@@ -1,15 +1,12 @@
 <?php
 
-namespace App\Domain\CustomField\Types;
+namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\Types;
 
-use App\Domain\CustomField\CustomFieldType;
-use App\Models\CustomField;
-use App\Models\CustomFieldAnswer;
-use App\Models\CustomFieldProductTerm;
-use Filament\Forms\Components\Component;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Filament\Forms\Components\TextInput;
 use Filament\Infolists\Components\TextEntry;
-use Illuminate\Support\Facades\App;
 
 class TextType extends CustomFieldType
 {

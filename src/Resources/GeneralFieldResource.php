@@ -3,23 +3,112 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\Resources;
 
 use Ffhs\FilamentPackageFfhsCustomForms\Resources\GeneralFieldsResource\Pages\{CreateGeneralField,ListGeneralField,EditGeneralField};
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
+use Filament\Forms\Components\Group;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Tabs;
+use Filament\Forms\Components\Tabs\Tab;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Table;
 
 class GeneralFieldResource extends Resource
 {
     protected static ?string $model = GeneralField::class;
 
+    const langPrefix= "filament-package_ffhs_custom_forms::custom_forms.fields.";
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+
+    public static function getNavigationGroup(): ?string
+    {
+        return __('filament-package_ffhs_custom_forms::custom_forms.navigation.group.forms');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('filament-package_ffhs_custom_forms::custom_forms.navigation.general_fields');
+    }
+
+    public static function getNavigationParentItem(): ?string {
+        return __('filament-package_ffhs_custom_forms::custom_forms.navigation.forms');
+    }
+
+    public static function getTitleCasePluralModelLabel(): string {
+        return __('filament-package_ffhs_custom_forms::custom_forms.navigation.general_fields');
+    }
+
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                //
+                Section::make()
+                    ->columnSpan(2)
+                    ->columns(2)
+                    ->schema([
+
+                        Tabs::make()
+                            ->tabs([
+                                Tab::make("Deutsch")
+                                    ->schema([
+                                        TextInput::make("name_de")
+                                            ->required(),
+                                        TextInput::make("tool_tip_de")
+                                    ]),
+
+                                Tab::make("Englisch")
+                                    ->schema([
+                                        TextInput::make("name_en")
+                                            ->required(),
+                                        TextInput::make("tool_tip_en")
+                                    ]),
+                            ]),
+                        Select::make("type")
+                            ->options(function (){
+                                $types = CustomFieldType::getAllTypes();
+                                $keys = array_keys($types);
+                                $values = array_map(fn(string $type) => CustomFieldType::getTypeFromName($type)->getTranslatedName(), $keys);
+                                return array_combine($keys,$values);
+                            })
+                            ->label(__(self::langPrefix . 'type'))
+                            ->helperText(__(self::langPrefix . 'helper_text.type'))
+                            ->columnStart(1)
+                            ->columnSpan(1)
+                            ->required()
+                            ->live(),
+
+                        TextInput::make("identify_key")
+                            ->label(__(self::langPrefix . 'identify_key'))
+                            ->helperText(__(self::langPrefix . 'helper_text.identify_key'))
+                            ->columnStart(1)
+                            ->columnSpan(1)
+                            ->required(),
+
+                       Toggle::make("is_general_field_active")
+                            ->label(__(self::langPrefix . 'is_active'))
+                            ->helperText(__(self::langPrefix . 'helper_text.is_general_field_active'))
+                            ->default(true)
+                            ->columnStart(2)
+                            ->columnSpan(1),
+
+
+                        //Extra field FromType
+                        Group::make(function ($get){
+                            if(is_null($get("type"))) return[];
+                            $type = CustomFieldType::getTypeFromName($get("type"));
+                            if(is_null($type)) return [];
+                            $component = $type->getGeneralFieldExtraField();
+                            return is_null($component)?[]:[$component];
+                        })->columnSpanFull()
+
+                    ])
             ]);
     }
 
@@ -27,18 +116,32 @@ class GeneralFieldResource extends Resource
     {
         return $table
             ->columns([
-                //
+                Tables\Columns\TextColumn::make('name')
+                    ->label(__(self::langPrefix . 'label'))
+                    ->getStateUsing(function ($record){
+                        return $record->toArray()["name_" .app()->getLocale()];
+                    }),
+
+                Tables\Columns\TextColumn::make('type')
+                    ->label(__(self::langPrefix .'type'))
+                    ->getStateUsing(function ($record){
+                        return __(self::langPrefix .'types.'.$record->type);
+                    }),
+
+                Tables\Columns\ToggleColumn::make('is_general_field_active')
+                    ->label(__(self::langPrefix .'is_general_field_active'))
             ])
             ->filters([
                 //
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
+                BulkActionGroup::make([
+                        DeleteBulkAction::make()]
+                ),
             ]);
     }
 

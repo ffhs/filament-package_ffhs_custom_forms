@@ -24,6 +24,13 @@ class GeneralField extends ACustomField
     ];
 
 
+    public static function getTranslatableAttributes(): array
+    {
+        return ['name','tool_tip'];
+    }
+
+
+
     //None no generalFields
     protected static function booted()
     {
@@ -36,10 +43,6 @@ class GeneralField extends ACustomField
         });
     }
 
-    public static function __(string $key): string {
-        if(explode(".",$key)[0] == "types") return CustomField::__($key);
-        return __("model.general_field.".$key);
-    }
 
     public static function allCached(): Collection{
        return Cache::remember("general_fields-all", 5,fn()=>self::all());

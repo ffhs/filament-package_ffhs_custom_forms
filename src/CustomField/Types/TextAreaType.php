@@ -1,16 +1,14 @@
 <?php
 
-namespace App\Domain\CustomField\Types;
+namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\Types;
 
-use App\Domain\CustomField\CustomFieldType;
-use App\Models\CustomField;
-use App\Models\CustomFieldAnswer;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Group;
-use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Textarea;
 use Filament\Infolists\Components\TextEntry;
-use Illuminate\Support\Facades\App;
 
 class TextAreaType extends CustomFieldType
 {

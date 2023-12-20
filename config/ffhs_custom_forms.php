@@ -1,12 +1,13 @@
 <?php
 
-use App\Domain\CustomField\Types\CheckboxType;
-use App\Domain\CustomField\Types\DateTimeType;
-use App\Domain\CustomField\Types\DateType;
-use App\Domain\CustomField\Types\EmailType;
-use App\Domain\CustomField\Types\NumberType;
-use App\Domain\CustomField\Types\TextAreaType;
-use App\Domain\CustomField\Types\TextType;
+
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\Types\CheckboxType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\Types\DateTimeType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\Types\DateType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\Types\EmailType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\Types\NumberType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\Types\TextAreaType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\Types\TextType;
 
 return [
     "custom_field_types" => [

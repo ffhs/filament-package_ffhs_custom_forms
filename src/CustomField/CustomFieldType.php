@@ -1,22 +1,11 @@
 <?php
 
-namespace App\Domain\CustomField;
+namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField;
 
 
-use App\Domain\CustomField\Types\CheckboxType;
-use App\Domain\CustomField\Types\DateTimeType;
-use App\Domain\CustomField\Types\DateType;
-use App\Domain\CustomField\Types\EmailType;
-use App\Domain\CustomField\Types\ModuleSelectorType;
-use App\Domain\CustomField\Types\NumberType;
-use App\Domain\CustomField\Types\RadioType;
-use App\Domain\CustomField\Types\SelectType;
-use App\Domain\CustomField\Types\TextAreaType;
-use App\Domain\CustomField\Types\TextType;
-use App\Models\CustomField;
-use App\Models\CustomFieldAnswer;
-use App\Models\CustomFieldProductTerm;
-use App\Models\GeneralField;
+
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Repeater;
 use Illuminate\Support\Facades\App;
@@ -35,7 +24,6 @@ abstract class CustomFieldType
     }
 
     public static function getTypeClassFromName(string $typeName): ?string {
-
         $types = self::getAllTypes();
         if(!array_key_exists($typeName,$types)) return null;
         return self::getAllTypes()[$typeName];
@@ -48,6 +36,9 @@ abstract class CustomFieldType
     }
 
 
+    public function getTranslatedName():string{
+        return __("filament-package_ffhs_custom_forms::custom_forms.fields.types." . self::getObjFieldName());
+    }
 
     public static abstract function getFieldName():string;
 

@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Domain\CustomField\Types;
+namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\Types;
 
-use App\Models\CustomField;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Filament\Forms\Components\TextInput;
 
 class NumberType extends TextType
