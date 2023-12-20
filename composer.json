@@ -1,0 +1,39 @@
+{
+    "name": "ffhs/filament-package_ffhs_custom_forms",
+    "description": "Custom forms for Fernfachhochschule Schweiz (FFHS)",
+    "keywords": [
+        "ffhs",
+        "filament-package_ffhs_custom_forms"
+    ],
+
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Ffhs\\FilamentPackageFfhsCustomForms\\": "src/"
+        }
+    },
+    "minimum-stability": "dev",
+    "require": {
+        "php": "^8.1",
+        "filament/filament": "^3.0-stable",
+        "filament/notifications": "^3.0-stable",
+        "guzzlehttp/guzzle": "^7.0.1",
+        "laravel/framework": "^9.0 | ^10.0",
+        "laravel/prompts": "^0.1.8",
+        "socialiteproviders/microsoft": "^4.2",
+        "spatie/laravel-activitylog": "^4.7",
+        "spatie/laravel-permission": "^5.10",
+        "stechstudio/filament-impersonate": "^3.5"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Ffhs\\FilamentPackageFfhsCustomForms\\FilamentPackageFfhsCustomFormsServiceProvider"
+            ],
+            "aliases": {
+                "FilamentPackageFfhsCustomForms": "Ffhs\\FilamentPackageFfhsCustomForms\\FilamentPackageFfhsCustomFormsFacade"
+            }
+        }
+    }
+}
