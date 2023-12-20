@@ -5,6 +5,8 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Resources;
 use Ffhs\FilamentPackageFfhsCustomForms\Resources\GeneralFieldsResource\Pages\{CreateGeneralField,ListGeneralField,EditGeneralField};
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralFieldForm;
+use Ffhs\FilamentPackageFfhsCustomForms\Resources\GeneralFieldsResource\RelationManagers\GeneralFieldFormRelationManager;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
@@ -18,6 +20,7 @@ use Filament\Tables;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class GeneralFieldResource extends Resource
 {
@@ -42,6 +45,10 @@ class GeneralFieldResource extends Resource
 
     public static function getTitleCasePluralModelLabel(): string {
         return __('filament-package_ffhs_custom_forms::custom_forms.navigation.general_fields');
+    }
+
+    public static function getEloquentQuery(): Builder {
+        return parent::getEloquentQuery()->with("generalFieldForms");
     }
 
 
@@ -92,15 +99,16 @@ class GeneralFieldResource extends Resource
                             ->required(),
 
                        Toggle::make("is_general_field_active")
-                            ->label(__(self::langPrefix . 'is_active'))
+                            ->label(__(self::langPrefix . 'is_general_field_active'))
                             ->helperText(__(self::langPrefix . 'helper_text.is_general_field_active'))
                             ->default(true)
                             ->columnStart(2)
                             ->columnSpan(1),
 
 
+
                         //Extra field FromType
-                        Group::make(function ($get){
+                       Group::make(function ($get){
                             if(is_null($get("type"))) return[];
                             $type = CustomFieldType::getTypeFromName($get("type"));
                             if(is_null($type)) return [];
@@ -129,7 +137,17 @@ class GeneralFieldResource extends Resource
                     }),
 
                 Tables\Columns\ToggleColumn::make('is_general_field_active')
-                    ->label(__(self::langPrefix .'is_general_field_active'))
+                    ->label(__(self::langPrefix .'is_general_field_active')),
+
+                Tables\Columns\TextColumn::make('generalFieldForms.custom_form_identifier')
+                    ->label(__(self::langPrefix . 'form_connections'))
+                    ->listWithLineBreaks()
+                    ->state(fn(GeneralField $record) =>
+                        $record->generalFieldForms
+                            ->map(fn($generalFieldForm) => $generalFieldForm->dynamicFormConfiguration())
+                            ->map(fn(string $class) => ($class)::displayName())
+                    )
+
             ])
             ->filters([
                 //
@@ -139,16 +157,13 @@ class GeneralFieldResource extends Resource
                 Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
-                BulkActionGroup::make([
-                        DeleteBulkAction::make()]
-                ),
             ]);
     }
 
     public static function getRelations(): array
     {
         return [
-            //
+            GeneralFieldFormRelationManager::class
         ];
     }
 

@@ -5,6 +5,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Models;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Cache;
 
 class GeneralField extends ACustomField
@@ -29,8 +30,6 @@ class GeneralField extends ACustomField
         return ['name','tool_tip'];
     }
 
-
-
     //None no generalFields
     protected static function booted()
     {
@@ -44,23 +43,22 @@ class GeneralField extends ACustomField
     }
 
 
-    public static function allCached(): Collection{
-       return Cache::remember("general_fields-all", 5,fn()=>self::all());
-    }
-
-    public function customFields(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function customFields(): HasMany
     {
         return $this->hasMany(CustomField::class);
     }
 
-    // Relation for dropdownOptions
-    public function dropdownOptions(): BelongsToMany
-    {
-        return $this->belongsToMany(DropdownOption::class);
+    public function generalFieldForms(): HasMany {
+        return $this->hasMany(GeneralFieldForm::class);
     }
+
+
     public static function cached(mixed $custom_field_id): ?ACustomField{
         return Cache::remember("custom_field-" .$custom_field_id, 1, fn()=>GeneralField::query()->firstWhere("id", $custom_field_id));
     }
 
+    public static function allCached(): Collection{
+        return Cache::remember("general_fields-all", 5,fn()=>self::all());
+    }
 
 }

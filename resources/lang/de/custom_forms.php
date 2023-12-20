@@ -18,6 +18,7 @@ return [
         'identify_key'=> 'Identifizierung Schlüssel',
         'is_general_field_active' => 'Aktive',
         'label'=> "Name",
+        'form_connections'=> 'Verknüpfte Formulare',
 
         'helper_text' => [
             'type'=> 'Der Feldtyp des Felds',
@@ -37,7 +38,13 @@ return [
             "textarea" => "Textbereich",
             "module_select" => "Module Selector",
         ],
-    ]
+    ],
 
+    'form'=>[
+        'custom_form_identifier'=> [
+            'display_name' => "Formulartype Name",
+            'raw_name' => "Formulartype Identifier"
+        ]
+    ]
 
 ];

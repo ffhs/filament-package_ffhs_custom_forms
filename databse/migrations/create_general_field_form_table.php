@@ -17,6 +17,7 @@ return new class () extends Migration {
             $table->id();
             $table->foreignId("general_field_id")->constrained()->on("custom_fields");
             $table->string("custom_form_identifier");
+            $table->timestamps();
         });
     }
 
