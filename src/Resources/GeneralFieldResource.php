@@ -106,7 +106,6 @@ class GeneralFieldResource extends Resource
                             ->columnSpan(1),
 
 
-
                         //Extra field FromType
                        Group::make(function ($get){
                             if(is_null($get("type"))) return[];
@@ -136,9 +135,6 @@ class GeneralFieldResource extends Resource
                         return __(self::langPrefix .'types.'.$record->type);
                     }),
 
-                Tables\Columns\ToggleColumn::make('is_general_field_active')
-                    ->label(__(self::langPrefix .'is_general_field_active')),
-
                 Tables\Columns\TextColumn::make('generalFieldForms.custom_form_identifier')
                     ->label(__(self::langPrefix . 'form_connections'))
                     ->listWithLineBreaks()
@@ -146,7 +142,10 @@ class GeneralFieldResource extends Resource
                         $record->generalFieldForms
                             ->map(fn($generalFieldForm) => $generalFieldForm->dynamicFormConfiguration())
                             ->map(fn(string $class) => ($class)::displayName())
-                    )
+                    ),
+
+                Tables\Columns\ToggleColumn::make('is_general_field_active')
+                    ->label(__(self::langPrefix .'is_general_field_active')),
 
             ])
             ->filters([

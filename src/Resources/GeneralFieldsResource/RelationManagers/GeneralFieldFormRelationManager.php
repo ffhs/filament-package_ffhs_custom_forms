@@ -26,7 +26,7 @@ class GeneralFieldFormRelationManager extends RelationManager
                     ->required()
                     ->options(function ($livewire){
                         $generalField = $livewire->getOwnerRecord();
-                        $selectedIdentifyers= $generalField->generalFieldForm->map(fn(GeneralFieldForm $fieldForm) => $fieldForm->custom_form_identifier);
+                        $selectedIdentifyers= $generalField->generalFieldForms->map(fn(GeneralFieldForm $fieldForm) => $fieldForm->custom_form_identifier);
                         $notSelecdetForms = collect(config("ffhs_custom_forms.forms"))
                             ->filter(
                                 fn($class) => $selectedIdentifyers
