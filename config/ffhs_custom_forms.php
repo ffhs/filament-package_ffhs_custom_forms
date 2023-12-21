@@ -1,13 +1,13 @@
 <?php
 
 
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\Types\CheckboxType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\Types\DateTimeType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\Types\DateType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\Types\EmailType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\Types\NumberType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\Types\TextAreaType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\Types\TextType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CheckboxType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\DateTimeType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\DateType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\EmailType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\NumberType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\TextAreaType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\TextType;
 
 return [
     "custom_field_types" => [
@@ -33,4 +33,8 @@ return [
         TextAreaType::class,
         TextType::class,
     ],
+
+    'view_modes' => [
+
+    ]
 ];

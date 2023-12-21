@@ -15,6 +15,9 @@ use function PHPUnit\Framework\isEmpty;
 abstract class CustomFieldType
 {
 
+    /*
+     * Static Class Functions
+     */
     public static function getAllTypes():array{
         $output = [];
         foreach(config("ffhs_custom_forms.custom_field_types") as $typeClass){
@@ -22,7 +25,6 @@ abstract class CustomFieldType
         }
         return $output;
     }
-
     public static function getTypeClassFromName(string $typeName): ?string {
         $types = self::getAllTypes();
         if(!array_key_exists($typeName,$types)) return null;
@@ -35,15 +37,61 @@ abstract class CustomFieldType
         return new $class();
     }
 
+    /*
+     * Abstract and Instance Functions
+     */
 
-    public function getTranslatedName():string{
-        return __("filament-package_ffhs_custom_forms::custom_forms.fields.types." . self::getObjFieldName());
+    public function getFormComponent(CustomField $record, string $viewMode = "default", array $parameter = []): \Filament\Forms\Components\Component{
+        $viewMods = $this->getViewModes();
+        //FieldTypeView.php
+        if(is_null($viewMods[$viewMode])) return ($viewMods["default"])::getFormComponent($this,$record,$parameter);
+        return ($viewMods[$viewMode])::getFormComponent($this,$record,$parameter);
+    }
+    public function getViewComponent(CustomFieldAnswer $record,string $viewMode = "default", array $parameter = []): \Filament\Infolists\Components\Component{
+        $viewMods = $this->getViewModes();
+        //FieldTypeView.php
+        if(is_null($viewMods[$viewMode])) return ($viewMods["default"])::getFormComponent($this,$record,$parameter);
+        return ($viewMods[$viewMode])::getFormComponent($this,$record,$parameter);
     }
 
-    public static abstract function getFieldName():string;
+    public abstract function viewModes():array;
 
-    public abstract function getFormComponent(CustomField $record,string $viewMode = "default", array $parameter = []): Component;
-    public abstract function getViewComponent(CustomFieldAnswer $record,string $viewMode = "default", array $parameter = []): \Filament\Infolists\Components\Component;
+    public function getViewModes(?string $dynamicFormConfiguration = null):array {
+        if(is_null($dynamicFormConfiguration)) return $this->viewModes();
+        $viewMods = $this->viewModes();
+
+        //Config Overwrite
+        $overWrittenLevelOne = $this->getOverwriteViewMode();
+        foreach (array_keys($overWrittenLevelOne) as $viewMode) $viewMods[$viewMode] = $overWrittenLevelOne[$viewMode];
+
+        // Form Overwritten
+        if(!is_null($dynamicFormConfiguration)){
+            $overWrittenLevelTwo = ($dynamicFormConfiguration)->getOverwriteViewMode();
+            foreach (array_keys($overWrittenLevelTwo) as $viewMode) $viewMods[$viewMode] = $overWrittenLevelOne[$viewMode];
+        }
+
+        return $viewMods;
+
+    }
+
+    public function getOverwriteViewMode():array{
+        $viewModes = config("ffhs_custom_forms.view_modes");
+        $overWritten = $viewModes[$this::class];
+        if(isEmpty($overWritten)) return [];
+        return $overWritten;
+    }
+
+
+
+
+
+
+
+
+    public function getTranslatedName():string{
+        return __("filament-package_ffhs_custom_forms::custom_forms.fields.types." . self::fieldIdentifier());
+    } //ToDo make Traid for this ones and add Default to lang custom_types
+    public static abstract function getFieldIdentifier():string;
 
     public static function getToolTips(CustomField $record) {
         return   $record->getInheritState()["tool_tip_" . App::currentLocale()];
@@ -52,10 +100,11 @@ abstract class CustomFieldType
         return  $record->getInheritState()["short_title_" . App::currentLocale()];
     }
 
-    public function getObjFieldName():string{
-        return $this::getFieldName();
-    }
+    public function fieldIdentifier():string{return $this::getFieldIdentifier();}
 
+
+
+    // Extra Options
     public function getExtraOptionSchema():?array{
         return null;
     }
@@ -64,7 +113,12 @@ abstract class CustomFieldType
         return [];
     }
 
+    public function getGeneralFieldExtraField(): ?Component{
+        return  null;
+    }
 
+    /*
+     ToDo:
     public function prepareOptionDataBeforeFill(array $data):array{
          if(!array_key_exists("field_options",$data) || is_null($data["field_options"]) )$data["field_options"] = ["options"=> []];
          else $data["field_options"] = ["options"=>$data["field_options"]];
@@ -76,12 +130,13 @@ abstract class CustomFieldType
         else $data["field_options"] = null;
         return $data;
     }
+
     public function prepareOptionDataBeforeCreate(array $data):array{
         return $this->prepareOptionDataBeforeSave($data);
     }
 
     public function hasExtraOptions():bool{
-        return Cache::remember("has_extra_option-" .$this->getObjFieldName(),30,fn()=> !isEmpty($this->getExtraOptionSchema()));
+        return Cache::remember("has_extra_option-" .$this->getObjFieldIdentifier(),30,fn()=> !isEmpty($this->getExtraOptionSchema()));
     }
 
     public function getExtraOptionsRepeater(): ?Repeater{
@@ -100,14 +155,12 @@ abstract class CustomFieldType
             ->live();
     }
 
-    /*public static function prepareCloneOptions(array $templateOptions, bool $isInheritGeneral) :array{
+    public static function prepareCloneOptions(array $templateOptions, bool $isInheritGeneral) :array{
         return $templateOptions;
     }*/
 
 
-    public function getGeneralFieldExtraField(): ?Component{
-        return  null;
-    }
+
 
 
 
