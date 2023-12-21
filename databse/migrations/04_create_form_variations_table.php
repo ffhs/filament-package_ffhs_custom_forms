@@ -13,16 +13,16 @@ return new class () extends Migration {
      */
     public function up()
     {
-        Schema::create('general_field_form', function (Blueprint $table) {
+        Schema::create('form_variations', function (Blueprint $table) {
             $table->id();
 
-            $table->foreignId("general_field_id")->constrained()->on("custom_fields");
-            $table->string("custom_form_identifier");
+            $table->foreignId("custom_form_id");
+            $table->string("short_title")->nullable();
 
-            $table->boolean("is_required")->default(false);
-            $table->integer("max_amount")->default(1);
 
             $table->timestamps();
+            $table->softDeletes();
+
         });
     }
 
@@ -33,7 +33,7 @@ return new class () extends Migration {
      */
     public function down()
     {
-        Schema::dropIfExists('general_field_form');
+        Schema::dropIfExists('custom_fields');
     }
 };
 

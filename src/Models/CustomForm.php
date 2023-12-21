@@ -11,11 +11,18 @@ class CustomForm extends Model
     protected $fillable = [
         'custom_form_identifier',
         'short_title',
+        'relation_model',
     ];
 
     public function customFields(): HasMany {
         return $this->hasMany(CustomField::class);
     }
+
+
+    public function relationModel() {
+       $this->morphTo();
+    }
+
 
     //toDo get CustomFieldLayout
 

@@ -15,11 +15,14 @@ return new class () extends Migration {
     {
         Schema::create('custom_forms', function (Blueprint $table) {
             $table->id();
-            $table->timestamps();
-            $table->softDeletes();
 
             $table->string("custom_form_identifier");
             $table->string("short_title")->nullable();
+
+            $table->morphs("relation_model");
+
+            $table->timestamps();
+            $table->softDeletes();
 
         });
     }

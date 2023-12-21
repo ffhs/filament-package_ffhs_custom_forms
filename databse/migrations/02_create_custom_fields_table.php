@@ -42,8 +42,8 @@ return new class () extends Migration {
 
 
             $table->timestamps();
-
             $table->softDeletes();
+
             $table->unique(["general_field_id","custom_form_id"]);
             $table->unique(["custom_form_id","custom_form_place"]);
 

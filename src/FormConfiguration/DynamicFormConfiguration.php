@@ -5,6 +5,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\FormConfiguration;
 
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType;
+use Illuminate\Database\Eloquent\Builder;
 
 abstract class DynamicFormConfiguration
 {
@@ -32,5 +33,20 @@ abstract class DynamicFormConfiguration
     public static function getOverwriteViewModes():array {
         return [];
     }
+
+
+    public static function hasVariations(): bool{
+        return false;
+    }
+
+    public static function hasRelationVariations(): bool{
+        return false;
+    }
+
+    public static function relationVariationsQuery(Builder $query): Builder{
+        return $query;
+    }
+
+
 
 }
