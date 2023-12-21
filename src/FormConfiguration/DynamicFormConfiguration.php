@@ -3,11 +3,18 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\FormConfiguration;
 
 
+
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType;
+
 abstract class DynamicFormConfiguration
 {
-    public abstract static function formFieldTypes():array;
 
-    public abstract function identifyer(): string;
+    public abstract static function identifier(): string;
+    public abstract static function displayName(): string;
+
+    public  static function formFieldTypes():array{
+        return CustomFieldType::getAllTypes();
+    }
 
     public static function displayViewMode():string {
         return 'default';
