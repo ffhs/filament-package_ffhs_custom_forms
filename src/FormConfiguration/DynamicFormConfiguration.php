@@ -25,5 +25,12 @@ abstract class DynamicFormConfiguration
     public static function displayCreateMode():string {
         return 'default';
     }
+    public static function displayMode():string {
+        return 'default';
+    }
+
+    public static function getOverwriteViewModes():array {
+        return [];
+    }
 
 }
