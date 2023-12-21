@@ -27,9 +27,9 @@ class ListCustomFormField extends ListRecords
 
         foreach (config("ffhs_custom_forms.forms") as $formClass){
             $tabs[$formClass::identifier()] =
-                Tab::make($formClass::displayName());
-                    //->badge($this->prepareTabQuerry($formClass::identifier(),GeneralField::query())->count())
-                    //->modifyQueryUsing(fn($query) => $this->prepareTabQuerry($formClass::identifier(),$query));
+                Tab::make($formClass::displayName())
+                    ->badge($this->prepareTabQuerry($formClass::identifier(),CustomForm::query())->count())
+                    ->modifyQueryUsing(fn($query) => $this->prepareTabQuerry($formClass::identifier(),$query));
 
         }
 
@@ -37,11 +37,7 @@ class ListCustomFormField extends ListRecords
     }
 
     private function prepareTabQuerry ($identifier, $query) {
-        return $query/*->whereIn("id",
-            GeneralFieldForm::query()
-                ->where("custom_form_identifier", $identifier)
-                ->select("general_field_id")
-        )*/;
+        return $query->where("custom_form_identifier", $identifier);
     }
 
     public function getDefaultActiveTab(): string | int | null

@@ -20,6 +20,8 @@ use Filament\Tables;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
 
 class CustomFormResource extends Resource
 {
@@ -28,6 +30,7 @@ class CustomFormResource extends Resource
     protected static ?string $model = CustomForm::class;
     protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-check';
 
+    const langPrefix= "filament-package_ffhs_custom_forms::custom_forms.form.";
 
     public static function getNavigationGroup(): ?string
     {
@@ -44,20 +47,24 @@ class CustomFormResource extends Resource
         return $form;
     }
 
+    public static function getEloquentQuery(): Builder {
+        return parent::getEloquentQuery()->with("customFields");
+    }
 
-    
 
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make("id"),
-                Tables\Columns\TextColumn::make("short_title"),
-                Tables\Columns\TextColumn::make('generalFieldForms.custom_form_identifier')
-                    ->label(__('filament-package_ffhs_custom_forms::custom_forms.fields.form_connections'))
+                Tables\Columns\TextColumn::make("short_title")
+                    ->label(__(self::langPrefix . "short_title")),
+                Tables\Columns\TextColumn::make('custom_form_identifier')
+                    ->label(__(self::langPrefix . "custom_form_identifier.display_name"))
                     ->state(fn(CustomForm $record) =>($record->dynamicFormConfiguration())::displayName()),
-                Tables\Columns\TextColumn::make("customFields")
-                    ->state(fn(CustomForm $record) => $record->customFields->count())
+                Tables\Columns\TextColumn::make("custom_fields_amount")
+                    ->label(__(self::langPrefix . "custom_fields_amount"))
+                    ->state(fn(CustomForm $record) => $record->customFields->count()),
             ]);
     }
 
