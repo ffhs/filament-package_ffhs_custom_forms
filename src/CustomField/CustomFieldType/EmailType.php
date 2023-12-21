@@ -7,6 +7,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Views\EmailT
 
 class EmailType extends CustomFieldType
 {
+    use HasCustomFormPackageTranslation;
     public static function getFieldIdentifier(): string {return "email";}
 
     public function viewModes(): array {

@@ -21,7 +21,7 @@ abstract class CustomFieldType
     public static function getAllTypes():array{
         $output = [];
         foreach(config("ffhs_custom_forms.custom_field_types") as $typeClass){
-            $output[$typeClass::getFieldName()]= $typeClass;
+            $output[$typeClass::getFieldIdentifier()]= $typeClass;
         }
         return $output;
     }
@@ -61,12 +61,12 @@ abstract class CustomFieldType
         $viewMods = $this->viewModes();
 
         //Config Overwrite
-        $overWrittenLevelOne = $this->getOverwriteViewMode();
+        $overWrittenLevelOne = $this->getOverwriteViewModes();
         foreach (array_keys($overWrittenLevelOne) as $viewMode) $viewMods[$viewMode] = $overWrittenLevelOne[$viewMode];
 
         // Form Overwritten
         if(!is_null($dynamicFormConfiguration)){
-            $overWrittenLevelTwo = ($dynamicFormConfiguration)->getOverwriteViewMode();
+            $overWrittenLevelTwo = ($dynamicFormConfiguration)->getOverwriteViewModes();
             foreach (array_keys($overWrittenLevelTwo) as $viewMode) $viewMods[$viewMode] = $overWrittenLevelOne[$viewMode];
         }
 
@@ -74,7 +74,7 @@ abstract class CustomFieldType
 
     }
 
-    public function getOverwriteViewMode():array{
+    public function getOverwriteViewModes():array{
         $viewModes = config("ffhs_custom_forms.view_modes");
         $overWritten = $viewModes[$this::class];
         if(isEmpty($overWritten)) return [];
@@ -86,11 +86,10 @@ abstract class CustomFieldType
 
 
 
-
-
     public function getTranslatedName():string{
-        return __("filament-package_ffhs_custom_forms::custom_forms.fields.types." . self::fieldIdentifier());
-    } //ToDo make Traid for this ones and add Default to lang custom_types
+        return __("custom_forms.types." . self::fieldIdentifier());
+    }
+
     public static abstract function getFieldIdentifier():string;
 
     public static function getToolTips(CustomField $record) {

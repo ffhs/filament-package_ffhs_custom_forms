@@ -6,6 +6,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType;
 
 class TextAreaType extends CustomFieldType
 {
+    use HasCustomFormPackageTranslation;
 
     public static function getFieldIdentifier(): string {return "textarea";}
 

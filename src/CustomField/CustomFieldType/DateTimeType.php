@@ -8,6 +8,7 @@ use Filament\Forms\Components\TextInput;
 
 class DateTimeType extends CustomFieldType
 {
+    use HasCustomFormPackageTranslation;
     public static function getFieldIdentifier(): string {return "date-time";}
 
 

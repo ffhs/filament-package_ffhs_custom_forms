@@ -8,9 +8,9 @@ use Filament\Forms\Components\TextInput;
 
 class TextType extends CustomFieldType
 {
+    use HasCustomFormPackageTranslation;
 
     public static function getFieldIdentifier(): string {return "text";}
-
 
 
     public function getExtraOptionFields(): array {

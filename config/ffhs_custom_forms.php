@@ -24,14 +24,7 @@ return [
 
     ],
 
-    "general_field_types"=>[
-        CheckboxType::class,
-        DateTimeType::class,
-        DateType::class,
-        EmailType::class,
-        NumberType::class,
-        TextAreaType::class,
-        TextType::class,
+    "disabled_general_field_types"=>[
     ],
 
     'view_modes' => [

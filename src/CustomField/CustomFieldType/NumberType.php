@@ -8,6 +8,7 @@ use Filament\Forms\Components\TextInput;
 
 class NumberType extends CustomFieldType
 {
+    use HasCustomFormPackageTranslation;
     public static function getFieldIdentifier(): string {return "number";}
 
 
