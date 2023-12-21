@@ -20,7 +20,7 @@ class DateTypeView implements FieldTypeView
             ->format(self::getFormat($record));
     }
 
-    public static function getViewComponent(CustomFieldType $type, CustomFieldAnswer $record,
+    public static function getInfolistComponent(CustomFieldType $type, CustomFieldAnswer $record,
         array $parameter = []): TextEntry {
         return TextEntry::make($record->customField->identify_key)
             ->dateTime(self::getFormat($record->customField))

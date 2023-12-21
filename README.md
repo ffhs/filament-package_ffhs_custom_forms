@@ -37,7 +37,7 @@ return [
 	...
     ],  
   
-    "general_field_types"=>[  
+    "disabled_general_field_types"=>[  
 	...
     ],  
   
@@ -138,7 +138,7 @@ return [
 	...
     ],  
   
-    "general_field_types"=>[  
+    "disabled_general_field_types"=>[  
 	...
     ],  
   

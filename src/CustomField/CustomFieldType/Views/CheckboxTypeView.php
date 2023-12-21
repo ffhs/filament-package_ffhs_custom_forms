@@ -19,7 +19,7 @@ class CheckboxTypeView implements FieldTypeView
             ->helperText($type::class::getToolTips($record));
     }
 
-    public static function getViewComponent(CustomFieldType $type, CustomFieldAnswer $record,
+    public static function getInfolistComponent(CustomFieldType $type, CustomFieldAnswer $record,
         array $parameter = []): IconEntry {
         return IconEntry::make($record->customField->identify_key)
             ->label($type::class::getLabelName($record->customField))

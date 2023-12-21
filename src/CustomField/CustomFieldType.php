@@ -7,9 +7,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Filament\Forms\Components\Component;
-use Filament\Forms\Components\Repeater;
 use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\Cache;
 use function PHPUnit\Framework\isEmpty;
 
 abstract class CustomFieldType
@@ -47,7 +45,7 @@ abstract class CustomFieldType
         if(is_null($viewMods[$viewMode])) return ($viewMods["default"])::getFormComponent($this,$record,$parameter);
         return ($viewMods[$viewMode])::getFormComponent($this,$record,$parameter);
     }
-    public function getViewComponent(CustomFieldAnswer $record,string $viewMode = "default", array $parameter = []): \Filament\Infolists\Components\Component{
+    public function getInfolistComponent(CustomFieldAnswer $record,string $viewMode = "default", array $parameter = []): \Filament\Infolists\Components\Component{
         $viewMods = $this->getViewModes();
         //FieldTypeView.php
         if(is_null($viewMods[$viewMode])) return ($viewMods["default"])::getFormComponent($this,$record,$parameter);

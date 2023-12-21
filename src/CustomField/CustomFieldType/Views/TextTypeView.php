@@ -20,7 +20,7 @@ class TextTypeView implements FieldTypeView
             ->label($type::class::getLabelName($record));
     }
 
-    public static function getViewComponent(CustomFieldType $type, CustomFieldAnswer $record,
+    public static function getInfolistComponent(CustomFieldType $type, CustomFieldAnswer $record,
         array $parameter = []): TextEntry {
         return TextEntry::make($record->customField->identify_key)
             ->state(fn(CustomFieldAnswer $record) => $record->answer)

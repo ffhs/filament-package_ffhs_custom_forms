@@ -19,7 +19,7 @@ class TextAreaTypeView implements FieldTypeView
             ->label($type::class::getLabelName($record));
     }
 
-    public static function getViewComponent(CustomFieldType $type, CustomFieldAnswer $record,
+    public static function getInfolistComponent(CustomFieldType $type, CustomFieldAnswer $record,
         array $parameter = []): \Filament\Infolists\Components\Component {
         return TextEntry::make($record->identify_key)
             ->state($record->answer)
