@@ -42,6 +42,14 @@ class CustomFormResource extends Resource
     }
 
 
+    public static function getTitleCasePluralModelLabel(): string {
+        return __('filament-package_ffhs_custom_forms::custom_forms.navigation.forms');
+    }
+
+    public static function getTitleCaseModelLabel(): string {
+        return __('filament-package_ffhs_custom_forms::custom_forms.form.custom_form');
+    }
+
     public static function form(Form $form): Form
     {
         return $form;
