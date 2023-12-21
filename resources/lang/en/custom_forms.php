@@ -3,33 +3,53 @@
 
 return [
 
+    'functions'=>[
+        'connect'=>'Connect',
+    ],
+
+    "navigation"=>[
+        'general_fields'=> "General Fields",
+        'forms' => 'Forms',
+        'group' => [
+            'forms'=> 'Forms'
+        ]
+    ],
+
     "fields" =>[
-        'type' => 'Feldtyp',
+        'type' => 'Field Type',
         'name' => 'Name',
-        'tool_tip'=> 'Kurzbeschrieb',
-        'identify_key'=> 'Identifizierung Schlüssel',
-        'is_general_field_active' => 'Aktive',
+        'tool_tip'=> 'Short Description',
+        'identify_key'=> 'Identification Key',
+        'is_general_field_active' => 'Active',
         'label'=> "Name",
+        'form_connections'=> 'Linked Forms',
+        'general_field' => 'General Field',
 
         'helper_text' => [
-            'type'=> 'Der Feldtyp des Felds',
-            'identify_key'=> 'Dieser Schlüssel wird benötigt um für die Daten zu exportieren',
-            'is_general_field_active'=> 'Falls dies Deaktiviert wird, werden alle generelle Felder Deaktiviert, welches auf dieses Feld basieren.',
+            'type'=> 'The field type of the field. WARNING: This cannot be changed after creation.',
+            'identify_key'=> 'This key is required for exporting the data.',
+            'is_general_field_active'=> 'If this is deactivated, all general fields based on this field will be deactivated.',
         ],
 
         'types'=>[
             "text" => "Text",
             "email" => "Email",
-            "number" => "Nummer",
-            "select" => "Auswahl",
-            "checkbox" => "Kontrollkästchen",
+            "number" => "Number",
+            "select" => "Selection",
+            "checkbox" => "Checkbox",
             "radio" => "Radio",
-            "date" => "Datum",
-            "date-time" => "Datum und Zeit",
-            "textarea" => "Textbereich",
+            "date" => "Date",
+            "date-time" => "Date and Time",
+            "textarea" => "Textarea",
             "module_select" => "Module Selector",
         ],
-    ]
+    ],
 
+    'form'=>[
+        'custom_form_identifier'=> [
+            'display_name' => "Form Type Name",
+            'raw_name' => "Form Type Identifier"
+        ]
+    ]
 
 ];

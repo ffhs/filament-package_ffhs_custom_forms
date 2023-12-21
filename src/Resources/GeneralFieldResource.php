@@ -5,7 +5,6 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Resources;
 use Ffhs\FilamentPackageFfhsCustomForms\Resources\GeneralFieldsResource\Pages\{CreateGeneralField,ListGeneralField,EditGeneralField};
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralFieldForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Resources\GeneralFieldsResource\RelationManagers\GeneralFieldFormRelationManager;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Section;
@@ -17,14 +16,17 @@ use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
 class GeneralFieldResource extends Resource
 {
     protected static ?string $model = GeneralField::class;
+
+    public static function getRecordTitleAttribute(): ?string {
+        return "name_" . app()->getLocale();
+    }
+
 
     const langPrefix= "filament-package_ffhs_custom_forms::custom_forms.fields.";
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
@@ -47,10 +49,27 @@ class GeneralFieldResource extends Resource
         return __('filament-package_ffhs_custom_forms::custom_forms.navigation.general_fields');
     }
 
+    public static function getTitleCaseModelLabel(): string {
+        return __('filament-package_ffhs_custom_forms::custom_forms.fields.general_field');
+    }
+
+
+
     public static function getEloquentQuery(): Builder {
         return parent::getEloquentQuery()->with("generalFieldForms");
     }
 
+
+    private static function getTranslationTab(string $location, string $label): Tab {
+        return Tab::make($label)
+            ->schema([
+                TextInput::make("name_" . $location)
+                    ->label("Name")
+                    ->required(),
+                TextInput::make("tool_tip_" . $location)
+                    ->label(__(self::langPrefix . 'tool_tip')),
+            ]);
+    }
 
     public static function form(Form $form): Form
     {
@@ -63,29 +82,23 @@ class GeneralFieldResource extends Resource
 
                         Tabs::make()
                             ->tabs([
-                                Tab::make("Deutsch")
-                                    ->schema([
-                                        TextInput::make("name_de")
-                                            ->required(),
-                                        TextInput::make("tool_tip_de")
-                                    ]),
-
-                                Tab::make("Englisch")
-                                    ->schema([
-                                        TextInput::make("name_en")
-                                            ->required(),
-                                        TextInput::make("tool_tip_en")
-                                    ]),
+                                self::getTranslationTab("de","Deutsch"),
+                                self::getTranslationTab("en","Englisch"),
                             ]),
+
                         Select::make("type")
-                            ->options(function (){
-                                $types = CustomFieldType::getAllTypes();
-                                $keys = array_keys($types);
+                            ->options(function (Select $component){
+                                //Skip selectable
+                                if($component->isDisabled()) return CustomFieldType::getAllTypes();
+
+                                $types = config("ffhs_custom_forms.general_field_types");
+                                $keys = array_map(fn($class) => ($class)::getFieldName(),$types);
                                 $values = array_map(fn(string $type) => CustomFieldType::getTypeFromName($type)->getTranslatedName(), $keys);
                                 return array_combine($keys,$values);
                             })
                             ->label(__(self::langPrefix . 'type'))
                             ->helperText(__(self::langPrefix . 'helper_text.type'))
+                            ->disabledOn("edit")
                             ->columnStart(1)
                             ->columnSpan(1)
                             ->required()
@@ -113,9 +126,9 @@ class GeneralFieldResource extends Resource
                             if(is_null($type)) return [];
                             $component = $type->getGeneralFieldExtraField();
                             return is_null($component)?[]:[$component];
-                        })->columnSpanFull()
+                        })->columnSpanFull(),
 
-                    ])
+                    ]),
             ]);
     }
 
@@ -162,7 +175,7 @@ class GeneralFieldResource extends Resource
     public static function getRelations(): array
     {
         return [
-            GeneralFieldFormRelationManager::class
+            GeneralFieldFormRelationManager::class,
         ];
     }
 

@@ -22,5 +22,15 @@ return [
 
     "forms"=>[
 
-    ]
+    ],
+
+    "general_field_types"=>[
+        CheckboxType::class,
+        DateTimeType::class,
+        DateType::class,
+        EmailType::class,
+        NumberType::class,
+        TextAreaType::class,
+        TextType::class,
+    ],
 ];
