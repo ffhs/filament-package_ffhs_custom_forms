@@ -34,18 +34,13 @@ class CustomField extends ACustomField
     }
 
 
-    // Returns the translatable attributes
-    public static function getTranslatableAttributes(): array
-    {
-        return ['name','tool_tip'];
-    }
-
     public static function inheritCustomField(): Builder {
         return self::query()->whereNot("general_field_id");
     }
     public static function notInheritCustomField(): Builder {
         return self::query()->whereNull("general_field_id");
     }
+
 
 
 
@@ -87,16 +82,9 @@ class CustomField extends ACustomField
         return !is_null($this->custom_field_id);
     }
 
-    public function customFieldProductTerms(): HasMany
+    public function customForm(): HasMany
     {
-        return $this->hasMany(CustomFieldProductTerm::class)->orderBy("product_term_id");
-    }
-
-
-
-    public function product(): BelongsTo
-    {
-        return $this->belongsTo(Product::class);
+        return $this->hasMany(CustomForm::class);
     }
 
     public function generalField(): BelongsTo

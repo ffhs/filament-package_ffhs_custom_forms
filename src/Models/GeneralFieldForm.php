@@ -12,6 +12,8 @@ use Illuminate\Support\Facades\Cache;
 class GeneralFieldForm extends Model
 {
 
+    use HasFormIdentifyer;
+
     protected $table = "general_field_form";
     protected $fillable = [
         'general_field_id',
@@ -22,9 +24,6 @@ class GeneralFieldForm extends Model
         return $this->belongsTo(GeneralField::class);
     }
 
-    public function dynamicFormConfiguration(): string {
-        return collect(config("ffhs_custom_forms.forms"))->where(fn(string $class)=> $class::identifier() == $this->custom_form_identifier)->first();
-    }
 
 
 }

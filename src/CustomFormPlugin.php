@@ -2,7 +2,7 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms;
 
-use Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormsResource;
+use Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormResource;
 use Ffhs\FilamentPackageFfhsCustomForms\Resources\GeneralFieldResource;
 use Filament\Contracts\Plugin;
 use Filament\Panel;
@@ -22,7 +22,7 @@ class CustomFormPlugin implements Plugin {
     public function register(Panel $panel): void {
         $panel
             ->resources([
-                CustomFormsResource::class,
+                CustomFormResource::class,
                 GeneralFieldResource::class
             ]);
     }

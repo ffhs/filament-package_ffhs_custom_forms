@@ -21,6 +21,10 @@ return new class () extends Migration {
             $table->boolean('is_general_field')->default(false);
 
 
+            $table->foreignId('custom_form_id')->nullable()->constrained();
+            $table->integer('custom_form_place')->nullable()->constrained();
+
+
             //Inherit GeneralField
             $table->foreignId("general_field_id")->nullable()
                 ->constrained()->references('id')->on('custom_fields')->onDelete('cascade');
@@ -38,8 +42,10 @@ return new class () extends Migration {
 
 
             $table->timestamps();
+
             $table->softDeletes();
-            //$table->unique(["general_field_id"]);
+            $table->unique(["general_field_id","custom_form_id"]);
+            $table->unique(["custom_form_id","custom_form_place"]);
 
 
         });

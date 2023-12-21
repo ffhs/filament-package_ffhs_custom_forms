@@ -89,10 +89,15 @@ class GeneralFieldResource extends Resource
                         Select::make("type")
                             ->options(function (Select $component){
                                 //Skip selectable
-                                if($component->isDisabled()) return CustomFieldType::getAllTypes();
+                                if($component->isDisabled()){
+                                    $types = CustomFieldType::getAllTypes();
+                                    $keys = array_keys($types);
+                                }
+                                else{
+                                    $types = config("ffhs_custom_forms.general_field_types");
+                                    $keys = array_map(fn($class) => ($class)::getFieldName(),$types);
+                                }
 
-                                $types = config("ffhs_custom_forms.general_field_types");
-                                $keys = array_map(fn($class) => ($class)::getFieldName(),$types);
                                 $values = array_map(fn(string $type) => CustomFieldType::getTypeFromName($type)->getTranslatedName(), $keys);
                                 return array_combine($keys,$values);
                             })

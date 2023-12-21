@@ -46,6 +46,8 @@ return [
     ],
 
     'form'=>[
+        'short_title'=> 'Title',
+        'custom_fields_amount'=> 'Anzahl der hinzugefügten Felder',
         'custom_form_identifier'=> [
             'display_name' => "Formulartype Name",
             'raw_name' => "Formulartype Identifier"
