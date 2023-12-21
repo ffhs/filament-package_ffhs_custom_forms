@@ -46,6 +46,7 @@ return [
     ],
 
     'form'=>[
+        'custom_form' =>'Formular',
         'short_title'=> 'Title',
         'custom_fields_amount'=> 'Anzahl der hinzugefügten Felder',
         'custom_form_identifier'=> [
