@@ -1,93 +1,400 @@
-# filament-package_ffhs_custom_forms
 
+# Formulararten
 
-
-## Getting started
-
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
-
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
-
-## Add your files
-
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
-
-```
-cd existing_repo
-git remote add origin https://git.ffhs.ch/ffhs-it-services/laravel/filament-package_ffhs_custom_forms.git
-git branch -M main
-git push -uf origin main
+## Erstellen einer neuen Formularart
+### Schritt 1: Konfiguration erstellen
+Um ein neue Formularart hinzuzufügen müssen Sie zuerst eine neue Klasse `DynamicFormConfiguration` hinzufügen. 
+```php
+class CourseApplications extends DynamicFormConfiguration  
+{
+	public static function identifier(): string {  
+	    return "test_form";  
+	}  
+	  
+	public static function displayName(): string {  
+	    return "Test Form";  
+	}
+}
 ```
 
-## Integrate with your tools
+- `identifier()`
+	- Mit Identifier wird die Formularart den `CustomField`, `GeneralFieldForm` und `CustomForm` zugeordnet. Es ist empfohlen diesen im nachhinein **nicht** zu ändern !!!!
+- `displayName()`
+	- So wird die Formularart bei den `GeneralFields` und anderen Orten auf der Oberfläche gekennzeichnet.
 
-- [ ] [Set up project integrations](https://git.ffhs.ch/ffhs-it-services/laravel/filament-package_ffhs_custom_forms/-/settings/integrations)
+### Schritt 2: Konfiguration registrieren
+1. Gehe in die config `ffhs_custom_forms.php`
+2. Füge die `DynamicFormConfiguration` bei `forms` hinzu
+```php
+return [  
+    "forms"=>[ 
+	...
+	CourseApplications::class,
+	...
+    ],  
+    
+    "custom_field_types" => [  
+	...
+    ],  
+  
+    "general_field_types"=>[  
+	...
+    ],  
+  
+    'view_modes' => [  
+	...
+    ]  
+];
+```
 
-## Collaborate with your team
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Set auto-merge](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
+# CustomFieldType
 
-## Test and Deploy
 
-Use the built-in continuous integration in GitLab.
+## Neuer Feldtypen erstellen
+### Schritt 1: Feldtyp Klasse erstellen
 
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+Um eine neue Feldtyp Klasse zu erstellen muss die neue Klasse von `CustomFieldType` erben
 
-***
+```php
+class LocationSelectorType extends CustomFieldType  
+{  
 
-# Editing this README
+    public static function getFieldIdentifier(): string {  
+        return "loc_selector";
+    }  
+    
+     public function viewModes(): array {  
+        return [
+		'default'=>LocationSelectorTypeView::class,
+		...
+        ];
+    }  
+}
+```
+- `getFieldIdentifier()`
+	- Mit Identifier wird die Formularart den `CustomField` und `GeneralField`. Es ist empfohlen diesen im nachhinein **nicht** zu ändern !!!!
+- `viewModes()`
+	- Die `viewModes` sind verschiedene Ansichten, diese können hier, in der globalen Konfigurationsdatei oder in den `DynamicFormConfiguration` ergänzt oder überschrieben werden
+	- `default` **muss** vorhanden sein.
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
+### Schritt 2: View erstellen
+Die eine TypeView Klasse muss so aufgebaut sein und `FieldTypeView` implementieren:
+```php
+class LocationSelectorTypeView implements FieldTypeView  
+{  
+    public static function getFormComponent(CustomFieldType $type, CustomField $record,  
+        array $parameter = []): \Filament\Forms\Components\Component {  
+        return Select::make($record->identify_key)  
+            ->label($type::class::getLabelName($record->customField))  
+            ->helperText($type::class::getToolTips($record))  
+            ->options([  
+               1 => "Bern",  
+               2 => "Zürich",  
+               3 => "Basel",  
+            ]);  
+    }  
+  
+    public static function getViewComponent(CustomFieldType $type, CustomFieldAnswer $record,  
+        array $parameter = []): \Filament\Infolists\Components\Component {  
+        return TextEntry::make($record->customField->identify_key)  
+            ->state($record->answare)  
+            ->formatState(fn($state) => ([  
+                1 => "Bern",  
+                2 => "Zürich",  
+                3 => "Basel",  
+            ])[$state])  
+            ->inlineLabel();  
+    }  
+}
+```
+- `getFormComponent()`
+	- The Component for the edit Form
+	- `CustomFieldType $type`: The type for them this view ist. 
+		- It is for the primary functions like:
+			- `getToolTips(CustomField $record)`
+			- `getLabelName(CustomField $record)`
+	- `CustomField $record`: The Record (Changing Soon)
+	- `array $parameter`: Coming Soon
+- `getViewComponent()`
+	- The Component for the Infolist
+	- `CustomFieldType $type`: The type for them this view ist. 
+		- It is for the primary functions like:
+			- `getToolTips(CustomField $record)`
+			- `getLabelName(CustomField $record)`
+	- `CustomFieldAnswer $record`: The Record
+	- `array $parameter`: Coming Soon
+### Schritt 3: Registrieren
+1. Gehe in die config `ffhs_custom_forms.php`
+2. Füge die `DynamicFormConfiguration` bei `forms` hinzu
+```php
+return [  
+    "forms"=>[ 
+	...
+    ],  
+    
+    "custom_field_types" => [  
+	LocationSelectorType:class,
+	...
+    ],  
+  
+    "general_field_types"=>[  
+	...
+    ],  
+  
+    'view_modes' => [  
+	...
+    ]  
+];
+```
 
-## Suggestions for a good README
 
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+### Schritt 4: Translation
+Das Feld benötigt noch einen übersetzen Namen
 
-## Name
-Choose a self-explaining name for your project.
+#### Variante 1 Default Language File
+1. Erstelle/Öffne das Language File `.\lang\..\custom_forms`
+2. Füge einen Eintrag bei `types.<fieldIdentifier>` hinzu
+```php
+return [
+	'types'=>[
+		'loc_selector' = 'Ort Selector'
+	]
+];
+```
 
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+#### Variante 2  Überschreiben
+1. Füge in Ihrer `CustomFieldType` die Methode `public function getTranslatedName(): string` hinzu
+2. Setze den Rückgabeparameter auf den schon übersetzten Namen 
+```php
+class LocationSelectorType extends CustomFieldType  
+{  
+    public static function getFieldIdentifier(): string {  
+        return "loc_selector";  
+    }  
+  
+    public function viewModes(): array {  
+        return [  
+            'default'=>LocationSelectorTypeView::class,  
+        ];  
+    }  
+  
+    public function getTranslatedName(): string {  
+        return __("my.location.is.this");  
+    }  
+}
+```
 
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
 
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+## Feldtypen begrenzen für bestimmte Formulararten 
 
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+Es ist möglich die Feldtypen für eine bestimmte Formularart anzupassen. Standartmässig werden alle registrieren `CustomFieldType` 
+1. Gehe in die entsprechende `DynamicFormConfiguration` 
+2. Füge die Methode `formFieldTypes(): array` hinzu
+3. Gebe die ausgewählten `CustomFieldType` an
+```php
+class CourseApplications extends DynamicFormConfiguration  
+{
+	public static function identifier(): string {  
+	    return "test_form";  
+	}  
+	  
+	public static function displayName(): string {  
+	    return "Test Form";  
+	}
 
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
+	public static function formFieldTypes(): array {  
+	    return [  
+	      TextType::class,  
+	      DateTimeType::class,  
+	      EmailType::class,
+	      ...  
+	    ];  
+	}
+}
+```
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
 
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
+## Feldtypen begrenzen für generelle Felder
 
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
+Es ist Möglich die Feldtypen für die `GeneralFields` zu filtern. 
+1. Gehe in die config `ffhs_custom_forms.php`
+2. Füge die nicht erlaubten Feldtypen unter `disabled_general_field_types` hinzu
+```php
+return [  
+    "custom_field_types" => [  
+	    ...
+    ],  
+    "forms"=>[  
+	...
+    ],  
+  
+    "disabled_general_field_types"=>[  
+        CheckboxType::class,  
+        ...
+    ],  
 
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
+    'view_modes' => [  
+	...  
+    ],
+  
+];
+```
 
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
 
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
+# ViewModes
 
-## License
-For open source projects, say how it is licensed.
+## Erklärung
+Für jede `CustomFieldType` hat einen Aufbau für das Formular und die Ansicht. Nun kann es auch vorkommen, dass das Formular zwei verschiedene Ansichten braucht, dafür kann  man einen  `ViewMode` hinzufügen.
+Der `ViewMode` kann an drei Orten registriert und überschrieben werden
+- Im `CustomFieldType` selbst (Level 0)
+- In der Plugin-Konfigurationsdatei (Level 1)
+- Und in der `DynamicFormConfiguration` (Level 2)
+Wenn die View in der Plugin-Konfigurationsdatei überschreiben wird, wird diese verwendet. Wenn sie zusätzlich oder in der `DynamicFormConfiguration` überschreiben wird gilt die `ViewMode` von der `DynamicFormConfiguration` .
 
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+Die `ViewMode` besteht aus einem `Key` und einem `FieldTypeView`
+
+## Erstellen einer neuen TypeView
+Die eine TypeView Klasse muss so aufgebaut sein und `FieldTypeView` implementieren:
+```php
+class LocationSelectorTypeView implements FieldTypeView  
+{  
+    public static function getFormComponent(CustomFieldType $type, CustomField $record,  
+        array $parameter = []): \Filament\Forms\Components\Component {  
+        return Select::make($record->identify_key)  
+            ->label($type::class::getLabelName($record->customField))  
+            ->helperText($type::class::getToolTips($record))  
+            ->options([  
+               1 => "Bern",  
+               2 => "Zürich",  
+               3 => "Basel",  
+            ]);  
+    }  
+  
+    public static function getViewComponent(CustomFieldType $type, CustomFieldAnswer $record,  
+        array $parameter = []): \Filament\Infolists\Components\Component {  
+        return TextEntry::make($record->customField->identify_key)  
+            ->state($record->answare)  
+            ->formatState(fn($state) => ([  
+                1 => "Bern",  
+                2 => "Zürich",  
+                3 => "Basel",  
+            ])[$state])  
+            ->inlineLabel();  
+    }  
+}
+```
+- `getFormComponent()`
+	- The Component for the edit Form
+	- `CustomFieldType $type`: The type for them this view ist. 
+		- It is for the primary functions like:
+			- `getToolTips(CustomField $record)`
+			- `getLabelName(CustomField $record)`
+	- `CustomField $record`: The Record (Changing Soon)
+	- `array $parameter`: Coming Soon
+- `getViewComponent()`
+	- The Component for the Infolist
+	- `CustomFieldType $type`: The type for them this view ist. 
+		- It is for the primary functions like:
+			- `getToolTips(CustomField $record)`
+			- `getLabelName(CustomField $record)`
+	- `CustomFieldAnswer $record`: The Record
+	- `array $parameter`: Coming Soon
+
+## Hinzufügen einer `ViewMode` über `CustomFieldType`
+Sehe **CustomFieldType -> Neuer Feldtypen erstellen -> Schritt 1**
+
+## Überschreiben/Hinzufügen einer `ViewMode` über die Plugin-Konfigurationsdatei
+Der Hinzufügen und überschreiben funktioniert genau gleich.
+1. Gehe in die config `ffhs_custom_forms.php`
+2. Füge unter `view_modes` die `CustomFieldType` hinzu bei welcher eine `FieldView` hinzugefügt werden soll. 
+3. Ergänze den `Key` (Namen) der `ViewMode` und die `FieldView` Klasse hinzu
+```php
+return [  
+    "custom_field_types" => [  
+	    ...
+    ],  
+    "forms"=>[  
+	...
+    ],  
+  
+    "disabled_general_field_types"=>[  
+        ...
+    ],  
+    
+    'view_modes' => [  
+	TextType:class => [
+		 "default"=>MyNewDefaultView::class, //Überschreiben
+		 "super_view"=>MyNewSuperView::class, //Hinzufügen
+		...
+	],
+	...  
+    ],
+  
+];
+```
+
+
+## Überschreiben/Hinzufügen einer `ViewMode` über die `DynamicFormConfiguration`
+1. Gehe in die entsprechende `DynamicFormConfiguration` 
+2. Füge die Methode `getOverwriteViewModes(): array` hinzu
+3. Gebe die ausgewählten `CustomFieldType` an
+4. Füge im Array die `CustomFieldType` hinzu bei welcher eine `FieldView` hinzugefügt werden soll. 
+3. Ergänze den `Key` (Namen) der `ViewMode` und die `FieldView` Klasse hinzu
+```php
+class CourseApplications extends DynamicFormConfiguration  
+{
+	public static function identifier(): string {  
+	    return "test_form";  
+	}  
+	  
+	public static function displayName(): string {  
+	    return "Test Form";  
+	}
+
+	public static function getOverwriteViewModes(): array {  
+	    return [  
+	      TextType::class =>>[
+		      "default"=>MyNewDefaultView::class, //Überschreiben
+		      "super_view"=>MyNewSuperView::class, //Hinzufügen
+		      ...
+	      ],
+	      ...
+	    ];  
+	}
+}
+```
+
+
+## Der `DynamicFormConfiguration` Default `ViewMode`
+Es ist möglich die default `ViewMode` für:
+- den `EditMode`
+- den `ViewMode`
+- den `CreateMode`
+- den `displayMode` einstellen
+
+
+</br>
+
+1. Gehe in die entsprechende `DynamicFormConfiguration` 
+2. Füge die Methode einer der folgenden Methoden hinzu:
+	1. `displayViewMode():string`
+	2. `displayEditMode():string`
+	3. `displayCreateMode():string`
+	4. `displayMode():string`
+```php
+class CourseApplications extends DynamicFormConfiguration  
+{
+	public static function identifier(): string {  
+	    return "test_form";  
+	}  
+	  
+	public static function displayName(): string {  
+	    return "Test Form";  
+	}
+
+	public static function displayViewMode(): array {  
+	    return "super_view";
+	}
+}
+```
