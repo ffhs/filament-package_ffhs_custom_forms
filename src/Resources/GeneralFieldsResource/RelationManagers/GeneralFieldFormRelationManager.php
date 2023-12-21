@@ -3,7 +3,6 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\Resources\GeneralFieldsResource\RelationManagers;
 
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralFieldForm;
-use Ffhs\FilamentPackageFfhsCustomForms\Resources\GeneralFieldResource;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -35,7 +34,7 @@ class GeneralFieldFormRelationManager extends RelationManager
                             );
                         $keys = $notSelecdetForms->map(fn($class) => ($class)::identifier())->toArray();
                         $values = $notSelecdetForms->map(fn($class) => ($class)::displayName())->toArray();
-                        return array_combine($keys,$values); //ToDo Better Name
+                        return array_combine($keys,$values);
                     }),
             ]);
     }
@@ -56,7 +55,7 @@ class GeneralFieldFormRelationManager extends RelationManager
             ])
             ->headerActions([
                 Tables\Actions\CreateAction::make()
-                ->label("Verknüpfen"), //ToDo Translate
+                ->label(__("filament-package_ffhs_custom_forms::custom_forms.functions.connect")), //ToDo Translate
             ])
             ->actions([
                 Tables\Actions\DeleteAction::make(),

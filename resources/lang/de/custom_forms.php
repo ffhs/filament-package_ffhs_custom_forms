@@ -3,6 +3,10 @@
 
 return [
 
+    'functions'=>[
+        'connect'=>'Verknüpfen',
+    ],
+
     "navigation"=>[
         'general_fields'=> "Generelle Felder",
         'forms' => 'Formulare',
@@ -19,9 +23,10 @@ return [
         'is_general_field_active' => 'Aktive',
         'label'=> "Name",
         'form_connections'=> 'Verknüpfte Formulare',
+        'general_field' => 'Generelles Felde',
 
         'helper_text' => [
-            'type'=> 'Der Feldtyp des Felds',
+            'type'=> 'Der Feldtyp des Felds. ACHTUNG: Dieser kann nach dem erstellen nicht mehr geändert werden',
             'identify_key'=> 'Dieser Schlüssel wird benötigt um für die Daten zu exportieren',
             'is_general_field_active'=> 'Falls dies Deaktiviert wird, werden alle generelle Felder Deaktiviert, welches auf dieses Feld basieren.',
         ],

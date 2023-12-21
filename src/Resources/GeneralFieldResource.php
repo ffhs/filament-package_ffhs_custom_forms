@@ -5,7 +5,6 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Resources;
 use Ffhs\FilamentPackageFfhsCustomForms\Resources\GeneralFieldsResource\Pages\{CreateGeneralField,ListGeneralField,EditGeneralField};
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralFieldForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Resources\GeneralFieldsResource\RelationManagers\GeneralFieldFormRelationManager;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Section;
@@ -17,14 +16,17 @@ use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
 class GeneralFieldResource extends Resource
 {
     protected static ?string $model = GeneralField::class;
+
+    public static function getRecordTitleAttribute(): ?string {
+        return "name_" . app()->getLocale();
+    }
+
 
     const langPrefix= "filament-package_ffhs_custom_forms::custom_forms.fields.";
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
@@ -46,6 +48,12 @@ class GeneralFieldResource extends Resource
     public static function getTitleCasePluralModelLabel(): string {
         return __('filament-package_ffhs_custom_forms::custom_forms.navigation.general_fields');
     }
+
+    public static function getTitleCaseModelLabel(): string {
+        return __('filament-package_ffhs_custom_forms::custom_forms.fields.general_field');
+    }
+
+
 
     public static function getEloquentQuery(): Builder {
         return parent::getEloquentQuery()->with("generalFieldForms");
@@ -86,6 +94,7 @@ class GeneralFieldResource extends Resource
                             })
                             ->label(__(self::langPrefix . 'type'))
                             ->helperText(__(self::langPrefix . 'helper_text.type'))
+                            ->disabledOn("edit")
                             ->columnStart(1)
                             ->columnSpan(1)
                             ->required()
