@@ -21,12 +21,12 @@ class GeneralFieldFormRelationManager extends RelationManager
         return $form
             ->schema([
                 Forms\Components\Select::make('custom_form_identifier')
-                    ->label(__("filament-package_ffhs_custom_forms::custom_forms.form.custom_form_identifier.raw_name"))
+                    ->label(__('filament-package_ffhs_custom_forms::custom_forms.form.custom_form_identifier.raw_name'))
                     ->required()
                     ->options(function ($livewire){
                         $generalField = $livewire->getOwnerRecord();
                         $selectedIdentifyers= $generalField->generalFieldForms->map(fn(GeneralFieldForm $fieldForm) => $fieldForm->custom_form_identifier);
-                        $notSelecdetForms = collect(config("ffhs_custom_forms.forms"))
+                        $notSelecdetForms = collect(config('ffhs_custom_forms.forms'))
                             ->filter(
                                 fn($class) => $selectedIdentifyers
                                     ->filter(fn($identifier)=> ($class)::identifier() == $identifier)
@@ -36,6 +36,8 @@ class GeneralFieldFormRelationManager extends RelationManager
                         $values = $notSelecdetForms->map(fn($class) => ($class)::displayName())->toArray();
                         return array_combine($keys,$values);
                     }),
+                Forms\Components\Checkbox::make('is_required')
+                    ->label(__('filament-package_ffhs_custom_forms::custom_forms.fields.is_required')),
             ]);
     }
     //To Do show required and max
@@ -44,18 +46,20 @@ class GeneralFieldFormRelationManager extends RelationManager
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('id'),
+                Tables\Columns\CheckboxColumn::make('is_required')
+                    ->label(__('filament-package_ffhs_custom_forms::custom_forms.fields.is_required')),
                 Tables\Columns\TextColumn::make('custom_form_identifier_name')
-                    ->label(__("filament-package_ffhs_custom_forms::custom_forms.form.custom_form_identifier.display_name"))
+                    ->label(__('filament-package_ffhs_custom_forms::custom_forms.form.custom_form_identifier.display_name'))
                     ->state(fn(GeneralFieldForm $record) => ($record->dynamicFormConfiguration())::displayName()),
                 Tables\Columns\TextColumn::make('custom_form_identifier')
-                    ->label(__("filament-package_ffhs_custom_forms::custom_forms.form.custom_form_identifier.raw_name")),
+                    ->label(__('filament-package_ffhs_custom_forms::custom_forms.form.custom_form_identifier.raw_name')),
             ])
             ->filters([
                 //
             ])
             ->headerActions([
                 Tables\Actions\CreateAction::make()
-                ->label(__("filament-package_ffhs_custom_forms::custom_forms.functions.connect")), //ToDo Translate
+                ->label(__('filament-package_ffhs_custom_forms::custom_forms.functions.connect')), //ToDo Translate
             ])
             ->actions([
                 Tables\Actions\DeleteAction::make(),

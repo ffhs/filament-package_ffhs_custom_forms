@@ -19,7 +19,6 @@ class GeneralFieldForm extends Model
         'general_field_id',
         'custom_form_identifier',
         'is_required',
-        'max_amount'
     ];
 
     public function generalFields(): BelongsTo {
