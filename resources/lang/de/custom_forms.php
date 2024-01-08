@@ -24,6 +24,7 @@ return [
         'label'=> "Name",
         'form_connections'=> 'Verknüpfte Formulare',
         'general_field' => 'Generelles Felde',
+        'is_required'=> 'Wird benötigt',
 
         'helper_text' => [
             'type'=> 'Der Feldtyp des Felds. ACHTUNG: Dieser kann nach dem erstellen nicht mehr geändert werden',

@@ -1,6 +1,5 @@
 <?php
 
-use App\Models\GeneralField;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -20,7 +19,6 @@ return new class () extends Migration {
             $table->string("custom_form_identifier");
 
             $table->boolean("is_required")->default(false);
-            $table->integer("max_amount")->default(1);
 
             $table->timestamps();
         });
