@@ -4,6 +4,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Models;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
@@ -22,7 +23,8 @@ class CustomField extends ACustomField
 
         'product_id',
         'is_term_bound',
-        'custom_form_id'
+        'custom_form_id',
+        'has_variations'
     ];
 
 
@@ -42,8 +44,12 @@ class CustomField extends ACustomField
         return self::query()->whereNull("general_field_id");
     }
 
-
-
+    public function customFieldVariations (): HasMany {
+        return $this->hasMany(CustomFieldVariation::class);
+    }
+    public function templateVariation ():Model|null {
+        return $this->customFieldVariations->filter(fn($customFieldVariation)=> $customFieldVariation->isTemplate())->first();
+    }
 
     private function getInheritStateFromArrays($thisValues, $generalFieldArray){
         $output =  $thisValues;
@@ -93,6 +99,12 @@ class CustomField extends ACustomField
     }
 
 
+    public function getVariation($relatedObject ): Model|null{
+        if(!$this->has_variations) return $this->templateVariation();
+        $variation =  $this->customFieldVariations()->get()->filter(fn($fieldVariation)=>$fieldVariation->variation_relation_id == $relatedObject->id);
+        if(is_null($variation)) return $this->templateVariation();
+        else return $relatedObject;
+    }
 
 
 }

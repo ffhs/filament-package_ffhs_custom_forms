@@ -1,6 +1,5 @@
 <?php
 
-use App\Models\GeneralField;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -19,6 +18,7 @@ return new class () extends Migration {
             // general field stuff
             $table->boolean('is_general_field_active')->nullable();
             $table->boolean('is_general_field')->default(false);
+            $table->boolean("has_variations")->nullable();
 
 
             $table->foreignId('custom_form_id')->nullable()->constrained();
