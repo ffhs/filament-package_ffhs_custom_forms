@@ -2,7 +2,7 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Models;
 
-use App\Domain\CustomField\CustomFieldType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -16,14 +16,15 @@ abstract class ACustomField extends Model
     protected $table = "custom_fields";
 
     public function getTypeName():string{
-        if(!$this->isInheritFromGeneralField()) $typeName = $this->type;
+        if($this->is_general_field) $typeName = $this->type;
+        else if(!$this->isInheritFromGeneralField()) $typeName = $this->type;
         else $typeName = $this->generalField()->get()->type;
         return  $typeName;
     }
     public function getTypeClass():string{
         return CustomFieldType::getTypeClassFromName($this->getTypeName());
     }
-    public function getType():string{
+    public function getType():CustomFieldType{
         $typeClass = CustomFieldType::getTypeClassFromName($this->getTypeName());
         return new $typeClass();
     }

@@ -21,7 +21,6 @@ class CustomField extends ACustomField
         'name_en',
         'type',
 
-        'product_id',
         'is_term_bound',
         'custom_form_id',
         'has_variations',
