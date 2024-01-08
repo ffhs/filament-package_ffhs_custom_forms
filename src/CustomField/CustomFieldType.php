@@ -117,14 +117,14 @@ abstract class CustomFieldType
     /*
      ToDo:
     public function prepareOptionDataBeforeFill(array $data):array{
-         if(!array_key_exists("field_options",$data) || is_null($data["field_options"]) )$data["field_options"] = ["options"=> []];
-         else $data["field_options"] = ["options"=>$data["field_options"]];
+         if(!array_key_exists("options",$data) || is_null($data["options"]) )$data["options"] = ["options"=> []];
+         else $data["options"] = ["options"=>$data["options"]];
          return $data;
     }
     public function prepareOptionDataBeforeSave(?array $data):array{
-        if(array_key_exists("field_options",$data)&&!is_null($data["field_options"]) && !empty($data["field_options"]))
-            $data["field_options"] =array_values($data["field_options"])[0];
-        else $data["field_options"] = null;
+        if(array_key_exists("options",$data)&&!is_null($data["options"]) && !empty($data["options"]))
+            $data["options"] =array_values($data["options"])[0];
+        else $data["options"] = null;
         return $data;
     }
 
@@ -138,7 +138,7 @@ abstract class CustomFieldType
 
     public function getExtraOptionsRepeater(): ?Repeater{
         if(!$this->hasExtraOptions()) return null;
-        return Repeater::make("field_options")
+        return Repeater::make("options")
             ->schema($this->getExtraOptionSchema())
             ->reorderable(false)
             ->deletable(false)

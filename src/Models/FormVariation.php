@@ -3,7 +3,7 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\Models;
 
 use Illuminate\Database\Eloquent\Model;
-class FormVariations extends Model
+class FormVariation extends Model
 {
     use HasFormIdentifyer;
     protected $fillable = [

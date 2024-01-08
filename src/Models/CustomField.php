@@ -22,6 +22,7 @@ class CustomField extends ACustomField
 
         'product_id',
         'is_term_bound',
+        'custom_form_id'
     ];
 
 
@@ -82,9 +83,8 @@ class CustomField extends ACustomField
         return !is_null($this->custom_field_id);
     }
 
-    public function customForm(): HasMany
-    {
-        return $this->hasMany(CustomForm::class);
+    public function customForm(): BelongsTo {
+        return $this->belongsTo(CustomForm::class);
     }
 
     public function generalField(): BelongsTo
