@@ -12,13 +12,12 @@ return new class () extends Migration {
      */
     public function up()
     {
-        Schema::create('custom_forms', function (Blueprint $table) {
+        Schema::create('form_variations', function (Blueprint $table) {
             $table->id();
 
-            $table->string("custom_form_identifier");
+            $table->foreignId("custom_form_id")->constrained();
             $table->string("short_title")->nullable();
 
-            $table->nullableMorphs("relation_model");
 
             $table->timestamps();
             $table->softDeletes();

@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\GeneralField;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -12,16 +13,16 @@ return new class () extends Migration {
      */
     public function up()
     {
-        Schema::create('custom_forms', function (Blueprint $table) {
+        Schema::create('custom_field_variation', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('custom_field_id')->nullable()->constrained();
 
-            $table->string("custom_form_identifier");
-            $table->string("short_title")->nullable();
+            $table->boolean("required");
+            $table->boolean("is_active");
+            $table->json('options')->nullable();
 
-            $table->nullableMorphs("relation_model");
+            $table->nullableMorphs("variation_relation");
 
-            $table->timestamps();
-            $table->softDeletes();
 
         });
     }
@@ -33,7 +34,7 @@ return new class () extends Migration {
      */
     public function down()
     {
-        Schema::dropIfExists('custom_fields');
+        Schema::dropIfExists('custom_field_variation');
     }
 };
 

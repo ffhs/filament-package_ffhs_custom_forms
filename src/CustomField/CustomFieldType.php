@@ -7,9 +7,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Filament\Forms\Components\Component;
-use Filament\Forms\Components\Repeater;
 use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\Cache;
 use function PHPUnit\Framework\isEmpty;
 
 abstract class CustomFieldType
@@ -47,7 +45,7 @@ abstract class CustomFieldType
         if(is_null($viewMods[$viewMode])) return ($viewMods["default"])::getFormComponent($this,$record,$parameter);
         return ($viewMods[$viewMode])::getFormComponent($this,$record,$parameter);
     }
-    public function getViewComponent(CustomFieldAnswer $record,string $viewMode = "default", array $parameter = []): \Filament\Infolists\Components\Component{
+    public function getInfolistComponent(CustomFieldAnswer $record,string $viewMode = "default", array $parameter = []): \Filament\Infolists\Components\Component{
         $viewMods = $this->getViewModes();
         //FieldTypeView.php
         if(is_null($viewMods[$viewMode])) return ($viewMods["default"])::getFormComponent($this,$record,$parameter);
@@ -119,14 +117,14 @@ abstract class CustomFieldType
     /*
      ToDo:
     public function prepareOptionDataBeforeFill(array $data):array{
-         if(!array_key_exists("field_options",$data) || is_null($data["field_options"]) )$data["field_options"] = ["options"=> []];
-         else $data["field_options"] = ["options"=>$data["field_options"]];
+         if(!array_key_exists("options",$data) || is_null($data["options"]) )$data["options"] = ["options"=> []];
+         else $data["options"] = ["options"=>$data["options"]];
          return $data;
     }
     public function prepareOptionDataBeforeSave(?array $data):array{
-        if(array_key_exists("field_options",$data)&&!is_null($data["field_options"]) && !empty($data["field_options"]))
-            $data["field_options"] =array_values($data["field_options"])[0];
-        else $data["field_options"] = null;
+        if(array_key_exists("options",$data)&&!is_null($data["options"]) && !empty($data["options"]))
+            $data["options"] =array_values($data["options"])[0];
+        else $data["options"] = null;
         return $data;
     }
 
@@ -140,7 +138,7 @@ abstract class CustomFieldType
 
     public function getExtraOptionsRepeater(): ?Repeater{
         if(!$this->hasExtraOptions()) return null;
-        return Repeater::make("field_options")
+        return Repeater::make("options")
             ->schema($this->getExtraOptionSchema())
             ->reorderable(false)
             ->deletable(false)

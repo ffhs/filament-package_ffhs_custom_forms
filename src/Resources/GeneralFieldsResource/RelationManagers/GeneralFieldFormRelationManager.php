@@ -15,7 +15,7 @@ class GeneralFieldFormRelationManager extends RelationManager
     protected static string $relationship = 'generalFieldForms';
 
 
-
+    //To Do set required and max
     public function form(Form $form): Form
     {
         return $form
@@ -38,7 +38,7 @@ class GeneralFieldFormRelationManager extends RelationManager
                     }),
             ]);
     }
-
+    //To Do show required and max
     public function table(Table $table): Table
     {
         return $table

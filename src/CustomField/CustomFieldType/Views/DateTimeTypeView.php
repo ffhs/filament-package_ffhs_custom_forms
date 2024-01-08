@@ -6,35 +6,36 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldVariation;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Infolists\Components\TextEntry;
 
 class DateTimeTypeView implements FieldTypeView
 {
 
-    public static function getFormComponent(CustomFieldType $type, CustomField $record,
+    public static function getFormComponent(CustomFieldType $type, CustomFieldVariation $record,
         array $parameter = []): DateTimePicker {
-        return DateTimePicker::make($record->identify_key)
+        return DateTimePicker::make($record->customField->identify_key)
             ->label($type::class::getLabelName($record->customField))
             ->helperText($type::class::getToolTips($record))
             ->format(self::getFormat($record));
     }
 
-    public static function getViewComponent(CustomFieldType $type, CustomFieldAnswer $record,
+    public static function getInfolistComponent(CustomFieldType $type, CustomFieldAnswer $record,
         array $parameter = []): TextEntry {
-        return TextEntry::make($record->customField->identify_key)
-            ->dateTime(self::getFormat($record->customField))
-            ->label($type::class::getLabelName($record->customField))
+        return TextEntry::make($record->customFieldVariation->customField->identify_key)
+            ->dateTime(self::getFormat($record->customFieldVariation))
+            ->label($type::class::getLabelName($record->customFieldVariation->customField))
             ->state($record->answare)
             ->inlineLabel();
     }
 
-    private static function getFormat(CustomField $customField):string{
-        if(is_null($customField->field_options)) return "Y-m-d h:i:s";
-        return  array_key_exists("format",$customField->field_options)
-        && !is_null($customField->field_options["format"])
-        && !empty($customField->field_options["format"])
-            ?$customField->field_options["format"]:"Y-m-d h:i:s";
+    private static function getFormat(CustomFieldVariation $customField):string{
+        if(is_null($customField->options)) return "Y-m-d h:i:s";
+        return  array_key_exists("format",$customField->options)
+        && !is_null($customField->options["format"])
+        && !empty($customField->options["format"])
+            ?$customField->options["format"]:"Y-m-d h:i:s";
     }
 
 }

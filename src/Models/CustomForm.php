@@ -11,11 +11,30 @@ class CustomForm extends Model
     protected $fillable = [
         'custom_form_identifier',
         'short_title',
+        'relation_model_id',
+        'relation_model_type',
     ];
 
     public function customFields(): HasMany {
         return $this->hasMany(CustomField::class);
     }
+
+
+    public function relationModel(): \Illuminate\Database\Eloquent\Relations\MorphTo {
+      return $this->morphTo();
+    }
+
+
+
+    public function relatedModels() {
+        if(!$this->dynamicFormConfiguration()::hasVariations)
+            return null;
+        else if($this->dynamicFormConfiguration()::hasRelationVariations)
+            return $this->dynamicFormConfiguration()::relationVariationsQuery($this->relationModel());
+        else
+            return $this->hasMany(FormVariation::class);
+    }
+
 
     //toDo get CustomFieldLayout
 
