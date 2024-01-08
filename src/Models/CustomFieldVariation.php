@@ -16,8 +16,8 @@ class CustomFieldVariation extends Model
         'is_active',
         'options',
         "custom_field_id",
-        'variation_relation_id',
-        'variation_relation_type',
+        'variation_id',
+        'variation_type',
     ];
 
 
@@ -29,10 +29,10 @@ class CustomFieldVariation extends Model
 
 
     public function isTemplate(): bool {
-        return is_null($this->variation_relation_id);
+        return is_null($this->variation_id);
     }
 
-    public function variationRelation(): \Illuminate\Database\Eloquent\Relations\MorphTo {
+    public function variation(): \Illuminate\Database\Eloquent\Relations\MorphTo {
         return $this->morphTo();
     }
 

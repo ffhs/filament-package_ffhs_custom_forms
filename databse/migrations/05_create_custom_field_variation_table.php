@@ -21,7 +21,7 @@ return new class () extends Migration {
             $table->boolean("is_active");
             $table->json('options')->nullable();
 
-            $table->nullableMorphs("variation_relation");
+            $table->nullableMorphs("variation");
 
 
         });

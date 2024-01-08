@@ -39,6 +39,7 @@ return new class () extends Migration {
             $table->string('name_de')->nullable();
             $table->string('name_en')->nullable();
             $table->string("type")->nullable();
+            $table->integer('form_position')->nullable();
 
 
             $table->timestamps();

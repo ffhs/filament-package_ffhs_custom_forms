@@ -24,7 +24,8 @@ class CustomField extends ACustomField
         'product_id',
         'is_term_bound',
         'custom_form_id',
-        'has_variations'
+        'has_variations',
+        'form_position',
     ];
 
 
@@ -101,7 +102,7 @@ class CustomField extends ACustomField
 
     public function getVariation($relatedObject ): Model|null{
         if(!$this->has_variations) return $this->templateVariation();
-        $variation =  $this->customFieldVariations()->get()->filter(fn($fieldVariation)=>$fieldVariation->variation_relation_id == $relatedObject->id);
+        $variation =  $this->customFieldVariations()->get()->filter(fn($fieldVariation)=>$fieldVariation->variation_id == $relatedObject->id);
         if(is_null($variation)) return $this->templateVariation();
         else return $relatedObject;
     }

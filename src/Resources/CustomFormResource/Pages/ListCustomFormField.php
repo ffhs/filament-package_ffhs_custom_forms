@@ -4,6 +4,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormResource\Pages
 
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormResource;
+use Filament\Pages\Actions\CreateAction;
 use Filament\Resources\Components\Tab;
 use Filament\Resources\Pages\ListRecords;
 
@@ -14,7 +15,7 @@ class ListCustomFormField extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            //Actions\CreateAction::make(),
+            CreateAction::make(),
         ];
     }
 

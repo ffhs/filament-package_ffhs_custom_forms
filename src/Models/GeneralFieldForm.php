@@ -21,7 +21,7 @@ class GeneralFieldForm extends Model
         'is_required',
     ];
 
-    public function generalFields(): BelongsTo {
+    public function generalField(): BelongsTo {
         return $this->belongsTo(GeneralField::class);
     }
 
