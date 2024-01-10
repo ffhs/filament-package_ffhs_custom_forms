@@ -2,15 +2,19 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormResource\Pages;
 
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Form\CustomFormEditForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormResource;
 use Filament\Actions;
+use Filament\Forms\Form;
 use Filament\Resources\Pages\EditRecord;
-use Illuminate\Database\Eloquent\Model;
 
 class EditCustomForm extends EditRecord
 {
-    use FormForm;
     protected static string $resource = CustomFormResource::class;
+
+    public function form(Form $form): Form {
+        return $form->schema(CustomFormEditForm::formSchema());
+    }
 
 
     protected function getHeaderActions(): array

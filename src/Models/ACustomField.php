@@ -24,7 +24,7 @@ use Illuminate\Support\Facades\Cache;
 abstract class ACustomField extends Model
 {
     use HasFactory;
-    use SoftDeletes;
+    //use SoftDeletes;
 
     protected $table = "custom_fields";
 

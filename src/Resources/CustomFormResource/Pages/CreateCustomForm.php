@@ -10,7 +10,6 @@ use Filament\Resources\Pages\CreateRecord;
 
 class CreateCustomForm extends CreateRecord
 {
-    use FormForm;
     protected static string $resource = CustomFormResource::class;
 
     public function form(Form $form): Form {

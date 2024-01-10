@@ -21,13 +21,13 @@ return new class () extends Migration {
             $table->boolean("has_variations")->nullable();
 
 
-            $table->foreignId('custom_form_id')->nullable()->constrained();
-            $table->integer('custom_form_place')->nullable()->constrained();
+            $table->foreignId('custom_form_id')->nullable()->constrained()->cascadeOnDelete();
+            $table->integer('custom_form_place')->nullable();
 
 
             //Inherit GeneralField
             $table->foreignId("general_field_id")->nullable()
-                ->constrained()->references('id')->on('custom_fields')->onDelete('cascade');
+                ->constrained()->references('id')->on('custom_fields')->cascadeOnDelete();
 
 
             //That doesn't can be null if general_field_id are null
@@ -43,7 +43,7 @@ return new class () extends Migration {
 
 
             $table->timestamps();
-            $table->softDeletes();
+            //$table->softDeletes();
 
             $table->unique(["general_field_id","custom_form_id"]);
             $table->unique(["custom_form_id","custom_form_place"]);
