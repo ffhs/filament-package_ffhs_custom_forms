@@ -2,7 +2,9 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms;
 
+use App\Models\VariationRelation;
 use Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormResource;
+use Ffhs\FilamentPackageFfhsCustomForms\Resources\FormVariationResource;
 use Ffhs\FilamentPackageFfhsCustomForms\Resources\GeneralFieldResource;
 use Filament\Contracts\Plugin;
 use Filament\Panel;
@@ -23,7 +25,8 @@ class CustomFormPlugin implements Plugin {
         $panel
             ->resources([
                 CustomFormResource::class,
-                GeneralFieldResource::class
+                GeneralFieldResource::class,
+                FormVariationResource::class,
             ]);
     }
 

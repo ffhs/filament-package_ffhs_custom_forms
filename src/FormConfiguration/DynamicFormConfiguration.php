@@ -58,6 +58,9 @@ abstract class DynamicFormConfiguration
     public static function isVariationDisabled(Model $variationModel):bool {
         return $variationModel->is_disabled;
     }
+    public static function isVariationHidden(Model $variationModel):bool {
+        return $variationModel->is_hidden;
+    }
 
 
 

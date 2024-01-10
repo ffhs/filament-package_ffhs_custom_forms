@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property CustomForm $customForm
  * @property String $short_title
  * @property bool $is_disabled
+ * @property bool $is_hidden
  *
  */
 
@@ -21,6 +22,7 @@ class FormVariation extends Model
         'custom_form_id',
         'short_title',
         'is_disabled',
+        'is_hidden',
     ];
 
     public function customForm(): BelongsTo {

@@ -85,6 +85,13 @@ class ViewVariationsFromCustomForm extends ViewRecord
                                                ->getStateUsing(
                                                    fn(Model $record) => $customForm->getFormConfiguration()::isVariationDisabled($record)
                                                ),
+                                           IconEntry::make("is_hidden")
+                                               ->boolean()
+                                               ->inlineLabel()
+                                               ->label("Versteckt") //ToDo translate
+                                               ->getStateUsing(
+                                                   fn(Model $record) => $customForm->getFormConfiguration()::isVariationHidden($record)
+                                               ),
                                        ];
                                    }),
                            ]),

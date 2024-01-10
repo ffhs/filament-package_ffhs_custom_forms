@@ -22,14 +22,13 @@ use Illuminate\Database\Eloquent\Builder;
 class GeneralFieldResource extends Resource
 {
     protected static ?string $model = GeneralField::class;
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+
+    const langPrefix= "filament-package_ffhs_custom_forms::custom_forms.fields.";
 
     public static function getRecordTitleAttribute(): ?string {
         return "name_" . app()->getLocale();
     }
-
-
-    const langPrefix= "filament-package_ffhs_custom_forms::custom_forms.fields.";
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     public static function getNavigationGroup(): ?string
     {
@@ -52,7 +51,6 @@ class GeneralFieldResource extends Resource
     public static function getTitleCaseModelLabel(): string {
         return __('filament-package_ffhs_custom_forms::custom_forms.fields.general_field');
     }
-
 
 
     public static function getEloquentQuery(): Builder {
