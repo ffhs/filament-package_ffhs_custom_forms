@@ -25,12 +25,9 @@ class EditCustomFormAction extends Action
         $this->form(CustomFormEditForm::formSchema());
 
 
-
+        $this->record(fn($get)=> CustomForm::cached($get($this->name)));
         //Copied from Filament/EditAction clas
-        $this->fillForm(function (HasActions $livewire): array {
-
-            $this->record(fn($get)=> CustomForm::cached($get($this->name)));
-            $record =$this->getRecord();
+        $this->fillForm(function (HasActions $livewire,$record): array {
 
             if ($translatableContentDriver = $livewire->makeFilamentTranslatableContentDriver()) {
                 $data = $translatableContentDriver->getRecordAttributesToArray($record);
