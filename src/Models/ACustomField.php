@@ -8,6 +8,19 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Cache;
 
+/**
+ * @property int $id
+ *
+ * @property string|null $name_de
+ * @property string|null $name_en
+ *
+ * @property string|null tool_tip_de
+ * @property string|null tool_tip_en
+ *
+ * @property String|null $type
+ *
+ * @property bool $is_general_field
+ */
 abstract class ACustomField extends Model
 {
     use HasFactory;

@@ -9,6 +9,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Facades\Cache;
 
+/**
+ * @property GeneralField $generalField
+ * @property bool $is_required
+ */
 class GeneralFieldForm extends Model
 {
 

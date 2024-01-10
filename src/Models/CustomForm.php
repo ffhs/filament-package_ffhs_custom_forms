@@ -5,6 +5,10 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * @property int $id
+ * @property string $custom_form_identifier
+ */
 class CustomForm extends Model
 {
     use HasFormIdentifyer;

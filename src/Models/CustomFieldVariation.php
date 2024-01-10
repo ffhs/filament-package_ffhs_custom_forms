@@ -5,6 +5,20 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property int $id
+ *
+ * @property bool $required
+ * @property bool is_active
+ * @property array options
+ *
+ * @property CustomField customField
+ * @property mixed|null $variation
+ *
+ * @property int|null $variation_id
+ * @property string|null $variation_type
+ * @property int $custom_field_id
+ */
 class CustomFieldVariation extends Model
 {
     use HasFactory;

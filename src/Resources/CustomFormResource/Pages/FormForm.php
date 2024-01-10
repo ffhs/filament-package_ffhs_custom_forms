@@ -2,6 +2,7 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormResource\Pages;
 
+use Closure;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldVariation;
@@ -22,6 +23,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
 use Filament\Support\Colors\Color;
 use Illuminate\Database\Eloquent\Model;
 
@@ -45,9 +47,9 @@ trait FormForm
                             ->schema(fn(CustomForm $record) => [
                                 Repeater::make("custom_fields")
                                     ->itemLabel(fn($state)=>array_key_exists("general_field_id",$state)&&  !is_null($state["general_field_id"])? GeneralField::cached($state["general_field_id"])->name_de : $state["name_de"]) //toDo Translate
-                                    ->reorderableWithDragAndDrop(true)
                                     ->orderColumn("form_position")
                                     ->relationship("customFields")
+                                    ->reorderableWithDragAndDrop()
                                     ->addable(false)
                                     //->reorderableWithButtons()
                                     ->defaultItems(0)
@@ -79,12 +81,42 @@ trait FormForm
 
                                                 return ["customFields"=> [array_merge($customFieldData,$variations)]];
                                             })
-                                            ->form(fn($get,$state,$arguments)=> self::getCustomFieldForm($get("custom_form_identifier"), $state[$arguments["item"]]))//$data = $type->prepareOptionDataBeforeFill($data);
+                                            ->form(fn($get,$state,$arguments)=> self::getCustomFieldForm($get("custom_form_identifier"), $state[$arguments["item"]]))
                                             ->action(function ($get,$set,$data,$arguments): void {
                                                 $fields = $get("custom_fields");
                                                 $fields[$arguments["item"]] = $data["customFields"][0];
                                                 $set("custom_fields",$fields);
                                             }),
+                                    ])
+                                    ->rules([
+                                        fn (Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get) {
+                                        $formIdentifier = $get("custom_form_identifier");
+                                        $requiredGeneralFieldForm = GeneralFieldForm::query()
+                                            ->where("custom_form_identifier", $formIdentifier)
+                                            ->select("general_field_id")
+                                            ->where("is_required", true)
+                                            ->with("generalField")
+                                            ->get();
+
+                                        $requiredGeneralIDs = $requiredGeneralFieldForm
+                                            ->map(fn ($fieldForm) => $fieldForm->general_field_id);
+
+                                        $usedGeneralIDs =self::getUsedGeneralFieldIds($value);
+                                        $notAddedRequiredFields = $requiredGeneralIDs
+                                            ->filter(fn($id)=> !in_array($id, $usedGeneralIDs));
+
+                                        if($notAddedRequiredFields->count() == 0) return;
+
+
+                                        $fieldName = $requiredGeneralFieldForm
+                                            ->filter(fn($fieldForm) => $fieldForm->general_field_id == $notAddedRequiredFields->first())
+                                            ->first()->generalField->name_de;
+
+                                        $failureMessage =
+                                            "Du must das generelle Feld \"" . $fieldName . "\" hinzufügen"; //ToDo Translate
+
+                                        $fail($failureMessage);
+                                            },
                                     ])
                                     ->saveRelationshipsUsing(
                                         fn(Repeater $component, HasForms $livewire, ?array $state) =>
@@ -98,8 +130,8 @@ trait FormForm
     }
 
 
-    private static function getUsedGeneralFieldIds($get):array {
-        $usedGeneralFields = array_filter(array_values($get("custom_fields")), fn($field)=>
+    private static function getUsedGeneralFieldIds(array $customFields):array {
+        $usedGeneralFields = array_filter(array_values($customFields), fn($field)=>
             array_key_exists("general_field_id",$field) && !empty($field["general_field_id"])
         );
         return array_map(fn($used) => $used["general_field_id"],$usedGeneralFields);
@@ -115,16 +147,24 @@ trait FormForm
             Select::make("add_general_field_id")
                 ->label("")
                 ->live()
-                ->disableOptionWhen(fn($value, $get) =>in_array($value, $this->getUsedGeneralFieldIds($get)))
+                ->disableOptionWhen(fn($value, $get) =>in_array($value, $this->getUsedGeneralFieldIds($get("custom_fields"))))
                 ->options(function ($get){
                     $formIdentifier = $get("custom_form_identifier");
                     $generalFieldForms = GeneralFieldForm::query()
                         ->where("custom_form_identifier", $formIdentifier)
                         ->with("generalField")
                         ->get();
-                    $generalFields=  $generalFieldForms->map(fn($generalFieldForm)=>$generalFieldForm->generalField);
+                    $generalFields=  $generalFieldForms->map(function(GeneralFieldForm $generalFieldForm){
+                        $generalField =$generalFieldForm->generalField;
 
-                    $generalFields = $generalFields->filter(); //Mark Required GeneralFields
+                        if($generalFieldForm->is_required){
+                            $generalField->name_de = "* " . $generalField->name_de;
+                            $generalField->name_en = "* " . $generalField->name_en;
+                        }
+                        return $generalField;
+                    });
+
+                    //Mark Required GeneralFields
 
                     return $generalFields->pluck("name_de","id"); //ToDo Translate
                 }),
@@ -134,7 +174,7 @@ trait FormForm
                     ->mutateFormDataUsing(fn($data,$get) => array_merge($data["customFields"][0], ["general_field_id" => $get("add_general_field_id")]))
                     ->disabled(fn($get)=>
                         is_null($get("add_general_field_id")) ||
-                        in_array($get("add_general_field_id"), $this->getUsedGeneralFieldIds($get))
+                        in_array($get("add_general_field_id"), $this->getUsedGeneralFieldIds($get("custom_fields")))
                     )
                     ->label(fn()=>"Erstellen ") //ToDo Translate
                     ->fillForm(function ($get){
@@ -214,7 +254,7 @@ trait FormForm
                 ->addable(false)
                 ->defaultItems(0)
                 ->label("")
-                ->columns(2)
+                ->columns()
                 ->schema([
 
                     Group::make()
@@ -333,6 +373,7 @@ trait FormForm
                 ->schema([
 
                     Section::make()
+                        ->columns()
                         ->schema([
                             // Active
                             Toggle::make('is_active')
@@ -343,7 +384,7 @@ trait FormForm
                             Toggle::make('required')
                                 ->label("Benötigt") //ToDo Translate
                                 ->default(true),
-                        ])->columns(2),
+                        ]),
 
                     //TypeOptions
                     Group::make()
@@ -376,7 +417,7 @@ trait FormForm
         if(empty($variations)) return $customfield;  //If it is empty it have also no Template variation what meen it wasnt edit
 
         $variationsOld = $customfield->customFieldVariation;
-        $updatetVariationsIds = [];
+        $updatetVariationIds = [];
 
         $formConfiguration =self::getFormConfiguration( $customForm->custom_form_identifier);
 
@@ -386,33 +427,33 @@ trait FormForm
             if($variationId == "") $variationId = null;
             else $variationId = intval($variationId);
 
+            /** @var CustomFieldVariation|null $variation */
             $variation = $variationsOld
                 ->filter(fn(CustomFieldVariation $fieldVariation)=> $fieldVariation->variation_id == $variationId)
                 ->first();
 
 
+            //Prepare Variation Data
+            $variationData = $customfield->getType()->prepareOptionDataBeforeCreate($variationData);
+
             if($variation == null){
+                //Create new Variation
                 $variation = new CustomFieldVariation();
 
-                $variation->fill($variationData);
-                $variationData = $customfield->getType()->prepareOptionDataBeforeCreate($variationData);
                 $variation->variation_id = $variationId;
                 $variation->variation_type = $formConfiguration::variationModel();
                 $variation->custom_field_id = $customfield->id;
-                $variation->save();
-            }
-            else{
-                $variationData = $customfield->getType()->prepareOptionDataBeforeSave($variationData);
-                $variation->fill($variationData);
-                $variation->save();
             }
 
-            $updatetVariationsIds[] = $variationId;
+            $variation->save();
+            $variation->fill($variationData);
+
+            $updatetVariationIds[] = $variationId;
         }
 
-        //Delete the old ones
+        //Delete the deleted Variation
         $variationsOld
-            ->filter(fn(CustomFieldVariation $fieldVariation)=>!in_array($fieldVariation->variation_id,$updatetVariationsIds))
+            ->filter(fn(CustomFieldVariation $fieldVariation)=>!in_array($fieldVariation->variation_id,$updatetVariationIds))
             ->each(fn(CustomFieldVariation $fieldVariation)=>$fieldVariation->delete());
 
 
@@ -423,7 +464,7 @@ trait FormForm
     }
 
     //Copied from Repeaters and edited
-    private static function saveCustomFields(Repeater $component, CustomForm $customForm, ?array $state) {
+    private static function saveCustomFields(Repeater $component, CustomForm $customForm, ?array $state): void {
         if (!is_array($state)) {
             $state = [];
         }
@@ -435,7 +476,7 @@ trait FormForm
         $recordsToDelete = [];
 
         foreach ($existingRecords->pluck($relationship->getRelated()->getKeyName()) as $keyToCheckForDeletion) {
-            if (array_key_exists("record-{$keyToCheckForDeletion}", $state)) {
+            if (array_key_exists("record-$keyToCheckForDeletion", $state)) {
                 continue;
             }
 

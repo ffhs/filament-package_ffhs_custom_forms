@@ -153,10 +153,10 @@ abstract class CustomFieldType
         return $this->prepareOptionDataBeforeSave($data);
     }
 
-/*
+
     public static function prepareCloneOptions(array $templateOptions, bool $isInheritGeneral) :array{
         return $templateOptions;
-    }*/
+    }
 
 
 

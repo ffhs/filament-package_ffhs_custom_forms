@@ -7,7 +7,21 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
+
+/**
+ * @property int|null general_field_id
+ * @property Collection $customFieldVariation
+ * @property int  custom_form_id
+ * @property bool $has_variations
+ * @property int $form_position
+ *
+ * @property Collection|null customFieldVariations
+ *
+ * @property CustomForm customForm
+ * @property GeneralField|null $generalField
+*/
 
 class CustomField extends ACustomField
 {
@@ -22,15 +36,13 @@ class CustomField extends ACustomField
         'name_en',
         'type',
 
-        'is_term_bound',
         'custom_form_id',
         'has_variations',
         'form_position',
     ];
 
 
-    protected static function booted()
-    {
+    protected static function booted(): void {
         //Only CustomFields and CustomFields where inherit from GeneralFields
         static::addGlobalScope('is_general_field', function (Builder $builder) {
             $builder->where('is_general_field', false);
@@ -112,7 +124,7 @@ class CustomField extends ACustomField
         return $this->hasMany(CustomFieldVariation::class);
     }
 
-    public static function cached(mixed $custom_field_id): ?ACustomField{
+    public static function cached(mixed $custom_field_id): ?CustomField{
         return Cache::remember("custom_field-" .$custom_field_id, 1, fn()=>CustomField::query()->firstWhere("id", $custom_field_id));
     }
 }
