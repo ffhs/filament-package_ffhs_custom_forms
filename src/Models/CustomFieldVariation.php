@@ -9,7 +9,7 @@ class CustomFieldVariation extends Model
 {
     use HasFactory;
 
-    protected $table = 'custom_field_product_term';
+    protected $table = 'custom_field_variation';
 
     protected $fillable = [
         'required',

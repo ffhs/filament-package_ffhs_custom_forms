@@ -18,7 +18,7 @@ abstract class ACustomField extends Model
     public function getTypeName():string{
         if($this->is_general_field) $typeName = $this->type;
         else if(!$this->isInheritFromGeneralField()) $typeName = $this->type;
-        else $typeName = $this->generalField()->get()->type;
+        else $typeName = $this->generalField->type;
         return  $typeName;
     }
     public function getTypeClass():string{

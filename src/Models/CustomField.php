@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Cache;
 
 class CustomField extends ACustomField
 {
@@ -86,7 +87,7 @@ class CustomField extends ACustomField
 
 
     public function isInheritFromGeneralField():bool{
-        return !is_null($this->custom_field_id);
+        return !is_null($this->general_field_id);
     }
 
     public function customForm(): BelongsTo {
@@ -107,4 +108,11 @@ class CustomField extends ACustomField
     }
 
 
+    public function customFieldVariation(): HasMany {
+        return $this->hasMany(CustomFieldVariation::class);
+    }
+
+    public static function cached(mixed $custom_field_id): ?ACustomField{
+        return Cache::remember("custom_field-" .$custom_field_id, 1, fn()=>CustomField::query()->firstWhere("id", $custom_field_id));
+    }
 }

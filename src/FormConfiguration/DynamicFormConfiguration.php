@@ -5,6 +5,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\FormConfiguration;
 
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\FormVariation;
 use Illuminate\Database\Eloquent\Builder;
 
 abstract class DynamicFormConfiguration
@@ -39,6 +40,7 @@ abstract class DynamicFormConfiguration
         return false;
     }
 
+    //Can not normal Variation also be a relationVariation
     public static function hasRelationVariations(): bool{
         return false;
     }
@@ -47,6 +49,9 @@ abstract class DynamicFormConfiguration
         return $query;
     }
 
+    public static function variationModel(): ?string{
+        return FormVariation::class;
+    }
 
 
 }

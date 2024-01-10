@@ -3,6 +3,10 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormResource\Pages;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldVariation;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\FormVariation;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralFieldForm;
 use Filament\Forms\Components\Actions;
@@ -17,8 +21,10 @@ use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
 use Filament\Support\Colors\Color;
+use Illuminate\Database\Eloquent\Model;
 
 trait FormForm
 {
@@ -37,36 +43,61 @@ trait FormForm
 
                         Group::make()
                             ->columnSpan(2)
-                            ->schema([
+                            ->schema(fn(CustomForm $record) => [
                                 Repeater::make("custom_fields")
-                                    ->itemLabel(fn($state)=>array_key_exists("general_field_id",$state)? GeneralField::cached($state["general_field_id"])->name_de :$state["name_de"]) //toDo Translate
-                                    ->reorderableWithDragAndDrop(false)
+                                    ->itemLabel(fn($state)=>array_key_exists("general_field_id",$state)&&  !is_null($state["general_field_id"])? GeneralField::cached($state["general_field_id"])->name_de : $state["name_de"]) //toDo Translate
+                                    ->reorderableWithDragAndDrop(true)
+                                    ->orderColumn("form_position")
                                     ->relationship("customFields")
                                     ->addable(false)
-                                    ->reorderableWithButtons()
+                                    //->reorderableWithButtons()
                                     ->defaultItems(0)
                                     ->persistCollapsed()
                                     ->reorderable()
                                     ->collapsed()
                                     ->expandAllAction(fn(Action $action)=> $action->hidden())
                                     ->collapseAllAction(fn(Action $action)=> $action->hidden())
-                                    ->schema([TextInput::make("create_name")->live()->afterStateUpdated(fn( ?string $old, $set)=> $set("create_name",$old))])
                                     ->extraItemActions([
                                         Action::make('edit')
                                             ->icon('heroicon-m-pencil-square')
-                                            ->fillForm(fn($state,$arguments) => ["customFields"=> [$state[$arguments["item"]]]])
-                                            ->form(fn($get,$state,$arguments)=> self::getCustomFieldForm($get("custom_form_identifier"), $state[$arguments["item"]]))
-                                            ->mutateFormDataUsing(fn($data,$get) => array_merge($data["customFields"][0], ["type" => $get("add_custom_field_type")]))
-                                            ->action(function ($state ): void {
-                                                dd($state); //ToDo Save changes
+                                            ->fillForm(function($state,$arguments)  {
+                                                $data = $state[$arguments["item"]];
+                                                $customFieldData = array_filter($data, fn($key) =>!str_starts_with($key, "variation-"),ARRAY_FILTER_USE_KEY);
+                                                $variations = array_filter($data, fn($key) => str_starts_with($key, "variation-"),ARRAY_FILTER_USE_KEY);
+
+                                                if(empty($variations)){
+                                                    $variations = [];
+                                                    $customField = CustomField::cached($data["id"]);
+
+                                                    foreach ($customField->customFieldVariation as $variation){
+                                                        $variationData =$customField->getType()->prepareOptionDataBeforeFill($variation->toArray());
+                                                        $variations["variation-" . $variation->variation_id] = [0=>$variationData];
+                                                    }
+
+                                                    $customField->getType()->prepareOptionDataBeforeFill($data);
+                                                }
+
+                                                return ["customFields"=> [array_merge($customFieldData,$variations)]];
+                                            })
+                                            ->form(fn($get,$state,$arguments)=> self::getCustomFieldForm($get("custom_form_identifier"), $state[$arguments["item"]]))//$data = $type->prepareOptionDataBeforeFill($data);
+                                            ->action(function ($get,$set,$data,$arguments): void {
+                                                $fields = $get("custom_fields");
+                                                $fields[$arguments["item"]] = $data["customFields"][0];
+                                                $set("custom_fields",$fields);
                                             }),
-                                    ]),
+                                    ])
+                                    ->saveRelationshipsUsing(
+                                        fn(Repeater $component, HasForms $livewire, ?array $state) =>
+                                        self::saveCustomFields($component,$record,$state)
+                                    ),
 
                             ]),
                     ]),
 
             ]);
     }
+
+
 
     private function getFieldAddSchema():array {
         return [
@@ -91,13 +122,14 @@ trait FormForm
                 Action::make("add_general_field")
                     ->mutateFormDataUsing(fn($data,$get) => array_merge($data["customFields"][0], ["general_field_id" => $get("add_general_field_id")]))
                     ->disabled(fn($get)=>is_null($get("add_general_field_id")))
-                    ->label("Hinzufügen") //ToDo Translate
-                    ->fillForm(["customFields"=>["new"=>[]]])
+                    ->label("Erstellen") //ToDo Translate
+                    ->fillForm(["customFields"=>["new"=>[]]])//ToDo   $variationData =$customField->getType()->prepareOptionDataBeforeFill($variation->toArray());
                     ->form(fn($get)=>self::getCustomFieldForm($get("custom_form_identifier"), ["general_field_id" => $get("add_general_field_id")]))
-
                     ->action(function ($set,$get,array $data){
-                        $customFieldData = array_filter($data, fn($key) => !str_starts_with($key, 'variation-'), ARRAY_FILTER_USE_KEY);
-                        dd($data,$customFieldData);
+                        $fields = $get("custom_fields");
+                        $id = uniqid();
+                        $fields[$id] = $data;
+                        $set("custom_fields",$fields);
                     }),
             ]),
 
@@ -125,15 +157,14 @@ trait FormForm
                 Action::make("add_custom_field")
                     ->mutateFormDataUsing(fn($data,$get) => array_merge($data["customFields"][0], ["type" => $get("add_custom_field_type")]))
                     ->disabled(fn($get)=>is_null($get("add_custom_field_type")))
-                    ->label("Hinzufügen") //ToDo Translate
-                    ->fillForm(["customFields"=>["new"=>[]]])
+                    ->label("Erstellen") //ToDo Translate
+                    ->fillForm(["customFields"=>["new"=>[]]]) //ToDo   $variationData =$customField->getType()->prepareOptionDataBeforeFill($variation->toArray());
                     ->form(fn($get)=>
                         self::getCustomFieldForm($get("custom_form_identifier"), ["type" => $get("add_custom_field_type")])
                     )
                     ->action(function ($set,$get,array $data){
                         $fields = $get("custom_fields");
                         $id = uniqid();
-                        $data["create_name"] = $id;
                         $fields[$id] = $data;
                         $set("custom_fields",$fields);
                     }),
@@ -149,7 +180,7 @@ trait FormForm
     private static function getCustomFieldForm(string $formIdentifyer, array $data):array{
 
         $hasVariations = self::getFormConfiguration($formIdentifyer)::hasVariations();
-        $isGeneral = array_key_exists("general_field_id", $data);
+        $isGeneral = array_key_exists("general_field_id",$data)&& !is_null($data["general_field_id"]);
         //$isNew = !array_key_exists("id", $data);
         $type = $isGeneral? GeneralField::cached($data["general_field_id"])->getType(): CustomFieldType::getTypeFromName($data["type"]);
 
@@ -206,6 +237,8 @@ trait FormForm
     }
 
 
+
+
     private static function createCustomFieldVariationTab(?int $variationId, bool $isGeneral, CustomFieldType $type): Tabs\Tab
     {
 
@@ -221,7 +254,6 @@ trait FormForm
                 Repeater::make("variation-".$variationId)
                     ->reorderable(false)
                     ->deletable(false)
-                    ->cloneable(true)
                     ->addable(false)
                     ->defaultItems(1)
                     ->minItems(1)
@@ -230,17 +262,10 @@ trait FormForm
                     ->schema([
                         self::getCustomFieldVariationRepeaterSchema($isGeneral, $type)
                     ])
-                    ->mutateRelationshipDataBeforeCreateUsing(fn(array $data)=>$type->prepareOptionDataBeforeCreate($data))
-                    /*ToDo
-                       // Disabled active if they new to a disabled term
-                       if($isTermDisabled)$data["is_active"] = false;
-                     */
-                    ->mutateRelationshipDataBeforeFillUsing(fn (array $data)=>$type->prepareOptionDataBeforeFill($data))
-                    ->mutateRelationshipDataBeforeSaveUsing(fn ($data) =>$type->prepareOptionDataBeforeSave($data))
                     //Create new Recorde if a new ProductTerm add
                     ->hidden(function (array|null $state, Repeater $component,$set)  {
                         if (!empty($state)) return;
-                        $newRecord = [uniqid() => ['is_active' => true, 'required' => true, 'field_options'=>['options'=>[]]]];
+                        $newRecord = [uniqid() => ['is_active' => true, 'required' => true, 'options'=>['options'=>[]]]];
                         $set($component->getName(), $newRecord);
                     })
                     ->cloneAction(
@@ -257,7 +282,7 @@ trait FormForm
                                 $set($setPrefix.'is_active', $template['is_active']);
 
                                 //FieldOptions clone
-                                $clonedFieldOptions = $type->prepareCloneOptions($template['field_options'],$isGeneral);
+                                $clonedFieldOptions = $type->prepareCloneOptions($template['options'],$isGeneral);
                                 $set($setPrefix.'field_options', $clonedFieldOptions);
                             })
                     )
@@ -279,7 +304,6 @@ trait FormForm
     private static function getCustomFieldVariationRepeaterSchema(bool $isGeneral, CustomFieldType $type):Group {
 
         return Group::make([
-
             //Setings
             Group::make()
                 ->columnStart(1)
@@ -298,7 +322,6 @@ trait FormForm
                                 ->default(true),
                         ])->columns(2),
 
-
                     //TypeOptions
                     Group::make()
                         ->schema(function ($get, $set) use ($type, $isGeneral) {
@@ -316,5 +339,118 @@ trait FormForm
                 ])
                 ->columns(1),
         ]);
+    }
+
+
+
+
+    private static function updateCustomField(CustomField $customfield,array $itemData, CustomForm $customForm):CustomField{
+        $customFieldData = array_filter($itemData, fn($key) =>!str_starts_with($key, "variation-"),ARRAY_FILTER_USE_KEY);
+        $variations = array_filter($itemData, fn($key) => str_starts_with($key, "variation-"),ARRAY_FILTER_USE_KEY);
+
+        $customfield->fill($customFieldData)->save();
+
+        if(empty($variations)) return $customfield;  //If it is empty it have also no Template variation what meen it wasnt edit
+
+        $variationsOld = $customfield->customFieldVariation;
+        $updatetVariationsIds = [];
+
+        $formConfiguration =self::getFormConfiguration( $customForm->custom_form_identifier);
+
+        foreach($variations as $variationName => $variationData){
+            $variationData = $variationData[0];
+            $variationId = explode("variation-",$variationName)[1]; //$variationName
+            if($variationId == "") $variationId = null;
+            else $variationId = intval($variationId);
+
+            $variation = $variationsOld
+                ->filter(fn(CustomFieldVariation $fieldVariation)=> $fieldVariation->variation_id == $variationId)
+                ->first();
+
+            if($variation == null){
+                $variation = new CustomFieldVariation();
+                //ToDo Type mutate data before create
+
+                $variation->fill($variationData);
+                $variationData = $customfield->getType()->prepareOptionDataBeforeCreate($variationData);
+                $variation->variation_id = $variationId;
+                $variation->variation_type = $formConfiguration::variationModel();
+                $variation->custom_field_id = $customfield->id;
+                try {
+                    $variation->save();
+                }catch (\TypeError){
+                    dd($variations,$variationData,$variation);
+                }
+            }
+            else{
+                $variationData = $customfield->getType()->prepareOptionDataBeforeSave($variationData);
+                $variation->fill($variationData);
+                $variation->save();
+            }
+
+            $updatetVariationsIds[] = $variationId;
+        }
+
+        //Delete the old ones
+        $variationsOld
+            ->filter(fn(CustomFieldVariation $fieldVariation)=>!in_array($fieldVariation->id,$updatetVariationsIds))
+            ->each(fn(CustomFieldVariation $fieldVariation)=>$fieldVariation->delete());
+
+
+        return $customfield;
+    }
+    private static function createCustomField(array $itemData,CustomForm $customForm):CustomField{
+        return self::updateCustomField(new CustomField(), $itemData,$customForm);
+    }
+
+    //Copied from Repeaters and edited
+    private static function saveCustomFields(Repeater $component, CustomForm $customForm, ?array $state) {
+        if (!is_array($state)) {
+            $state = [];
+        }
+
+        $relationship = $component->getRelationship();
+
+        $existingRecords = $component->getCachedExistingRecords();
+
+        $recordsToDelete = [];
+
+        foreach ($existingRecords->pluck($relationship->getRelated()->getKeyName()) as $keyToCheckForDeletion) {
+            if (array_key_exists("record-{$keyToCheckForDeletion}", $state)) {
+                continue;
+            }
+
+            $recordsToDelete[] = $keyToCheckForDeletion;
+        }
+
+        $relationship
+            ->whereKey($recordsToDelete)
+            ->get()
+            ->each(static fn(Model $record) => $record->delete());
+
+        $childComponentContainers = $component->getChildComponentContainers();
+
+        $itemOrder = 1;
+        $orderColumn = $component->getOrderColumn();
+
+
+        foreach ($childComponentContainers as $itemKey => $item) {
+            $itemData = $item->getRawState();
+
+            if ($orderColumn) {
+                $itemData[$orderColumn] = $itemOrder;
+                $itemOrder++;
+            }
+
+            if ($record = ($existingRecords[$itemKey] ?? null)) {
+                self::updateCustomField($record, $itemData,$customForm);
+                continue;
+            }
+
+            $record = self::createCustomField($itemData,$customForm);
+
+            $record = $relationship->save($record);
+            $item->model($record)->saveRelationships();
+        }
     }
 }
