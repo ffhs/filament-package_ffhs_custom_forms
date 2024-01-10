@@ -5,8 +5,10 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\FormConfiguration;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\FormVariation;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use PhpParser\Node\Expr\AssignOp\Mod;
 
 abstract class DynamicFormConfiguration
 {
@@ -48,9 +50,21 @@ abstract class DynamicFormConfiguration
         return FormVariation::class;
     }
 
-    public final static function getFormConfigurationClass(string $custom_form_identifier) {
+
+    public static function variationName(Model $variationModel):string {
+        return $variationModel->short_title;
+    }
+
+    public static function isVariationDisabled(Model $variationModel):bool {
+        return $variationModel->is_disabled;
+    }
+
+
+
+    public final static function getFormConfigurationClass(string $custom_form_identifier):string {
         return collect(config("ffhs_custom_forms.forms"))->where(fn(string $class)=> $class::identifier() == $custom_form_identifier)->first();
     }
+
 
 
 }

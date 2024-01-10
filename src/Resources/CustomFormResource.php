@@ -6,6 +6,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormResource\Pages\CreateCustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormResource\Pages\EditCustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormResource\Pages\ListCustomFormField;
+use Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormResource\Pages\ViewVariationsFromCustomForm;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -53,6 +54,13 @@ class CustomFormResource extends Resource
     {
         return $table
             ->bulkActions([
+
+            ])
+            ->actions([
+                Tables\Actions\Action::make("to_variations")
+                    ->label("Variationen") //ToDo Translate
+                    ->url(fn($record)=>CustomFormResource::getUrl('variations', ['record' => $record->id]))
+                    ->link()
             ])
             ->columns([
                 Tables\Columns\TextColumn::make("id"),
@@ -80,6 +88,7 @@ class CustomFormResource extends Resource
             'index' => ListCustomFormField::route('/'),
             'create' => CreateCustomForm::route('/create'),
             'edit' => EditCustomForm::route('/{record}/edit'),
+            'variations' => ViewVariationsFromCustomForm::route('/{record}/variations'),
         ];
     }
 }

@@ -14,6 +14,8 @@ use Illuminate\Support\Facades\Cache;
  * @property int $id
  * @property string $custom_form_identifier
  * @property string|null $short_title
+ * @property int|null relation_model_id
+ * @property string|null relation_model_type
  */
 class CustomForm extends Model
 {

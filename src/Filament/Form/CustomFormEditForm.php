@@ -65,7 +65,6 @@ class CustomFormEditForm
                                                 $customFieldData = array_filter($data, fn($key) =>!str_starts_with($key, "variation-"),ARRAY_FILTER_USE_KEY);
                                                 $variations = array_filter($data, fn($key) => str_starts_with($key, "variation-"),ARRAY_FILTER_USE_KEY);
 
-
                                                 if(empty($variations)){
                                                     $variations = [];
                                                     $customField = CustomField::cached($data["id"]);
@@ -366,7 +365,7 @@ class CustomFormEditForm
     private static function getCustomFieldVariationRepeaterSchema(bool $isGeneral, CustomFieldType $type):Group {
 
         return Group::make([
-            //Setings
+            //Settings
             Group::make()
                 ->columnStart(1)
                 ->schema([

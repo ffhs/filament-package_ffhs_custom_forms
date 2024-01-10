@@ -17,6 +17,7 @@ return new class () extends Migration {
 
             $table->foreignId("custom_form_id")->constrained();
             $table->string("short_title")->nullable();
+            $table->boolean("is_disabled")->default(false);
 
 
             $table->timestamps();
