@@ -4,7 +4,12 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Cache;
 
+/**
+ * @property int $id
+ * @property string $custom_form_identifier
+ */
 class CustomForm extends Model
 {
     use HasFormIdentifyer;
@@ -14,6 +19,8 @@ class CustomForm extends Model
         'relation_model_id',
         'relation_model_type',
     ];
+
+
 
     public function customFields(): HasMany {
         return $this->hasMany(CustomField::class);
@@ -38,5 +45,8 @@ class CustomForm extends Model
 
     //toDo get CustomFieldLayout
 
+    public static function cached(int $id):CustomForm {
+        return Cache::remember("custom_form-" .$id, 1, fn()=>CustomForm::query()->firstWhere("id", $id));
+    }
 
 }

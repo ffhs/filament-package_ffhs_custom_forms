@@ -2,13 +2,13 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Models;
 
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Support\Facades\Cache;
 
+/**
+ * @property GeneralField $generalField
+ * @property bool $is_required
+ */
 class GeneralFieldForm extends Model
 {
 
@@ -21,7 +21,7 @@ class GeneralFieldForm extends Model
         'is_required',
     ];
 
-    public function generalFields(): BelongsTo {
+    public function generalField(): BelongsTo {
         return $this->belongsTo(GeneralField::class);
     }
 

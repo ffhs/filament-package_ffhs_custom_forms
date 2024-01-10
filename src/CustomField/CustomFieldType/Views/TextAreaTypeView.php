@@ -4,7 +4,6 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Views;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldTypeView;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldVariation;
 use Filament\Forms\Components\Textarea;

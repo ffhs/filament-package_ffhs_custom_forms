@@ -7,6 +7,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Filament\Forms\Components\Component;
+use Filament\Forms\Components\Repeater;
 use Illuminate\Support\Facades\App;
 use function PHPUnit\Framework\isEmpty;
 
@@ -114,26 +115,8 @@ abstract class CustomFieldType
         return  null;
     }
 
-    /*
-     ToDo:
-    public function prepareOptionDataBeforeFill(array $data):array{
-         if(!array_key_exists("options",$data) || is_null($data["options"]) )$data["options"] = ["options"=> []];
-         else $data["options"] = ["options"=>$data["options"]];
-         return $data;
-    }
-    public function prepareOptionDataBeforeSave(?array $data):array{
-        if(array_key_exists("options",$data)&&!is_null($data["options"]) && !empty($data["options"]))
-            $data["options"] =array_values($data["options"])[0];
-        else $data["options"] = null;
-        return $data;
-    }
-
-    public function prepareOptionDataBeforeCreate(array $data):array{
-        return $this->prepareOptionDataBeforeSave($data);
-    }
-
     public function hasExtraOptions():bool{
-        return Cache::remember("has_extra_option-" .$this->getObjFieldIdentifier(),30,fn()=> !isEmpty($this->getExtraOptionSchema()));
+        return !empty($this->getExtraOptionFields());
     }
 
     public function getExtraOptionsRepeater(): ?Repeater{
@@ -152,9 +135,27 @@ abstract class CustomFieldType
             ->live();
     }
 
+    public function prepareOptionDataBeforeFill(array $data):array{
+         if(!array_key_exists("options",$data) || is_null($data["options"]) )$data["options"] = ["options"=> []];
+         else if(!array_key_exists(0,$data["options"]))$data["options"] = [0=> $data["options"]];
+         return $data;
+    }
+    public function prepareOptionDataBeforeSave(?array $data):array{
+        if(array_key_exists("options",$data) && !empty($data["options"]))
+            $data["options"] = $data["options"][0];
+        else
+            $data["options"] = null;
+        return $data;
+    }
+
+    public function prepareOptionDataBeforeCreate(array $data):array{
+        return $this->prepareOptionDataBeforeSave($data);
+    }
+
+
     public static function prepareCloneOptions(array $templateOptions, bool $isInheritGeneral) :array{
         return $templateOptions;
-    }*/
+    }
 
 
 
