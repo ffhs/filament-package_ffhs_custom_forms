@@ -15,16 +15,16 @@ class EditCustomFormAction extends Action
 {
 
     protected Model|Closure|null $record = null;
+    protected int|null $customFormId = null;
 
-
+    //ToDo THE SHIT DOESNT WORK
 
     protected function setUp(): void
     {
         parent::setUp();
         $this->form(CustomFormEditForm::formSchema());
 
-
-        $this->record(fn($get)=> CustomForm::cached($get($this->name)));
+        $this->record(fn($get)=> CustomForm::cached(is_null($this->customFormId)?$get($this->name): $this->customFormId));
         //Copied from Filament/EditAction clas
         $this->fillForm(function (HasActions $livewire,$record): array {
 
@@ -51,6 +51,11 @@ class EditCustomFormAction extends Action
 
             $this->success();
         });
+    }
+
+    public function customFormId($recordId): static {
+        $this->customFormId = $recordId;
+        return $this;
     }
 
     //Copied from Filament/EditAction class

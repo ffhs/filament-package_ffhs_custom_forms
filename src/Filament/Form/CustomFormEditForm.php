@@ -4,6 +4,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Form;
 
 use Closure;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType;
+use Ffhs\FilamentPackageFfhsCustomForms\FormConfiguration\DynamicFormConfiguration;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldVariation;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
@@ -203,7 +204,7 @@ class CustomFormEditForm
                 ->live()
                 ->options(function ($get){
                     $formIdentifier = $get("custom_form_identifier");
-                    $formConfiguration = self::getFormConfiguration($formIdentifier);
+                    $formConfiguration = DynamicFormConfiguration::getFormConfigurationClass($formIdentifier);
                     $types = $formConfiguration::formFieldTypes();
 
                     $keys = array_map(fn($type) => $type::getFieldIdentifier(),$types);
@@ -233,14 +234,11 @@ class CustomFormEditForm
 
 
     }
-    private static function getFormConfiguration($formIdentifier): string{
-        return collect(config("ffhs_custom_forms.forms"))->where(fn(string $class)=> $class::identifier() == $formIdentifier)->first();
-    }
 
 
     private static function getCustomFieldForm(string $formIdentifyer, array $data):array{
 
-        $hasVariations = self::getFormConfiguration($formIdentifyer)::hasVariations();
+        $hasVariations = DynamicFormConfiguration::getFormConfigurationClass($formIdentifyer)::hasVariations();
         $isGeneral = array_key_exists("general_field_id",$data)&& !is_null($data["general_field_id"]);
         //$isNew = !array_key_exists("id", $data);
         $type = $isGeneral? GeneralField::cached($data["general_field_id"])->getType(): CustomFieldType::getTypeFromName($data["type"]);
@@ -282,13 +280,15 @@ class CustomFormEditForm
 
                             Tabs::make()
                                 ->columnStart(1)
-                                ->tabs(function ($get) use ($type, $isGeneral) {
+                                ->tabs(function ($get,CustomForm $record) use ($type, $isGeneral) {
                                     $tabs = [];
 
-                                    //ToDo Variations
-
                                     $tabs[] = self::createCustomFieldVariationTab(null, $isGeneral, $type);
+
                                     if(!$get("has_variations")) return $tabs;
+
+                                    foreach ($record->variationModels()->select("id")->get() as $model)
+                                        $tabs[] = self::createCustomFieldVariationTab($model->id, $isGeneral, $type);
 
                                     return $tabs;
                                 }),
@@ -315,6 +315,7 @@ class CustomFormEditForm
                 Repeater::make("variation-".$variationId)
                     ->reorderable(false)
                     ->deletable(false)
+                    ->cloneable()
                     ->addable(false)
                     ->defaultItems(1)
                     ->minItems(1)
@@ -326,7 +327,7 @@ class CustomFormEditForm
                     //Create new Recorde if a new Variation was addet
                     ->hidden(function (array|null $state, Repeater $component,$set)  {
                         if (!empty($state)) return;
-                        $newRecord = [uniqid() => ['is_active' => true, 'required' => true, 'options'=>['options'=>[]]]];
+                        $newRecord = [uniqid() => ['is_active' => true, 'required' => true, 'options'=>[0=>[]]]];
                         $set($component->getName(), $newRecord);
                     })
                     ->cloneAction(
@@ -412,12 +413,12 @@ class CustomFormEditForm
 
         $customfield->fill($customFieldData)->save();
 
-        if(empty($variations)) return $customfield;  //If it is empty it have also no Template variation what mean it wasn't edit
+        if(empty($variations)) return $customfield;  //If it is empty it has also no Template variation what mean it wasn't edit
 
         $variationsOld = $customfield->customFieldVariation;
         $updatetVariationIds = [];
 
-        $formConfiguration =self::getFormConfiguration( $customForm->custom_form_identifier);
+        $formConfiguration = $customForm->getFormConfiguration();
 
         foreach($variations as $variationName => $variationData){
             $variationData = $variationData[0];
