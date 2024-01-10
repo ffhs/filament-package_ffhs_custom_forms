@@ -65,6 +65,7 @@ trait FormForm
                                                 $customFieldData = array_filter($data, fn($key) =>!str_starts_with($key, "variation-"),ARRAY_FILTER_USE_KEY);
                                                 $variations = array_filter($data, fn($key) => str_starts_with($key, "variation-"),ARRAY_FILTER_USE_KEY);
 
+
                                                 if(empty($variations)){
                                                     $variations = [];
                                                     $customField = CustomField::cached($data["id"]);
@@ -122,8 +123,12 @@ trait FormForm
                 Action::make("add_general_field")
                     ->mutateFormDataUsing(fn($data,$get) => array_merge($data["customFields"][0], ["general_field_id" => $get("add_general_field_id")]))
                     ->disabled(fn($get)=>is_null($get("add_general_field_id")))
-                    ->label("Erstellen") //ToDo Translate
-                    ->fillForm(["customFields"=>["new"=>[]]])//ToDo   $variationData =$customField->getType()->prepareOptionDataBeforeFill($variation->toArray());
+                    ->label(fn()=>"Erstellen ") //ToDo Translate
+                    ->fillForm(function ($get){
+                        $typeName = $get("add_custom_field_type");
+                        $type = CustomFieldType::getTypeFromName($typeName);
+                        return ["customFields"=>["new"=>$type->prepareOptionDataBeforeFill([])]];
+                    })
                     ->form(fn($get)=>self::getCustomFieldForm($get("custom_form_identifier"), ["general_field_id" => $get("add_general_field_id")]))
                     ->action(function ($set,$get,array $data){
                         $fields = $get("custom_fields");
@@ -158,7 +163,11 @@ trait FormForm
                     ->mutateFormDataUsing(fn($data,$get) => array_merge($data["customFields"][0], ["type" => $get("add_custom_field_type")]))
                     ->disabled(fn($get)=>is_null($get("add_custom_field_type")))
                     ->label("Erstellen") //ToDo Translate
-                    ->fillForm(["customFields"=>["new"=>[]]]) //ToDo   $variationData =$customField->getType()->prepareOptionDataBeforeFill($variation->toArray());
+                    ->fillForm(function ($get){
+                        $typeName = $get("add_custom_field_type");
+                        $type = CustomFieldType::getTypeFromName($typeName);
+                        return ["customFields"=>["new"=>$type->prepareOptionDataBeforeFill([])]];
+                    })
                     ->form(fn($get)=>
                         self::getCustomFieldForm($get("custom_form_identifier"), ["type" => $get("add_custom_field_type")])
                     )
@@ -244,7 +253,7 @@ trait FormForm
 
         $isTemplate = is_null($variationId);
 
-        $tabTitle = "Template";
+        $tabTitle = "Default"; //ToDo Translate
         if (!is_null($variationId)) {
             $tabTitle = "Variation " . $variationId; //ToDo title from DynamicFormConfiguration
         }
@@ -262,7 +271,7 @@ trait FormForm
                     ->schema([
                         self::getCustomFieldVariationRepeaterSchema($isGeneral, $type)
                     ])
-                    //Create new Recorde if a new ProductTerm add
+                    //Create new Recorde if a new Variation was addet
                     ->hidden(function (array|null $state, Repeater $component,$set)  {
                         if (!empty($state)) return;
                         $newRecord = [uniqid() => ['is_active' => true, 'required' => true, 'options'=>['options'=>[]]]];
@@ -283,7 +292,7 @@ trait FormForm
 
                                 //FieldOptions clone
                                 $clonedFieldOptions = $type->prepareCloneOptions($template['options'],$isGeneral);
-                                $set($setPrefix.'field_options', $clonedFieldOptions);
+                                $set($setPrefix.'options', $clonedFieldOptions);
                             })
                     )
             ]);
@@ -330,7 +339,7 @@ trait FormForm
                             if(is_null($repeater)) return [];
                             //Need for to Add to begin of a new one
                             $fieldOptions = $get("options");
-                            if(is_null($fieldOptions) || empty($fieldOptions) || (sizeof($fieldOptions) == 1 && array_key_exists("options",$fieldOptions) && empty($fieldOptions["options"]) )) {
+                            if(empty($fieldOptions) || (sizeof($fieldOptions) == 1 && array_key_exists("options",$fieldOptions) && empty($fieldOptions["options"]) )) {
                                 $set("options", ["options" => $type->getExtraOptionFields()]);
                             }
                             return [$repeater];
@@ -367,20 +376,16 @@ trait FormForm
                 ->filter(fn(CustomFieldVariation $fieldVariation)=> $fieldVariation->variation_id == $variationId)
                 ->first();
 
+
             if($variation == null){
                 $variation = new CustomFieldVariation();
-                //ToDo Type mutate data before create
 
                 $variation->fill($variationData);
                 $variationData = $customfield->getType()->prepareOptionDataBeforeCreate($variationData);
                 $variation->variation_id = $variationId;
                 $variation->variation_type = $formConfiguration::variationModel();
                 $variation->custom_field_id = $customfield->id;
-                try {
-                    $variation->save();
-                }catch (\TypeError){
-                    dd($variations,$variationData,$variation);
-                }
+                $variation->save();
             }
             else{
                 $variationData = $customfield->getType()->prepareOptionDataBeforeSave($variationData);
@@ -393,7 +398,7 @@ trait FormForm
 
         //Delete the old ones
         $variationsOld
-            ->filter(fn(CustomFieldVariation $fieldVariation)=>!in_array($fieldVariation->id,$updatetVariationsIds))
+            ->filter(fn(CustomFieldVariation $fieldVariation)=>!in_array($fieldVariation->variation_id,$updatetVariationsIds))
             ->each(fn(CustomFieldVariation $fieldVariation)=>$fieldVariation->delete());
 
 

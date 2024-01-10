@@ -138,13 +138,14 @@ abstract class CustomFieldType
 
     public function prepareOptionDataBeforeFill(array $data):array{
          if(!array_key_exists("options",$data) || is_null($data["options"]) )$data["options"] = ["options"=> []];
-         else $data["options"] = ["options"=>$data["options"]];
+         else if(!array_key_exists(0,$data["options"]))$data["options"] = [0=> $data["options"]];
          return $data;
     }
     public function prepareOptionDataBeforeSave(?array $data):array{
-        if(array_key_exists("options",$data)&&!is_null($data["options"]) && !empty($data["options"]))
-            $data["options"] =array_values($data["options"])[0];
-        else $data["options"] = null;
+        if(array_key_exists("options",$data) && !empty($data["options"]))
+            $data["options"] = $data["options"][0];
+        else
+            $data["options"] = null;
         return $data;
     }
 
