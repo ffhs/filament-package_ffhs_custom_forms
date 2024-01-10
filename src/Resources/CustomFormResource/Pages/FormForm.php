@@ -6,7 +6,6 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldVariation;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\FormVariation;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralFieldForm;
 use Filament\Forms\Components\Actions;
@@ -99,6 +98,12 @@ trait FormForm
     }
 
 
+    private static function getUsedGeneralFieldIds($get):array {
+        $usedGeneralFields = array_filter(array_values($get("custom_fields")), fn($field)=>
+            array_key_exists("general_field_id",$field) && !empty($field["general_field_id"])
+        );
+        return array_map(fn($used) => $used["general_field_id"],$usedGeneralFields);
+    }
 
     private function getFieldAddSchema():array {
         return [
@@ -110,27 +115,36 @@ trait FormForm
             Select::make("add_general_field_id")
                 ->label("")
                 ->live()
+                ->disableOptionWhen(fn($value, $get) =>in_array($value, $this->getUsedGeneralFieldIds($get)))
                 ->options(function ($get){
                     $formIdentifier = $get("custom_form_identifier");
-                    $generalFields= GeneralFieldForm::query()
+                    $generalFieldForms = GeneralFieldForm::query()
                         ->where("custom_form_identifier", $formIdentifier)
-                        ->with("generalField")->get()
-                        ->map(fn($generalFieldForm)=>$generalFieldForm->generalField);
+                        ->with("generalField")
+                        ->get();
+                    $generalFields=  $generalFieldForms->map(fn($generalFieldForm)=>$generalFieldForm->generalField);
+
+                    $generalFields = $generalFields->filter(); //Mark Required GeneralFields
+
                     return $generalFields->pluck("name_de","id"); //ToDo Translate
                 }),
 
             Actions::make([
                 Action::make("add_general_field")
                     ->mutateFormDataUsing(fn($data,$get) => array_merge($data["customFields"][0], ["general_field_id" => $get("add_general_field_id")]))
-                    ->disabled(fn($get)=>is_null($get("add_general_field_id")))
+                    ->disabled(fn($get)=>
+                        is_null($get("add_general_field_id")) ||
+                        in_array($get("add_general_field_id"), $this->getUsedGeneralFieldIds($get))
+                    )
                     ->label(fn()=>"Erstellen ") //ToDo Translate
                     ->fillForm(function ($get){
-                        $typeName = $get("add_custom_field_type");
-                        $type = CustomFieldType::getTypeFromName($typeName);
+                        $type = GeneralField::cached($get("add_general_field_id"))->getType();
                         return ["customFields"=>["new"=>$type->prepareOptionDataBeforeFill([])]];
                     })
                     ->form(fn($get)=>self::getCustomFieldForm($get("custom_form_identifier"), ["general_field_id" => $get("add_general_field_id")]))
                     ->action(function ($set,$get,array $data){
+                        $set("add_general_field_id", null);
+
                         $fields = $get("custom_fields");
                         $id = uniqid();
                         $fields[$id] = $data;
@@ -239,9 +253,9 @@ trait FormForm
                                     if(!$get("has_variations")) return $tabs;
 
                                     return $tabs;
-                                })
-                        ])
-                ])
+                                }),
+                        ]),
+                ]),
         ];
     }
 
@@ -269,7 +283,7 @@ trait FormForm
                     ->label("")
                     ->live()
                     ->schema([
-                        self::getCustomFieldVariationRepeaterSchema($isGeneral, $type)
+                        self::getCustomFieldVariationRepeaterSchema($isGeneral, $type),
                     ])
                     //Create new Recorde if a new Variation was addet
                     ->hidden(function (array|null $state, Repeater $component,$set)  {
@@ -294,7 +308,7 @@ trait FormForm
                                 $clonedFieldOptions = $type->prepareCloneOptions($template['options'],$isGeneral);
                                 $set($setPrefix.'options', $clonedFieldOptions);
                             })
-                    )
+                    ),
             ]);
     }
 
