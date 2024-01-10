@@ -6,7 +6,6 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormResource\Pages\CreateCustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormResource\Pages\EditCustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormResource\Pages\ListCustomFormField;
-use Ffhs\FilamentPackageFfhsCustomForms\Resources\GeneralFieldsResource\Pages\EditGeneralField;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;

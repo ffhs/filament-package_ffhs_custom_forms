@@ -7,7 +7,6 @@ use Ffhs\FilamentPackageFfhsCustomForms\Filament\Form\CustomFormEditForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Components\Actions\Action;
-use Filament\Support\Enums\MaxWidth;
 use Illuminate\Database\Eloquent\Model;
 /**
  * the name has to be the field of the id of the CustomForm

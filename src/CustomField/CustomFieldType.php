@@ -9,7 +9,6 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Repeater;
 use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\Cache;
 use function PHPUnit\Framework\isEmpty;
 
 abstract class CustomFieldType

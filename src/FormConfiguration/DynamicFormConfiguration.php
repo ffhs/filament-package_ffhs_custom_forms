@@ -2,8 +2,6 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\FormConfiguration;
 
-
-
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\FormVariation;
 use Illuminate\Database\Eloquent\Builder;
