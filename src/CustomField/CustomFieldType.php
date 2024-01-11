@@ -60,12 +60,12 @@ abstract class CustomFieldType
         $viewMods = $this->viewModes();
 
         //Config Overwrite
-        $overWrittenLevelOne = $this->getOverwriteViewModes();
+        $overWrittenLevelOne = $this->overwriteViewModes();
         foreach (array_keys($overWrittenLevelOne) as $viewMode) $viewMods[$viewMode] = $overWrittenLevelOne[$viewMode];
 
         // Form Overwritten
         if(!is_null($dynamicFormConfiguration)){
-            $overWrittenLevelTwo = ($dynamicFormConfiguration)->getOverwriteViewModes();
+            $overWrittenLevelTwo = ($dynamicFormConfiguration)->overwriteViewModes();
             foreach (array_keys($overWrittenLevelTwo) as $viewMode) $viewMods[$viewMode] = $overWrittenLevelOne[$viewMode];
         }
 
@@ -73,7 +73,7 @@ abstract class CustomFieldType
 
     }
 
-    public function getOverwriteViewModes():array{
+    public function overwriteViewModes():array{
         $viewModes = config("ffhs_custom_forms.view_modes");
         $overWritten = $viewModes[$this::class];
         if(isEmpty($overWritten)) return [];

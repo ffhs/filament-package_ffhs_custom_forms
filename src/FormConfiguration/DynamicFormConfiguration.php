@@ -21,19 +21,19 @@ abstract class DynamicFormConfiguration
     }
 
     public static function displayViewMode():string {
-        return 'default';
+        return self::displayMode();
     }
     public static function displayEditMode():string {
-        return 'default';
+        return self::displayMode();
     }
     public static function displayCreateMode():string {
-        return 'default';
+        return self::displayMode();
     }
     public static function displayMode():string {
         return 'default';
     }
 
-    public static function getOverwriteViewModes():array {
+    public static function overwriteViewModes():array {
         return [];
     }
 

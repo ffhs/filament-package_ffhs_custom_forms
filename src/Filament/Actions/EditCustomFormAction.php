@@ -2,7 +2,6 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Actions;
 
-use App\Models\FormRelation;
 use Closure;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Form\CustomFormEditForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
@@ -37,6 +36,7 @@ class EditCustomFormAction extends Action
 
         $this->mountUsing(function (Form $form, $record,$livewire) {
             $form->model($record);
+            $form->getRecord();
 
             //Copied from Filament/EditAction class
             if ($translatableContentDriver = $livewire->makeFilamentTranslatableContentDriver())
