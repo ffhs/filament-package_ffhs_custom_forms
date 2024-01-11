@@ -329,7 +329,7 @@ class CustomFormEditForm
                                     $id = null;
                                     $tabs[] = self::getCustomFieldVariationTab($id,$isGeneral,$type,$tabTitle);//ToDo Translate
 
-                                    //IF no Variations than skip the Variations and get only the default Tab
+                                    //If no Variations than skip the Variations and get only the default Tab
                                     if(!$get("has_variations")) return $tabs;
 
                                     //VariationTabs
@@ -436,9 +436,13 @@ class CustomFormEditForm
 
                             //if a new Variation was added, then we have to add options
                             $fieldOptions = $get("options");
-
-                            if( empty($fieldOptions) ||  empty($fieldOptions["options"])) {
-                                $set("options", ["options" => $type->getExtraOptionFields()]);
+                            $fieldOptionsNotExist = empty($fieldOptions) ;
+                            $fieldOptionsEmpty =
+                                sizeof($fieldOptions) == 1 &&
+                                array_key_exists("options",$fieldOptions) &&
+                                empty($fieldOptions["options"]) ;
+                            if($fieldOptionsNotExist|| $fieldOptionsEmpty) {
+                                $set("options", [$type->getExtraOptionFields()]);
                             }
 
                             return [$repeater];
