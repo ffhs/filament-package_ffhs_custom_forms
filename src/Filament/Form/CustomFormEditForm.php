@@ -66,6 +66,7 @@ class CustomFormEditForm
                                     ->collapseAllAction(fn(Action $action)=> $action->hidden())
                                     ->extraItemActions([
                                         Action::make('edit')
+                                            ->closeModalByClickingAway(false)
                                             ->icon('heroicon-m-pencil-square')
                                             ->modalWidth(function(array $state,array $arguments){
                                                return empty($state[$arguments["item"]]["general_field_id"])?'5xl':'xl';
@@ -200,6 +201,7 @@ class CustomFormEditForm
 
             Actions::make([
                 Action::make("add_general_field")
+                    ->closeModalByClickingAway(false)
                     ->label(fn()=>"Erstellen ") //ToDo Translate
                     ->modalWidth(MaxWidth::ExtraLarge)
                     ->disabled(fn($get)=>
@@ -257,6 +259,7 @@ class CustomFormEditForm
             Actions::make([
                 Action::make("add_custom_field")
                     ->disabled(fn($get)=>is_null($get("add_custom_field_type")))
+                    ->closeModalByClickingAway(false)
                     ->label("Erstellen") //ToDo Translate
                     ->modalWidth('5xl')
                     ->fillForm(function ($get){

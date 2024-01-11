@@ -2,12 +2,15 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Actions;
 
+use App\Models\FormRelation;
 use Closure;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Form\CustomFormEditForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Form;
 use Illuminate\Database\Eloquent\Model;
+
 /**
  * the name has to be the field of the id of the CustomForm
  */
@@ -25,20 +28,25 @@ class EditCustomFormAction extends Action
         $this->form(CustomFormEditForm::formSchema());
 
         $this->record(fn($get)=> CustomForm::cached(is_null($this->customFormId)?$get($this->name): $this->customFormId));
-        //Copied from Filament/EditAction clas
-        $this->fillForm(function (HasActions $livewire,$record): array {
 
-            if ($translatableContentDriver = $livewire->makeFilamentTranslatableContentDriver()) {
-                $data = $translatableContentDriver->getRecordAttributesToArray($record);
-            } else {
-                $data = $record->attributesToArray();
-            }
-
-            return $data;
-        });
 
         $this->modalWidth('7xl');
+
+        $this->closeModalByClickingAway(false);
         $this->slideOver();
+
+        $this->mountUsing(function (Form $form, $record,$livewire) {
+            $form->model($record);
+
+            //Copied from Filament/EditAction class
+            if ($translatableContentDriver = $livewire->makeFilamentTranslatableContentDriver())
+                $data = $translatableContentDriver->getRecordAttributesToArray($record);
+            else
+                $data = $record->attributesToArray();
+
+            $form->fill($data);
+        });
+
 
         $this->action(function (): void {
             $this->process(function (array $data, HasActions $livewire, Model $record) {
