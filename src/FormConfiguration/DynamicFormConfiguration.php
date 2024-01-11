@@ -43,7 +43,7 @@ abstract class DynamicFormConfiguration
     }
 
     public static function relationVariationsQuery(MorphTo $query): Builder{
-        return FormVariation::query()->whereIn("custom_form_id", fn() => $query->select("id"));
+        return FormVariation::query()->whereIn("custom_form_id", $query->select("id"));
     }
 
     public static function variationModel(): ?string{

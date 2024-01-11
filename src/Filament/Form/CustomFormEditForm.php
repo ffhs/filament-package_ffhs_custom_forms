@@ -352,9 +352,6 @@ class CustomFormEditForm
     {
         $isTemplate = is_null($variationId);
 
-        if (!is_null($variationId))
-            $tabTitle = "Variation " . $variationId; //ToDo title from DynamicFormConfiguration
-
         return  Tabs\Tab::make($tabTitle)
             ->schema([
                 Repeater::make("variation-".$variationId)
