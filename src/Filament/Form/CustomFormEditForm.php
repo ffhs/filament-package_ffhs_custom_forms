@@ -25,6 +25,7 @@ use Filament\Forms\Components\Toggle;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Get;
 use Filament\Support\Colors\Color;
+use Filament\Support\Enums\MaxWidth;
 use Illuminate\Database\Eloquent\Model;
 use function PHPUnit\Framework\isEmpty;
 
@@ -48,7 +49,7 @@ class CustomFormEditForm
                                 Repeater::make("custom_fields")
                                     ->itemLabel(function($state){
                                         if(!empty($state["general_field_id"]))
-                                            return GeneralField::cached($state["general_field_id"])->name_de; //ToDo Translate
+                                            return "G. " . GeneralField::cached($state["general_field_id"])->name_de; //ToDo Translate
                                         else
                                             return $state["name_de"]; //ToDo Translate
                                     })
@@ -66,6 +67,27 @@ class CustomFormEditForm
                                     ->extraItemActions([
                                         Action::make('edit')
                                             ->icon('heroicon-m-pencil-square')
+                                            ->modalWidth(function(array $state,array $arguments){
+                                               return empty($state[$arguments["item"]]["general_field_id"])?'5xl':'xl';
+                                            })
+                                            ->modalHeading(function(array $state,array $arguments){
+                                                $data = $state[$arguments["item"]];
+                                                if(!empty($data["general_field_id"]))
+                                                    return "G. " . GeneralField::cached($data["general_field_id"])->name_de . " Felddaten bearbeiten"; //ToDo Translate
+                                                else
+                                                    return $data["name_de"] . " Felddaten bearbeiten "; //ToDo Translate
+                                            })
+                                            ->form(fn($get,$state,$arguments)=>
+                                                self::getCustomFieldSchema(
+                                                    $get("custom_form_identifier"),
+                                                    $state[$arguments["item"]]
+                                                )
+                                            )
+                                            ->action(function ($get,$set,$data,$arguments): void {
+                                                $fields = $get("custom_fields");
+                                                $fields[$arguments["item"]] = $data["customFields"][0];
+                                                $set("custom_fields",$fields);
+                                            })
                                             ->fillForm(function($state,$arguments)  {
                                                 $data = $state[$arguments["item"]];
 
@@ -93,17 +115,6 @@ class CustomFormEditForm
                                                 }
 
                                                 return ["customFields"=> [array_merge($customFieldData,$variations)]];
-                                            })
-                                            ->form(fn($get,$state,$arguments)=>
-                                                self::getCustomFieldSchema(
-                                                    $get("custom_form_identifier"),
-                                                    $state[$arguments["item"]]
-                                                )
-                                            )
-                                            ->action(function ($get,$set,$data,$arguments): void {
-                                                $fields = $get("custom_fields");
-                                                $fields[$arguments["item"]] = $data["customFields"][0];
-                                                $set("custom_fields",$fields);
                                             }),
                                     ])
                                     ->rules([
@@ -190,6 +201,7 @@ class CustomFormEditForm
             Actions::make([
                 Action::make("add_general_field")
                     ->label(fn()=>"Erstellen ") //ToDo Translate
+                    ->modalWidth(MaxWidth::ExtraLarge)
                     ->disabled(fn($get)=>
                         is_null($get("add_general_field_id")) ||
                         in_array($get("add_general_field_id"), self::getUsedGeneralFieldIds($get("custom_fields")))
@@ -246,6 +258,7 @@ class CustomFormEditForm
                 Action::make("add_custom_field")
                     ->disabled(fn($get)=>is_null($get("add_custom_field_type")))
                     ->label("Erstellen") //ToDo Translate
+                    ->modalWidth('5xl')
                     ->fillForm(function ($get){
                         $typeName = $get("add_custom_field_type");
                         $type = CustomFieldType::getTypeFromName($typeName);
@@ -289,12 +302,12 @@ class CustomFormEditForm
                 ->deletable(false)
                 ->addable(false)
                 ->defaultItems(0)
+                ->columnSpanFull()
                 ->label("")
-                ->columns()
+                ->columns($isGeneral?1:2)
                 ->schema([
 
                     Group::make()
-                        ->extraAttributes(['style' => "background-color: '#FFE5E5'"])
                         ->schema([
                             Tabs::make()
                                 ->columnStart(1)
