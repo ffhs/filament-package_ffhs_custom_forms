@@ -1,9 +1,8 @@
 
 # Formulararten
-
 ## Erstellen einer neuen Formularart
 ### Schritt 1: Konfiguration erstellen
-Um ein neue Formularart hinzuzufügen müssen Sie zuerst eine neue Klasse `DynamicFormConfiguration` hinzufügen. 
+Um ein neue Formularart hinzuzufügen müssen Sie zuerst eine neue Klasse `DynamicFormConfiguration` hinzufügen.
 ```php
 class CourseApplications extends DynamicFormConfiguration  
 {
@@ -18,9 +17,9 @@ class CourseApplications extends DynamicFormConfiguration
 ```
 
 - `identifier()`
-	- Mit Identifier wird die Formularart den `CustomField`, `GeneralFieldForm` und `CustomForm` zugeordnet. Es ist empfohlen diesen im nachhinein **nicht** zu ändern !!!!
+    - Mit Identifier wird die Formularart den `CustomField`, `GeneralFieldForm` und `CustomForm` zugeordnet. Es ist empfohlen diesen im nachhinein **nicht** zu ändern !!!!
 - `displayName()`
-	- So wird die Formularart bei den `GeneralFields` und anderen Orten auf der Oberfläche gekennzeichnet.
+    - So wird die Formularart bei den `GeneralFields` und anderen Orten auf der Oberfläche gekennzeichnet.
 
 ### Schritt 2: Konfiguration registrieren
 1. Gehe in die config `ffhs_custom_forms.php`
@@ -45,6 +44,103 @@ return [
 	...
     ]  
 ];
+```
+
+## Configurations Möglichkeiten
+
+### displayModes
+Die `displayModes` bzw. `ViewModes` sind für die Darstellung der FeldTypen verantwortlich (Sehe ViewModes)
+
+- `public static function displayViewMode():string`
+    - Standard ViewMode
+    - Wenn die anderen `displayModes` nicht geändert werden wird dieser Verwendet
+- `public static function displayEditMode():string`
+    - Standard ViewMode beim Editieren des Formulars (Bearbeiten der Antworten)
+- `public static function displayCreateMode():string`
+    - Standard ViewMode beim Erstellen des Formulars (Erstellen der Antworten)
+- `public static function overwriteViewModes():array`
+    - Mit dem kann man vorhandene ViewModes für einzelne Feldtypen ändern oder diese nur für dieses Formular registeren
+
+```php
+public static function overwriteViewModes():array {
+	return [
+		TextType:class => [
+			 "default"=>MyNewDefaultView::class, //Überschreiben
+			 "super_view"=>MyNewSuperView::class, //Hinzufügen
+			 ...
+		],
+	];
+```
+-
+
+### Feld Typen
+
+Mit `public  static function formFieldTypes():array` können die zur Verfügung gestellten Feldtypen  begrenzt werden.
+```php
+public static function formFieldTypes():array {
+	return [
+		TextType:class,
+		...
+	];
+```
+
+### Feldvariationen
+Die Felder in Formularen können verschiedene Variationen haben. Dort kann man diese Aktivieren/Deaktivieren oder die Feldeinstellungen bearbeiten.
+#### Aktivierung Feldvariationen
+```php
+public static function hasVariations(): bool{  
+    return true;  
+}
+```
+
+
+#### Wie funktionieren Feldvariationen
+Feldvariationen sind alle so aufgebaut, das ein Model (Default: `CustomForm`) eine Relation zu einem anderen Model hat (Default: `FormVariation`). Diese Abildung werden nacher auf die `CustomFieldVariation` übertragt.
+Die `FormVariation` kann in der Resource `Fomulare/FormVariations` erstellt und verwaltet werden.
+
+Feldvariationen beinhalten einen Namen, können für die Bearbeitung `disabled` werden  und oder für die Bearbeitung versteckt werden.
+
+
+#### Feldvariationen mit eine Benuzerspeziffischen Relation
+Es kann sein das man ein Formular für Studiengänge hat und die Optionen auf die Semester anpassen muss. Dann kann man folgendes tun.
+
+1. Erstelle ein Model für die Studiengänge(`Product`) und Semester (`Term`)
+2. Passen sie die Konfiguration an.
+```php 
+public static function hasVariations(): bool{  
+    return true;  
+}  
+  
+public static function relationVariationsQuery(MorphTo $query): Builder{  //MorphTo to Product
+    return Term::query()->whereIn("id", $query->get()->terms()->select("id"));  
+}  
+  
+public static function variationModel(): ?string{  
+    return Term::class;  
+}  
+  
+public static function variationName(Model $variationModel):string {  
+    /**@var Term $variationModel*/
+    return $variationModel->short_title;  
+}  
+  
+public static function isVariationDisabled(Model $variationModel):bool { 
+    /**@var Term $variationModel*/ 
+    return !$variationModel->is_preapere;  
+}
+
+public static function isVariationHidden(Model $variationModel):bool {  
+    /**@var Term $variationModel*/ 
+    return !($variationModel->is_preapere || $variationModel->is_active);  
+}
+```
+
+3. Beim erstellen des `CustomForm` muss die Relation unbedingt eingefügt werden.
+```php
+$form new CustomForm();
+$form->custom_form_identifier = DynamicFormConfiguration::identifier();
+$form->relation_model_type = Product::class
+$form->relation_model_id = $myProduct->id;
 ```
 
 
@@ -337,7 +433,7 @@ return [
 
 ## Überschreiben/Hinzufügen einer `ViewMode` über die `DynamicFormConfiguration`
 1. Gehe in die entsprechende `DynamicFormConfiguration` 
-2. Füge die Methode `getOverwriteViewModes(): array` hinzu
+2. Füge die Methode `overwriteViewModes(): array` hinzu
 3. Gebe die ausgewählten `CustomFieldType` an
 4. Füge im Array die `CustomFieldType` hinzu bei welcher eine `FieldView` hinzugefügt werden soll. 
 3. Ergänze den `Key` (Namen) der `ViewMode` und die `FieldView` Klasse hinzu
@@ -352,7 +448,7 @@ class CourseApplications extends DynamicFormConfiguration
 	    return "Test Form";  
 	}
 
-	public static function getOverwriteViewModes(): array {  
+	public static function overwriteViewModes(): array {  
 	    return [  
 	      TextType::class =>>[
 		      "default"=>MyNewDefaultView::class, //Überschreiben
