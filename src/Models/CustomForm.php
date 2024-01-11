@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 
 /**
@@ -32,8 +33,9 @@ class CustomForm extends Model
 
         self::created(function(CustomForm $customForm) {
             if(!$customForm->getFormConfiguration()::hasVariations()) return;
-            if(!is_null("relation_model_id")) return;
+            if(!is_null($customForm->relation_model_id)) return;
             $customForm->customForm()->save($customForm);
+            $customForm->save();
         });
 
     }
@@ -58,7 +60,13 @@ class CustomForm extends Model
     public function variationModels(): Builder {
         return $this->dynamicFormConfiguration()::relationVariationsQuery($this->relationModel());
     }
-
+    public function variationModelsChached(): Collection {
+        return Cache::remember(
+            "custom_form-". $this->id . "_variation_models",
+            1,
+            fn()=>$this->dynamicFormConfiguration()::relationVariationsQuery($this->relationModel())->get()
+        );
+    }
 
     //toDo get CustomFieldLayout
 

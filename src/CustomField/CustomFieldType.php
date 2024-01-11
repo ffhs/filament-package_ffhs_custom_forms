@@ -136,8 +136,9 @@ abstract class CustomFieldType
     }
 
     public function prepareOptionDataBeforeFill(array $data):array{
-         if(!array_key_exists("options",$data) || is_null($data["options"]) )$data["options"] = ["options"=> []];
-         else if(!array_key_exists(0,$data["options"]))$data["options"] = [0=> $data["options"]];
+
+         if(!array_key_exists("options",$data) || is_null($data["options"])) $data["options"] = [0=> $this->getExtraOptionFields()];
+         else if(!array_key_exists(0,$data["options"]))$data["options"] = [0 => $data["options"]];
          return $data;
     }
     public function prepareOptionDataBeforeSave(?array $data):array{
