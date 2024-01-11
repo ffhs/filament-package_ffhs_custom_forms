@@ -343,7 +343,7 @@ class CustomFormEditForm
                                         $tabs[] = self::getCustomFieldVariationTab($varID, $isGeneral, $type, $tabTitle, $isDisabled);
 
 
-                                        //Set Contend if Empty
+                                        //Set contend if empty
                                         if(!empty($get("variation-".$varID))) continue;
                                         $toSet = [
                                             0 => $type->prepareOptionDataBeforeFill([
@@ -380,16 +380,6 @@ class CustomFormEditForm
                     ->schema([
                         self::getCustomFieldVariationRepeaterSchema($isGeneral, $type,$isDisabled),
                     ])
-                    //Create new Recorde if a new Variation was addet
-                    /*->hidden(function (array|null $state, Repeater $component,$set) use ($isDisabled) {
-                        if (!empty($state)) return;
-                        $newRecord = [uniqid() => [
-                            'is_active' => $isDisabled,
-                            'required' => $isDisabled,
-                            'options'=>[0=>[]]]
-                        ];
-                        $set($component->getName(), $newRecord);
-                    })*/
                     ->cloneAction(
                         fn(Action $action) => $action
                             ->color(fn() => $isTemplate? Color::Zinc: Color::Orange)
