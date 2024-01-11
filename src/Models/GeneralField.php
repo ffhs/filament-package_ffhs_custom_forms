@@ -8,6 +8,14 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Cache;
 
 /**
+ * @property string $identify_key
+ * @property bool $is_general_field_active
+ * @property bool $is_term_bound
+ * @property null|string $tool_tip_de
+ * @property null|string $tool_tip_en
+ * @property string $name_de
+ * @property string $name_en
+ * @property string $type
  */
 class GeneralField extends ACustomField
 {

@@ -21,7 +21,6 @@ use Illuminate\Database\Eloquent\Model;
  */
 class CustomFieldVariation extends Model
 {
-    use HasFactory;
 
     protected $table = 'custom_field_variation';
 

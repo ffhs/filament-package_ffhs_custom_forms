@@ -7,7 +7,31 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
+/**
+ * @property int $id
+ * @property int $custom_form_answerer_id
+ * @property int $custom_field_variation_id
+ * @property CustomFieldVariation $customFieldVariation
+ * @property CustomFormAnswer $customFormAnswer
+ */
 class CustomFieldAnswer extends Model
 {
-    //ToDo
+    protected $fillable = [
+        'custom_form_answerer_id',
+        'custom_field_variation_id',
+    ];
+
+
+    protected $casts = [
+        'answerer'=>'array',
+    ];
+
+    public function customFieldVariation () {
+        return $this->belongsTo(CustomFieldVariation::class);
+    }
+
+    public function customFormAnswer () {
+        return $this->belongsTo(CustomFormAnswer::class);
+    }
+
 }
