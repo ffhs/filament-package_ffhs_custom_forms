@@ -14,7 +14,7 @@ class DateTimeTypeView implements FieldTypeView
 
     public static function getFormComponent(CustomFieldType $type, CustomFieldVariation $record,
         array $parameter = []): DateTimePicker {
-        return DateTimePicker::make($record->customField->identify_key)
+        return DateTimePicker::make($type::getIdentifyKey($record))
             ->label($type::class::getLabelName($record->customField))
             ->helperText($type::class::getToolTips($record))
             ->format(self::getFormat($record));

@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property array options
  *
  * @property CustomField customField
+ * @property string identify_key
  * @property mixed|null $variation
  *
  * @property int|null $variation_id

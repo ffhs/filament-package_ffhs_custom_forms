@@ -14,15 +14,15 @@ class TextTypeView implements FieldTypeView
 
     public static function getFormComponent(CustomFieldType $type, CustomFieldVariation $record,
         array $parameter = []): TextInput {
-        return TextInput::make($record->customField->identify_key)
+        return TextInput::make($type::getIdentifyKey($record))
             ->maxLength($record->options["max_size"])
-            ->helperText($type::class::getToolTips($record))
-            ->label($type::class::getLabelName($record));
+            ->helperText($type::getToolTips($record))
+            ->label($type::getLabelName($record));
     }
 
     public static function getInfolistComponent(CustomFieldType $type, CustomFieldAnswer $record,
         array $parameter = []): TextEntry {
-        return TextEntry::make($record->customField->identify_key)
+        return TextEntry::make($type::getIdentifyKey($record))
             ->state(fn(CustomFieldAnswer $record) => $record->answer)
             ->label($type::class::getLabelName($record->customField));
     }

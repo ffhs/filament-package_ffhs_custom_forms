@@ -14,14 +14,14 @@ class TextAreaTypeView implements FieldTypeView
 
     public static function getFormComponent(CustomFieldType $type, CustomFieldVariation $record,
         array $parameter = []): Textarea {
-        return Textarea::make($record->customField->identify_key)
+        return Textarea::make($type::getIdentifyKey($record))
             ->helperText($type::class::getToolTips($record))
             ->label($type::class::getLabelName($record));
     }
 
     public static function getInfolistComponent(CustomFieldType $type, CustomFieldAnswer $record,
         array $parameter = []): \Filament\Infolists\Components\Component {
-        return TextEntry::make($record->customField->identify_key)
+        return TextEntry::make($type::getIdentifyKey($record))
             ->state($record->answer)
             ->label($type::class::getLabelName($record->customField))
             ->inlineLabel();

@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Cache;
  * @property int $form_position
  *
  * @property Collection|null customFieldVariations
+ * @property string|null identify_key
  *
  * @property CustomForm customForm
  * @property GeneralField|null $generalField
@@ -39,6 +40,7 @@ class CustomField extends ACustomField
         'custom_form_id',
         'has_variations',
         'form_position',
+        'identify_key',
     ];
 
 
@@ -112,9 +114,10 @@ class CustomField extends ACustomField
     }
 
 
-    public function getVariation($relatedObject ): Model|null{
+    public function getVariation(Model|int $relatedObject ): Model|null{
         if(!$this->has_variations) return $this->templateVariation();
-        $variation =  $this->customFieldVariations()->get()->filter(fn($fieldVariation)=>$fieldVariation->variation_id == $relatedObject->id);
+        if($relatedObject instanceof  Model) $relatedObject = $relatedObject->id;
+        $variation =  $this->customFieldVariations->filter(fn(CustomFieldVariation $fieldVariation)=>$fieldVariation->variation_id == $relatedObject);
         if(is_null($variation)) return $this->templateVariation();
         else return $relatedObject;
     }

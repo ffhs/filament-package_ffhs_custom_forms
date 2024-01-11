@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Cache;
  * @property int|null relation_model_id
  * @property string|null relation_model_type
  * @property Collection $customFormAnswers
+ * @property Collection $customFields
  */
 class CustomForm extends Model
 {
@@ -44,7 +45,7 @@ class CustomForm extends Model
 
 
     public function customFields(): HasMany {
-        return $this->hasMany(CustomField::class);
+        return $this->hasMany(CustomField::class)->orderBy("form_position");
     }
 
 

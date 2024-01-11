@@ -319,11 +319,17 @@ class CustomFormEditForm
                                     self::getTranslationTab("de","Deutsch"),
                                     self::getTranslationTab("en","Englisch"),
                                 ]),
+
+                            TextInput::make("identify_key") //ToDo check that it exist only one time in the form
+                                ->label("Schlüssel") //ToDo Translate
+                                ->required(),
+
                             Toggle::make("has_variations")
                                 ->label("Hat Variationen")
                                 ->hidden(!$hasVariations)
                                 ->columnStart(1)
                                 ->live(),
+
                         ])->hidden($isGeneral),
 
                     Group::make()

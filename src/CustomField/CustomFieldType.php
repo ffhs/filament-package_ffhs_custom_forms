@@ -6,6 +6,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField;
 
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldVariation;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Repeater;
 use Illuminate\Support\Facades\App;
@@ -40,7 +41,7 @@ abstract class CustomFieldType
      * Abstract and Instance Functions
      */
 
-    public function getFormComponent(CustomField $record, string $viewMode = "default", array $parameter = []): \Filament\Forms\Components\Component{
+    public function getFormComponent(CustomFieldVariation $record, string $viewMode = "default", array $parameter = []): Component { //ToDo Remove Parameters?
         $viewMods = $this->getViewModes();
         //FieldTypeView.php
         if(is_null($viewMods[$viewMode])) return ($viewMods["default"])::getFormComponent($this,$record,$parameter);
@@ -91,11 +92,14 @@ abstract class CustomFieldType
 
     public static abstract function getFieldIdentifier():string;
 
-    public static function getToolTips(CustomField $record) {
-        return   $record->getInheritState()["tool_tip_" . App::currentLocale()];
+    public static function getToolTips(CustomFieldVariation $record) :?string{
+        return   $record->customField->getInheritState()["tool_tip_" . App::currentLocale()];
     }
-    public static function getLabelName(CustomField $record) {
-        return  $record->getInheritState()["short_title_" . App::currentLocale()];
+    public static function getIdentifyKey(CustomFieldVariation $record) :string{
+        return   $record->customField->getInheritState()["identify_key"];
+    }
+    public static function getLabelName(CustomFieldVariation $record) :string{
+        return  $record->customField->getInheritState()["name_" . App::currentLocale()];
     }
 
     public function fieldIdentifier():string{return $this::getFieldIdentifier();}
