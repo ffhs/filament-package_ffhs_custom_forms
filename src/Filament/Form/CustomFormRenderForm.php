@@ -5,6 +5,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Form;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldVariation;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
+use Filament\Forms\Components\Repeater;
 use Illuminate\Database\Eloquent\Model;
 
 class CustomFormRenderForm
@@ -22,6 +23,9 @@ class CustomFormRenderForm
 
         foreach($fieldVariations as $fieldVariation){
             /** @var CustomFieldVariation $fieldVariation*/
+
+            if(!$fieldVariation->is_active) continue;
+
             /** @var CustomField $customField*/
             $customField = $form->customFields->firstWhere("id", $fieldVariation->custom_field_id);
 
@@ -29,8 +33,11 @@ class CustomFormRenderForm
         }
 
 
-        return  $customFormSchema;
+        return  [Repeater::make("form")->schema($customFormSchema)]; //ToDo change Stuff
     }
 
+    //Todo Make InfoList Render
+
+    //Todo Make save and load help for answars
 
 }

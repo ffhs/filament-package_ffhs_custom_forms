@@ -92,6 +92,8 @@ abstract class CustomFieldType
 
     public static abstract function getFieldIdentifier():string;
 
+
+
     public static function getToolTips(CustomFieldVariation $record) :?string{
         return   $record->customField->getInheritState()["tool_tip_" . App::currentLocale()];
     }
@@ -103,6 +105,8 @@ abstract class CustomFieldType
     }
 
     public function fieldIdentifier():string{return $this::getFieldIdentifier();}
+
+
 
 
 
