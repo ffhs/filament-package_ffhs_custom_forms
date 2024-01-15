@@ -2,6 +2,7 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Form;
 
+use Barryvdh\Debugbar\Facades\Debugbar;
 use Closure;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType;
@@ -126,10 +127,10 @@ class CustomFormEditForm
             ->schema([
                 Group::make()
                     ->schema(fn(Get $get)=>
-                    CustomFieldType::getTypeFromName(($get("type"))) instanceof CustomLayoutType?
+                        !is_null($get("type")) && CustomFieldType::getTypeFromName(($get("type"))) instanceof CustomLayoutType?
                         [self::getCustomFieldRepeater($record)]: []
                     )
-                    ->hidden(fn(Get $get)=>!CustomFieldType::getTypeFromName($get("type")) instanceof CustomFieldType),
+                    ->hidden(fn(Get $get)=>is_null($get("type")) || !CustomFieldType::getTypeFromName($get("type")) instanceof CustomFieldType),
             ]);
     }
 
@@ -583,8 +584,20 @@ class CustomFormEditForm
     private static function getUsedGeneralFieldIds(array $customFields):array {
         $usedGeneralFields = array_filter(
             array_values($customFields),
-            fn($field)=> array_key_exists("general_field_id",$field) && !empty($field["general_field_id"])
+            fn($field)=> !empty($field["general_field_id"])
         );
+        $nestedFields = collect(array_values($customFields))
+            ->filter(fn($field)=> !empty($field["custom_fields"]))
+            ->map(fn($field)=> $field["custom_fields"]);
+
+
+        $usedGeneralFields=  array_filter($usedGeneralFields, fn($value)=> !is_null($value));
+
+        if($nestedFields->count() > 0){
+            $nestedGeneralFields = $nestedFields->map(fn(array $fields)=> self::getUsedGeneralFieldIds($fields))->flatten(1);
+            return array_merge(array_map(fn($used) => $used["general_field_id"],$usedGeneralFields), $nestedGeneralFields->toArray());
+        }
+
         return array_map(fn($used) => $used["general_field_id"],$usedGeneralFields);
     }
 
