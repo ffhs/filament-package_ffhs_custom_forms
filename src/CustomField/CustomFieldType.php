@@ -169,7 +169,11 @@ abstract class CustomFieldType
 
 
 
-
+    public function getOptionParameter(CustomFieldVariation|CustomFieldAnswer $record, string $option){
+        if($record instanceof CustomFieldAnswer) $record->customFieldVariation;
+        if(array_key_exists($option, $record->options)) return $record->options[$option];
+        return $this->getExtraOptionFields()[$option];
+    }
 
 
 }

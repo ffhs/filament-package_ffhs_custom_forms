@@ -15,6 +15,7 @@ class DateTypeView implements FieldTypeView
     public static function getFormComponent(CustomFieldType $type, CustomFieldVariation $record,
         array $parameter = []): DatePicker {
         return DatePicker::make($type::getIdentifyKey($record))
+            ->columnSpan($type->getOptionParameter($record,"column_span"))
             ->label($type::class::getLabelName($record))
             ->helperText($type::class::getToolTips($record))
             ->format(self::getFormat($record));
@@ -22,10 +23,10 @@ class DateTypeView implements FieldTypeView
 
     public static function getInfolistComponent(CustomFieldType $type, CustomFieldAnswer $record,
         array $parameter = []): TextEntry {
-        return TextEntry::make($type::getIdentifyKey($record))
+        return TextEntry::make($type::getIdentifyKey($record->customFieldVariation))
             ->dateTime(self::getFormat($record->customFieldVariation))
             ->label($type::class::getLabelName($record->customFieldVariation))
-            ->state($record->answare)
+            ->state($record->answer)
             ->inlineLabel();
     }
 

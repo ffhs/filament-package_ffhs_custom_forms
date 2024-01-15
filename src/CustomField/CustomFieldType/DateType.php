@@ -14,6 +14,14 @@ class DateType extends CustomFieldType
 
     public function getExtraOptionSchema(): ?array {
         return [
+            TextInput::make("column_span")
+                ->label("Zeilenweite")//ToDo Translation
+                ->maxValue(10)
+                ->minValue(1)
+                ->columnSpanFull()
+                ->step(1)
+                ->integer()
+                ->required(),
             TextInput::make("format")
                 ->placeholder("Y-m-d")
                 ->columnSpanFull()
@@ -23,6 +31,7 @@ class DateType extends CustomFieldType
     public function getExtraOptionFields(): array {
         return [
             'format'=>null,
+            'column_span' => 3,
         ];
     }
 

@@ -21,9 +21,9 @@ class CheckboxTypeView implements FieldTypeView
 
     public static function getInfolistComponent(CustomFieldType $type, CustomFieldAnswer $record,
         array $parameter = []): IconEntry {
-        return IconEntry::make($type::getIdentifyKey($record))
+        return IconEntry::make($type::getIdentifyKey($record->customFieldVariation))
             ->label($type::class::getLabelName($record->customFieldVariation))
-            ->state($record->answare)
+            ->state($record->answer) //ToDo
             ->inlineLabel()
             ->boolean();
     }

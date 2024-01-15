@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  * @property int $custom_form_answerer_id
  * @property int $custom_field_variation_id
  * @property CustomFieldVariation $customFieldVariation
+ * @property array answer
  * @property CustomFormAnswer $customFormAnswer
  */
 class CustomFieldAnswer extends Model
@@ -19,11 +20,12 @@ class CustomFieldAnswer extends Model
     protected $fillable = [
         'custom_form_answerer_id',
         'custom_field_variation_id',
+        'answer'
     ];
 
 
     protected $casts = [
-        'answerer'=>'array',
+        'answer'=>'array',
     ];
 
     public function customFieldVariation () {
