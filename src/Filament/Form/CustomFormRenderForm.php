@@ -47,7 +47,7 @@ class CustomFormRenderForm
             }
 
 
-            $endLocation = $fieldVariation->options["end_location"];
+            $endLocation = $fieldVariation->customField->layout_end_position;
             $fieldVariationData = $fieldVariations->slice($index+1,$endLocation-$indexOffset);
             $renderedOutput = self::renderForm($indexOffset+$index+1,$fieldVariationData, $viewMode);
             $customFormSchema[] = $customField->getType()->getFormComponent($fieldVariation,$viewMode, [
