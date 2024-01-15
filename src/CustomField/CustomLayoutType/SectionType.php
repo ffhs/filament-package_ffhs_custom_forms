@@ -3,14 +3,15 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType;
 
 
-
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\HasCustomFormPackageTranslation;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\Views\SectionTypeView;
-use Filament\Forms\Components\TextInput;
 
 class SectionType extends CustomLayoutType
 {
+
+    use HasCustomFormPackageTranslation;
+
     public function viewModes(): array {
         return [
             "default" => SectionTypeView::class

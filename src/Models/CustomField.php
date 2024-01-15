@@ -140,6 +140,7 @@ class CustomField extends ACustomField
 
         if(!($this->getType() instanceof CustomLayoutType)) return null;
 
+
         $layoutsInRange = CustomField::query()
             ->where("custom_form_id", $this->custom_form_id)
             ->where("form_position",">", $this->form_position)
