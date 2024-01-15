@@ -23,7 +23,7 @@ class TextAreaTypeView implements FieldTypeView
         array $parameter = []): \Filament\Infolists\Components\Component {
         return TextEntry::make($type::getIdentifyKey($record))
             ->state($record->answer)
-            ->label($type::class::getLabelName($record->customField))
+            ->label($type::class::getLabelName($record->customFieldVariation))
             ->inlineLabel();
     }
 }

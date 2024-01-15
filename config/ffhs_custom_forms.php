@@ -8,6 +8,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\EmailType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\NumberType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\TextAreaType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\TextType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\SectionType;
 
 return [
     "custom_field_types" => [
@@ -18,6 +19,7 @@ return [
         NumberType::class,
         TextAreaType::class,
         TextType::class,
+        SectionType::class
     ],
 
     "forms"=>[

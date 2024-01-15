@@ -24,7 +24,7 @@ class TextTypeView implements FieldTypeView
         array $parameter = []): TextEntry {
         return TextEntry::make($type::getIdentifyKey($record))
             ->state(fn(CustomFieldAnswer $record) => $record->answer)
-            ->label($type::class::getLabelName($record->customField));
+            ->label($type::class::getLabelName($record->customFieldVariation));
     }
 
 }

@@ -15,14 +15,14 @@ class CheckboxTypeView implements FieldTypeView
     public static function getFormComponent(CustomFieldType $type, CustomFieldVariation $record,
         array $parameter = []): Checkbox {
         return Checkbox::make($type::getIdentifyKey($record))
-            ->label($type::class::getLabelName($record->customField))
+            ->label($type::class::getLabelName($record))
             ->helperText($type::class::getToolTips($record));
     }
 
     public static function getInfolistComponent(CustomFieldType $type, CustomFieldAnswer $record,
         array $parameter = []): IconEntry {
         return IconEntry::make($type::getIdentifyKey($record))
-            ->label($type::class::getLabelName($record->customFieldVariation->customField))
+            ->label($type::class::getLabelName($record->customFieldVariation))
             ->state($record->answare)
             ->inlineLabel()
             ->boolean();

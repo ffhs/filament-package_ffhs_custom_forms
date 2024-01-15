@@ -38,6 +38,7 @@ return [
             "number" => "Number",
             "select" => "Select",
             "checkbox" => "Checkbox",
+            "section"=>"Section",
             "radio" => "Radio",
             "date" => "Date",
             "date-time" => "Date and Time",

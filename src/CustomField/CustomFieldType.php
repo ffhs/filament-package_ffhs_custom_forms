@@ -158,6 +158,7 @@ abstract class CustomFieldType
     }
 
     public function prepareOptionDataBeforeCreate(array $data):array{
+        $data["identify_key"]= uniqid();
         return $this->prepareOptionDataBeforeSave($data);
     }
 

@@ -4,6 +4,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Form;
 
 use Closure;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType;
 use Ffhs\FilamentPackageFfhsCustomForms\FormConfiguration\DynamicFormConfiguration;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldVariation;
@@ -43,122 +44,73 @@ class CustomFormEditForm
                             ->columns(1)
                             ->schema(self::getFieldAddActionSchema()),
 
-                        Group::make()
+                        Repeater::make("custom_fields")
+                            ->expandAllAction(fn(Action $action)=> $action->hidden())
+                            ->collapseAllAction(fn(Action $action)=> $action->hidden())
+                            ->orderColumn("form_position")
+                            ->relationship("customFields")
+                            ->addable(false)
+                            ->defaultItems(0)
                             ->columnSpan(2)
-                            ->schema(fn(CustomForm $record) => [
-                                Repeater::make("custom_fields")
-                                    ->itemLabel(function($state){
-                                        if(!empty($state["general_field_id"]))
-                                            return "G. " . GeneralField::cached($state["general_field_id"])->name_de; //ToDo Translate
-                                        else
-                                            return $state["name_de"]; //ToDo Translate
-                                    })
-                                    ->orderColumn("form_position")
-                                    ->relationship("customFields")
-                                    ->reorderableWithDragAndDrop()
-                                    ->addable(false)
-                                    //->reorderableWithButtons()
-                                    ->defaultItems(0)
-                                    ->persistCollapsed()
-                                    ->reorderable()
-                                    ->collapsed()
-                                    ->expandAllAction(fn(Action $action)=> $action->hidden())
-                                    ->collapseAllAction(fn(Action $action)=> $action->hidden())
-                                    ->extraItemActions([
-                                        Action::make('edit')
-                                            ->closeModalByClickingAway(false)
-                                            ->icon('heroicon-m-pencil-square')
-                                            ->modalWidth(function(array $state,array $arguments){
-                                               return empty($state[$arguments["item"]]["general_field_id"])?'5xl':'xl';
-                                            })
-                                            ->modalHeading(function(array $state,array $arguments){
-                                                $data = $state[$arguments["item"]];
-                                                if(!empty($data["general_field_id"]))
-                                                    return "G. " . GeneralField::cached($data["general_field_id"])->name_de . " Felddaten bearbeiten"; //ToDo Translate
-                                                else
-                                                    return $data["name_de"] . " Felddaten bearbeiten "; //ToDo Translate
-                                            })
-                                            ->form(fn($get,$state,$arguments)=>
-                                                self::getCustomFieldSchema(
-                                                    $get("custom_form_identifier"),
-                                                    $state[$arguments["item"]]
-                                                )
-                                            )
-                                            ->action(function ($get,$set,$data,$arguments): void {
-                                                $fields = $get("custom_fields");
-                                                $fields[$arguments["item"]] = $data["customFields"][0];
-                                                $set("custom_fields",$fields);
-                                            })
-                                            ->fillForm(function($state,$arguments)  {
-                                                $data = $state[$arguments["item"]];
-
-                                                $customFieldData = array_filter(
-                                                    $data,
-                                                    fn($key) =>!str_starts_with($key, "variation-"),
-                                                    ARRAY_FILTER_USE_KEY
-                                                );
-                                                $variations = array_filter(
-                                                    $data,
-                                                    fn($key) => str_starts_with($key, "variation-"),
-                                                    ARRAY_FILTER_USE_KEY
-                                                );
-
-                                                if(empty($variations)){
-                                                    $variations = [];
-                                                    $customField = CustomField::cached($data["id"]);
-
-                                                    foreach ($customField->customFieldVariation as $variation){
-                                                        $variationData = $customField->getType()
-                                                            ->prepareOptionDataBeforeFill($variation->toArray());
-                                                        $varIdentifier = "variation-" . $variation->variation_id;
-                                                        $variations[$varIdentifier] = [0=>$variationData];
-                                                    }
-                                                }
-
-                                                return ["customFields"=> [array_merge($customFieldData,$variations)]];
-                                            }),
+                            ->columns(2)
+                            ->persistCollapsed()
+                            ->reorderable()
+                            ->collapsed()
+                            ->extraItemActions([
+                                self::getAddUpInRecordAction(),
+                                self::getEditCustomFormAction()
+                            ])
+                            ->itemLabel(fn($state)=> //ToDo Translate
+                                !empty($state["general_field_id"])?
+                                    "G. " . GeneralField::cached($state["general_field_id"])->name_de:
+                                    $state["name_de"] //ToDo Translate
+                            )
+                            ->schema([
+                                Group::make()
+                                    ->schema(fn()=>[
+                                        //ToDo Repeater
                                     ])
-                                    ->rules([
-                                        function (Get $get): Closure {
-                                            return function (string $attribute, $value, Closure $fail) use ($get) {
-                                                $formIdentifier = $get("custom_form_identifier");
-                                                $requiredGeneralFieldForm = GeneralFieldForm::query()
-                                                    ->where("custom_form_identifier", $formIdentifier)
-                                                    ->select("general_field_id")
-                                                    ->where("is_required", true)
-                                                    ->with("generalField")
-                                                    ->get();
+                                    ->hidden(fn($get)=>CustomFieldType::getTypeFromName($get("type")))
+                            ])
+                            ->mutateRelationshipDataBeforeFillUsing(fn(array $data)=> dd($data)?[]:[])
+                            ->saveRelationshipsUsing(
+                                fn(Repeater $component, HasForms $livewire, ?array $state, CustomForm $record) =>
+                                self::saveCustomFields($component,$record,$state)
+                            )
+                            ->rules([
+                                function (Get $get): Closure {
+                                    return function (string $attribute, $value, Closure $fail) use ($get) {
+                                        $formIdentifier = $get("custom_form_identifier");
+                                        $requiredGeneralFieldForm = GeneralFieldForm::query()
+                                            ->where("custom_form_identifier", $formIdentifier)
+                                            ->select("general_field_id")
+                                            ->where("is_required", true)
+                                            ->with("generalField")
+                                            ->get();
 
-                                                $requiredGeneralIDs = $requiredGeneralFieldForm
-                                                    ->map(fn ($fieldForm) => $fieldForm->general_field_id);
+                                        $requiredGeneralIDs = $requiredGeneralFieldForm
+                                            ->map(fn ($fieldForm) => $fieldForm->general_field_id);
 
-                                                $usedGeneralIDs =self::getUsedGeneralFieldIds($value);
-                                                $notAddedRequiredFields = $requiredGeneralIDs
-                                                    ->filter(fn($id)=> !in_array($id, $usedGeneralIDs));
+                                        $usedGeneralIDs =self::getUsedGeneralFieldIds($value);
+                                        $notAddedRequiredFields = $requiredGeneralIDs
+                                            ->filter(fn($id)=> !in_array($id, $usedGeneralIDs));
 
-                                                if($notAddedRequiredFields->count() == 0) return;
+                                        if($notAddedRequiredFields->count() == 0) return;
 
+                                        $fieldName = $requiredGeneralFieldForm
+                                            ->filter(function($fieldForm) use ($notAddedRequiredFields) {
+                                                $generalFieldId = $fieldForm->general_field_id;
+                                                $notAddedField = $notAddedRequiredFields->first();
+                                                return $generalFieldId == $notAddedField;
+                                            })
+                                            ->first()->generalField->name_de;
 
-                                                $fieldName = $requiredGeneralFieldForm
-                                                    ->filter(function($fieldForm) use ($notAddedRequiredFields) {
-                                                        $generalFieldId = $fieldForm->general_field_id;
-                                                        $notAddedField = $notAddedRequiredFields->first();
-                                                        return $generalFieldId == $notAddedField;
-                                                    })
-                                                    ->first()->generalField->name_de;
+                                        $failureMessage =
+                                            "Du must das generelle Feld \"" . $fieldName . "\" hinzufügen"; //ToDo Translate
 
-                                                $failureMessage =
-                                                    "Du must das generelle Feld \"" . $fieldName . "\" hinzufügen"; //ToDo Translate
-
-                                                $fail($failureMessage);
-                                            };
-                                        }
-                                    ])
-                                    ->saveRelationshipsUsing(
-                                        fn(Repeater $component, HasForms $livewire, ?array $state) =>
-                                        self::saveCustomFields($component,$record,$state)
-                                    ),
-
+                                        $fail($failureMessage);
+                                    };
+                                }
                             ]),
                     ]),
 
@@ -292,22 +244,23 @@ class CustomFormEditForm
 
     }
 
-    private static function getCustomFieldSchema(string $formIdentifyer, array $data):array{
+    private static function getCustomFieldSchema(string $formIdentifier, array $data):array{
 
-        $hasVariations = DynamicFormConfiguration::getFormConfigurationClass($formIdentifyer)::hasVariations();
+        $hasVariations = DynamicFormConfiguration::getFormConfigurationClass($formIdentifier)::hasVariations();
         $isGeneral = array_key_exists("general_field_id",$data)&& !is_null($data["general_field_id"]);
         //$isNew = !array_key_exists("id", $data);
-        $type = $isGeneral? GeneralField::cached($data["general_field_id"])->getType(): CustomFieldType::getTypeFromName($data["type"]);
+        //$type =   $isGeneral? GeneralField::cached($data["general_field_id"])->getType(): CustomFieldType::getTypeFromName($data["type"]);
+        $type = self::getFieldTypeFromRawDate($data);
 
         return [
             Repeater::make("customFields")
+                ->columns($isGeneral?1:2)
                 ->reorderable(false)
                 ->deletable(false)
                 ->addable(false)
                 ->defaultItems(0)
                 ->columnSpanFull()
                 ->label("")
-                ->columns($isGeneral?1:2)
                 ->schema([
 
                     Group::make()
@@ -320,9 +273,9 @@ class CustomFormEditForm
                                     self::getTranslationTab("en","Englisch"),
                                 ]),
 
-                            TextInput::make("identify_key") //ToDo check that it exist only one time in the form
+                           /* TextInput::make("identify_key") //ToDo check that it exist only one time in the form
                                 ->label("Schlüssel") //ToDo Translate
-                                ->required(),
+                                ->required(),*/
 
                             Toggle::make("has_variations")
                                 ->label("Hat Variationen")
@@ -598,4 +551,90 @@ class CustomFormEditForm
         );
         return array_map(fn($used) => $used["general_field_id"],$usedGeneralFields);
     }
+
+    private static function getEditCustomFormAction(): Action {
+        return Action::make('edit')
+            ->closeModalByClickingAway(false)
+            ->icon('heroicon-m-pencil-square')
+            ->modalWidth(function(array $state,array $arguments){
+                return empty($state[$arguments["item"]]["general_field_id"])?'5xl':'xl';
+            })
+            ->modalHeading(function(array $state,array $arguments){
+                $data = $state[$arguments["item"]];
+                if(!empty($data["general_field_id"]))
+                    return "G. " . GeneralField::cached($data["general_field_id"])->name_de . " Felddaten bearbeiten"; //ToDo Translate
+                else
+                    return $data["name_de"] . " Felddaten bearbeiten "; //ToDo Translate
+            })
+            ->form(fn($get,$state,$arguments)=>
+            self::getCustomFieldSchema(
+                $get("custom_form_identifier"),
+                $state[$arguments["item"]]
+            )
+            )
+            ->action(function ($get,$set,$data,$arguments): void {
+                $fields = $get("custom_fields");
+                $fields[$arguments["item"]] = $data["customFields"][0];
+                $set("custom_fields",$fields);
+            })
+            ->fillForm(function($state,$arguments)  {
+                $data = $state[$arguments["item"]];
+
+                $customFieldData = array_filter(
+                    $data,
+                    fn($key) =>!str_starts_with($key, "variation-"),
+                    ARRAY_FILTER_USE_KEY
+                );
+                $variations = array_filter(
+                    $data,
+                    fn($key) => str_starts_with($key, "variation-"),
+                    ARRAY_FILTER_USE_KEY
+                );
+
+                if(empty($variations)){
+                    $variations = [];
+                    $customField = CustomField::cached($data["id"]);
+
+                    foreach ($customField->customFieldVariation as $variation){
+                        $variationData = $customField->getType()
+                            ->prepareOptionDataBeforeFill($variation->toArray());
+                        $varIdentifier = "variation-" . $variation->variation_id;
+                        $variations[$varIdentifier] = [0=>$variationData];
+                    }
+                }
+
+                return ["customFields"=> [array_merge($customFieldData,$variations)]];
+            });
+    }
+
+    private static function getAddUpInRecordAction(): Action {
+        return Action::make("toUp")
+            ->icon('heroicon-m-arrow-long-up')
+            ->action(function($arguments,$state){
+                $itemIndex = $arguments["item"];
+                $itemIndexPostion = self::getKeyPosition($itemIndex, $state);
+                $upperCustomFieldData = $state[array_keys($state)[$itemIndexPostion-1]];
+                $type = self::getFieldTypeFromRawDate($upperCustomFieldData);
+
+            })
+            ->disabled(function($arguments,$state) {
+                $itemIndex = $arguments["item"];
+                $itemIndexPostion = self::getKeyPosition($itemIndex, $state);
+                if($itemIndexPostion == 0) return true;
+                $upperCustomFieldData = $state[array_keys($state)[$itemIndexPostion-1]];
+                $type = self::getFieldTypeFromRawDate($upperCustomFieldData);
+                return !($type instanceof CustomLayoutType);
+            });
+    }
+
+    private static function getFieldTypeFromRawDate(array $data): ?CustomFieldType {
+        $isGeneral = array_key_exists("general_field_id",$data)&& !is_null($data["general_field_id"]);
+        return $isGeneral? GeneralField::cached($data["general_field_id"])->getType(): CustomFieldType::getTypeFromName($data["type"]);
+    }
+
+    private static function getKeyPosition($key, $array) {
+        $keys = array_keys($array);
+        return array_search($key, $keys);
+    }
+
 }
