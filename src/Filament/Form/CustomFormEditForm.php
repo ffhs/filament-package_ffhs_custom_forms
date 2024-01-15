@@ -48,17 +48,17 @@ class CustomFormEditForm
                             ->expandAllAction(fn(Action $action)=> $action->hidden())
                             ->collapseAllAction(fn(Action $action)=> $action->hidden())
                             ->orderColumn("form_position")
-                            ->relationship("customFields")
+                            ->relationship("customFieldInLayout")
                             ->addable(false)
                             ->defaultItems(0)
                             ->columnSpan(2)
-                            ->columns(2)
+                            //->columns(2)
                             ->persistCollapsed()
                             ->reorderable()
                             ->collapsed()
                             ->extraItemActions([
                                 self::getAddUpInRecordAction(),
-                                self::getEditCustomFormAction()
+                                self::getEditCustomFormAction(),
                             ])
                             ->itemLabel(fn($state)=> //ToDo Translate
                                 !empty($state["general_field_id"])?
@@ -67,12 +67,15 @@ class CustomFormEditForm
                             )
                             ->schema([
                                 Group::make()
-                                    ->schema(fn()=>[
-                                        //ToDo Repeater
-                                    ])
-                                    ->hidden(fn($get)=>CustomFieldType::getTypeFromName($get("type")))
+                                    ->schema(fn($get)=>
+                                        CustomFieldType::getTypeFromName(($get("type"))) instanceof CustomLayoutType?
+                                            [Repeater::make("test")
+                                                 ->relationship("customFieldInLayout")
+                                                 ->schema([TextInput::make("name_de")]),
+                                            ]: []
+                                    )
+                                    ->hidden(fn($get)=>!CustomFieldType::getTypeFromName($get("type")) instanceof CustomFieldType),
                             ])
-                            ->mutateRelationshipDataBeforeFillUsing(fn(array $data)=> dd($data)?[]:[])
                             ->saveRelationshipsUsing(
                                 fn(Repeater $component, HasForms $livewire, ?array $state, CustomForm $record) =>
                                 self::saveCustomFields($component,$record,$state)
@@ -110,11 +113,16 @@ class CustomFormEditForm
 
                                         $fail($failureMessage);
                                     };
-                                }
+                                },
                             ]),
                     ]),
 
             ];
+    }
+
+
+    private static function getCustomFieldRepeater() {
+
     }
 
     private static function getFieldAddActionSchema():array {
@@ -324,7 +332,7 @@ class CustomFormEditForm
                                             0 => $type->prepareOptionDataBeforeFill([
                                                     'is_active' => !$isDisabled,
                                                     'required' => !$isDisabled,
-                                                ])
+                                                ]),
                                         ];
                                         $set("variation-".$varID, $toSet);
                                     }
@@ -440,7 +448,14 @@ class CustomFormEditForm
         $customFieldData = array_filter($itemData, fn($key) =>!str_starts_with($key, "variation-"),ARRAY_FILTER_USE_KEY);
         $variations = array_filter($itemData, fn($key) => str_starts_with($key, "variation-"),ARRAY_FILTER_USE_KEY);
 
+        if($customfield->getType() instanceof CustomLayoutType){
+            $customfield->layout_end_position = 2;
+            dd($customForm->customFieldInLayout()->get());
+        }
+
         $customfield->fill($customFieldData)->save();
+
+
 
         if(empty($variations)) return $customfield;  //If it is empty, it has also no Template variation what mean it wasn't edit
 

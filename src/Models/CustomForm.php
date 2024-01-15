@@ -2,6 +2,7 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Models;
 
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType;
 use Ffhs\FilamentPackageFfhsCustomForms\FormConfiguration\DynamicFormConfiguration;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -83,6 +84,32 @@ class CustomForm extends Model
 
     public function customFormAnsware(): HasMany {
         return $this->hasMany(CustomFormAnswer::class);
+    }
+
+
+    public function customFieldInLayout(): HasMany {
+
+        $subQuery = CustomField::query()
+            ->where("custom_form_id", $this->id)
+            ->whereIn("type", collect(config("ffhs_custom_forms.custom_field_types"))
+                ->filter(fn(string $type) => (new $type()) instanceof CustomLayoutType)
+                ->map(fn(string $type) => $type::getFieldIdentifier())
+            );
+
+        return $this->hasMany(CustomField::class)
+            ->whereNotIn("id",
+                CustomField::query()
+                    ->select("id")
+                    ->where("form_position", ">",$subQuery->clone()
+                        ->select("form_position")
+                        ->orderBy("form_position", "ASC")
+                        ->limit(1))
+                    ->where("form_position", "<=",$subQuery->clone()
+                        ->select("layout_end_position")
+                        ->orderBy("layout_end_position", "DESC")
+                        ->limit(1))
+            )
+            ->orderBy("form_position");
     }
 
 }

@@ -16,18 +16,5 @@ use function PHPUnit\Framework\isEmpty;
 abstract class CustomLayoutType extends CustomFieldType
 {
 
-    public function getExtraOptionSchema():?array{
-        return [
-            TextInput::make("end_location")
-                ->numeric()
-                //->disabled()
-        ];
-    }
-
-    public function getExtraOptionFields():array{
-        return [
-            "end_location" => null
-        ];
-    }
 
 }
