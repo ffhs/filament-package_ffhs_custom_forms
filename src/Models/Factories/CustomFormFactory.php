@@ -37,7 +37,7 @@ class CustomFormFactory extends Factory
                 CustomField::factory(sizeof($types))
                     ->state(new Sequence(
                         fn (Sequence $sequence) => [
-                            'type' => array_keys($types)[$sequence->index],
+                            'type' => (array_values($types)[$sequence->index])::getFieldIdentifier(),
                             'name_de' => (array_values($types)[$sequence->index])::getFieldIdentifier(),
                             'name_en' => (array_values($types)[$sequence->index])::getFieldIdentifier(),
                             'form_position' => $sequence->index+1,

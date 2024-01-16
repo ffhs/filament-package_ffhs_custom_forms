@@ -19,7 +19,8 @@ class TextTypeView implements FieldTypeView
             ->maxLength($type->getOptionParameter($record,"max_length"))
             ->minLength($type->getOptionParameter($record,"min_length"))
             ->helperText($type::getToolTips($record))
-            ->label($type::getLabelName($record));
+            ->label($type::getLabelName($record))
+            ->required($record->required);
     }
 
     public static function getInfolistComponent(CustomFieldType $type, CustomFieldAnswer $record,

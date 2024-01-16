@@ -7,6 +7,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldVariation;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\DateTimePicker;
 use Filament\Infolists\Components\TextEntry;
 
 class DateTypeView implements FieldTypeView
@@ -15,20 +16,24 @@ class DateTypeView implements FieldTypeView
     public static function getFormComponent(CustomFieldType $type, CustomFieldVariation $record,
         array $parameter = []): DatePicker {
         return DatePicker::make($type::getIdentifyKey($record))
+            ->columnStart($type->getOptionParameter($record,"new_line_option"))
+            ->inlineLabel($type->getOptionParameter($record,"in_line_label"))
             ->columnSpan($type->getOptionParameter($record,"column_span"))
             ->label($type::class::getLabelName($record))
             ->helperText($type::class::getToolTips($record))
-            ->format(self::getFormat($record));
+            ->format(self::getFormat($record))
+            ->required($record->required);
     }
 
     public static function getInfolistComponent(CustomFieldType $type, CustomFieldAnswer $record,
         array $parameter = []): TextEntry {
         return TextEntry::make($type::getIdentifyKey($record->customFieldVariation))
             ->dateTime(self::getFormat($record->customFieldVariation))
-            ->label($type::class::getLabelName($record->customFieldVariation))
-            ->state($record->answer)
+            ->label($type::getLabelName($record->customFieldVariation))
+            ->state($record->answare)
             ->inlineLabel();
     }
+
 
     private static function getFormat(CustomFieldVariation $customField):string{
         if(is_null($customField->options)) return "Y-m-d";

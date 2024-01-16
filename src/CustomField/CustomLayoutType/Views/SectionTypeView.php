@@ -15,7 +15,12 @@ class SectionTypeView implements FieldTypeView
 
     public static function getFormComponent(CustomFieldType $type, CustomFieldVariation $record,
         array $parameter = []): Section {
-        return Section::make($type::class::getLabelName($record))  ->schema($parameter["rendered"])->columns(4)->columnSpan(4);
+        return Section::make($type::getIdentifyKey($record))
+            ->label($type->getOptionParameter($record,"show_title")? $type::getLabelName($record):false)
+            ->columnSpan($type->getOptionParameter($record,"column_span"))
+            ->columns($type->getOptionParameter($record,"columns"))
+            ->aside($type->getOptionParameter($record,"aside"))
+            ->schema($parameter["rendered"]);
     }
 
     public static function getInfolistComponent(CustomFieldType $type, CustomFieldAnswer $record,

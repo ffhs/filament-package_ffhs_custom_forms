@@ -42,7 +42,7 @@ class CustomFormRenderForm
 
             $customField = $fieldVariation->customField;
             if(!($customField->getType() instanceof CustomLayoutType)){
-                $customFormSchema[] = $customField->getType()->getFormComponent($fieldVariation,$viewMode)->columnStart(1);
+                $customFormSchema[] = $customField->getType()->getFormComponent($fieldVariation,$viewMode);
                 continue;
             }
 
@@ -52,8 +52,7 @@ class CustomFormRenderForm
             $customFormSchema[] = $customField->getType()->getFormComponent($fieldVariation,$viewMode, [
                 "fieldVariationData" => $fieldVariationData,
                 "rendered"=> $renderedOutput[0],
-            ])
-                ->columnStart(1);
+            ]);
             $index+=$renderedOutput[1];
         }
         return [$customFormSchema,$index-$indexOffset];

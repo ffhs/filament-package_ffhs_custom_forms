@@ -15,17 +15,20 @@ class DateTimeTypeView implements FieldTypeView
     public static function getFormComponent(CustomFieldType $type, CustomFieldVariation $record,
         array $parameter = []): DateTimePicker {
         return DateTimePicker::make($type::getIdentifyKey($record))
+            ->columnStart($type->getOptionParameter($record,"new_line_option"))
+            ->inlineLabel($type->getOptionParameter($record,"in_line_label"))
             ->columnSpan($type->getOptionParameter($record,"column_span"))
             ->label($type::class::getLabelName($record))
             ->helperText($type::class::getToolTips($record))
-            ->format(self::getFormat($record));
+            ->format(self::getFormat($record))
+            ->required($record->required);
     }
 
     public static function getInfolistComponent(CustomFieldType $type, CustomFieldAnswer $record,
         array $parameter = []): TextEntry {
-        return TextEntry::make($record->customFieldVariation->customField->identify_key)
+        return TextEntry::make($type::getIdentifyKey($record->customFieldVariation))
             ->dateTime(self::getFormat($record->customFieldVariation))
-            ->label($type::class::getLabelName($record->customFieldVariation))
+            ->label($type::getLabelName($record->customFieldVariation))
             ->state($record->answare)
             ->inlineLabel();
     }
