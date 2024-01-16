@@ -15,8 +15,7 @@ class SectionTypeView implements FieldTypeView
 
     public static function getFormComponent(CustomFieldType $type, CustomFieldVariation $record,
         array $parameter = []): Section {
-        return Section::make($type::getIdentifyKey($record))
-            ->label($type->getOptionParameter($record,"show_title")? $type::getLabelName($record):false)
+        return Section::make($type->getOptionParameter($record,"show_title")? $type::getLabelName($record):"")
             ->columnSpan($type->getOptionParameter($record,"column_span"))
             ->columns($type->getOptionParameter($record,"columns"))
             ->aside($type->getOptionParameter($record,"aside"))

@@ -32,7 +32,6 @@ class SectionType extends CustomLayoutType
             'columns' => 4,
             'show_title' => true,
             'aside' => false,
-            'in_line_label'=> false,
             'new_line_option'=> true,
         ];
     }

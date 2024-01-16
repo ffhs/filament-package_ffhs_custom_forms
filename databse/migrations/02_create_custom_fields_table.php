@@ -22,7 +22,6 @@ return new class () extends Migration {
 
 
             $table->foreignId('custom_form_id')->nullable()->constrained()->cascadeOnDelete();
-            $table->integer('custom_form_place')->nullable();
 
 
             //Inherit GeneralField
@@ -47,7 +46,7 @@ return new class () extends Migration {
             //$table->softDeletes();
 
             $table->unique(["general_field_id","custom_form_id"]);
-            $table->unique(["custom_form_id","custom_form_place"]);
+            $table->unique(["custom_form_id","form_position"]);
 
 
         });

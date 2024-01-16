@@ -93,6 +93,7 @@ class CustomForm extends Model
 
     public function customFieldInLayout(): HasMany {
 
+
         $subQuery = CustomField::query()
             ->where("custom_form_id", $this->id)
             ->whereIn("type", collect(config("ffhs_custom_forms.custom_field_types"))
