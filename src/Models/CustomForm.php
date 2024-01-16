@@ -5,6 +5,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Models;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType;
 use Ffhs\FilamentPackageFfhsCustomForms\FormConfiguration\DynamicFormConfiguration;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
@@ -24,6 +25,10 @@ use Illuminate\Support\Facades\Cache;
 class CustomForm extends Model
 {
     use HasFormIdentifyer;
+    use HasFactory;
+
+
+
     protected $fillable = [
         'custom_form_identifier',
         'short_title',
@@ -110,5 +115,7 @@ class CustomForm extends Model
             )
             ->orderBy("form_position");
     }
+
+
 
 }

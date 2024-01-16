@@ -10,6 +10,7 @@
     "license": "MIT",
     "autoload": {
         "psr-4": {
+            "Database\\Factories\\": "database/factories/",
             "Ffhs\\FilamentPackageFfhsCustomForms\\": "src/"
         }
     },

@@ -1,7 +1,7 @@
 <?php
 
 namespace Ffhs\FilamentPackageFfhsCustomForms;
-
+use Illuminate\Database\Eloquent\Factories\Factory;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
@@ -16,6 +16,12 @@ class FilamentPackageFfhsCustomFormsServiceProvider extends PackageServiceProvid
             ->hasConfigFile('ffhs_custom_forms')
             ->hasTranslations();
 
+    }
+
+    public function boot(): void {
+        Factory::guessFactoryNamesUsing(function(string $modelName) {
+            return 'Ffhs\\FilamentPackageFfhsCustomForms\\Models\Factories\\' . class_basename($modelName) . 'Factory';
+        });
     }
 
 }
