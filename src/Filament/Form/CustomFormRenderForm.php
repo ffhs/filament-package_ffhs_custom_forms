@@ -48,7 +48,6 @@ class CustomFormRenderForm
 
             $endLocation = $fieldVariation->customField->layout_end_position;
             $fieldVariationData = $fieldVariations->slice($index+1-$indexOffset,$endLocation-$indexOffset-1);
-            if($fieldVariationData->count()< 1)dd( $fieldVariations,$index+1, $fieldVariation->customField->layout_end_position);
             $renderedOutput = self::renderForm($index+1,$fieldVariationData, $viewMode);
             $customFormSchema[] = $customField->getType()->getFormComponent($fieldVariation,$viewMode, [
                 "fieldVariationData" => $fieldVariationData,
