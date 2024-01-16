@@ -500,7 +500,9 @@ class CustomFormEditForm
     }
 
     private static function createCustomField(array $itemData,CustomForm $customForm):CustomField{
-        return self::updateCustomField(new CustomField(), $itemData,$customForm);
+        $customField = new CustomField();
+        $customField->identify_key = uniqid();
+        return self::updateCustomField($customField, $itemData,$customForm);
     }
 
 

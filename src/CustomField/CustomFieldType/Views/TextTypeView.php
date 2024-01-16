@@ -15,7 +15,7 @@ class TextTypeView implements FieldTypeView
     public static function getFormComponent(CustomFieldType $type, CustomFieldVariation $record,
         array $parameter = []): TextInput {
         return TextInput::make($type::getIdentifyKey($record))
-            ->columnSpan($type->getOptionParameter($record,"colum_span"))
+            ->columnSpan($type->getOptionParameter($record,"column_span"))
             ->maxLength($type->getOptionParameter($record,"max_length"))
             ->minLength($type->getOptionParameter($record,"min_length"))
             ->helperText($type::getToolTips($record))

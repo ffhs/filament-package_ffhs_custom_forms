@@ -10,7 +10,7 @@ class NumberTypeView extends TextTypeView
 {
     public static function getFormComponent(CustomFieldType $type, CustomFieldVariation $record, array $parameter = []): TextInput {
         return parent::getFormComponent($type, $record, $parameter)
-            ->columnSpan($type->getOptionParameter($record,"colum_span"))
+            ->columnSpan($type->getOptionParameter($record,"column_span"))
             ->minValue($type->getOptionParameter($record,"min_value"))
             ->maxValue($type->getOptionParameter($record,"max_value"))
             ->step($type->getOptionParameter($record,"step"))

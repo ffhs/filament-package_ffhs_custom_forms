@@ -71,9 +71,8 @@ class CustomField extends ACustomField
     }
 
     private function getInheritStateFromArrays($thisValues, $generalFieldArray){
-        $output =  $thisValues;
-        if(!is_null($generalFieldArray))
-            $output= array_replace($output, array_filter($generalFieldArray, fn($value) => !is_null($value)));
+        if(is_null($generalFieldArray)) return $thisValues;
+        $output= array_replace($thisValues, array_filter($generalFieldArray, fn($value) => !is_null($value)));
         $output["is_general_field"] = false;
         unset($output["id"]);
         unset($output["general_field_id"]);

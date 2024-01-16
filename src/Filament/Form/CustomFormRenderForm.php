@@ -34,7 +34,7 @@ class CustomFormRenderForm
     public static function renderForm(int $indexOffset, Collection $fieldVariations, string $viewMode) {
         $customFormSchema = [];
         for($index = $indexOffset; $index<$fieldVariations->count()+$indexOffset; $index++){
-            if(empty( $fieldVariations[$index]))dd($fieldVariations);
+            if(empty( $fieldVariations[$index]))dd($fieldVariations, $index);
              /** @var CustomFieldVariation $fieldVariation*/
             $fieldVariation = $fieldVariations[$index];
 
@@ -46,10 +46,10 @@ class CustomFormRenderForm
                 continue;
             }
 
-
             $endLocation = $fieldVariation->customField->layout_end_position;
-            $fieldVariationData = $fieldVariations->slice($index+1,$endLocation-$indexOffset);
-            $renderedOutput = self::renderForm($indexOffset+$index+1,$fieldVariationData, $viewMode);
+            $fieldVariationData = $fieldVariations->slice($index+1-$indexOffset,$endLocation-$indexOffset-1);
+            if($fieldVariationData->count()< 1)dd( $fieldVariations,$index+1, $fieldVariation->customField->layout_end_position);
+            $renderedOutput = self::renderForm($index+1,$fieldVariationData, $viewMode);
             $customFormSchema[] = $customField->getType()->getFormComponent($fieldVariation,$viewMode, [
                 "fieldVariationData" => $fieldVariationData,
                 "rendered"=> $renderedOutput[0],
@@ -57,7 +57,6 @@ class CustomFormRenderForm
                 ->columnStart(1);
             $index+=$renderedOutput[1];
         }
-
         return [$customFormSchema,$index-$indexOffset];
     }
 
