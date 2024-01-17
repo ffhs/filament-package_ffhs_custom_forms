@@ -65,7 +65,7 @@ class CustomField extends ACustomField
     public function customFieldVariations (): HasMany {
         return $this->hasMany(CustomFieldVariation::class);
     }
-    public function templateVariation ():Model|null {
+    public function templateVariation ():CustomFieldVariation|null {
         return $this->customFieldVariations->filter(fn($customFieldVariation)=> $customFieldVariation->isTemplate())->first();
     }
 
@@ -116,7 +116,7 @@ class CustomField extends ACustomField
     }
 
 
-    public function getVariation(Model|int $relatedObject ): Model|null{
+    public function getVariation(Model|int $relatedObject ): CustomFieldVariation|null{
         if(!$this->has_variations) return $this->templateVariation();
         if($relatedObject instanceof  Model) $relatedObject = $relatedObject->id;
         $variation =  $this->customFieldVariations->filter(fn(CustomFieldVariation $fieldVariation)=>$fieldVariation->variation_id == $relatedObject);

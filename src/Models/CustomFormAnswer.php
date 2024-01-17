@@ -11,6 +11,7 @@ use Illuminate\Support\Collection;
  * @property int $custom_form_id
  * @property CustomForm $customForm
  * @property Collection $customFieldAnswers
+ * @property int $id
  */
 class CustomFormAnswer extends Model
 {

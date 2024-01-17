@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 /**
  * @property int $id
- * @property int $custom_form_answerer_id
+ * @property int $custom_form_answer_id
  * @property int $custom_field_variation_id
  * @property CustomFieldVariation $customFieldVariation
  * @property array answer
@@ -18,7 +18,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 class CustomFieldAnswer extends Model
 {
     protected $fillable = [
-        'custom_form_answerer_id',
+        'custom_form_answer_id',
         'custom_field_variation_id',
         'answer'
     ];

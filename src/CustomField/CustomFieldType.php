@@ -42,13 +42,13 @@ abstract class CustomFieldType
      */
 
     public function getFormComponent(CustomFieldVariation $record, string $viewMode = "default", array $parameter = []): Component { //ToDo Remove Parameters?
-        $viewMods = $this->getViewModes();
+        $viewMods = $this->getViewModes($record->customField->customForm->getFormConfiguration());
         //FieldTypeView.php
         if(is_null($viewMods[$viewMode])) return ($viewMods["default"])::getFormComponent($this,$record,$parameter);
         return ($viewMods[$viewMode])::getFormComponent($this,$record,$parameter);
     }
     public function getInfolistComponent(CustomFieldAnswer $record,string $viewMode = "default", array $parameter = []): \Filament\Infolists\Components\Component{
-        $viewMods = $this->getViewModes();
+        $viewMods = $this->getViewModes($record->customFieldVariation->customField->customForm->getFormConfiguration());
         //FieldTypeView.php
         if(is_null($viewMods[$viewMode])) return ($viewMods["default"])::getFormComponent($this,$record,$parameter);
         return ($viewMods[$viewMode])::getFormComponent($this,$record,$parameter);
@@ -65,10 +65,9 @@ abstract class CustomFieldType
         foreach (array_keys($overWrittenLevelOne) as $viewMode) $viewMods[$viewMode] = $overWrittenLevelOne[$viewMode];
 
         // Form Overwritten
-        if(!is_null($dynamicFormConfiguration)){
-            $overWrittenLevelTwo = ($dynamicFormConfiguration)->overwriteViewModes();
-            foreach (array_keys($overWrittenLevelTwo) as $viewMode) $viewMods[$viewMode] = $overWrittenLevelOne[$viewMode];
-        }
+        $overWrittenLevelTwo = $dynamicFormConfiguration::overwriteViewModes();
+        foreach (array_keys($overWrittenLevelTwo) as $viewMode) $viewMods[$viewMode] = $overWrittenLevelOne[$viewMode];
+
 
         return $viewMods;
 
@@ -76,21 +75,9 @@ abstract class CustomFieldType
 
     public function overwriteViewModes():array{
         $viewModes = config("ffhs_custom_forms.view_modes");
-        $overWritten = $viewModes[$this::class];
-        if(isEmpty($overWritten)) return [];
-        return $overWritten;
+        if(empty($viewModes[$this::class])) return [];
+        return $viewModes[$this::class];
     }
-
-
-
-
-
-
-    public function getTranslatedName():string{
-        return __("custom_forms.types." . self::fieldIdentifier());
-    }
-
-    public static abstract function getFieldIdentifier():string;
 
 
 
@@ -104,9 +91,29 @@ abstract class CustomFieldType
         return  $record->customField->getInheritState()["name_" . App::currentLocale()];
     }
 
+
+    public static function prepareCloneOptions(array $templateOptions, bool $isInheritGeneral) :array{
+        return $templateOptions;
+    }
+
+
+    public function prepareSaveFieldData(mixed $data): ?array{
+        if(is_null($data)) return null;
+        return ["saved"=> $data];
+    }
+    public function prepareLoadFieldData(array $data): mixed{
+        if(empty($data["saved"])) return null;
+        return $data["saved"];
+    }
+
+
+    public function getTranslatedName():string{
+        return __("custom_forms.types." . self::fieldIdentifier());
+    }
+
+    public static abstract function getFieldIdentifier():string;
+
     public function fieldIdentifier():string{return $this::getFieldIdentifier();}
-
-
 
 
 
@@ -161,12 +168,6 @@ abstract class CustomFieldType
         $data["identify_key"]= uniqid();
         return $this->prepareOptionDataBeforeSave($data);
     }
-
-
-    public static function prepareCloneOptions(array $templateOptions, bool $isInheritGeneral) :array{
-        return $templateOptions;
-    }
-
 
 
     public function getOptionParameter(CustomFieldVariation|CustomFieldAnswer $record, string $option){

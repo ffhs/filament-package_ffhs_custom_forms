@@ -27,19 +27,35 @@ class EditCustomFormAnswer extends EditRecord
     protected function mutateFormDataBeforeFill(array $data): array {
         $data= parent::mutateFormDataBeforeFill($data);
 
-        /**@var CustomFormAnswer  $customFormAnsware*/
-        $customFormAnsware = CustomFormAnswer::query()->firstWhere("id", $data["id"]);
-        if($customFormAnsware->customForm->getFormConfiguration()::hasVariations()){
-            if(!empty($customFormAnsware->customFieldAnswers)){
-                $variation= $customFormAnsware->customFieldAnswers
+        if(!empty($customFormAnswer->customFieldAnswers)) return $data;
+        /**@var CustomFormAnswer  $customFormAnswer*/
+        $customFormAnswer = $this->form->getRecord();
+
+        //Load Datas from fields
+        $data =array_merge($data,CustomFormRenderForm::loadHelper($customFormAnswer));
+
+        if($customFormAnswer->customForm->getFormConfiguration()::hasVariations()){
+                $variation= $customFormAnswer->customFieldAnswers
                     ->map(fn(CustomFieldAnswer $answer)=>$answer->customFieldVariation)
                     ->flatten(1)
                     ->firstWhere("custom_field_variation_id","!=",null);
                 if(!is_null($variation))  $data["variation"]= $variation->id;
-            }
         }
 
         return $data;
+    }
+
+    protected function mutateFormDataBeforeSave(array $data): array {
+        /**@var CustomFormAnswer  $customFormAnswer*/
+        $customFormAnswer = $this->form->getRecord();
+        $variation= $customFormAnswer->customFieldAnswers
+            ->map(fn(CustomFieldAnswer $answer)=>$answer->customFieldVariation)
+            ->flatten(1)
+            ->firstWhere("custom_field_variation_id","!=",null);
+        if(is_null($variation))$variation = -1;
+        CustomFormRenderForm::saveHelper($customFormAnswer, $data, $variation);
+
+        return [];
     }
 
 

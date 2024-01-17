@@ -5,8 +5,10 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Form;
 use Barryvdh\Debugbar\Facades\Debugbar;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldVariation;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
 use Filament\Forms\Components\Group;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
@@ -27,14 +29,67 @@ class CustomFormRenderForm
 
 
         $customFormSchema = self::renderForm(0,$fieldVariations,$viewMode,$customFields)[0];
-        Debugbar::info("   ");
-
 
         return  [
             Group::make($customFormSchema)->columns(config("ffhs_custom_forms.default_column_count")),
         ];
     }
 
+    public static function saveHelper(CustomFormAnswer $fieldAnswerer, array $formData, Model|int $variation) :void{
+
+        $customFieldAnswers = $fieldAnswerer->customFieldAnswers;
+        $keys = $customFieldAnswers->map(fn(CustomFieldAnswer $answer)=> $answer->customFieldVariation->customField->getInheritState()["identify_key"])->toArray();
+        $customFieldAnswersArray = [];
+        $customFieldAnswers->each(function($model) use (&$customFieldAnswersArray) {$customFieldAnswersArray[] = $model;});
+        $fieldAnswersIdentify = array_combine($keys, $customFieldAnswersArray);
+
+        $customFields = $fieldAnswerer->customForm->customFields;
+        $keys = $customFields->map(fn(CustomField $customField)=> $customField->getInheritState()["identify_key"])->toArray();
+        $customFieldArray = [];
+        $customFields->each(function($model) use (&$customFieldArray) {$customFieldArray[] = $model;});
+        $customFieldsIdentify = array_combine($keys, $customFieldArray);
+
+        foreach($formData as $key => $fieldData){
+            if(empty($customFieldsIdentify[$key])){
+                continue;
+            }
+
+            /**@var CustomField $customField*/
+            /**@var null|CustomFieldAnswer $customFieldAnswer*/
+            $customField = $customFieldsIdentify[$key];
+            $fieldAnswererData = $customField->getType()->prepareSaveFieldData($fieldData);
+            if(empty($fieldAnswererData)) {
+                if(empty($fieldAnswersIdentify[$key])) $customFieldAnswer->delete();
+                continue;
+            }
+
+            if(empty( $fieldAnswersIdentify[$key]))
+                $customFieldAnswer= new CustomFieldAnswer([
+                    "custom_field_variation_id" => $customField->getVariation($variation)->id,
+                    "custom_form_answer_id" => $fieldAnswerer->id,
+                ]);
+            else $customFieldAnswer = $fieldAnswersIdentify[$key];
+
+            $customFieldAnswer->answer = $fieldAnswererData;
+            $customFieldAnswer->save();
+        }
+
+    }
+
+    public static function loadHelper(CustomFormAnswer $answerer):array {
+        $data = [];
+        foreach($answerer->customFieldAnswers as $fieldAnswer){
+            /**@var CustomFieldAnswer $fieldAnswer*/
+            $customField =$fieldAnswer
+                ->customFieldVariation
+                ->customField;
+            $fieldData = $customField
+                ->getType()
+                ->prepareLoadFieldData($fieldAnswer->answer);
+            $data[$customField->getInheritState()["identify_key"]] = $fieldData;
+        }
+            return $data;
+    }
 
     public static function renderForm(int $indexOffset, Collection $fieldVariations, string $viewMode, Collection $customFields) {
         $customFormSchema = [];
