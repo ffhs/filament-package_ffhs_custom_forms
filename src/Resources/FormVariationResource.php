@@ -68,6 +68,7 @@ class FormVariationResource extends Resource
                             ->relationship("customForm", "short_title", fn(Builder$query)=>
                                 $query ->whereIn("custom_form_identifier",
                                     collect(config("ffhs_custom_forms.forms"))
+                                        ->filter(fn($configClass)=> $configClass::hasVariations())
                                         ->filter(fn($configClass)=> $configClass::variationModel() == FormVariation::class)
                                         ->map(fn($configClass)=> $configClass::identifier())
                                 )
