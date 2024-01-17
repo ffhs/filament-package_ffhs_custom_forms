@@ -116,10 +116,10 @@ class CustomFormEditForm
             ])
             ->itemLabel(function($state){
                  if(!empty($state["general_field_id"])){
-                     return "G. " . GeneralField::cached($state["general_field_id"])->name_de; //ToDo Translate
+                     return "Gen. " . GeneralField::cached($state["general_field_id"])->name_de; //ToDo Translate
                  }
                  else if(self::getFieldTypeFromRawDate($state) instanceof CustomLayoutType){
-                     return "|^| " . $state["name_de"]; //ToDo Translate
+                     return " ( ".sizeof($state["custom_fields"])." ) " .$state["name_de"] ; //ToDo Translate
                  }
                  return  $state["name_de"]; //ToDo Translate
                }
@@ -171,16 +171,13 @@ class CustomFormEditForm
             Actions::make([
                 Action::make("add_general_field")
                     ->closeModalByClickingAway(false)
-                    ->label(fn()=>"Erstellen ") //ToDo Translate
+                    ->fillForm(fn()=> ["customFields"=>[0=>[]]])
                     ->modalWidth(MaxWidth::ExtraLarge)
+                    ->label(fn()=>"Hinzufügen ") //ToDo Translate
                     ->disabled(fn(Get $get)=>
                         is_null($get("add_general_field_id")) ||
                         in_array($get("add_general_field_id"), self::getUsedGeneralFieldIds($get("custom_fields")))
                     )
-                    ->fillForm(function (Get $get){
-                        $type = GeneralField::cached($get("add_general_field_id"))->getType();
-                        return ["customFields"=>[0=>["variation-"=> $type->prepareOptionDataBeforeFill([])]]];
-                    })
                     ->mutateFormDataUsing(function(array $data,Get $get) {
                         //SetGeneralField ID
                         $state = $data["customFields"][0];
@@ -226,14 +223,10 @@ class CustomFormEditForm
             Actions::make([
                 Action::make("add_custom_field")
                     ->disabled(fn(Get $get)=>is_null($get("add_custom_field_type")))
+                    ->fillForm(fn()=> ["customFields"=>[0=>[]]])
                     ->closeModalByClickingAway(false)
-                    ->label("Erstellen") //ToDo Translate
+                    ->label("Hinzufügen") //ToDo Translate
                     ->modalWidth('5xl')
-                    ->fillForm(function (Get $get){
-                        $typeName = $get("add_custom_field_type");
-                        $type = CustomFieldType::getTypeFromName($typeName);
-                        return ["customFields"=>[0=>["variation-"=> $type->prepareOptionDataBeforeFill([])]]];
-                    })
                     ->mutateFormDataUsing(function(array $data,Get $get) {
                         //setType
                         $state = $data["customFields"][0];
@@ -312,6 +305,17 @@ class CustomFormEditForm
                                     $id = null;
                                     $tabs[] = self::getCustomFieldVariationTab($id,$isGeneral,$type,$tabTitle);//ToDo Translate
 
+                                    if(empty($get("variation-"))){
+                                        $toSet = [
+                                            0 => $type->prepareOptionDataBeforeFill([
+                                                'is_active' => true,
+                                                'required' => true,
+                                            ]),
+                                        ];
+                                        $set("variation-", $toSet);
+                                    }
+
+
                                     //If no Variations than skip the Variations and get only the default Tab
                                     if(!$get("has_variations")) return $tabs;
 
@@ -331,9 +335,9 @@ class CustomFormEditForm
                                         if(!empty($get("variation-".$varID))) continue;
                                         $toSet = [
                                             0 => $type->prepareOptionDataBeforeFill([
-                                                    'is_active' => !$isDisabled,
-                                                    'required' => !$isDisabled,
-                                                ]),
+                                                'is_active' => !$isDisabled,
+                                                'required' => !$isDisabled,
+                                            ]),
                                         ];
                                         $set("variation-".$varID, $toSet);
                                     }
