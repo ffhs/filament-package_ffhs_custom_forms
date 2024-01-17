@@ -118,18 +118,19 @@ class CustomFormEditForm
                 self::getEditCustomFormAction($record),
             ])
             ->itemLabel(function($state){
-                $styleClassses = "text-sm font-medium ext-gray-950 dark:text-white";
+                $styleClassses = "text-sm font-medium ext-gray-950 dark:text-white  cursor-pointer truncate select-none ";
+                $openOnClick = 'wire:click="mountFormComponentAction(\'data.custom_fields.record-20.custom_fields\', \'edit\', JSON.parse(\'{\u0022item\u0022:\u0022record-21\u0022}\'))"';
                  if(!empty($state["general_field_id"])){
                      $badge = new HtmlBadge("Gen", Color::rgb("rgb(43, 164, 204)"));
                      $name = GeneralField::cached($state["general_field_id"])->name_de;
-                     return new HtmlString(  '</h4>' .$badge. '<h4 class="'.$styleClassses.'">' .$name); //ToDo Translate
+                     return new HtmlString(  '</h4>' .$badge. '<h4 class="'.$styleClassses.'"'.$openOnClick.'>' .$name); //ToDo Translate
                  }
                  else if(self::getFieldTypeFromRawDate($state) instanceof CustomLayoutType){
                     $size = sizeof($state["custom_fields"]);
-                    return new HtmlString(  "</h4>" .new HtmlBadge($size). '<h4 x-on:click.stop="isCollapsed = !isCollapsed" class="'.$styleClassses.' cursor-pointer truncate select-none ">' .$state["name_de"]); //ToDo Translate
-
+                    $h4 = '<h4 x-on:click.stop="isCollapsed = !isCollapsed" class="'.$styleClassses.'">';
+                    return new HtmlString(  "</h4>" .new HtmlBadge($size). $h4 .$state["name_de"]); //ToDo Translate
                  }
-                 return  new HtmlString( '</h4><h4 class="'.$styleClassses.'">'. $state["name_de"] ); //ToDo Translate
+                 return  new HtmlString( '</h4> <h4 class="'.$styleClassses.'"'.$openOnClick.'">'. $state["name_de"] ); //ToDo Translate
                }
             )
             ->schema([
@@ -725,7 +726,7 @@ class CustomFormEditForm
         return $isGeneral? GeneralField::cached($data["general_field_id"])->getType(): CustomFieldType::getTypeFromName($data["type"]);
     }
 
-    private static function getKeyPosition($key, $array) {
+    private static function getKeyPosition($key, $array):  int {
         $keys = array_keys($array);
         return array_search($key, $keys);
     }
