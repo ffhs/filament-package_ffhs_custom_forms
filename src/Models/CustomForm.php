@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 
 /**
  * @property int $id
@@ -94,27 +95,27 @@ class CustomForm extends Model
     public function customFieldInLayout(): HasMany {
 
 
-        $subQuery = CustomField::query()
+        $subQueryAlLayouts = CustomField::query()
+            ->select('form_position','layout_end_position')
             ->where("custom_form_id", $this->id)
             ->whereIn("type", collect(config("ffhs_custom_forms.custom_field_types"))
                 ->filter(fn(string $type) => (new $type()) instanceof CustomLayoutType)
                 ->map(fn(string $type) => $type::getFieldIdentifier())
             );
 
-        return $this->hasMany(CustomField::class)
+
+        $query = $this->hasMany(CustomField::class)
             ->whereNotIn("id",
-                CustomField::query()
+                $this->hasMany(CustomField::class)
                     ->select("id")
-                    ->where("form_position", ">",$subQuery->clone()
-                        ->select("form_position")
-                        ->orderBy("form_position", "ASC")
-                        ->limit(1))
-                    ->where("form_position", "<=",$subQuery->clone()
-                        ->select("layout_end_position")
-                        ->orderBy("layout_end_position", "DESC")
-                        ->limit(1))
-            )
-            ->orderBy("form_position");
+                    ->rightJoinSub($subQueryAlLayouts, 'sub', function ($join) {
+                        $join->on('custom_fields.form_position', '>', 'sub.form_position')
+                        ->on('custom_fields.form_position', '<=', 'sub.layout_end_position');
+                    })
+            );
+
+
+        return $query;
     }
 
 

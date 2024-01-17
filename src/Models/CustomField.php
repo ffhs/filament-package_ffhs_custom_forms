@@ -139,7 +139,31 @@ class CustomField extends ACustomField
         if(!($this->getType() instanceof CustomLayoutType)) return null;
 
 
-        $layoutsInRange = CustomField::query()
+        $subQueryAlLayouts =
+            $this->hasMany(CustomField::class, "custom_form_id","custom_form_id")
+            ->select('form_position','layout_end_position')
+            ->where("form_position",">", $this->form_position)
+            ->whereIn("type", collect(config("ffhs_custom_forms.custom_field_types"))
+                ->filter(fn(string $type) => (new $type()) instanceof CustomLayoutType)
+                ->map(fn(string $type) => $type::getFieldIdentifier())
+            );
+
+
+        $query = $this->hasMany(CustomField::class, "custom_form_id","custom_form_id")
+            ->where("form_position",">", $this->form_position)
+            ->where("form_position","<=", $this->layout_end_position)
+            ->whereNotIn("id",
+                $this->hasMany(CustomField::class, "custom_form_id","custom_form_id")
+                    ->select("id")
+                    ->rightJoinSub($subQueryAlLayouts, 'sub', function ($join) {
+                        $join->on('custom_fields.form_position', '>', 'sub.form_position')
+                            ->on('custom_fields.form_position', '<=', 'sub.layout_end_position');
+                    })
+            );
+
+        return $query;
+
+        /*$layoutsInRange = CustomField::query()
             ->where("custom_form_id", $this->custom_form_id)
             ->where("form_position",">", $this->form_position)
             ->where("form_position","<=", $this->layout_end_position)
@@ -163,7 +187,7 @@ class CustomField extends ACustomField
                             $layoutsInRange->clone()->select("layout_end_position")->orderBy("layout_end_position", "DESC")->limit(1))
                 )
             )
-            ->orderBy("form_position");
+            ->orderBy("form_position");*/
     }
 
 
