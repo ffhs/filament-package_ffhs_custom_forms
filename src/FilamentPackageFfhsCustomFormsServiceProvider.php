@@ -19,6 +19,7 @@ class FilamentPackageFfhsCustomFormsServiceProvider extends PackageServiceProvid
     }
 
     public function boot(): void {
+        parent::boot();
         Factory::guessFactoryNamesUsing(function(string $modelName) {
             return 'Ffhs\\FilamentPackageFfhsCustomForms\\Models\Factories\\' . class_basename($modelName) . 'Factory';
         });
