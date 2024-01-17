@@ -15,6 +15,7 @@ return new class () extends Migration {
         Schema::create('custom_form_answers', function (Blueprint $table) {
             $table->id();
             $table->foreignId("custom_form_id")->constrained()->cascadeOnDelete();
+            $table->string("short_title")->nullable();
 
             $table->timestamps();
 

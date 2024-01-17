@@ -2,7 +2,7 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms;
 
-use App\Models\VariationRelation;
+use Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormAnsweResource;
 use Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormResource;
 use Ffhs\FilamentPackageFfhsCustomForms\Resources\FormVariationResource;
 use Ffhs\FilamentPackageFfhsCustomForms\Resources\GeneralFieldResource;
@@ -27,6 +27,7 @@ class CustomFormPlugin implements Plugin {
                 CustomFormResource::class,
                 GeneralFieldResource::class,
                 FormVariationResource::class,
+                CustomFormAnsweResource::class,
             ]);
     }
 

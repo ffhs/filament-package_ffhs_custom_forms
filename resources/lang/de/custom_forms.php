@@ -12,7 +12,8 @@ return [
         'forms' => 'Formulare',
         'group' => [
             'forms'=> 'Formulare'
-        ]
+        ],
+        'custom_form_answer'=> "Ausgefüllte Formulare",
     ],
 
     "fields" =>[

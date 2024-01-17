@@ -42,7 +42,7 @@ class FormVariationResource extends Resource
             return __('filament-package_ffhs_custom_forms::custom_forms.navigation.forms');
         }
 
-    /*ToDo
+    /*ToDo Translate
       public static function getTitleCasePluralModelLabel(): string {
         return __('filament-package_ffhs_custom_forms::custom_forms.navigation.general_fields');
          }

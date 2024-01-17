@@ -23,6 +23,6 @@ class CustomFormAnswer extends Model
     }
 
     public function customFieldAnswers (): HasMany {
-        return $this->hasMany(CustomFormAnswer::class);
+        return $this->hasMany(CustomFieldAnswer::class);
     }
 }
