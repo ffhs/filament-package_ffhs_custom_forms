@@ -37,7 +37,7 @@ class CustomFieldVariation extends Model
 
     protected $casts = [
         'required' => 'boolean',
-        'active' => 'boolean',
+        'is_active' => 'boolean',
         'options'=>'array'
     ];
 
