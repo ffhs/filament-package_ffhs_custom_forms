@@ -119,9 +119,9 @@ class CustomField extends ACustomField
     public function getVariation(Model|int $relatedObject ): CustomFieldVariation|null{
         if(!$this->has_variations) return $this->templateVariation();
         if($relatedObject instanceof  Model) $relatedObject = $relatedObject->id;
-        $variation =  $this->customFieldVariations->filter(fn(CustomFieldVariation $fieldVariation)=>$fieldVariation->variation_id == $relatedObject);
+        $variation =  $this->customFieldVariations->firstWhere(fn(CustomFieldVariation $fieldVariation)=>$fieldVariation->variation_id == $relatedObject);
         if(is_null($variation)) return $this->templateVariation();
-        else return $relatedObject;
+        else return $variation;
     }
 
 

@@ -4,10 +4,11 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormAnswerResource
 
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Form\CustomFormRenderForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldVariation;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormAnsweResource;
 use Filament\Actions;
-use Filament\Forms\Components\Group;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
 use Filament\Resources\Pages\EditRecord;
@@ -31,14 +32,13 @@ class EditCustomFormAnswer extends EditRecord
         /**@var CustomFormAnswer  $customFormAnswer*/
         $customFormAnswer = $this->form->getRecord();
 
-        //Load Datas from fields
-        $data =array_merge($data,CustomFormRenderForm::loadHelper($customFormAnswer));
+        //Load datas from fields
+        $data =array_merge($data, CustomFormRenderForm::loadHelper($customFormAnswer));
 
         if($customFormAnswer->customForm->getFormConfiguration()::hasVariations()){
                 $variation= $customFormAnswer->customFieldAnswers
                     ->map(fn(CustomFieldAnswer $answer)=>$answer->customFieldVariation)
-                    ->flatten(1)
-                    ->firstWhere("custom_field_variation_id","!=",null);
+                    ->filter(fn(CustomFieldVariation $variation)=>is_null($variation->variation_id))->first();
                 if(!is_null($variation))  $data["variation"]= $variation->id;
         }
 
@@ -74,7 +74,7 @@ class EditCustomFormAnswer extends EditRecord
                             return array_combine($keys,$value);
                         }),
 
-                    Group::make()
+                    Section::make()
                         ->schema(function(CustomFormAnswer $record,$get){
                             $formConfiguration = $record->customForm->getFormConfiguration();
                             $isCreating = empty($record->customFieldAnswers);
@@ -83,7 +83,7 @@ class EditCustomFormAnswer extends EditRecord
 
                             $hasVariations = $record->customForm->getFormConfiguration()::hasVariations();
                             $variation = null;
-                            if($hasVariations) $record->customForm->variationModels()->firstWhere("id",$get("variation"));
+                            if($hasVariations) $variation =$record->customForm->variationModels()->firstWhere("id",$get("variation"));
 
                             return CustomFormRenderForm::generateFormSchema($record->customForm, $viewMode,$variation);
                         })

@@ -15,8 +15,6 @@ use Illuminate\Support\Collection;
 
 class CustomFormRenderForm
 {
-
-
     public static function generateFormSchema(CustomForm $form, string $viewMode, null|int|Model $variation = null):array{
 
         $customFields = CustomField::query()->where("custom_form_id",$form->id)->with("customFieldVariations.customField","customFieldVariations")->get();
