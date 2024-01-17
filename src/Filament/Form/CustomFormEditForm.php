@@ -5,6 +5,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Form;
 use Closure;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\HtmlComponents\HtmlBadge;
 use Ffhs\FilamentPackageFfhsCustomForms\FormConfiguration\DynamicFormConfiguration;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldVariation;
@@ -25,11 +26,14 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Get;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Support\Colors\Color;
 use Filament\Support\Enums\MaxWidth;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection;
+use Illuminate\Support\HtmlString;
+use Illuminate\View\Compilers\BladeCompiler;
 
 class CustomFormEditForm
 {
@@ -119,7 +123,8 @@ class CustomFormEditForm
                      return "Gen. " . GeneralField::cached($state["general_field_id"])->name_de; //ToDo Translate
                  }
                  else if(self::getFieldTypeFromRawDate($state) instanceof CustomLayoutType){
-                     return " ( ".sizeof($state["custom_fields"])." ) " .$state["name_de"] ; //ToDo Translate
+                    $size = sizeof($state["custom_fields"]);
+                    return new HtmlString(  "</h4>" .new HtmlBadge($size). "<h4>" .$state["name_de"]); //ToDo Translate
                  }
                  return  $state["name_de"]; //ToDo Translate
                }
@@ -130,7 +135,7 @@ class CustomFormEditForm
                         !is_null($get("type")) && CustomFieldType::getTypeFromName(($get("type"))) instanceof CustomLayoutType?
                         [self::getCustomFieldRepeater($record)]: []
                     )
-                    ->hidden(fn(Get $get)=>is_null($get("type")) || !CustomFieldType::getTypeFromName($get("type")) instanceof CustomFieldType),
+                    ->hidden(fn(Get $get)=>is_null($get("type")) || !CustomFieldType::getTypeFromName($get("type")) instanceof CustomFieldType)
             ]);
     }
 
