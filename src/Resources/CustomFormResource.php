@@ -46,9 +46,8 @@ class CustomFormResource extends Resource
     }
 
     public static function getEloquentQuery(): Builder {
-        return parent::getEloquentQuery()->with("customFields");
+        return parent::getEloquentQuery()->with(["customFields","customFields.customFieldVariations","customFields.customFieldInLayout"]);
     }
-
 
     public static function table(Table $table): Table
     {
@@ -74,6 +73,8 @@ class CustomFormResource extends Resource
                     ->state(fn(CustomForm $record) => $record->customFields->count()),
             ]);
     }
+
+
 
     public static function getRelations(): array
     {

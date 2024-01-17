@@ -4,6 +4,8 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 /**
  * @property int $id
@@ -46,11 +48,11 @@ class CustomFieldVariation extends Model
         return is_null($this->variation_id);
     }
 
-    public function variation(): \Illuminate\Database\Eloquent\Relations\MorphTo {
+    public function variation(): MorphTo {
         return $this->morphTo();
     }
 
-    public function customField(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function customField(): BelongsTo
     {
         return $this->belongsTo(CustomField::class);
     }

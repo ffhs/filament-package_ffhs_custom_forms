@@ -17,15 +17,18 @@ class CustomFormRenderForm
 
     public static function generateFormSchema(CustomForm $form, string $viewMode, null|int|Model $variation = null):array{
 
+        $customFields = CustomField::query()->where("custom_form_id",$form->id)->with("customFieldVariations.customField","customFieldVariations")->get();
+
         /** @var Collection $fieldVariations*/
         if(is_null($variation))
-            $fieldVariations = $form->customFields->map(fn(CustomField $field) => $field->templateVariation());
+            $fieldVariations = $customFields->map(fn(CustomField $field) => $field->templateVariation());
         else
-            $fieldVariations = $form->customFields->map(fn(CustomField $field) => $field->getVariation($variation));
+            $fieldVariations = $customFields->map(fn(CustomField $field) => $field->getVariation($variation));
 
 
-        $customFormSchema = self::renderForm(0,$fieldVariations,$viewMode)[0];
+        $customFormSchema = self::renderForm(0,$fieldVariations,$viewMode,$customFields)[0];
         Debugbar::info("   ");
+
 
         return  [
             Group::make($customFormSchema)->columns(config("ffhs_custom_forms.default_column_count")),
@@ -33,12 +36,12 @@ class CustomFormRenderForm
     }
 
 
-    public static function renderForm(int $indexOffset, Collection $fieldVariations, string $viewMode) {
+    public static function renderForm(int $indexOffset, Collection $fieldVariations, string $viewMode, Collection $customFields) {
         $customFormSchema = [];
 
         $preparedFields = collect(
             array_combine(
-                $fieldVariations->map(fn(CustomFieldVariation $variation)=> $variation->customField->form_position)->toArray(),
+                $fieldVariations->map(fn(CustomFieldVariation $variation)=> $customFields->firstWhere("id",$variation->custom_field_id)->form_position)->toArray(),
                 $fieldVariations->map(fn(CustomFieldVariation $variation)=> $variation->id)->toArray()
             )
         );
@@ -53,13 +56,14 @@ class CustomFormRenderForm
 
             if(!$fieldVariation->is_active) continue;
 
-            $customField = $fieldVariation->customField;
+            /** @var CustomField $customField*/
+            $customField = $customFields->firstWhere("id",$fieldVariation->custom_field_id);
             if(!($customField->getType() instanceof CustomLayoutType)){
                 $customFormSchema[] = $customField->getType()->getFormComponent($fieldVariation,$viewMode);
                 continue;
             }
 
-            $endLocation = $fieldVariation->customField->layout_end_position;
+            $endLocation = $customField->layout_end_position;
 
             //Setup Render Data
             $fieldVariationRenderData = [];
@@ -70,7 +74,7 @@ class CustomFormRenderForm
 
 
             //Render Schema Input
-            $renderedOutput = self::renderForm($index,$fieldVariationRenderData, $viewMode);
+            $renderedOutput = self::renderForm($index,$fieldVariationRenderData, $viewMode,$customFields);
             //Get Layout Schema
             $customFormSchema[] = $customField->getType()->getFormComponent($fieldVariation,$viewMode, [
                 "fieldVariationData" => $fieldVariationRenderData,

@@ -99,7 +99,6 @@ class CustomFormEditForm
         return Repeater::make("custom_fields")
             ->collapseAllAction(fn(Action $action)=> $action->hidden())
             ->expandAllAction(fn(Action $action)=> $action->hidden())
-
             ->relationship("customFieldInLayout")
             ->orderColumn("form_position")
             ->saveRelationshipsUsing(fn()=>empty(null))
@@ -109,6 +108,7 @@ class CustomFormEditForm
             ->persistCollapsed()
             ->reorderable()
             ->collapsed()
+            ->lazy()
             ->extraItemActions([
                 self::getPullOutLayoutAction(),
                 self::getPullInLayoutAction(),
@@ -449,7 +449,7 @@ class CustomFormEditForm
         ]);
     }
 
-    private static function updateCustomField(CustomField $customfield,array $itemData, CustomForm $customForm):CustomField{
+    private static function updateCustomField(CustomField $customfield,array $itemData, CustomForm $customForm): void {
         $customFieldData = array_filter($itemData, fn($key) =>!str_starts_with($key, "variation-"),ARRAY_FILTER_USE_KEY);
         $variations = array_filter($itemData, fn($key) => str_starts_with($key, "variation-"),ARRAY_FILTER_USE_KEY);
 
@@ -457,7 +457,9 @@ class CustomFormEditForm
 
 
 
-        if(empty($variations)) return $customfield;  //If it is empty, it has also no Template variation what mean it wasn't edit
+        if(empty($variations)) {
+            return;
+        }  //If it is empty, it has also no Template variation what mean it wasn't edit
 
         $variationsOld = $customfield->customFieldVariation;
         $updatetVariationIds = [];
@@ -501,7 +503,6 @@ class CustomFormEditForm
             ->each(fn(CustomFieldVariation $variation)=>$variation->delete());
 
 
-        return $customfield;
     }
 
     private static function createCustomField(array $itemData,CustomForm $customForm): void {
@@ -632,7 +633,7 @@ class CustomFormEditForm
                 $fields[$arguments["item"]] = $data["customFields"][0];
                 $set("custom_fields",$fields);
             })
-            ->fillForm(function($state,$arguments)  {
+            ->fillForm(function($state,$arguments) use ($customForm) {
                 $data = $state[$arguments["item"]];
 
                 $customFieldData = array_filter(
@@ -648,7 +649,7 @@ class CustomFormEditForm
 
                 if(empty($variations)){
                     $variations = [];
-                    $customField = CustomField::cached($data["id"]);
+                    $customField = CustomField::cachedAllInForm($customForm->id)->firstWhere("id",$data["id"]);
 
                     foreach ($customField->customFieldVariation as $variation){
                         $variationData = $customField->getType()

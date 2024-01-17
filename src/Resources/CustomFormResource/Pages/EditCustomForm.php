@@ -12,25 +12,27 @@ use Filament\Forms\Components\Repeater;
 use Filament\Forms\Form;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Support\Enums\MaxWidth;
+use Illuminate\Database\Eloquent\Builder;
 
 class EditCustomForm extends EditRecord
 {
     protected static string $resource = CustomFormResource::class;
 
     public function form(Form $form): Form {
-        return $form->schema(
-            array_merge(
-                CustomFormEditForm::formSchema(),
-                [
-                       \Filament\Forms\Components\Actions::make([ //ToDo remove
-                            Action::make("test1")
-                                ->modalWidth('7xl')
-                                ->form(fn($record)=>CustomFormRenderForm::generateFormSchema($record,"default"))
-                                ->action(fn()=> dd("??"))
-                       ])
-                ]
-            )
-        );
+        return $form
+            ->schema(
+                array_merge(
+                    CustomFormEditForm::formSchema(),
+                    [
+                           \Filament\Forms\Components\Actions::make([ //ToDo remove
+                                Action::make("test1")
+                                    ->modalWidth('7xl')
+                                    ->form(fn($record)=>CustomFormRenderForm::generateFormSchema($record,"default"))
+                                    ->action(fn()=> dd("??"))
+                           ])
+                    ]
+                )
+            );
     }
 
 

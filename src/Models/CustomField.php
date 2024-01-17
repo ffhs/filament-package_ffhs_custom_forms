@@ -133,10 +133,16 @@ class CustomField extends ACustomField
         return Cache::remember("custom_field-" .$custom_field_id, 1, fn()=>CustomField::query()->firstWhere("id", $custom_field_id));
     }
 
+    public static function cachedAllInForm(int $formId): Collection{
+        return Cache::remember("custom_field-form_id" .$formId, 1, fn()=>CustomField::query()->where("custom_form_id", $formId)->get());
+    }
 
-    public function customFieldInLayout(): ?HasMany {
 
-        if(!($this->getType() instanceof CustomLayoutType)) return null;
+    public function customFieldInLayout(): HasMany {
+
+        if(!($this->getType() instanceof CustomLayoutType))
+            return $this->hasMany(CustomField::class, "custom_form_id","custom_form_id")
+                ->where("id",null);
 
 
         $subQueryAlLayouts =
@@ -162,32 +168,6 @@ class CustomField extends ACustomField
             );
 
         return $query;
-
-        /*$layoutsInRange = CustomField::query()
-            ->where("custom_form_id", $this->custom_form_id)
-            ->where("form_position",">", $this->form_position)
-            ->where("form_position","<=", $this->layout_end_position)
-            ->whereIn("type", collect(config("ffhs_custom_forms.custom_field_types"))
-                ->filter(fn(string $type) => (new $type()) instanceof CustomLayoutType)
-                ->map(fn(string $type) => $type::getFieldIdentifier())
-            );
-
-
-        return $this->hasMany(CustomField::class, "custom_form_id","custom_form_id")
-            ->where("form_position",">", $this->form_position)
-            ->where("form_position","<=", $this->layout_end_position)
-            ->where(fn($query)=>$query
-                ->whereNotExists($layoutsInRange->clone())
-                ->orWhereNotIn("id",
-                    CustomField::query()
-                        ->select("id")
-                        ->where("form_position", ">",
-                            $layoutsInRange->clone()->select("form_position")->orderBy("form_position", "ASC")->limit(1))
-                        ->where("form_position", "<=",
-                            $layoutsInRange->clone()->select("layout_end_position")->orderBy("layout_end_position", "DESC")->limit(1))
-                )
-            )
-            ->orderBy("form_position");*/
     }
 
 

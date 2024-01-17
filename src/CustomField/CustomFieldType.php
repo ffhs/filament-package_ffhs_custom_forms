@@ -95,10 +95,10 @@ abstract class CustomFieldType
 
 
     public static function getToolTips(CustomFieldVariation $record) :?string{
-        return   $record->customField->getInheritState()["tool_tip_" . App::currentLocale()];
+        return  $record->customField->getInheritState()["tool_tip_" . App::currentLocale()];
     }
     public static function getIdentifyKey(CustomFieldVariation $record) :string{
-        return   $record->customField->getInheritState()["identify_key"];
+        return  $record->customField->getInheritState()["identify_key"];
     }
     public static function getLabelName(CustomFieldVariation $record) :string{
         return  $record->customField->getInheritState()["name_" . App::currentLocale()];
