@@ -26,14 +26,12 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Get;
-use Filament\Infolists\Components\TextEntry;
 use Filament\Support\Colors\Color;
 use Filament\Support\Enums\MaxWidth;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection;
 use Illuminate\Support\HtmlString;
-use Illuminate\View\Compilers\BladeCompiler;
 
 class CustomFormEditForm
 {
@@ -112,6 +110,7 @@ class CustomFormEditForm
             ->persistCollapsed()
             ->reorderable()
             ->collapsed()
+            ->collapsible(false)
             ->lazy()
             ->extraItemActions([
                 self::getPullOutLayoutAction(),
@@ -119,14 +118,18 @@ class CustomFormEditForm
                 self::getEditCustomFormAction($record),
             ])
             ->itemLabel(function($state){
+                $styleClassses = "text-sm font-medium ext-gray-950 dark:text-white";
                  if(!empty($state["general_field_id"])){
-                     return "Gen. " . GeneralField::cached($state["general_field_id"])->name_de; //ToDo Translate
+                     $badge = new HtmlBadge("Gen", Color::rgb("rgb(43, 164, 204)"));
+                     $name = GeneralField::cached($state["general_field_id"])->name_de;
+                     return new HtmlString(  '</h4>' .$badge. '<h4 class="'.$styleClassses.'">' .$name); //ToDo Translate
                  }
                  else if(self::getFieldTypeFromRawDate($state) instanceof CustomLayoutType){
                     $size = sizeof($state["custom_fields"]);
-                    return new HtmlString(  "</h4>" .new HtmlBadge($size). "<h4>" .$state["name_de"]); //ToDo Translate
+                    return new HtmlString(  "</h4>" .new HtmlBadge($size). '<h4 x-on:click.stop="isCollapsed = !isCollapsed" class="'.$styleClassses.' cursor-pointer truncate select-none ">' .$state["name_de"]); //ToDo Translate
+
                  }
-                 return  $state["name_de"]; //ToDo Translate
+                 return  new HtmlString( '</h4><h4 class="'.$styleClassses.'">'. $state["name_de"] ); //ToDo Translate
                }
             )
             ->schema([
@@ -572,13 +575,15 @@ class CustomFormEditForm
             $itemData["form_position"] = $itemOrder;
             $itemOrder++;
 
+            $isGeneralField = !empty($itemData["general_field_id"]);
+
             //For the Layouts
             if(!empty($itemData["custom_fields"])){
                 $itemOrder = self::saveCustomFieldFromData($itemOrder, $itemData["custom_fields"], $customForm,$relationship,$existingRecords);
                 unset($itemData["custom_fields"]);
                 $itemData["layout_end_position"] = $itemOrder-1;
             }
-            else if(CustomFieldType::getTypeFromName($itemData["type"]) instanceof CustomLayoutType){
+            else if(!$isGeneralField && CustomFieldType::getTypeFromName($itemData["type"]) instanceof CustomLayoutType){
                 unset($itemData["custom_fields"]);
                 $itemData["layout_end_position"] = $itemOrder-1;
             }

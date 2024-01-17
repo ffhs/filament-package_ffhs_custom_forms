@@ -27,6 +27,7 @@ return [
     ],
 
     "disabled_general_field_types"=>[
+        SectionType::class
     ],
 
     'view_modes' => [
