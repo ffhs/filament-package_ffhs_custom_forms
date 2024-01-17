@@ -17,6 +17,7 @@ class CustomFormAnswer extends Model
 {
     protected $fillable = [
             'custom_form_id',
+            'short_title'
         ];
 
     public function customForm (): BelongsTo {

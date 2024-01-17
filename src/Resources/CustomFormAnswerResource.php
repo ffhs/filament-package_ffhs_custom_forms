@@ -13,7 +13,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
-class CustomFormAnsweResource extends Resource
+class CustomFormAnswerResource extends Resource
 {
     protected static ?string $model = CustomFormAnswer::class;
 
@@ -64,8 +64,13 @@ class CustomFormAnsweResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make("id"),
-                Tables\Columns\TextColumn::make("short_title"),
-                Tables\Columns\TextColumn::make("customForm.short_title"),
+                Tables\Columns\TextColumn::make("short_title")
+                    ->label("Name"), //ToDo Translate
+                Tables\Columns\TextColumn::make("customForm.short_title")
+                    ->label("Formular Name"), //ToDo Translate,
+                Tables\Columns\TextColumn::make('customForm.custom_form_identifier')
+                    ->label("Formular Art") //ToDo Translate,
+                    ->state(fn(CustomFormAnswer $record) =>($record->customForm->dynamicFormConfiguration())::displayName()),
             ])
             ->filters([
                 //

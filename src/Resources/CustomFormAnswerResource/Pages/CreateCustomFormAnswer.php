@@ -2,7 +2,7 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormAnswerResource\Pages;
 
-use Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormAnsweResource;
+use Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormAnswerResource;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
@@ -10,7 +10,7 @@ use Filament\Resources\Pages\CreateRecord;
 
 class CreateCustomFormAnswer extends CreateRecord
 {
-    protected static string $resource = CustomFormAnsweResource::class;
+    protected static string $resource = CustomFormAnswerResource::class;
 
     public function form(Form $form): Form {
         return $form->schema([

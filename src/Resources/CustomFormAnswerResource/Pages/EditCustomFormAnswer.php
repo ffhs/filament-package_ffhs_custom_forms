@@ -6,7 +6,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\Filament\Form\CustomFormRenderForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldVariation;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
-use Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormAnsweResource;
+use Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormAnswerResource;
 use Filament\Actions;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
@@ -16,7 +16,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class EditCustomFormAnswer extends EditRecord
 {
-    protected static string $resource = CustomFormAnsweResource::class;
+    protected static string $resource = CustomFormAnswerResource::class;
 
     protected function getHeaderActions(): array
     {
@@ -77,9 +77,8 @@ class EditCustomFormAnswer extends EditRecord
                     Section::make()
                         ->schema(function(CustomFormAnswer $record,$get){
                             $formConfiguration = $record->customForm->getFormConfiguration();
-                            $isCreating = empty($record->customFieldAnswers);
+                            $isCreating = $record->customFieldAnswers->count() ==0;
                             $viewMode = $isCreating? $formConfiguration::displayCreateMode() : $formConfiguration::displayEditMode();
-
 
                             $hasVariations = $record->customForm->getFormConfiguration()::hasVariations();
                             $variation = null;

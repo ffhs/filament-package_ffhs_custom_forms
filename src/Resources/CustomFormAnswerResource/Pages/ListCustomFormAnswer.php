@@ -2,13 +2,13 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormAnswerResource\Pages;
 
-use Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormAnsweResource;
+use Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormAnswerResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 
 class ListCustomFormAnswer extends ListRecords
 {
-    protected static string $resource = CustomFormAnsweResource::class;
+    protected static string $resource = CustomFormAnswerResource::class;
 
     protected function getHeaderActions(): array
     {
