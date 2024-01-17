@@ -49,6 +49,7 @@ class SectionType extends CustomLayoutType
                 ->integer(),
             Toggle::make("show_title")
                 ->label("Titel Anzeigen") //ToDo Translate
+                ->columnSpan(2)
                 ->columnStart(1),
             Toggle::make("aside")
                 ->label("Seitlich Anzeigen") //ToDo Translate

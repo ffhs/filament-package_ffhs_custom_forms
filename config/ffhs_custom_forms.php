@@ -31,5 +31,7 @@ return [
 
     'view_modes' => [
 
-    ]
+    ],
+
+    'default_column_count' => 8
 ];

@@ -29,6 +29,7 @@ use Filament\Support\Colors\Color;
 use Filament\Support\Enums\MaxWidth;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Collection;
 
 class CustomFormEditForm
 {
@@ -499,14 +500,14 @@ class CustomFormEditForm
         return $customfield;
     }
 
-    private static function createCustomField(array $itemData,CustomForm $customForm):CustomField{
+    private static function createCustomField(array $itemData,CustomForm $customForm): void {
         $customField = new CustomField();
         $customField->identify_key = uniqid();
-        return self::updateCustomField($customField, $itemData,$customForm);
+        self::updateCustomField($customField, $itemData, $customForm);
     }
 
 
-    private static function existingRecordFromArrayData( \Illuminate\Support\Collection &$customFieldsOld, array $state,  array&$statedRecords){
+    private static function setArrayExistingRecordFromArrayData(Collection &$customFieldsOld, array $state,  array&$statedRecords): void {
         foreach ($state as $key => $fieldData){
             if(!empty($fieldData["id"])){
                 $record = $customFieldsOld->firstWhere("id", $fieldData["id"]);
@@ -514,7 +515,7 @@ class CustomFormEditForm
             }
 
             if(empty($fieldData["custom_fields"])) continue;
-            self::existingRecordFromArrayData($customFieldsOld, $fieldData["custom_fields"], $statedRecords);
+            self::setArrayExistingRecordFromArrayData($customFieldsOld, $fieldData["custom_fields"], $statedRecords);
         }
     }
 
@@ -526,7 +527,7 @@ class CustomFormEditForm
 
         $existingRecords = $customForm->customFields;
         $statedRecords = [];
-        self::existingRecordFromArrayData($customForm->customFields, $state,$statedRecords);
+        self::setArrayExistingRecordFromArrayData($customForm->customFields, $state,$statedRecords);
 
         //ToDo Modify CustomField in CustomField
 
@@ -564,6 +565,10 @@ class CustomFormEditForm
             //For the Layouts
             if(!empty($itemData["custom_fields"])){
                 $itemOrder = self::saveCustomFieldFromData($itemOrder, $itemData["custom_fields"], $customForm,$relationship,$existingRecords);
+                unset($itemData["custom_fields"]);
+                $itemData["layout_end_position"] = $itemOrder-1;
+            }
+            else if(CustomFieldType::getTypeFromName($itemData["type"]) instanceof CustomLayoutType){
                 unset($itemData["custom_fields"]);
                 $itemData["layout_end_position"] = $itemOrder-1;
             }
