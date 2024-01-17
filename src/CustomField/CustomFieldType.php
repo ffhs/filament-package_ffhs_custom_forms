@@ -44,33 +44,36 @@ abstract class CustomFieldType
     public function getFormComponent(CustomFieldVariation $record, string $viewMode = "default", array $parameter = []): Component { //ToDo Remove Parameters?
         $viewMods = $this->getViewModes($record->customField->customForm->getFormConfiguration());
         //FieldTypeView.php
-        if(is_null($viewMods[$viewMode])) return ($viewMods["default"])::getFormComponent($this,$record,$parameter);
+        if(empty($viewMods[$viewMode])) return ($viewMods["default"])::getFormComponent($this,$record,$parameter);
         return ($viewMods[$viewMode])::getFormComponent($this,$record,$parameter);
     }
     public function getInfolistComponent(CustomFieldAnswer $record,string $viewMode = "default", array $parameter = []): \Filament\Infolists\Components\Component{
         $viewMods = $this->getViewModes($record->customFieldVariation->customField->customForm->getFormConfiguration());
         //FieldTypeView.php
-        if(is_null($viewMods[$viewMode])) return ($viewMods["default"])::getFormComponent($this,$record,$parameter);
+        if(empty($viewMods[$viewMode])) return ($viewMods["default"])::getFormComponent($this,$record,$parameter);
         return ($viewMods[$viewMode])::getFormComponent($this,$record,$parameter);
     }
 
     public abstract function viewModes():array;
 
     public function getViewModes(?string $dynamicFormConfiguration = null):array {
-        if(is_null($dynamicFormConfiguration)) return $this->viewModes();
         $viewMods = $this->viewModes();
 
         //Config Overwrite
         $overWrittenLevelOne = $this->overwriteViewModes();
-        foreach (array_keys($overWrittenLevelOne) as $viewMode) $viewMods[$viewMode] = $overWrittenLevelOne[$viewMode];
+        if(!empty($overWrittenLevelOne) && !empty($overWrittenLevelOne[self::class])){
+            foreach($overWrittenLevelOne[$this::class] as $key => $value) $viewMods[$key] = $value;
+        }
+
+        if(is_null($dynamicFormConfiguration)) return $this->viewModes();
 
         // Form Overwritten
         $overWrittenLevelTwo = $dynamicFormConfiguration::overwriteViewModes();
-        foreach (array_keys($overWrittenLevelTwo) as $viewMode) $viewMods[$viewMode] = $overWrittenLevelOne[$viewMode];
-
+        if(!empty($overWrittenLevelTwo) && !empty($overWrittenLevelTwo[$this::class])){
+            foreach($overWrittenLevelTwo[$this::class] as $key => $value)$viewMods[$key] = $value;
+        }
 
         return $viewMods;
-
     }
 
     public function overwriteViewModes():array{
