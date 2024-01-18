@@ -2,7 +2,7 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormAnswerResource\Pages;
 
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Form\CustomFormRenderForm;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Form\CustomFormRender;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldVariation;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
@@ -33,7 +33,7 @@ class EditCustomFormAnswer extends EditRecord
         $customFormAnswer = $this->form->getRecord();
 
         //Load datas from fields
-        $data =array_merge($data, CustomFormRenderForm::loadHelper($customFormAnswer));
+        $data =array_merge($data, CustomFormRender::loadHelper($customFormAnswer));
 
         if($customFormAnswer->customForm->getFormConfiguration()::hasVariations()){
                 $variation= $customFormAnswer->customFieldAnswers
@@ -53,7 +53,7 @@ class EditCustomFormAnswer extends EditRecord
             ->flatten(1)
             ->firstWhere("custom_field_variation_id","!=",null);
         if(is_null($variation))$variation = -1;
-        CustomFormRenderForm::saveHelper($customFormAnswer, $data, $variation);
+        CustomFormRender::saveHelper($customFormAnswer, $data, $variation);
 
         return [];
     }
@@ -84,15 +84,14 @@ class EditCustomFormAnswer extends EditRecord
                             $variation = null;
                             if($hasVariations) $variation =$record->customForm->variationModels()->firstWhere("id",$get("variation"));
 
-                            return CustomFormRenderForm::generateFormSchema($record->customForm, $viewMode,$variation);
+                            return CustomFormRender::generateFormSchema($record->customForm, $viewMode,$variation);
                         })
                         ->visible(function(CustomFormAnswer $record,$get){
                             $hasVariations = $record->customForm->getFormConfiguration()::hasVariations();
                             return  !$hasVariations || !is_null($get("variation"));
                         })
                         ->columnSpanFull(),
-                ])
-            ;
+                ]);
     }
 
 

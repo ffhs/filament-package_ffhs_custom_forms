@@ -7,6 +7,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormAnswerResource\Pages\CreateCustomFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormAnswerResource\Pages\EditCustomFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormAnswerResource\Pages\ListCustomFormAnswer;
+use Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormAnswerResource\Pages\ViewCustomFormAnswer;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -76,6 +77,7 @@ class CustomFormAnswerResource extends Resource
                 //
             ])
             ->actions([
+                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
@@ -98,6 +100,7 @@ class CustomFormAnswerResource extends Resource
             'index' => ListCustomFormAnswer::route('/'),
             'create' => CreateCustomFormAnswer::route('/create'),
             'edit' => EditCustomFormAnswer::route('/{record}/edit'),
+            'view'=> ViewCustomFormAnswer::route('/{record}')
         ];
     }
 }

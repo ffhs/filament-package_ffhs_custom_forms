@@ -28,9 +28,9 @@ class TextAreaTypeView implements FieldTypeView
 
     public static function getInfolistComponent(CustomFieldType $type, CustomFieldAnswer $record,
         array $parameter = []): Component {
-        return TextEntry::make($type::getIdentifyKey($record->customFieldVariation))
-            ->state($record->answer)
-            ->label($type::class::getLabelName($record->customFieldVariation))
-            ->inlineLabel();
+        return TextEntry::make($type::getIdentifyKey($record))
+            ->label($type::class::getLabelName($record->customFieldVariation). ":")
+            ->columnStart($type->getOptionParameter($record,"new_line_option"))
+            ->state($record->answer);
     }
 }

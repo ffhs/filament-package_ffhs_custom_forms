@@ -51,7 +51,7 @@ abstract class CustomFieldType
         $viewMods = $this->getViewModes($record->customFieldVariation->customField->customForm->getFormConfiguration());
         //FieldTypeView.php
         if(empty($viewMods[$viewMode])) return ($viewMods["default"])::getFormComponent($this,$record,$parameter);
-        return ($viewMods[$viewMode])::getFormComponent($this,$record,$parameter);
+        return ($viewMods[$viewMode])::getInfolistComponent($this,$record,$parameter);
     }
 
     public abstract function viewModes():array;
@@ -84,13 +84,16 @@ abstract class CustomFieldType
 
 
 
-    public static function getToolTips(CustomFieldVariation $record) :?string{
+    public static function getToolTips(CustomFieldVariation|CustomFieldAnswer $record) :?string{
+        if($record instanceof  CustomFieldAnswer) $record = $record->customFieldVariation;
         return  $record->customField->getInheritState()["tool_tip_" . App::currentLocale()];
     }
-    public static function getIdentifyKey(CustomFieldVariation $record) :string{
+    public static function getIdentifyKey(CustomFieldVariation|CustomFieldAnswer  $record) :string{
+        if($record instanceof  CustomFieldAnswer) $record = $record->customFieldVariation;
         return  $record->customField->getInheritState()["identify_key"];
     }
-    public static function getLabelName(CustomFieldVariation $record) :string{
+    public static function getLabelName(CustomFieldVariation|CustomFieldAnswer  $record) :string{
+        if($record instanceof  CustomFieldAnswer) $record = $record->customFieldVariation;
         return  $record->customField->getInheritState()["name_" . App::currentLocale()];
     }
 
@@ -174,7 +177,7 @@ abstract class CustomFieldType
 
 
     public function getOptionParameter(CustomFieldVariation|CustomFieldAnswer $record, string $option){
-        if($record instanceof CustomFieldAnswer) $record->customFieldVariation;
+        if($record instanceof CustomFieldAnswer) $record=$record->customFieldVariation;
         if(array_key_exists($option, $record->options)) return $record->options[$option];
         return $this->getExtraOptionFields()[$option];
     }

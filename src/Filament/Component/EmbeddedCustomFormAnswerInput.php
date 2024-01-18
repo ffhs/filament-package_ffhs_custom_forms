@@ -4,7 +4,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component;
 
 
 use Closure;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Form\CustomFormRenderForm;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Form\CustomFormRender;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Concerns\EntanglesStateWithSingularRelationship;
@@ -46,19 +46,19 @@ class EmbeddedCustomFormAnswerInput extends Component implements CanEntangleWith
         parent::setUp();
         $this->label("");
         $this->schema(fn(EmbeddedCustomFormAnswerInput $component)=>[
-            Group::make(fn($record)=> CustomFormRenderForm::generateFormSchema($record->customForm,$component->getViewMode(),$component->getVariation())),
+            Group::make(fn($record)=> CustomFormRender::generateFormSchema($record->customForm,$component->getViewMode(),$component->getVariation())),
         ]);
         $this->mutateRelationshipDataBeforeFillUsing(function(array $data, Model $record, EmbeddedCustomFormAnswerInput $component){
             /**@var CustomFormAnswer $answer*/
             $relationshipName = $component->getRelationshipName();
             $answer = $record->$relationshipName;
-            return CustomFormRenderForm::loadHelper($answer);
+            return CustomFormRender::loadHelper($answer);
         });
         $this->mutateRelationshipDataBeforeSaveUsing(function(array $data, Model $record, EmbeddedCustomFormAnswerInput $component){
             /**@var CustomFormAnswer $answer*/
             $relationshipName = $component->getRelationshipName();
             $answer = $record->$relationshipName;
-            CustomFormRenderForm::saveHelper($answer, $data,$component->getVariation());
+            CustomFormRender::saveHelper($answer, $data,$component->getVariation());
             return [];
         });
         $this->columns(1);

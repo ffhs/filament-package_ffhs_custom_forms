@@ -15,6 +15,7 @@ class TextTypeView implements FieldTypeView
     public static function getFormComponent(CustomFieldType $type, CustomFieldVariation $record,
         array $parameter = []): TextInput {
         return TextInput::make($type::getIdentifyKey($record))
+            ->columnStart($type->getOptionParameter($record,"new_line_option"))
             ->columnSpan($type->getOptionParameter($record,"column_span"))
             ->maxLength($type->getOptionParameter($record,"max_length"))
             ->minLength($type->getOptionParameter($record,"min_length"))
@@ -26,8 +27,10 @@ class TextTypeView implements FieldTypeView
     public static function getInfolistComponent(CustomFieldType $type, CustomFieldAnswer $record,
         array $parameter = []): TextEntry {
         return TextEntry::make($type::getIdentifyKey($record->customFieldVariation))
-            ->state(fn(CustomFieldAnswer $record) => $record->answer) //ToDo
-            ->label($type::class::getLabelName($record->customFieldVariation));
+            ->label($type::class::getLabelName($record->customFieldVariation). ":")
+            ->columnStart($type->getOptionParameter($record,"new_line_option"))
+            ->state($record->answer)
+            ->inlineLabel();
     }
 
 }

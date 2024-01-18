@@ -15,10 +15,9 @@ class CreateCustomFormAnswer extends CreateRecord
     public function form(Form $form): Form {
         return $form->schema([
             TextInput::make("short_title")
-                ->label("Name") //ToDo Translate
-                ->required(),
+                ->label("Name"), //ToDo Translate
             Select::make("custom_form_id")
-                ->label("Fomular") //ToDo Translate
+                ->label("Formular") //ToDo Translate
                 ->relationship("customForm","short_title")
                 ->required(),
         ]);
