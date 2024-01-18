@@ -53,14 +53,14 @@ class CustomFormRenderForm
             }
 
             /**@var CustomField $customField*/
-            /**@var null|CustomFieldAnswer $customFieldAnswer*/
             $customField = $customFieldsIdentify[$key];
             $fieldAnswererData = $customField->getType()->prepareSaveFieldData($fieldData);
             if(empty($fieldAnswererData)) {
-                if(empty($fieldAnswersIdentify[$key])) $customFieldAnswer->delete();
+                if(!empty($fieldAnswersIdentify[$key])) $fieldAnswersIdentify[$key]->delete();
                 continue;
             }
 
+            /**@var null|CustomFieldAnswer $customFieldAnswer*/
             if(empty( $fieldAnswersIdentify[$key]))
                 $customFieldAnswer= new CustomFieldAnswer([
                     "custom_field_variation_id" => $customField->getVariation($variation)->id,

@@ -12,6 +12,7 @@ use Illuminate\Support\Collection;
  * @property CustomForm $customForm
  * @property Collection $customFieldAnswers
  * @property int $id
+ * @property string|null $short_title
  */
 class CustomFormAnswer extends Model
 {

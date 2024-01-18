@@ -9,6 +9,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Concerns\EntanglesStateWithSingularRelationship;
 use Filament\Forms\Components\Contracts\CanEntangleWithSingularRelationships;
+use Filament\Forms\Components\Group;
 use Illuminate\Database\Eloquent\Model;
 
 class EmbeddedCustomFormAnswerInput extends Component implements CanEntangleWithSingularRelationships
@@ -21,7 +22,7 @@ class EmbeddedCustomFormAnswerInput extends Component implements CanEntangleWith
     protected string|Closure $viewMode;
     protected Model|int|Closure|null $variation;
 
-    public static function make(Closure|null $relationship,string|Closure $viewMode= "default", Model|int|Closure|null $variation=null): static
+    public static function make(Closure|string $relationship,string|Closure $viewMode= "default", Model|int|Closure|null $variation=null): static
     {
         $static = app(static::class, [
             'viewMode' => $viewMode,
@@ -33,9 +34,10 @@ class EmbeddedCustomFormAnswerInput extends Component implements CanEntangleWith
         return $static;
     }
 
-    final public function __construct(Closure|null $relationship, string|Closure $viewMode = "default",Model|int|Closure|null $variation=null)
+    final public function __construct(Closure|string $relationship, string|Closure $viewMode = "default",Model|int|Closure|null $variation=null)
     {
-        $this->viewMode=
+        $this->viewMode= $viewMode;
+        $this->variation = $variation;
         $relationship = $this->evaluate($relationship);
         if(!is_null($relationship)) $this->relationship($relationship);
     }
@@ -43,11 +45,20 @@ class EmbeddedCustomFormAnswerInput extends Component implements CanEntangleWith
     protected function setUp(): void {
         parent::setUp();
         $this->label("");
-        /**@var CustomFormAnswer $record*/
-        $record = $this->getRecord();
-        $this->schema(CustomFormRenderForm::generateFormSchema($record->customForm,$this->getViewMode(),$this->getVariation()));
-        $this->mutateRelationshipDataBeforeFillUsing(fn($data)=> CustomFormRenderForm::loadHelper($record));
-        $this->mutateRelationshipDataBeforeSaveUsing(fn($data)=> CustomFormRenderForm::saveHelper($record, $data,$this->getVariation()));
+        $this->schema(fn(EmbeddedCustomFormAnswerInput $component)=>[
+            Group::make(fn($record)=> CustomFormRenderForm::generateFormSchema($record->customForm,$component->getViewMode(),$component->getVariation()))
+        ]);
+        $this->mutateRelationshipDataBeforeFillUsing(function($data,EmbeddedCustomFormAnswerInput $component){
+            /**@var CustomFormAnswer $record*/
+            $record = $component->getRelationship()->getRelated();
+            return CustomFormRenderForm::loadHelper($record);
+        });
+        $this->mutateRelationshipDataBeforeSaveUsing(function($data,EmbeddedCustomFormAnswerInput $component){
+            /**@var CustomFormAnswer $record*/
+            $record = $component->getRelationship()->getRelated();
+            CustomFormRenderForm::saveHelper($record, $data,$component->getVariation());
+            return [];
+        });
         $this->columns(1);
 
 
