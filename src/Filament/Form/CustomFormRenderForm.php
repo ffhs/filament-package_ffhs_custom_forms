@@ -16,7 +16,6 @@ use Illuminate\Support\Collection;
 class CustomFormRenderForm
 {
     public static function generateFormSchema(CustomForm $form, string $viewMode, null|int|Model $variation = null):array{
-
         $customFields = CustomField::query()->where("custom_form_id",$form->id)->with("customFieldVariations.customField","customFieldVariations")->get();
 
         /** @var Collection $fieldVariations*/
@@ -33,61 +32,6 @@ class CustomFormRenderForm
         ];
     }
 
-    public static function saveHelper(CustomFormAnswer $fieldAnswerer, array $formData, Model|int $variation) :void{
-
-        $customFieldAnswers = $fieldAnswerer->customFieldAnswers;
-        $keys = $customFieldAnswers->map(fn(CustomFieldAnswer $answer)=> $answer->customFieldVariation->customField->getInheritState()["identify_key"])->toArray();
-        $customFieldAnswersArray = [];
-        $customFieldAnswers->each(function($model) use (&$customFieldAnswersArray) {$customFieldAnswersArray[] = $model;});
-        $fieldAnswersIdentify = array_combine($keys, $customFieldAnswersArray);
-
-        $customFields = $fieldAnswerer->customForm->customFields;
-        $keys = $customFields->map(fn(CustomField $customField)=> $customField->getInheritState()["identify_key"])->toArray();
-        $customFieldArray = [];
-        $customFields->each(function($model) use (&$customFieldArray) {$customFieldArray[] = $model;});
-        $customFieldsIdentify = array_combine($keys, $customFieldArray);
-
-        foreach($formData as $key => $fieldData){
-            if(empty($customFieldsIdentify[$key])){
-                continue;
-            }
-
-            /**@var CustomField $customField*/
-            $customField = $customFieldsIdentify[$key];
-            $fieldAnswererData = $customField->getType()->prepareSaveFieldData($fieldData);
-            if(empty($fieldAnswererData)) {
-                if(!empty($fieldAnswersIdentify[$key])) $fieldAnswersIdentify[$key]->delete();
-                continue;
-            }
-
-            /**@var null|CustomFieldAnswer $customFieldAnswer*/
-            if(empty( $fieldAnswersIdentify[$key]))
-                $customFieldAnswer= new CustomFieldAnswer([
-                    "custom_field_variation_id" => $customField->getVariation($variation)->id,
-                    "custom_form_answer_id" => $fieldAnswerer->id,
-                ]);
-            else $customFieldAnswer = $fieldAnswersIdentify[$key];
-
-            $customFieldAnswer->answer = $fieldAnswererData;
-            $customFieldAnswer->save();
-        }
-
-    }
-
-    public static function loadHelper(CustomFormAnswer $answerer):array {
-        $data = [];
-        foreach($answerer->customFieldAnswers as $fieldAnswer){
-            /**@var CustomFieldAnswer $fieldAnswer*/
-            $customField =$fieldAnswer
-                ->customFieldVariation
-                ->customField;
-            $fieldData = $customField
-                ->getType()
-                ->prepareLoadFieldData($fieldAnswer->answer);
-            $data[$customField->getInheritState()["identify_key"]] = $fieldData;
-        }
-            return $data;
-    }
 
     public static function renderForm(int $indexOffset, Collection $fieldVariations, string $viewMode, Collection $customFields) {
         $customFormSchema = [];
@@ -138,6 +82,64 @@ class CustomFormRenderForm
 
         }
         return [$customFormSchema,$index];
+    }
+
+
+    public static function saveHelper(CustomFormAnswer $fieldAnswerer, array $formData, Model|int $variation) :void{
+
+        $customFieldAnswers = $fieldAnswerer->customFieldAnswers;
+        $keys = $customFieldAnswers->map(fn(CustomFieldAnswer $answer)=> $answer->customFieldVariation->customField->getInheritState()["identify_key"])->toArray();
+        $customFieldAnswersArray = [];
+        $customFieldAnswers->each(function($model) use (&$customFieldAnswersArray) {$customFieldAnswersArray[] = $model;});
+        $fieldAnswersIdentify = array_combine($keys, $customFieldAnswersArray);
+
+        $customFields = $fieldAnswerer->customForm->customFields;
+        $keys = $customFields->map(fn(CustomField $customField)=> $customField->getInheritState()["identify_key"])->toArray();
+        $customFieldArray = [];
+        $customFields->each(function($model) use (&$customFieldArray) {$customFieldArray[] = $model;});
+        $customFieldsIdentify = array_combine($keys, $customFieldArray);
+
+        foreach($formData as $key => $fieldData){
+            if(empty($customFieldsIdentify[$key])){
+                continue;
+            }
+
+            /**@var CustomField $customField*/
+            $customField = $customFieldsIdentify[$key];
+            $fieldAnswererData = $customField->getType()->prepareSaveFieldData($fieldData);
+            if(empty($fieldAnswererData)) {
+                if(!empty($fieldAnswersIdentify[$key])) $fieldAnswersIdentify[$key]->delete();
+                continue;
+            }
+
+            /**@var null|CustomFieldAnswer $customFieldAnswer*/
+            if(empty( $fieldAnswersIdentify[$key]))
+                $customFieldAnswer= new CustomFieldAnswer([
+                    "custom_field_variation_id" => $customField->getVariation($variation)->id,
+                    "custom_form_answer_id" => $fieldAnswerer->id,
+                ]);
+            else $customFieldAnswer = $fieldAnswersIdentify[$key];
+
+            $customFieldAnswer->answer = $fieldAnswererData;
+            $customFieldAnswer->save();
+        }
+
+    }
+
+
+    public static function loadHelper(CustomFormAnswer $answerer):array {
+        $data = [];
+        foreach($answerer->customFieldAnswers as $fieldAnswer){
+            /**@var CustomFieldAnswer $fieldAnswer*/
+            $customField =$fieldAnswer
+                ->customFieldVariation
+                ->customField;
+            $fieldData = $customField
+                ->getType()
+                ->prepareLoadFieldData($fieldAnswer->answer);
+            $data[$customField->getInheritState()["identify_key"]] = $fieldData;
+        }
+        return $data;
     }
 
     //Todo Make InfoList Render

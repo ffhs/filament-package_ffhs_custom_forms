@@ -39,24 +39,26 @@ class EmbeddedCustomFormAnswerInput extends Component implements CanEntangleWith
         $this->viewMode= $viewMode;
         $this->variation = $variation;
         $relationship = $this->evaluate($relationship);
-        if(!is_null($relationship)) $this->relationship($relationship);
+        $this->relationship($relationship);
     }
 
     protected function setUp(): void {
         parent::setUp();
         $this->label("");
         $this->schema(fn(EmbeddedCustomFormAnswerInput $component)=>[
-            Group::make(fn($record)=> CustomFormRenderForm::generateFormSchema($record->customForm,$component->getViewMode(),$component->getVariation()))
+            Group::make(fn($record)=> CustomFormRenderForm::generateFormSchema($record->customForm,$component->getViewMode(),$component->getVariation())),
         ]);
-        $this->mutateRelationshipDataBeforeFillUsing(function($data,EmbeddedCustomFormAnswerInput $component){
-            /**@var CustomFormAnswer $record*/
-            $record = $component->getRelationship()->getRelated();
-            return CustomFormRenderForm::loadHelper($record);
+        $this->mutateRelationshipDataBeforeFillUsing(function(array $data, Model $record, EmbeddedCustomFormAnswerInput $component){
+            /**@var CustomFormAnswer $answer*/
+            $relationshipName = $component->getRelationshipName();
+            $answer = $record->$relationshipName;
+            return CustomFormRenderForm::loadHelper($answer);
         });
-        $this->mutateRelationshipDataBeforeSaveUsing(function($data,EmbeddedCustomFormAnswerInput $component){
-            /**@var CustomFormAnswer $record*/
-            $record = $component->getRelationship()->getRelated();
-            CustomFormRenderForm::saveHelper($record, $data,$component->getVariation());
+        $this->mutateRelationshipDataBeforeSaveUsing(function(array $data, Model $record, EmbeddedCustomFormAnswerInput $component){
+            /**@var CustomFormAnswer $answer*/
+            $relationshipName = $component->getRelationshipName();
+            $answer = $record->$relationshipName;
+            CustomFormRenderForm::saveHelper($answer, $data,$component->getVariation());
             return [];
         });
         $this->columns(1);
@@ -71,6 +73,18 @@ class EmbeddedCustomFormAnswerInput extends Component implements CanEntangleWith
     private function getVariation(): Model|int|null {
         if(is_null($this->variation)) return null;
         return $this->evaluate($this->variation);
+    }
+
+    public function autoViewMode(bool|Closure $autoViewMode = true):static {
+        if(!$this->evaluate($autoViewMode)) return $this;
+        $this->viewMode = function (Model $record, EmbeddedCustomFormAnswerInput $component){
+            /**@var CustomFormAnswer $answer*/
+            $relationshipName = $component->getRelationshipName();
+            $answer = $record->$relationshipName;
+            if($answer->customFieldAnswers->count() == 0) return $answer->customForm->getFormConfiguration()::displayCreateMode();
+            else return $answer->customForm->getFormConfiguration()::displayEditMode();
+        };
+        return $this;
     }
 
 
