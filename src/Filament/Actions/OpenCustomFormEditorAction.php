@@ -16,14 +16,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
 
 
-class EditCustomFormAction extends Action
+class OpenCustomFormEditorAction extends Action
 {
 
     protected Model|Closure|null $record = null;
     protected string|null $customFormRelationShip = null;
     protected Model|null $parentRecord = null;
-
-
 
 
     protected function setUp(): void
