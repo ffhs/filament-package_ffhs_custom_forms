@@ -7,48 +7,51 @@ use Ffhs\FilamentPackageFfhsCustomForms\Filament\Form\CustomFormEditForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\Group;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
+use Filament\Support\Enums\MaxWidth;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cache;
 
-/**
- * the name has to be the field of the id of the CustomForm
- */
+
 class EditCustomFormAction extends Action
 {
 
     protected Model|Closure|null $record = null;
-    protected int|null $customFormId = null;
+    protected string|null $customFormRelationShip = null;
+    protected Model|null $parentRecord = null;
 
-    //ToDo THE SHIT DOESNT WORK
+
+
 
     protected function setUp(): void
     {
+        $groupId = "customForm-" . uniqid();
         parent::setUp();
-        $this->form(CustomFormEditForm::formSchema());
+        $this->form(fn()=>[
+            Group::make()
+                ->relationship($this->getCustomFormRelationShip())
+                ->schema(CustomFormEditForm::formSchema())
+        ]);
 
-        $this->record(fn($get)=> CustomForm::cached(is_null($this->customFormId)?$get($this->name): $this->customFormId));
+
+        $this->record(function(){
+            $relationShip =$this->getCustomFormRelationShip();
+            return $this->parentRecord->$relationShip;
+        });
 
 
-        $this->modalWidth('7xl');
+        $this->modalWidth(MaxWidth::ScreenTwoExtraLarge);
 
         $this->closeModalByClickingAway(false);
         $this->slideOver();
 
-        $this->mountUsing(function (Form $form, $record,$livewire) {
-            $form->model($record);
-            $form->getRecord();
-
-            //Copied from Filament/EditAction class
-            if ($translatableContentDriver = $livewire->makeFilamentTranslatableContentDriver())
-                $data = $translatableContentDriver->getRecordAttributesToArray($record);
-            else
-                $data = $record->attributesToArray();
-
-            $form->fill($data);
-        });
-
+        $this->fillForm(fn(CustomForm $record, array $data)=>[$groupId=>$record->toArray()]);
 
         $this->action(function (): void {
+            //FromEdit Action
             $this->process(function (array $data, HasActions $livewire, Model $record) {
                 if ($translatableContentDriver = $livewire->makeFilamentTranslatableContentDriver()) {
                     $translatableContentDriver->updateRecord($record, $data);
@@ -61,10 +64,7 @@ class EditCustomFormAction extends Action
         });
     }
 
-    public function customFormId($recordId): static {
-        $this->customFormId = $recordId;
-        return $this;
-    }
+
 
     //Copied from Filament/EditAction class
     public function process(?Closure $default, array $parameters = []): mixed
@@ -90,6 +90,21 @@ class EditCustomFormAction extends Action
 
         return $this;
     }
+
+    public function getCustomFormRelationShip(): ?string {
+        return is_null($this->customFormRelationShip)? $this->name:$this->customFormRelationShip;
+    }
+
+    public function setCustomFormRelationShip(?string $customFormRelationShip): static {
+        $this->customFormRelationShip = $customFormRelationShip;
+        return $this;
+    }
+
+    public function parentRecord(Model $record): static{
+        $this->parentRecord = $record;
+        return $this;
+    }
+
 
 
 }

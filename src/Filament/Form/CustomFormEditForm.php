@@ -6,7 +6,6 @@ use Closure;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\HtmlComponents\HtmlBadge;
-use Ffhs\FilamentPackageFfhsCustomForms\FormConfiguration\DynamicFormConfiguration;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldVariation;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
@@ -53,13 +52,12 @@ class CustomFormEditForm
                             ->schema(fn(CustomForm $record)=>[
                                 self::getCustomFieldRepeater($record)
                                     ->saveRelationshipsUsing(
-                                        fn(Repeater $component, HasForms $livewire, ?array $state, CustomForm $record) =>
-                                        self::saveCustomFields($component,$record,$state)
+                                        fn(Repeater $component, HasForms $livewire, ?array $state, CustomForm $record) =>self::saveCustomFields($component,$record,$state)
                                     )
                                 ->rules([
-                                    function (Get $get): Closure {
-                                        return function (string $attribute, $value, Closure $fail) use ($get) {
-                                            $formIdentifier = $get("custom_form_identifier");
+                                    fn (CustomForm $record) =>
+                                         function (string $attribute, $value, Closure $fail) use($record)  {
+                                            $formIdentifier = $record->custom_form_identifier;
                                             $requiredGeneralFieldForm = GeneralFieldForm::query()
                                                 ->where("custom_form_identifier", $formIdentifier)
                                                 ->select("general_field_id")
@@ -88,9 +86,8 @@ class CustomFormEditForm
                                                 "Du must das generelle Feld \"" . $fieldName . "\" hinzufügen"; //ToDo Translate
 
                                             $fail($failureMessage);
-                                        };
-                                    },
-                                ]),//ToDo Chanche to multy array
+                                        }
+                                ]),//ToDo Chanche to multy array*/
                         ])
                     ]),
             ];
@@ -117,22 +114,39 @@ class CustomFormEditForm
                 self::getPullInLayoutAction(),
                 self::getEditCustomFormAction($record),
             ])
-            ->itemLabel(function($state){
-                $styleClassses = "text-sm font-medium ext-gray-950 dark:text-white  cursor-pointer truncate select-none ";
-                $openOnClick = 'wire:click="mountFormComponentAction(\'data.custom_fields.record-20.custom_fields\', \'edit\', JSON.parse(\'{\u0022item\u0022:\u0022record-21\u0022}\'))"';
+            ->itemLabel(function($state, Repeater $component){
+                $mainRecordName = array_search($state, $component->getState());
+                $styleClasses = "text-sm font-medium ext-gray-950 dark:text-white  cursor-pointer truncate select-none ";
+
+                $recordExtras = "";
+                $parentRepeater =$component;
+                while (!is_null($parentRepeater->getParentRepeater())){
+                    $newParentRepeater =  $parentRepeater->getParentRepeater();
+
+                    $recordName = collect($newParentRepeater->getState())
+                        ->filter(fn($customField) => !empty($customField["custom_fields"]))
+                        ->filter(fn($customField)=> $customField["custom_fields"] == $parentRepeater->getState())
+                        ->keys()
+                        ->first();
+
+                    $recordExtras = ".". $recordName .".custom_fields".$recordExtras;
+                    $parentRepeater = $newParentRepeater;
+                }
+                $openOnClick = 'wire:click="mountFormComponentAction(\'data.custom_fields'.$recordExtras .'\', \'edit\', JSON.parse(\'{\u0022item\u0022:\u0022'.$mainRecordName .'\u0022}\'))"';
                  if(!empty($state["general_field_id"])){
                      $badge = new HtmlBadge("Gen", Color::rgb("rgb(43, 164, 204)"));
                      $name = GeneralField::cached($state["general_field_id"])->name_de;
-                     return new HtmlString(  '</h4>' .$badge. '<h4 class="'.$styleClassses.'"'.$openOnClick.'>' .$name); //ToDo Translate
+                     return new HtmlString(  '</h4>' .$badge. '<h4 class="'.$styleClasses.'"'.$openOnClick.'>' .$name); //ToDo Translate
                  }
                  else if(self::getFieldTypeFromRawDate($state) instanceof CustomLayoutType){
-                    $size = sizeof($state["custom_fields"]);
-                    $h4 = '<h4 x-on:click.stop="isCollapsed = !isCollapsed" class="'.$styleClassses.'">';
+                    $size = empty($state["custom_fields"])?0:sizeof($state["custom_fields"]);
+                    $h4 = '<h4 x-on:click.stop="isCollapsed = !isCollapsed" class="'.$styleClasses.'">';
                     return new HtmlString(  "</h4>" .new HtmlBadge($size). $h4 .$state["name_de"]); //ToDo Translate
                  }
-                 return  new HtmlString( '</h4> <h4 class="'.$styleClassses.'"'.$openOnClick.'">'. $state["name_de"] ); //ToDo Translate
+                 return  new HtmlString( '</h4> <h4 class="'.$styleClasses.'"'.$openOnClick.'">'. $state["name_de"] ); //ToDo Translate
                }
             )
+
             ->schema([
                 Group::make()
                     ->schema(fn(Get $get)=>
@@ -220,9 +234,8 @@ class CustomFormEditForm
             Select::make("add_custom_field_type")
                 ->label("")
                 ->live()
-                ->options(function (Get $get){
-                    $formIdentifier = $get("custom_form_identifier");
-                    $formConfiguration = DynamicFormConfiguration::getFormConfigurationClass($formIdentifier);
+                ->options(function (CustomForm $record){
+                    $formConfiguration = $record->getFormConfiguration();
                     $types = $formConfiguration::formFieldTypes();
 
                     $keys = array_map(fn($type) => $type::getFieldIdentifier(),$types);

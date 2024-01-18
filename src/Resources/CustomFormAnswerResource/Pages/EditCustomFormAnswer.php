@@ -8,7 +8,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldVariation;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormAnswerResource;
 use Filament\Actions;
-use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
 use Filament\Resources\Pages\EditRecord;
@@ -74,7 +74,7 @@ class EditCustomFormAnswer extends EditRecord
                             return array_combine($keys,$value);
                         }),
 
-                    Section::make()
+                    Group::make()
                         ->schema(function(CustomFormAnswer $record,$get){
                             $formConfiguration = $record->customForm->getFormConfiguration();
                             $isCreating = $record->customFieldAnswers->count() ==0;
