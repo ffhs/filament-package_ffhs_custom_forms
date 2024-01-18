@@ -87,7 +87,7 @@ class CustomFormEditForm
 
                                             $fail($failureMessage);
                                         }
-                                ]),//ToDo Chanche to multy array*/
+                                ]),
                         ])
                     ]),
             ];
