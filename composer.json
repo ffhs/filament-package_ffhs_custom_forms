@@ -24,7 +24,10 @@
         "socialiteproviders/microsoft": "^4.2",
         "spatie/laravel-activitylog": "^4.7",
         "spatie/laravel-permission": "^5.10",
-        "stechstudio/filament-impersonate": "^3.5"
+        "stechstudio/filament-impersonate": "^3.5",
+        "davidhsianturi/blade-bootstrap-icons": "^1.4",
+        "codeat3/blade-carbon-icons": "^2.17.2",
+        "ryangjchandler/blade-tabler-icons": "^2.2.0"
     },
     "extra": {
         "laravel": {

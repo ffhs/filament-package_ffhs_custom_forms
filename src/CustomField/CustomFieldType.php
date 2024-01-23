@@ -6,6 +6,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField;
 
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldVariation;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Repeater;
 use Illuminate\Support\Facades\App;
@@ -40,66 +41,90 @@ abstract class CustomFieldType
      * Abstract and Instance Functions
      */
 
-    public function getFormComponent(CustomField $record, string $viewMode = "default", array $parameter = []): \Filament\Forms\Components\Component{
-        $viewMods = $this->getViewModes();
+
+
+    public static abstract function getFieldIdentifier():string;
+    public abstract function viewModes():array;
+    public abstract function  icon():string;
+
+
+    public function getFormComponent(CustomFieldVariation $record, string $viewMode = "default", array $parameter = []): Component { //ToDo Remove Parameters?
+        $viewMods = $this->getViewModes($record->customField->customForm->getFormConfiguration());
         //FieldTypeView.php
-        if(is_null($viewMods[$viewMode])) return ($viewMods["default"])::getFormComponent($this,$record,$parameter);
+        if(empty($viewMods[$viewMode])) return ($viewMods["default"])::getFormComponent($this,$record,$parameter);
         return ($viewMods[$viewMode])::getFormComponent($this,$record,$parameter);
     }
     public function getInfolistComponent(CustomFieldAnswer $record,string $viewMode = "default", array $parameter = []): \Filament\Infolists\Components\Component{
-        $viewMods = $this->getViewModes();
+        $viewMods = $this->getViewModes($record->customFieldVariation->customField->customForm->getFormConfiguration());
         //FieldTypeView.php
-        if(is_null($viewMods[$viewMode])) return ($viewMods["default"])::getFormComponent($this,$record,$parameter);
-        return ($viewMods[$viewMode])::getFormComponent($this,$record,$parameter);
+        if(empty($viewMods[$viewMode])) return ($viewMods["default"])::getFormComponent($this,$record,$parameter);
+        return ($viewMods[$viewMode])::getInfolistComponent($this,$record,$parameter);
     }
 
-    public abstract function viewModes():array;
 
     public function getViewModes(?string $dynamicFormConfiguration = null):array {
-        if(is_null($dynamicFormConfiguration)) return $this->viewModes();
         $viewMods = $this->viewModes();
 
         //Config Overwrite
         $overWrittenLevelOne = $this->overwriteViewModes();
-        foreach (array_keys($overWrittenLevelOne) as $viewMode) $viewMods[$viewMode] = $overWrittenLevelOne[$viewMode];
+        if(!empty($overWrittenLevelOne) && !empty($overWrittenLevelOne[self::class])){
+            foreach($overWrittenLevelOne[$this::class] as $key => $value) $viewMods[$key] = $value;
+        }
+
+        if(is_null($dynamicFormConfiguration)) return $this->viewModes();
 
         // Form Overwritten
-        if(!is_null($dynamicFormConfiguration)){
-            $overWrittenLevelTwo = ($dynamicFormConfiguration)->overwriteViewModes();
-            foreach (array_keys($overWrittenLevelTwo) as $viewMode) $viewMods[$viewMode] = $overWrittenLevelOne[$viewMode];
+        $overWrittenLevelTwo = $dynamicFormConfiguration::overwriteViewModes();
+        if(!empty($overWrittenLevelTwo) && !empty($overWrittenLevelTwo[$this::class])){
+            foreach($overWrittenLevelTwo[$this::class] as $key => $value)$viewMods[$key] = $value;
         }
 
         return $viewMods;
-
     }
 
     public function overwriteViewModes():array{
         $viewModes = config("ffhs_custom_forms.view_modes");
-        $overWritten = $viewModes[$this::class];
-        if(isEmpty($overWritten)) return [];
-        return $overWritten;
+        if(empty($viewModes[$this::class])) return [];
+        return $viewModes[$this::class];
     }
 
 
 
+    public static function getToolTips(CustomFieldVariation|CustomFieldAnswer $record) :?string{
+        if($record instanceof  CustomFieldAnswer) $record = $record->customFieldVariation;
+        return  $record->customField->getInheritState()["tool_tip_" . App::currentLocale()];
+    }
+    public static function getIdentifyKey(CustomFieldVariation|CustomFieldAnswer  $record) :string{
+        if($record instanceof  CustomFieldAnswer) $record = $record->customFieldVariation;
+        return  $record->customField->getInheritState()["identify_key"];
+    }
+    public static function getLabelName(CustomFieldVariation|CustomFieldAnswer  $record) :string{
+        if($record instanceof  CustomFieldAnswer) $record = $record->customFieldVariation;
+        return  $record->customField->getInheritState()["name_" . App::currentLocale()];
+    }
 
+
+    public static function prepareCloneOptions(array $templateOptions, bool $isInheritGeneral) :array{
+        return $templateOptions;
+    }
+
+
+    public function prepareSaveFieldData(mixed $data): ?array{
+        if(is_null($data)) return null;
+        return ["saved"=> $data];
+    }
+    public function prepareLoadFieldData(array $data): mixed{
+        if(empty($data["saved"])) return null;
+        return $data["saved"];
+    }
 
 
     public function getTranslatedName():string{
         return __("custom_forms.types." . self::fieldIdentifier());
     }
 
-    public static abstract function getFieldIdentifier():string;
-
-    public static function getToolTips(CustomField $record) {
-        return   $record->getInheritState()["tool_tip_" . App::currentLocale()];
-    }
-    public static function getLabelName(CustomField $record) {
-        return  $record->getInheritState()["short_title_" . App::currentLocale()];
-    }
 
     public function fieldIdentifier():string{return $this::getFieldIdentifier();}
-
 
 
     // Extra Options
@@ -136,11 +161,11 @@ abstract class CustomFieldType
     }
 
     public function prepareOptionDataBeforeFill(array $data):array{
-
          if(!array_key_exists("options",$data) || is_null($data["options"])) $data["options"] = [0=> $this->getExtraOptionFields()];
          else if(!array_key_exists(0,$data["options"]))$data["options"] = [0 => $data["options"]];
          return $data;
     }
+
     public function prepareOptionDataBeforeSave(?array $data):array{
         if(array_key_exists("options",$data) && !empty($data["options"]))
             $data["options"] = $data["options"][0];
@@ -150,17 +175,16 @@ abstract class CustomFieldType
     }
 
     public function prepareOptionDataBeforeCreate(array $data):array{
+        $data["identify_key"]= uniqid();
         return $this->prepareOptionDataBeforeSave($data);
     }
 
 
-    public static function prepareCloneOptions(array $templateOptions, bool $isInheritGeneral) :array{
-        return $templateOptions;
+    public function getOptionParameter(CustomFieldVariation|CustomFieldAnswer $record, string $option){
+        if($record instanceof CustomFieldAnswer) $record=$record->customFieldVariation;
+        if(array_key_exists($option, $record->options)) return $record->options[$option];
+        return $this->getExtraOptionFields()[$option];
     }
-
-
-
-
 
 
 }

@@ -62,8 +62,6 @@ abstract class DynamicFormConfiguration
         return $variationModel->is_hidden;
     }
 
-
-
     public final static function getFormConfigurationClass(string $custom_form_identifier):string {
         return collect(config("ffhs_custom_forms.forms"))->where(fn(string $class)=> $class::identifier() == $custom_form_identifier)->first();
     }

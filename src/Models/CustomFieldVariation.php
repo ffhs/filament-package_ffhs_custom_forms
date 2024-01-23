@@ -4,6 +4,8 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 /**
  * @property int $id
@@ -13,6 +15,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property array options
  *
  * @property CustomField customField
+ * @property string identify_key
  * @property mixed|null $variation
  *
  * @property int|null $variation_id
@@ -21,7 +24,6 @@ use Illuminate\Database\Eloquent\Model;
  */
 class CustomFieldVariation extends Model
 {
-    use HasFactory;
 
     protected $table = 'custom_field_variation';
 
@@ -37,7 +39,7 @@ class CustomFieldVariation extends Model
 
     protected $casts = [
         'required' => 'boolean',
-        'active' => 'boolean',
+        'is_active' => 'boolean',
         'options'=>'array'
     ];
 
@@ -46,11 +48,11 @@ class CustomFieldVariation extends Model
         return is_null($this->variation_id);
     }
 
-    public function variation(): \Illuminate\Database\Eloquent\Relations\MorphTo {
+    public function variation(): MorphTo {
         return $this->morphTo();
     }
 
-    public function customField(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function customField(): BelongsTo
     {
         return $this->belongsTo(CustomField::class);
     }

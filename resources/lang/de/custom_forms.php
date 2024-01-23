@@ -12,7 +12,8 @@ return [
         'forms' => 'Formulare',
         'group' => [
             'forms'=> 'Formulare'
-        ]
+        ],
+        'custom_form_answer'=> "Ausgefüllte Formulare",
     ],
 
     "fields" =>[
@@ -38,6 +39,7 @@ return [
             "number" => "Nummer",
             "select" => "Auswahl",
             "checkbox" => "Kontrollkästchen",
+            "section"=>"Sektion",
             "radio" => "Radio",
             "date" => "Datum",
             "date-time" => "Datum und Zeit",

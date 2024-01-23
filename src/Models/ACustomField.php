@@ -27,16 +27,20 @@ abstract class ACustomField extends Model
 
     protected $table = "custom_fields";
 
-    public function getTypeName():string{
+    public function getTypeName():?string{
         if($this->is_general_field) $typeName = $this->type;
         else if(!$this->isInheritFromGeneralField()) $typeName = $this->type;
         else $typeName = $this->generalField->type;
         return  $typeName;
     }
-    public function getTypeClass():string{
-        return CustomFieldType::getTypeClassFromName($this->getTypeName());
+    public function getTypeClass():?string{
+        $typeName = $this->getTypeName();
+        if(is_null($typeName)) return null;
+        return CustomFieldType::getTypeClassFromName($typeName);
     }
-    public function getType():CustomFieldType{
+    public function getType():?CustomFieldType{
+        $typeName = $this->getTypeName();
+        if(is_null($typeName)) return null;
         $typeClass = CustomFieldType::getTypeClassFromName($this->getTypeName());
         return new $typeClass();
     }

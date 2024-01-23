@@ -14,17 +14,23 @@ class TextTypeView implements FieldTypeView
 
     public static function getFormComponent(CustomFieldType $type, CustomFieldVariation $record,
         array $parameter = []): TextInput {
-        return TextInput::make($record->customField->identify_key)
-            ->maxLength($record->options["max_size"])
-            ->helperText($type::class::getToolTips($record))
-            ->label($type::class::getLabelName($record));
+        return TextInput::make($type::getIdentifyKey($record))
+            ->columnStart($type->getOptionParameter($record,"new_line_option"))
+            ->columnSpan($type->getOptionParameter($record,"column_span"))
+            ->maxLength($type->getOptionParameter($record,"max_length"))
+            ->minLength($type->getOptionParameter($record,"min_length"))
+            ->helperText($type::getToolTips($record))
+            ->label($type::getLabelName($record))
+            ->required($record->required);
     }
 
     public static function getInfolistComponent(CustomFieldType $type, CustomFieldAnswer $record,
         array $parameter = []): TextEntry {
-        return TextEntry::make($record->customField->identify_key)
-            ->state(fn(CustomFieldAnswer $record) => $record->answer)
-            ->label($type::class::getLabelName($record->customField));
+        return TextEntry::make($type::getIdentifyKey($record->customFieldVariation))
+            ->label($type::class::getLabelName($record->customFieldVariation). ":")
+            ->columnStart($type->getOptionParameter($record,"new_line_option"))
+            ->state($record->answer)
+            ->inlineLabel();
     }
 
 }

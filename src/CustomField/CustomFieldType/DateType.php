@@ -4,25 +4,34 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Views\DateTypeView;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\Traids\HasCustomFormPackageTranslation;
 use Filament\Forms\Components\TextInput;
 
 class DateType extends CustomFieldType
 {
     use HasCustomFormPackageTranslation;
-    public static function getFieldIdentifier(): string {return "date";}
+    use \Ffhs\FilamentPackageFfhsCustomForms\CustomField\Traids\HasBasicSettings;
 
+    public static function getFieldIdentifier(): string {return "date";}
 
     public function getExtraOptionSchema(): ?array {
         return [
+            $this->getColumnSpanOption(),
             TextInput::make("format")
-                ->placeholder("Y-m-d")
-                ->columnSpanFull()
+                ->label("Format") //ToDo Translate
+                ->placeholder("Y-m-d"),
+            $this->getNewLineOption(),
+            $this->getInLineLabelOption()
 
         ];
     }
+
     public function getExtraOptionFields(): array {
         return [
             'format'=>null,
+            'column_span' => 3,
+            'in_line_label' => false,
+            'new_line_option' => true,
         ];
     }
 
@@ -32,4 +41,7 @@ class DateType extends CustomFieldType
         ];
     }
 
+    public function icon(): string {
+        return  "bi-calendar3";
+    }
 }

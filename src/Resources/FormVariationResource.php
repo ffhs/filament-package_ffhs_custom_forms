@@ -42,7 +42,7 @@ class FormVariationResource extends Resource
             return __('filament-package_ffhs_custom_forms::custom_forms.navigation.forms');
         }
 
-    /*ToDo
+    /*ToDo Translate
       public static function getTitleCasePluralModelLabel(): string {
         return __('filament-package_ffhs_custom_forms::custom_forms.navigation.general_fields');
          }
@@ -68,6 +68,7 @@ class FormVariationResource extends Resource
                             ->relationship("customForm", "short_title", fn(Builder$query)=>
                                 $query ->whereIn("custom_form_identifier",
                                     collect(config("ffhs_custom_forms.forms"))
+                                        ->filter(fn($configClass)=> $configClass::hasVariations())
                                         ->filter(fn($configClass)=> $configClass::variationModel() == FormVariation::class)
                                         ->map(fn($configClass)=> $configClass::identifier())
                                 )

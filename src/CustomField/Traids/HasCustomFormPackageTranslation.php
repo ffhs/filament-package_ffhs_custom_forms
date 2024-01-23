@@ -1,6 +1,6 @@
 <?php
 
-namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType;
+namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\Traids;
 
 trait HasCustomFormPackageTranslation
 {

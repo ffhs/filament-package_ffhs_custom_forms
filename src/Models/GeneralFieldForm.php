@@ -2,6 +2,7 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -25,6 +26,13 @@ class GeneralFieldForm extends Model
         return $this->belongsTo(GeneralField::class);
     }
 
+    public static function getGeneralFieldQuery(string $identifier): Builder {
+        return GeneralField::query()->whereIn("id",
+            GeneralFieldForm::query()
+                ->select("general_field_id")
+                ->where("custom_form_identifier",$identifier)
+        );
+    }
 
 
 }

@@ -2,6 +2,7 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Models;
 
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -16,8 +17,10 @@ use Illuminate\Support\Facades\Cache;
  * @property int  custom_form_id
  * @property bool $has_variations
  * @property int $form_position
+ * @property int|null $layout_end_position
  *
  * @property Collection|null customFieldVariations
+ * @property string|null identify_key
  *
  * @property CustomForm customForm
  * @property GeneralField|null $generalField
@@ -39,6 +42,8 @@ class CustomField extends ACustomField
         'custom_form_id',
         'has_variations',
         'form_position',
+        'layout_end_position',
+        'identify_key',
     ];
 
 
@@ -60,14 +65,13 @@ class CustomField extends ACustomField
     public function customFieldVariations (): HasMany {
         return $this->hasMany(CustomFieldVariation::class);
     }
-    public function templateVariation ():Model|null {
+    public function templateVariation ():CustomFieldVariation|null {
         return $this->customFieldVariations->filter(fn($customFieldVariation)=> $customFieldVariation->isTemplate())->first();
     }
 
     private function getInheritStateFromArrays($thisValues, $generalFieldArray){
-        $output =  $thisValues;
-        if(!is_null($generalFieldArray))
-            $output= array_replace($output, array_filter($generalFieldArray, fn($value) => !is_null($value)));
+        if(is_null($generalFieldArray)) return $thisValues;
+        $output= array_replace($thisValues, array_filter($generalFieldArray, fn($value) => !is_null($value)));
         $output["is_general_field"] = false;
         unset($output["id"]);
         unset($output["general_field_id"]);
@@ -112,11 +116,12 @@ class CustomField extends ACustomField
     }
 
 
-    public function getVariation($relatedObject ): Model|null{
+    public function getVariation(Model|int $relatedObject ): CustomFieldVariation|null{
         if(!$this->has_variations) return $this->templateVariation();
-        $variation =  $this->customFieldVariations()->get()->filter(fn($fieldVariation)=>$fieldVariation->variation_id == $relatedObject->id);
+        if($relatedObject instanceof  Model) $relatedObject = $relatedObject->id;
+        $variation =  $this->customFieldVariations->firstWhere(fn(CustomFieldVariation $fieldVariation)=>$fieldVariation->variation_id == $relatedObject);
         if(is_null($variation)) return $this->templateVariation();
-        else return $relatedObject;
+        else return $variation;
     }
 
 
@@ -127,4 +132,43 @@ class CustomField extends ACustomField
     public static function cached(mixed $custom_field_id): ?CustomField{
         return Cache::remember("custom_field-" .$custom_field_id, 1, fn()=>CustomField::query()->firstWhere("id", $custom_field_id));
     }
+
+    public static function cachedAllInForm(int $formId): Collection{
+        return Cache::remember("custom_field-form_id" .$formId, 1, fn()=>CustomField::query()->where("custom_form_id", $formId)->get());
+    }
+
+
+    public function customFieldInLayout(): HasMany {
+
+        if(!($this->getType() instanceof CustomLayoutType))
+            return $this->hasMany(CustomField::class, "custom_form_id","custom_form_id")
+                ->where("id",null);
+
+
+        $subQueryAlLayouts =
+            $this->hasMany(CustomField::class, "custom_form_id","custom_form_id")
+            ->select('form_position','layout_end_position')
+            ->where("form_position",">", $this->form_position)
+            ->whereIn("type", collect(config("ffhs_custom_forms.custom_field_types"))
+                ->filter(fn(string $type) => (new $type()) instanceof CustomLayoutType)
+                ->map(fn(string $type) => $type::getFieldIdentifier())
+            );
+
+
+        $query = $this->hasMany(CustomField::class, "custom_form_id","custom_form_id")
+            ->where("form_position",">", $this->form_position)
+            ->where("form_position","<=", $this->layout_end_position)
+            ->whereNotIn("id",
+                $this->hasMany(CustomField::class, "custom_form_id","custom_form_id")
+                    ->select("id")
+                    ->rightJoinSub($subQueryAlLayouts, 'sub', function ($join) {
+                        $join->on('custom_fields.form_position', '>', 'sub.form_position')
+                            ->on('custom_fields.form_position', '<=', 'sub.layout_end_position');
+                    })
+            );
+
+        return $query;
+    }
+
+
 }
