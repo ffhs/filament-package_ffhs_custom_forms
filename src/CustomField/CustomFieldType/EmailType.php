@@ -21,4 +21,8 @@ class EmailType extends CustomFieldType
             "default"=> EmailTypeView::class,
         ];
     }
+
+    public function icon(): string {
+        return  "carbon-email";
+    }
 }

@@ -60,4 +60,7 @@ class SectionType extends CustomLayoutType
     }
 
 
+    public function icon(): string {
+       return  "tabler-section";
+    }
 }

@@ -52,4 +52,8 @@ class TextType extends CustomFieldType
           'default' => TextTypeView::class
         ];
     }
+
+    public function icon(): string {
+       return "bi-input-cursor-text";
+    }
 }

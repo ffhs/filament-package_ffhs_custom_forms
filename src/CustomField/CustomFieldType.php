@@ -41,6 +41,13 @@ abstract class CustomFieldType
      * Abstract and Instance Functions
      */
 
+
+
+    public static abstract function getFieldIdentifier():string;
+    public abstract function viewModes():array;
+    public abstract function  icon():string;
+
+
     public function getFormComponent(CustomFieldVariation $record, string $viewMode = "default", array $parameter = []): Component { //ToDo Remove Parameters?
         $viewMods = $this->getViewModes($record->customField->customForm->getFormConfiguration());
         //FieldTypeView.php
@@ -54,7 +61,6 @@ abstract class CustomFieldType
         return ($viewMods[$viewMode])::getInfolistComponent($this,$record,$parameter);
     }
 
-    public abstract function viewModes():array;
 
     public function getViewModes(?string $dynamicFormConfiguration = null):array {
         $viewMods = $this->viewModes();
@@ -117,10 +123,8 @@ abstract class CustomFieldType
         return __("custom_forms.types." . self::fieldIdentifier());
     }
 
-    public static abstract function getFieldIdentifier():string;
 
     public function fieldIdentifier():string{return $this::getFieldIdentifier();}
-
 
 
     // Extra Options
@@ -157,11 +161,11 @@ abstract class CustomFieldType
     }
 
     public function prepareOptionDataBeforeFill(array $data):array{
-
          if(!array_key_exists("options",$data) || is_null($data["options"])) $data["options"] = [0=> $this->getExtraOptionFields()];
          else if(!array_key_exists(0,$data["options"]))$data["options"] = [0 => $data["options"]];
          return $data;
     }
+
     public function prepareOptionDataBeforeSave(?array $data):array{
         if(array_key_exists("options",$data) && !empty($data["options"]))
             $data["options"] = $data["options"][0];

@@ -51,4 +51,8 @@ class NumberType extends CustomFieldType
           'default' => NumberTypeView::class
         ];
     }
+
+    public function icon(): string {
+        return  "tabler-number";
+    }
 }

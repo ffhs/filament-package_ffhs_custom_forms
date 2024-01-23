@@ -3,12 +3,10 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormAnswerResource\Pages;
 
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\EmbeddedCustomFormAnswerView;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Form\CustomFormRender;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormAnswerResource;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ViewRecord;
-use Illuminate\Database\Eloquent\Model;
 
 class ViewCustomFormAnswer extends ViewRecord
 {
@@ -19,8 +17,9 @@ class ViewCustomFormAnswer extends ViewRecord
     public function infolist(Infolist $infolist): Infolist {
         return $infolist
             ->schema([
-                EmbeddedCustomFormAnswerView::make(fn(CustomFormAnswer $record)=>$record)->autoViewMode()
-                //fn(CustomFormAnswer$record) => CustomFormRender::generateInfoListSchema($record, $record->customForm->getFormConfiguration()::displayViewMode())
+                EmbeddedCustomFormAnswerView::make(fn(CustomFormAnswer $record)=>$record)
+                    ->autoViewMode()
+                    ->columnSpanFull()
         ]);
     }
 

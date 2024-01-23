@@ -33,4 +33,8 @@ class CheckboxType extends CustomFieldType
             $this->getInLineLabelOption(),
         ];
     }
+
+    public function icon(): string {
+        return  "bi-check-square";
+    }
 }

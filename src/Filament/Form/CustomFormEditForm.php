@@ -30,6 +30,7 @@ use Filament\Support\Enums\MaxWidth;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\HtmlString;
 
 class CustomFormEditForm
@@ -115,35 +116,54 @@ class CustomFormEditForm
                 self::getEditCustomFormAction($record),
             ])
             ->itemLabel(function($state, Repeater $component){
-                $mainRecordName = array_search($state, $component->getState());
-                $styleClasses = "text-sm font-medium ext-gray-950 dark:text-white  cursor-pointer truncate select-none ";
-
-                $recordExtras = "";
-                $parentRepeater =$component;
-                while (!is_null($parentRepeater->getParentRepeater())){
-                    $newParentRepeater =  $parentRepeater->getParentRepeater();
-
-                    $recordName = collect($newParentRepeater->getState())
-                        ->filter(fn($customField) => !empty($customField["custom_fields"]))
-                        ->filter(fn($customField)=> $customField["custom_fields"] == $parentRepeater->getState())
-                        ->keys()
-                        ->first();
-
-                    $recordExtras = ".". $recordName .".custom_fields".$recordExtras;
-                    $parentRepeater = $newParentRepeater;
+                $styleClasses = "text-sm font-medium ext-gray-950 dark:text-white truncate select-none";
+                $type = self::getFieldTypeFromRawDate($state);
+                //
+                $icon = Blade::render('<x-'. $type->icon() .' class="h-4 w-4 "/>',[]) ;
+                $name = "";
+                if(!empty($state["general_field_id"])){
+                    $badge = new HtmlBadge("Gen", Color::rgb("rgb(43, 164, 204)"));
+                    $name = GeneralField::cached($state["general_field_id"])->name_de; //ToDo Translate
+                    $html = $badge;
                 }
-                $openOnClick = 'wire:click="mountFormComponentAction(\'data.custom_fields'.$recordExtras .'\', \'edit\', JSON.parse(\'{\u0022item\u0022:\u0022'.$mainRecordName .'\u0022}\'))"';
-                 if(!empty($state["general_field_id"])){
-                     $badge = new HtmlBadge("Gen", Color::rgb("rgb(43, 164, 204)"));
-                     $name = GeneralField::cached($state["general_field_id"])->name_de;
-                     return new HtmlString(  '</h4>' .$badge. '<h4 class="'.$styleClasses.'"'.$openOnClick.'>' .$name); //ToDo Translate
-                 }
-                 else if(self::getFieldTypeFromRawDate($state) instanceof CustomLayoutType){
+                else {
+                    $name = $state["name_de"]; //ToDo Translate
+                    $html = " ";
+                }
+
+                if($type instanceof CustomLayoutType){
                     $size = empty($state["custom_fields"])?0:sizeof($state["custom_fields"]);
-                    $h4 = '<h4 x-on:click.stop="isCollapsed = !isCollapsed" class="'.$styleClasses.'">';
-                    return new HtmlString(  "</h4>" .new HtmlBadge($size). $h4 .$state["name_de"]); //ToDo Translate
-                 }
-                 return  new HtmlString( '</h4> <h4 class="'.$styleClasses.'"'.$openOnClick.'">'. $state["name_de"] ); //ToDo Translate
+                    $badge = new HtmlBadge($size);
+                    $html = $badge;
+                    $span = '<span x-on:click.stop="isCollapsed = !isCollapsed" class="cursor-pointer flex" >';
+                   // return new HtmlString(  "</h4>" .new HtmlBadge($size). $icon .$h4 .$state["name_de"]); //ToDo Translate
+                }
+                else {
+                   /* $recordExtras = "";
+                    $parentRepeater =$component;
+                    $mainRecordName = array_search($state, $component->getState());
+                    while (!is_null($parentRepeater->getParentRepeater())){
+                        $newParentRepeater =  $parentRepeater->getParentRepeater();
+
+                        $recordName = collect($newParentRepeater->getState())
+                            ->filter(fn($customField) => !empty($customField["custom_fields"]))
+                            ->filter(fn($customField)=> $customField["custom_fields"] == $parentRepeater->getState())
+                            ->keys()
+                            ->first();
+
+                        $recordExtras = ".". $recordName .".custom_fields".$recordExtras;
+                        $parentRepeater = $newParentRepeater;
+                    }
+                    $openOnClick = 'wire:click="mountFormComponentAction(\'data.custom_fields'.$recordExtras .'\', \'edit\', JSON.parse(\'{\u0022item\u0022:\u0022'.$mainRecordName .'\u0022}\'))"'; ToDo
+
+                    $span = '<span'. $openOnClick.'  class="cursor-pointer flex">';*/
+                    $span = '<span  class="cursor-pointer flex">';
+
+                }
+                $h4 = '<h4 class="'.$styleClasses.'">';
+                $html= "</h4>". $span. '<span class="px-1.5">'.$html  . '</span>'.  '<span class="px-1.5">' .$icon . '</span>'. $h4 . $name . " </h4></span><h4>";
+
+                 return  new HtmlString($html);
                }
             )
 

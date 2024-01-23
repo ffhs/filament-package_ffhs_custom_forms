@@ -41,4 +41,7 @@ class DateType extends CustomFieldType
         ];
     }
 
+    public function icon(): string {
+        return  "bi-calendar3";
+    }
 }

@@ -57,4 +57,7 @@ class TextAreaType extends CustomFieldType
     }
 
 
+    public function icon(): string {
+        return  "bi-textarea-t";
+    }
 }

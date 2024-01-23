@@ -43,4 +43,7 @@ class DateTimeType extends CustomFieldType
         ];
     }
 
+    public function icon(): string {
+        return  "bi-clock";
+    }
 }
