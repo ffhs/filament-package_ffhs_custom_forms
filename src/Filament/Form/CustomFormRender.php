@@ -17,17 +17,12 @@ use Illuminate\Support\Collection;
 
 class CustomFormRender
 {
+
     public static function generateFormSchema(CustomForm $form, string $viewMode, null|int|Model $variation = null):array{
-        $customFields = CustomField::query()->where("custom_form_id",$form->id)->with("customFieldVariations.customField","customFieldVariations")->get();
+        $customFields = CustomField::query()->where("custom_form_id",)->with("customFieldVariations.customField","customFieldVariations")->get();
 
-        /** @var Collection $fieldVariations*/
-        if(is_null($variation))
-            $fieldVariations = $customFields->map(fn(CustomField $field) => $field->templateVariation());
-        else
-            $fieldVariations = $customFields->map(fn(CustomField $field) => $field->getVariation($variation));
-
-        $render= fn(CustomFieldType $type, CustomFieldVariation $variation, array $parameter)=> $type->getFormComponent($variation,$viewMode, $parameter);
-
+        $fieldVariations = self::getFormFieldVariations($customFields, $variation);
+        $render= self::getFormRender($viewMode);
         $customFormSchema = self::render(0,$fieldVariations,$customFields,$render)[0];
 
         return  [
@@ -35,6 +30,71 @@ class CustomFormRender
         ];
     }
 
+    public static function getFormRender($viewMode) {
+        return function(CustomFieldType $type, CustomFieldVariation $variation, array $parameter) use ($viewMode) {
+            return $type->getFormComponent($variation,$viewMode, $parameter);
+        };
+    }
+
+    public static function getFormFieldVariations(Collection $customFields,null|int|Model $variation = null) :Collection{
+        if(is_null($variation))
+            $fieldVariations = $customFields->map(fn(CustomField $field) => $field->templateVariation());
+        else
+            $fieldVariations = $customFields->map(fn(CustomField $field) => $field->getVariation($variation));
+        return $fieldVariations;
+    }
+
+
+    public static function generateInfoListSchema(CustomFormAnswer $formAnswer, string $viewMode):array {
+        $customFields = CustomField::query()->where("custom_form_id",$formAnswer->customForm->id)->with("customFieldVariations.customField","customFieldVariations")->get();
+        $fieldVariations = self::getInfoListVariations($formAnswer, $customFields);
+
+        $fieldAnswers = $formAnswer->customFieldAnswers;
+
+        $render= self::getInfolistRender($viewMode, $fieldAnswers);
+        $customViewSchema = self::render(0,$fieldVariations,$customFields,$render)[0];
+
+        return  [
+            \Filament\Infolists\Components\Group::make($customViewSchema)->columns(config("ffhs_custom_forms.default_column_count")),
+        ];
+    }
+
+
+    private static function getInfolistRender(string $viewMode, Collection $fieldAnswers): Closure {
+        return function (CustomFieldType $type, CustomFieldVariation $variation, array $parameter) use (
+            $viewMode, $fieldAnswers
+        ) {
+            $answer = $fieldAnswers->firstWhere("custom_field_variation_id", $variation->id);
+            if (is_null($answer)) {
+                $answer = new CustomFieldAnswer();
+                $answer->answer = null;
+                $answer->custom_field_variation_id = $variation->id;
+            }
+            return $type->getInfolistComponent($answer, $viewMode, $parameter);
+        };
+    }
+
+
+    private static function getInfoListVariations(CustomFormAnswer $formAnswer, Collection|array $customFields): Collection {
+        $fieldVariations = $formAnswer->customFieldAnswers->map(fn(CustomFieldAnswer $answer) => $answer->customFieldVariation);
+
+        $variation = null;
+        if ($formAnswer->customForm->getFormConfiguration()::hasVariations()) {
+            $variation = $formAnswer->customFieldAnswers
+                ->map(fn(CustomFieldAnswer $answer) => $answer->customFieldVariation)
+                ->filter(fn(CustomFieldVariation $variation) => is_null($variation->variation_id))->first();
+            if (!is_null($variation)) $variation = $variation->id;
+        }
+
+        if (is_null($variation))
+            $fieldVariationsAddon = $customFields->map(fn(CustomField $field) => $field->templateVariation());
+        else
+            $fieldVariationsAddon = $customFields->map(fn(CustomField $field) => $field->getVariation($variation));
+
+        $fieldVariationsAddon = $fieldVariationsAddon->filter(fn(CustomFieldVariation $variation) => !$fieldVariations->contains($variation->id));
+        $fieldVariationsAddon->each(fn(CustomFieldVariation $variation) => $fieldVariations->add($variation));
+        return $fieldVariations;
+    }
 
     public static function render(int $indexOffset, Collection $fieldVariations, Collection &$customFields, Closure &$render) {
         $customFormSchema = [];
@@ -87,52 +147,6 @@ class CustomFormRender
         }
         return [$customFormSchema,$index];
     }
-
-
-    public static function generateInfoListSchema(CustomFormAnswer $formAnswer, string $viewMode):array {
-        $customFields = CustomField::query()->where("custom_form_id",$formAnswer->customForm->id)->with("customFieldVariations.customField","customFieldVariations")->get();
-
-        /** @var Collection $fieldVariations*/
-        $fieldVariations = $formAnswer->customFieldAnswers->map(fn(CustomFieldAnswer $answer)=>$answer->customFieldVariation);
-
-        $variation = null;
-        if($formAnswer->customForm->getFormConfiguration()::hasVariations()){
-            $variation= $formAnswer->customFieldAnswers
-                ->map(fn(CustomFieldAnswer $answer)=>$answer->customFieldVariation)
-                ->filter(fn(CustomFieldVariation $variation)=>is_null($variation->variation_id))->first();
-            if(!is_null($variation)) $variation= $variation->id;
-        }
-
-        if(is_null($variation))
-            $fieldVariationsAddon = $customFields->map(fn(CustomField $field) => $field->templateVariation());
-        else
-            $fieldVariationsAddon = $customFields->map(fn(CustomField $field) => $field->getVariation($variation));
-
-        $fieldVariationsAddon = $fieldVariationsAddon->filter(fn(CustomFieldVariation $variation)=> !$fieldVariations->contains($variation->id));
-        $fieldVariationsAddon->each(fn(CustomFieldVariation $variation)=> $fieldVariations->add($variation));
-
-
-        $fieldAnswers = $formAnswer->customFieldAnswers;
-
-        $render= function (CustomFieldType $type, CustomFieldVariation $variation, array $parameter) use (
-            $viewMode, $fieldAnswers
-        ) {
-            $answer = $fieldAnswers->firstWhere("custom_field_variation_id", $variation->id);
-            if(is_null($answer)){
-                $answer = new CustomFieldAnswer();
-                $answer->answer = null;
-                $answer->custom_field_variation_id = $variation->id;
-            }
-            return $type->getInfolistComponent($answer,$viewMode, $parameter);
-        };
-        $customViewSchema = self::render(0,$fieldVariations,$customFields,$render)[0];
-
-        return  [
-            \Filament\Infolists\Components\Group::make($customViewSchema)->columns(config("ffhs_custom_forms.default_column_count")),
-        ];
-    }
-
-
 
 
     public static function saveHelper(CustomFormAnswer $fieldAnswerer, array $formData, Model|int $variation) :void{
