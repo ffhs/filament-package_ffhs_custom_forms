@@ -9,11 +9,8 @@ use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Section;
-use Filament\Forms\Contracts\HasForms;
-use Filament\Forms\Form;
 use Filament\Support\Enums\MaxWidth;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Cache;
 
 
 class OpenCustomFormEditorAction extends Action
@@ -31,7 +28,11 @@ class OpenCustomFormEditorAction extends Action
         $this->form(fn()=>[
             Group::make()
                 ->relationship($this->getCustomFormRelationShip())
-                ->schema(CustomFormEditForm::formSchema())
+                ->schema([
+                    Section::make()
+                        ->schema(CustomFormEditForm::formSchema())
+                        ->columns(3)
+                ])
         ]);
 
 

@@ -37,61 +37,56 @@ class CustomFormEditForm
 {
     public static function formSchema(): array {
         return [
+            Fieldset::make()
+                ->columnStart(1)
+                ->columnSpan(1)
+                ->columns(1)
+                ->schema(self::getFieldAddActionSchema()),
 
-                Section::make("Form")
-                    ->columns(3)
-                    ->schema([
-                        Fieldset::make()
-                            ->columnStart(1)
-                            ->columnSpan(1)
-                            ->columns(1)
-                            ->schema(self::getFieldAddActionSchema()),
+            Group::make()
+                ->columns(1)
+                ->columnSpan(2)
+                ->schema(fn(CustomForm $record)=>[
+                    self::getCustomFieldRepeater($record)
+                        ->saveRelationshipsUsing(
+                            fn(Repeater $component, HasForms $livewire, ?array $state, CustomForm $record) =>self::saveCustomFields($component,$record,$state)
+                        )
+                        ->rules([
+                            fn (CustomForm $record) =>
+                            function (string $attribute, $value, Closure $fail) use($record)  {
+                            $formIdentifier = $record->custom_form_identifier;
+                            $requiredGeneralFieldForm = GeneralFieldForm::query()
+                                ->where("custom_form_identifier", $formIdentifier)
+                                ->select("general_field_id")
+                                ->where("is_required", true)
+                                ->with("generalField")
+                                ->get();
 
-                        Group::make()
-                            ->columns(1)
-                            ->columnSpan(2)
-                            ->schema(fn(CustomForm $record)=>[
-                                self::getCustomFieldRepeater($record)
-                                    ->saveRelationshipsUsing(
-                                        fn(Repeater $component, HasForms $livewire, ?array $state, CustomForm $record) =>self::saveCustomFields($component,$record,$state)
-                                    )
-                                ->rules([
-                                    fn (CustomForm $record) =>
-                                         function (string $attribute, $value, Closure $fail) use($record)  {
-                                            $formIdentifier = $record->custom_form_identifier;
-                                            $requiredGeneralFieldForm = GeneralFieldForm::query()
-                                                ->where("custom_form_identifier", $formIdentifier)
-                                                ->select("general_field_id")
-                                                ->where("is_required", true)
-                                                ->with("generalField")
-                                                ->get();
+                            $requiredGeneralIDs = $requiredGeneralFieldForm
+                                ->map(fn ($fieldForm) => $fieldForm->general_field_id);
 
-                                            $requiredGeneralIDs = $requiredGeneralFieldForm
-                                                ->map(fn ($fieldForm) => $fieldForm->general_field_id);
+                            $usedGeneralIDs =self::getUsedGeneralFieldIds($value);
+                            $notAddedRequiredFields = $requiredGeneralIDs
+                                ->filter(fn($id)=> !in_array($id, $usedGeneralIDs));
 
-                                            $usedGeneralIDs =self::getUsedGeneralFieldIds($value);
-                                            $notAddedRequiredFields = $requiredGeneralIDs
-                                                ->filter(fn($id)=> !in_array($id, $usedGeneralIDs));
+                            if($notAddedRequiredFields->count() == 0) return;
 
-                                            if($notAddedRequiredFields->count() == 0) return;
+                            $fieldName = $requiredGeneralFieldForm
+                                ->filter(function($fieldForm) use ($notAddedRequiredFields) {
+                                    $generalFieldId = $fieldForm->general_field_id;
+                                    $notAddedField = $notAddedRequiredFields->first();
+                                    return $generalFieldId == $notAddedField;
+                                })
+                                ->first()->generalField->name_de;
 
-                                            $fieldName = $requiredGeneralFieldForm
-                                                ->filter(function($fieldForm) use ($notAddedRequiredFields) {
-                                                    $generalFieldId = $fieldForm->general_field_id;
-                                                    $notAddedField = $notAddedRequiredFields->first();
-                                                    return $generalFieldId == $notAddedField;
-                                                })
-                                                ->first()->generalField->name_de;
+                            $failureMessage =
+                                "Du must das generelle Feld \"" . $fieldName . "\" hinzufügen"; //ToDo Translate
 
-                                            $failureMessage =
-                                                "Du must das generelle Feld \"" . $fieldName . "\" hinzufügen"; //ToDo Translate
-
-                                            $fail($failureMessage);
-                                        }
-                                ]),
-                        ])
-                    ]),
-            ];
+                                $fail($failureMessage);
+                        }
+                        ]),
+                ]),
+        ];
     }
 
 
