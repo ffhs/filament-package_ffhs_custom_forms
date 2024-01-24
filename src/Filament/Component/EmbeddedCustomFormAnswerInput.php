@@ -58,7 +58,9 @@ class EmbeddedCustomFormAnswerInput extends Component implements CanEntangleWith
             /**@var CustomFormAnswer $answer*/
             $relationshipName = $component->getRelationshipName();
             $answer = $record->$relationshipName;
-            CustomFormRender::saveHelper($answer, $data,$component->getVariation());
+            $variation=$component->getVariation();
+            if(is_null($variation))$variation = -1;
+            CustomFormRender::saveHelper($answer, $data,$variation);
             return [];
         });
         $this->columns(1);

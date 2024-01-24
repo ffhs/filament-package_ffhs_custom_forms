@@ -137,6 +137,14 @@ class CustomField extends ACustomField
         return Cache::remember("custom_field-form_id" .$formId, 1, fn()=>CustomField::query()->where("custom_form_id", $formId)->get());
     }
 
+    public function allCustomFieldsInLayout(): HasMany {
+        if(!($this->getType() instanceof CustomLayoutType))
+            return $this->hasMany(CustomField::class, "custom_form_id","custom_form_id")
+                ->where("id",null);
+        return $this->hasMany(CustomField::class, "custom_form_id", "custom_form_id")
+            ->where("form_position", ">", $this->form_position)
+            ->where("form_position", "<=", $this->layout_end_position);
+    }
 
     public function customFieldInLayout(): HasMany {
 
