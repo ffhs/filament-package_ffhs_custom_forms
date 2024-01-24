@@ -605,15 +605,13 @@ class CustomFormEditForm
             $itemData["form_position"] = $itemOrder;
             $itemOrder++;
 
-            $isGeneralField = !empty($itemData["general_field_id"]);
-
             //For the Layouts
             if(!empty($itemData["custom_fields"])){
                 $itemOrder = self::saveCustomFieldFromData($itemOrder, $itemData["custom_fields"], $customForm,$relationship,$existingRecords);
                 unset($itemData["custom_fields"]);
                 $itemData["layout_end_position"] = $itemOrder-1;
             }
-            else if(!$isGeneralField && CustomFieldType::getTypeFromName($itemData["type"]) instanceof CustomLayoutType){
+            else if(self::getFieldTypeFromRawDate($itemData) instanceof CustomLayoutType){
                 unset($itemData["custom_fields"]);
                 $itemData["layout_end_position"] = $itemOrder-1;
             }
