@@ -70,7 +70,7 @@ class CustomField extends ACustomField
         return $this->customFieldVariations->filter(fn($customFieldVariation)=> $customFieldVariation->isTemplate())->first();
     }
 
-    private function getInheritStateFromArrays($thisValues, $generalFieldArray){
+    private function getInheritStateFromArrays($thisValues, $generalFieldArray): array {
         if(is_null($generalFieldArray)) return $thisValues;
         $output= array_replace($thisValues, array_filter($generalFieldArray, fn($value) => !is_null($value)));
         $output["is_general_field"] = false;
@@ -92,7 +92,7 @@ class CustomField extends ACustomField
     /**
      * @return array there are the stat from this Field and the Stats from the GeneralField
      */
-    public function getInheritStatsFromOrigin() {
+    public function getInheritStatsFromOrigin(): array {
         $generalFieldId = $this->getOriginal("general_field_id");
         $generalFieldArray = is_null($generalFieldId)? null: GeneralField::cached($generalFieldId)->toArray();
         return $this->getInheritStateFromArrays($this->getOriginal(), $generalFieldArray);
@@ -117,8 +117,8 @@ class CustomField extends ACustomField
     }
 
 
-    public function getVariation(Model|int $relatedObject ): CustomFieldVariation|null{
-        if(!$this->has_variations) return $this->templateVariation();
+    public function getVariation(Model|int|null $relatedObject ): CustomFieldVariation|null{
+        if(!$this->has_variations || is_null($relatedObject)) return $this->templateVariation();
         if($relatedObject instanceof  Model) $relatedObject = $relatedObject->id;
         $variation =  $this->customFieldVariations->firstWhere(fn(CustomFieldVariation $fieldVariation)=>$fieldVariation->variation_id == $relatedObject);
         if(is_null($variation)) return $this->templateVariation();

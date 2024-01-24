@@ -3,6 +3,7 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component;
 
 
+use App\Forms\Components\EmbeddedCustomFormSectionAnswerInput;
 use Closure;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Form\CustomFormRender;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
@@ -21,6 +22,7 @@ class EmbeddedCustomFormAnswerInput extends Component implements CanEntangleWith
     protected string $view = 'filament-forms::components.group';
     protected string|Closure $viewMode;
     protected Model|int|Closure|null $variation;
+    protected bool|Closure $isAutoSave;
 
     public static function make(Closure|string $relationship,string|Closure $viewMode= "default", Model|int|Closure|null $variation=null): static
     {
@@ -38,6 +40,7 @@ class EmbeddedCustomFormAnswerInput extends Component implements CanEntangleWith
     {
         $this->viewMode= $viewMode;
         $this->variation = $variation;
+        $this->isAutoSave=false;
         $relationship = $this->evaluate($relationship);
         $this->relationship($relationship);
     }
@@ -65,6 +68,14 @@ class EmbeddedCustomFormAnswerInput extends Component implements CanEntangleWith
         });
         $this->columns(1);
 
+        //SetUp Auto Update
+        $this->afterStateUpdated(function (EmbeddedCustomFormSectionAnswerInput $component, array $state,?Model $record){
+            if(!$component->getIsAutoSave()) return;
+            /**@var CustomFormAnswer $answer*/
+            $relationshipName = $component->getRelationshipName();
+            $answer = $record->$relationshipName;
+            CustomFormRender::saveHelper($answer, $state,$component->getVariation());
+        });
 
     }
 
@@ -86,6 +97,15 @@ class EmbeddedCustomFormAnswerInput extends Component implements CanEntangleWith
             if($answer->customFieldAnswers->count() == 0) return $answer->customForm->getFormConfiguration()::displayCreateMode();
             else return $answer->customForm->getFormConfiguration()::displayEditMode();
         };
+        return $this;
+    }
+
+    public function getIsAutoSave():bool {
+        return $this->evaluate($this->isAutoSave);
+    }
+
+    public function autoSave(bool|Closure $isAutoSave = true):static {
+        $this->isAutoSave = $isAutoSave;
         return $this;
     }
 

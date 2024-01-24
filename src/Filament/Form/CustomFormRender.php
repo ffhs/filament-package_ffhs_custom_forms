@@ -148,7 +148,7 @@ class CustomFormRender
     }
 
 
-    public static function saveHelper(CustomFormAnswer $fieldAnswerer, array $formData, Model|int $variation) :void{
+    public static function saveHelper(CustomFormAnswer $fieldAnswerer, array $formData, Model|int|null $variation) :void{
 
         $customFieldAnswers = $fieldAnswerer->customFieldAnswers;
         $keys = $customFieldAnswers->map(fn(CustomFieldAnswer $answer)=> $answer->customFieldVariation->customField->getInheritState()["identify_key"])->toArray();
