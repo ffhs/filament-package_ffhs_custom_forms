@@ -4,13 +4,11 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField;
 
 
 
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldVariation;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Repeater;
 use Illuminate\Support\Facades\App;
-use function PHPUnit\Framework\isEmpty;
 
 abstract class CustomFieldType
 {
@@ -67,8 +65,8 @@ abstract class CustomFieldType
 
         //Config Overwrite
         $overWrittenLevelOne = $this->overwriteViewModes();
-        if(!empty($overWrittenLevelOne) && !empty($overWrittenLevelOne[self::class])){
-            foreach($overWrittenLevelOne[$this::class] as $key => $value) $viewMods[$key] = $value;
+        if(!empty($overWrittenLevelOne)){
+            foreach($overWrittenLevelOne as $key => $value) $viewMods[$key] = $value;
         }
 
         if(is_null($dynamicFormConfiguration)) return $this->viewModes();

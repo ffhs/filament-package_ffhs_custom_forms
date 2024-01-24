@@ -159,10 +159,6 @@ class CustomField extends ACustomField
                 ->select('form_position','layout_end_position')
                 ->where("form_position",">", $this->form_position)
                 ->where("layout_end_position","!=", null);
-                /*->whereIn("type", collect(config("ffhs_custom_forms.custom_field_types"))
-                    ->filter(fn(string $type) => (new $type()) instanceof CustomLayoutType)
-                    ->map(fn(string $type) => $type::getFieldIdentifier())
-                );*/
 
 
         $query = $this->hasMany(CustomField::class, "custom_form_id","custom_form_id")

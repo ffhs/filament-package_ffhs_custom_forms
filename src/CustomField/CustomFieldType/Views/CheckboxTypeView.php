@@ -27,7 +27,7 @@ class CheckboxTypeView implements FieldTypeView
         return IconEntry::make($type::getIdentifyKey($record->customFieldVariation))
             ->label($type::class::getLabelName($record->customFieldVariation). ":")
             ->columnStart($type->getOptionParameter($record,"new_line_option"))
-            ->state($record->answer)
+            ->state(is_null($record->answer)? false : $record->answer)
             ->inlineLabel()
             ->boolean();
     }
