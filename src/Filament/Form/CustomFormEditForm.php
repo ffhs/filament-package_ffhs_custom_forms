@@ -113,7 +113,7 @@ class CustomFormEditForm
                 $styleClasses = "text-sm font-medium ext-gray-950 dark:text-white truncate select-none";
                 $type = self::getFieldTypeFromRawDate($state);
                 $icon = "";
-                //$icon = Blade::render('<x-'. $type->icon() .' class="h-4 w-4 "/>') ; ToDo Fix
+                //$icon = Blade::render('<x-'. $type->icon() .' class="h-4 w-4 "/>') ; //ToDo Fix
                 if(!empty($state["general_field_id"])){
                     $badge = new HtmlBadge("Gen", Color::rgb("rgb(43, 164, 204)"));
                     $name = GeneralField::cached($state["general_field_id"])->name_de; //ToDo Translate
@@ -615,6 +615,8 @@ class CustomFormEditForm
                 unset($itemData["custom_fields"]);
                 $itemData["layout_end_position"] = $itemOrder-1;
             }
+            else $itemData["layout_end_position"] = null;
+
 
             if ($record = ($existingRecords[$itemKey] ?? null)) {
                 self::updateCustomField($record, $itemData,$customForm);

@@ -2,7 +2,6 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Models;
 
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType;
 use Ffhs\FilamentPackageFfhsCustomForms\FormConfiguration\DynamicFormConfiguration;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -12,7 +11,6 @@ use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\DB;
 
 /**
  * @property int $id
@@ -98,10 +96,11 @@ class CustomForm extends Model
         $subQueryAlLayouts = CustomField::query()
             ->select('form_position','layout_end_position')
             ->where("custom_form_id", $this->id)
-            ->whereIn("type", collect(config("ffhs_custom_forms.custom_field_types"))
+            ->where("layout_end_position","!=", null);
+            /*->whereIn("type", collect(config("ffhs_custom_forms.custom_field_types"))
                 ->filter(fn(string $type) => (new $type()) instanceof CustomLayoutType)
                 ->map(fn(string $type) => $type::getFieldIdentifier())
-            );
+            );*/
 
 
         $query = $this->hasMany(CustomField::class)
@@ -113,7 +112,6 @@ class CustomForm extends Model
                         ->on('custom_fields.form_position', '<=', 'sub.layout_end_position');
                     })
             );
-
 
         return $query;
     }
