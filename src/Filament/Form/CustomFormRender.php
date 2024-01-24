@@ -74,7 +74,7 @@ class CustomFormRender
     }
 
 
-    private static function getInfoListVariations(CustomFormAnswer $formAnswer, Collection|array $customFields): Collection {
+    public static function getInfoListVariations(CustomFormAnswer $formAnswer, Collection|array $customFields): Collection {
         $fieldVariations = $formAnswer->customFieldAnswers->map(fn(CustomFieldAnswer $answer) => $answer->customFieldVariation);
 
         $variation = null;

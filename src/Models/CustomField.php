@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\Cache;
  * @property int|null $layout_end_position
  *
  * @property Collection|null customFieldVariations
+ * @property Collection|null allCustomFieldsInLayout
  * @property string|null identify_key
  *
  * @property CustomForm customForm
