@@ -30,6 +30,7 @@ use Filament\Support\Enums\MaxWidth;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\HtmlString;
 
 class CustomFormEditForm
@@ -109,52 +110,31 @@ class CustomFormEditForm
                 self::getPullInLayoutAction(),
                 self::getEditCustomFormAction($record),
             ])
-            ->itemLabel(function($state, Repeater $component){
+            ->itemLabel(function($state){
                 $styleClasses = "text-sm font-medium ext-gray-950 dark:text-white truncate select-none";
                 $type = self::getFieldTypeFromRawDate($state);
-                $icon = "";
-                //$icon = Blade::render('<x-'. $type->icon() .' class="h-4 w-4 "/>') ; //ToDo Fix
-                if(!empty($state["general_field_id"])){
-                    $badge = new HtmlBadge("Gen", Color::rgb("rgb(43, 164, 204)"));
-                    $name = GeneralField::cached($state["general_field_id"])->name_de; //ToDo Translate
-                    $html = $badge;
-                }
-                else {
-                    $name = $state["name_de"]; //ToDo Translate
-                    $html = " ";
-                }
+                $icon = Blade::render('<x-'. $type->icon() .' class="h-4 w-4 "/>') ; //ToDo Fix
+                $badgeCount= null;
 
+                if(!empty($state["general_field_id"])){
+                    $badgeCount = new HtmlBadge("Gen", Color::rgb("rgb(43, 164, 204)")); Blade::render('<x-filament::badge size="Gen">New</x-filament::badge>');
+                    $name = GeneralField::cached($state["general_field_id"])->name_de; //ToDo Translate
+                }
+                else  $name = $state["name_de"]; //ToDo Translate
+
+                $generalBadge =null;
                 if($type instanceof CustomLayoutType){
                     $size = empty($state["custom_fields"])?0:sizeof($state["custom_fields"]);
-                    $badge = new HtmlBadge($size);
-                    $html = $badge;
+                    $generalBadge = new HtmlBadge($size);
                     $span = '<span x-on:click.stop="isCollapsed = !isCollapsed" class="cursor-pointer flex" >';
-                   // return new HtmlString(  "</h4>" .new HtmlBadge($size). $icon .$h4 .$state["name_de"]); //ToDo Translate
                 }
-                else {
-                   /* $recordExtras = "";
-                    $parentRepeater =$component;
-                    $mainRecordName = array_search($state, $component->getState());
-                    while (!is_null($parentRepeater->getParentRepeater())){
-                        $newParentRepeater =  $parentRepeater->getParentRepeater();
+                else $span = '<span  class="cursor-pointer flex">';
 
-                        $recordName = collect($newParentRepeater->getState())
-                            ->filter(fn($customField) => !empty($customField["custom_fields"]))
-                            ->filter(fn($customField)=> $customField["custom_fields"] == $parentRepeater->getState())
-                            ->keys()
-                            ->first();
-
-                        $recordExtras = ".". $recordName .".custom_fields".$recordExtras;
-                        $parentRepeater = $newParentRepeater;
-                    }
-                    $openOnClick = 'wire:click="mountFormComponentAction(\'data.custom_fields'.$recordExtras .'\', \'edit\', JSON.parse(\'{\u0022item\u0022:\u0022'.$mainRecordName .'\u0022}\'))"'; ToDo
-
-                    $span = '<span'. $openOnClick.'  class="cursor-pointer flex">';*/
-                    $span = '<span  class="cursor-pointer flex">';
-
-                }
                 $h4 = '<h4 class="'.$styleClasses.'">';
-                $html= "</h4>". $span. '<span class="px-1.5">'.$html  . '</span>'.  '<span class="px-1.5">' .$icon . '</span>'. $h4 . $name . " </h4></span><h4>";
+                $html = "</h4>". $span;
+                if(!is_null($generalBadge)) $html .= '<span class="px-1.5">'. $generalBadge. '</span>';
+                if(!is_null($badgeCount)) $html .= '<span class="px-1.5">'. $badgeCount. '</span>';
+                $html .= '<span class="px-1.5">' .$icon . '</span>'. $h4 . $name . " </h4></span><h4>";
 
                  return  new HtmlString($html);
                }
