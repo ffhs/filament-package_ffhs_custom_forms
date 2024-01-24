@@ -2,7 +2,6 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Form;
 
-use Barryvdh\Debugbar\Facades\Debugbar;
 use Closure;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType;
@@ -19,7 +18,7 @@ class CustomFormRender
 {
 
     public static function generateFormSchema(CustomForm $form, string $viewMode, null|int|Model $variation = null):array{
-        $customFields = CustomField::query()->where("custom_form_id",)->with("customFieldVariations.customField","customFieldVariations")->get();
+        $customFields = CustomField::query()->where("custom_form_id",$form->id)->with("customFieldVariations.customField","customFieldVariations")->get();
 
         $fieldVariations = self::getFormFieldVariations($customFields, $variation);
         $render= self::getFormRender($viewMode);

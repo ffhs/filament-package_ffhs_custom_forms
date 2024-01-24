@@ -30,7 +30,6 @@ use Filament\Support\Enums\MaxWidth;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\HtmlString;
 
 class CustomFormEditForm
@@ -113,9 +112,8 @@ class CustomFormEditForm
             ->itemLabel(function($state, Repeater $component){
                 $styleClasses = "text-sm font-medium ext-gray-950 dark:text-white truncate select-none";
                 $type = self::getFieldTypeFromRawDate($state);
-                //
-                $icon = Blade::render('<x-'. $type->icon() .' class="h-4 w-4 "/>',[]) ;
-                $name = "";
+                $icon = "";
+                //$icon = Blade::render('<x-'. $type->icon() .' class="h-4 w-4 "/>') ; ToDo Fix
                 if(!empty($state["general_field_id"])){
                     $badge = new HtmlBadge("Gen", Color::rgb("rgb(43, 164, 204)"));
                     $name = GeneralField::cached($state["general_field_id"])->name_de; //ToDo Translate
