@@ -162,11 +162,14 @@ class CustomFormEditForm
 
             ->schema([
                 Group::make()
-                    ->schema(fn(Get $get)=>
-                        !is_null($get("type")) && CustomFieldType::getTypeFromName(($get("type"))) instanceof CustomLayoutType?
-                        [self::getCustomFieldRepeater($record)]: []
-                    )
-                    ->hidden(fn(Get $get)=>is_null($get("type")) || !CustomFieldType::getTypeFromName($get("type")) instanceof CustomFieldType)
+                    ->schema(function(Get $get,$state) use ($record) {
+                        $type = self::getFieldTypeFromRawDate($state);
+                        if($type instanceof CustomLayoutType)
+                            return[self::getCustomFieldRepeater($record)];
+                        else return [];
+
+                    })
+                    ->visible(fn($state)=>self::getFieldTypeFromRawDate($state) instanceof CustomFieldType)
             ]);
     }
 
