@@ -59,7 +59,7 @@ class CustomFormRender
     }
 
 
-    private static function getInfolistRender(string $viewMode, Collection $fieldAnswers): Closure {
+    public static function getInfolistRender(string $viewMode, Collection $fieldAnswers): Closure {
         return function (CustomFieldType $type, CustomFieldVariation $variation, array $parameter) use (
             $viewMode, $fieldAnswers
         ) {
