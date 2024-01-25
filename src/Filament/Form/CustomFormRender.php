@@ -74,18 +74,18 @@ class CustomFormRender
     }
 
 
-    public static function getInfoListVariations(CustomFormAnswer $formAnswer, Collection|array $customFields): Collection {
+    public static function getInfoListVariations(CustomFormAnswer $formAnswer, Collection|array $customFields, Model|int|null $variationRaw = null): Collection {
         $fieldVariations = $formAnswer->customFieldAnswers->map(fn(CustomFieldAnswer $answer) => $answer->customFieldVariation);
 
-        $variation = null;
-        if ($formAnswer->customForm->getFormConfiguration()::hasVariations()) {
+        $variation = $variationRaw;
+        if (is_null($variationRaw)&&$formAnswer->customForm->getFormConfiguration()::hasVariations()) {
             $variation = $formAnswer->customFieldAnswers
                 ->map(fn(CustomFieldAnswer $answer) => $answer->customFieldVariation)
                 ->filter(fn(CustomFieldVariation $variation) => is_null($variation->variation_id))->first();
             if (!is_null($variation)) $variation = $variation->id;
         }
 
-        if (is_null($variation))
+        if (is_null($variation) || !$formAnswer->customForm->getFormConfiguration()::hasVariations())
             $fieldVariationsAddon = $customFields->map(fn(CustomField $field) => $field->templateVariation());
         else
             $fieldVariationsAddon = $customFields->map(fn(CustomField $field) => $field->getVariation($variation));
