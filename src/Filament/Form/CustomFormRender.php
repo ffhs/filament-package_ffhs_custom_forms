@@ -113,11 +113,12 @@ class CustomFormRender
             /** @var CustomFieldVariation $fieldVariation*/
             $fieldVariation = $fieldVariations->firstWhere("id",$preparedFields[$index]);
 
-            if(!$fieldVariation->is_active) continue;
+
 
             /** @var CustomField $customField*/
             $customField = $customFields->firstWhere("id",$fieldVariation->custom_field_id);
             if(!($customField->getType() instanceof CustomLayoutType)){
+                if(!$fieldVariation->is_active) continue;
                 $customFormSchema[] = $render($customField->getType(),$fieldVariation, []);
                 continue;
             }
@@ -139,9 +140,12 @@ class CustomFormRender
                 "fieldVariationData" => $fieldVariationRenderData,
                 "rendered"=> $renderedOutput[0],
             ];
-            $customFormSchema[] = $render($customField->getType(),$fieldVariation, $parameters);
+
             //Set Index
             $index= $renderedOutput[1]-1;
+
+            if(!$fieldVariation->is_active) continue;
+            $customFormSchema[] = $render($customField->getType(),$fieldVariation, $parameters);
 
         }
         return [$customFormSchema,$index];
