@@ -102,9 +102,9 @@ class CustomFormEditForm
             ->defaultItems(0)
             ->columnSpan(2)
             ->persistCollapsed()
+            ->label("")
             ->reorderable()
             ->collapsed()
-            ->label("")
             ->lazy()
             ->extraItemActions([
                 self::getPullOutLayoutAction(),
@@ -143,14 +143,13 @@ class CustomFormEditForm
 
             ->schema([
                 Group::make()
+                    ->visible(fn($state)=>self::getFieldTypeFromRawDate($state) instanceof CustomFieldType)
                     ->schema(function(Get $get,$state) use ($record) {
                         $type = self::getFieldTypeFromRawDate($state);
                         if($type instanceof CustomLayoutType)
                             return[self::getCustomFieldRepeater($record)];
                         else return [];
-
                     })
-                    ->visible(fn($state)=>self::getFieldTypeFromRawDate($state) instanceof CustomFieldType)
             ]);
     }
 
@@ -649,9 +648,13 @@ class CustomFormEditForm
                     $state[$arguments["item"]]
                 )
             )
+            ->mutateFormDataUsing(function(array $data) {
+                //SetGeneralField ID
+                return $data["customFields"][0];
+            })
             ->action(function (Get $get,$set,array $data,array $arguments): void {
                 $fields = $get("custom_fields");
-                $fields[$arguments["item"]] = $data["customFields"][0];
+                $fields[$arguments["item"]] = $data;
                 $set("custom_fields",$fields);
             })
             ->fillForm(function($state,$arguments) use ($customForm) {
