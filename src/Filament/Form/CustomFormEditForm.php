@@ -97,13 +97,14 @@ class CustomFormEditForm
             ->relationship("customFieldInLayout")
             ->orderColumn("form_position")
             ->saveRelationshipsUsing(fn()=>empty(null))
+            ->collapsible(false)
             ->addable(false)
             ->defaultItems(0)
             ->columnSpan(2)
             ->persistCollapsed()
             ->reorderable()
             ->collapsed()
-            ->collapsible(false)
+            ->label("")
             ->lazy()
             ->extraItemActions([
                 self::getPullOutLayoutAction(),
