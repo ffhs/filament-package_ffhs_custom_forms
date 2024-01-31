@@ -27,7 +27,7 @@ class CustomFormEditForm
                 ->columnStart(1)
                 ->columnSpan(1)
                 ->columns(1)
-                ->schema(CustomFieldEditForm::getFieldAddActionSchema()),
+                ->schema(fn(CustomForm $record)=>CustomFieldEditForm::getFieldAddActionSchema($record)),
 
             Group::make()
                 ->columns(1)

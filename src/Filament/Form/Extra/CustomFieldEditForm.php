@@ -4,10 +4,14 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Form\Extra;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Form\CustomFormEditForm;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralFieldForm;
+use Filament\Actions\CreateAction;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Repeater;
@@ -19,6 +23,9 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Get;
 use Filament\Support\Colors\Color;
+use Filament\Support\Enums\ActionSize;
+use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\HtmlString;
 
 class CustomFieldEditForm
 {
@@ -159,7 +166,8 @@ class CustomFieldEditForm
 
 
 
-    public static function getFieldAddActionSchema():array {
+    public static function getFieldAddActionSchema(CustomForm $record):array {
+
         return [
             //GeneralField
             Placeholder::make("")
@@ -171,14 +179,53 @@ class CustomFieldEditForm
 
             //Space
             Placeholder::make("")->content(""),
-            self::getCustomFieldAddActionSchema(),
-
-            //New CustomField
+            //New CustomFields
             Placeholder::make("")
                 ->label("Spezifische Felder") //ToDo Translate
                 ->content(""),
 
-            ];
+            Group::make(self::getNewCustomFielActions($record))->columns()
+
+        ];
+    }
+
+    private static function getNewCustomFielActions(CustomForm $record): array {
+        $actions = [];
+        $types = collect($record->getFormConfiguration()::formFieldTypes())->map(fn($class) => new $class());
+
+        /**@var CustomFieldType $type */
+        foreach ($types as $type) {
+            $actions[] = Actions::make([
+                Action::make("add_".$type->fieldIdentifier()."_action")
+                    ->modalHeading("Hinzufügen eines ".$type->getTranslatedName()." Feldes") //ToDo Translate
+                    ->tooltip($type->getTranslatedName())
+                    ->extraAttributes(["style" => "width: 100%; height: 100%;"])
+                    ->label(new HtmlString(
+                        '<div class="flex flex-col items-center justify-center">'. //
+                        Blade::render(
+                            '<x-'.$type->icon().
+                            ' class="h-6 w-6 text-red-600"/>'
+                        ).
+                        '<p class="" style="margin-top: 10px;word-break: break-word;">'.$type->getTranslatedName().'</p>'.
+                        '</div>'
+                    ))
+                    ->outlined()
+                    ->mutateFormDataUsing(fn(Action $action) => array_values($action->getLivewire()->getCachedForms())[1]->getRawState())//Get RawSate (yeah is possible)
+                    ->form(fn(Get $get, CustomForm $record) => CustomFieldEditForm::getCustomFieldSchema($record,
+                        ["type" => $type->fieldIdentifier()]))
+                    ->modalWidth(fn(Get $get) => self::getEditCustomFormActionModalWith(["type" => $type->fieldIdentifier()]))
+                    ->disabled(fn(Get $get) => is_null($type->fieldIdentifier()))
+                    ->fillForm(fn($get) => ["type" => $type->fieldIdentifier()])
+                    ->closeModalByClickingAway(false)
+                    ->action(function ($set, Get $get, array $data) {
+                        //Add to the other Fields
+                        $fields = $get("custom_fields");
+                        $fields[uniqid()] = $data;
+                        $set("custom_fields", $fields);
+                    })
+            ]);
+        }
+        return $actions;
     }
 
     private static function getGeneralFieldAddAction():Group {
@@ -209,53 +256,27 @@ class CustomFieldEditForm
                     return $generalFields->pluck("name_de","id"); //ToDo Translate
                 }),
             Actions::make([
-                self::getFieldAddActions("general_field_id","add_general_field_id","add_general_field")
-                    ->disabled(fn(Get $get)=>
-                        is_null($get("add_general_field_id")) ||
-                        in_array($get("add_general_field_id"), CustomFormEditForm::getUsedGeneralFieldIds($get("custom_fields")))
-                    )
+                    Action::make("add_general_field")
+                        ->modalWidth(fn(Get $get)=> self::getEditCustomFormActionModalWith(["general_field_id"=> $get("add_general_field_id")]))
+                        ->form(fn(Get $get, CustomForm $record)=> CustomFieldEditForm::getCustomFieldSchema($record, ["general_field_id" => $get("add_general_field_id")]))
+                        ->mutateFormDataUsing(fn(Action $action) =>array_values($action->getLivewire()->getCachedForms())[1]->getRawState())//Get RawSate (yeah is possible)
+                        ->fillForm(fn($get)=> ["general_field_id"=> $get("add_general_field_id")])
+                        ->closeModalByClickingAway(false)
+                        ->label(fn()=>"Hinzufügen ") //ToDo Translate
+                        ->disabled(fn(Get $get)=>
+                           is_null($get("add_general_field_id")) ||
+                           collect(CustomFormEditForm::getUsedGeneralFieldIds($get("custom_fields")))
+                               ->contains($get("add_general_field_id"))
+                        )
+                        ->action(function ($set,Get $get,array $data) {
+                            //Add to the other Fields
+                            $set("add_general_field_id", null);
+                            $fields = $get("custom_fields");
+                            $fields[uniqid()] = $data;
+                            $set("custom_fields",$fields);
+                        })
             ]),
         ]);
-    }
-    public static function getCustomFieldAddActionSchema():Group {
-        return Group::make([
-            Select::make("add_custom_field_type")
-                ->label("")
-                ->live()
-                ->options(function (CustomForm $record){
-                    $formConfiguration = $record->getFormConfiguration();
-                    $types = $formConfiguration::formFieldTypes();
-
-                    $keys = array_map(fn($type) => $type::getFieldIdentifier(),$types);
-                    $values = array_map(fn($type) => (new $type)->getTranslatedName(), $types);
-                    return array_combine($keys,$values);
-                }),
-            Actions::make([self::getFieldAddActions("type","add_custom_field_type","add_custom_field")]),
-        ]);
-    }
-
-    private static function getFieldAddActions(string $key, string $getID, string $name): Action {
-        return Action::make($name)
-            ->modalWidth(fn(Get $get)=> self::getEditCustomFormActionModalWith([$key=> $get($getID)]))
-            ->disabled(fn(Get $get)=> is_null($get($getID)))
-            ->fillForm(fn($get)=> [$key=> $get($getID)])
-            ->closeModalByClickingAway(false)
-            ->label(fn()=>"Hinzufügen ") //ToDo Translate
-            ->form(fn(Get $get, CustomForm $record)=>
-                CustomFieldEditForm::getCustomFieldSchema($record, [$key => $get($getID)])
-            )
-            ->mutateFormDataUsing(fn(Action $action) =>
-                //Get RawSate (yeah is possible)
-                array_values($action->getLivewire()->getCachedForms())[1]->getRawState()
-            )
-            ->action(function ($set,Get $get,array $data) use ($getID) {
-                //Add to the other Fields
-                $set($getID, null);
-
-                $fields = $get("custom_fields");
-                $fields[uniqid()] = $data;
-                $set("custom_fields",$fields);
-            });
     }
 
 
@@ -267,14 +288,7 @@ class CustomFieldEditForm
         return'5xl';
     }
 
-    /**
-     * @param  Get  $get
-     * @param  CustomForm  $customForm
-     * @param  bool  $isGeneral
-     * @param  CustomFieldType|null  $type
-     * @param $set
-     * @return array
-     */
+
     private  static function  getVariationTabs(Get $get, CustomForm $customForm, bool $isGeneral, ?CustomFieldType $type, $set): array {
         $tabs = [];
 
@@ -309,5 +323,6 @@ class CustomFieldEditForm
         }
         return $tabs;
     }
+
 
 }
