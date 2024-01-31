@@ -98,7 +98,7 @@ class CustomFormRender
     public static function render(int $indexOffset, Collection $fieldVariations, Collection &$customFields, Closure &$render) {
         $customFormSchema = [];
 
-        $preparedFields = collect(
+        $preparedFieldsVariations = collect(
             array_combine(
                 $fieldVariations->map(fn(CustomFieldVariation $variation)=> $customFields->firstWhere("id",$variation->custom_field_id)->form_position)->toArray(),
                 $fieldVariations->map(fn(CustomFieldVariation $variation)=> $variation->id)->toArray()
@@ -108,10 +108,10 @@ class CustomFormRender
 
         for($index = $indexOffset+1; $index<= $fieldVariations->count()+$indexOffset; $index++){
 
-            if(empty($preparedFields[$index]))continue;
+            if(empty($preparedFieldsVariations[$index]))continue;
 
             /** @var CustomFieldVariation $fieldVariation*/
-            $fieldVariation = $fieldVariations->firstWhere("id",$preparedFields[$index]);
+            $fieldVariation = $fieldVariations->firstWhere("id",$preparedFieldsVariations[$index]);
 
 
 
@@ -128,7 +128,8 @@ class CustomFormRender
             //Setup Render Data
             $fieldVariationRenderData = [];
             for($formPositionSubForm = $customField->form_position+1; $formPositionSubForm <= $endLocation; $formPositionSubForm++){
-                $fieldVariationRenderData[] =  $fieldVariations->firstWhere("id",$preparedFields[$formPositionSubForm]);
+                if($preparedFieldsVariations->keys()->contains($formPositionSubForm))
+                    $fieldVariationRenderData[] =  $fieldVariations->firstWhere("id",$preparedFieldsVariations[$formPositionSubForm]);
             }
             $fieldVariationRenderData = collect($fieldVariationRenderData);
 
