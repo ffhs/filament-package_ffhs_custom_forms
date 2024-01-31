@@ -128,8 +128,7 @@ class CustomFormRender
             //Setup Render Data
             $fieldVariationRenderData = [];
             for($formPositionSubForm = $customField->form_position+1; $formPositionSubForm <= $endLocation; $formPositionSubForm++){
-                if($preparedFieldsVariations->keys()->contains($formPositionSubForm))
-                    $fieldVariationRenderData[] =  $fieldVariations->firstWhere("id",$preparedFieldsVariations[$formPositionSubForm]);
+                $fieldVariationRenderData[] =  $fieldVariations->firstWhere("id",$preparedFieldsVariations[$formPositionSubForm]);
             }
             $fieldVariationRenderData = collect($fieldVariationRenderData);
 
