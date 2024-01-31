@@ -4,13 +4,14 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Views\DateTypeView;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\Traids\HasBasicSettings;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\Traids\HasCustomFormPackageTranslation;
 use Filament\Forms\Components\TextInput;
 
 class DateType extends CustomFieldType
 {
     use HasCustomFormPackageTranslation;
-    use \Ffhs\FilamentPackageFfhsCustomForms\CustomField\Traids\HasBasicSettings;
+    use HasBasicSettings;
 
     public static function getFieldIdentifier(): string {return "date";}
 

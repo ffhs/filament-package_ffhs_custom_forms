@@ -3,11 +3,10 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField;
 
 
-
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldVariation;
 use Filament\Forms\Components\Component;
-use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Section;
 use Illuminate\Support\Facades\App;
 
 abstract class CustomFieldType
@@ -35,15 +34,17 @@ abstract class CustomFieldType
         return new $class();
     }
 
-    /*
-     * Abstract and Instance Functions
-     */
+    public static function prepareCloneOptions(array $templateOptions, bool $isInheritGeneral) :array{
+        return $templateOptions;
+        //ToDO
+    }
 
 
 
     public static abstract function getFieldIdentifier():string;
     public abstract function viewModes():array;
-    public abstract function  icon():string;
+    public abstract function icon():string;
+
 
 
     public function getFormComponent(CustomFieldVariation $record, string $viewMode = "default", array $parameter = []): Component { //ToDo Remove Parameters?
@@ -102,9 +103,6 @@ abstract class CustomFieldType
     }
 
 
-    public static function prepareCloneOptions(array $templateOptions, bool $isInheritGeneral) :array{
-        return $templateOptions;
-    }
 
 
     public function prepareSaveFieldData(mixed $data): ?array{
@@ -135,46 +133,60 @@ abstract class CustomFieldType
     }
 
     public function getGeneralFieldExtraField(): ?Component{
-        return  null;
+        return  null; //ToDo
     }
 
     public function hasExtraOptions():bool{
         return !empty($this->getExtraOptionFields());
     }
 
-    public function getExtraOptionsRepeater(): ?Repeater{
+    public function getExtraOptionsComponent(): ?Component{
         if(!$this->hasExtraOptions()) return null;
-        return Repeater::make("options")
+        return Section::make()
             ->schema($this->getExtraOptionSchema())
-            ->reorderable(false)
-            ->deletable(false)
-            ->cloneable(false)
-            ->addable(false)
-            ->defaultItems(1)
-            ->columns(2)
-            ->maxItems(1)
-            ->minItems(1)
-            ->label("")
-            ->live();
+            ->statePath("options")
+            ->columns();
     }
 
-    public function prepareOptionDataBeforeFill(array $data):array{
-         if(!array_key_exists("options",$data) || is_null($data["options"])) $data["options"] = [0=> $this->getExtraOptionFields()];
-         else if(!array_key_exists(0,$data["options"]))$data["options"] = [0 => $data["options"]];
+    public function mutateVariationDataBeforeFill(array $data):array{
+         if(!array_key_exists("options",$data) || is_null($data["options"])) $data["options"] = $this->getExtraOptionFields();
          return $data;
     }
 
-    public function prepareOptionDataBeforeSave(?array $data):array{
-        if(array_key_exists("options",$data) && !empty($data["options"]))
-            $data["options"] = $data["options"][0];
-        else
-            $data["options"] = null;
+    public function mutateVariationDataBeforeSave(?array $data):array{
+        if(!array_key_exists("options",$data)  || empty($data["options"]))  $data["options"] = null;
+        if(!$this->canBeDeactivate()) $data["is_active"] = true;
+        if(!$this->canBeRequired()) $data["required"] = false;
         return $data;
     }
 
-    public function prepareOptionDataBeforeCreate(array $data):array{
-        $data["identify_key"]= uniqid();
-        return $this->prepareOptionDataBeforeSave($data);
+    public function mutateVariationDataBeforeCreate(array $data):array{
+        return $this->mutateVariationDataBeforeSave($data);
+    }
+
+    public function mutateCustomFieldDataBeforeFill(array $data):array{
+        return $data;
+    }
+
+    public function mutateCustomFieldDataBeforeSave(?array $data):array{
+        return $data;
+    }
+
+    public function mutateCustomFieldDataBeforeCreate(array $data):array{
+        if(empty($data["identify_key"]) && empty($data["general_field_id"])) $data["identify_key"] = uniqid();
+        return $this->mutateCustomFieldDataBeforeSave($data);
+    }
+
+
+
+    public function canBeDeactivate():bool {
+        return true;
+    }
+    public function canHasVariations():bool {
+        return true;
+    }
+    public function canBeRequired():bool {
+        return true;
     }
 
 

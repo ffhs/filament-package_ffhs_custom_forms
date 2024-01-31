@@ -16,8 +16,8 @@ return new class () extends Migration {
             $table->id();
             $table->foreignId('custom_field_id')->nullable()->constrained()->cascadeOnDelete();
 
-            $table->boolean("required");
-            $table->boolean("is_active");
+            $table->boolean("required")->default(false);
+            $table->boolean("is_active")->default(true);
             $table->json('options')->nullable();
 
             $table->nullableMorphs("variation");
