@@ -25,6 +25,7 @@ class CustomFormEditSave
         if($customfield->exists) $customFieldData = $type->mutateCustomFieldDataBeforeSave($customFieldData);
         else $customFieldData = $type->mutateCustomFieldDataBeforeCreate($customFieldData);
         $customfield->fill($customFieldData)->save();
+        $type->afterCustomFieldSave($customfield,$customFieldData);
 
 
 
@@ -60,8 +61,8 @@ class CustomFormEditSave
                 $variationData = $type->mutateVariationDataBeforeSave($variationData);
             }
 
-            $variation->fill($variationData);
-            $variation->save();
+            $variation->fill($variationData)->save();
+            $type->afterCustomFieldVariationSave($variation,$variationData);
 
             $updatetVariationIds[] = $variationId;
         }

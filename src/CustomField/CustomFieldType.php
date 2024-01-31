@@ -3,6 +3,7 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField;
 
 
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldVariation;
 use Filament\Forms\Components\Component;
@@ -153,12 +154,13 @@ abstract class CustomFieldType
          return $data;
     }
 
-    public function mutateVariationDataBeforeSave(?array $data):array{
+    public function mutateVariationDataBeforeSave(array $data):array{
         if(!array_key_exists("options",$data)  || empty($data["options"]))  $data["options"] = null;
         if(!$this->canBeDeactivate()) $data["is_active"] = true;
         if(!$this->canBeRequired()) $data["required"] = false;
         return $data;
     }
+
 
     public function mutateVariationDataBeforeCreate(array $data):array{
         return $this->mutateVariationDataBeforeSave($data);
@@ -177,6 +179,10 @@ abstract class CustomFieldType
         return $this->mutateCustomFieldDataBeforeSave($data);
     }
 
+    public function afterCustomFieldSave(CustomField $field, array$data):void{
+    }
+    public function afterCustomFieldVariationSave(?CustomFieldVariation $variation, array $variationData):void {
+    }
 
 
     public function canBeDeactivate():bool {
@@ -195,6 +201,8 @@ abstract class CustomFieldType
         if(array_key_exists($option, $record->options)) return $record->options[$option];
         return $this->getExtraOptionFields()[$option];
     }
+
+
 
 
 }
