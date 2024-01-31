@@ -543,8 +543,8 @@ class CustomFormEditForm
     }
 
     //Copied from Repeaters and edited
-    private static function saveCustomFields(Repeater $component, CustomForm $customForm, array $state): void {
-
+    private static function saveCustomFields(Repeater $component, CustomForm $customForm, ?array $state): void {
+        if(is_null($state)) return;
 
         $relationship = $customForm->customFields();
 
