@@ -241,7 +241,7 @@ class CustomFormEditForm
             });
     }
 
-    private static function getFieldTypeFromRawDate(array $data): ?CustomFieldType {
+    public static function getFieldTypeFromRawDate(array $data): ?CustomFieldType {
         $isGeneral = array_key_exists("general_field_id",$data)&& !is_null($data["general_field_id"]);
         return $isGeneral? GeneralField::cached($data["general_field_id"])->getType(): CustomFieldType::getTypeFromName($data["type"]);
     }
