@@ -51,6 +51,11 @@ class FormVariationResource extends Resource
           return __('filament-package_ffhs_custom_forms::custom_forms.fields.general_field');
       }
    */
+
+    public static function getEloquentQuery(): Builder {
+        return parent::getEloquentQuery()->with("customForm");
+    }
+
         public static function form(Form $form): Form
         {
             return $form
@@ -125,9 +130,7 @@ class FormVariationResource extends Resource
             ]);
     }
 
-    public static function getEloquentQuery(): Builder {
-        return parent::getEloquentQuery()->with("customForm");
-    }
+
 
 
     public static function getRelations(): array
