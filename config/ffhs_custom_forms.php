@@ -7,6 +7,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\DateType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\EmailType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\IconSelectType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\NumberType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\SelectType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\TextAreaType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\TextType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\SectionType;
@@ -22,6 +23,7 @@ return [
         TextType::class,
         SectionType::class,
         IconSelectType::class,
+        SelectType::class,
     ],
 
     "forms"=>[

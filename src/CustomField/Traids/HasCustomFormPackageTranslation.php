@@ -4,7 +4,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\Traids;
 
 trait HasCustomFormPackageTranslation
 {
-    public function getTranslatedName():string{
+    public function getTranslatedName():String{
         return __("filament-package_ffhs_custom_forms::custom_forms.fields.types." . self::fieldIdentifier());
     }
 }

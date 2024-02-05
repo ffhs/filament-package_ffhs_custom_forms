@@ -36,7 +36,7 @@ class DateTypeView implements FieldTypeView
     }
 
 
-    private static function getFormat(CustomFieldVariation $customField):string{
+    private static function getFormat(CustomFieldVariation $customField):String{
         if(is_null($customField->options)) return "Y-m-d";
         return  array_key_exists("format",$customField->options)
         && !is_null($customField->options["format"])

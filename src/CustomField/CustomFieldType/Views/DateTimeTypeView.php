@@ -34,7 +34,7 @@ class DateTimeTypeView implements FieldTypeView
             ->inlineLabel();
     }
 
-    private static function getFormat(CustomFieldVariation $customField):string{
+    private static function getFormat(CustomFieldVariation $customField):String{
         if(is_null($customField->options)) return "Y-m-d h:i:s";
         return  array_key_exists("format",$customField->options)
         && !is_null($customField->options["format"])

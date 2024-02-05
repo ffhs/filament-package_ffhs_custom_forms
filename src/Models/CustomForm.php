@@ -58,7 +58,7 @@ class CustomForm extends Model
     }
 
 
-    public function getFormConfiguration():string{
+    public function getFormConfiguration():String{
         return DynamicFormConfiguration::getFormConfigurationClass($this->custom_form_identifier);
     }
 

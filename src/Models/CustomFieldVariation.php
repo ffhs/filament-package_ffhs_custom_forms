@@ -63,4 +63,6 @@ class CustomFieldVariation extends Model
     public function customOptions(): BelongsToMany {
         return $this->belongsToMany(CustomOption::class, "option_field_variation");
     }
+
+
 }

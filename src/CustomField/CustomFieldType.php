@@ -42,9 +42,9 @@ abstract class CustomFieldType
 
 
 
-    public static abstract function getFieldIdentifier():string;
+    public static abstract function getFieldIdentifier():String;
     public abstract function viewModes():array;
-    public abstract function icon():string;
+    public abstract function icon():String;
 
 
 
@@ -94,11 +94,11 @@ abstract class CustomFieldType
         if($record instanceof  CustomFieldAnswer) $record = $record->customFieldVariation;
         return  $record->customField->getInheritState()["tool_tip_" . App::currentLocale()];
     }
-    public static function getIdentifyKey(CustomFieldVariation|CustomFieldAnswer  $record) :string{
+    public static function getIdentifyKey(CustomFieldVariation|CustomFieldAnswer  $record) :String{
         if($record instanceof  CustomFieldAnswer) $record = $record->customFieldVariation;
         return  $record->customField->getInheritState()["identify_key"];
     }
-    public static function getLabelName(CustomFieldVariation|CustomFieldAnswer  $record) :string{
+    public static function getLabelName(CustomFieldVariation|CustomFieldAnswer  $record) :String{
         if($record instanceof  CustomFieldAnswer) $record = $record->customFieldVariation;
         return  $record->customField->getInheritState()["name_" . App::currentLocale()];
     }
@@ -116,12 +116,12 @@ abstract class CustomFieldType
     }
 
 
-    public function getTranslatedName():string{
+    public function getTranslatedName():String{
         return __("custom_forms.types." . self::fieldIdentifier());
     }
 
 
-    public function fieldIdentifier():string{return $this::getFieldIdentifier();}
+    public function fieldIdentifier():String{return $this::getFieldIdentifier();}
 
 
     // Extra Options
@@ -182,6 +182,7 @@ abstract class CustomFieldType
     public function afterCustomFieldSave(CustomField $field, array$data):void{
     }
     public function afterCustomFieldVariationSave(?CustomFieldVariation $variation, array $variationData):void {
+
     }
 
 

@@ -33,11 +33,8 @@ class CustomOption extends Model
     protected static function booted() {
         parent::booted();
 
-        self::created(function(CustomOption $customForm) {
-            if(!$customForm->getFormConfiguration()::hasVariations()) return;
-            if(!is_null($customForm->relation_model_id)) return;
-            $customForm->customForm()->save($customForm);
-            $customForm->save();
+        self::creating(function(CustomOption $customOption) {
+            if(is_null($customOption->identifier)) $customOption->identifier= uniqid();
         });
     }
 
