@@ -17,7 +17,8 @@ return new class () extends Migration {
             $table->id();
             $table->string('name_de');
             $table->string('name_en');
-            $table->string('custom_key')->nullable();
+            $table->string('identifier');
+            $table->string('icon')->nullable();
 
             $table->timestamps();
 

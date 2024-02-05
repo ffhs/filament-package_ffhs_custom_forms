@@ -4,6 +4,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Models;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Cache;
 
@@ -16,6 +17,7 @@ use Illuminate\Support\Facades\Cache;
  * @property string $name_de
  * @property string $name_en
  * @property string $type
+ * @property Collection $customOptions
  */
 class GeneralField extends ACustomField
 {
@@ -49,6 +51,10 @@ class GeneralField extends ACustomField
         return $this->hasMany(GeneralFieldForm::class);
     }
 
+    public function customOptions(): BelongsToMany {
+        return $this->belongsToMany(CustomOption::class, "option_general_field");
+    }
+
 
     public static function cached(mixed $custom_field_id): ?ACustomField{
         return Cache::remember("custom_field-" .$custom_field_id, 1, fn()=>GeneralField::query()->firstWhere("id", $custom_field_id));
@@ -57,5 +63,6 @@ class GeneralField extends ACustomField
     public static function allCached(): Collection{
         return Cache::remember("general_fields-all", 5,fn()=>self::all());
     }
+
 
 }

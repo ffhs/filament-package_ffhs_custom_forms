@@ -2,32 +2,32 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Models;
 
-use Ffhs\FilamentPackageFfhsCustomForms\FormConfiguration\DynamicFormConfiguration;
-use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\MorphOne;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Cache;
 
 /**
  * @property int $id
  * @property string $name_de
- * @property string|null $name_en
- * @property string|null $custom_key
+ * @property string $name_en
+ * @property string $identifier
+ * @property string|null $icon
+ *
+ * @property CustomFieldVariation $customFieldVariation
+ * @property CustomOption $customOption
  */
 class CustomOption extends Model
 {
     use HasFormIdentifyer;
     use HasFactory;
 
-
     protected $fillable = [
         'name_de',
         'name_en',
-        'custom_key',
+        'identifier',
+        'icon',
     ];
 
     protected static function booted() {
@@ -39,7 +39,14 @@ class CustomOption extends Model
             $customForm->customForm()->save($customForm);
             $customForm->save();
         });
+    }
 
+
+    public function customFieldVariation () :BelongsTo{
+        return $this->belongsTo(CustomFieldVariation::class);
+    }
+    public function customOption () :BelongsTo{
+        return $this->belongsTo(CustomOption::class);
     }
 
 }
