@@ -44,7 +44,7 @@ return [
             "date" => "Datum",
             "date-time" => "Datum und Zeit",
             "textarea" => "Textbereich",
-            "module_select" => "Module Selector",
+            "icon-select" => "Icon Auswahl",
         ],
     ],
 

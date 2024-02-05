@@ -43,7 +43,7 @@ return [
             "date" => "Date",
             "date-time" => "Date and Time",
             "textarea" => "Textarea",
-            "module_select" => "Module Selector",
+            "icon-select" => "Icon Selector",
         ],
     ],
 
