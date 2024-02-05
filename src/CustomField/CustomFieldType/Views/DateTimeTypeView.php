@@ -26,8 +26,8 @@ class DateTimeTypeView implements FieldTypeView
 
     public static function getInfolistComponent(CustomFieldType $type, CustomFieldAnswer $record,
         array $parameter = []): TextEntry {
-        return TextEntry::make($type::getIdentifyKey($record->customFieldVariation))
-            ->label($type::class::getLabelName($record->customFieldVariation). ":")
+        return TextEntry::make($type::getIdentifyKey($record))
+            ->label($type::class::getLabelName($record). ":")
             ->columnStart($type->getOptionParameter($record,"new_line_option"))
             ->dateTime(self::getFormat($record->customFieldVariation))
             ->state($record->answer)
