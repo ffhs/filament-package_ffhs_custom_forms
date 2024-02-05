@@ -20,11 +20,11 @@ use Illuminate\Support\Facades\Cache;
 class GeneralField extends ACustomField
 {
 
+    protected $table = "general_fields";
 
     protected $fillable = [
         'identify_key',
-        'is_general_field_active',
-        'is_general_field',
+        'is_active',
         'is_term_bound',
         'tool_tip_de',
         'tool_tip_en',
@@ -37,18 +37,6 @@ class GeneralField extends ACustomField
     public static function getTranslatableAttributes(): array
     {
         return ['name','tool_tip'];
-    }
-
-    //None no generalFields
-    protected static function booted()
-    {
-        static::addGlobalScope('is_general_field', function (Builder $builder) {
-            $builder->where('is_general_field', true);
-        });
-
-        static::creating(function (GeneralField $field) {
-            $field->is_general_field = true;
-        });
     }
 
 

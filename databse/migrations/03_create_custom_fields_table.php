@@ -16,8 +16,6 @@ return new class () extends Migration {
             $table->id();
 
             // general field stuff
-            $table->boolean('is_general_field_active')->nullable();
-            $table->boolean('is_general_field')->default(false);
             $table->boolean("has_variations")->nullable();
 
 
@@ -26,7 +24,7 @@ return new class () extends Migration {
 
             //Inherit GeneralField
             $table->foreignId("general_field_id")->nullable()
-                ->constrained()->references('id')->on('custom_fields')->cascadeOnDelete();
+                ->constrained()->references('id')->on('general_fields')->cascadeOnDelete();
 
 
             //That doesn't can be null if general_field_id are null
@@ -44,9 +42,8 @@ return new class () extends Migration {
 
             $table->timestamps();
             //$table->softDeletes();
-
-            $table->unique(["general_field_id","custom_form_id"]);
-           // $table->unique(["custom_form_id","form_position"]);
+            // $table->unique(["general_field_id","custom_form_id"]);
+            // $table->unique(["custom_form_id","form_position"]);
 
 
         });

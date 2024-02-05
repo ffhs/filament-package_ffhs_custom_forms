@@ -17,18 +17,16 @@ use Illuminate\Support\Facades\Cache;
  * @property string|null tool_tip_en
  *
  * @property String|null $type
- *
- * @property bool $is_general_field
  */
 abstract class ACustomField extends Model
 {
     use HasFactory;
     //use SoftDeletes;
 
-    protected $table = "custom_fields";
+
 
     public function getTypeName():?string{
-        if($this->is_general_field) $typeName = $this->type;
+        if($this->getTable() == "general_fields") $typeName = $this->type;
         else if(!$this->isInheritFromGeneralField()) $typeName = $this->type;
         else $typeName = $this->generalField->type;
         return  $typeName;

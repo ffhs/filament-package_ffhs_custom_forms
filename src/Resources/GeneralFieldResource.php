@@ -111,7 +111,7 @@ class GeneralFieldResource extends Resource
                             ->columnSpan(1)
                             ->required(),
 
-                       Toggle::make("is_general_field_active")
+                       Toggle::make("is_active")
                             ->label(__(self::langPrefix . 'is_general_field_active'))
                             ->helperText(__(self::langPrefix . 'helper_text.is_general_field_active'))
                             ->default(true)
@@ -157,7 +157,7 @@ class GeneralFieldResource extends Resource
                             ->map(fn(string $class) => ($class)::displayName())
                     ),
 
-                Tables\Columns\ToggleColumn::make('is_general_field_active')
+                Tables\Columns\ToggleColumn::make('is_active')
                     ->label(__(self::langPrefix .'is_general_field_active')),
 
             ])
