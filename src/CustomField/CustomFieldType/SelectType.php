@@ -2,16 +2,13 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType;
 
-use Barryvdh\Debugbar\Facades\Debugbar;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Views\CheckboxTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\Traids\HasBasicSettings;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\Traids\HasCustomFormPackageTranslation;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\Traids\HasTypeOptions;
-use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Group;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use PHPUnit\Metadata\Group;
 
 class SelectType extends CustomFieldType
 {
@@ -36,30 +33,26 @@ class SelectType extends CustomFieldType
             Toggle::make("several")
                 ->label("Mehre auswählbar")//ToDo Translate
                 ->columnSpanFull()
-                ->live(), //WHY THAT DONT WORK
+                ->live(),
 
-            \Filament\Forms\Components\Group::make()
-                ->hidden(fn($get)=> Debugbar::info(!$get("several"))) //WHY THAT DONT WORK
-                ->columnSpanFull()
-                ->columns()
-                ->hidden()
-                ->schema([
-                    TextInput::make("min_select")
-                        ->label("Mindestanzahl") //ToDo Translate
-                        ->helperText("Greift nur bei (Benötigt)")//ToDo Translate
-                        ->minValue(0)
-                        ->step(1)
-                        ->required()
-                        ->numeric(),
-                    TextInput::make("max_select")
-                        ->label("Maximalanzahl") //ToDo Translate
-                        ->helperText("'0' entspricht keine Begrenzung") //ToDo Translate
-                        ->minValue(0)
-                        ->step(1)
-                        ->required()
-                        ->numeric(),
-                ]),
+            TextInput::make("min_select")
+                ->hidden(fn($get)=> !$get("several"))
+                ->label("Mindestanzahl") //ToDo Translate
+                ->columnStart(1)
+                ->helperText("Greift nur bei (Benötigt)")//ToDo Translate
+                ->minValue(0)
+                ->step(1)
+                ->required()
+                ->numeric(),
 
+            TextInput::make("max_select")
+                ->hidden(fn($get)=> !$get("several"))
+                ->label("Maximalanzahl") //ToDo Translate
+                ->helperText("'0' entspricht keine Begrenzung") //ToDo Translate
+                ->minValue(0)
+                ->step(1)
+                ->required()
+                ->numeric(),
 
             $this->getCustomOptionsRepeater(),
         ];
