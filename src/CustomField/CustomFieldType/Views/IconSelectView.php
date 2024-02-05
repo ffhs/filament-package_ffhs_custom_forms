@@ -2,7 +2,6 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Views;
 
-use Closure;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\IconInput;
