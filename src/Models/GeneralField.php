@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Cache;
  * @property string $name_de
  * @property string $name_en
  * @property string $type
+ * @property array $extra_options
  * @property Collection $customOptions
  */
 class GeneralField extends ACustomField
@@ -25,16 +26,22 @@ class GeneralField extends ACustomField
     protected $table = "general_fields";
 
     protected $fillable = [
-        'identify_key',
-        'is_active',
+        'variation_options',
         'is_term_bound',
+        'extra_options',
+        'identify_key',
         'tool_tip_de',
         'tool_tip_en',
+        'is_active',
         'name_de',
         'name_en',
         'type',
     ];
 
+    protected $casts = [
+        'extra_options'=>'array',
+        'variation_options'=>'array',
+    ];
 
     public static function getTranslatableAttributes(): array
     {

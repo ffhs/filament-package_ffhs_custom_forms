@@ -18,6 +18,7 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use function PHPUnit\Framework\isEmpty;
 
 class GeneralFieldResource extends Resource
 {
@@ -75,7 +76,7 @@ class GeneralFieldResource extends Resource
             ->schema([
                 Section::make()
                     ->columnSpan(2)
-                    ->columns(2)
+                    ->columns()
                     ->schema([
 
                         Tabs::make()
@@ -119,16 +120,36 @@ class GeneralFieldResource extends Resource
                             ->columnSpan(1),
 
 
-                        //Extra field FromType
-                       Group::make(function ($get){
+                      /*   //Extra field FromType
+                      Group::make(function ($get){
                             if(is_null($get("type"))) return[];
                             $type = CustomFieldType::getTypeFromName($get("type"));
                             if(is_null($type)) return [];
                             $component = $type->getGeneralFieldExtraField();
                             return is_null($component)?[]:[$component];
-                        })->columnSpanFull(),
-
+                       })->columnSpanFull(),*/
                     ]),
+
+
+                Section::make("Extraoptionen") //ToDo Translate
+                    ->visible(function($get){
+                        if(is_null($get("type"))) return false;
+                        $type = CustomFieldType::getTypeFromName($get("type"));
+                        $array = $type->getGeneralFieldExtraFields();
+                        return !empty($array);
+                    })
+                    ->schema(function($get){
+                        if(is_null($get("type"))) return[];
+                        $type = CustomFieldType::getTypeFromName($get("type"));
+                        $array = $type->getGeneralFieldExtraFields();
+                        if(empty($array)) return [];
+                        return  $array;
+                    })
+                    ->statePath("extra_options")
+                    ->columnSpan(1)
+
+                //ToDo add variation settings
+
             ]);
     }
 

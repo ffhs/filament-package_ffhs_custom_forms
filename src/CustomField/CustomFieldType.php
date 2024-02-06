@@ -133,9 +133,12 @@ abstract class CustomFieldType
         return [];
     }
 
-    public function getGeneralFieldExtraField(): ?Component{
+
+    public function getGeneralFieldExtraFields(): ?array{
         return  null; //ToDo
     }
+
+
 
     public function hasExtraOptions():bool{
         return !empty($this->getExtraOptionFields());

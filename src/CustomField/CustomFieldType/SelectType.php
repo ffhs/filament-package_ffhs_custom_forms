@@ -6,6 +6,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\Traids\HasBasicSettings;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\Traids\HasCustomFormPackageTranslation;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\Traids\HasTypeOptions;
+use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -23,6 +24,8 @@ class SelectType extends CustomFieldType
             'default'  => CustomFieldType\Views\SelecTypeView::class, //ToDo
         ];
     }
+
+
 
     public function getExtraOptionSchema():?array{
         return [

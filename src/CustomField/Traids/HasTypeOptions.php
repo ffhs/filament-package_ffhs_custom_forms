@@ -21,7 +21,13 @@ trait HasTypeOptions
         ];
     }
 
-    protected function getCustomOptionsRepeater (): Repeater {
+    public function getGeneralFieldExtraFields(): ?array {
+        return [
+            $this->getCustomOptionsRepeater(true)
+        ];
+    }
+
+    protected function getCustomOptionsRepeater (bool $withIdentifikator = false): Repeater {
         return Repeater::make("customOptions")
             ->collapseAllAction(fn($action) => $action->hidden())
             ->expandAllAction(fn($action) => $action->hidden())
@@ -32,9 +38,15 @@ trait HasTypeOptions
             ->collapsible()
             ->collapsed()
             ->addable()
+            ->columns()
             ->schema([
-                TextInput::make("name_de")->label("Name DE")->required(),
-                TextInput::make("name_en")->label("Name EN")->required(),
+                TextInput::make("name_de")->label("Name De")->required(),
+                TextInput::make("name_en")->label("Name En")->required(),
+                TextInput::make("identifier")
+                    ->label("Identifikator")
+                    ->visible($withIdentifikator)
+                    ->columnSpanFull()
+                    ->required(),
             ]);
     }
 
