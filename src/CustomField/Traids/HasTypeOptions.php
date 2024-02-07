@@ -2,6 +2,7 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\Traids;
 
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldVariation;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomOption;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
@@ -12,6 +13,7 @@ use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Get;
+use Illuminate\Database\Eloquent\Collection;
 
 trait HasTypeOptions
 {
@@ -27,6 +29,7 @@ trait HasTypeOptions
     }
 
 
+
     public function getExtraOptionSchema():?array{
         return [
             Group::make()
@@ -38,14 +41,14 @@ trait HasTypeOptions
                     Group::make()
                         ->columnSpanFull()
                         ->schema(function ($get){
-                            if(!is_null($get("../../../../general_field_id"))) return [$this->getCustomOptionsSelector()];
+                            if(!is_null($get("../../../general_field_id"))) return [$this->getCustomOptionsSelector()];
                             return [];
                         }),
                 ]),
             Group::make()
                 ->columnSpanFull()
                 ->schema(function ($get){
-                    if(is_null($get("../../../general_field_id"))) return [$this->getCustomOptionsRepeater()];
+                    if(is_null($get("../../general_field_id"))) return [$this->getCustomOptionsRepeater()];
                     return [];
                 }),
         ];
@@ -94,7 +97,7 @@ trait HasTypeOptions
                 ->columnSpanFull()
                 ->multiple()
                 ->options(function($get){
-                    $generalField = GeneralField::cached($get("../../../../general_field_id"));
+                    $generalField = GeneralField::cached($get("../../../general_field_id"));
                     return $generalField->customOptions->pluck("name_de","id"); //toDo Translate;
                 })
             ;
@@ -103,6 +106,7 @@ trait HasTypeOptions
     public function mutateVariationDataBeforeFill(array $data):array{
         $data = parent::mutateVariationDataBeforeFill($data);
         if(empty($data["id"]))return $data;
+        if(!empty($data["general_field_id"])) return $data;
         $customOptionDatas = [];
         /** @var CustomFieldVariation $customFieldVariation */
         $customFieldVariation = CustomFieldVariation::query()->with("customOptions")->firstWhere("id", $data["id"]);
@@ -151,6 +155,23 @@ trait HasTypeOptions
 
         $set($target.".customOptions",$customOptions);
         return $variationData["options"];
+    }
+    public function getAvailableCustomOptions(CustomFieldVariation $record) : \Illuminate\Support\Collection{
+        if($record->customField->isInheritFromGeneralField())
+            $options = $record
+                ->customField
+                ->generalField
+                ->customOptions
+                ->whereIn("identifier", $this->getOptionParameter($record, "available_options"));
+        else  $options = $record->customOptions;
+        return $options->pluck("name_de","identifier");//ToDo Translate
+    }
+
+    public function getAllCustomOptions(CustomFieldVariation|CustomFieldAnswer $record) : \Illuminate\Support\Collection{
+        if($record instanceof CustomFieldAnswer) $record = $record->customFieldVariation;
+        if($record->customField->isInheritFromGeneralField()) $options = $record->customField->generalField->customOptions;
+        else $options = $record->customOptions;
+        return $options->pluck("name_de","identifier");//ToDo Translate
     }
 
 }

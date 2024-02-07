@@ -19,14 +19,15 @@ class SelectTypeView implements FieldTypeView
 
     public static function getFormComponent(CustomFieldType $type, CustomFieldVariation $record,
         array $parameter = []): Component {
+
         $select = Select::make($type::getIdentifyKey($record))
-            ->options(fn()=> $record->customOptions->pluck("name_de","identifier"))//ToDo Translate
             ->columnStart($type->getOptionParameter($record,"new_line_option"))
             ->inlineLabel($type->getOptionParameter($record,"in_line_label"))
             ->columnSpan($type->getOptionParameter($record,"column_span"))
             ->helperText($type::class::getToolTips($record))
             ->label($type::class::getLabelName($record))
-            ->required($record->required);
+            ->required($record->required)
+            ->options($type->getAvailableCustomOptions($record));
 
         if($type->getOptionParameter($record,"several")){
             $select->multiple()
@@ -40,21 +41,20 @@ class SelectTypeView implements FieldTypeView
 
     public static function getInfolistComponent(CustomFieldType $type, CustomFieldAnswer $record,
         array $parameter = []): \Filament\Infolists\Components\Component {
+
+        $answerer =$type->answare($record);
+        if(empty($answerer)) $state =  "";
+        else if(is_array($answerer))
+            $state =  $type->getAllCustomOptions($record)->filter(fn($value, $id) => in_array($id,$answerer));
+        else
+            $state =  $type->getAllCustomOptions($record)->filter(fn($value, $id) => $id ==$answerer);
+
         return TextEntry::make($type::getIdentifyKey($record))
             ->columnStart($type->getOptionParameter($record,"new_line_option"))
             ->label($type::class::getLabelName($record). ":")
             ->columnSpanFull()
             ->inlineLabel()
-            ->badge()
-            ->state(function () use ($type, $record){
-                if(empty($type->answare($record)) || empty($type->answare($record))) return "";
-                return $record
-                    ->customFieldVariation
-                    ->customOptions
-                    ->pluck("name_de","identifier")
-                    ->filter(fn($value, $id) => in_array($id,$type->answare($record)));
-                  //ToDo Translate
-            });
+            ->state($state);
     }
 
 }

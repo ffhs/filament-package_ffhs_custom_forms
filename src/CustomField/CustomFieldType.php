@@ -105,7 +105,9 @@ abstract class CustomFieldType
     }
 
     public function answare(CustomFieldAnswer $answer) {
-        return $this->prepareLoadFieldData($answer->answer);
+        $rawAnswerer = $answer->answer;
+        if(is_null($rawAnswerer)) return null;
+        return $this->prepareLoadFieldData($rawAnswerer);
     }
 
 
