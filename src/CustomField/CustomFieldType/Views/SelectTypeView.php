@@ -10,7 +10,9 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomOption;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Filament\Infolists\Components\IconEntry;
+use Filament\Infolists\Components\TextEntry;
 
 class SelectTypeView implements FieldTypeView
 {
@@ -37,15 +39,22 @@ class SelectTypeView implements FieldTypeView
     }
 
     public static function getInfolistComponent(CustomFieldType $type, CustomFieldAnswer $record,
-        array $parameter = []): IconEntry {
-        return IconEntry::make($type::getIdentifyKey($record))
+        array $parameter = []): \Filament\Infolists\Components\Component {
+        return TextEntry::make($type::getIdentifyKey($record))
             ->label($type::class::getLabelName($record). ":")
             ->columnStart($type->getOptionParameter($record,"new_line_option"))
+            ->columnSpanFull()
+            ->inlineLabel()
+            ->badge()
             ->state(function () use ($record){
-                $record->customFieldVariation->customOptions->pluck("name_de","id"); //ToDo Translate
-                return $record->answer;
-            })
-            ->inlineLabel();
+                if(empty($record->answer)) return "";
+                return $record
+                    ->customFieldVariation
+                    ->customOptions
+                    ->pluck("name_de","identifier")
+                    ->filter(fn($value, $id) => in_array($id,$record->answer));
+                  //ToDo Translate
+            });
     }
 
 }

@@ -78,11 +78,11 @@ class CustomFormRender
         $fieldVariations = $formAnswer->customFieldAnswers->map(fn(CustomFieldAnswer $answer) => $answer->customFieldVariation);
 
         $variation = $variationRaw;
-        if (is_null($variationRaw)&&$formAnswer->customForm->getFormConfiguration()::hasVariations()) {
+        if (is_null($variationRaw)&& $formAnswer->customForm->getFormConfiguration()::hasVariations()) {
             $variation = $formAnswer->customFieldAnswers
                 ->map(fn(CustomFieldAnswer $answer) => $answer->customFieldVariation)
-                ->filter(fn(CustomFieldVariation $variation) => is_null($variation->variation_id))->first();
-            if (!is_null($variation)) $variation = $variation->id;
+                ->filter(fn(CustomFieldVariation $variation) => !is_null($variation->variation_id))->first();
+            if (!is_null($variation)) $variation = $variation->variation_id;
         }
 
         if (is_null($variation) || !$formAnswer->customForm->getFormConfiguration()::hasVariations())

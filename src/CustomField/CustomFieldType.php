@@ -108,13 +108,17 @@ abstract class CustomFieldType
 
 
     public function prepareSaveFieldData(mixed $data): ?array{
-        if(is_null($data)) return null;
-        return ["saved"=> $data];
+        //if(is_null($data)) return null;
+        //return ["saved"=> $data];
+        return $data;
     }
     public function prepareLoadFieldData(array $data): mixed{
-        if(empty($data["saved"])) return null;
-        return $data["saved"];
+        //if(empty($data["saved"])) return null;
+        //return $data["saved"];
+        return $data;
     }
+
+
 
 
     public function getTranslatedName():String{
