@@ -67,10 +67,13 @@ trait HasTypeOptions
 
     public function getCustomOptionsSelector (?GeneralField $generalField = null):Component {
         return  Select::make("available_options")
-                ->options(function($state){
-
-                })
+                ->label("Mögliche Auswahlmöglichkeiten")
                 ->multiple()
+                ->options(function($get){
+                    $generalFieldID = $get("../../../general_field_id");
+                    $generalField = GeneralField::cached($generalFieldID);
+                    return $generalField->customOptions->pluck("name_de","id"); //toDo Translate;
+                })
             ;
     }
 

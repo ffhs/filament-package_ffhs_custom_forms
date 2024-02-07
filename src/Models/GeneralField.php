@@ -64,7 +64,7 @@ class GeneralField extends ACustomField
     }
 
 
-    public static function cached(mixed $custom_field_id): ?ACustomField{
+    public static function cached(mixed $custom_field_id): ?GeneralField{
         return Cache::remember("custom_field-" .$custom_field_id, 1, fn()=>GeneralField::query()->firstWhere("id", $custom_field_id));
     }
 
