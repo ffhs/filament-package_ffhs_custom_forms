@@ -17,12 +17,12 @@ trait HasTypeOptions
 {
 
     //ToDo Docs
-    public function getExtraTraitOptionSchema() : array{
+    protected function getExtraOptionSchemaHasOptions() : array{
         return  [];
     }
 
     //ToDo Docs
-    public function getGeneralExtraFieldTrait() : array{
+    protected function getGeneralExtraFieldHasOptions() : array{
         return  [];
     }
 
@@ -34,7 +34,7 @@ trait HasTypeOptions
                 ->columnSpanFull()
                 ->columns()
                 ->schema([
-                    Group::make($this->getExtraTraitOptionSchema())->columnSpanFull()->columns(),
+                    Group::make($this->getExtraOptionSchemaHasOptions())->columnSpanFull()->columns(),
                     Group::make()
                         ->columnSpanFull()
                         ->schema(function ($get){
@@ -53,7 +53,7 @@ trait HasTypeOptions
 
     public function getGeneralExtraField(): ?array {
         return [
-            Group::make($this->getGeneralExtraFieldTrait())->columns(),
+            Group::make($this->getGeneralExtraFieldHasOptions())->columns(),
             $this->getCustomOptionsRepeater(true),
         ];
     }

@@ -30,7 +30,7 @@ class DateTimeTypeView implements FieldTypeView
             ->columnStart($type->getOptionParameter($record,"new_line_option"))
             ->dateTime(self::getFormat($record->customFieldVariation))
             ->label($type::class::getLabelName($record). ":")
-            ->state($record->answer)
+            ->state($type->answare($record))
             ->columnSpanFull()
             ->inlineLabel();
     }

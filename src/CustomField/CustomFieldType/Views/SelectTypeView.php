@@ -46,13 +46,13 @@ class SelectTypeView implements FieldTypeView
             ->columnSpanFull()
             ->inlineLabel()
             ->badge()
-            ->state(function () use ($record){
-                if(empty($record->answer)) return "";
+            ->state(function () use ($type, $record){
+                if(empty($type->answare($record)) || empty($type->answare($record))) return "";
                 return $record
                     ->customFieldVariation
                     ->customOptions
                     ->pluck("name_de","identifier")
-                    ->filter(fn($value, $id) => in_array($id,$record->answer));
+                    ->filter(fn($value, $id) => in_array($id,$type->answare($record)));
                   //ToDo Translate
             });
     }

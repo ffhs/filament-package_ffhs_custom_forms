@@ -29,7 +29,7 @@ class TextTypeView implements FieldTypeView
         return TextEntry::make($type::getIdentifyKey($record))
             ->columnStart($type->getOptionParameter($record,"new_line_option"))
             ->label($type::getLabelName($record). ":")
-            ->state($record->answer)
+            ->state($type->answare($record))
             ->columnSpanFull()
             ->inlineLabel();
     }

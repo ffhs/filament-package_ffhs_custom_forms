@@ -31,7 +31,7 @@ class TextAreaTypeView implements FieldTypeView
         return TextEntry::make($type::getIdentifyKey($record))
             ->columnStart($type->getOptionParameter($record,"new_line_option"))
             ->label($type::class::getLabelName($record). ":")
-            ->state($record->answer)
+            ->state($type->answare($record))
             ->columnSpanFull();
     }
 }

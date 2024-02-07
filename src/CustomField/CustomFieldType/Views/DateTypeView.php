@@ -32,7 +32,7 @@ class DateTypeView implements FieldTypeView
             ->dateTime(self::getFormat($record->customFieldVariation))
             ->label($type::class::getLabelName($record). ":")
             ->columnSpanFull()
-            ->state($record->answer)
+            ->state($type->answare($record))
             ->inlineLabel();
     }
 

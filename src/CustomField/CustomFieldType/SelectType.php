@@ -26,7 +26,7 @@ class SelectType extends CustomFieldType
     }
 
 
-    public function getExtraTraitOptionSchema() : array{
+    public function getExtraOptionSchemaHasOptions() : array{
         return array_merge($this->getExtraOptionSchemaBasicSetup(), [
             Toggle::make("several")
                 ->label("Mehre auswählbar")//ToDo Translate
@@ -55,7 +55,7 @@ class SelectType extends CustomFieldType
     }
 
 
-    public function getExtraOptionFieldsTrait():array{
+    public function getExtraOptionFieldsBasicOptions():array{
         return [
             'several' => false,
             'min_select'=>1,

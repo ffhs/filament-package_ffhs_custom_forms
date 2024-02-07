@@ -104,18 +104,18 @@ abstract class CustomFieldType
         return  $record->customField->getInheritState()["name_" . App::currentLocale()];
     }
 
-
+    public function answare(CustomFieldAnswer $answer) {
+        return $this->prepareLoadFieldData($answer->answer);
+    }
 
 
     public function prepareSaveFieldData(mixed $data): ?array{
-        //if(is_null($data)) return null;
-        //return ["saved"=> $data];
-        return $data;
+        if(is_null($data)) return null;
+        return ["saved"=> $data];
     }
     public function prepareLoadFieldData(array $data): mixed{
-        //if(empty($data["saved"])) return null;
-        //return $data["saved"];
-        return $data;
+        if(empty($data["saved"])) return null;
+        return $data["saved"];
     }
 
 

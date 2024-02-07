@@ -10,6 +10,9 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldVariation;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\TextInput;
 use Filament\Infolists\Components\IconEntry;
+use Filament\Infolists\Components\TextEntry;
+use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\HtmlString;
 
 class IconSelectView implements FieldTypeView
 {
@@ -30,14 +33,19 @@ class IconSelectView implements FieldTypeView
     }
 
     public static function getInfolistComponent(CustomFieldType $type, CustomFieldAnswer $record,
-        array $parameter = []): IconEntry {
-        return IconEntry::make($type::getIdentifyKey($record))
+        array $parameter = []): \Filament\Infolists\Components\Component {
+        try {
+            $icon = new HtmlString(Blade::render("<x-".$type->answare($record). " class=\"h-20 w-20\" />"));
+        }catch (\InvalidArgumentException){
+            $icon = "";
+
+        }
+        return TextEntry::make($type::getIdentifyKey($record))
             ->columnStart($type->getOptionParameter($record,"new_line_option"))
-            ->state(is_null($record->answer)? false : $record->answer)
-            ->label($type::class::getLabelName($record). ":")
+            ->label($type::getLabelName($record). ":")
             ->columnSpanFull()
             ->inlineLabel()
-            ->boolean();
+            ->state($icon); //I Dont now why that isnt working
     }
 
 }

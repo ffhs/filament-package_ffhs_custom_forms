@@ -26,7 +26,7 @@ class CheckboxTypeView implements FieldTypeView
         array $parameter = []): IconEntry {
         return IconEntry::make($type::getIdentifyKey($record))
             ->columnStart($type->getOptionParameter($record,"new_line_option"))
-            ->state(is_null($record->answer)? false : $record->answer)
+            ->state(is_null($type->answare($record))? false : $type->answare($record))
             ->label($type::class::getLabelName($record). ":")
             ->columnSpanFull()
             ->inlineLabel()

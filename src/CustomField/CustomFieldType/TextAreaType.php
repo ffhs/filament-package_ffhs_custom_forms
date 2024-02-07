@@ -23,18 +23,15 @@ class TextAreaType extends CustomFieldType
         ];
     }
 
-    public function getExtraOptionFields(): array {
+    protected function getExtraOptionFieldsBasicOptions(): array {
         return [
             'max_length' => 100,
             'min_length' => 0,
-            'column_span' => 3,
-            'in_line_label'=> false,
-            'new_line_option'=> true,
             'auto_size'=> true,
         ];
     }
 
-    public function getExtraOptionSchema(): ?array {
+    protected function getExtraOptionSchemaBasicOptions(): array {
         return [
             TextInput::make("max_length")
                 ->label("Maximale Länge") //ToDo Translate
@@ -50,9 +47,6 @@ class TextAreaType extends CustomFieldType
             Toggle::make("auto_size")
                 ->label("Automatische Grösse") //ToDo Translate
                 ->columnSpan(2),
-            $this->getColumnSpanOption(),
-            $this->getNewLineOption()->columnStart(1),
-            $this->getInLineLabelOption()
         ];
     }
 

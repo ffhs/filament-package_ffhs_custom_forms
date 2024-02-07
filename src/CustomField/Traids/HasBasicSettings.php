@@ -8,11 +8,15 @@ use Filament\Forms\Components\Toggle;
 trait HasBasicSettings
 {
 
-    public function getExtraOptionFieldsTrait(): array {
+    protected function getExtraOptionFieldsBasicOptions(): array {
         return [];
     }
+    protected function getExtraOptionSchemaBasicOptions(): array {
+        return [];
+    }
+
     public function getExtraOptionFields(): array {
-        return array_merge($this->getExtraOptionFieldsTrait(),[
+        return array_merge($this->getExtraOptionFieldsBasicOptions(),[
             'column_span' => 3,
             'in_line_label' => false,
             'new_line_option' => true,
@@ -20,11 +24,11 @@ trait HasBasicSettings
     }
 
     public function getExtraOptionSchema(): ?array {
-        return [
+        return array_merge([
             $this->getColumnSpanOption(),
             $this->getNewLineOption()->columnStart(1),
             $this->getInLineLabelOption()
-        ];
+        ], $this->getExtraOptionSchemaBasicOptions());
     }
 
 
