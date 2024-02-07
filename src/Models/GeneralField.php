@@ -54,6 +54,7 @@ class GeneralField extends ACustomField
         return $this->hasMany(CustomField::class);
     }
 
+
     public function generalFieldForms(): HasMany {
         return $this->hasMany(GeneralFieldForm::class);
     }

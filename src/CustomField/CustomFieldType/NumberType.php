@@ -17,7 +17,7 @@ class NumberType extends CustomFieldType
 
 
 
-    public function getExtraOptionSchema(): ?array {
+    public function getExtraOptionSchema(bool $isInheritGeneral = false): ?array {
         return [
             TextInput::make("min_value")
                 ->label("Mindestgrösse")//ToDo Translation
@@ -36,7 +36,7 @@ class NumberType extends CustomFieldType
         ];
     }
 
-    public function getExtraOptionFields(): array {
+    public function getExtraOptionFields(bool $isInheritGeneral = false): array {
         return [
             'column_span' => 3,
             'in_line_label' => false,

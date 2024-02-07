@@ -4,31 +4,40 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\Traids;
 
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldVariation;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomOption;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\TextInput;
 
 trait HasTypeOptions
 {
 
-    public function getExtraOptionFields():array{
+    public function getExtraOptionFields(bool $isInheritGeneral = false):array{
         return [
             "customOptions" => [],
         ];
     }
-    public function getExtraOptionSchema():?array{
+    public function getExtraOptionSchema(bool $isInheritGeneral = false):?array{
         return [
             self::getCustomOptionsRepeater(),
         ];
     }
 
-    public function getGeneralFieldExtraFields(): ?array {
+    public function isGeneralExtraFieldPathSet() {
+
+    }
+    public function getGeneralExtraField(): ?array {
         return [
             $this->getCustomOptionsRepeater(true)
+
         ];
     }
 
-    protected function getCustomOptionsRepeater (bool $withIdentifikator = false): Repeater {
-        return Repeater::make("customOptions")
+    protected function getCustomOptionsRepeater (bool $generalField = false): Repeater {
+        $repeater =  Repeater::make("customOptions");
+
+        if($generalField) $repeater->relationship("customOptions");
+
+        $repeater
             ->collapseAllAction(fn($action) => $action->hidden())
             ->expandAllAction(fn($action) => $action->hidden())
             ->reorderableWithDragAndDrop(false) //ToDo
@@ -44,31 +53,32 @@ trait HasTypeOptions
                 TextInput::make("name_en")->label("Name En")->required(),
                 TextInput::make("identifier")
                     ->label("Identifikator")
-                    ->visible($withIdentifikator)
+                    ->visible($generalField)
                     ->columnSpanFull()
                     ->required(),
             ]);
+
+        return $repeater;
     }
 
-    public function mutateVariationDataBeforeFill(array $data):array{
-        $data = parent::mutateVariationDataBeforeFill($data);
+    public function mutateVariationDataBeforeFill(array $data, bool $isInheritGeneral = false ):array{
+        $data = parent::mutateVariationDataBeforeFill($data, $isInheritGeneral );
         if(empty($data["id"]))return $data;
         $customOptionDatas = [];
         /** @var CustomFieldVariation $customFieldVariation */
         $customFieldVariation = CustomFieldVariation::query()->with("customOptions")->firstWhere("id", $data["id"]);
         $customOptions = $customFieldVariation->customOptions;
 
-        foreach ($customOptions as $option){
-            $customOptionDatas["record-".$option->id]=$option->toArray();
-        }
+        foreach ($customOptions as $option)$customOptionDatas["record-".$option->id]=$option->toArray();
+
 
         $data["options"]["customOptions"] = $customOptionDatas;
 
         return $data;
     }
 
-    public function mutateVariationDataBeforeSave(array $data):array{
-        $data = parent::mutateVariationDataBeforeSave($data);
+    public function mutateVariationDataBeforeSave(array $data, bool $isInheritGeneral = false):array{
+        $data = parent::mutateVariationDataBeforeSave($data, $isInheritGeneral);
         if(empty($data["options"])) $data["options"] = [];
         if(empty($data["options"]["customOptions"])) $data["options"]["customOptions"] = [];
         $data["customOptions"] = $data["options"]["customOptions"];

@@ -140,9 +140,10 @@ class CustomFieldEditForm
 
             //Type Options
             Group::make()
-                ->visible($type->hasExtraOptions())
+                ->visible(fn($get) => $type->hasExtraOptions(!is_null($get("../../general_field_id")))) //Tests It
                 ->schema(function (Get $get, $set) use ($type) {
-                    $repeater = $type->getExtraOptionsComponent();
+                    $generalField = !is_null($get("../../general_field_id"));
+                    $repeater = $type->getExtraOptionsComponent($generalField);
 
                     if(is_null($repeater)) return [];
 
@@ -155,7 +156,7 @@ class CustomFieldEditForm
                         empty($fieldOptions["options"]);
 
                     if($fieldOptionsEmpty)
-                        $set("options", [$type->getExtraOptionFields()]);
+                        $set("options", [$type->getExtraOptionFields($generalField)]);
 
 
                     return [$repeater];
@@ -317,7 +318,7 @@ class CustomFieldEditForm
                 0 => $type->mutateVariationDataBeforeFill([
                     'is_active' => !$isDisabled,
                     'required' => !$isDisabled,
-                ]),
+                ],$isGeneral ),
             ];
             $set("variation-".$varID, $toSet);
         }

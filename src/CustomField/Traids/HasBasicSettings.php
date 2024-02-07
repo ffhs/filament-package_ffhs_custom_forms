@@ -8,7 +8,7 @@ use Filament\Forms\Components\Toggle;
 trait HasBasicSettings
 {
 
-    public function getExtraOptionFields(): array {
+    public function getExtraOptionFields(bool $isInheritGeneral = false): array {
         return [
             'column_span' => 3,
             'in_line_label' => false,
@@ -16,7 +16,7 @@ trait HasBasicSettings
         ];
     }
 
-    public function getExtraOptionSchema(): ?array {
+    public function getExtraOptionSchema(bool $isInheritGeneral = false): ?array {
         return [
             $this->getColumnSpanOption(),
             $this->getNewLineOption()->columnStart(1),

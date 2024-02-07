@@ -20,14 +20,14 @@ class CheckboxType extends CustomFieldType
         ];
     }
 
-    public function getExtraOptionFields(): array {
+    public function getExtraOptionFields(bool $isInheritGeneral = false): array {
         return [
             'in_line_label' => false,
             'new_line_option' => true,
         ];
     }
 
-    public function getExtraOptionSchema(): ?array {
+    public function getExtraOptionSchema(bool $isInheritGeneral = false): ?array {
         return [
             $this->getNewLineOption(),
             $this->getInLineLabelOption(),

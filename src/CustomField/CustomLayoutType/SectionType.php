@@ -26,7 +26,7 @@ class SectionType extends CustomLayoutType
         ];
     }
 
-    public function getExtraOptionFields(): array {
+    public function getExtraOptionFields(bool $isInheritGeneral = false): array {
         return [
             'column_span' => 3,
             'columns' => 4,
@@ -36,7 +36,7 @@ class SectionType extends CustomLayoutType
         ];
     }
 
-    public function getExtraOptionSchema(): ?array {
+    public function getExtraOptionSchema(bool $isInheritGeneral = false): ?array {
         return [
 
             $this->getColumnSpanOption(),

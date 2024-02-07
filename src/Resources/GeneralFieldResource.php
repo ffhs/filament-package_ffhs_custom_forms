@@ -119,35 +119,57 @@ class GeneralFieldResource extends Resource
                             ->columnStart(2)
                             ->columnSpan(1),
 
-
-                      /*   //Extra field FromType
-                      Group::make(function ($get){
-                            if(is_null($get("type"))) return[];
-                            $type = CustomFieldType::getTypeFromName($get("type"));
-                            if(is_null($type)) return [];
-                            $component = $type->getGeneralFieldExtraField();
-                            return is_null($component)?[]:[$component];
-                       })->columnSpanFull(),*/
                     ]),
 
 
                 Section::make("Extraoptionen") //ToDo Translate
+                    ->columnSpan(1)
+                    ->columns(1)
+                    ->collapsed()
                     ->visible(function($get){
                         if(is_null($get("type"))) return false;
                         $type = CustomFieldType::getTypeFromName($get("type"));
-                        $array = $type->getGeneralFieldExtraFields();
+                        $array = $type->getGeneralExtraField();
                         return !empty($array);
                     })
                     ->schema(function($get){
                         if(is_null($get("type"))) return[];
                         $type = CustomFieldType::getTypeFromName($get("type"));
-                        $array = $type->getGeneralFieldExtraFields();
+                        $array = $type->getGeneralExtraField();
                         if(empty($array)) return [];
-                        return  $array;
-                    })
-                    ->statePath("extra_options")
-                    ->columnSpan(1)
+                        $group = Group::make()->schema($array);
+                        if($type->isGeneralExtraFieldPathSet())  $group->statePath("extra_options");
+                        return  [
+                            $group
+                        ];
+                    }),
 
+                Section::make("Variation Settings") //ToDo Translate
+                    ->columnSpan(1)
+                    ->columns(1)
+                    ->collapsed()
+                    ->default(function($get){
+                        if(is_null($get("type"))) return null;
+                        $type = CustomFieldType::getTypeFromName($get("type"));
+                        return $type->mutateCustomFieldDataBeforeFill([""])["options"];
+                    })
+                    ->visible(function($get){
+                        if(is_null($get("type"))) return false;
+                        $type = CustomFieldType::getTypeFromName($get("type"));
+                        $array = $type->getExtraOptionFields(true);
+                        return !empty($array);
+                    })
+                    ->schema(function($get){
+                        if(is_null($get("type"))) return[];
+                        $type = CustomFieldType::getTypeFromName($get("type"));
+                        $array = $type->getExtraOptionFields(true);
+                        if(empty($array)) return [];
+                        $group = Group::make()->schema($array);
+                        if($type->getExtraOptionFields(true))  $group->statePath("extra_options");
+                        return  [
+                            $group
+                        ];
+                    })
                 //ToDo add variation settings
 
             ]);

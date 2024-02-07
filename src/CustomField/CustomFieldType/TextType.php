@@ -16,7 +16,7 @@ class TextType extends CustomFieldType
     public static function getFieldIdentifier(): string {return "text";}
 
 
-    public function getExtraOptionFields(): array {
+    public function getExtraOptionFields(bool $isInheritGeneral = false): array {
         return [
           'max_length' => 100,
           'min_length' => 0,
@@ -26,7 +26,7 @@ class TextType extends CustomFieldType
         ];
     }
 
-    public function getExtraOptionSchema(): ?array {
+    public function getExtraOptionSchema(bool $isInheritGeneral = false): ?array {
         return [
 
             TextInput::make("max_length")

@@ -6,6 +6,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\Traids\HasBasicSettings;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\Traids\HasCustomFormPackageTranslation;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\Traids\HasTypeOptions;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\TextInput;
@@ -25,9 +26,7 @@ class SelectType extends CustomFieldType
         ];
     }
 
-
-
-    public function getExtraOptionSchema():?array{
+    public function getExtraOptionSchema(bool $isInheritGeneral = false):?array{
         return [
             $this->getNewLineOption()->columnStart(1),
             $this->getInLineLabelOption(),
@@ -41,8 +40,8 @@ class SelectType extends CustomFieldType
             TextInput::make("min_select")
                 ->hidden(fn($get)=> !$get("several"))
                 ->label("Mindestanzahl") //ToDo Translate
-                ->columnStart(1)
                 ->helperText("Greift nur bei (Benötigt)")//ToDo Translate
+                ->columnStart(1)
                 ->minValue(0)
                 ->step(1)
                 ->required()
@@ -61,7 +60,7 @@ class SelectType extends CustomFieldType
         ];
     }
 
-    public function getExtraOptionFields():array{
+    public function getExtraOptionFields(bool $isInheritGeneral = false):array{
         return [
             "customOptions" => [],
             'column_span' => 3,

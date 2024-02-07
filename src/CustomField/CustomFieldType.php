@@ -35,7 +35,7 @@ abstract class CustomFieldType
         return new $class();
     }
 
-    public static function prepareCloneOptions(array $templateOptions, bool $isInheritGeneral) :array{
+    public static function prepareCloneOptions(array $templateOptions, bool $isInheritGenerall) :array{
         return $templateOptions;
         //ToDO
     }
@@ -124,40 +124,42 @@ abstract class CustomFieldType
     public function fieldIdentifier():String{return $this::getFieldIdentifier();}
 
 
+
     // Extra Options
-    public function getExtraOptionSchema():?array{
+    public function getExtraOptionSchema(bool $isInheritGeneral = false):?array{
         return null;
     }
 
-    public function getExtraOptionFields():array{
+    public function getExtraOptionFields(bool $isInheritGeneral = false):array{
         return [];
     }
 
-
-    public function getGeneralFieldExtraFields(): ?array{
-        return  null; //ToDo
+    public function isGeneralExtraFieldPathSet() {
+        return true;
     }
 
-
-
-    public function hasExtraOptions():bool{
-        return !empty($this->getExtraOptionFields());
+    public function getGeneralExtraField(): ?array{
+        return  null;
     }
 
-    public function getExtraOptionsComponent(): ?Component{
-        if(!$this->hasExtraOptions()) return null;
+    public function hasExtraOptions(bool $isInheritGeneral = false):bool{ //Bis Hier
+        return !empty($this->getExtraOptionFields($isInheritGeneral));
+    }
+
+    public function getExtraOptionsComponent(bool $isInheritGeneral = false): ?Component{
+        if(!$this->hasExtraOptions($isInheritGeneral)) return null;
         return Section::make()
-            ->schema($this->getExtraOptionSchema())
+            ->schema($this->getExtraOptionSchema($isInheritGeneral))
             ->statePath("options")
             ->columns();
     }
 
-    public function mutateVariationDataBeforeFill(array $data):array{
+    public function mutateVariationDataBeforeFill(array $data, bool $isInheritGeneral = false):array{
          if(!array_key_exists("options",$data) || is_null($data["options"])) $data["options"] = $this->getExtraOptionFields();
          return $data;
     }
 
-    public function mutateVariationDataBeforeSave(array $data):array{
+    public function mutateVariationDataBeforeSave(array $data, bool $isInheritGeneral = false):array{
         if(!array_key_exists("options",$data)  || empty($data["options"]))  $data["options"] = null;
         if(!$this->canBeDeactivate()) $data["is_active"] = true;
         if(!$this->canBeRequired()) $data["required"] = false;
@@ -165,7 +167,7 @@ abstract class CustomFieldType
     }
 
 
-    public function mutateVariationDataBeforeCreate(array $data):array{
+    public function mutateVariationDataBeforeCreate(array $data, bool $isInheritGeneral = false):array{
         return $this->mutateVariationDataBeforeSave($data);
     }
 

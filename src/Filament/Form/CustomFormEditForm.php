@@ -181,11 +181,12 @@ class CustomFormEditForm
 
                 if(empty($variations)){
                     $variations = [];
+                    $isGeneralField = !empty($data["general_field_id"]);
                     $customField = CustomField::cachedAllInForm($customForm->id)->firstWhere("id",$data["id"]);
                     /** @var CustomField $customField*/
                     foreach ($customField->customFieldVariation as $variation){
                         $variationData = $variation->toArray();
-                        $variationData = $type->mutateVariationDataBeforeFill($variationData);
+                        $variationData = $type->mutateVariationDataBeforeFill($variationData,$isGeneralField);
                         $varIdentifier = "variation-" . $variation->variation_id;
                         $variations[$varIdentifier] = [0=>$variationData];
                     }

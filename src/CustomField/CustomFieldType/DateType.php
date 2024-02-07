@@ -15,7 +15,7 @@ class DateType extends CustomFieldType
 
     public static function getFieldIdentifier(): string {return "date";}
 
-    public function getExtraOptionSchema(): ?array {
+    public function getExtraOptionSchema(bool $isInheritGeneral = false): ?array {
         return [
             $this->getColumnSpanOption(),
             TextInput::make("format")
@@ -27,7 +27,7 @@ class DateType extends CustomFieldType
         ];
     }
 
-    public function getExtraOptionFields(): array {
+    public function getExtraOptionFields(bool $isInheritGeneral = false): array {
         return [
             'format'=>null,
             'column_span' => 3,
