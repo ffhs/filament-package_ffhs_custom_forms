@@ -41,8 +41,8 @@ class SelectTypeView implements FieldTypeView
     public static function getInfolistComponent(CustomFieldType $type, CustomFieldAnswer $record,
         array $parameter = []): \Filament\Infolists\Components\Component {
         return TextEntry::make($type::getIdentifyKey($record))
-            ->label($type::class::getLabelName($record). ":")
             ->columnStart($type->getOptionParameter($record,"new_line_option"))
+            ->label($type::class::getLabelName($record). ":")
             ->columnSpanFull()
             ->inlineLabel()
             ->badge()
