@@ -37,8 +37,8 @@ abstract class CustomFieldType
         return new $class();
     }
 
-    public static function prepareCloneOptions(array $templateOptions, bool $isInheritGeneral) :array{
-        return $templateOptions;
+    public static function prepareCloneOptions(array $variationData, string $target, $set, Get $get) :array{
+        return $variationData["options"];
     }
 
 
@@ -133,10 +133,6 @@ abstract class CustomFieldType
 
     public function getExtraOptionFields():array{
         return [];
-    }
-
-    public function isGeneralExtraFieldPathSet():bool {
-        return true;
     }
 
     public function getGeneralExtraField(): ?array{

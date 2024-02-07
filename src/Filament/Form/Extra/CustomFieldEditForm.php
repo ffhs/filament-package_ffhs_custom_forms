@@ -72,7 +72,7 @@ class CustomFieldEditForm
         ];
     }
 
-    private static function getCustomFieldVariationTab(?int $variationId, bool $isGeneral, CustomFieldType $type, String $tabTitle, bool $isDisabled = false): Tab
+    private static function getCustomFieldVariationTab(?int $variationId, CustomFieldType $type, String $tabTitle, bool $isDisabled = false): Tab
     {
         $isTemplate = is_null($variationId);
 
@@ -94,17 +94,17 @@ class CustomFieldEditForm
                             ->color(fn() => $isTemplate? Color::Zinc: Color::Orange)
                             ->disabled($isTemplate || $isDisabled)
                             ->label("Vom Template")
-                            ->action(function ($set,Get $get) use ($type, $variationId, $isGeneral) {
+                            ->action(function ($set,Get $get) use ($type, $variationId) {
                                 $template = array_values($get("variation-"))[0];
                                 $recordName = array_keys($get("variation-".$variationId))[0];
-                                $setPrefix = "variation-".$variationId.".".$recordName.".";
+                                $setPrefix = "variation-".$variationId.".".$recordName;
 
-                                $set($setPrefix.'required', $template['required']);
-                                $set($setPrefix.'is_active', $template['is_active']);
+                                $set($setPrefix.'.required', $template['required']);
+                                $set($setPrefix.'.is_active', $template['is_active']);
 
                                 //FieldOptions clone
-                                $clonedFieldOptions = $type->prepareCloneOptions($template['options'],$isGeneral);
-                                $set($setPrefix.'options', $clonedFieldOptions);
+                                $clonedFieldOptions = $type->prepareCloneOptions($template,$setPrefix,$set,$get);
+                                $set($setPrefix.'.options', $clonedFieldOptions);
                             })
                     ),
             ]);
@@ -313,7 +313,7 @@ class CustomFieldEditForm
             $varID = $model?->id;
 
             //Create Tab
-            $tabs[] = self::getCustomFieldVariationTab($varID, $isGeneral, $type, $tabTitle, $isDisabled);
+            $tabs[] = self::getCustomFieldVariationTab($varID, $type, $tabTitle, $isDisabled);
 
             //Set new contend if it is empty
             if (!empty($get("variation-".$varID))) continue;

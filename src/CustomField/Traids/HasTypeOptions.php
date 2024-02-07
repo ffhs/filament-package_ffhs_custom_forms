@@ -8,8 +8,10 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Get;
 
 trait HasTypeOptions
 {
@@ -30,13 +32,17 @@ trait HasTypeOptions
         ];
     }
 
-    public function isGeneralExtraFieldPathSet(): bool {
-        return false;
-    }
     public function getGeneralExtraField(): ?array {
         return [
             $this->getCustomOptionsRepeater(true)
         ];
+    }
+
+    public function getExtraOptionsComponent(): ?Component{
+        if(!$this->hasExtraOptions()) return null;
+        return Section::make()
+            ->schema($this->getExtraOptionSchema())
+            ->columns();
     }
 
     protected function getCustomOptionsRepeater (bool $withIdentifikator = false): Repeater {
@@ -85,22 +91,15 @@ trait HasTypeOptions
         foreach ($customOptions as $option)$customOptionDatas["record-".$option->id]=$option->toArray();
 
 
-        $data["options"]["customOptions"] = $customOptionDatas;
+        $data["customOptions"] = $customOptionDatas;
 
         return $data;
     }
 
-    public function mutateVariationDataBeforeSave(array $data):array{
-        $data = parent::mutateVariationDataBeforeSave($data);
-        if(empty($data["options"])) $data["options"] = [];
-        if(empty($data["options"]["customOptions"])) $data["options"]["customOptions"] = [];
-        $data["customOptions"] = $data["options"]["customOptions"];
-        unset($data["options"]["customOptions"]);
-        return $data;
-    }
 
     public function afterCustomFieldVariationSave(?CustomFieldVariation $variation, array $variationData):void {
         $customOptions = $variation->customOptions;
+
         if(empty($variationData["customOptions"])) {
             $customOptions->each(fn(CustomOption $option) =>$option->delete());
             return;
@@ -119,19 +118,19 @@ trait HasTypeOptions
             /**@var CustomOption $option*/
             if($optionExist) $option = $customOptions->firstWhere("id",$optionData["id"]);
             else $option = new CustomOption();
-            if(is_null($option))dd($option,$optionExist,$customOptions,$optionData);
             $option->fill($optionData)->save();
             if(!$optionExist)$variation->customOptions()->attach($option);
-
         }
     }
 
-    public static function prepareCloneOptions(array $templateOptions, bool $isInheritGeneral) :array{
-        if($isInheritGeneral) return $templateOptions;
-        foreach($templateOptions["customOptions"] as $key => $option){
-            unset($templateOptions["customOptions"][$key]["id"]);
-        }
-        return $templateOptions;
+    public static function prepareCloneOptions(array $variationData, string $target, $set, Get $get) :array{
+        if(!empty($get("general_field_id"))) return $variationData["options"];
+
+        $customOptions = $variationData["customOptions"] ;
+        foreach($customOptions as $key => $option) unset($customOptions[$key]["id"]);
+
+        $set($target.".customOptions",$customOptions);
+        return $variationData["options"];
     }
 
 }

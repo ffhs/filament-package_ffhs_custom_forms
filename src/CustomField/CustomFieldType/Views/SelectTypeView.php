@@ -12,19 +12,28 @@ use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Select;
 use Filament\Infolists\Components\IconEntry;
 
-class SelecTypeView implements FieldTypeView
+class SelectTypeView implements FieldTypeView
 {
 
     public static function getFormComponent(CustomFieldType $type, CustomFieldVariation $record,
         array $parameter = []): Component {
-        return Select::make($type::getIdentifyKey($record))
+        $select = Select::make($type::getIdentifyKey($record))
+            ->options(fn()=> $record->customOptions->pluck("name_de","identifier"))//ToDo Translate
             ->columnStart($type->getOptionParameter($record,"new_line_option"))
             ->inlineLabel($type->getOptionParameter($record,"in_line_label"))
             ->columnSpan($type->getOptionParameter($record,"column_span"))
             ->helperText($type::class::getToolTips($record))
             ->label($type::class::getLabelName($record))
-            ->required($record->required)
-            ->options(fn()=> $record->customOptions->pluck("name_de","identifier"));//ToDo Translate
+            ->required($record->required);
+
+        if($type->getOptionParameter($record,"several")){
+            $select->multiple()
+                ->minItems($record->required?$type->getOptionParameter($record,"min_select"):0)
+                ->maxItems($type->getOptionParameter($record,"max_select"));
+        }
+
+
+        return $select;
     }
 
     public static function getInfolistComponent(CustomFieldType $type, CustomFieldAnswer $record,
@@ -32,9 +41,11 @@ class SelecTypeView implements FieldTypeView
         return IconEntry::make($type::getIdentifyKey($record))
             ->label($type::class::getLabelName($record). ":")
             ->columnStart($type->getOptionParameter($record,"new_line_option"))
-            ->state(is_null($record->answer)? false : $record->answer)
-            ->inlineLabel()
-            ->boolean();
+            ->state(function () use ($record){
+                $record->customFieldVariation->customOptions->pluck("name_de","id"); //ToDo Translate
+                return $record->answer;
+            })
+            ->inlineLabel();
     }
 
 }

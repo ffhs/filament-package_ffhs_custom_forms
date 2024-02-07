@@ -21,7 +21,7 @@ class SelectType extends CustomFieldType
 
     public function viewModes(): array {
         return  [
-            'default'  => CustomFieldType\Views\SelecTypeView::class, //ToDo
+            'default'  => CustomFieldType\Views\SelectTypeView::class, //ToDo
         ];
     }
 
