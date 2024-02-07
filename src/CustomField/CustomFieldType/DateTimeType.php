@@ -6,6 +6,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Views\DateTimeTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\Traids\HasBasicSettings;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\Traids\HasCustomFormPackageTranslation;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Filament\Forms\Components\TextInput;
 
 class DateTimeType extends CustomFieldType
@@ -16,7 +17,7 @@ class DateTimeType extends CustomFieldType
     public static function getFieldIdentifier(): string {return "date-time";}
 
 
-    public function getExtraOptionSchema(bool $isInheritGeneral = false): ?array {
+    public function getExtraOptionSchema(?GeneralField $generalField = null): ?array {
         return [
             $this->getColumnSpanOption(),
             TextInput::make("format")
@@ -28,7 +29,7 @@ class DateTimeType extends CustomFieldType
 
         ];
     }
-    public function getExtraOptionFields(bool $isInheritGeneral = false): array {
+    public function getExtraOptionFields(?GeneralField $generalField = null): array {
         return [
             'format'=>null,
             'column_span' => 3,

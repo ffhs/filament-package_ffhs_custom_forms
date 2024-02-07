@@ -33,10 +33,11 @@ class CustomFieldEditForm
     public static function getCustomFieldSchema(CustomForm $customForm, array $data):array{
 
         $hasVariations = $customForm->getFormConfiguration()::hasVariations();
-        $isGeneral = array_key_exists("general_field_id",$data)&& !is_null($data["general_field_id"]);
+        $isGeneral = array_key_exists("general_field_id",$data)&& !empty($data["general_field_id"]);
+        $generalField = $isGeneral? GeneralField::cached($data["general_field_id"]): null;
         $type = CustomFormEditForm::getFieldTypeFromRawDate($data);
 
-        $hasOptionsForVariations = $type->canBeRequired()||$type->canBeDeactivate()||$type->hasExtraOptions();
+        $hasOptionsForVariations = $type->canBeRequired()||$type->canBeDeactivate()||$type->hasExtraOptions($generalField);
         $showVariations =  $hasVariations  && $type->canHasVariations();
         $columns = $isGeneral||!$hasOptionsForVariations?1:2;
 
@@ -63,14 +64,15 @@ class CustomFieldEditForm
                     Tabs::make()
                         ->columnStart($isGeneral?1:2)
                         ->visible($hasOptionsForVariations)
-                        ->tabs(fn (Get $get,$set) => self::getVariationTabs($get, $customForm, $isGeneral, $type, $set)),
+                        ->tabs(fn (Get $get,$set) => self::getVariationTabs($get, $customForm, $type, $set,$generalField)),
                 ]),
         ];
     }
 
-    private static function getCustomFieldVariationTab(?int $variationId, bool $isGeneral, CustomFieldType $type, String $tabTitle, bool $isDisabled = false): Tab
+    private static function getCustomFieldVariationTab(?int $variationId, CustomFieldType $type, String $tabTitle, bool $isDisabled , ?GeneralField $generalField): Tab
     {
         $isTemplate = is_null($variationId);
+        $isGeneral = ! is_null($generalField);
 
         return  Tabs\Tab::make($tabTitle)
             ->schema([
@@ -84,13 +86,13 @@ class CustomFieldEditForm
                     ->label("")
                     ->cloneable()
                     ->live()
-                    ->schema(self::getCustomFieldVariationRepeaterSchema($type,$isDisabled))
+                    ->schema(self::getCustomFieldVariationRepeaterSchema($type,$isDisabled, $generalField))
                     ->cloneAction(
                         fn(Action $action) => $action
                             ->color(fn() => $isTemplate? Color::Zinc: Color::Orange)
                             ->disabled($isTemplate || $isDisabled)
                             ->label("Vom Template")
-                            ->action(function ($set,Get $get) use ($type, $variationId, $isGeneral) {
+                            ->action(function ($set,Get $get) use ($isGeneral, $type, $variationId) {
                                 $template = array_values($get("variation-"))[0];
                                 $recordName = array_keys($get("variation-".$variationId))[0];
                                 $setPrefix = "variation-".$variationId.".".$recordName.".";
@@ -118,7 +120,7 @@ class CustomFieldEditForm
     }
 
 
-    private static function getCustomFieldVariationRepeaterSchema(CustomFieldType $type, bool $isDisabled):array {
+    private static function getCustomFieldVariationRepeaterSchema(CustomFieldType $type, bool $isDisabled,?GeneralField $generalField):array {
 
         return[
 
@@ -140,9 +142,9 @@ class CustomFieldEditForm
 
             //Type Options
             Group::make()
-                ->visible(fn($get) => $type->hasExtraOptions(!is_null($get("../../general_field_id")))) //Tests It
-                ->schema(function (Get $get, $set) use ($type) {
-                    $generalField = !is_null($get("../../general_field_id"));
+                ->visible(fn()=> $type->hasExtraOptions($generalField))
+                ->schema(function (Get $get, $set) use ($generalField, $type) {
+                    $generalFieldId = !is_null($get("../../general_field_id"));
                     $repeater = $type->getExtraOptionsComponent($generalField);
 
                     if(is_null($repeater)) return [];
@@ -284,13 +286,13 @@ class CustomFieldEditForm
     public static function getEditCustomFormActionModalWith(array $state): string {
         $type = CustomFormEditForm::getFieldTypeFromRawDate($state);
         if(!empty($state["general_field_id"])) return 'xl';
-        $hasOptionsForVariations = $type->canBeRequired()||$type->canBeDeactivate()||$type->hasExtraOptions();
+        $hasOptionsForVariations = $type->canBeRequired()||$type->canBeDeactivate()||$type->hasExtraOptions(null);
         if(!$hasOptionsForVariations) return 'xl';
         return'5xl';
     }
 
 
-    private  static function  getVariationTabs(Get $get, CustomForm $customForm, bool $isGeneral, ?CustomFieldType $type, $set): array {
+    private  static function  getVariationTabs(Get $get, CustomForm $customForm,  ?CustomFieldType $type, $set, ?GeneralField $generalField): array {
         $tabs = [];
 
         //If no Variations than skip the Variations and get only the default Tab
@@ -310,7 +312,7 @@ class CustomFieldEditForm
             $varID = $model?->id;
 
             //Create Tab
-            $tabs[] = self::getCustomFieldVariationTab($varID, $isGeneral, $type, $tabTitle, $isDisabled);
+            $tabs[] = self::getCustomFieldVariationTab($varID, $type, $tabTitle, $isDisabled,$generalField);
 
             //Set new contend if it is empty
             if (!empty($get("variation-".$varID))) continue;
@@ -318,7 +320,7 @@ class CustomFieldEditForm
                 0 => $type->mutateVariationDataBeforeFill([
                     'is_active' => !$isDisabled,
                     'required' => !$isDisabled,
-                ],$isGeneral ),
+                ],$generalField ),
             ];
             $set("variation-".$varID, $toSet);
         }

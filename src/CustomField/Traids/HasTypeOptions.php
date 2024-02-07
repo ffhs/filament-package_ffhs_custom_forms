@@ -5,37 +5,41 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\Traids;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldVariation;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomOption;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
+use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 
 trait HasTypeOptions
 {
 
-    public function getExtraOptionFields(bool $isInheritGeneral = false):array{
+    public function getExtraOptionFields(?GeneralField $generalField = null):array{
         return [
             "customOptions" => [],
         ];
     }
-    public function getExtraOptionSchema(bool $isInheritGeneral = false):?array{
+
+
+    public function getExtraOptionSchema(?GeneralField $generalField = null):?array{
+        if(!is_null($generalField)) return [];
         return [
-            self::getCustomOptionsRepeater(),
+            $this->getCustomOptionsRepeater(true),
         ];
     }
 
-    public function isGeneralExtraFieldPathSet() {
-
+    public function isGeneralExtraFieldPathSet(): bool {
+        return false;
     }
     public function getGeneralExtraField(): ?array {
         return [
-            $this->getCustomOptionsRepeater(true)
-
+            $this->getCustomOptionsRepeater(true),
         ];
     }
 
-    protected function getCustomOptionsRepeater (bool $generalField = false): Repeater {
+    protected function getCustomOptionsRepeater (bool $isGeneralField ): Repeater {
         $repeater =  Repeater::make("customOptions");
 
-        if($generalField) $repeater->relationship("customOptions");
+        if($isGeneralField) $repeater->relationship("customOptions");
 
         $repeater
             ->collapseAllAction(fn($action) => $action->hidden())
@@ -53,7 +57,7 @@ trait HasTypeOptions
                 TextInput::make("name_en")->label("Name En")->required(),
                 TextInput::make("identifier")
                     ->label("Identifikator")
-                    ->visible($generalField)
+                    ->visible($isGeneralField)
                     ->columnSpanFull()
                     ->required(),
             ]);
@@ -61,8 +65,17 @@ trait HasTypeOptions
         return $repeater;
     }
 
-    public function mutateVariationDataBeforeFill(array $data, bool $isInheritGeneral = false ):array{
-        $data = parent::mutateVariationDataBeforeFill($data, $isInheritGeneral );
+    public function getCustomOptionsSelector (?GeneralField $generalField = null):Component {
+        return  Select::make("available_options")
+                ->options(function($state){
+
+                })
+                ->multiple()
+            ;
+    }
+
+    public function mutateVariationDataBeforeFill(array $data, ?GeneralField $generalField = null ):array{
+        $data = parent::mutateVariationDataBeforeFill($data, $generalField);
         if(empty($data["id"]))return $data;
         $customOptionDatas = [];
         /** @var CustomFieldVariation $customFieldVariation */
@@ -77,8 +90,8 @@ trait HasTypeOptions
         return $data;
     }
 
-    public function mutateVariationDataBeforeSave(array $data, bool $isInheritGeneral = false):array{
-        $data = parent::mutateVariationDataBeforeSave($data, $isInheritGeneral);
+    public function mutateVariationDataBeforeSave(array $data, ?GeneralField $generalField = null):array{
+        $data = parent::mutateVariationDataBeforeSave($data, $generalField);
         if(empty($data["options"])) $data["options"] = [];
         if(empty($data["options"]["customOptions"])) $data["options"]["customOptions"] = [];
         $data["customOptions"] = $data["options"]["customOptions"];

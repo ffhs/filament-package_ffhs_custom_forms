@@ -7,6 +7,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\Views\SectionTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\Traids\HasBasicSettings;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\Traids\HasCustomFormPackageTranslation;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 
@@ -26,7 +27,7 @@ class SectionType extends CustomLayoutType
         ];
     }
 
-    public function getExtraOptionFields(bool $isInheritGeneral = false): array {
+    public function getExtraOptionFields(GeneralField|null $generalField = null): array {
         return [
             'column_span' => 3,
             'columns' => 4,
@@ -36,9 +37,8 @@ class SectionType extends CustomLayoutType
         ];
     }
 
-    public function getExtraOptionSchema(bool $isInheritGeneral = false): ?array {
+    public function getExtraOptionSchema(?GeneralField $generalField = null): ?array {
         return [
-
             $this->getColumnSpanOption(),
             TextInput::make("columns")
                 ->label("Anzahl Spalten") //ToDo Translate

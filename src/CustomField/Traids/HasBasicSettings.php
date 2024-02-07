@@ -2,13 +2,14 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\Traids;
 
+use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 
 trait HasBasicSettings
 {
 
-    public function getExtraOptionFields(bool $isInheritGeneral = false): array {
+    public function getExtraOptionFields(?GeneralField $generalField = null): array {
         return [
             'column_span' => 3,
             'in_line_label' => false,
@@ -16,7 +17,7 @@ trait HasBasicSettings
         ];
     }
 
-    public function getExtraOptionSchema(bool $isInheritGeneral = false): ?array {
+    public function getExtraOptionSchema(?GeneralField $generalField = null): ?array {
         return [
             $this->getColumnSpanOption(),
             $this->getNewLineOption()->columnStart(1),

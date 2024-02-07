@@ -5,6 +5,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\Traids\HasBasicSettings;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\Traids\HasCustomFormPackageTranslation;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 
@@ -23,7 +24,7 @@ class TextAreaType extends CustomFieldType
         ];
     }
 
-    public function getExtraOptionFields(bool $isInheritGeneral = false): array {
+    public function getExtraOptionFields(?GeneralField $generalField = null): array {
         return [
             'max_length' => 100,
             'min_length' => 0,
@@ -34,7 +35,7 @@ class TextAreaType extends CustomFieldType
         ];
     }
 
-    public function getExtraOptionSchema(bool $isInheritGeneral = false): ?array {
+    public function getExtraOptionSchema(?GeneralField $generalField = null): ?array {
         return [
             TextInput::make("max_length")
                 ->label("Maximale Länge") //ToDo Translate

@@ -122,7 +122,7 @@ class GeneralFieldResource extends Resource
                     ]),
 
 
-                Section::make("Extraoptionen") //ToDo Translate
+                Section::make("Optionen") //ToDo Translate
                     ->columnSpan(1)
                     ->columns(1)
                     ->collapsed()
@@ -138,13 +138,12 @@ class GeneralFieldResource extends Resource
                         $array = $type->getGeneralExtraField();
                         if(empty($array)) return [];
                         $group = Group::make()->schema($array);
-                        if($type->isGeneralExtraFieldPathSet())  $group->statePath("extra_options");
                         return  [
                             $group
                         ];
                     }),
 
-                Section::make("Variation Settings") //ToDo Translate
+                Section::make("Variations Einstellungen") //ToDo Translate
                     ->columnSpan(1)
                     ->columns(1)
                     ->collapsed()
@@ -153,14 +152,14 @@ class GeneralFieldResource extends Resource
                         $type = CustomFieldType::getTypeFromName($get("type"));
                         return $type->mutateCustomFieldDataBeforeFill([""])["options"];
                     })
-                    ->visible(function($get){
+                    ->visible(function($get, $record){
                         if(is_null($get("type"))) return false;
                         $type = CustomFieldType::getTypeFromName($get("type"));
-                        $array = $type->getExtraOptionFields(true);
+                        $array = $type->getExtraOptionFields(is_null($record)?new GeneralField():$record);
                         return !empty($array);
                     })
                     ->schema(function($get){
-                        if(is_null($get("type"))) return[];
+                      /*  if(is_null($get("type"))) return[];
                         $type = CustomFieldType::getTypeFromName($get("type"));
                         $array = $type->getExtraOptionFields(true);
                         if(empty($array)) return [];
@@ -168,7 +167,8 @@ class GeneralFieldResource extends Resource
                         if($type->getExtraOptionFields(true))  $group->statePath("extra_options");
                         return  [
                             $group
-                        ];
+                        ];*/
+                        return [];
                     })
                 //ToDo add variation settings
 

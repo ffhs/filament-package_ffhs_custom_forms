@@ -6,6 +6,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Views\TextTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\Traids\HasBasicSettings;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\Traids\HasCustomFormPackageTranslation;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Filament\Forms\Components\TextInput;
 
 class TextType extends CustomFieldType
@@ -16,7 +17,7 @@ class TextType extends CustomFieldType
     public static function getFieldIdentifier(): string {return "text";}
 
 
-    public function getExtraOptionFields(bool $isInheritGeneral = false): array {
+    public function getExtraOptionFields(?GeneralField $generalField = null): array {
         return [
           'max_length' => 100,
           'min_length' => 0,
@@ -26,7 +27,7 @@ class TextType extends CustomFieldType
         ];
     }
 
-    public function getExtraOptionSchema(bool $isInheritGeneral = false): ?array {
+    public function getExtraOptionSchema(GeneralField|null $generalField = null): ?array {
         return [
 
             TextInput::make("max_length")

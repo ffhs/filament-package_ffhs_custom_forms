@@ -26,8 +26,8 @@ class SelectType extends CustomFieldType
         ];
     }
 
-    public function getExtraOptionSchema(bool $isInheritGeneral = false):?array{
-        return [
+    public function getExtraOptionSchema(?GeneralField $generalField = null):?array{
+        $schema = [
             $this->getNewLineOption()->columnStart(1),
             $this->getInLineLabelOption(),
             $this->getColumnSpanOption(),
@@ -56,11 +56,16 @@ class SelectType extends CustomFieldType
                 ->required()
                 ->numeric(),
 
-            $this->getCustomOptionsRepeater(),
+
         ];
+
+        if(is_null($generalField))$schema[] = $this->getCustomOptionsRepeater(true);
+        if(!is_null($generalField))$schema[] = $this->getCustomOptionsSelector($generalField);
+
+        return $schema;
     }
 
-    public function getExtraOptionFields(bool $isInheritGeneral = false):array{
+    public function getExtraOptionFields(?GeneralField $generalField = null):array{
         return [
             "customOptions" => [],
             'column_span' => 3,
@@ -77,4 +82,6 @@ class SelectType extends CustomFieldType
     public function icon(): String {
         return  "carbon-select-window";
     }
+
+
 }

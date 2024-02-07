@@ -3,7 +3,6 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Views\CheckboxTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Views\IconSelectView;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\Traids\HasBasicSettings;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\Traids\HasCustomFormPackageTranslation;

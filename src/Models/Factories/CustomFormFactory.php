@@ -50,7 +50,7 @@ class CustomFormFactory extends Factory
                         $variation->custom_field_id = $field->id;
                         $variation->required = true;
                         $variation->is_active = true;
-                        $variation->options = $field->getType()->getExtraOptionFields(false);
+                        $variation->options = $field->getType()->getExtraOptionFields(nullnull);
                         $variation->save();
                     })->create();
             });
@@ -73,7 +73,7 @@ class CustomFormFactory extends Factory
                     ->fromGeneralField()->afterCreating(function (CustomField $field){
                         $variation = new CustomFieldVariation();
                         $variation->custom_field_id = $field->id;
-                        $variation->options = $field->getType()->getExtraOptionFields(true);
+                        $variation->options = $field->getType()->getExtraOptionFields($field->generalField);
                         $variation->save();
                     })->create();
             });
