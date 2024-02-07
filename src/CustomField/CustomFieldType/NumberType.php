@@ -7,7 +7,6 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Views\Number
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\Traids\HasBasicSettings;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\Traids\HasCustomFormPackageTranslation;
 use Filament\Forms\Components\TextInput;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 
 class NumberType extends CustomFieldType
 {
@@ -18,7 +17,7 @@ class NumberType extends CustomFieldType
 
 
 
-    public function getExtraOptionSchema(?GeneralField $generalField = null): ?array {
+    public function getExtraOptionSchema(): ?array {
         return [
             TextInput::make("min_value")
                 ->label("Mindestgrösse")//ToDo Translation
@@ -37,7 +36,7 @@ class NumberType extends CustomFieldType
         ];
     }
 
-    public function getExtraOptionFields(?GeneralField $generalField = null): array {
+    public function getExtraOptionFields(): array {
         return [
             'column_span' => 3,
             'in_line_label' => false,

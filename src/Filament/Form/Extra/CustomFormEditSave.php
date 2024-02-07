@@ -49,7 +49,7 @@ class CustomFormEditSave
 
             if($variation == null){
                 //Prepare Variation Data before Create
-                $variationData = $type->mutateVariationDataBeforeCreate($variationData,$customfield->isInheritFromGeneralField());
+                $variationData = $type->mutateVariationDataBeforeCreate($variationData);
                 //Create new Variation
                 $variation = new CustomFieldVariation();
 
@@ -58,7 +58,7 @@ class CustomFormEditSave
                 $variation->custom_field_id = $customfield->id;
             }else{
                 //Prepare Variation Data
-                $variationData = $type->mutateVariationDataBeforeSave($variationData,$customfield->isInheritFromGeneralField());
+                $variationData = $type->mutateVariationDataBeforeSave($variationData);
             }
 
             $variation->fill($variationData)->save();

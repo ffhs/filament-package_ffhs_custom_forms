@@ -6,6 +6,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldVariation;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomOption;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Filament\Forms\Components\Component;
+use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -13,17 +14,19 @@ use Filament\Forms\Components\TextInput;
 trait HasTypeOptions
 {
 
-    public function getExtraOptionFields(?GeneralField $generalField = null):array{
+    public function getExtraOptionFields():array{
         return [
             "customOptions" => [],
         ];
     }
 
 
-    public function getExtraOptionSchema(?GeneralField $generalField = null):?array{
-        if(!is_null($generalField)) return [];
+    public function getExtraOptionSchema():?array{
         return [
-            $this->getCustomOptionsRepeater(true),
+            Group::make(function ($get){
+                if(!empty($get("../../../general_filed_id"))) return [];
+                return [$this->getCustomOptionsRepeater()];
+            })
         ];
     }
 
@@ -32,16 +35,12 @@ trait HasTypeOptions
     }
     public function getGeneralExtraField(): ?array {
         return [
-            $this->getCustomOptionsRepeater(true),
+            $this->getCustomOptionsRepeater(true)
         ];
     }
 
-    protected function getCustomOptionsRepeater (bool $isGeneralField ): Repeater {
-        $repeater =  Repeater::make("customOptions");
-
-        if($isGeneralField) $repeater->relationship("customOptions");
-
-        $repeater
+    protected function getCustomOptionsRepeater (bool $withIdentifikator = false): Repeater {
+        return Repeater::make("customOptions")
             ->collapseAllAction(fn($action) => $action->hidden())
             ->expandAllAction(fn($action) => $action->hidden())
             ->reorderableWithDragAndDrop(false) //ToDo
@@ -57,28 +56,26 @@ trait HasTypeOptions
                 TextInput::make("name_en")->label("Name En")->required(),
                 TextInput::make("identifier")
                     ->label("Identifikator")
-                    ->visible($isGeneralField)
+                    ->visible($withIdentifikator)
                     ->columnSpanFull()
                     ->required(),
             ]);
-
-        return $repeater;
     }
 
-    public function getCustomOptionsSelector (?GeneralField $generalField = null):Component {
+    public function getCustomOptionsSelector ():Component {
         return  Select::make("available_options")
                 ->label("Mögliche Auswahlmöglichkeiten")
+                ->columnSpanFull()
                 ->multiple()
                 ->options(function($get){
-                    $generalFieldID = $get("../../../general_field_id");
-                    $generalField = GeneralField::cached($generalFieldID);
+                    $generalField = GeneralField::cached($get("../../../../general_field_id"));
                     return $generalField->customOptions->pluck("name_de","id"); //toDo Translate;
                 })
             ;
     }
 
-    public function mutateVariationDataBeforeFill(array $data, ?GeneralField $generalField = null ):array{
-        $data = parent::mutateVariationDataBeforeFill($data, $generalField);
+    public function mutateVariationDataBeforeFill(array $data):array{
+        $data = parent::mutateVariationDataBeforeFill($data);
         if(empty($data["id"]))return $data;
         $customOptionDatas = [];
         /** @var CustomFieldVariation $customFieldVariation */
@@ -93,8 +90,8 @@ trait HasTypeOptions
         return $data;
     }
 
-    public function mutateVariationDataBeforeSave(array $data, ?GeneralField $generalField = null):array{
-        $data = parent::mutateVariationDataBeforeSave($data, $generalField);
+    public function mutateVariationDataBeforeSave(array $data):array{
+        $data = parent::mutateVariationDataBeforeSave($data);
         if(empty($data["options"])) $data["options"] = [];
         if(empty($data["options"]["customOptions"])) $data["options"]["customOptions"] = [];
         $data["customOptions"] = $data["options"]["customOptions"];

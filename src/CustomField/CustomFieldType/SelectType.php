@@ -6,7 +6,6 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\Traids\HasBasicSettings;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\Traids\HasCustomFormPackageTranslation;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\Traids\HasTypeOptions;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\TextInput;
@@ -26,46 +25,61 @@ class SelectType extends CustomFieldType
         ];
     }
 
-    public function getExtraOptionSchema(?GeneralField $generalField = null):?array{
-        $schema = [
-            $this->getNewLineOption()->columnStart(1),
-            $this->getInLineLabelOption(),
-            $this->getColumnSpanOption(),
 
-            Toggle::make("several")
-                ->label("Mehre auswählbar")//ToDo Translate
+
+    public function getExtraOptionSchema():?array{
+        return [
+            Group::make()
+                ->statePath("options")
                 ->columnSpanFull()
-                ->live(),
+                ->columns()
+                ->schema([
+                    $this->getNewLineOption()->columnStart(1),
+                    $this->getInLineLabelOption(),
+                    $this->getColumnSpanOption(),
 
-            TextInput::make("min_select")
-                ->hidden(fn($get)=> !$get("several"))
-                ->label("Mindestanzahl") //ToDo Translate
-                ->helperText("Greift nur bei (Benötigt)")//ToDo Translate
-                ->columnStart(1)
-                ->minValue(0)
-                ->step(1)
-                ->required()
-                ->numeric(),
+                    Toggle::make("several")
+                        ->label("Mehre auswählbar")//ToDo Translate
+                        ->columnSpanFull()
+                        ->live(),
 
-            TextInput::make("max_select")
-                ->hidden(fn($get)=> !$get("several"))
-                ->label("Maximalanzahl") //ToDo Translate
-                ->helperText("'0' entspricht keine Begrenzung") //ToDo Translate
-                ->minValue(0)
-                ->step(1)
-                ->required()
-                ->numeric(),
+                    TextInput::make("min_select")
+                        ->hidden(fn($get)=> !$get("several"))
+                        ->label("Mindestanzahl") //ToDo Translate
+                        ->columnStart(1)
+                        ->helperText("Greift nur bei (Benötigt)")//ToDo Translate
+                        ->minValue(0)
+                        ->step(1)
+                        ->required()
+                        ->numeric(),
 
+                    TextInput::make("max_select")
+                        ->hidden(fn($get)=> !$get("several"))
+                        ->label("Maximalanzahl") //ToDo Translate
+                        ->helperText("'0' entspricht keine Begrenzung") //ToDo Translate
+                        ->minValue(0)
+                        ->step(1)
+                        ->required()
+                        ->numeric(),
 
+                    Group::make()
+                        ->columnSpanFull()
+                        ->schema(function ($get){
+                            if(!is_null($get("../../../../general_field_id"))) return [$this->getCustomOptionsSelector()];
+                            return [];
+                        }),
+                ]),
+
+            Group::make()
+                ->columnSpanFull()
+                ->schema(function ($get){
+                    if(is_null($get("../../../general_field_id"))) return [$this->getCustomOptionsRepeater()];
+                    return [];
+                }),
         ];
-
-        if(is_null($generalField))$schema[] = $this->getCustomOptionsRepeater(true);
-        if(!is_null($generalField))$schema[] = $this->getCustomOptionsSelector($generalField);
-
-        return $schema;
     }
 
-    public function getExtraOptionFields(?GeneralField $generalField = null):array{
+    public function getExtraOptionFields():array{ //ToDo dont work
         return [
             "customOptions" => [],
             'column_span' => 3,
@@ -82,6 +96,4 @@ class SelectType extends CustomFieldType
     public function icon(): String {
         return  "carbon-select-window";
     }
-
-
 }

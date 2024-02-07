@@ -5,7 +5,6 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Views\CheckboxTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\Traids\HasBasicSettings;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\Traids\HasCustomFormPackageTranslation;
 
 class CheckboxType extends CustomFieldType
@@ -21,14 +20,14 @@ class CheckboxType extends CustomFieldType
         ];
     }
 
-    public function getExtraOptionFields(?GeneralField $generalField = null): array {
+    public function getExtraOptionFields(): array {
         return [
             'in_line_label' => false,
             'new_line_option' => true,
         ];
     }
 
-    public function getExtraOptionSchema(?GeneralField $generalField = null): ?array {
+    public function getExtraOptionSchema(): ?array {
         return [
             $this->getNewLineOption(),
             $this->getInLineLabelOption(),

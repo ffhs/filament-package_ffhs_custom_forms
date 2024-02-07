@@ -68,7 +68,7 @@ class CustomForm extends Model
         return $this->dynamicFormConfiguration()::relationVariationsQuery($this->relationModel());
     }
     public function variationModelsCached(): Collection {
-        if(!$this->getFormConfiguration()::hasVariations) return collect();
+        if(!$this->getFormConfiguration()::hasVariations()) return collect();
         return Cache::remember(
             "custom_form-". $this->id . "_variation_models",
             1,
