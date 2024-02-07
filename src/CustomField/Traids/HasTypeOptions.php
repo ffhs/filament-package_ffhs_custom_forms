@@ -16,25 +16,45 @@ use Filament\Forms\Get;
 trait HasTypeOptions
 {
 
-    public function getExtraOptionFields():array{
-        return [
-            "customOptions" => [],
-        ];
+    //ToDo Docs
+    public function getExtraTraitOptionSchema() : array{
+        return  [];
+    }
+
+    //ToDo Docs
+    public function getGeneralExtraFieldTrait() : array{
+        return  [];
     }
 
 
     public function getExtraOptionSchema():?array{
         return [
-            Group::make(function ($get){
-                if(!empty($get("../../../general_filed_id"))) return [];
-                return [$this->getCustomOptionsRepeater()];
-            })
+            Group::make()
+                ->statePath("options")
+                ->columnSpanFull()
+                ->columns()
+                ->schema([
+                    Group::make($this->getExtraTraitOptionSchema())->columnSpanFull()->columns(),
+                    Group::make()
+                        ->columnSpanFull()
+                        ->schema(function ($get){
+                            if(!is_null($get("../../../../general_field_id"))) return [$this->getCustomOptionsSelector()];
+                            return [];
+                        }),
+                ]),
+            Group::make()
+                ->columnSpanFull()
+                ->schema(function ($get){
+                    if(is_null($get("../../../general_field_id"))) return [$this->getCustomOptionsRepeater()];
+                    return [];
+                }),
         ];
     }
 
     public function getGeneralExtraField(): ?array {
         return [
-            $this->getCustomOptionsRepeater(true)
+            Group::make($this->getGeneralExtraFieldTrait())->columns(),
+            $this->getCustomOptionsRepeater(true),
         ];
     }
 
