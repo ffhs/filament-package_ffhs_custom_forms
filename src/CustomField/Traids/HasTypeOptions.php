@@ -119,10 +119,19 @@ trait HasTypeOptions
             /**@var CustomOption $option*/
             if($optionExist) $option = $customOptions->firstWhere("id",$optionData["id"]);
             else $option = new CustomOption();
+            if(is_null($option))dd($option,$optionExist,$customOptions,$optionData);
             $option->fill($optionData)->save();
             if(!$optionExist)$variation->customOptions()->attach($option);
 
         }
+    }
+
+    public static function prepareCloneOptions(array $templateOptions, bool $isInheritGeneral) :array{
+        if($isInheritGeneral) return $templateOptions;
+        foreach($templateOptions["customOptions"] as $key => $option){
+            unset($templateOptions["customOptions"][$key]["id"]);
+        }
+        return $templateOptions;
     }
 
 }

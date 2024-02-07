@@ -62,6 +62,7 @@ class CustomFormEditSave
             }
 
             $variation->fill($variationData)->save();
+
             $type->afterCustomFieldVariationSave($variation,$variationData);
 
             $updatetVariationIds[] = $variationId;

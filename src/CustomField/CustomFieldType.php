@@ -39,7 +39,6 @@ abstract class CustomFieldType
 
     public static function prepareCloneOptions(array $templateOptions, bool $isInheritGeneral) :array{
         return $templateOptions;
-        //ToDO
     }
 
 
@@ -190,7 +189,6 @@ abstract class CustomFieldType
     public function afterCustomFieldSave(CustomField $field, array$data):void{
     }
     public function afterCustomFieldVariationSave(?CustomFieldVariation $variation, array $variationData):void {
-
     }
 
     //ToDo Mutate answerers (Save,  Create)
