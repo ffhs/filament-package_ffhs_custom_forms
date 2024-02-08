@@ -15,7 +15,7 @@ return new class () extends Migration {
         Schema::create('general_field_form', function (Blueprint $table) {
             $table->id();
 
-            $table->foreignId("general_field_id")->constrained()->on("custom_fields");
+            $table->foreignId("general_field_id")->constrained();
             $table->string("custom_form_identifier");
 
             $table->boolean("is_required")->default(false);
