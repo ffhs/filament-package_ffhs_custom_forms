@@ -7,6 +7,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\Traids\HasBasicSettings;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\Traids\HasCustomFormPackageTranslation;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\Traids\HasTypeOptions;
 use Filament\Forms\Components\Builder;
+use Filament\Forms\Components\Group;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 
@@ -25,22 +26,56 @@ class ToggleButtonsType extends CustomFieldType
             'default'  => CustomFieldType\Views\ToggleButtonsView::class,
         ];
     }
-    public function getExtraOptionSchemaHasOptions() : array{
-        return array_merge($this->getExtraOptionSchemaBasicSetup(), [
-            Toggle::make("inline")
-                ->label("Mehre auswählbar"),//ToDo Translate
-            Toggle::make("grouped")
-                ->label("Gruppeiert"),//ToDo Translate
-            Toggle::make("boolean")
-                ->label("Ja/Nein"),//ToDo Translate
-            Toggle::make("multiple")
-                ->label("Mehre auswählbar"),//ToDo Translate
-            TextInput::make("columns")
-                ->label("Spalten")//ToDo Translate
-                ->numeric()
+    public function getExtraOptionSchema() : array{
 
+        return [
+            Group::make()
+                ->statePath("options")
+                ->columnSpanFull()
+                ->columns()
+                ->schema([
+                    Group::make()
+                        ->columnSpanFull()
+                        ->columns()
+                        ->schema(array_merge($this->getExtraOptionSchemaBasicSetup(),[
+                            Toggle::make("inline")
+                                ->disabled(fn($get)=> $get("grouped"))
+                                ->label("Mehre auswählbar"),//ToDo Translate
+                            Toggle::make("grouped")
+                                ->disabled(fn($get)=> $get("inline"))
+                                ->label("Gruppeiert")//ToDo Translate
+                                ->columnStart(2),
+                            Toggle::make("boolean")
+                                ->disabled(fn($get)=> $get("multiple"))
+                                ->label("Ja/Nein")//ToDo Translate
+                                ->columnStart(1),
 
-        ]);
+                            Toggle::make("multiple")
+                                ->columnStart(2)
+                                ->disabled(fn($get)=> $get("boolean"))
+                                ->label("Mehre auswählbar"),//ToDo Translate
+
+                            TextInput::make("columns")
+                                ->columnStart(1)
+                                ->disabled(fn($get)=> $get("grouped") ||  $get("inline")||  $get("boolean"))
+                                ->label("Spalten")//ToDo Translate
+                                ->numeric()
+                        ])),
+                    Group::make()
+                        ->hidden(fn($get)=> is_null($get("../../../general_field_id")) || $get("boolean"))
+                        ->columnSpanFull()
+                        ->schema(function ($get){
+                            if(!is_null($get("../../../general_field_id"))) return [$this->getCustomOptionsSelector()];
+                            return [];
+                        }),
+                ]),
+            Group::make()
+                ->columnSpanFull()
+                ->schema(function ($get){
+                    if(is_null($get("../../general_field_id")) || $get("options.boolean")) return [$this->getCustomOptionsRepeater()];
+                    return [];
+                }),
+        ];
     }
 
 
