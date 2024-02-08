@@ -18,16 +18,16 @@ abstract class DynamicFormConfiguration
         return CustomFieldType::getAllTypes();
     }
 
-    public static function displayViewMode():string {
+    public static function displayViewMode():String {
         return self::displayMode();
     }
-    public static function displayEditMode():string {
+    public static function displayEditMode():String {
         return self::displayMode();
     }
-    public static function displayCreateMode():string {
+    public static function displayCreateMode():String {
         return self::displayMode();
     }
-    public static function displayMode():string {
+    public static function displayMode():String {
         return 'default';
     }
 
@@ -49,7 +49,7 @@ abstract class DynamicFormConfiguration
     }
 
 
-    public static function variationName(Model $variationModel):string {
+    public static function variationName(Model $variationModel):String {
         return $variationModel->short_title;
     }
 
@@ -60,7 +60,7 @@ abstract class DynamicFormConfiguration
         return $variationModel->is_hidden;
     }
 
-    public final static function getFormConfigurationClass(string $custom_form_identifier):string {
+    public final static function getFormConfigurationClass(string $custom_form_identifier):String {
         return collect(config("ffhs_custom_forms.forms"))->where(fn(string $class)=> $class::identifier() == $custom_form_identifier)->first();
     }
 

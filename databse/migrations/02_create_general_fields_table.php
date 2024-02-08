@@ -1,0 +1,46 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class () extends Migration {
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::create('general_fields', function (Blueprint $table) {
+            $table->id();
+
+            // general field stuff
+            $table->boolean('is_active')->nullable();
+            //ToDo Icon
+
+            $table->string('identify_key')->nullable()->unique();
+            $table->json("variation_options")->nullable();
+            $table->json("extra_options")->nullable();
+            $table->string('tool_tip_de')->nullable();
+            $table->string('tool_tip_en')->nullable();
+            $table->string('name_de')->nullable();
+            $table->string('name_en')->nullable();
+            $table->string("type")->nullable();
+
+
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migration
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::dropIfExists('custom_fields');
+    }
+};
+

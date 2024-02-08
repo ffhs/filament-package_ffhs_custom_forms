@@ -22,7 +22,7 @@ class DateTimeType extends CustomFieldType
             TextInput::make("format")
                 ->label("Format") //ToDo Translate
                 ->placeholder("Y-m-d H:i:s")
-                ->columnSpanFull(),
+                ->columnSpan(1),
             $this->getNewLineOption(),
             $this->getInLineLabelOption()
 
@@ -44,6 +44,6 @@ class DateTimeType extends CustomFieldType
     }
 
     public function icon(): string {
-        return  "bi-clock";
+        return  "heroicon-s-clock";
     }
 }
