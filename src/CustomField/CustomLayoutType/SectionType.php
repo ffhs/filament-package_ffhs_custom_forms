@@ -58,6 +58,10 @@ class SectionType extends CustomLayoutType
         ];
     }
 
+    public function canBeRequired(): bool {
+        return false;
+    }
+
 
     public function icon(): string {
        return  "tabler-section";
