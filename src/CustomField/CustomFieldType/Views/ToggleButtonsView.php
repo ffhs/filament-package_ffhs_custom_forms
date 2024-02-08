@@ -24,7 +24,7 @@ class ToggleButtonsView implements FieldTypeView
 
         $toggles = ToggleButtons::make($type::getIdentifyKey($record))
             ->columnStart($type->getOptionParameter($record,"new_line_option"))
-
+            ->inlineLabel($type->getOptionParameter($record,"in_line_label"))
             ->multiple($type->getOptionParameter($record,"multiple"))
             ->columns($type->getOptionParameter($record,"columns"))
             ->helperText($type::getToolTips($record))
@@ -32,7 +32,7 @@ class ToggleButtonsView implements FieldTypeView
             ->required($record->required);
 
         if($type->getOptionParameter($record,"grouped")) $toggles->grouped();
-        else if($type->getOptionParameter($record,"in_line_label")) $toggles->inlineLabel();
+        else if($type->getOptionParameter($record,"inline")) $toggles->inline();
         else $toggles->columnSpan($type->getOptionParameter($record,"column_span"));
 
         if($type->getOptionParameter($record,"boolean")) $toggles->boolean();
@@ -54,7 +54,6 @@ class ToggleButtonsView implements FieldTypeView
                 ->columnSpanFull()
                 ->inlineLabel()
                 ->boolean();
-
     }
 
 }

@@ -20,10 +20,11 @@ class CheckboxListTypeView implements FieldTypeView
             ->columnStart($type->getOptionParameter($record,"new_line_option"))
             ->inlineLabel($type->getOptionParameter($record,"in_line_label"))
             ->columnSpan($type->getOptionParameter($record,"column_span"))
+            ->columns($type->getOptionParameter($record,"columns"))
+            ->options($type->getAvailableCustomOptions($record))
             ->helperText($type::class::getToolTips($record))
             ->label($type::class::getLabelName($record))
-            ->required($record->required)
-            ->options($type->getAvailableCustomOptions($record));
+            ->required($record->required);
     }
 
 

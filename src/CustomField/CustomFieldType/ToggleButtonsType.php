@@ -40,16 +40,16 @@ class ToggleButtonsType extends CustomFieldType
                         ->schema(array_merge($this->getExtraOptionSchemaBasicSetup(),[
                             Toggle::make("inline")
                                 ->disabled(fn($get)=> $get("grouped"))
-                                ->label("Mehre auswählbar"),//ToDo Translate
+                                ->label("In der Zeile"),//ToDo Translate
                             Toggle::make("grouped")
                                 ->disabled(fn($get)=> $get("inline"))
                                 ->label("Gruppeiert")//ToDo Translate
                                 ->columnStart(2),
+
                             Toggle::make("boolean")
                                 ->disabled(fn($get)=> $get("multiple"))
                                 ->label("Ja/Nein")//ToDo Translate
                                 ->columnStart(1),
-
                             Toggle::make("multiple")
                                 ->columnStart(2)
                                 ->disabled(fn($get)=> $get("boolean"))
