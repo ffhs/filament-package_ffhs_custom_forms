@@ -7,16 +7,16 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\Traids\HasCustomOptionInfoListView;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldVariation;
 use Filament\Forms\Components\Component;
-use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Radio;
 
-class SelectTypeView implements FieldTypeView
+class RadioTypeView implements FieldTypeView
 {
     use HasCustomOptionInfoListView;
 
     public static function getFormComponent(CustomFieldType $type, CustomFieldVariation $record,
         array $parameter = []): Component {
 
-        $select = Select::make($type::getIdentifyKey($record))
+        return Radio::make($type::getIdentifyKey($record))
             ->columnStart($type->getOptionParameter($record,"new_line_option"))
             ->inlineLabel($type->getOptionParameter($record,"in_line_label"))
             ->columnSpan($type->getOptionParameter($record,"column_span"))
@@ -24,14 +24,5 @@ class SelectTypeView implements FieldTypeView
             ->label($type::class::getLabelName($record))
             ->required($record->required)
             ->options($type->getAvailableCustomOptions($record));
-
-        if($type->getOptionParameter($record,"several")){
-            $maxItems = $type->getOptionParameter($record,"max_select");
-            $select->multiple()->minItems($record->required?$type->getOptionParameter($record,"min_select"):0);
-            if($maxItems > 0)$select->maxItems($maxItems);
-        }
-
-        return $select;
     }
-
 }

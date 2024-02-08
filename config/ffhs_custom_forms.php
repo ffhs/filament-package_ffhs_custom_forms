@@ -1,15 +1,18 @@
 <?php
 
 
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CheckboxListType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CheckboxType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\DateTimeType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\DateType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\EmailType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\IconSelectType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\NumberType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\RadioType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\SelectType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\TextAreaType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\TextType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\ToggleButtonsType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\SectionType;
 
 return [
@@ -24,6 +27,9 @@ return [
         SectionType::class,
         IconSelectType::class,
         SelectType::class,
+        RadioType::class,
+        CheckboxListType::class,
+        ToggleButtonsType::class,
     ],
 
     "forms"=>[

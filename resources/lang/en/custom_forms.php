@@ -44,6 +44,8 @@ return [
             "date-time" => "Date and Time",
             "textarea" => "Textarea",
             "icon-select" => "Icon Selector",
+            "checkbox_list" => "Checkbox List",
+            "toggle_buttons"=> "Toggle Buttons",
         ],
     ],
 

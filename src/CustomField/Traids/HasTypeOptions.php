@@ -38,12 +38,13 @@ trait HasTypeOptions
                 ->schema([
                     Group::make($this->getExtraOptionSchemaHasOptions())->columnSpanFull()->columns(),
                     Group::make()
+                        ->hidden(fn($get)=> is_null($get("../../../general_field_id")))
                         ->columnSpanFull()
                         ->schema(function ($get){
                             if(!is_null($get("../../../general_field_id"))) return [$this->getCustomOptionsSelector()];
                             return [];
                         }),
-                ]),
+                ])->hidden(fn ($get)=>is_null($get("../../general_field_id")) && empty($this->getExtraOptionSchemaHasOptions())),
             Group::make()
                 ->columnSpanFull()
                 ->schema(function ($get){

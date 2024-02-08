@@ -45,6 +45,8 @@ return [
             "date-time" => "Datum und Zeit",
             "textarea" => "Textbereich",
             "icon-select" => "Icon Auswahl",
+            "checkbox_list" => "Kontrollkästchen",
+            "toggle_buttons"=> "Umschalttasten",
         ],
     ],
 

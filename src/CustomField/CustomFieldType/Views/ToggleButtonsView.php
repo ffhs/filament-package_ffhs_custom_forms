@@ -8,30 +8,27 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\Traids\HasCustomOptionInfoLi
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldVariation;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\ToggleButtons;
 
-class SelectTypeView implements FieldTypeView
+class ToggleButtonsView implements FieldTypeView
 {
     use HasCustomOptionInfoListView;
 
     public static function getFormComponent(CustomFieldType $type, CustomFieldVariation $record,
         array $parameter = []): Component {
 
-        $select = Select::make($type::getIdentifyKey($record))
+        $toggle = ToggleButtons::make($type::getIdentifyKey($record))
             ->columnStart($type->getOptionParameter($record,"new_line_option"))
             ->inlineLabel($type->getOptionParameter($record,"in_line_label"))
             ->columnSpan($type->getOptionParameter($record,"column_span"))
+            ->options($type->getAvailableCustomOptions($record))
             ->helperText($type::class::getToolTips($record))
             ->label($type::class::getLabelName($record))
-            ->required($record->required)
-            ->options($type->getAvailableCustomOptions($record));
+            ->required($record->required);
 
-        if($type->getOptionParameter($record,"several")){
-            $maxItems = $type->getOptionParameter($record,"max_select");
-            $select->multiple()->minItems($record->required?$type->getOptionParameter($record,"min_select"):0);
-            if($maxItems > 0)$select->maxItems($maxItems);
-        }
 
-        return $select;
+
+        return $toggle;
     }
 
 }
