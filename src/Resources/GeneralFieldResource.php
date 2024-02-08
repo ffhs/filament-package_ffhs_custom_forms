@@ -153,10 +153,11 @@ class GeneralFieldResource extends Resource
                         return $type->mutateCustomFieldDataBeforeFill([""])["options"];
                     })
                     ->visible(function($get, $record){
-                        if(is_null($get("type"))) return false;
+                       /* if(is_null($get("type"))) return false;
                         $type = CustomFieldType::getTypeFromName($get("type"));
                         $array = $type->getExtraOptionFields(is_null($record)?new GeneralField():$record);
-                        return !empty($array);
+                        return !empty($array);*/
+                        return true;
                     })
                     ->schema(function($get){
                       /*  if(is_null($get("type"))) return[];
