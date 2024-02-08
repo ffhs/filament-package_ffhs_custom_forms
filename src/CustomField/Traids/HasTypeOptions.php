@@ -55,8 +55,9 @@ trait HasTypeOptions
     }
 
     public function getGeneralExtraField(): ?array {
+        $extraFields = $this->getGeneralExtraFieldHasOptions();
         return [
-            Group::make($this->getGeneralExtraFieldHasOptions())->columns(),
+            Group::make($extraFields)->hidden(empty($extraFields))->columns(),
             $this->getCustomOptionsRepeater(true),
         ];
     }
@@ -69,7 +70,7 @@ trait HasTypeOptions
     }
 
     protected function getCustomOptionsRepeater (bool $withIdentifikator = false): Repeater {
-        return Repeater::make("customOptions")
+        $repeater = Repeater::make("customOptions")
             ->collapseAllAction(fn($action) => $action->hidden())
             ->expandAllAction(fn($action) => $action->hidden())
             ->reorderableWithDragAndDrop(false) //ToDo
@@ -89,6 +90,10 @@ trait HasTypeOptions
                     ->columnSpanFull()
                     ->required(),
             ]);
+
+        if($withIdentifikator) $repeater->relationship("customOptions");
+
+        return $repeater;
     }
 
     public function getCustomOptionsSelector ():Component {
@@ -98,7 +103,7 @@ trait HasTypeOptions
                 ->multiple()
                 ->options(function($get){
                     $generalField = GeneralField::cached($get("../../../general_field_id"));
-                    return $generalField->customOptions->pluck("name_de","id"); //toDo Translate;
+                    return $generalField->customOptions->pluck("name_de","identifier"); //toDo Translate;
                 })
             ;
     }
@@ -157,12 +162,13 @@ trait HasTypeOptions
         return $variationData["options"];
     }
     public function getAvailableCustomOptions(CustomFieldVariation $record) : \Illuminate\Support\Collection{
-        if($record->customField->isInheritFromGeneralField())
+        if($record->customField->isInheritFromGeneralField()) {
             $options = $record
                 ->customField
                 ->generalField
                 ->customOptions
                 ->whereIn("identifier", $this->getOptionParameter($record, "available_options"));
+        }
         else  $options = $record->customOptions;
         return $options->pluck("name_de","identifier");//ToDo Translate
     }
