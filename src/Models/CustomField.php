@@ -31,14 +31,15 @@ class CustomField extends ACustomField
 {
     use HasFactory;
 
-    protected $fillable = [
-        'general_field_id',
+    protected $table = "custom_fields";
 
+    protected $fillable = [
         'tool_tip_de',
         'tool_tip_en',
         'name_de',
         'name_en',
         'type',
+        'general_field_id',
 
         'custom_form_id',
         'has_variations',
@@ -46,14 +47,6 @@ class CustomField extends ACustomField
         'layout_end_position',
         'identify_key',
     ];
-
-
-    protected static function booted(): void {
-        //Only CustomFields and CustomFields where inherit from GeneralFields
-        static::addGlobalScope('is_general_field', function (Builder $builder) {
-            $builder->where('is_general_field', false);
-        });
-    }
 
 
     public static function inheritCustomField(): Builder {
@@ -73,7 +66,6 @@ class CustomField extends ACustomField
     private function getInheritStateFromArrays($thisValues, $generalFieldArray): array {
         if(is_null($generalFieldArray)) return $thisValues;
         $output= array_replace($thisValues, array_filter($generalFieldArray, fn($value) => !is_null($value)));
-        $output["is_general_field"] = false;
         unset($output["id"]);
         unset($output["general_field_id"]);
         unset($output["created_at"]);

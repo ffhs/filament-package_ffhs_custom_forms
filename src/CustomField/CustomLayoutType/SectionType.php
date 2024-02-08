@@ -38,7 +38,6 @@ class SectionType extends CustomLayoutType
 
     public function getExtraOptionSchema(): ?array {
         return [
-
             $this->getColumnSpanOption(),
             TextInput::make("columns")
                 ->label("Anzahl Spalten") //ToDo Translate
@@ -57,6 +56,10 @@ class SectionType extends CustomLayoutType
             $this->getNewLineOption()->columnStart(1),
             $this->getInLineLabelOption(),
         ];
+    }
+
+    public function canBeRequired(): bool {
+        return false;
     }
 
 

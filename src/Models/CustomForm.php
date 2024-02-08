@@ -58,7 +58,7 @@ class CustomForm extends Model
     }
 
 
-    public function getFormConfiguration():string{
+    public function getFormConfiguration():String{
         return DynamicFormConfiguration::getFormConfigurationClass($this->custom_form_identifier);
     }
 
@@ -67,7 +67,8 @@ class CustomForm extends Model
     public function variationModels(): Builder {
         return $this->dynamicFormConfiguration()::relationVariationsQuery($this->relationModel());
     }
-    public function variationModelsChached(): Collection {
+    public function variationModelsCached(): Collection {
+        if(!$this->getFormConfiguration()::hasVariations()) return collect();
         return Cache::remember(
             "custom_form-". $this->id . "_variation_models",
             1,

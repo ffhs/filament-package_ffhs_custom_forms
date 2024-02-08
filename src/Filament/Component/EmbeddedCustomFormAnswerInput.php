@@ -3,7 +3,6 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component;
 
 
-use App\Forms\Components\EmbeddedCustomFormSectionAnswerInput;
 use Closure;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Form\CustomFormRender;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
@@ -69,7 +68,7 @@ class EmbeddedCustomFormAnswerInput extends Component implements CanEntangleWith
         $this->columns(1);
 
         //SetUp Auto Update
-        $this->afterStateUpdated(function (EmbeddedCustomFormSectionAnswerInput $component, array $state,?Model $record){
+        $this->afterStateUpdated(function (EmbeddedCustomFormAnswerInput $component, array $state,?Model $record){
             if(!$component->getIsAutoSave()) return;
             /**@var CustomFormAnswer $answer*/
             $relationshipName = $component->getRelationshipName();

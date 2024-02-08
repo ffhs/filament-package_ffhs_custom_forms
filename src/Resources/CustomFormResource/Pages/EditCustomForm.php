@@ -23,12 +23,12 @@ class EditCustomForm extends EditRecord
                         ->schema(CustomFormEditForm::formSchema())
                         ->columns(3),
 
-                    \Filament\Forms\Components\Actions::make([ //ToDo remove
+                   /* \Filament\Forms\Components\Actions::make([ //ToDo remove
                          Action::make("test1")
                              ->modalWidth('7xl')
                              ->form(fn($record)=>CustomFormRender::generateFormSchema($record,"default"))
                              ->action(fn()=> dd("??"))
-                    ])
+                    ])*/
                 ]
             );
     }

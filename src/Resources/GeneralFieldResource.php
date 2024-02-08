@@ -18,6 +18,7 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use function PHPUnit\Framework\isEmpty;
 
 class GeneralFieldResource extends Resource
 {
@@ -75,7 +76,7 @@ class GeneralFieldResource extends Resource
             ->schema([
                 Section::make()
                     ->columnSpan(2)
-                    ->columns(2)
+                    ->columns()
                     ->schema([
 
                         Tabs::make()
@@ -111,24 +112,67 @@ class GeneralFieldResource extends Resource
                             ->columnSpan(1)
                             ->required(),
 
-                       Toggle::make("is_general_field_active")
+                       Toggle::make("is_active")
                             ->label(__(self::langPrefix . 'is_general_field_active'))
                             ->helperText(__(self::langPrefix . 'helper_text.is_general_field_active'))
                             ->default(true)
                             ->columnStart(2)
                             ->columnSpan(1),
 
-
-                        //Extra field FromType
-                       Group::make(function ($get){
-                            if(is_null($get("type"))) return[];
-                            $type = CustomFieldType::getTypeFromName($get("type"));
-                            if(is_null($type)) return [];
-                            $component = $type->getGeneralFieldExtraField();
-                            return is_null($component)?[]:[$component];
-                        })->columnSpanFull(),
-
                     ]),
+
+
+                Section::make("Optionen") //ToDo Translate
+                    ->columnSpan(1)
+                    ->columns(1)
+                    ->collapsed()
+                    ->visible(function($get){
+                        if(is_null($get("type"))) return false;
+                        $type = CustomFieldType::getTypeFromName($get("type"));
+                        $array = $type->getGeneralExtraField();
+                        return !empty($array);
+                    })
+                    ->schema(function($get){
+                        if(is_null($get("type"))) return[];
+                        $type = CustomFieldType::getTypeFromName($get("type"));
+                        $array = $type->getGeneralExtraField();
+                        if(empty($array)) return [];
+                        $group = Group::make()->schema($array);
+                        return  [
+                            $group
+                        ];
+                    }),
+
+                Section::make("Variations Einstellungen") //ToDo Translate
+                    ->columnSpan(1)
+                    ->columns(1)
+                    ->collapsed()
+                    ->default(function($get){
+                        if(is_null($get("type"))) return null;
+                        $type = CustomFieldType::getTypeFromName($get("type"));
+                        return $type->mutateCustomFieldDataBeforeFill([""])["options"];
+                    })
+                    ->visible(function($get, $record){
+                       /* if(is_null($get("type"))) return false;
+                        $type = CustomFieldType::getTypeFromName($get("type"));
+                        $array = $type->getExtraOptionFields(is_null($record)?new GeneralField():$record);
+                        return !empty($array);*/
+                        return true;
+                    })
+                    ->schema(function($get){
+                      /*  if(is_null($get("type"))) return[];
+                        $type = CustomFieldType::getTypeFromName($get("type"));
+                        $array = $type->getExtraOptionFields(true);
+                        if(empty($array)) return [];
+                        $group = Group::make()->schema($array);
+                        if($type->getExtraOptionFields(true))  $group->statePath("extra_options");
+                        return  [
+                            $group
+                        ];*/
+                        return [];
+                    })
+                //ToDo add variation settings
+
             ]);
     }
 
@@ -157,7 +201,7 @@ class GeneralFieldResource extends Resource
                             ->map(fn(string $class) => ($class)::displayName())
                     ),
 
-                Tables\Columns\ToggleColumn::make('is_general_field_active')
+                Tables\Columns\ToggleColumn::make('is_active')
                     ->label(__(self::langPrefix .'is_general_field_active')),
 
             ])

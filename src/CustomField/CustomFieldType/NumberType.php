@@ -15,9 +15,7 @@ class NumberType extends CustomFieldType
 
     public static function getFieldIdentifier(): string {return "number";}
 
-
-
-    public function getExtraOptionSchema(): ?array {
+    public function getExtraOptionSchemaBasicOptions(): array {
         return [
             TextInput::make("min_value")
                 ->label("Mindestgrösse")//ToDo Translation
@@ -29,22 +27,18 @@ class NumberType extends CustomFieldType
                 ->step(1)
                 ->required()
                 ->integer(),
-
-            $this->getColumnSpanOption(),
-            $this->getNewLineOption()->columnStart(1),
-            $this->getInLineLabelOption()
         ];
     }
 
-    public function getExtraOptionFields(): array {
+    public function getExtraOptionFieldsBasicOptions(): array {
         return [
-            'column_span' => 3,
-            'in_line_label' => false,
-            'new_line_option' => true,
             'min_value'=>0,
             'max_value'=>100,
         ];
     }
+
+
+
 
     public function viewModes(): array {
         return [
