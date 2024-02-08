@@ -37,11 +37,10 @@ class RadioType extends CustomFieldType
                         ->columnSpanFull()
                         ->columns()
                         ->schema(array_merge($this->getExtraOptionSchemaBasicSetup(),[
+                            Toggle::make("boolean")
+                                ->label("Ja/Nein"),//ToDo Translate
                             Toggle::make("inline")
                                 ->label("In der Zeile"),//ToDo Translate
-                            Toggle::make("boolean")
-                                ->label("Ja/Nein")//ToDo Translate
-                                ->columnStart(1)
                         ])),
                     Group::make()
                         ->hidden(fn($get)=> is_null($get("../../../general_field_id")) || $get("boolean"))
