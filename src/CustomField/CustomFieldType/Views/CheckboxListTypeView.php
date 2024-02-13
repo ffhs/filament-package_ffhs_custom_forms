@@ -17,15 +17,14 @@ class CheckboxListTypeView implements FieldTypeView
         array $parameter = []): Component {
 
         return CheckboxList::make($type::getIdentifyKey($record))
-           /* ->columnStart($type->getOptionParameter($record,"new_line_option"))
+           ->columnStart($type->getOptionParameter($record,"new_line_option"))
             ->inlineLabel($type->getOptionParameter($record,"in_line_label"))
             ->columnSpan($type->getOptionParameter($record,"column_span"))
-            ->columns($type->getOptionParameter($record,"columns"))*/
+            ->columns($type->getOptionParameter($record,"columns"))
             ->options($type->getAvailableCustomOptions($record))
-            //->helperText($type::class::getToolTips($record))
-            //->label($type::class::getLabelName($record))
-            //->required($record->required);
-        ;
+            ->helperText($type::class::getToolTips($record))
+            ->label($type::class::getLabelName($record))
+            ->required($record->required);
     }
 
 
