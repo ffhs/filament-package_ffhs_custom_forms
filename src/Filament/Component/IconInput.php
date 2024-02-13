@@ -26,7 +26,7 @@ class IconInput extends Component implements CanEntangleWithSingularRelationship
 
 
     protected string $view = 'filament-forms::components.group';
-    private Closure|bool|null $required = false;
+    private Closure|bool $required = false;
 
     public static function make(string $id): static
     {
@@ -54,15 +54,17 @@ class IconInput extends Component implements CanEntangleWithSingularRelationship
 
         $this->schema(fn(IconInput $component,$set)=>[
 
-            $component->modifyTextInput(TextInput::make($this->id)
-                ->label(fn()=>$this->getLabel())
-                ->live()
-                ->prefixIcon(function($state) {
-                    $icons = config("ffhs_custom_forms.icons");
-                    $icons = collect($icons)->flatten(1);
-                    if($icons->contains($state)) return $state ;
-                    else return "";
-                }))
+            $component->modifyTextInput(
+                TextInput::make($this->id)
+                    ->label(fn()=>$this->getLabel())
+                    ->live()
+                    ->required($component->required)
+                    ->prefixIcon(function($state) {
+                        $icons = config("ffhs_custom_forms.icons");
+                        $icons = collect($icons)->flatten(1);
+                        if($icons->contains($state)) return $state ;
+                        else return "";
+                    }))
 
                 ->rules([
                         function () {
@@ -125,7 +127,7 @@ class IconInput extends Component implements CanEntangleWithSingularRelationship
     }
 
 
-    public function required(Closure| bool|null $required = true) : static {
+    public function required(Closure| bool $required = true) : static {
         $this->required =$required;
         return $this;
     }
@@ -144,7 +146,7 @@ class IconInput extends Component implements CanEntangleWithSingularRelationship
     }
 
     public function getRequired():bool|Closure {
-        return is_null($this->required)?false:$this->required;
+        return $this->evaluate($this->required);
     }
 
     public function label(Htmlable|Closure|string|null $label): static {
