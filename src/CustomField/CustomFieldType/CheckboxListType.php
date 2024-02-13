@@ -29,6 +29,7 @@ class CheckboxListType extends CustomFieldType
             TextInput::make("columns")
                 ->label("Spalten")//ToDo Translate
                 ->columnStart(1)
+                ->required()
                 ->numeric()
         ]);
     }
