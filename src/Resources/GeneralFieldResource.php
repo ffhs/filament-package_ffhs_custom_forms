@@ -2,9 +2,11 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Resources;
 
-use Ffhs\FilamentPackageFfhsCustomForms\Resources\GeneralFieldsResource\Pages\{CreateGeneralField,ListGeneralField,EditGeneralField};
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
+use Ffhs\FilamentPackageFfhsCustomForms\Resources\GeneralFieldsResource\Pages\{CreateGeneralField,
+    EditGeneralField,
+    ListGeneralField};
 use Ffhs\FilamentPackageFfhsCustomForms\Resources\GeneralFieldsResource\RelationManagers\GeneralFieldFormRelationManager;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Section;
@@ -18,7 +20,6 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use function PHPUnit\Framework\isEmpty;
 
 class GeneralFieldResource extends Resource
 {
@@ -188,8 +189,8 @@ class GeneralFieldResource extends Resource
 
                 Tables\Columns\TextColumn::make('type')
                     ->label(__(self::langPrefix .'type'))
-                    ->getStateUsing(function ($record){
-                        return __(self::langPrefix .'types.'.$record->type);
+                    ->getStateUsing(function (GeneralField $record){
+                        return  $record->getType()->getTranslatedName();
                     }),
 
                 Tables\Columns\TextColumn::make('generalFieldForms.custom_form_identifier')
