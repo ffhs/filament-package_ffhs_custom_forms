@@ -98,10 +98,6 @@ class CustomForm extends Model
             ->select('form_position','layout_end_position')
             ->where("custom_form_id", $this->id)
             ->where("layout_end_position","!=", null);
-            /*->whereIn("type", collect(config("ffhs_custom_forms.custom_field_types"))
-                ->filter(fn(string $type) => (new $type()) instanceof CustomLayoutType)
-                ->map(fn(string $type) => $type::getFieldIdentifier())
-            );*/
 
 
         $query = $this->hasMany(CustomField::class)
@@ -117,6 +113,14 @@ class CustomForm extends Model
         return $query;
     }
 
+
+    public function cachedFields(): Collection {
+        return Cache::remember("custom_fields-from-form_" . $this->id,2, fn() => $this->customFields);
+    }
+
+    public function cachedField(int $customFieldId): CustomField|null {
+        return $this->cachedFields()->firstWhere("id",$customFieldId);
+    }
 
 
 }
