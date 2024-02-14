@@ -77,7 +77,7 @@ class CustomField extends ACustomField
      * @return array there are the stat from this Field and the Stats from the GeneralField
      */
     public function getInheritState():array{
-        $generalFiledArray = $this->isGeneralField()?$this->generalField()->first()->toArray():null;
+        $generalFiledArray = $this->isGeneralField()?$this->generalField->toArray():null;
         return $this->getInheritStateFromArrays($this->toArray(), $generalFiledArray);
     }
 
