@@ -3,6 +3,8 @@
 
 return [
 
+    'cache_duration'=> 1,
+
     'functions'=>[
         'connect'=>'Verknüpfen',
     ],

@@ -123,11 +123,11 @@ class CustomField extends ACustomField
     }
 
     public static function cached(mixed $custom_field_id): ?CustomField{
-        return Cache::remember("custom_field-" .$custom_field_id, 1, fn()=>CustomField::query()->firstWhere("id", $custom_field_id));
+        return Cache::remember("custom_field-" .$custom_field_id, config('ffhs_custom_forms.cache_duration'), fn()=>CustomField::query()->firstWhere("id", $custom_field_id));
     }
 
     public static function cachedAllInForm(int $formId): Collection{
-        return Cache::remember("custom_field-form_id" .$formId, 1, fn()=>CustomField::query()->where("custom_form_id", $formId)->get());
+        return Cache::remember("custom_field-form_id" .$formId, config('ffhs_custom_forms.cache_duration'), fn()=>CustomField::query()->where("custom_form_id", $formId)->get());
     }
 
     public function allCustomFieldsInLayout(): HasMany {
