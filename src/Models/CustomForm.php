@@ -82,6 +82,10 @@ class CustomForm extends Model
         return Cache::remember("custom_form-" .$id, 1, fn()=>CustomForm::query()->firstWhere("id", $id));
     }
 
+    public function makeCached():void {
+         Cache::put("custom_form-" .$this->id, $this,1);
+    }
+
     public function customForm(): MorphOne {
         return $this->morphOne(CustomForm::class, "relation_model");
     }
@@ -98,10 +102,6 @@ class CustomForm extends Model
             ->select('form_position','layout_end_position')
             ->where("custom_form_id", $this->id)
             ->where("layout_end_position","!=", null);
-            /*->whereIn("type", collect(config("ffhs_custom_forms.custom_field_types"))
-                ->filter(fn(string $type) => (new $type()) instanceof CustomLayoutType)
-                ->map(fn(string $type) => $type::getFieldIdentifier())
-            );*/
 
 
         $query = $this->hasMany(CustomField::class)
@@ -116,6 +116,16 @@ class CustomForm extends Model
 
         return $query;
     }
+
+
+    public function cachedFields(): Collection {
+        return Cache::remember("custom_fields-from-form_" . $this->id,2, fn() => $this->customFields()->with("customFieldVariations.customOptions", "generalField.customOptions")->get());
+    }
+
+    public function cachedField(int $customFieldId): CustomField|null {
+        return $this->cachedFields()->firstWhere("id",$customFieldId);
+    }
+
 
 
 

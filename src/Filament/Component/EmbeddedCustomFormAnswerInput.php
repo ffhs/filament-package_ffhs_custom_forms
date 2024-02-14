@@ -5,6 +5,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component;
 
 use Closure;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Form\CustomFormRender;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Concerns\EntanglesStateWithSingularRelationship;
@@ -48,7 +49,7 @@ class EmbeddedCustomFormAnswerInput extends Component implements CanEntangleWith
         parent::setUp();
         $this->label("");
         $this->schema(fn(EmbeddedCustomFormAnswerInput $component)=>[
-            Group::make(fn($record)=> CustomFormRender::generateFormSchema($record->customForm,$component->getViewMode(),$component->getVariation())),
+            Group::make(fn(CustomFormAnswer $record)=> CustomFormRender::generateFormSchema(CustomForm::cached($record->custom_form_id),$component->getViewMode(),$component->getVariation())),
         ]);
         $this->mutateRelationshipDataBeforeFillUsing(function(array $data, Model $record, EmbeddedCustomFormAnswerInput $component){
             /**@var CustomFormAnswer $answer*/
@@ -93,8 +94,12 @@ class EmbeddedCustomFormAnswerInput extends Component implements CanEntangleWith
             /**@var CustomFormAnswer $answer*/
             $relationshipName = $component->getRelationshipName();
             $answer = $record->$relationshipName;
-            if($answer->customFieldAnswers->count() == 0) return $answer->customForm->getFormConfiguration()::displayCreateMode();
-            else return $answer->customForm->getFormConfiguration()::displayEditMode();
+            $form = CustomForm::cached($answer->custom_form_id);
+            if($answer->customFieldAnswers->count() == 0) return $form->getFormConfiguration()::displayCreateMode();
+            else{
+                $form = CustomForm::cached($answer->custom_form_id);
+                return $form->getFormConfiguration()::displayEditMode();
+            }
         };
         return $this;
     }

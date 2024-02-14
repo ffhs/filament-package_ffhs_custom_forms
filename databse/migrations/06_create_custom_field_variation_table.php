@@ -18,7 +18,7 @@ return new class () extends Migration {
 
             $table->boolean("required")->default(false);
             $table->boolean("is_active")->default(true);
-            $table->json('options')->nullable();
+            $table->json('options')->default("{}");
 
             $table->nullableMorphs("variation");
 

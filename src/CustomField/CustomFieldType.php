@@ -6,6 +6,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldVariation;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Get;
@@ -48,14 +49,14 @@ abstract class CustomFieldType
 
 
 
-    public function getFormComponent(CustomFieldVariation $record, string $viewMode = "default", array $parameter = []): Component { //ToDo Remove Parameters?
-        $viewMods = $this->getViewModes($record->customField->customForm->getFormConfiguration());
+    public function getFormComponent(CustomFieldVariation $record, CustomForm $form, string $viewMode = "default", array $parameter = []): Component { //ToDo Remove Parameters?
+        $viewMods = $this->getViewModes($form->getFormConfiguration());
         //FieldTypeView.php
         if(empty($viewMods[$viewMode])) return ($viewMods["default"])::getFormComponent($this,$record,$parameter);
         return ($viewMods[$viewMode])::getFormComponent($this,$record,$parameter);
     }
-    public function getInfolistComponent(CustomFieldAnswer $record,string $viewMode = "default", array $parameter = []): \Filament\Infolists\Components\Component{
-        $viewMods = $this->getViewModes($record->customFieldVariation->customField->customForm->getFormConfiguration());
+    public function getInfolistComponent(CustomFieldAnswer $record,CustomForm $form, string $viewMode = "default", array $parameter = []): \Filament\Infolists\Components\Component{
+        $viewMods = $this->getViewModes($form->getFormConfiguration());
         //FieldTypeView.php
         if(empty($viewMods[$viewMode])) return ($viewMods["default"])::getFormComponent($this,$record,$parameter);
         return ($viewMods[$viewMode])::getInfolistComponent($this,$record,$parameter);
@@ -102,6 +103,7 @@ abstract class CustomFieldType
         if($record instanceof  CustomFieldAnswer) $record = $record->customFieldVariation;
         return  $record->customField->getInheritState()["name_" . App::currentLocale()];
     }
+
 
     public function answare(CustomFieldAnswer $answer) {
         $rawAnswerer = $answer->answer;

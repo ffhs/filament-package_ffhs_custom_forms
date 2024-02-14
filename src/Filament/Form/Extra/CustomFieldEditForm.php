@@ -25,6 +25,7 @@ use Filament\Forms\Get;
 use Filament\Support\Colors\Color;
 use Filament\Support\Enums\ActionSize;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\HtmlString;
 
 class CustomFieldEditForm
@@ -242,10 +243,15 @@ class CustomFieldEditForm
                 })
                 ->options(function (Get $get){
                     $formIdentifier = $get("custom_form_identifier");
-                    $generalFieldForms = GeneralFieldForm::query()
-                        ->where("custom_form_identifier", $formIdentifier)
-                        ->with("generalField")
-                        ->get();
+
+                    $generalFieldForms =  Cache::remember("general_filed_form-from-identifier_". $formIdentifier, 5,
+                        fn()=>  GeneralFieldForm::query()
+                            ->where("custom_form_identifier", $formIdentifier)
+                            ->with("generalField")
+                            ->get()
+                    );
+
+
                     //Mark Required GeneralFields
                     $generalFields=  $generalFieldForms->map(function(GeneralFieldForm $generalFieldForm){
                         $generalField =$generalFieldForm->generalField;

@@ -48,462 +48,462 @@ return [
 
     "icons"=> [
         "Academic" => [
-            "heroicon-s-academic-cap"
+            "heroicon-o-academic-cap"
         ],
         "Adjustments" => [
-            "heroicon-s-adjustments-horizontal",
-            "heroicon-s-adjustments-vertical"
+            "heroicon-o-adjustments-horizontal",
+            "heroicon-o-adjustments-vertical"
         ],
         "Archive" => [
-            "heroicon-s-archive-box",
-            "heroicon-s-archive-box-arrow-down",
-            "heroicon-s-archive-box-x-mark"
+            "heroicon-o-archive-box",
+            "heroicon-o-archive-box-arrow-down",
+            "heroicon-o-archive-box-x-mark"
         ],
         "Arrow" => [
-            "heroicon-s-arrow-down",
-            "heroicon-s-arrow-down-circle",
-            "heroicon-s-arrow-down-left",
-            "heroicon-s-arrow-down-on-square",
-            "heroicon-s-arrow-down-on-square-stack",
-            "heroicon-s-arrow-down-right",
-            "heroicon-s-arrow-down-tray",
-            "heroicon-s-arrow-left",
-            "heroicon-s-arrow-left-circle",
-            "heroicon-s-arrow-left-end-on-rectangle",
-            "heroicon-s-arrow-left-start-on-rectangle",
-            "heroicon-s-arrow-long-down",
-            "heroicon-s-arrow-long-left",
-            "heroicon-s-arrow-long-right",
-            "heroicon-s-arrow-long-up",
-            "heroicon-s-arrow-path",
-            "heroicon-s-arrow-path-rounded-square",
-            "heroicon-s-arrow-right",
-            "heroicon-s-arrow-right-circle",
-            "heroicon-s-arrow-right-end-on-rectangle",
-            "heroicon-s-arrow-right-start-on-rectangle",
-            "heroicon-s-arrow-top-right-on-square",
-            "heroicon-s-arrow-trending-down",
-            "heroicon-s-arrow-trending-up",
-            "heroicon-s-arrow-up",
-            "heroicon-s-arrow-up-circle",
-            "heroicon-s-arrow-up-left",
-            "heroicon-s-arrow-up-on-square",
-            "heroicon-s-arrow-up-on-square-stack",
-            "heroicon-s-arrow-up-right",
-            "heroicon-s-arrow-up-tray",
-            "heroicon-s-arrow-uturn-down",
-            "heroicon-s-arrow-uturn-left",
-            "heroicon-s-arrow-uturn-right",
-            "heroicon-s-arrow-uturn-up"
+            "heroicon-o-arrow-down",
+            "heroicon-o-arrow-down-circle",
+            "heroicon-o-arrow-down-left",
+            "heroicon-o-arrow-down-on-square",
+            "heroicon-o-arrow-down-on-square-stack",
+            "heroicon-o-arrow-down-right",
+            "heroicon-o-arrow-down-tray",
+            "heroicon-o-arrow-left",
+            "heroicon-o-arrow-left-circle",
+            "heroicon-o-arrow-left-end-on-rectangle",
+            "heroicon-o-arrow-left-start-on-rectangle",
+            "heroicon-o-arrow-long-down",
+            "heroicon-o-arrow-long-left",
+            "heroicon-o-arrow-long-right",
+            "heroicon-o-arrow-long-up",
+            "heroicon-o-arrow-path",
+            "heroicon-o-arrow-path-rounded-square",
+            "heroicon-o-arrow-right",
+            "heroicon-o-arrow-right-circle",
+            "heroicon-o-arrow-right-end-on-rectangle",
+            "heroicon-o-arrow-right-start-on-rectangle",
+            "heroicon-o-arrow-top-right-on-square",
+            "heroicon-o-arrow-trending-down",
+            "heroicon-o-arrow-trending-up",
+            "heroicon-o-arrow-up",
+            "heroicon-o-arrow-up-circle",
+            "heroicon-o-arrow-up-left",
+            "heroicon-o-arrow-up-on-square",
+            "heroicon-o-arrow-up-on-square-stack",
+            "heroicon-o-arrow-up-right",
+            "heroicon-o-arrow-up-tray",
+            "heroicon-o-arrow-uturn-down",
+            "heroicon-o-arrow-uturn-left",
+            "heroicon-o-arrow-uturn-right",
+            "heroicon-o-arrow-uturn-up"
         ],
         "Arrows" => [
-            "heroicon-s-arrows-pointing-in",
-            "heroicon-s-arrows-pointing-out",
-            "heroicon-s-arrows-right-left",
-            "heroicon-s-arrows-up-down"
+            "heroicon-o-arrows-pointing-in",
+            "heroicon-o-arrows-pointing-out",
+            "heroicon-o-arrows-right-left",
+            "heroicon-o-arrows-up-down"
         ],
         "Bars" => [
-            "heroicon-s-bars-2",
-            "heroicon-s-bars-3",
-            "heroicon-s-bars-3-bottom-left",
-            "heroicon-s-bars-3-bottom-right",
-            "heroicon-s-bars-3-center-left",
-            "heroicon-s-bars-4",
-            "heroicon-s-bars-arrow-down",
-            "heroicon-s-bars-arrow-up"
+            "heroicon-o-bars-2",
+            "heroicon-o-bars-3",
+            "heroicon-o-bars-3-bottom-left",
+            "heroicon-o-bars-3-bottom-right",
+            "heroicon-o-bars-3-center-left",
+            "heroicon-o-bars-4",
+            "heroicon-o-bars-arrow-down",
+            "heroicon-o-bars-arrow-up"
         ],
         "Battery" => [
-            "heroicon-s-battery-0",
-            "heroicon-s-battery-100",
-            "heroicon-s-battery-50"
+            "heroicon-o-battery-0",
+            "heroicon-o-battery-100",
+            "heroicon-o-battery-50"
         ],
         "Bell" => [
-            "heroicon-s-bell",
-            "heroicon-s-bell-alert",
-            "heroicon-s-bell-slash",
-            "heroicon-s-bell-snooze",
-            "heroicon-s-bolt",
-            "heroicon-s-bolt-slash"
+            "heroicon-o-bell",
+            "heroicon-o-bell-alert",
+            "heroicon-o-bell-slash",
+            "heroicon-o-bell-snooze",
+            "heroicon-o-bolt",
+            "heroicon-o-bolt-slash"
         ],
         "Book" => [
-            "heroicon-s-book-open",
-            "heroicon-s-bookmark",
-            "heroicon-s-bookmark-slash",
-            "heroicon-s-bookmark-square"
+            "heroicon-o-book-open",
+            "heroicon-o-bookmark",
+            "heroicon-o-bookmark-slash",
+            "heroicon-o-bookmark-square"
         ],
         "Briefcase" => [
-            "heroicon-s-briefcase"
+            "heroicon-o-briefcase"
         ],
         "Building" => [
-            "heroicon-s-building-library",
-            "heroicon-s-building-office",
-            "heroicon-s-building-office-2",
-            "heroicon-s-building-storefront",
-            "heroicon-s-home",
-            "heroicon-s-home-modern"
+            "heroicon-o-building-library",
+            "heroicon-o-building-office",
+            "heroicon-o-building-office-2",
+            "heroicon-o-building-storefront",
+            "heroicon-o-home",
+            "heroicon-o-home-modern"
         ],
         "Cake" => [
-            "heroicon-s-cake"
+            "heroicon-o-cake"
         ],
         "Calculator" => [
-            "heroicon-s-calculator"
+            "heroicon-o-calculator"
         ],
         "Calendar" => [
-            "heroicon-s-calendar",
-            "heroicon-s-calendar-days"
+            "heroicon-o-calendar",
+            "heroicon-o-calendar-days"
         ],
         "Chart" => [
-            "heroicon-s-chart-bar",
-            "heroicon-s-chart-bar-square",
-            "heroicon-s-chart-pie"
+            "heroicon-o-chart-bar",
+            "heroicon-o-chart-bar-square",
+            "heroicon-o-chart-pie"
         ],
         "Chat" => [
-            "heroicon-s-chat-bubble-bottom-center",
-            "heroicon-s-chat-bubble-bottom-center-text",
-            "heroicon-s-chat-bubble-left",
-            "heroicon-s-chat-bubble-left-ellipsis",
-            "heroicon-s-chat-bubble-left-right",
-            "heroicon-s-chat-bubble-oval-left",
-            "heroicon-s-chat-bubble-oval-left-ellipsis"
+            "heroicon-o-chat-bubble-bottom-center",
+            "heroicon-o-chat-bubble-bottom-center-text",
+            "heroicon-o-chat-bubble-left",
+            "heroicon-o-chat-bubble-left-ellipsis",
+            "heroicon-o-chat-bubble-left-right",
+            "heroicon-o-chat-bubble-oval-left",
+            "heroicon-o-chat-bubble-oval-left-ellipsis"
         ],
         "Check" => [
-            "heroicon-s-check",
-            "heroicon-s-check-badge",
-            "heroicon-s-check-circle"
+            "heroicon-o-check",
+            "heroicon-o-check-badge",
+            "heroicon-o-check-circle"
         ],
         "Chevron" => [
-            "heroicon-s-chevron-double-down",
-            "heroicon-s-chevron-double-left",
-            "heroicon-s-chevron-double-right",
-            "heroicon-s-chevron-double-up",
-            "heroicon-s-chevron-down",
-            "heroicon-s-chevron-left",
-            "heroicon-s-chevron-right",
-            "heroicon-s-chevron-up",
-            "heroicon-s-chevron-up-down"
+            "heroicon-o-chevron-double-down",
+            "heroicon-o-chevron-double-left",
+            "heroicon-o-chevron-double-right",
+            "heroicon-o-chevron-double-up",
+            "heroicon-o-chevron-down",
+            "heroicon-o-chevron-left",
+            "heroicon-o-chevron-right",
+            "heroicon-o-chevron-up",
+            "heroicon-o-chevron-up-down"
         ],
         "Clipboard" => [
-            "heroicon-s-clipboard",
-            "heroicon-s-clipboard-document",
-            "heroicon-s-clipboard-document-check",
-            "heroicon-s-clipboard-document-list"
+            "heroicon-o-clipboard",
+            "heroicon-o-clipboard-document",
+            "heroicon-o-clipboard-document-check",
+            "heroicon-o-clipboard-document-list"
         ],
         "Cloud" => [
-            "heroicon-s-cloud",
-            "heroicon-s-cloud-arrow-down",
-            "heroicon-s-cloud-arrow-up"
+            "heroicon-o-cloud",
+            "heroicon-o-cloud-arrow-down",
+            "heroicon-o-cloud-arrow-up"
         ],
         "Cog" => [
-            "heroicon-s-cog",
-            "heroicon-s-cog-6-tooth",
-            "heroicon-s-cog-8-tooth",
-            "heroicon-s-wrench",
-            "heroicon-s-wrench-screwdriver"
+            "heroicon-o-cog",
+            "heroicon-o-cog-6-tooth",
+            "heroicon-o-cog-8-tooth",
+            "heroicon-o-wrench",
+            "heroicon-o-wrench-screwdriver"
         ],
         "Command" => [
-            "heroicon-s-command-line",
-            "heroicon-s-bug-ant",
-            "heroicon-s-computer-desktop",
-            "heroicon-s-cpu-chip",
-            "heroicon-s-code-bracket",
-            "heroicon-s-code-bracket-square",
-            "heroicon-s-qr-code",
-            "heroicon-s-link",
-            "heroicon-s-wifi",
-            "heroicon-s-window",
-            "heroicon-s-tv",
-            "heroicon-s-server",
-            "heroicon-s-server-stack",
-            "heroicon-s-printer",
-            "heroicon-s-circle-stack",
-            "heroicon-s-cursor-arrow-rays",
-            "heroicon-s-cursor-arrow-ripple",
-            "heroicon-s-device-phone-mobile",
-            "heroicon-s-device-tablet",
-            "heroicon-s-funnel",
-            "heroicon-s-finger-print",
-            "heroicon-s-gif"
+            "heroicon-o-command-line",
+            "heroicon-o-bug-ant",
+            "heroicon-o-computer-desktop",
+            "heroicon-o-cpu-chip",
+            "heroicon-o-code-bracket",
+            "heroicon-o-code-bracket-square",
+            "heroicon-o-qr-code",
+            "heroicon-o-link",
+            "heroicon-o-wifi",
+            "heroicon-o-window",
+            "heroicon-o-tv",
+            "heroicon-o-server",
+            "heroicon-o-server-stack",
+            "heroicon-o-printer",
+            "heroicon-o-circle-stack",
+            "heroicon-o-cursor-arrow-rays",
+            "heroicon-o-cursor-arrow-ripple",
+            "heroicon-o-device-phone-mobile",
+            "heroicon-o-device-tablet",
+            "heroicon-o-funnel",
+            "heroicon-o-finger-print",
+            "heroicon-o-gif"
         ],
         "Credit Card" => [
-            "heroicon-s-credit-card",
-            "heroicon-s-identification"
+            "heroicon-o-credit-card",
+            "heroicon-o-identification"
         ],
         "Cube" => [
-            "heroicon-s-cube",
-            "heroicon-s-cube-transparent"
+            "heroicon-o-cube",
+            "heroicon-o-cube-transparent"
         ],
         "Currency" => [
-            "heroicon-s-currency-bangladeshi",
-            "heroicon-s-currency-dollar",
-            "heroicon-s-currency-euro",
-            "heroicon-s-currency-pound",
-            "heroicon-s-currency-rupee",
-            "heroicon-s-currency-yen"
+            "heroicon-o-currency-bangladeshi",
+            "heroicon-o-currency-dollar",
+            "heroicon-o-currency-euro",
+            "heroicon-o-currency-pound",
+            "heroicon-o-currency-rupee",
+            "heroicon-o-currency-yen"
         ],
         "Document" => [
-            "heroicon-s-document",
-            "heroicon-s-document-arrow-down",
-            "heroicon-s-document-arrow-up",
-            "heroicon-s-document-chart-bar",
-            "heroicon-s-document-check",
-            "heroicon-s-document-duplicate",
-            "heroicon-s-document-magnifying-glass",
-            "heroicon-s-document-minus",
-            "heroicon-s-document-plus",
-            "heroicon-s-document-text"
+            "heroicon-o-document",
+            "heroicon-o-document-arrow-down",
+            "heroicon-o-document-arrow-up",
+            "heroicon-o-document-chart-bar",
+            "heroicon-o-document-check",
+            "heroicon-o-document-duplicate",
+            "heroicon-o-document-magnifying-glass",
+            "heroicon-o-document-minus",
+            "heroicon-o-document-plus",
+            "heroicon-o-document-text"
         ],
         "Ellipsis" => [
-            "heroicon-s-ellipsis-horizontal",
-            "heroicon-s-ellipsis-horizontal-circle",
-            "heroicon-s-ellipsis-vertical"
+            "heroicon-o-ellipsis-horizontal",
+            "heroicon-o-ellipsis-horizontal-circle",
+            "heroicon-o-ellipsis-vertical"
         ],
         "Envelope" => [
-            "heroicon-s-envelope",
-            "heroicon-s-envelope-open"
+            "heroicon-o-envelope",
+            "heroicon-o-envelope-open"
         ],
         "Exclamation" => [
-            "heroicon-s-exclamation-circle",
-            "heroicon-s-exclamation-triangle"
+            "heroicon-o-exclamation-circle",
+            "heroicon-o-exclamation-triangle"
         ],
         "Eye" => [
-            "heroicon-s-eye",
-            "heroicon-s-eye-dropper",
-            "heroicon-s-eye-slash"
+            "heroicon-o-eye",
+            "heroicon-o-eye-dropper",
+            "heroicon-o-eye-slash"
         ],
         "Film" => [
-            "heroicon-s-camera",
-            "heroicon-s-film",
-            "heroicon-s-forward",
-            "heroicon-s-video-camera",
-            "heroicon-s-video-camera-slash",
-            "heroicon-s-view-columns",
-            "heroicon-s-viewfinder-circle",
-            "heroicon-s-musical-note",
-            "heroicon-s-pause",
-            "heroicon-s-pause-circle",
-            "heroicon-s-photo",
+            "heroicon-o-camera",
+            "heroicon-o-film",
+            "heroicon-o-forward",
+            "heroicon-o-video-camera",
+            "heroicon-o-video-camera-slash",
+            "heroicon-o-view-columns",
+            "heroicon-o-viewfinder-circle",
+            "heroicon-o-musical-note",
+            "heroicon-o-pause",
+            "heroicon-o-pause-circle",
+            "heroicon-o-photo",
         ],
         "Fire" => [
-            "heroicon-s-face-frown",
-            "heroicon-s-face-smile",
-            "heroicon-s-heart",
-            "heroicon-s-fire",
-            "heroicon-s-star",
-            "heroicon-s-sun",
-            "heroicon-s-flag",
-            "heroicon-s-rocket-launch",
+            "heroicon-o-face-frown",
+            "heroicon-o-face-smile",
+            "heroicon-o-heart",
+            "heroicon-o-fire",
+            "heroicon-o-star",
+            "heroicon-o-sun",
+            "heroicon-o-flag",
+            "heroicon-o-rocket-launch",
         ],
         "Folder" => [
-            "heroicon-s-folder",
-            "heroicon-s-folder-arrow-down",
-            "heroicon-s-folder-minus",
-            "heroicon-s-folder-open",
-            "heroicon-s-folder-plus"
+            "heroicon-o-folder",
+            "heroicon-o-folder-arrow-down",
+            "heroicon-o-folder-minus",
+            "heroicon-o-folder-open",
+            "heroicon-o-folder-plus"
         ],
         "Gift" => [
-            "heroicon-s-gift",
-            "heroicon-s-gift-top"
+            "heroicon-o-gift",
+            "heroicon-o-gift-top"
         ],
         "Globe" => [
-            "heroicon-s-globe-alt",
-            "heroicon-s-globe-americas",
-            "heroicon-s-globe-asia-australia",
-            "heroicon-s-globe-europe-africa"
+            "heroicon-o-globe-alt",
+            "heroicon-o-globe-americas",
+            "heroicon-o-globe-asia-australia",
+            "heroicon-o-globe-europe-africa"
         ],
         "Hand" => [
-            "heroicon-s-hand-raised",
-            "heroicon-s-hand-thumb-down",
-            "heroicon-s-hand-thumb-up"
+            "heroicon-o-hand-raised",
+            "heroicon-o-hand-thumb-down",
+            "heroicon-o-hand-thumb-up"
         ],
         "Hashtag" => [
-            "heroicon-s-hashtag"
+            "heroicon-o-hashtag"
         ],
         "Inbox" => [
-            "heroicon-s-inbox",
-            "heroicon-s-inbox-arrow-down",
-            "heroicon-s-inbox-stack"
+            "heroicon-o-inbox",
+            "heroicon-o-inbox-arrow-down",
+            "heroicon-o-inbox-stack"
         ],
         "Information" => [
-            "heroicon-s-information-circle"
+            "heroicon-o-information-circle"
         ],
         "Key" => [
-            "heroicon-s-key"
+            "heroicon-o-key"
         ],
         "Language" => [
-            "heroicon-s-language"
+            "heroicon-o-language"
         ],
         "Lifebuoy" => [
-            "heroicon-s-lifebuoy"
+            "heroicon-o-lifebuoy"
         ],
         "Light Bulb" => [
-            "heroicon-s-light-bulb"
+            "heroicon-o-light-bulb"
         ],
         "List" => [
-            "heroicon-s-list-bullet"
+            "heroicon-o-list-bullet"
         ],
         "Lock" => [
-            "heroicon-s-lock-closed",
-            "heroicon-s-lock-open"
+            "heroicon-o-lock-closed",
+            "heroicon-o-lock-open"
         ],
         "Magnifying Glass" => [
-            "heroicon-s-magnifying-glass",
-            "heroicon-s-magnifying-glass-circle",
-            "heroicon-s-magnifying-glass-minus",
-            "heroicon-s-magnifying-glass-plus"
+            "heroicon-o-magnifying-glass",
+            "heroicon-o-magnifying-glass-circle",
+            "heroicon-o-magnifying-glass-minus",
+            "heroicon-o-magnifying-glass-plus"
         ],
         "Map" => [
-            "heroicon-s-map",
-            "heroicon-s-map-pin"
+            "heroicon-o-map",
+            "heroicon-o-map-pin"
         ],
         "Megaphone" => [
-            "heroicon-s-megaphone"
+            "heroicon-o-megaphone"
         ],
         "Microphone" => [
-            "heroicon-s-microphone"
+            "heroicon-o-microphone"
         ],
         "Minus" => [
-            "heroicon-s-minus",
-            "heroicon-s-minus-circle"
+            "heroicon-o-minus",
+            "heroicon-o-minus-circle"
         ],
         "Moon" => [
-            "heroicon-s-moon"
+            "heroicon-o-moon"
         ],
         "Newspaper" => [
-            "heroicon-s-newspaper"
+            "heroicon-o-newspaper"
         ],
         "No Symbol" => [
-            "heroicon-s-no-symbol"
+            "heroicon-o-no-symbol"
         ],
         "Paint Brush" => [
-            "heroicon-s-paint-brush"
+            "heroicon-o-paint-brush"
         ],
         "Paper" => [
-            "heroicon-s-paper-airplane",
-            "heroicon-s-paper-clip"
+            "heroicon-o-paper-airplane",
+            "heroicon-o-paper-clip"
         ],
         "Pencil" => [
-            "heroicon-s-pencil",
-            "heroicon-s-pencil-square"
+            "heroicon-o-pencil",
+            "heroicon-o-pencil-square"
         ],
         "Phone" => [
-            "heroicon-s-phone",
-            "heroicon-s-phone-arrow-down-left",
-            "heroicon-s-phone-arrow-up-right",
-            "heroicon-s-phone-x-mark"
+            "heroicon-o-phone",
+            "heroicon-o-phone-arrow-down-left",
+            "heroicon-o-phone-arrow-up-right",
+            "heroicon-o-phone-x-mark"
         ],
         "Play" => [
-            "heroicon-s-play",
-            "heroicon-s-play-circle",
-            "heroicon-s-play-pause"
+            "heroicon-o-play",
+            "heroicon-o-play-circle",
+            "heroicon-o-play-pause"
         ],
         "Plus" => [
-            "heroicon-s-plus",
-            "heroicon-s-plus-circle"
+            "heroicon-o-plus",
+            "heroicon-o-plus-circle"
         ],
         "Power" => [
-            "heroicon-s-power"
+            "heroicon-o-power"
         ],
         "Presentation" => [
-            "heroicon-s-presentation-chart-bar",
-            "heroicon-s-presentation-chart-line"
+            "heroicon-o-presentation-chart-bar",
+            "heroicon-o-presentation-chart-line"
         ],
         "Puzzle Piece" => [
-            "heroicon-s-puzzle-piece"
+            "heroicon-o-puzzle-piece"
         ],
         "Question Mark" => [
-            "heroicon-s-question-mark-circle"
+            "heroicon-o-question-mark-circle"
         ],
         "Queue List" => [
-            "heroicon-s-queue-list"
+            "heroicon-o-queue-list"
         ],
         "Radio" => [
-            "heroicon-s-radio"
+            "heroicon-o-radio"
         ],
         "Receipt" => [
-            "heroicon-s-receipt-percent",
-            "heroicon-s-receipt-refund"
+            "heroicon-o-receipt-percent",
+            "heroicon-o-receipt-refund"
         ],
         "Rectangle" => [
-            "heroicon-s-rectangle-group",
-            "heroicon-s-rectangle-stack"
+            "heroicon-o-rectangle-group",
+            "heroicon-o-rectangle-stack"
         ],
         "RSS" => [
-            "heroicon-s-rss"
+            "heroicon-o-rss"
         ],
         "Scale" => [
-            "heroicon-s-scale"
+            "heroicon-o-scale"
         ],
         "Scissors" => [
-            "heroicon-s-scissors"
+            "heroicon-o-scissors"
         ],
         "Share" => [
-            "heroicon-s-share"
+            "heroicon-o-share"
         ],
         "Shield" => [
-            "heroicon-s-shield-check",
-            "heroicon-s-shield-exclamation"
+            "heroicon-o-shield-check",
+            "heroicon-o-shield-exclamation"
         ],
         "Shopping" => [
-            "heroicon-s-shopping-bag",
-            "heroicon-s-shopping-cart"
+            "heroicon-o-shopping-bag",
+            "heroicon-o-shopping-cart"
         ],
         "Signal" => [
-            "heroicon-s-signal",
-            "heroicon-s-signal-slash"
+            "heroicon-o-signal",
+            "heroicon-o-signal-slash"
         ],
         "Speaker" => [
-            "heroicon-s-speaker-wave",
-            "heroicon-s-speaker-x-mark"
+            "heroicon-o-speaker-wave",
+            "heroicon-o-speaker-x-mark"
         ],
         "Sparkles" => [
-            "heroicon-s-sparkles"
+            "heroicon-o-sparkles"
         ],
         "Square" => [
-            "heroicon-s-square-2-stack",
-            "heroicon-s-square-3-stack-3d",
-            "heroicon-s-squares-2x2",
-            "heroicon-s-squares-plus"
+            "heroicon-o-square-2-stack",
+            "heroicon-o-square-3-stack-3d",
+            "heroicon-o-squares-2x2",
+            "heroicon-o-squares-plus"
         ],
         "Stop" => [
-            "heroicon-s-stop",
-            "heroicon-s-stop-circle"
+            "heroicon-o-stop",
+            "heroicon-o-stop-circle"
         ],
         "Swatch" => [
-            "heroicon-s-swatch"
+            "heroicon-o-swatch"
         ],
         "Table" => [
-            "heroicon-s-table-cells"
+            "heroicon-o-table-cells"
         ],
         "Tag" => [
-            "heroicon-s-tag",
-            "heroicon-s-ticket"
+            "heroicon-o-tag",
+            "heroicon-o-ticket"
         ],
         "Trash" => [
-            "heroicon-s-trash"
+            "heroicon-o-trash"
         ],
         "Trophy" => [
-            "heroicon-s-trophy"
+            "heroicon-o-trophy"
         ],
         "Truck" => [
-            "heroicon-s-truck"
+            "heroicon-o-truck"
         ],
         "User" => [
-            "heroicon-s-user",
-            "heroicon-s-user-circle",
-            "heroicon-s-user-group",
-            "heroicon-s-user-minus",
-            "heroicon-s-user-plus",
-            "heroicon-s-users"
+            "heroicon-o-user",
+            "heroicon-o-user-circle",
+            "heroicon-o-user-group",
+            "heroicon-o-user-minus",
+            "heroicon-o-user-plus",
+            "heroicon-o-users"
         ],
         "Variable" => [
-            "heroicon-s-variable"
+            "heroicon-o-variable"
         ],
         "Wallet" => [
-            "heroicon-s-wallet"
+            "heroicon-o-wallet"
         ],
         "X" => [
-            "heroicon-s-x-circle",
-            "heroicon-s-x-mark"
+            "heroicon-o-x-circle",
+            "heroicon-o-x-mark"
         ]
     ]
 

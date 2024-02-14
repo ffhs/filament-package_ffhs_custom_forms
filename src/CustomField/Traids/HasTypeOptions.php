@@ -165,7 +165,7 @@ trait HasTypeOptions
         if($record->customField->isInheritFromGeneralField()) {
             $options = $record
                 ->customField
-                ->generalField
+                ->generalField //ToDo Optimize generalFields
                 ->customOptions
                 ->whereIn("identifier", $this->getOptionParameter($record, "available_options"));
         }
