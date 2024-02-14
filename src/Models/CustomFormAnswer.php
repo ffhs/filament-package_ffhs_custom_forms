@@ -31,7 +31,7 @@ class CustomFormAnswer extends Model
     }
 
     public function cachedAnswers():Collection {
-        return Cache::remember("answers-from-custom_form_answers_" . $this->id,4,
+        return Cache::remember("answers-from-custom_form_answers_" . $this->id,config('ffhs_custom_forms.cache_duration'),
             fn()=>$this->customFieldAnswers()->get()
         );
     }

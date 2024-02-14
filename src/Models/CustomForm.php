@@ -71,7 +71,7 @@ class CustomForm extends Model
         if(!$this->getFormConfiguration()::hasVariations()) return collect();
         return Cache::remember(
             "custom_form-". $this->id . "_variation_models",
-            1,
+            config('ffhs_custom_forms.cache_duration'),
             fn()=>$this->dynamicFormConfiguration()::relationVariationsQuery($this->relationModel())->get()
         );
     }
@@ -79,11 +79,11 @@ class CustomForm extends Model
     //toDo get CustomFieldLayout
 
     public static function cached(int $id):CustomForm {
-        return Cache::remember("custom_form-" .$id, 1, fn()=>CustomForm::query()->firstWhere("id", $id));
+        return Cache::remember("custom_form-" .$id, config('ffhs_custom_forms.cache_duration'), fn()=>CustomForm::query()->firstWhere("id", $id));
     }
 
     public function makeCached():void {
-         Cache::put("custom_form-" .$this->id, $this,1);
+         Cache::put("custom_form-" .$this->id, $this,config('ffhs_custom_forms.cache_duration'));
     }
 
     public function customForm(): MorphOne {
@@ -119,7 +119,7 @@ class CustomForm extends Model
 
 
     public function cachedFields(): Collection {
-        return Cache::remember("custom_fields-from-form_" . $this->id,2, fn() => $this->customFields()->with([
+        return Cache::remember("custom_fields-from-form_" . $this->id,config('ffhs_custom_forms.cache_duration'), fn() => $this->customFields()->with([
             "customFieldVariations.customOptions",
             "generalField.customOptions",
         ])->get());
