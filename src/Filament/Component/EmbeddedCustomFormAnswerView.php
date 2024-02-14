@@ -5,6 +5,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component;
 
 use Closure;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Form\CustomFormRender;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
 use Filament\Infolists\Components\Component;
 use Filament\Infolists\Components\Group;
@@ -52,7 +53,8 @@ class EmbeddedCustomFormAnswerView extends Component
     public function autoViewMode(bool|Closure $autoViewMode = true):static {
         if(!$this->evaluate($autoViewMode)) return $this;
         $this->viewMode = function (EmbeddedCustomFormAnswerView $component){
-            return $component->getModel()->customForm->getFormConfiguration()::displayViewMode();
+            $customForm = CustomForm::cached($component->getModel()->custom_form_id);
+            return $customForm->getFormConfiguration()::displayViewMode();
         };
         return $this;
     }

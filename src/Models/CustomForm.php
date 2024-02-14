@@ -82,6 +82,10 @@ class CustomForm extends Model
         return Cache::remember("custom_form-" .$id, 1, fn()=>CustomForm::query()->firstWhere("id", $id));
     }
 
+    public function makeCached():void {
+         Cache::put("custom_form-" .$this->id, $this,1);
+    }
+
     public function customForm(): MorphOne {
         return $this->morphOne(CustomForm::class, "relation_model");
     }
@@ -115,7 +119,7 @@ class CustomForm extends Model
 
 
     public function cachedFields(): Collection {
-        return Cache::remember("custom_fields-from-form_" . $this->id,2, fn() => $this->customFields);
+        return Cache::remember("custom_fields-from-form_" . $this->id,2, fn() => $this->customFields()->with("customFieldVariations")->get());
     }
 
     public function cachedField(int $customFieldId): CustomField|null {

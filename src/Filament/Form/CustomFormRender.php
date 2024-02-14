@@ -18,7 +18,7 @@ class CustomFormRender
 {
 
     public static function generateFormSchema(CustomForm $form, string $viewMode, null|int|Model $variation = null):array{
-        $customFields = CustomField::query()->where("custom_form_id",$form->id)->with("customFieldVariations.customField","customFieldVariations")->get();
+        $customFields = $form->cachedFields();
 
         $fieldVariations = self::getFormFieldVariations($customFields, $variation);
         $render= self::getFormRender($viewMode,$form);
@@ -29,8 +29,9 @@ class CustomFormRender
         ];
     }
 
-    public static function getFormRender($viewMode,$form) {
+    public static function getFormRender(string $viewMode,CustomForm $form): Closure {
         return function(CustomFieldType $type, CustomFieldVariation $variation, array $parameter) use ($form, $viewMode) {
+            $variation->customField = $form->cachedField($variation->custom_field_id);
             return $type->getFormComponent($variation,$form,$viewMode, $parameter);
         };
     }
@@ -45,11 +46,11 @@ class CustomFormRender
 
 
     public static function generateInfoListSchema(CustomFormAnswer $formAnswer, string $viewMode):array {
-        $customFields = CustomField::query()->where("custom_form_id",$formAnswer->customForm->id)->with("customFieldVariations.customField","customFieldVariations")->get();
-        $fieldVariations = self::getInfoListVariations($formAnswer, $customFields);
-        $fieldAnswers = $formAnswer->customFieldAnswers()->with("custom_field_variation")->get();
-
         $form = CustomForm::cached($formAnswer->custom_form_id);
+        $customFields = $form->cachedFields();
+        $fieldVariations = self::getInfoListVariations($formAnswer, $customFields);
+        $fieldAnswers = $formAnswer->cachedAnswers();
+
         $render= self::getInfolistRender($viewMode,$form, $fieldAnswers);
         $customViewSchema = self::render(0,$fieldVariations,$customFields,$render)[0];
 
@@ -70,20 +71,31 @@ class CustomFormRender
                 $answer->answer = null;
                 $answer->custom_field_variation_id = $variation->id;
             }
+
+            $variation->customField = $form->cachedField($variation->custom_field_id);
+            $answer->customFieldVariation = $variation;
+
             return $type->getInfolistComponent($answer, $form, $viewMode, $parameter);
         };
     }
 
 
     public static function getInfoListVariations(CustomFormAnswer $formAnswer, Collection|array $customFields, Model|int|null $variationRaw = null): Collection {
-        $fieldVariations = $formAnswer->customFieldAnswers->map(fn(CustomFieldAnswer $answer) => $answer->customFieldVariation);
         $customForm = CustomForm::cached($formAnswer->custom_form_id);
+        $customFieldVariations = $customForm
+            ->cachedFields()
+            ->map(fn(CustomField$customField) => $customField->customFieldVariations)
+            ->flatten(1);
+        $fieldAnswers = $formAnswer->cachedAnswers();
+
+
+        $fieldVariations = $fieldAnswers
+            ->map(fn(CustomFieldAnswer $answer) => $customFieldVariations->firstWhere("id", $answer->custom_field_variation_id));
 
         //Find Variation
         $variation = $variationRaw;
         if (is_null($variationRaw)&& $customForm->getFormConfiguration()::hasVariations()) {
-            $variation = $formAnswer->customFieldAnswers
-                ->map(fn(CustomFieldAnswer $answer) => $answer->customFieldVariation)
+            $variation = $fieldVariations
                 ->filter(fn(CustomFieldVariation $variation) => !is_null($variation->variation_id))->first();
             if (!is_null($variation)) $variation = $variation->variation_id;
         }
@@ -207,11 +219,19 @@ class CustomFormRender
 
     public static function loadHelper(CustomFormAnswer $answerer):array {
         $data = [];
+        $form = CustomForm::cached($answerer->custom_form_id);
+
+        $customFields = $form->cachedFields();
+
         foreach($answerer->customFieldAnswers as $fieldAnswer){
             /**@var CustomFieldAnswer $fieldAnswer*/
-            $customField =$fieldAnswer
-                ->customFieldVariation
-                ->customField;
+            $customField = $customFields
+                ->filter(fn(CustomField $field) =>
+                    !is_null(
+                        $field->customFieldVariations->firstWhere("id", $fieldAnswer->custom_field_variation_id)
+                    )
+                )
+                ->first();
             $fieldData = $customField
                 ->getType()
                 ->prepareLoadFieldData($fieldAnswer->answer);
