@@ -119,7 +119,12 @@ class CustomForm extends Model
 
 
     public function cachedFields(): Collection {
-        return Cache::remember("custom_fields-from-form_" . $this->id,2, fn() => $this->customFields()->with("customFieldVariations.customOptions", "generalField.customOptions")->get());
+        return Cache::remember("custom_fields-from-form_" . $this->id,2, fn() => $this->customFields()->with([
+            "customFieldVariations",
+            "customFieldVariations.customOptions",
+            "generalField.customOptions",
+            "generalField"
+        ])->get());
     }
 
     public function cachedField(int $customFieldId): CustomField|null {
