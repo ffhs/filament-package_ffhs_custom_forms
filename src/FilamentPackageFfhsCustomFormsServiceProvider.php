@@ -1,6 +1,7 @@
 <?php
 
 namespace Ffhs\FilamentPackageFfhsCustomForms;
+use Ffhs\FilamentPackageFfhsCustomForms\Commands\Install;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldVariation;
@@ -10,6 +11,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\FormVariation;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralFieldForm;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
@@ -19,10 +21,31 @@ class FilamentPackageFfhsCustomFormsServiceProvider extends PackageServiceProvid
 
     public function configurePackage(Package $package): void {
         $package
-            ->hasMigrations(['create_custom_field_table', 'create_general_field_form_table'])
             ->name('filament-package_ffhs_custom_forms')
+            ->hasMigrations([
+                'create_custom_forms_table',
+                'create_general_fields_table',
+                'create_custom_fields_table',
+                'create_general_field_form_table',
+                'create_form_variations_table',
+                'create_custom_field_variation_table',
+                'create_custom_form_answers_table',
+                'create_custom_field_answers_table',
+                'create_custom_options_table',
+                'create_option_field_variation_table',
+                'create_option_general_field_table',
+            ])
             ->hasConfigFile('ffhs_custom_forms')
-            ->hasTranslations();
+            ->hasTranslations()
+            /* ->hasCommand(Install::class);*/
+            ->hasInstallCommand(function(InstallCommand $command) {
+                $command
+                    ->publishConfigFile()
+                    ->copyAndRegisterServiceProviderInApp()
+                    ->publishMigrations()
+                    ->askToRunMigrations()
+                    ->copyAndRegisterServiceProviderInApp();
+            });
 
     }
 
