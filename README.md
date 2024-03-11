@@ -1,3 +1,22 @@
+# Instalation
+## Register package in AdminPanelProvider
+Fügen Sie das Plugin zu einem Panel hinzu, indem Sie die Plugin-Klasse instanziieren (\app\Providers\Filament\AdminPanelProvider.php) und sie an die plugin()-Methode der Konfiguration übergeben:
+```php
+use Ffhs\FilamentPackageFfhsCustomForms\CustomFormPlugin;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->plugin([CustomFormPlugin::make()]);
+}
+```
+
+## Starten des Installers
+Starten Sie den Installer
+```bash
+php artisan filament-package_ffhs_custom_forms:install
+```
 
 # Formulararten
 ## Erstellen einer neuen Formularart
