@@ -44,7 +44,8 @@ class FilamentPackageFfhsCustomFormsServiceProvider extends PackageServiceProvid
                     ->copyAndRegisterServiceProviderInApp()
                     ->publishMigrations()
                     ->askToRunMigrations()
-                    ->copyAndRegisterServiceProviderInApp();
+                    ->copyAndRegisterServiceProviderInApp()
+                    ->info("Make `php artisan icons:cache` so that the icons works");
             });
 
     }
