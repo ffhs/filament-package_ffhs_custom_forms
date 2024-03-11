@@ -37,7 +37,6 @@ class FilamentPackageFfhsCustomFormsServiceProvider extends PackageServiceProvid
             ])
             ->hasConfigFile('ffhs_custom_forms')
             ->hasTranslations()
-            /* ->hasCommand(Install::class);*/
             ->hasInstallCommand(function(InstallCommand $command) {
                 $command
                     ->publishConfigFile()
