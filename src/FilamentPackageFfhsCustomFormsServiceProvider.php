@@ -11,6 +11,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\FormVariation;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralFieldForm;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Facades\Artisan;
 use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
@@ -37,15 +38,20 @@ class FilamentPackageFfhsCustomFormsServiceProvider extends PackageServiceProvid
             ])
             ->hasConfigFile('ffhs_custom_forms')
             ->hasTranslations()
-            ->hasInstallCommand(function(InstallCommand $command) {
+            ->hasInstallCommand(fn(InstallCommand $command) =>
                 $command
                     ->publishConfigFile()
                     ->copyAndRegisterServiceProviderInApp()
                     ->publishMigrations()
                     ->askToRunMigrations()
                     ->copyAndRegisterServiceProviderInApp()
-                    ->info("Make `php artisan icons:cache` so that the icons works");
-            });
+                    ->endWith(function (InstallCommand $command) {
+                        $command->info("Clear cache and icon cache");
+                        // Clear the application cache
+                        Artisan::call('icons:cache');
+                        Artisan::call('cache:clear');
+                    })
+            );
 
     }
 
