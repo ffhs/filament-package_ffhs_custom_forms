@@ -22,7 +22,7 @@ class SectionTypeView implements FieldTypeView
 
     public static function getInfolistComponent(CustomFieldType $type, CustomFieldAnswer $record,
         array $parameter = []): \Filament\Infolists\Components\Component {
-        return \Filament\Infolists\Components\Section::make($type::class::getLabelName($record)) ->schema($parameter["rendered"]);
+        return \Filament\Infolists\Components\Section::make($type::getLabelName($record)) ->schema($parameter["rendered"]);
     }
 
 }
