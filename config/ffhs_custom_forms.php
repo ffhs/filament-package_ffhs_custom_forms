@@ -1,19 +1,19 @@
 <?php
 
 
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CheckboxListType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CheckboxType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\DateTimeType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\DateType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\EmailType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\IconSelectType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\NumberType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\RadioType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\SelectType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\TextAreaType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\TextType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\ToggleButtonsType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\SectionType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\CheckboxListType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\CheckboxType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\DateTimeType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\DateType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\EmailType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\IconSelectType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\NumberType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\RadioType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\SelectType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\TextAreaType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\TextType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\ToggleButtonsType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\Types\SectionType;
 
 return [
     "custom_field_types" => [
@@ -32,12 +32,27 @@ return [
         ToggleButtonsType::class,
     ],
 
+    "field_rules"=>[
+
+    ],
+
     "forms"=>[
 
     ],
 
-    "disabled_general_field_types"=>[
-        SectionType::class
+    "general_field_types"=>[
+        CheckboxType::class,
+        DateTimeType::class,
+        DateType::class,
+        EmailType::class,
+        NumberType::class,
+        TextAreaType::class,
+        TextType::class,
+        IconSelectType::class,
+        SelectType::class,
+        RadioType::class,
+        CheckboxListType::class,
+        ToggleButtonsType::class,
     ],
 
     'view_modes' => [

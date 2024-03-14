@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $custom_field_id
  * @property CustomFormAnswer $customFormAnswer
  * @property CustomForm $customForm
+ * @property CustomField $customField
  * @property array $answer
  */
 class CustomFieldAnswer extends Model

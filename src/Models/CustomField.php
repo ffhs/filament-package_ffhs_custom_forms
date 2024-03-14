@@ -2,10 +2,8 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Models;
 
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType;
-use Illuminate\Database\Eloquent\Builder;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\CustomLayoutType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection;
@@ -16,12 +14,15 @@ use Illuminate\Support\Facades\Cache;
  * @property Collection $customFieldVariation
  * @property int  custom_form_id
  * @property bool $has_variations
+ * @property bool $required
+ * @property bool $active
  * @property int $form_position
  * @property int|null $layout_end_position
  *
  * @property Collection|null customFieldVariations
  * @property Collection|null allCustomFieldsInLayout
  * @property string|null identify_key
+ * @property array options
  *
  * @property CustomForm customForm
  * @property GeneralField|null $generalField
@@ -41,6 +42,9 @@ class CustomField extends ACustomField
         'type',
         'general_field_id',
 
+        'required',
+        'active',
+        'options',
         'custom_form_id',
         'has_variations',
         'form_position',
@@ -48,14 +52,19 @@ class CustomField extends ACustomField
         'identify_key',
     ];
 
+    protected $casts = [
+        "options" => "array"
+    ];
 
-    public static function inheritCustomField(): Builder {
-        return self::query()->whereNot("general_field_id");
+    protected static function booted() {
+        parent::booted();
+        self::creating(function (CustomField $field){#
+            //Set identifier key to on other
+            if(is_null($field->identify_key) && is_null($field->general_field_id)) $field->identify_key = uniqid();
+            return $field;
+        });
     }
 
-    public static function notInheritCustomField(): Builder {
-        return self::query()->whereNull("general_field_id");
-    }
 
     private function getInheritStateFromArrays($thisValues, $generalFieldArray): array {
         if(is_null($generalFieldArray)) return $thisValues;

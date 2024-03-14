@@ -4,10 +4,10 @@ namespace Ffhs\FilamentPackageFfhsCustomForms;
 use Ffhs\FilamentPackageFfhsCustomForms\Commands\Install;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldVariation;
+
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\FormVariation;
+
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralFieldForm;
 use Illuminate\Database\Eloquent\Factories\Factory;

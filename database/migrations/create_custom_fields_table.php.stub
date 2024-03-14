@@ -15,12 +15,7 @@ return new class () extends Migration {
         Schema::create('custom_fields', function (Blueprint $table) {
             $table->id();
 
-            // general field stuff
-            $table->boolean("has_variations")->nullable();
-
-
             $table->foreignId('custom_form_id')->nullable()->constrained()->cascadeOnDelete();
-
 
             //Inherit GeneralField
             $table->foreignId("general_field_id")->nullable()
@@ -30,6 +25,7 @@ return new class () extends Migration {
             //That doesn't can be null if general_field_id are null
             $table->string('identify_key')->nullable()->unique();
 
+
             //FieldOptions
             $table->string('tool_tip_de')->nullable();
             $table->string('tool_tip_en')->nullable();
@@ -38,14 +34,12 @@ return new class () extends Migration {
             $table->string("type")->nullable();
             $table->integer('form_position')->nullable();
             $table->integer('layout_end_position')->nullable();
+            $table->json('options')->nullable();
+            $table->boolean("required")->default(false);
+            $table->boolean("active")->default(true);
 
 
             $table->timestamps();
-            //$table->softDeletes();
-            // $table->unique(["general_field_id","custom_form_id"]);
-            // $table->unique(["custom_form_id","form_position"]);
-
-
         });
     }
 

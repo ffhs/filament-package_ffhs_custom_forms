@@ -1,12 +1,12 @@
 <?php
 
-namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType;
+namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\Types;
 
 
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\Views\SectionTypeView;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\Traids\HasBasicSettings;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\Traids\HasCustomFormPackageTranslation;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\HasBasicSettings;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\HasCustomFormPackageTranslation;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\CustomLayoutType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\Types\Views\SectionTypeView;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 

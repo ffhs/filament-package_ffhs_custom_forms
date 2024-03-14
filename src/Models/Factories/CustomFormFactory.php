@@ -2,9 +2,9 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Models\Factories;
 
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\CustomLayoutType;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldVariation;
+
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralFieldForm;
 use Illuminate\Database\Eloquent\Factories\Factory;

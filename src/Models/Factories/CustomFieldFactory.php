@@ -1,7 +1,7 @@
 <?php
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Models\Factories;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Illuminate\Database\Eloquent\Factories\Factory;
 

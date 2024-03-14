@@ -2,7 +2,7 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Resources;
 
-use Ffhs\FilamentPackageFfhsCustomForms\Models\FormVariation;
+
 use Ffhs\FilamentPackageFfhsCustomForms\Resources\FormVariationResource\Pages\CreateFormVariation;
 use Ffhs\FilamentPackageFfhsCustomForms\Resources\FormVariationResource\Pages\EditFormVariation;
 use Ffhs\FilamentPackageFfhsCustomForms\Resources\FormVariationResource\Pages\ListFormVariations;

@@ -2,8 +2,8 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Form;
 
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomFieldType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\CustomLayoutType;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Form\Extra\CustomFieldEditForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Form\Extra\CustomFormEditSave;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\HtmlComponents\HtmlBadge;

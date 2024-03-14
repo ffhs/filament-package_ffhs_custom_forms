@@ -4,7 +4,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormAnswerResource
 
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Form\CustomFormRender;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldVariation;
+
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormAnswerResource;

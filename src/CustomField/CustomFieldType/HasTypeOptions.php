@@ -1,9 +1,8 @@
 <?php
 
-namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\Traids;
+namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType;
 
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldVariation;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomOption;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Filament\Forms\Components\Component;
