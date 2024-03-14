@@ -16,8 +16,8 @@ return new class () extends Migration {
     {
         Schema::create('option_field_variation', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(CustomFieldVariation::class)->index("option_variation_variation_id_foreign")->cascadeOnDelete();
-            $table->foreignIdFor(CustomOption::class)->index("option_variation_option_id_foreign")->cascadeOnDelete();
+            $table->foreignIdFor(CustomFieldVariation::class)->index("option_variation_id_foreign")->constrained()->on("custom_field_variation")->cascadeOnDelete();
+            $table->foreignIdFor(CustomOption::class)->index("option_option_id_foreign")->constrained()->cascadeOnDelete();
 
             $table->timestamps();
         });
