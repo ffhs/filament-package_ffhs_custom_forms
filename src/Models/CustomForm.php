@@ -35,26 +35,9 @@ class CustomForm extends Model
         'relation_model_type',
     ];
 
-    protected static function booted() {
-        parent::booted();
-
-        self::created(function(CustomForm $customForm) {
-            if(!$customForm->getFormConfiguration()::hasVariations()) return;
-            if(!is_null($customForm->relation_model_id)) return;
-            $customForm->customForm()->save($customForm);
-            $customForm->save();
-        });
-
-    }
-
 
     public function customFields(): HasMany {
         return $this->hasMany(CustomField::class)->orderBy("form_position");
-    }
-
-
-    public function relationModel(): MorphTo {
-      return $this->morphTo();
     }
 
 
@@ -63,18 +46,6 @@ class CustomForm extends Model
     }
 
 
-
-    public function variationModels(): Builder {
-        return $this->dynamicFormConfiguration()::relationVariationsQuery($this->relationModel());
-    }
-    public function variationModelsCached(): Collection {
-        if(!$this->getFormConfiguration()::hasVariations()) return collect();
-        return Cache::remember(
-            "custom_form-". $this->id . "_variation_models",
-            config('ffhs_custom_forms.cache_duration'),
-            fn()=>$this->dynamicFormConfiguration()::relationVariationsQuery($this->relationModel())->get()
-        );
-    }
 
     //toDo get CustomFieldLayout
 
@@ -96,7 +67,6 @@ class CustomForm extends Model
 
 
     public function customFieldInLayout(): HasMany {
-
 
         $subQueryAlLayouts = CustomField::query()
             ->select('form_position','layout_end_position')
@@ -120,7 +90,6 @@ class CustomForm extends Model
 
     public function cachedFields(): Collection {
         return Cache::remember("custom_fields-from-form_" . $this->id,config('ffhs_custom_forms.cache_duration'), fn() => $this->customFields()->with([
-            "customFieldVariations.customOptions",
             "generalField.customOptions",
         ])->get());
     }

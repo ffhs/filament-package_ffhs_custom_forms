@@ -19,6 +19,7 @@ return new class () extends Migration {
             $table->string("custom_form_identifier");
 
             $table->boolean("is_required")->default(false);
+            $table->boolean("export")->default(false);
 
             $table->timestamps();
         });

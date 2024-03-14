@@ -52,15 +52,9 @@ class CustomField extends ACustomField
     public static function inheritCustomField(): Builder {
         return self::query()->whereNot("general_field_id");
     }
+
     public static function notInheritCustomField(): Builder {
         return self::query()->whereNull("general_field_id");
-    }
-
-    public function customFieldVariations (): HasMany {
-        return $this->hasMany(CustomFieldVariation::class);
-    }
-    public function templateVariation ():CustomFieldVariation|null {
-        return $this->customFieldVariations->filter(fn($customFieldVariation)=> $customFieldVariation->isTemplate())->first();
     }
 
     private function getInheritStateFromArrays($thisValues, $generalFieldArray): array {
@@ -109,19 +103,6 @@ class CustomField extends ACustomField
     }
 
 
-    public function getVariation(Model|int|null $relatedObject ): CustomFieldVariation|null{
-        if(!$this->has_variations || is_null($relatedObject)) return $this->templateVariation();
-        if($relatedObject instanceof  Model) $relatedObject = $relatedObject->id;
-        $variation =  $this->customFieldVariations->firstWhere(fn(CustomFieldVariation $fieldVariation)=>$fieldVariation->variation_id == $relatedObject);
-        if(is_null($variation)) return $this->templateVariation();
-        else return $variation;
-    }
-
-
-    public function customFieldVariation(): HasMany {
-        return $this->hasMany(CustomFieldVariation::class);
-    }
-
     public static function cached(mixed $custom_field_id): ?CustomField{
         return Cache::remember("custom_field-" .$custom_field_id, config('ffhs_custom_forms.cache_duration'), fn()=>CustomField::query()->firstWhere("id", $custom_field_id));
     }
@@ -153,7 +134,7 @@ class CustomField extends ACustomField
                 ->where("layout_end_position","!=", null);
 
 
-        $query = $this->hasMany(CustomField::class, "custom_form_id","custom_form_id")
+        return $this->hasMany(CustomField::class, "custom_form_id","custom_form_id")
             ->where("form_position",">", $this->form_position)
             ->where("form_position","<=", $this->layout_end_position)
             ->whereNotIn("id",
@@ -164,8 +145,6 @@ class CustomField extends ACustomField
                             ->on('custom_fields.form_position', '<=', 'sub.layout_end_position');
                     })
             );
-
-        return $query;
     }
 
 

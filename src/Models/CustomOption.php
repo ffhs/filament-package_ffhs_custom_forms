@@ -15,7 +15,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property string $identifier
  * @property string|null $icon
  *
- * @property CustomFieldVariation $customFieldVariation
  * @property CustomOption $customOption
  */
 class CustomOption extends Model
@@ -38,12 +37,5 @@ class CustomOption extends Model
         });
     }
 
-
-    public function customFieldVariation () :BelongsTo{
-        return $this->belongsTo(CustomFieldVariation::class);
-    }
-    public function customOption () :BelongsTo{
-        return $this->belongsTo(CustomOption::class);
-    }
 
 }

@@ -8,7 +8,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * @property GeneralField $generalField
+ * @property string $custom_form_identifier
+ * @property int $general_field_id
  * @property bool $is_required
+ * @property bool $export
  */
 class GeneralFieldForm extends Model
 {
@@ -20,6 +23,7 @@ class GeneralFieldForm extends Model
         'general_field_id',
         'custom_form_identifier',
         'is_required',
+        'export',
     ];
 
     public function generalField(): BelongsTo {

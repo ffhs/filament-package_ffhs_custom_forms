@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Cache;
  * @property string $name_de
  * @property string $name_en
  * @property string $type
+ * @property string $icon
  * @property array $extra_options
  * @property Collection $customOptions
  */
@@ -36,6 +37,7 @@ class GeneralField extends ACustomField
         'name_de',
         'name_en',
         'type',
+        'icon',
     ];
 
     protected $casts = [

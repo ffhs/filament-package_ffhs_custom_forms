@@ -18,8 +18,6 @@ return new class () extends Migration {
             $table->string("custom_form_identifier");
             $table->string("short_title")->nullable();
 
-            $table->nullableMorphs("relation_model");
-
             $table->timestamps();
             $table->softDeletes();
 
