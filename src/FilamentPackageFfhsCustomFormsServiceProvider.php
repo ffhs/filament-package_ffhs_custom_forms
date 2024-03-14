@@ -43,10 +43,14 @@ class FilamentPackageFfhsCustomFormsServiceProvider extends PackageServiceProvid
                     ->askToRunMigrations()
                     ->copyAndRegisterServiceProviderInApp()
                     ->endWith(function (InstallCommand $command) {
-                        $command->info("Clear cache and icon cache");
                         // Clear the application cache
-                        Artisan::call('icons:cache');
+                        $command->info("Clear cache and icon cache");
                         Artisan::call('cache:clear');
+                        Artisan::call('icons:cache');
+
+                        // publish config from icon picker
+                        $command->info("Publish config from icon picker plugin");
+                        Artisan::call('vendor:publish', ["tag" => "filament-icon-picker-config"]);
                     })
             );
 
@@ -58,10 +62,8 @@ class FilamentPackageFfhsCustomFormsServiceProvider extends PackageServiceProvid
             $factoryNames = [
                 CustomField::class,
                 CustomFieldAnswer::class,
-                CustomFieldVariation::class,
                 CustomForm::class,
                 CustomFormAnswer::class,
-                FormVariation::class,
                 GeneralField::class,
                 GeneralFieldForm::class
             ];
