@@ -36,8 +36,14 @@ class GeneralFieldFormRelationManager extends RelationManager
                         $values = $notSelecdetForms->map(fn($class) => ($class)::displayName())->toArray();
                         return array_combine($keys,$values);
                     }),
-                Forms\Components\Checkbox::make('is_required')
-                    ->label(__('filament-package_ffhs_custom_forms::custom_forms.fields.is_required')),
+               Forms\Components\Group::make([
+                   Forms\Components\Toggle::make('is_required')
+                       ->label(__('filament-package_ffhs_custom_forms::custom_forms.fields.is_required'))
+                       ->default(true),
+                   Forms\Components\Toggle::make('export')
+                       ->label("Wird exportiert") //ToDo Translate
+                       ->default(false),
+               ])
             ]);
     }
     //To Do show required and max
@@ -46,13 +52,19 @@ class GeneralFieldFormRelationManager extends RelationManager
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('id'),
-                Tables\Columns\CheckboxColumn::make('is_required')
-                    ->label(__('filament-package_ffhs_custom_forms::custom_forms.fields.is_required')),
                 Tables\Columns\TextColumn::make('custom_form_identifier_name')
                     ->label(__('filament-package_ffhs_custom_forms::custom_forms.form.custom_form_identifier.display_name'))
                     ->state(fn(GeneralFieldForm $record) => ($record->dynamicFormConfiguration())::displayName()),
+                Tables\Columns\IconColumn::make('is_required')
+                    ->label(__('filament-package_ffhs_custom_forms::custom_forms.fields.is_required'))
+                    ->boolean(),
+                Tables\Columns\IconColumn::make('export')
+                    ->label("Wird exportiert")//ToDo Translate
+                    ->boolean(),
+                /*
                 Tables\Columns\TextColumn::make('custom_form_identifier')
                     ->label(__('filament-package_ffhs_custom_forms::custom_forms.form.custom_form_identifier.raw_name')),
+                 */
             ])
             ->filters([
                 //
@@ -72,7 +84,7 @@ class GeneralFieldFormRelationManager extends RelationManager
     }
 
     protected function canEdit(Model $record): bool {
-        return false;
+        return false; //toDo Check if it is possible and required
     }
 
 

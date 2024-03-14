@@ -14,7 +14,6 @@ class CheckboxListType extends CustomFieldType
     use HasCustomFormPackageTranslation;
     use HasBasicSettings,HasTypeOptions{
         HasTypeOptions::getExtraOptionSchema insteadof HasBasicSettings;
-        HasBasicSettings::getExtraOptionSchema as getExtraOptionSchemaBasicSetup;
     }
 
     public static function getFieldIdentifier(): string { return "checkbox_list"; }
@@ -25,7 +24,7 @@ class CheckboxListType extends CustomFieldType
         ];
     }
 
-    public function getExtraOptionSchemaHasOptions() : array{
+    /*public function getExtraOptionSchemaHasOptions() : array{
         return  array_merge($this->getExtraOptionSchemaBasicSetup(),[
             TextInput::make("columns")
                 ->label("Spalten")//ToDo Translate
@@ -33,7 +32,7 @@ class CheckboxListType extends CustomFieldType
                 ->required()
                 ->numeric()
         ]);
-    }
+    }*/
 
     protected function getExtraOptionFieldsBasicOptions(): array {
         return [

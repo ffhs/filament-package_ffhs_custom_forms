@@ -15,7 +15,6 @@ class RadioType extends CustomFieldType
     use HasCustomFormPackageTranslation;
     use HasBasicSettings,HasTypeOptions{
         HasTypeOptions::getExtraOptionSchema insteadof HasBasicSettings;
-        HasBasicSettings::getExtraOptionSchema as getExtraOptionSchemaBasicSetup;
     }
 
     public static function getFieldIdentifier(): string { return "radio"; }
@@ -25,7 +24,7 @@ class RadioType extends CustomFieldType
             'default'  => Types\Views\RadioTypeView::class,
         ];
     }
-    public function getExtraOptionSchema() : array{
+ /*   public function getExtraOptionSchema() : array{
 
         return [
             Group::make()
@@ -57,7 +56,7 @@ class RadioType extends CustomFieldType
                     return [];
                 }),
         ];
-    }
+    }*/
 
     public function getExtraOptionFieldsBasicOptions():array{
         return [

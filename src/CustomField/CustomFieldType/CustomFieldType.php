@@ -9,6 +9,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Filament\Forms\Components\Component;
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Section;
 
 abstract class CustomFieldType extends CustomFieldTypeMethods
@@ -20,6 +21,13 @@ abstract class CustomFieldType extends CustomFieldTypeMethods
     public static function getAllTypes():array{
         $output = [];
         foreach(config("ffhs_custom_forms.custom_field_types") as $typeClass)
+            $output[$typeClass::getFieldIdentifier()]= $typeClass;
+        return $output;
+    }
+
+    public static function getGeneralFieldTypes():array{
+        $output = [];
+        foreach(config("ffhs_custom_forms.general_field_types") as $typeClass)
             $output[$typeClass::getFieldIdentifier()]= $typeClass;
         return $output;
     }
@@ -85,7 +93,7 @@ abstract class CustomFieldType extends CustomFieldTypeMethods
         return !empty($this->getExtraTypeOptions());
     }
     public function hasExtraGeneralTypeOptions():bool{
-        return !empty($this->getExtraTypeOptions());
+        return !empty($this->getExtraGeneralTypeOptions());
     }
 
     public function getExtraTypeOptionComponent(): ?Component{
@@ -102,18 +110,15 @@ abstract class CustomFieldType extends CustomFieldTypeMethods
             ->columns();
     }
 
-    public function getExtraGeneralTypeOptionComponent(): ?Component{
-        if(!$this->hasExtraGeneralTypeOptions()) return null;
+    public function getExtraGeneralTypeOptionComponents(): array{
+        if(!$this->hasExtraGeneralTypeOptions()) return [];
         $components = [];
         foreach ($this->getExtraGeneralTypeOptions() as $key => $option ){
             /**@var TypeOption $option*/
-            $component =  $option->getComponent()->statePath("options.".$key);
+            $component =  $option->getComponent()->id($key);
             $components[] = $component;
         }
-        return Section::make()
-            ->schema($components)
-            ->statePath("options")
-            ->columns();
+        return $components;
     }
 
 }

@@ -15,7 +15,6 @@ class SelectType extends CustomFieldType
     use HasCustomFormPackageTranslation;
     use HasBasicSettings,HasTypeOptions{
         HasTypeOptions::getExtraOptionSchema insteadof HasBasicSettings;
-        HasBasicSettings::getExtraOptionSchema as getExtraOptionSchemaBasicSetup;
     }
 
     public static function getFieldIdentifier(): string { return "select"; }
@@ -27,7 +26,7 @@ class SelectType extends CustomFieldType
     }
 
 
-    public function getExtraOptionSchemaHasOptions() : array{
+  /*  public function getExtraOptionSchemaHasOptions() : array{
         return array_merge($this->getExtraOptionSchemaBasicSetup(), [
             Toggle::make("several")
                 ->label("Mehre auswählbar")//ToDo Translate
@@ -54,7 +53,7 @@ class SelectType extends CustomFieldType
                 ->numeric(),
         ]);
     }
-
+*/
 
     public function getExtraOptionFieldsBasicOptions():array{
         return [
