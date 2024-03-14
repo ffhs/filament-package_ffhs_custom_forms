@@ -12,8 +12,8 @@ class ColumnSpanOption extends TypeOption
         return 3;
     }
 
-    public function getComponent(): Component {
-       return TextInput::make("column_span")
+    public function getComponent(string $name): Component {
+       return TextInput::make($name)
            ->label("Zeilenweite")//ToDo Translation
            ->step(1)
            ->integer()

@@ -8,13 +8,13 @@ use Filament\Forms\Components\TextInput;
 
 class MinValueOption extends TypeOption
 {
-    public function getDefaultValue(): bool {
+    public function getDefaultValue(): int {
         return 100;
     }
 
-    public function getComponent(): Component {
+    public function getComponent(string $name): Component {
         return
-            TextInput::make("min_value")
+            TextInput::make($name)
                 ->label("Mindestgrösse")//ToDo Translation
                 ->step(1)
                 ->required()

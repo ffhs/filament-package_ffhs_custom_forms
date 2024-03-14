@@ -3,14 +3,16 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Form\Extra;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomFieldType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\TypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Form\CustomFormEditForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralFieldForm;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Placeholder;
-use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Tabs;
@@ -18,7 +20,6 @@ use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Get;
-use Filament\Support\Colors\Color;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\HtmlString;
@@ -28,14 +29,9 @@ class CustomFieldEditForm
 
     public static function getCustomFieldSchema(CustomForm $customForm, array $data):array{
 
-        $hasVariations = $customForm->getFormConfiguration()::hasVariations();
         $isGeneral = array_key_exists("general_field_id",$data)&& !empty($data["general_field_id"]);
         $type = CustomFormEditForm::getFieldTypeFromRawDate($data);
-
-        $hasOptionsForVariations = $type->canBeRequired()||$type->canBeDeactivate()||$type->hasExtraOptions();
-        $showVariations =  $hasVariations  && $type->canHasVariations();
-        $columns = $isGeneral||!$hasOptionsForVariations?1:2;
-
+        $columns = $isGeneral?1:2;
 
         return [
             Group::make()
@@ -43,68 +39,24 @@ class CustomFieldEditForm
                 ->columnSpanFull()
                 ->label("")
                 ->schema([
-                    Group::make()
-                        ->columns(1)
-                        ->schema([
-                            Tabs::make()
-                                ->columnStart(1)
-                                ->hidden($isGeneral)
-                                ->tabs([
-                                    self::getTranslationTab("de","Deutsch"),
-                                    self::getTranslationTab("en","Englisch"),
-                                ]),
-                            Toggle::make("has_variations")
-                                ->label("Hat Variationen")
-                                ->hidden(!$showVariations || !$hasOptionsForVariations)
-                                ->columnStart(1)
-                                ->live(),
-                        ]),
-
                     Tabs::make()
-                        ->columnStart($isGeneral?1:2)
-                        ->visible($hasOptionsForVariations)
-                        ->tabs(fn (Get $get,$set) => self::getVariationTabs($get, $customForm, $isGeneral, $type, $set)),
+                        ->columnStart(1)
+                        ->hidden($isGeneral)
+                        ->tabs([
+                            self::getTranslationTab("de","Deutsch"),
+                            self::getTranslationTab("en","Englisch"),
+                        ]),
+                    self::getFieldOptionSection($type)
+                        ->columnSpan(1),
+
+                    //toDo Rules Section
+                    Section::make("Regeln"),
+
                 ]),
         ];
     }
 
-    private static function getCustomFieldVariationTab(?int $variationId, CustomFieldType $type, String $tabTitle, bool $isDisabled = false): Tab
-    {
-        $isTemplate = is_null($variationId);
 
-        return  Tabs\Tab::make($tabTitle)
-            ->schema([
-                Repeater::make("variation-".$variationId)
-                    ->reorderable(false)
-                    ->deletable(false)
-                    ->addable(false)
-                    ->disabled($isDisabled)
-                    ->defaultItems(1)
-                    ->minItems(1)
-                    ->label("")
-                    ->cloneable()
-                    ->live()
-                    ->schema(self::getCustomFieldVariationRepeaterSchema($type,$isDisabled))
-                    ->cloneAction(
-                        fn(Action $action) => $action
-                            ->color(fn() => $isTemplate? Color::Zinc: Color::Orange)
-                            ->disabled($isTemplate || $isDisabled)
-                            ->label("Vom Template")
-                            ->action(function ($set,Get $get) use ($type, $variationId) {
-                                $template = array_values($get("variation-"))[0];
-                                $recordName = array_keys($get("variation-".$variationId))[0];
-                                $setPrefix = "variation-".$variationId.".".$recordName;
-
-                                $set($setPrefix.'.required', $template['required']);
-                                $set($setPrefix.'.is_active', $template['is_active']);
-
-                                //FieldOptions clone
-                                $clonedFieldOptions = $type->prepareCloneOptions($template,$setPrefix,$set,$get);
-                                $set($setPrefix.'.options', $clonedFieldOptions);
-                            })
-                    ),
-            ]);
-    }
 
     private static function getTranslationTab(string $location, string $label): Tab {
         return Tab::make($label)
@@ -116,53 +68,6 @@ class CustomFieldEditForm
                     ->label(__('filament-package_ffhs_custom_forms::custom_forms.fields.tool_tip')),
             ]);
     }
-
-
-    private static function getCustomFieldVariationRepeaterSchema(CustomFieldType $type, bool $isDisabled):array {
-
-        return[
-
-            Section::make()
-                ->columns()
-                ->schema([
-                // Active
-                Toggle::make('is_active')
-                    ->visible($type->canBeDeactivate())
-                    ->label("Aktive") //ToDo Translate
-                    ->default(!$isDisabled),
-
-                // Required
-                Toggle::make('required')
-                    ->visible($type->canBeRequired())
-                    ->label("Benötigt") //ToDo Translate
-                    ->default(!$isDisabled),
-            ]),
-
-            //Type Options
-            Group::make()
-                ->visible($type->hasExtraOptions())
-                ->schema(function (Get $get, $set) use ($type) {
-                    $repeater = $type->getExtraOptionsComponent();
-
-                    if(is_null($repeater)) return [];
-
-                    //if a new Variation was added, then we have to add options
-                    $fieldOptions = $get("options");
-                    $fieldOptionsNotExist = empty($fieldOptions) ;
-
-                    $fieldOptionsEmpty = $fieldOptionsNotExist || sizeof($fieldOptions) == 1 &&
-                        array_key_exists("options", $fieldOptions) &&
-                        empty($fieldOptions["options"]);
-
-                    if($fieldOptionsEmpty)
-                        $set("options", [$type->getExtraOptionFields()]);
-
-
-                    return [$repeater];
-                })
-        ];
-    }
-
 
 
 
@@ -211,17 +116,18 @@ class CustomFieldEditForm
                     ))
                     ->outlined()
                     ->mutateFormDataUsing(fn(Action $action) => array_values($action->getLivewire()->getCachedForms())[1]->getRawState())//Get RawSate (yeah is possible)
-                    ->form(fn(Get $get, CustomForm $record) => CustomFieldEditForm::getCustomFieldSchema($record,
-                        ["type" => $type::getFieldIdentifier()]))
+                    ->form(fn(Get $get, CustomForm $record) => CustomFieldEditForm::getCustomFieldSchema($record, ["type" => $type::getFieldIdentifier()]))
                     ->modalWidth(fn(Get $get) => self::getEditCustomFormActionModalWith(["type" => $type::getFieldIdentifier()]))
                     ->disabled(fn(Get $get) => is_null($type::getFieldIdentifier()))
-                    ->fillForm(fn($get) => ["type" => $type::getFieldIdentifier()])
+                    ->fillForm(fn($get) => [
+                        "type" => $type::getFieldIdentifier(),
+                        "options" => $type->getDefaultTypeOptionValues(),
+                        "is_active"=> true,
+                    ])
                     ->closeModalByClickingAway(false)
                     ->action(function ($set, Get $get, array $data) {
                         //Add to the other Fields
-                        $fields = $get("custom_fields");
-                        $fields[uniqid()] = $data;
-                        $set("custom_fields", $fields);
+                        self::setCustomField($data,$get,$set);
                     })
             ]);
         }
@@ -231,6 +137,7 @@ class CustomFieldEditForm
     private static function getGeneralFieldAddAction():Group {
         return Group::make([
             Select::make("add_general_field_id")
+                ->native(false)
                 ->label("")
                 ->live()
                 ->disableOptionWhen(function($value, Get $get) {
@@ -245,7 +152,6 @@ class CustomFieldEditForm
                             ->with("generalField")
                             ->get()
                     );
-
 
                     //Mark Required GeneralFields
                     $generalFields=  $generalFieldForms->map(function(GeneralFieldForm $generalFieldForm){
@@ -275,58 +181,110 @@ class CustomFieldEditForm
                         )
                         ->action(function ($set,Get $get,array $data) {
                             //Add to the other Fields
+                            self::setCustomField($data,$get,$set);
                             $set("add_general_field_id", null);
-                            $fields = $get("custom_fields");
-                            $fields[uniqid()] = $data;
-                            $set("custom_fields",$fields);
                         })
             ]),
         ]);
     }
+    public static function getEditCustomFieldAction(CustomForm $customForm): Action {
+        return Action::make('edit')
+            ->closeModalByClickingAway(false)
+            ->icon('heroicon-m-pencil-square')
+            ->modalWidth(fn(array $state,array $arguments)=> CustomFieldEditForm::getEditCustomFormActionModalWith($state[$arguments["item"]]))
+            ->mutateFormDataUsing(fn(Action $action) =>
+                //Get RawSate (yeah is possible)
+                array_values($action->getLivewire()->getCachedForms())[1]->getRawState()
+            )
+            ->modalHeading(function(array $state,array $arguments){
+                $data = $state[$arguments["item"]];
+                if(!empty($data["general_field_id"]))
+                    return "G. " . GeneralField::cached($data["general_field_id"])->name_de . " Felddaten bearbeiten"; //ToDo Translate
+                else
+                    return $data["name_de"] . " Felddaten bearbeiten "; //ToDo Translate
+            })
+            ->form(fn(Get $get, array $state,array $arguments)=>
+                CustomFieldEditForm::getCustomFieldSchema(
+                    $customForm,
+                    $state[$arguments["item"]]
+                )
+            )
+            ->fillForm(function($state,$arguments) use ($customForm) {
+                $data = $state[$arguments["item"]];
+                $type = CustomFormEditForm::getFieldTypeFromRawDate($data);
+                self::mutateOptionFieldData($type,$data,true);
 
+                return $data;
+            })
+            ->action(function (Get $get,$set,array $data,array $arguments): void {
+
+                self::setCustomField($data,$get,$set,$arguments);
+            });
+    }
 
     public static function getEditCustomFormActionModalWith(array $state): string {
         $type = CustomFormEditForm::getFieldTypeFromRawDate($state);
         if(!empty($state["general_field_id"])) return 'xl';
-        $hasOptionsForVariations = $type->canBeRequired()||$type->canBeDeactivate()||$type->hasExtraOptions();
+        $hasOptionsForVariations = $type->canBeRequired()||$type->canBeDeactivate()||$type->hasExtraTypeOptions();
         if(!$hasOptionsForVariations) return 'xl';
         return'5xl';
     }
 
 
-    private  static function  getVariationTabs(Get $get, CustomForm $customForm, bool $isGeneral, ?CustomFieldType $type, $set): array {
-        $tabs = [];
 
-        //If no Variations than skip the Variations and get only the default Tab
-        if (!$get("has_variations")) $variationModels = collect([null]);
-        else $variationModels = $customForm->variationModelsCached()->prepend(null);
+    private static function getFieldOptionSection(CustomFieldType $type): Section {
+        return Section::make("Optionen") //ToDo Translate
+            ->schema([
+                Fieldset::make()
+                    ->schema([
+                        Toggle::make('is_active')
+                            ->visible($type->canBeDeactivate())
+                            ->label("Aktive"), //ToDo Translate
 
-        //VariationTabs
-        foreach ($variationModels as $model) {
-            if (!is_null($model) && $customForm->getFormConfiguration()::isVariationHidden($model)) continue;
+                        // Required
+                        Toggle::make('required')
+                            ->visible($type->canBeRequired())
+                            ->label("Benötigt"), //ToDo Translate
 
-            //Tab Title
-            if (is_null($model)) $tabTitle = "Template";//ToDo Translate
-            else $tabTitle = $customForm->getFormConfiguration()::variationName($model);
+                    ]),
+                Fieldset::make() //ToDo load Defaults
+                    ->statePath("options")
+                    ->visible($type->hasExtraTypeOptions())
+                    ->schema($type->getExtraTypeOptionComponents())
 
-            $isDisabled = is_null($model) ? false : $customForm->getFormConfiguration()::isVariationDisabled($model);
+            ]);
+    }
 
-            $varID = $model?->id;
+    private static function mutateOptionFieldData(CustomFieldType $type, array $data, bool $load):array {
+        if(!array_key_exists("options", $data))return $data;
 
-            //Create Tab
-            $tabs[] = self::getCustomFieldVariationTab($varID, $type, $tabTitle, $isDisabled);
+        $typeOptions =  $type->getExtraTypeOptions();
 
-            //Set new contend if it is empty
-            if (!empty($get("variation-".$varID))) continue;
-            $toSet = [
-                0 => $type->mutateVariationDataBeforeFill([
-                    'is_active' => !$isDisabled,
-                    'required' => !$isDisabled,
-                ]),
-            ];
-            $set("variation-".$varID, $toSet);
+        $options = $data["options"];
+
+        foreach ($data as $optionName => $optionData){
+            if(!array_key_exists($optionName,$typeOptions)){
+                unset($options[$optionName]);
+                continue;
+            }
+            $typeOption = $typeOptions[$optionName];
+            /**@var TypeOption $typeOption*/
+            if($load) $options[$optionName] = $typeOption->mutateOnLoad($optionData);
+            else $options[$optionName] = $typeOption->mutateOnSave($optionData);
         }
-        return $tabs;
+
+        $data["options"]=$options;
+
+        return $data;
+    }
+
+    private static function setCustomField(array $data, Get $get, $set, ?array $arguments = null):void {
+        $type = CustomFormEditForm::getFieldTypeFromRawDate($data);
+        $data = self::mutateOptionFieldData($type,$data,false);
+        $fields = $get("custom_fields");
+        if(is_null($arguments)) $fields[uniqid()] = $data;
+        else $fields[$arguments["item"]] = $data;
+        $set("custom_fields",$fields);
     }
 
 

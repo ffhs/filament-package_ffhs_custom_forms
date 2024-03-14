@@ -9,13 +9,13 @@ use Filament\Forms\Components\Toggle;
 
 class MaxLenghtOption extends TypeOption
 {
-    public function getDefaultValue(): bool {
+    public function getDefaultValue(): int {
         return 100;
     }
 
-    public function getComponent(): Component {
+    public function getComponent(string $name): Component {
         return
-            TextInput::make("max_length")
+            TextInput::make($name)
                 ->label("Maximale Länge") //ToDo Translate
                 ->columnStart(1)
                 ->step(1)

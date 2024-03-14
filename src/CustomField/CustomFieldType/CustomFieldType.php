@@ -96,18 +96,15 @@ abstract class CustomFieldType extends CustomFieldTypeMethods
         return !empty($this->getExtraGeneralTypeOptions());
     }
 
-    public function getExtraTypeOptionComponent(): ?Component{
-        if(!$this->hasExtraTypeOptions()) return null;
+    public function getExtraTypeOptionComponents(): array{
+        if(!$this->hasExtraTypeOptions()) return [];
         $components = [];
         foreach ($this->getExtraTypeOptions() as $key => $option ){
             /**@var TypeOption $option*/
-            $component =  $option->getComponent()->statePath("options.".$key);
+            $component =  $option->getModifyComponent($key);
             $components[] = $component;
         }
-        return Section::make()
-            ->schema($components)
-            ->statePath("options")
-            ->columns();
+        return $components;
     }
 
     public function getExtraGeneralTypeOptionComponents(): array{
@@ -115,10 +112,28 @@ abstract class CustomFieldType extends CustomFieldTypeMethods
         $components = [];
         foreach ($this->getExtraGeneralTypeOptions() as $key => $option ){
             /**@var TypeOption $option*/
-            $component =  $option->getComponent()->id($key);
+            $component =  $option->getModifyComponent($key);
             $components[] = $component;
         }
         return $components;
+    }
+
+    public function getDefaultTypeOptionValues():array {
+        $defaults = [];
+        foreach ($this->getExtraTypeOptions() as $key => $extraTypeOption){
+            /**@var TypeOption $extraTypeOption*/
+            $defaults[$key] = $extraTypeOption->getDefaultValue();
+        }
+        return $defaults;
+    }
+
+    public function getDefaultGeneralOptionValues():array {
+        $defaults = [];
+        foreach ($this->getExtraGeneralTypeOptions() as $key => $extraTypeOption){
+            /**@var TypeOption $extraTypeOption*/
+            $defaults[$key] = $extraTypeOption->getDefaultValue();
+        }
+        return $defaults;
     }
 
 }

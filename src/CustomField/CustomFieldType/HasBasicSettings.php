@@ -19,7 +19,7 @@ trait HasBasicSettings
             $this->extraOptionsBeforeBasic(),
             [
                 'column_span' => new ColumnSpanOption(),
-                'in_line_label' => new InLineLabelOption(),
+                'in_line_label' => (new InLineLabelOption())->modifyComponent(fn($toggle) => $toggle->columnStart(1)),
                 'new_line_option' => new NewLineOption(),
             ],
             $this->extraOptionsAfterBasic()

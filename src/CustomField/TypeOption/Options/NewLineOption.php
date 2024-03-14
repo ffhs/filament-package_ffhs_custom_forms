@@ -12,8 +12,8 @@ class NewLineOption extends TypeOption
         return false;
     }
 
-    public function getComponent(): Component {
-        return Toggle::make("new_line_option")
+    public function getComponent(string $name): Component {
+        return Toggle::make($name)
             ->label("Neue Zeile");//ToDo Translation
     }
 }

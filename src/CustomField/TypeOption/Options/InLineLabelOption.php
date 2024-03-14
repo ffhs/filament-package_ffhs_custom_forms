@@ -13,8 +13,8 @@ class InLineLabelOption extends TypeOption
         return false;
     }
 
-    public function getComponent(): Component {
-        return Toggle::make("in_line_label")
+    public function getComponent(string $name): Component {
+        return Toggle::make($name)
             ->label("Title in der Zeile");//ToDo Translation
     }
 }

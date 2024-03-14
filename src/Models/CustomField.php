@@ -43,7 +43,7 @@ class CustomField extends ACustomField
         'general_field_id',
 
         'required',
-        'active',
+        'is_active',
         'options',
         'custom_form_id',
         'has_variations',
@@ -73,7 +73,7 @@ class CustomField extends ACustomField
         unset($output["general_field_id"]);
         unset($output["created_at"]);
         unset($output["updated_at"]);
-        return $output;
+        return $output; //ToDo Merge Options (Or overwrite)
     }
 
     /**

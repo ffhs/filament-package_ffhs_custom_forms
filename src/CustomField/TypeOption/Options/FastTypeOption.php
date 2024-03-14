@@ -20,7 +20,7 @@ class FastTypeOption extends TypeOption
         return   $this->defaultValue;
     }
 
-    public function getComponent(): Component {
+    public function getComponent(string $name): Component {
         return $this->component;
     }
 }

@@ -2,22 +2,32 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption;
 
+use Closure;
 use Filament\Forms\Components\Component;
 
 abstract class TypeOption
 {
 
+    protected ?Closure $modifyComponentCloser = null;
+
     public abstract function getDefaultValue():mixed;
-    public abstract function getComponent():Component;
-    public function prepareBeforeSave(mixed $value):mixed{
+    public abstract function getComponent(string $name):Component;
+
+    public function mutateOnSave(mixed $value):mixed{
         return $value;
     }
-    public function prepareBeforeLoad(mixed $value):mixed{
+    public function mutateOnLoad(mixed $value):mixed{
         return $value;
     }
 
-    public function prepareOnClone(mixed $value):mixed{
-        return $value;
+    public function modifyComponent(Closure $closure):static{
+        $this->modifyComponentCloser = $closure;
+        return $this;
+    }
+
+    public function getModifyComponent(string $name):Component{
+        if(is_null($this->modifyComponentCloser)) return $this->getComponent($name);
+        return ($this->modifyComponentCloser)($this->getComponent($name));
     }
 
 

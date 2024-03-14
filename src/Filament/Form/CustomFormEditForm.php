@@ -4,6 +4,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Form;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\CustomLayoutType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\TypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Form\Extra\CustomFieldEditForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Form\Extra\CustomFormEditSave;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\HtmlComponents\HtmlBadge;
@@ -60,7 +61,7 @@ class CustomFormEditForm
             ->extraItemActions([
                 self::getPullOutLayoutAction(),
                 self::getPullInLayoutAction(),
-                self::getEditCustomFormAction($record),
+                CustomFieldEditForm::getEditCustomFieldAction($record),
             ])
             ->itemLabel(function($state){
                 $styleClasses = "text-sm font-medium ext-gray-950 dark:text-white truncate select-none";
@@ -132,67 +133,7 @@ class CustomFormEditForm
 
 
 
-    private static function getEditCustomFormAction(CustomForm $customForm): Action {
-        return Action::make('edit')
-            ->closeModalByClickingAway(false)
-            ->icon('heroicon-m-pencil-square')
-            ->modalWidth(fn(array $state,array $arguments)=> CustomFieldEditForm::getEditCustomFormActionModalWith($state[$arguments["item"]]))
-            ->modalHeading(function(array $state,array $arguments){
-                $data = $state[$arguments["item"]];
-                if(!empty($data["general_field_id"]))
-                    return "G. " . GeneralField::cached($data["general_field_id"])->name_de . " Felddaten bearbeiten"; //ToDo Translate
-                else
-                    return $data["name_de"] . " Felddaten bearbeiten "; //ToDo Translate
-            })
-            ->form(fn(Get $get, array $state,array $arguments)=>
-                CustomFieldEditForm::getCustomFieldSchema(
-                    $customForm,
-                    $state[$arguments["item"]]
-                )
-            )
-            ->mutateFormDataUsing(fn(Action $action) =>
-                //Get RawSate (yeah is possible)
-                 array_values($action->getLivewire()->getCachedForms())[1]->getRawState()
-            )
-            ->action(function (Get $get,$set,array $data,array $arguments): void {
-                $fields = $get("custom_fields");
-                $fields[$arguments["item"]] = $data;
-                $set("custom_fields",$fields);
-            })
-            ->fillForm(function($state,$arguments) use ($customForm) {
-                $data = $state[$arguments["item"]];
-                $type = self::getFieldTypeFromRawDate($data);
 
-                //CustomFieldData
-                $customFieldData = array_filter(
-                    $data,
-                    fn($key) =>!str_starts_with($key, "variation-"),
-                    ARRAY_FILTER_USE_KEY
-                );
-
-                $customFieldData = $type->mutateCustomFieldDataBeforeFill($customFieldData);
-
-                //Variation Data's
-                $variations = array_filter(
-                    $data,
-                    fn($key) => str_starts_with($key, "variation-"),
-                    ARRAY_FILTER_USE_KEY
-                );
-
-                if(empty($variations)){
-                    $variations = [];
-                    $customField = CustomField::cachedAllInForm($customForm->id)->firstWhere("id",$data["id"]);
-                    /** @var CustomField $customField*/
-                    foreach ($customField->customFieldVariation as $variation){
-                        $variationData = $variation->toArray();
-                        $variationData = $type->mutateVariationDataBeforeFill($variationData);
-                        $varIdentifier = "variation-" . $variation->variation_id;
-                        $variations[$varIdentifier] = [0=>$variationData];
-                    }
-                }
-                return array_merge($customFieldData,$variations);
-            });
-    }
 
     private static function getPullInLayoutAction(): Action {
         return Action::make("pullIn")
