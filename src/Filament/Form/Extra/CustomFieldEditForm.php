@@ -196,7 +196,7 @@ class CustomFieldEditForm
         /**@var CustomFieldType $type */
         foreach ($types as $type) {
             $actions[] = Actions::make([
-                Action::make("add_".$type->fieldIdentifier()."_action")
+                Action::make("add_".$type::getFieldIdentifier()."_action")
                     ->modalHeading("Hinzufügen eines ".$type->getTranslatedName()." Feldes") //ToDo Translate
                     ->tooltip($type->getTranslatedName())
                     ->extraAttributes(["style" => "width: 100%; height: 100%;"])
@@ -212,10 +212,10 @@ class CustomFieldEditForm
                     ->outlined()
                     ->mutateFormDataUsing(fn(Action $action) => array_values($action->getLivewire()->getCachedForms())[1]->getRawState())//Get RawSate (yeah is possible)
                     ->form(fn(Get $get, CustomForm $record) => CustomFieldEditForm::getCustomFieldSchema($record,
-                        ["type" => $type->fieldIdentifier()]))
-                    ->modalWidth(fn(Get $get) => self::getEditCustomFormActionModalWith(["type" => $type->fieldIdentifier()]))
-                    ->disabled(fn(Get $get) => is_null($type->fieldIdentifier()))
-                    ->fillForm(fn($get) => ["type" => $type->fieldIdentifier()])
+                        ["type" => $type::getFieldIdentifier()]))
+                    ->modalWidth(fn(Get $get) => self::getEditCustomFormActionModalWith(["type" => $type::getFieldIdentifier()]))
+                    ->disabled(fn(Get $get) => is_null($type::getFieldIdentifier()))
+                    ->fillForm(fn($get) => ["type" => $type::getFieldIdentifier()])
                     ->closeModalByClickingAway(false)
                     ->action(function ($set, Get $get, array $data) {
                         //Add to the other Fields
