@@ -16,7 +16,7 @@ class FastTypeOption extends TypeOption
         $this->component = $component;
     }
 
-    public function getDefaultValue(): int {
+    public function getDefaultValue(): mixed {
         return   $this->defaultValue;
     }
 

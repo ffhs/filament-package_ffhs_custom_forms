@@ -9,6 +9,9 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomFieldT
 
 abstract class CustomLayoutType extends CustomFieldType
 {
+    public function canBeRequired(): bool {
+        return false;
+    }
 
 
 }

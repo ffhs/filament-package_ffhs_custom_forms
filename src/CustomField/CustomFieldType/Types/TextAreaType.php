@@ -6,6 +6,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomFieldT
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\HasBasicSettings;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\HasCustomFormPackageTranslation;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\FastTypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\MaxLenghtOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\MinLenghtOption;
 use Filament\Forms\Components\Toggle;
@@ -38,7 +39,7 @@ class TextAreaType extends CustomFieldType
         return [
             'max_length' => new MaxLenghtOption(),
             'min_length' => new MinLenghtOption(),
-            'auto_size'=> $autoSizeComponent,
+            'auto_size'=> new FastTypeOption(true,$autoSizeComponent),
         ];
     }
 

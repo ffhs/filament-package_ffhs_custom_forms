@@ -27,50 +27,6 @@ use Illuminate\Support\HtmlString;
 class CustomFieldEditForm
 {
 
-    public static function getCustomFieldSchema(CustomForm $customForm, array $data):array{
-
-        $isGeneral = array_key_exists("general_field_id",$data)&& !empty($data["general_field_id"]);
-        $type = CustomFormEditForm::getFieldTypeFromRawDate($data);
-        $columns = $isGeneral?1:2;
-
-        return [
-            Group::make()
-                ->columns($columns)
-                ->columnSpanFull()
-                ->label("")
-                ->schema([
-                    Tabs::make()
-                        ->columnStart(1)
-                        ->hidden($isGeneral)
-                        ->tabs([
-                            self::getTranslationTab("de","Deutsch"),
-                            self::getTranslationTab("en","Englisch"),
-                        ]),
-                    self::getFieldOptionSection($type)
-                        ->columnSpan(1),
-
-                    //toDo Rules Section
-                    Section::make("Regeln"),
-
-                ]),
-        ];
-    }
-
-
-
-    private static function getTranslationTab(string $location, string $label): Tab {
-        return Tab::make($label)
-            ->schema([
-                TextInput::make("name_" . $location)
-                    ->label(__('filament-package_ffhs_custom_forms::custom_forms.fields.name'))
-                    ->required(),
-                TextInput::make("tool_tip_" . $location)
-                    ->label(__('filament-package_ffhs_custom_forms::custom_forms.fields.tool_tip')),
-            ]);
-    }
-
-
-
     public static function getFieldAddActionSchema(CustomForm $record):array {
 
         return [
@@ -94,6 +50,25 @@ class CustomFieldEditForm
         ];
     }
 
+
+
+
+
+    private static function getTranslationTab(string $location, string $label): Tab {
+        return Tab::make($label)
+            ->schema([
+                TextInput::make("name_" . $location)
+                    ->label(__('filament-package_ffhs_custom_forms::custom_forms.fields.name'))
+                    ->required(),
+                TextInput::make("tool_tip_" . $location)
+                    ->label(__('filament-package_ffhs_custom_forms::custom_forms.fields.tool_tip')),
+            ]);
+    }
+
+
+
+
+
     private static function getNewCustomFielActions(CustomForm $record): array {
         $actions = [];
         $types = collect($record->getFormConfiguration()::formFieldTypes())->map(fn($class) => new $class());
@@ -116,7 +91,7 @@ class CustomFieldEditForm
                     ))
                     ->outlined()
                     ->mutateFormDataUsing(fn(Action $action) => array_values($action->getLivewire()->getCachedForms())[1]->getRawState())//Get RawSate (yeah is possible)
-                    ->form(fn(Get $get, CustomForm $record) => CustomFieldEditForm::getCustomFieldSchema($record, ["type" => $type::getFieldIdentifier()]))
+                    ->form(fn(Get $get, CustomForm $record) => CustomFieldEditForm::getCustomFieldSchema(["type" => $type::getFieldIdentifier()]))
                     ->modalWidth(fn(Get $get) => self::getEditCustomFormActionModalWith(["type" => $type::getFieldIdentifier()]))
                     ->disabled(fn(Get $get) => is_null($type::getFieldIdentifier()))
                     ->fillForm(fn($get) => [
@@ -169,9 +144,13 @@ class CustomFieldEditForm
             Actions::make([
                     Action::make("add_general_field")
                         ->modalWidth(fn(Get $get)=> self::getEditCustomFormActionModalWith(["general_field_id"=> $get("add_general_field_id")]))
-                        ->form(fn(Get $get, CustomForm $record)=> CustomFieldEditForm::getCustomFieldSchema($record, ["general_field_id" => $get("add_general_field_id")]))
+                        ->form(fn(Get $get, CustomForm $record)=> CustomFieldEditForm::getCustomFieldSchema(["general_field_id" => $get("add_general_field_id")]))
                         ->mutateFormDataUsing(fn(Action $action) =>array_values($action->getLivewire()->getCachedForms())[1]->getRawState())//Get RawSate (yeah is possible)
-                        ->fillForm(fn($get)=> ["general_field_id"=> $get("add_general_field_id")])
+                        ->fillForm(fn($get)=> [
+                            "is_active"=> true,
+                            "general_field_id"=> $get("add_general_field_id"),
+                            "options" => GeneralField::cached($get("add_general_field_id"))->getType()->getDefaultTypeOptionValues(),
+                        ])
                         ->closeModalByClickingAway(false)
                         ->label(fn()=>"Hinzufügen ") //ToDo Translate
                         ->disabled(fn(Get $get)=>
@@ -187,13 +166,22 @@ class CustomFieldEditForm
             ]),
         ]);
     }
+
+
+
     public static function getEditCustomFieldAction(CustomForm $customForm): Action {
         return Action::make('edit')
+            ->action(fn (Get $get,$set,array $data,array $arguments) => self::setCustomField($data,$get,$set,$arguments))
             ->closeModalByClickingAway(false)
             ->icon('heroicon-m-pencil-square')
-            ->modalWidth(fn(array $state,array $arguments)=> CustomFieldEditForm::getEditCustomFormActionModalWith($state[$arguments["item"]]))
+            ->modalWidth(fn(array $state,array $arguments)=>
+                CustomFieldEditForm::getEditCustomFormActionModalWith($state[$arguments["item"]])
+            )
+            ->form(fn(Get $get, array $state,array $arguments)=>
+                CustomFieldEditForm::getCustomFieldSchema($state[$arguments["item"]])
+            )
             ->mutateFormDataUsing(fn(Action $action) =>
-                //Get RawSate (yeah is possible)
+                //Get RawSate
                 array_values($action->getLivewire()->getCachedForms())[1]->getRawState()
             )
             ->modalHeading(function(array $state,array $arguments){
@@ -203,22 +191,12 @@ class CustomFieldEditForm
                 else
                     return $data["name_de"] . " Felddaten bearbeiten "; //ToDo Translate
             })
-            ->form(fn(Get $get, array $state,array $arguments)=>
-                CustomFieldEditForm::getCustomFieldSchema(
-                    $customForm,
-                    $state[$arguments["item"]]
-                )
-            )
             ->fillForm(function($state,$arguments) use ($customForm) {
                 $data = $state[$arguments["item"]];
                 $type = CustomFormEditForm::getFieldTypeFromRawDate($data);
                 self::mutateOptionFieldData($type,$data,true);
 
                 return $data;
-            })
-            ->action(function (Get $get,$set,array $data,array $arguments): void {
-
-                self::setCustomField($data,$get,$set,$arguments);
             });
     }
 
@@ -230,7 +208,34 @@ class CustomFieldEditForm
         return'5xl';
     }
 
+    public static function getCustomFieldSchema(array $data):array{
 
+        $isGeneral = array_key_exists("general_field_id",$data)&& !empty($data["general_field_id"]);
+        $type = CustomFormEditForm::getFieldTypeFromRawDate($data);
+        $columns = $isGeneral?1:2;
+
+        return [
+            Group::make()
+                ->columns($columns)
+                ->columnSpanFull()
+                ->label("")
+                ->schema([
+                    Tabs::make()
+                        ->columnStart(1)
+                        ->hidden($isGeneral)
+                        ->tabs([
+                            self::getTranslationTab("de","Deutsch"),
+                            self::getTranslationTab("en","Englisch"),
+                        ]),
+
+                    self::getFieldOptionSection($type)
+                        ->columnSpan(1),
+
+                    Section::make("Regeln"),//toDo Rules Section
+
+                ]),
+        ];
+    }
 
     private static function getFieldOptionSection(CustomFieldType $type): Section {
         return Section::make("Optionen") //ToDo Translate
@@ -247,7 +252,7 @@ class CustomFieldEditForm
                             ->label("Benötigt"), //ToDo Translate
 
                     ]),
-                Fieldset::make() //ToDo load Defaults
+                Fieldset::make()
                     ->statePath("options")
                     ->visible($type->hasExtraTypeOptions())
                     ->schema($type->getExtraTypeOptionComponents())

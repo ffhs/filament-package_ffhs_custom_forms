@@ -35,7 +35,6 @@ class CustomFormPlugin implements Plugin {
             ->resources([
                 CustomFormResource::class,
                 GeneralFieldResource::class,
-                FormVariationResource::class,
                 CustomFormAnswerResource::class,
             ]);
     }
