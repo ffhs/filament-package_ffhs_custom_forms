@@ -5,17 +5,14 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\HasBasicSettings;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\HasCustomFormPackageTranslation;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\HasTypeOptions;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomOption\HasTypeOptions;
 
 class SelectType extends CustomFieldType
 {
     use HasCustomFormPackageTranslation;
-    use HasBasicSettings,HasTypeOptions{
-        HasTypeOptions::getExtraOptionSchema insteadof HasBasicSettings;
-    }
+    use HasBasicSettings;
+    use HasTypeOptions;
 
     public static function getFieldIdentifier(): string { return "select"; }
 
@@ -24,7 +21,9 @@ class SelectType extends CustomFieldType
             'default'  => Types\Views\SelectTypeView::class,
         ];
     }
-
+    public function icon(): String {
+        return  "carbon-select-window";
+    }
 
   /*  public function getExtraOptionSchemaHasOptions() : array{
         return array_merge($this->getExtraOptionSchemaBasicSetup(), [
@@ -55,16 +54,14 @@ class SelectType extends CustomFieldType
     }
 */
 
-    public function getExtraOptionFieldsBasicOptions():array{
+   /* public function getExtraOptionFieldsBasicOptions():array{
         return [
             'several' => false,
             'min_select'=>1,
             'max_select'=> 0,
         ];
-    }
+    }*/
 
 
-    public function icon(): String {
-        return  "carbon-select-window";
-    }
+
 }

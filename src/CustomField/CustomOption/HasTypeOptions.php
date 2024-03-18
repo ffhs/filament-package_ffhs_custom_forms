@@ -1,6 +1,6 @@
 <?php
 
-namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType;
+namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomOption;
 
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomOption;
@@ -8,7 +8,6 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Repeater;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Get;
@@ -16,57 +15,34 @@ use Filament\Forms\Get;
 trait HasTypeOptions
 {
 
-    //ToDo Docs
-    protected function getExtraOptionSchemaHasOptions() : array{
-        return  [];
+    public function getExtraTypeOptionComponents(): array{
+        return array_merge(parent::getExtraTypeOptionComponents(),
+            [
+                Group::make()
+                    ->schema(fn($get)=> is_null($get("../general_field_id"))? []:[$this->getCustomOptionsSelector()])
+                    ->hidden(fn($get)=> is_null($get("../general_field_id")))
+                    ->columnSpanFull(),
+                Group::make()
+                    ->schema(fn($get)=> is_null($get("../general_field_id"))? [$this->getCustomOptionsRepeater()]:[])
+                    ->visible(fn($get)=> is_null($get("../general_field_id")))
+                    ->columnSpanFull(),
+            ]
+        );
     }
 
-    //ToDo Docs
-    protected function getGeneralExtraFieldHasOptions() : array{
-        return  [];
+
+    public function getExtraGeneralTypeOptionComponents(): array {
+        return array_merge(
+            parent::getExtraGeneralTypeOptionComponents(),
+            [$this->getCustomOptionsRepeater(true)]
+        );
     }
 
 
-
-    public function getExtraOptionSchema():?array{
-        return [
-            Group::make()
-                ->statePath("options")
-                ->columnSpanFull()
-                ->columns()
-                ->schema([
-                    Group::make($this->getExtraOptionSchemaHasOptions())->columnSpanFull()->columns(),
-                    Group::make()
-                        ->hidden(fn($get)=> is_null($get("../../../general_field_id")))
-                        ->columnSpanFull()
-                        ->schema(function ($get){
-                            if(!is_null($get("../../../general_field_id"))) return [$this->getCustomOptionsSelector()];
-                            return [];
-                        }),
-                ])->hidden(fn ($get)=>is_null($get("../../general_field_id")) && empty($this->getExtraOptionSchemaHasOptions())),
-            Group::make()
-                ->columnSpanFull()
-                ->schema(function ($get){
-                    if(is_null($get("../../general_field_id"))) return [$this->getCustomOptionsRepeater()];
-                    return [];
-                }),
-        ];
+    public function hasExtraGeneralTypeOptions(): bool {
+        return true;
     }
 
-    public function getGeneralExtraField(): ?array {
-        $extraFields = $this->getGeneralExtraFieldHasOptions();
-        return [
-            Group::make($extraFields)->hidden(empty($extraFields))->columns(),
-            $this->getCustomOptionsRepeater(true),
-        ];
-    }
-
-    public function getExtraOptionsComponent(): ?Component{
-        if(!$this->hasExtraOptions()) return null;
-        return Section::make()
-            ->schema($this->getExtraOptionSchema())
-            ->columns();
-    }
 
     protected function getCustomOptionsRepeater (bool $withIdentifikator = false): Repeater {
         $repeater = Repeater::make("customOptions")
@@ -101,13 +77,13 @@ trait HasTypeOptions
                 ->columnSpanFull()
                 ->multiple()
                 ->options(function($get){
-                    $generalField = GeneralField::cached($get("../../../general_field_id"));
+                    $generalField = GeneralField::cached($get("../general_field_id"));
                     return $generalField->customOptions->pluck("name_de","identifier"); //toDo Translate;
-                })
-            ;
+                });
     }
 
-    public function mutateVariationDataBeforeFill(array $data):array{
+
+    public function mutateVariationDataBeforeFillOLD(array $data):array{
         $data = parent::mutateVariationDataBeforeFill($data);
         if(empty($data["id"]))return $data;
         if(!empty($data["general_field_id"])) return $data;
@@ -125,7 +101,7 @@ trait HasTypeOptions
     }
 
 
-    public function afterCustomFieldVariationSave(?CustomFieldVariation $variation, array $variationData):void {
+    public function afterCustomFieldVariationSaveOLD(?CustomFieldVariation $variation, array $variationData):void {
         $customOptions = $variation->customOptions;
 
         if(empty($variationData["customOptions"])) {
@@ -151,7 +127,7 @@ trait HasTypeOptions
         }
     }
 
-    public static function prepareCloneOptions(array $variationData, string $target, $set, Get $get) :array{
+    public static function prepareCloneOptionsOLD(array $variationData, string $target, $set, Get $get) :array{
         if(!empty($get("general_field_id"))) return $variationData["options"];
 
         $customOptions = $variationData["customOptions"] ;
@@ -160,7 +136,7 @@ trait HasTypeOptions
         $set($target.".customOptions",$customOptions);
         return $variationData["options"];
     }
-    public function getAvailableCustomOptions(CustomFieldVariation $record) : \Illuminate\Support\Collection{
+    public function getAvailableCustomOptionsOLD(CustomFieldVariation $record) : \Illuminate\Support\Collection{
         if($record->customField->isInheritFromGeneralField()) {
             $options = $record
                 ->customField
@@ -172,11 +148,43 @@ trait HasTypeOptions
         return $options->pluck("name_de","identifier");//ToDo Translate
     }
 
-    public function getAllCustomOptions(CustomFieldVariation|CustomFieldAnswer $record) : \Illuminate\Support\Collection{
+    public function getAllCustomOptionsOLD(CustomFieldVariation|CustomFieldAnswer $record) : \Illuminate\Support\Collection{
         if($record instanceof CustomFieldAnswer) $record = $record->customFieldVariation;
         if($record->customField->isInheritFromGeneralField()) $options = $record->customField->generalField->customOptions;
         else $options = $record->customOptions;
         return $options->pluck("name_de","identifier");//ToDo Translate
     }
 
+
+
+    /*public function getExtraOptionSchema():?array{
+        return [
+            Group::make()
+                ->statePath("options")
+                ->columnSpanFull()
+                ->columns()
+                ->schema([
+                    Group::make($this->getExtraOptionSchemaHasOptions())->columnSpanFull()->columns(),
+                    Group::make()
+                        ->hidden(fn($get)=> is_null($get("../../../general_field_id")))
+                        ->columnSpanFull()
+                        ->schema(function ($get){
+                            if(!is_null($get("../../../general_field_id"))) return [$this->getCustomOptionsSelector()];
+                            return [];
+                        }),
+                ])->hidden(fn ($get)=>is_null($get("../../general_field_id")) && empty($this->getExtraOptionSchemaHasOptions())),
+            Group::make()
+                ->columnSpanFull()
+                ->schema(function ($get){
+                    if(is_null($get("../../general_field_id"))) return [$this->getCustomOptionsRepeater()];
+                    return [];
+                }),
+        ];
+    }*/
+    /*public function getExtraOptionsComponent(): ?Component{
+        if(!$this->hasExtraOptions()) return null;
+        return Section::make()
+            ->schema($this->getExtraOptionSchema())
+            ->columns();
+    }*/
 }

@@ -5,9 +5,8 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\HasBasicSettings;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\HasCustomFormPackageTranslation;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\HasTypeOptions;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types;
-use Filament\Forms\Components\TextInput;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomOption\HasTypeOptions;
 
 class CheckboxListType extends CustomFieldType
 {
