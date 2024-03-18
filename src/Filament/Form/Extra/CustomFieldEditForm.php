@@ -203,8 +203,8 @@ class CustomFieldEditForm
     public static function getEditCustomFormActionModalWith(array $state): string {
         $type = CustomFormEditForm::getFieldTypeFromRawDate($state);
         if(!empty($state["general_field_id"])) return 'xl';
-        $hasOptionsForVariations = $type->canBeRequired()||$type->canBeDeactivate()||$type->hasExtraTypeOptions();
-        if(!$hasOptionsForVariations) return 'xl';
+        $hasOptions = $type->canBeRequired()||$type->canBeDeactivate()||$type->hasExtraTypeOptions();
+        if(!$hasOptions) return 'xl';
         return'5xl';
     }
 

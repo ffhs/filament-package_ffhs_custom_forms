@@ -3,6 +3,7 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption;
 
 use Closure;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Filament\Forms\Components\Component;
 
 abstract class TypeOption
@@ -13,10 +14,13 @@ abstract class TypeOption
     public abstract function getDefaultValue():mixed;
     public abstract function getComponent(string $name):Component;
 
-    public function mutateOnSave(mixed $value):mixed{
+    public function mutateOnCreate(mixed $value):mixed{
         return $value;
     }
-    public function mutateOnLoad(mixed $value):mixed{
+    public function mutateOnSave(mixed $value, CustomField $field):mixed{
+        return $value;
+    }
+    public function mutateOnLoad(mixed $value, CustomField $field):mixed{
         return $value;
     }
 
