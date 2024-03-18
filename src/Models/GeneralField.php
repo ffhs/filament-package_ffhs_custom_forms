@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\Cache;
  * @property string $icon
  * @property array $extra_options
  * @property Collection $customOptions
+ * @property Collection $generalFieldForms
  */
 class GeneralField extends ACustomField
 {

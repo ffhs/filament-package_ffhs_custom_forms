@@ -16,7 +16,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class GeneralFieldForm extends Model
 {
 
-    use HasFormIdentifyer;
+    use HasFormIdentifier;
 
     protected $table = "general_field_form";
     protected $fillable = [

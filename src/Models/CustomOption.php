@@ -19,7 +19,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class CustomOption extends Model
 {
-    use HasFormIdentifyer;
+    use HasFormIdentifier;
     use HasFactory;
 
     protected $fillable = [

@@ -3,6 +3,7 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\Resources;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomFieldType;
+use Ffhs\FilamentPackageFfhsCustomForms\FormConfiguration\DynamicFormConfiguration;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Ffhs\FilamentPackageFfhsCustomForms\Resources\GeneralFieldsResource\Pages\{CreateGeneralField,
     EditGeneralField,
@@ -198,7 +199,7 @@ class GeneralFieldResource extends Resource
                     ->state(fn(GeneralField $record) =>
                         $record->generalFieldForms
                             ->map(fn($generalFieldForm) => $generalFieldForm->dynamicFormConfiguration())
-                            ->map(fn(string $class) => ($class)::displayName())
+                            ->map(fn(DynamicFormConfiguration $class) => ($class)::displayName())
                     ),
 
                 Tables\Columns\ToggleColumn::make('is_active')

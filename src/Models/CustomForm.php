@@ -23,7 +23,7 @@ use Illuminate\Support\Facades\Cache;
  */
 class CustomForm extends Model
 {
-    use HasFormIdentifyer;
+    use HasFormIdentifier;
     use HasFactory;
 
 

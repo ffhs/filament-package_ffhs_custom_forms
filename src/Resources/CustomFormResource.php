@@ -56,10 +56,8 @@ class CustomFormResource extends Resource
 
             ])
             ->actions([
-                Tables\Actions\Action::make("to_variations")
-                    ->label("Variationen") //ToDo Translate
-                    ->url(fn($record)=>CustomFormResource::getUrl('variations', ['record' => $record->id]))
-                    ->link()
+                Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make()
             ])
             ->columns([
                 Tables\Columns\TextColumn::make("id"),
@@ -89,7 +87,6 @@ class CustomFormResource extends Resource
             'index' => ListCustomFormField::route('/'),
             'create' => CreateCustomForm::route('/create'),
             'edit' => EditCustomForm::route('/{record}/edit'),
-            'variations' => ViewVariationsFromCustomForm::route('/{record}/variations'),
         ];
     }
 }
