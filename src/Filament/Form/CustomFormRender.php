@@ -17,7 +17,7 @@ use Illuminate\Support\Collection;
 class CustomFormRender
 {
 
-    public static function generateFormSchema(CustomForm $form, string $viewMode, null|int|Model $variation = null):array{
+    public static function generateFormSchema(CustomForm $form, string $viewMode):array{
         $customFields = $form->cachedFields();
 
         $render= self::getFormRender($viewMode,$form);
@@ -166,13 +166,8 @@ class CustomFormRender
 
         foreach($answerer->customFieldAnswers as $fieldAnswer){
             /**@var CustomFieldAnswer $fieldAnswer*/
-            $customField = $customFields
-                ->filter(fn(CustomField $field) =>
-                    !is_null(
-                        $field->customFieldVariations->firstWhere("id", $fieldAnswer->custom_field_variation_id)
-                    )
-                )
-                ->first();
+            /**@var CustomField $customField*/
+            $customField = $customFields->where("id", $fieldAnswer->custom_field_id)->first();
             $fieldData = $customField
                 ->getType()
                 ->prepareLoadFieldData($fieldAnswer->answer);

@@ -11,15 +11,12 @@ use Illuminate\Support\Facades\Cache;
 
 /**
  * @property int|null general_field_id
- * @property Collection $customFieldVariation
  * @property int  custom_form_id
- * @property bool $has_variations
  * @property bool $required
  * @property bool $is_active
  * @property int $form_position
  * @property int|null $layout_end_position
  *
- * @property Collection|null customFieldVariations
  * @property Collection|null allCustomFieldsInLayout
  * @property string|null identify_key
  * @property array options
@@ -46,7 +43,6 @@ class CustomField extends ACustomField
         'is_active',
         'options',
         'custom_form_id',
-        'has_variations',
         'form_position',
         'layout_end_position',
         'identify_key',

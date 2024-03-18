@@ -37,11 +37,6 @@ abstract class DynamicFormConfiguration
         return [];
     }
 
-    public static function hasVariations(): bool{
-        return false;
-    }
-
-
 
     public final static function getFormConfigurationClass(string $custom_form_identifier):String {
         return collect(config("ffhs_custom_forms.forms"))->where(fn(string $class)=> $class::identifier() == $custom_form_identifier)->first();
