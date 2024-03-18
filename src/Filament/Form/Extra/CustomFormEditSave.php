@@ -146,7 +146,7 @@ class CustomFormEditSave
             $data = null;
             if(array_key_exists($name,$options)) $data = $options[$name];
             if($customField->exists) $options[$name] = $option->mutateOnSave($data, $customField);
-            else $options[$name] = $option->mutateOnCreate($data);
+            else $options[$name] = $option->mutateOnCreate($data,$customField);
         }
         $customFieldData["options"] = $options;
         return $customFieldData;

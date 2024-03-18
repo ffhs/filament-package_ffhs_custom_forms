@@ -14,12 +14,13 @@ abstract class TypeOption
     public abstract function getDefaultValue():mixed;
     public abstract function getComponent(string $name):Component;
 
-    public function mutateOnCreate(mixed $value):mixed{
+    public function mutateOnCreate(mixed $value, CustomField $field):mixed{
         return $value;
     }
     public function mutateOnSave(mixed $value, CustomField $field):mixed{
         return $value;
     }
+    //ToDo
     public function mutateOnLoad(mixed $value, CustomField $field):mixed{
         return $value;
     }

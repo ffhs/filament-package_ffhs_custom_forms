@@ -113,16 +113,12 @@ class CustomFormRender
     }
 
 
-    public static function saveHelper(CustomFormAnswer $fieldAnswerer, array $formData, Model|int|null $variation) :void{
-        $customForm = CustomForm::cached($fieldAnswerer->custom_form_id);
+    public static function saveHelper(CustomFormAnswer $formAnswerer, array $formData) :void{
+        $customForm = CustomForm::cached($formAnswerer->custom_form_id);
 
-        $customFieldAnswers = $fieldAnswerer->customFieldAnswers;
+        $customFieldAnswers = $formAnswerer->customFieldAnswers;
         $keys = $customFieldAnswers
-            ->map(function(CustomFieldAnswer $answer) use ($customForm) {
-                $customFieldId = $answer->customFieldVariation->custom_field_id;
-                $customField = $customForm->cachedField($customFieldId);
-                return $customField->getInheritState()["identify_key"];
-            })
+            ->map(fn(CustomFieldAnswer $answer)=> $answer->customField->getInheritState()["identify_key"])
             ->toArray();
         $customFieldAnswersArray = [];
         $customFieldAnswers->each(function($model) use (&$customFieldAnswersArray) {$customFieldAnswersArray[] = $model;});
@@ -135,9 +131,8 @@ class CustomFormRender
         $customFieldsIdentify = array_combine($keys, $customFieldArray);
 
         foreach($formData as $key => $fieldData){
-            if(empty($customFieldsIdentify[$key])){
-                continue;
-            }
+            if(empty($customFieldsIdentify[$key])) continue;
+
 
             /**@var CustomField $customField*/
             $customField = $customFieldsIdentify[$key];
@@ -150,13 +145,13 @@ class CustomFormRender
             /**@var null|CustomFieldAnswer $customFieldAnswer*/
             if(empty( $fieldAnswersIdentify[$key]))
                 $customFieldAnswer= new CustomFieldAnswer([
-                    "custom_field_variation_id" => $customField->getVariation($variation)->id,
-                    "custom_form_answer_id" => $fieldAnswerer->id,
+                    "custom_field_id" => $customField->id,
+                    "custom_form_answer_id" => $formAnswerer->id,
                 ]);
             else $customFieldAnswer = $fieldAnswersIdentify[$key];
 
             $customFieldAnswer->answer = $fieldAnswererData;
-            $customFieldAnswer->save();
+            if(!$customFieldAnswer->exists|| $customFieldAnswer->isDirty())$customFieldAnswer->save();
         }
 
     }

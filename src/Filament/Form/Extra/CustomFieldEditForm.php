@@ -192,9 +192,10 @@ class CustomFieldEditForm
                     return $data["name_de"] . " Felddaten bearbeiten "; //ToDo Translate
             })
             ->fillForm(function($state,$arguments) use ($customForm) {
+
                 $data = $state[$arguments["item"]];
-                $type = CustomFormEditForm::getFieldTypeFromRawDate($data);
-                self::mutateOptionFieldData($type,$data,true);
+                //$type = CustomFormEditForm::getFieldTypeFromRawDate($data);
+                //self::mutateOptionFieldData($type,$data,true);
 
                 return $data;
             });
@@ -260,32 +261,10 @@ class CustomFieldEditForm
             ]);
     }
 
-    private static function mutateOptionFieldData(CustomFieldType $type, array $data, bool $load):array {
-        if(!array_key_exists("options", $data))return $data;
-
-        $typeOptions =  $type->getExtraTypeOptions();
-
-        $options = $data["options"];
-
-        foreach ($data as $optionName => $optionData){
-            if(!array_key_exists($optionName,$typeOptions)){
-                unset($options[$optionName]);
-                continue;
-            }
-            $typeOption = $typeOptions[$optionName];
-            /**@var TypeOption $typeOption*/
-            if($load) $options[$optionName] = $typeOption->mutateOnLoad($optionData);
-            else $options[$optionName] = $typeOption->mutateOnSave($optionData);
-        }
-
-        $data["options"]=$options;
-
-        return $data;
-    }
 
     private static function setCustomField(array $data, Get $get, $set, ?array $arguments = null):void {
-        $type = CustomFormEditForm::getFieldTypeFromRawDate($data);
-        $data = self::mutateOptionFieldData($type,$data,false);
+       // $type = CustomFormEditForm::getFieldTypeFromRawDate($data);
+       // $data = self::mutateOptionFieldData($type,$data,false);
         $fields = $get("custom_fields");
         if(is_null($arguments)) $fields[uniqid()] = $data;
         else $fields[$arguments["item"]] = $data;

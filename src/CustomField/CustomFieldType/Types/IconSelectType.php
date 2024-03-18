@@ -22,6 +22,6 @@ class IconSelectType extends CustomFieldType
 
 
     public function icon(): string {
-        return  "bi-check-square";
+        return  "tabler-color-picker";
     }
 }
