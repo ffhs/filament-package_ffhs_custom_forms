@@ -27,8 +27,8 @@ class IconSelectView implements FieldTypeView
             ->label(FormMapper::getToolTips($record))
             ->modifyTextInputUsing(fn(TextInput $textInput)=> $textInput
                 ->inlineLabel(FormMapper::getOptionParameter($record,"in_line_label"))
-                ->helperText($type::class::getToolTips($record))
-                ->label($type::class::getLabelName($record))
+                ->helperText(FormMapper::getToolTips($record))
+                ->label(FormMapper::getLabelName($record))
             );
 
     }

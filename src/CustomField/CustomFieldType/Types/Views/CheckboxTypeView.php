@@ -19,8 +19,8 @@ class CheckboxTypeView implements FieldTypeView
         return Checkbox::make(FormMapper::getIdentifyKey($record))
             ->columnStart(FormMapper::getOptionParameter($record,"new_line_option"))
             ->inlineLabel(FormMapper::getOptionParameter($record,"in_line_label"))
-            ->helperText($type::class::getToolTips($record))
-            ->label($type::class::getLabelName($record))
+            ->helperText(FormMapper::getToolTips($record))
+            ->label(FormMapper::getLabelName($record))
             ->required($record->required);
     }
 
@@ -29,7 +29,7 @@ class CheckboxTypeView implements FieldTypeView
         return IconEntry::make(FormMapper::getIdentifyKey($record))
             ->columnStart(FormMapper::getOptionParameter($record,"new_line_option"))
             ->state(is_null(FormMapper::getAnswer($record))? false : FormMapper::getAnswer($record))
-            ->label($type::class::getLabelName($record). ":")
+            ->label(FormMapper::getLabelName($record). ":")
             ->columnSpanFull()
             ->inlineLabel()
             ->boolean();

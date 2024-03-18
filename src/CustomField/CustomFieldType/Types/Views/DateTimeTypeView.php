@@ -20,8 +20,8 @@ class DateTimeTypeView implements FieldTypeView
             ->columnStart(FormMapper::getOptionParameter($record,"new_line_option"))
             ->inlineLabel(FormMapper::getOptionParameter($record,"in_line_label"))
             ->columnSpan(FormMapper::getOptionParameter($record,"column_span"))
-            ->label($type::class::getLabelName($record))
-            ->helperText($type::class::getToolTips($record))
+            ->label(FormMapper::getLabelName($record))
+            ->helperText(FormMapper::getToolTips($record))
             ->format(self::getFormat($record))
             ->required($record->required);
     }
@@ -31,7 +31,7 @@ class DateTimeTypeView implements FieldTypeView
         return TextEntry::make(FormMapper::getIdentifyKey($record))
             ->columnStart(FormMapper::getOptionParameter($record,"new_line_option"))
             ->dateTime(self::getFormat($record->customField))
-            ->label($type::class::getLabelName($record). ":")
+            ->label(FormMapper::getLabelName($record). ":")
             ->state(FormMapper::getAnswer($record))
             ->columnSpanFull()
             ->inlineLabel();

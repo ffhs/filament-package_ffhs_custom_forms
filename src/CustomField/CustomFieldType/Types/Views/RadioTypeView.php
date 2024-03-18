@@ -12,6 +12,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Radio;
 use Filament\Infolists\Components\IconEntry;
+use Livewire\Form;
 
 class RadioTypeView implements FieldTypeView
 {
@@ -27,8 +28,8 @@ class RadioTypeView implements FieldTypeView
             ->inlineLabel(FormMapper::getOptionParameter($record,"in_line_label"))
             ->columnSpan(FormMapper::getOptionParameter($record,"column_span"))
             ->inline(FormMapper::getOptionParameter($record,"inline"))
-            ->helperText($type::class::getToolTips($record))
-            ->label($type::class::getLabelName($record))
+            ->helperText(FormMapper::getToolTips($record))
+            ->label(FormMapper::getLabelName($record))
             ->required($record->required);
 
         if(FormMapper::getOptionParameter($record,"boolean")) $radio->boolean();

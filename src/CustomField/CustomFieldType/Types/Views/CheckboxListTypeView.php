@@ -24,8 +24,8 @@ class CheckboxListTypeView implements FieldTypeView
             ->columnSpan(FormMapper::getOptionParameter($record,"column_span"))
             ->columns(FormMapper::getOptionParameter($record,"columns"))
             ->options($type->getAvailableCustomOptions($record))
-            ->helperText($type::class::getToolTips($record))
-            ->label($type::class::getLabelName($record))
+            ->helperText(FormMapper::getToolTips($record))
+            ->label(FormMapper::getLabelName($record))
             ->required($record->required);
     }
 

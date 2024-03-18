@@ -3,6 +3,7 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\View;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomFieldType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FormMapper;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Filament\Infolists\Components\Component;
 use Filament\Infolists\Components\TextEntry;
@@ -27,7 +28,7 @@ trait HasCustomOptionInfoListView
 
         $textEntry
             ->columnStart(FormMapper::getOptionParameter($record,"new_line_option"))
-            ->label($type::class::getLabelName($record). ":")
+            ->label(FormMapper::getLabelName($record). ":")
             ->columnSpanFull()
             ->inlineLabel()
             ->badge()

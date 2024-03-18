@@ -27,7 +27,7 @@ class EmailTypeView implements FieldTypeView
         array $parameter = []): TextEntry {
         return TextEntry::make(FormMapper::getIdentifyKey($record))
             ->columnStart(FormMapper::getOptionParameter($record,"new_line_option"))
-            ->label($type::class::getLabelName($record). ":")
+            ->label(FormMapper::getLabelName($record). ":")
             ->state(FormMapper::getAnswer($record))
             ->columnSpanFull();
     }
