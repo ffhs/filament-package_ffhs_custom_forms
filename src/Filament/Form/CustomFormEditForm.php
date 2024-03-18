@@ -66,27 +66,31 @@ class CustomFormEditForm
             ->itemLabel(function($state){
                 $styleClasses = "text-sm font-medium ext-gray-950 dark:text-white truncate select-none";
                 $type = self::getFieldTypeFromRawDate($state);
-                $icon = Blade::render('<x-'. $type->icon() .' class="h-4 w-4 "/>') ; //ToDo Fix
-                $badgeCount= null;
+                $generalBadge= null;
 
                 if(!empty($state["general_field_id"])){
-                    $badgeCount = new HtmlBadge("Gen", Color::rgb("rgb(43, 164, 204)")); Blade::render('<x-filament::badge size="Gen">New</x-filament::badge>');
-                    $name = GeneralField::cached($state["general_field_id"])->name_de; //ToDo Translate
+                    $generalBadge = new HtmlBadge("Gen", Color::rgb("rgb(43, 164, 204)")); Blade::render('<x-filament::badge size="Gen">New</x-filament::badge>');
+                    $genField = GeneralField::cached($state["general_field_id"]);
+                    $name = $genField->name_de; //ToDo Translate
+                    $icon = Blade::render('<x-'. $genField->icon .' class="h-4 w-4 "/>') ;
                 }
-                else  $name = $state["name_de"]; //ToDo Translate
+                else  {
+                    $name = $state["name_de"]; //ToDo Translate
+                    $icon = Blade::render('<x-'. $type->icon() .' class="h-4 w-4 "/>') ;
+                }
 
-                $generalBadge =null;
+                $badgeCount =null;
                 if($type instanceof CustomLayoutType){
                     $size = empty($state["custom_fields"])?0:sizeof($state["custom_fields"]);
-                    $generalBadge = new HtmlBadge($size);
+                    $badgeCount = new HtmlBadge($size);
                     $span = '<span x-on:click.stop="isCollapsed = !isCollapsed" class="cursor-pointer flex" >';
                 }
                 else $span = '<span  class="cursor-pointer flex">';
 
                 $h4 = '<h4 class="'.$styleClasses.'">';
                 $html = "</h4>". $span;
-                if(!is_null($generalBadge)) $html .= '<span class="px-1.5">'. $generalBadge. '</span>';
                 if(!is_null($badgeCount)) $html .= '<span class="px-1.5">'. $badgeCount. '</span>';
+                if(!is_null($generalBadge)) $html .= '<span class="px-1.5">'. $generalBadge. '</span>';
                 $html .= '<span class="px-1.5">' .$icon . '</span>'. $h4 . $name . " </h4></span><h4>";
 
                  return  new HtmlString($html);
