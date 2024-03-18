@@ -15,11 +15,11 @@ class FormMapper
     }
     public static function getIdentifyKey(CustomField|CustomFieldAnswer  $record) :String{
         if($record instanceof  CustomFieldAnswer) $record = $record->customField;
-        return  $record->customField->getInheritState()["identify_key"];
+        return  $record->getInheritState()["identify_key"];
     }
     public static function getLabelName(CustomField|CustomFieldAnswer  $record) :String{
         if($record instanceof  CustomFieldAnswer) $record = $record->customField;
-        return  $record->customField->getInheritState()["name_" . App::currentLocale()];
+        return  $record->getInheritState()["name_" . App::currentLocale()];
     }
 
     public static function getOptionParameter(CustomField|CustomFieldAnswer $record, string $option){

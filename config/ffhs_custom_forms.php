@@ -17,7 +17,20 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\Types\Secti
 
 return [
 
+    'cache_duration'=> 1,
     'default_column_count' => 8,
+
+    "field_rules"=>[
+
+    ],
+
+    "forms"=>[
+
+    ],
+
+    'view_modes' => [
+
+    ],
 
     "custom_field_types" => [
         CheckboxType::class,
@@ -34,15 +47,6 @@ return [
         CheckboxListType::class,
         ToggleButtonsType::class,
     ],
-
-    "field_rules"=>[
-
-    ],
-
-    "forms"=>[
-
-    ],
-
     "general_field_types"=>[
         CheckboxType::class,
         DateTimeType::class,
@@ -56,10 +60,6 @@ return [
         RadioType::class,
         CheckboxListType::class,
         ToggleButtonsType::class,
-    ],
-
-    'view_modes' => [
-
     ],
 
 ];

@@ -59,7 +59,7 @@ abstract class CustomFieldType extends CustomFieldTypeMethods
         return ($viewMods[$viewMode])::getInfolistComponent($this,$record,$parameter);
     }
 
-    public function getViewModes(?string $dynamicFormConfiguration = null):array {
+    public function getViewModes(null|string|DynamicFormConfiguration $dynamicFormConfiguration = null):array {
         $viewMods = $this->viewModes();
 
         /**@var DynamicFormConfiguration $dynamicFormConfig*/

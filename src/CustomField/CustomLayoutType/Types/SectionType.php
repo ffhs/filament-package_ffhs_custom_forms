@@ -7,6 +7,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\HasBasicSett
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\HasCustomFormPackageTranslation;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\CustomLayoutType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\Types\Views\SectionTypeView;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\FastTypeOption;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 
@@ -15,6 +16,7 @@ class SectionType extends CustomLayoutType
 
     use HasBasicSettings;
     use HasCustomFormPackageTranslation;
+    use HasBasicSettings;
 
     public static function getFieldIdentifier(): string {
         return "section";
@@ -24,6 +26,10 @@ class SectionType extends CustomLayoutType
         return [
             "default" => SectionTypeView::class
         ];
+    }
+
+    public function icon(): string {
+        return  "tabler-section";
     }
 
     public function getExtraOptionFields(): array {
@@ -36,31 +42,30 @@ class SectionType extends CustomLayoutType
         ];
     }
 
-    public function getExtraOptionSchema(): ?array {
+
+    protected function extraOptionsBeforeBasic(): array {
         return [
-            $this->getColumnSpanOption(),
-            TextInput::make("columns")
-                ->label("Anzahl Spalten") //ToDo Translate
-                ->maxValue(10)
-                ->minValue(1)
-                ->step(1)
-                ->required()
-                ->integer(),
-            Toggle::make("show_title")
-                ->label("Titel Anzeigen") //ToDo Translate
-                ->columnSpan(2)
-                ->columnStart(1),
-            Toggle::make("aside")
-                ->label("Seitlich Anzeigen") //ToDo Translate
-                ->columnStart(1),
-            $this->getNewLineOption()->columnStart(1),
-            $this->getInLineLabelOption(),
+            new FastTypeOption(4,
+                TextInput::make("columns")
+                    ->label("Anzahl Spalten") //ToDo Translate
+                    ->maxValue(10)
+                    ->minValue(1)
+                    ->step(1)
+                    ->required()
+                    ->integer()
+            ),
+            new FastTypeOption(true,
+                Toggle::make("show_title")
+                    ->label("Titel Anzeigen") //ToDo Translate
+                    ->columnSpan(2)
+                    ->columnStart(1),
+            ),
+            new FastTypeOption(false,
+                Toggle::make("aside")
+                    ->label("Seitlich Anzeigen") //ToDo Translate
+                    ->columnStart(1),
+            )
         ];
     }
 
-
-
-    public function icon(): string {
-       return  "tabler-section";
-    }
 }

@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Cache;
  * @property int  custom_form_id
  * @property bool $has_variations
  * @property bool $required
- * @property bool $active
+ * @property bool $is_active
  * @property int $form_position
  * @property int|null $layout_end_position
  *

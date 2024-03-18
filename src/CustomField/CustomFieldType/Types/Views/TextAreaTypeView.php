@@ -24,15 +24,15 @@ class TextAreaTypeView implements FieldTypeView
             ->maxLength(FormMapper::getOptionParameter($record,"max_length"))
             ->minLength(FormMapper::getOptionParameter($record,"min_length"))
             ->autosize(FormMapper::getOptionParameter($record,"auto_size"))
-            ->helperText($type::class::getToolTips($record))
-            ->label($type::class::getLabelName($record));
+            ->helperText(FormMapper::getToolTips($record))
+            ->label(FormMapper::getLabelName($record));
     }
 
     public static function getInfolistComponent(CustomFieldType $type, CustomFieldAnswer $record,
         array $parameter = []): Component {
         return TextEntry::make(FormMapper::getIdentifyKey($record))
             ->columnStart(FormMapper::getOptionParameter($record,"new_line_option"))
-            ->label($type::class::getLabelName($record). ":")
+            ->label(FormMapper::getLabelName($record). ":")
             ->state(FormMapper::getAnswer($record))
             ->columnSpanFull();
     }
