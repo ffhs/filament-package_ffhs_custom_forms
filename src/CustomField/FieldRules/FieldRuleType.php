@@ -64,4 +64,9 @@ abstract class FieldRuleType
 
     }
 
+    public function getTranslatedName() {
+        //ToDo
+        return $this->identifier();
+    }
+
 }

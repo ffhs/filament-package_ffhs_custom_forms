@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  *
  * @property string rule_type_identifier
  * @property string anchor_identifier
+ * @property string rule_name
  *
  * @property array anchor_data
  * @property array rule_type_data
@@ -29,6 +30,7 @@ class FieldRule extends Model
         'anchor_data',
         'rule_type_identifier',
         'rule_type_data',
+        'rule_name'
     ];
 
 

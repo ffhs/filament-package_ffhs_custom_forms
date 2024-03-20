@@ -16,6 +16,7 @@ return new class () extends Migration {
     {
         Schema::create('field_rules', function (Blueprint $table) {
             $table->id();
+            $table->string("rule_name");
             $table->foreignIdFor(CustomField::class)->constrained()->cascadeOnDelete();
             $table->string("anchor_identifier");
             $table->json("anchor_data")->nullable();

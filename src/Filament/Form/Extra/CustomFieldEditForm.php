@@ -5,7 +5,6 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Form\Extra;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\TypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Form\CustomFormEditForm;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralFieldForm;
@@ -92,7 +91,7 @@ class CustomFieldEditForm
                     ))
                     ->outlined()
                     ->mutateFormDataUsing(fn(Action $action) => array_values($action->getLivewire()->getCachedForms())[1]->getRawState())//Get RawSate (yeah is possible)
-                    ->form(fn(Get $get, CustomForm $record) => CustomFieldEditForm::getCustomFieldSchema(["type" => $type::getFieldIdentifier()]))
+                    ->form(fn(Get $get) => CustomFieldEditForm::getCustomFieldSchema(["type" => $type::getFieldIdentifier()],$record))
                     ->modalWidth(fn(Get $get) => self::getEditCustomFormActionModalWith(["type" => $type::getFieldIdentifier()]))
                     ->disabled(fn(Get $get) => is_null($type::getFieldIdentifier()))
                     ->fillForm(fn($get) => [
@@ -103,6 +102,7 @@ class CustomFieldEditForm
                     ->closeModalByClickingAway(false)
                     ->action(function ($set, Get $get, array $data) {
                         //Add to the other Fields
+                        $data["identify_key"] = uniqid();
                         self::setCustomField($data,$get,$set);
                     })
             ]);
@@ -145,7 +145,7 @@ class CustomFieldEditForm
             Actions::make([
                     Action::make("add_general_field")
                         ->modalWidth(fn(Get $get)=> self::getEditCustomFormActionModalWith(["general_field_id"=> $get("add_general_field_id")]))
-                        ->form(fn(Get $get, CustomForm $record)=> CustomFieldEditForm::getCustomFieldSchema(["general_field_id" => $get("add_general_field_id")]))
+                        ->form(fn(Get $get, CustomForm $record)=> CustomFieldEditForm::getCustomFieldSchema(["general_field_id" => $get("add_general_field_id")],$record))
                         ->mutateFormDataUsing(fn(Action $action) =>array_values($action->getLivewire()->getCachedForms())[1]->getRawState())//Get RawSate (yeah is possible)
                         ->fillForm(fn($get)=> [
                             "is_active"=> true,
@@ -179,7 +179,7 @@ class CustomFieldEditForm
                 CustomFieldEditForm::getEditCustomFormActionModalWith($state[$arguments["item"]])
             )
             ->form(fn(Get $get, array $state,array $arguments)=>
-                CustomFieldEditForm::getCustomFieldSchema($state[$arguments["item"]])
+                CustomFieldEditForm::getCustomFieldSchema($state[$arguments["item"]],$customForm)
             )
             ->mutateFormDataUsing(fn(Action $action) =>
                 //Get RawSate
@@ -217,7 +217,7 @@ class CustomFieldEditForm
         return'5xl';
     }
 
-    public static function getCustomFieldSchema(array $data):array{
+    public static function getCustomFieldSchema(array $data, CustomForm $customForm):array{
 
         $isGeneral = array_key_exists("general_field_id",$data)&& !empty($data["general_field_id"]);
         $type = CustomFormEditForm::getFieldTypeFromRawDate($data);
@@ -240,7 +240,7 @@ class CustomFieldEditForm
                     self::getFieldOptionSection($type)
                         ->columnSpan(1),
 
-                    Section::make("Regeln"),//toDo Rules Section
+                    CustomFieldRuleEditForm::getRuleComponent($customForm,$type)
 
                 ]),
         ];

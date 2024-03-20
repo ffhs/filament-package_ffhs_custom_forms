@@ -54,7 +54,7 @@ class CustomFormEditSave
             /**@var CustomField $record*/
             $record = ($existingRecords[$itemKey] ?? new CustomField());
             self::updateCustomField($record, $itemData);
-
+            self::updateFieldRules($record,$itemData);
         }
         return $itemOrder;
     }
@@ -93,7 +93,7 @@ class CustomFormEditSave
 
     }
 
-    private static function updateCustomField(CustomField $customField,array $itemData): void {
+    private static function updateCustomField(CustomField &$customField,array $itemData): void {
         $type = CustomFormEditForm::getFieldTypeFromRawDate($itemData);
 
         $rawData = $itemData;
@@ -104,6 +104,7 @@ class CustomFormEditSave
         $customField->fill($customFieldData);
         if(!$customField->exists||$customField->isDirty()) $customField->save();
         $type->doAfterFieldSave($customField, $rawData);
+
     }
 
     public static function getGeneralFieldRepeaterValidationRule():Closure {
@@ -153,5 +154,24 @@ class CustomFormEditSave
         }
         $customFieldData["options"] = $options;
         return $customFieldData;
+    }
+
+    private static function updateFieldRules(CustomField $customField, array $itemData): void { //ToDo make setting which is running first
+        if(!array_key_exists("rules",$itemData)) $rules = [];
+        else $rules = $itemData["rules"];
+
+        $existingIds = [];
+        $toCreate = [];
+        foreach ($rules as $ruleData){
+            if(!array_key_exists("id",$ruleData)){
+                $toCreate[] = $ruleData; //ToDo Mutate Rule Datas
+                continue;
+            }
+            $id= $ruleData["id"];
+            $customField->fieldRules->where("id", $id)->first()?->update($ruleData); //ToDo make with upsert
+            $existingIds[] = $id;
+        }
+        $customField->fieldRules()->whereNotIn("id",$existingIds)->delete();
+        $customField->fieldRules()->createMany($toCreate);
     }
 }

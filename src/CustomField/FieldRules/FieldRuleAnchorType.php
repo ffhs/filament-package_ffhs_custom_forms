@@ -2,7 +2,6 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules;
 
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
@@ -36,7 +35,7 @@ abstract class FieldRuleAnchorType
 
 
 
-    public abstract function identifier();
+    public static abstract function identifier();
 
     public abstract function shouldRuleExecute(CustomFormAnswer $formAnswer, CustomFieldAnswer $fieldAnswer, FieldRule $rule):bool;
 
@@ -44,6 +43,11 @@ abstract class FieldRuleAnchorType
 
     public function mutateAnchorSave(array $data, CustomField $field, FieldRule $rule):array{
         return $data;
+    }
+
+    public function getTranslatedName() {
+        //toDo
+        return $this->identifier();
     }
 
 }
