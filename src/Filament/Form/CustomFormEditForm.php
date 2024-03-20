@@ -49,6 +49,7 @@ class CustomFormEditForm
             ->relationship("customFieldInLayout")
             ->orderColumn("form_position")
             ->saveRelationshipsUsing(fn()=>empty(null))
+            ->mutateRelationshipDataBeforeFillUsing(fn($data) => CustomFieldEditForm::mutateOptionDatas($data, $record))
             ->collapsible(false)
             ->addable(false)
             ->defaultItems(0)

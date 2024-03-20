@@ -192,21 +192,7 @@ class CustomFieldEditForm
                 else
                     return $data["name_de"] . " Felddaten bearbeiten "; //ToDo Translate
             })
-            ->fillForm(function($state,$arguments) use ($customForm) {
-                $data = $state[$arguments["item"]];
-                $type = CustomFormEditForm::getFieldTypeFromRawDate($data);
-
-                if(!array_key_exists("id", $data)) return $data;
-                $field = $customForm->customFields->where("id",$data["id"])->first();
-                if(!array_key_exists("options", $data)) return  $data;
-                foreach ($type->getExtraTypeOptions() as $name => $option){
-                    /**@var TypeOption $option*/
-                    if(!array_key_exists($name, $data["options"])) $data["options"][$name] = $option->mutateOnLoad(null, $field);
-                    else $data["options"][$name] = $option->mutateOnLoad($data["options"][$name],$field);
-                }
-
-                return $data;
-            });
+            ->fillForm(fn($state,$arguments) => $state[$arguments["item"]]);
     }
 
     public static function getEditCustomFormActionModalWith(array $state): string {
@@ -277,6 +263,21 @@ class CustomFieldEditForm
         if(is_null($arguments)) $fields[uniqid()] = $data;
         else $fields[$arguments["item"]] = $data;
         $set("custom_fields",$fields);
+    }
+
+    public static function mutateOptionDatas(array $data, CustomForm $customForm): array {
+        if(!array_key_exists("options",$data)) $data["options"] = [];
+
+        $type = CustomFormEditForm::getFieldTypeFromRawDate($data);
+        $field = $customForm->customFields->where("id",$data["id"])->first();
+
+        foreach ($type->getExtraTypeOptions() as $name => $option){
+            /**@var TypeOption $option*/
+            if(!array_key_exists($name, $data["options"])) $data["options"][$name] = $option->mutateOnLoad(null, $field);
+            else $data["options"][$name] = $option->mutateOnLoad($data["options"][$name],$field);
+        }
+
+        return $data;
     }
 
 

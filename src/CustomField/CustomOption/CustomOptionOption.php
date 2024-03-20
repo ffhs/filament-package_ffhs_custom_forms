@@ -49,7 +49,7 @@ class CustomOptionOption extends TypeOption
 
     public function mutateOnSave(mixed $value, CustomField $field): mixed {
         //CustomOption::query()->
-        if(is_null($value)) return null;
+        //if(is_null($value)) return null;
         if($field->isGeneralField()){
             $field->customOptions()->sync($value);
             return null;
@@ -71,7 +71,7 @@ class CustomOptionOption extends TypeOption
 
 
     public function mutateOnLoad(mixed $value, CustomField $field): mixed {
-        if(!is_null($value) &&!isEmpty($value))return $value;
+        //if(!is_null($value) &&!isEmpty($value))return $value;
         if($field->isGeneralField()) return $field->customOptions->pluck("id")->toArray();
         $field->customOptions->each(function (CustomOption $option) use (&$value){
             $value["record-". $option->id] = $option->toArray();
