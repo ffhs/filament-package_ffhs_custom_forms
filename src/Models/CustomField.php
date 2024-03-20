@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\Cache;
  *
  * @property Collection|null allCustomFieldsInLayout
  * @property Collection customOptions
+ * @property Collection fieldRules
  *
  * @property string|null identify_key
  * @property array options
@@ -96,6 +97,9 @@ class CustomField extends ACustomField
         return !is_null($this->general_field_id);
     }
 
+    public function fieldRules():HasMany {
+        return $this->hasMany(FieldRule::class);
+    }
 
     public function isInheritFromGeneralField():bool{
         return !is_null($this->general_field_id);

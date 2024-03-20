@@ -14,13 +14,18 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\TextAr
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\TextType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\ToggleButtonsType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\Types\SectionType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\Anchors\ValueEqualsRuleAnchor;
 
 return [
 
     'cache_duration'=> 1,
     'default_column_count' => 8,
 
-    "field_rules"=>[
+    "field_rule_anchor_types"=>[
+        ValueEqualsRuleAnchor::class
+    ],
+
+    "field_rule_types"=>[
 
     ],
 

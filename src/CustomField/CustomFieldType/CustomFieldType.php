@@ -9,9 +9,6 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Filament\Forms\Components\Component;
-use Filament\Forms\Components\Hidden;
-use Filament\Forms\Components\Section;
-
 abstract class CustomFieldType extends CustomFieldTypeMethods
 {
 

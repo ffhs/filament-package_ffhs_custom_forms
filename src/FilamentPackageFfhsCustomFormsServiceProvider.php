@@ -1,7 +1,6 @@
 <?php
 
 namespace Ffhs\FilamentPackageFfhsCustomForms;
-use Ffhs\FilamentPackageFfhsCustomForms\Commands\Install;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 
@@ -33,6 +32,7 @@ class FilamentPackageFfhsCustomFormsServiceProvider extends PackageServiceProvid
                 'create_custom_options_table',
                 'create_option_general_field_table',
                 'create_option_custom_field_table',
+                'create_field_rules_table',
             ])
             ->hasConfigFile('ffhs_custom_forms')
             ->hasTranslations()
