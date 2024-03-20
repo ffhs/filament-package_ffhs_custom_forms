@@ -4,6 +4,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField;
 
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\App;
 
 class FormMapper
@@ -39,4 +40,18 @@ class FormMapper
         return $answer->customField->getType()->prepareLoadFieldData($rawAnswerer);
     }
 
+
+
+
+    public static function getAvailableCustomOptions(CustomField $record) : Collection{
+        $options = $record->customOptions;
+        return $options->pluck("name_de","identifier");//ToDo Translate
+    }
+
+    public static function getAllCustomOptions(CustomField|CustomFieldAnswer $record) : Collection{
+        if($record instanceof CustomFieldAnswer) $record = $record->customField;
+        if($record->isInheritFromGeneralField()) $options = $record->generalField->customOptions;
+        else $options = $record->customOptions;
+        return $options->pluck("name_de","identifier");//ToDo Translate
+    }
 }

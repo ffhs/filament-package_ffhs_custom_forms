@@ -2,17 +2,22 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types;
 
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\HasBasicSettings;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\HasCustomFormPackageTranslation;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomOption\HasTypeOptions;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomOption\CustomOptionType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\BooleanOption;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\ColumnsOption;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\FastTypeOption;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\InlineOption;
+use Filament\Forms\Components\Component;
+use Filament\Forms\Components\Toggle;
 
-class ToggleButtonsType extends CustomFieldType
+class ToggleButtonsType extends CustomOptionType
 {
     use HasCustomFormPackageTranslation;
-    use HasBasicSettings,HasTypeOptions{
-        HasTypeOptions::getExtraOptionSchema insteadof HasBasicSettings;
+    use HasBasicSettings {
+        HasBasicSettings::getExtraTypeOptions as getExtraSettingsOptions;
     }
 
     public static function getFieldIdentifier(): string { return "toggle_buttons"; }
@@ -22,69 +27,48 @@ class ToggleButtonsType extends CustomFieldType
             'default'  => Types\Views\ToggleButtonsView::class,
         ];
     }
-  /*  public function getExtraOptionSchema() : array{
 
-        return [
-            Group::make()
-                ->statePath("options")
-                ->columnSpanFull()
-                ->columns()
-                ->schema([
-                    Group::make()
-                        ->columnSpanFull()
-                        ->columns()
-                        ->schema(array_merge($this->getExtraOptionSchemaBasicSetup(),[
-                            Toggle::make("inline")
-                                ->disabled(fn($get)=> $get("grouped"))
-                                ->label("In der Zeile"),//ToDo Translate
-                            Toggle::make("grouped")
-                                ->disabled(fn($get)=> $get("inline"))
-                                ->label("Gruppeiert")//ToDo Translate
-                                ->columnStart(2),
-
-                            Toggle::make("boolean")
-                                ->disabled(fn($get)=> $get("multiple"))
-                                ->label("Ja/Nein")//ToDo Translate
-                                ->columnStart(1),
-                            Toggle::make("multiple")
-                                ->columnStart(2)
-                                ->disabled(fn($get)=> $get("boolean"))
-                                ->label("Mehre auswählbar"),//ToDo Translate
-
-                            TextInput::make("columns")
-                                ->columnStart(1)
-                                ->disabled(fn($get)=> $get("grouped") ||  $get("inline")||  $get("boolean"))
-                                ->label("Spalten")//ToDo Translate
-                                ->numeric()
-                        ])),
-                    Group::make()
-                        ->hidden(fn($get)=> is_null($get("../../../general_field_id")) || $get("boolean"))
-                        ->columnSpanFull()
-                        ->schema(function ($get){
-                            if(!is_null($get("../../../general_field_id"))) return [$this->getCustomOptionsSelector()];
-                            return [];
-                        }),
-                ]),
-            Group::make()
-                ->columnSpanFull()
-                ->schema(function ($get){
-                    if(is_null($get("../../general_field_id")) || $get("options.boolean")) return [$this->getCustomOptionsRepeater()];
-                    return [];
-                }),
-        ];
-    }*/
-
-
-    public function getExtraOptionFieldsBasicOptions():array{
-        return [
-            'inline' => false,
-            'grouped'=>false,
-            'boolean'=> false,
-            'multiple'=> false,
-            'columns'=> 2,
-        ];
-    }
     public function icon(): String {
         return  "bi-toggles";
     }
+    public function getExtraTypeOptions(): array {
+        return array_merge(
+            [
+                "columns" => (new ColumnsOption())
+                    ->modifyComponent(fn($component) => $component
+                        ->disabled(fn($get)=> $get("grouped") ||  $get("inline")||  $get("boolean"))
+                        ->label("Spalten")//ToDo Translate
+                    )
+            ],
+            $this->getExtraSettingsOptions(),
+            [
+                "inline" => (new InlineOption())
+                    ->modifyComponent(fn(Toggle $component)=> $component->disabled(fn($get)=> $get("grouped"))),
+                "grouped" => new FastTypeOption(false,
+                    Toggle::make("grouped")
+                        ->disabled(fn($get)=> $get("inline"))
+                        ->label("Schalter gruppiert")//ToDo Translate
+                        ->columnStart(2)
+                        ->live(),
+                ),
+                "boolean" => (new BooleanOption())
+                    ->modifyComponent(fn(Toggle $component)=>
+                        $component
+                            ->disabled(fn($get)=> $get("multiple"))
+                            ->columnStart(1)
+                ),
+                "multiple" => new FastTypeOption(false,
+                    Toggle::make("multiple")
+                        ->disabled(fn($get)=> $get("boolean"))
+                        ->columnStart(2)
+                        ->label("Mehre Schalter auswählbar")//ToDo Translate
+                        ->live(),
+                ),
+                parent::getExtraTypeOptions()["customOptions" ]
+                    ->modifyComponent(fn(Component $component) => $component->hidden(fn($get) => $get("boolean")))
+            ],
+
+        );
+    }
+
 }

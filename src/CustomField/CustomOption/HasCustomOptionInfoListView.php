@@ -1,6 +1,6 @@
 <?php
 
-namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\View;
+namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomOption;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FormMapper;
@@ -19,9 +19,9 @@ trait HasCustomOptionInfoListView
 
         if(empty($answerer)) $state =  "";
         else if(is_array($answerer))
-            $state =  $type->getAllCustomOptions($record)->filter(fn($value, $id) => in_array($id,$answerer));
+            $state = FormMapper::getAllCustomOptions($record)->filter(fn($value, $id) => in_array($id,$answerer));
         else {
-            $state = $type->getAllCustomOptions($record)->filter(fn($value, $id) => $id == $answerer);
+            $state = FormMapper::getAllCustomOptions($record)->filter(fn($value, $id) => $id == $answerer);
             $textEntry->color("info");
         }
 
@@ -31,8 +31,8 @@ trait HasCustomOptionInfoListView
             ->label(FormMapper::getLabelName($record). ":")
             ->columnSpanFull()
             ->inlineLabel()
-            ->badge()
-            ->state($state);
+            ->state($state)
+            ->badge();
 
         return $textEntry;
     }

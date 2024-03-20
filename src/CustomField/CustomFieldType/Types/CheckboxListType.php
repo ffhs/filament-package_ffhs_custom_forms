@@ -2,17 +2,20 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types;
 
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\HasBasicSettings;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\HasCustomFormPackageTranslation;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomOption\HasTypeOptions;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomOption\CustomOptionType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\ColumnsOption;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\FastTypeOption;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 
-class CheckboxListType extends CustomFieldType
+class CheckboxListType extends CustomOptionType
 {
     use HasCustomFormPackageTranslation;
-    use HasBasicSettings,HasTypeOptions{
-        HasTypeOptions::getExtraOptionSchema insteadof HasBasicSettings;
+    use HasBasicSettings {
+        HasBasicSettings::getExtraTypeOptions as getExtraSettingsOptions;
     }
 
     public static function getFieldIdentifier(): string { return "checkbox_list"; }
@@ -22,25 +25,18 @@ class CheckboxListType extends CustomFieldType
             'default'  => Types\Views\CheckboxListTypeView::class,
         ];
     }
-
-    /*public function getExtraOptionSchemaHasOptions() : array{
-        return  array_merge($this->getExtraOptionSchemaBasicSetup(),[
-            TextInput::make("columns")
-                ->label("Spalten")//ToDo Translate
-                ->columnStart(1)
-                ->required()
-                ->numeric()
-        ]);
-    }*/
-
-    protected function getExtraOptionFieldsBasicOptions(): array {
-        return [
-            'columns'=> 1,
-        ];
-    }
-
-
     public function icon(): String {
         return  "bi-ui-checks-grid";
     }
+
+    public function getExtraTypeOptions(): array {
+        return array_merge(
+            ["columns" => new ColumnsOption()],
+            $this->getExtraSettingsOptions(),
+            parent::getExtraTypeOptions()
+        );
+    }
+
+
+
 }

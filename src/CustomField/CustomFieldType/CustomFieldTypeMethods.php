@@ -2,9 +2,6 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType;
 
-
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
-
 abstract class CustomFieldTypeMethods
 {
 

@@ -3,22 +3,19 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\Views;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomFieldType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomOption\HasCustomOptionInfoListView;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomOption\HasCustomOptionInfoListViewWithBoolean;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FormMapper;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\View\FieldTypeView;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\View\HasCustomOptionInfoListView;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
-
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Radio;
 use Filament\Infolists\Components\IconEntry;
-use Livewire\Form;
 
 class RadioTypeView implements FieldTypeView
 {
-    use HasCustomOptionInfoListView{
-        HasCustomOptionInfoListView::getInfolistComponent as getInfolistComponentParent;
-    }
+    use HasCustomOptionInfoListViewWithBoolean;
 
     public static function getFormComponent(CustomFieldType $type, CustomField $record,
         array $parameter = []): Component {
@@ -33,22 +30,10 @@ class RadioTypeView implements FieldTypeView
             ->required($record->required);
 
         if(FormMapper::getOptionParameter($record,"boolean")) $radio->boolean();
-        else $radio->options($type->getAvailableCustomOptions($record));
+        else $radio->options(FormMapper::getAvailableCustomOptions($record));
 
         return $radio;
     }
 
-    public static function getInfolistComponent(CustomFieldType $type, CustomFieldAnswer $record,
-        array $parameter = []): \Filament\Infolists\Components\Component {
 
-        if(!FormMapper::getOptionParameter($record, "boolean"))
-            return self::getInfolistComponentParent($type,$record,$parameter);
-        else
-            return IconEntry::make(FormMapper::getIdentifyKey($record))
-                ->label(FormMapper::getToolTips($record). ":")
-                ->state(FormMapper::getAnswer($record))
-                ->columnSpanFull()
-                ->inlineLabel()
-                ->boolean();
-    }
 }

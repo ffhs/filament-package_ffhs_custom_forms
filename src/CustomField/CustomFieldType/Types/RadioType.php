@@ -2,17 +2,19 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types;
 
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\HasBasicSettings;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\HasCustomFormPackageTranslation;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomOption\HasTypeOptions;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomOption\CustomOptionType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\BooleanOption;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\InlineOption;
+use Filament\Forms\Components\Component;
 
-class RadioType extends CustomFieldType
+class RadioType extends CustomOptionType
 {
     use HasCustomFormPackageTranslation;
-    use HasBasicSettings,HasTypeOptions{
-        HasTypeOptions::getExtraOptionSchema insteadof HasBasicSettings;
+    use HasBasicSettings {
+        HasBasicSettings::getExtraTypeOptions as getExtraSettingsOptions;
     }
 
     public static function getFieldIdentifier(): string { return "radio"; }
@@ -22,46 +24,19 @@ class RadioType extends CustomFieldType
             'default'  => Types\Views\RadioTypeView::class,
         ];
     }
- /*   public function getExtraOptionSchema() : array{
 
-        return [
-            Group::make()
-                ->statePath("options")
-                ->columnSpanFull()
-                ->columns()
-                ->schema([
-                    Group::make()
-                        ->columnSpanFull()
-                        ->columns()
-                        ->schema(array_merge($this->getExtraOptionSchemaBasicSetup(),[
-                            Toggle::make("boolean")
-                                ->label("Ja/Nein"),//ToDo Translate
-                            Toggle::make("inline")
-                                ->label("In der Zeile"),//ToDo Translate
-                        ])),
-                    Group::make()
-                        ->hidden(fn($get)=> is_null($get("../../../general_field_id")) || $get("boolean"))
-                        ->columnSpanFull()
-                        ->schema(function ($get){
-                            if(!is_null($get("../../../general_field_id"))) return [$this->getCustomOptionsSelector()];
-                            return [];
-                        }),
-                ]),
-            Group::make()
-                ->columnSpanFull()
-                ->schema(function ($get){
-                    if(is_null($get("../../general_field_id")) || $get("options.boolean")) return [$this->getCustomOptionsRepeater()];
-                    return [];
-                }),
-        ];
-    }*/
-
-    public function getExtraOptionFieldsBasicOptions():array{
-        return [
-            'inline' => false,
-            'boolean'=> false,
-        ];
+    public function getExtraTypeOptions(): array {
+        return array_merge(
+            $this->getExtraSettingsOptions(),
+            [
+               "boolean" => new BooleanOption(),
+               "inline" => new InlineOption(),
+               parent::getExtraTypeOptions()["customOptions" ]
+                   ->modifyComponent(fn(Component $component) => $component->hidden(fn($get) => $get("boolean")))
+            ],
+        );
     }
+
 
     public function icon(): String {
         return  "carbon-radio-button-checked";

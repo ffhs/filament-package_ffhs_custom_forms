@@ -3,10 +3,9 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\Views;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomFieldType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomOption\HasCustomOptionInfoListView;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FormMapper;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\View\FieldTypeView;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\View\HasCustomOptionInfoListView;
-
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Select;
@@ -17,7 +16,6 @@ class SelectTypeView implements FieldTypeView
 
     public static function getFormComponent(CustomFieldType $type, CustomField $record,
         array $parameter = []): Component {
-
         $select = Select::make(FormMapper::getIdentifyKey($record))
             ->columnStart(FormMapper::getOptionParameter($record,"new_line_option"))
             ->inlineLabel(FormMapper::getOptionParameter($record,"in_line_label"))
@@ -25,7 +23,7 @@ class SelectTypeView implements FieldTypeView
             ->helperText(FormMapper::getToolTips($record))
             ->label(FormMapper::getToolTips($record))
             ->required($record->required)
-            ->options($type->getAvailableCustomOptions($record));
+            ->options(FormMapper::getAvailableCustomOptions($record));
 
         if(FormMapper::getOptionParameter($record,"several")){
             $maxItems = FormMapper::getOptionParameter($record,"max_select");
