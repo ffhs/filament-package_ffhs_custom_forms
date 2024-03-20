@@ -9,7 +9,9 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\FieldRuleType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\TypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Form\CustomFormEditForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\HtmlComponents\HtmlBadge;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\FieldRule;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralFieldForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormResource\Pages\EditCustomForm;
@@ -170,6 +172,23 @@ class CustomFieldRuleEditForm
 
         }
         return $anchors;
+    }
+
+    public static function mutateRuleDatasOnLoad(array $data, CustomForm $customForm): array {
+        $data["rules"] = [];
+        /**@var CustomField $customField*/
+        $customField = $customForm->customFields->where("id",$data["id"])->first();
+
+        foreach ($customField->fieldRules as $rule){
+            /**@var FieldRule $rule*/
+            $ruleData = $rule->toArray();
+            $ruleData = $rule->getRuleType()->mutateDataBeforeRuleLoadInEdit($ruleData,$rule) ;
+            $ruleData["rules"] =   $rule->getAncherType()->mutateDataBeforeRuleLoadInEdit($ruleData,$rule);
+
+            $data["rules"][] = $ruleData;
+        }
+
+        return $data;
     }
 
 

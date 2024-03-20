@@ -50,4 +50,8 @@ abstract class FieldRuleAnchorType
         return $this->identifier();
     }
 
+    public function mutateDataBeforeRuleLoadInEdit(array $ruleData, FieldRule $rule) {
+        return $ruleData;
+    }
+
 }

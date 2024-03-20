@@ -6,6 +6,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomFieldT
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\CustomLayoutType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\TypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Form\Extra\CustomFieldEditForm;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Form\Extra\CustomFieldRuleEditForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Form\Extra\CustomFormEditSave;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\HtmlComponents\HtmlBadge;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
@@ -49,7 +50,11 @@ class CustomFormEditForm
             ->relationship("customFieldInLayout")
             ->orderColumn("form_position")
             ->saveRelationshipsUsing(fn()=>empty(null))
-            ->mutateRelationshipDataBeforeFillUsing(fn($data) => CustomFieldEditForm::mutateOptionDatas($data, $record))
+            ->mutateRelationshipDataBeforeFillUsing(function($data) use ($record) {
+                $data = CustomFieldEditForm::mutateOptionDatas($data, $record);
+                $data = CustomFieldRuleEditForm::mutateRuleDatasOnLoad($data, $record);
+                return $data;
+            })
             ->collapsible(false)
             ->addable(false)
             ->defaultItems(0)
@@ -132,11 +137,6 @@ class CustomFormEditForm
 
         return array_map(fn($used) => $used["general_field_id"],$usedGeneralFields);
     }
-
-
-
-
-
 
 
 

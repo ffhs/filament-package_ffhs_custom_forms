@@ -37,8 +37,8 @@ abstract class FieldRuleType
         return true;
     }
 
-    public function mutateDataBeforeRuleLoadInEdit(array $data, FieldRule $rule) {
-
+    public function mutateDataBeforeRuleLoadInEdit(array $data, FieldRule $rule):array {
+        return $data;
     }
 
 
