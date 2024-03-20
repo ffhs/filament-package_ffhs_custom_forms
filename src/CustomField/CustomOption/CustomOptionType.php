@@ -28,17 +28,14 @@ abstract class  CustomOptionType extends CustomFieldType
 
 
     public function getAvailableCustomOptions(CustomField $record) : Collection{
-        if($record->isGeneralField()){
-            $options = $record->customOptions;
-            return $options->pluck("name_de","identifier");//ToDo Translate
-        }
-        return collect(FormMapper::getOptionParameter($record,"customOptions"))->pluck("name_de","identifier");//ToDo Translate
+        $options = $record->customOptions;
+        return $options->pluck("name_de","identifier");//ToDo Translate
     }
 
     public function getAllCustomOptions(CustomField|CustomFieldAnswer $record) : Collection{
         if($record instanceof CustomFieldAnswer) $record = $record->customField;
         if($record->isInheritFromGeneralField()) $options = $record->generalField->customOptions;
-        else $options = collect(FormMapper::getOptionParameter($record,"customOptions")) ;
+        else $options = $record->customOptions;
         return $options->pluck("name_de","identifier");//ToDo Translate
     }
 

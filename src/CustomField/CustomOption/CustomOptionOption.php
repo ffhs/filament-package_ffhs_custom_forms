@@ -4,12 +4,14 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomOption;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\TypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomOption;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use function PHPUnit\Framework\isEmpty;
 
 class CustomOptionOption extends TypeOption
 {
@@ -47,20 +49,34 @@ class CustomOptionOption extends TypeOption
 
     public function mutateOnSave(mixed $value, CustomField $field): mixed {
         //CustomOption::query()->
-        if(!$field->isGeneralField()) {
-            foreach ($value as $key => $data) if(empty($data["identifier"])) $value[$key]["identifier"] = uniqid();
-
-            return $value;
-        }
         if(is_null($value)) return null;
-        $field->customOptions()->sync($value);
+        if($field->isGeneralField()){
+            $field->customOptions()->sync($value);
+            return null;
+        }
+        $ids = [];
+        $toCreate = [];
+        foreach ($value as $optionData){
+            if(!array_key_exists("id",$optionData)){
+                $toCreate[] = array_merge($optionData,["identifier"=> uniqid()]);
+                continue;
+            }
+            $ids[] = $optionData["id"];
+            $field->customOptions->where("id",$optionData["id"])->first()?->update($optionData);
+        }
+        $field->customOptions()->whereNotIn("custom_options.id", $ids)->delete();
+        $field->customOptions()->createMany($toCreate);
         return null;
     }
 
 
     public function mutateOnLoad(mixed $value, CustomField $field): mixed {
-        if(!$field->isGeneralField()) return $value;
-        return $field->customOptions->pluck("id")->toArray();
+        if(!is_null($value) &&!isEmpty($value))return $value;
+        if($field->isGeneralField()) return $field->customOptions->pluck("id")->toArray();
+        $field->customOptions->each(function (CustomOption $option) use (&$value){
+            $value["record-". $option->id] = $option->toArray();
+        });
+        return $value;
     }
 
 
