@@ -5,6 +5,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Form\Extra;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\TypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Form\CustomFormEditForm;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralFieldForm;
@@ -192,10 +193,17 @@ class CustomFieldEditForm
                     return $data["name_de"] . " Felddaten bearbeiten "; //ToDo Translate
             })
             ->fillForm(function($state,$arguments) use ($customForm) {
-
                 $data = $state[$arguments["item"]];
-                //$type = CustomFormEditForm::getFieldTypeFromRawDate($data);
-                //self::mutateOptionFieldData($type,$data,true);
+                $type = CustomFormEditForm::getFieldTypeFromRawDate($data);
+
+                if(!array_key_exists("id", $data)) return $data;
+                $field = $customForm->customFields->where("id",$data["id"])->first();
+                if(!array_key_exists("options", $data)) return  $data;
+                foreach ($type->getExtraTypeOptions() as $name => $option){
+                    /**@var TypeOption $option*/
+                    if(!array_key_exists($name, $data["options"])) $data["options"][$name] = $option->mutateOnLoad(null, $field);
+                    else $data["options"][$name] = $option->mutateOnLoad($data["options"][$name],$field);
+                }
 
                 return $data;
             });

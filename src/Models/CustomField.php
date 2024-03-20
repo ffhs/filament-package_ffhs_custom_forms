@@ -5,6 +5,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Models;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\CustomLayoutType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
@@ -18,6 +19,8 @@ use Illuminate\Support\Facades\Cache;
  * @property int|null $layout_end_position
  *
  * @property Collection|null allCustomFieldsInLayout
+ * @property Collection customOptions
+ *
  * @property string|null identify_key
  * @property array options
  *
@@ -49,7 +52,7 @@ class CustomField extends ACustomField
     ];
 
     protected $casts = [
-        "options" => "array"
+        "options" => "array",
     ];
 
     protected static function booted() {
@@ -105,6 +108,10 @@ class CustomField extends ACustomField
     public function generalField(): BelongsTo
     {
         return $this->belongsTo(GeneralField::class);
+    }
+
+    public function customOptions (): BelongsToMany {
+        return $this->belongsToMany(CustomOption::class, "option_custom_field");
     }
 
 

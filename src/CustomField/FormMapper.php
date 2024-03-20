@@ -26,7 +26,11 @@ class FormMapper
         if($record instanceof CustomFieldAnswer) $record=$record->customField;
         if(array_key_exists($option, $record->options)) return $record->options[$option];
         //ToDo Rule
-        return $record->getType()->getExtraOptionFields()[$option];
+        $generalOptions = $record->getType()->getDefaultGeneralOptionValues();
+        if(array_key_exists($option, $generalOptions)) return $generalOptions[$option];
+        $fieldOptions = $record->getType()->getDefaultTypeOptionValues();
+        if(array_key_exists($option, $fieldOptions)) return $fieldOptions[$option];
+        return null;
     }
 
     public static function getAnswer(CustomFieldAnswer $answer) {

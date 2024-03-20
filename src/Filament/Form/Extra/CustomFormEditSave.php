@@ -96,11 +96,14 @@ class CustomFormEditSave
     private static function updateCustomField(CustomField $customField,array $itemData): void {
         $type = CustomFormEditForm::getFieldTypeFromRawDate($itemData);
 
+        $rawData = $itemData;
+        $customField->fill($itemData);
         $customFieldData = self::mutateOptionData($type, $customField, $itemData);
 
         //Check if something hase Change
         $customField->fill($customFieldData);
         if(!$customField->exists||$customField->isDirty()) $customField->save();
+        $type->doAfterFieldSave($customField, $rawData);
     }
 
     public static function getGeneralFieldRepeaterValidationRule():Closure {
