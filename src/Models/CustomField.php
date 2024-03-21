@@ -98,7 +98,7 @@ class CustomField extends ACustomField
     }
 
     public function fieldRules():HasMany {
-        return $this->hasMany(FieldRule::class);
+        return $this->hasMany(FieldRule::class)->orderBy('execution_order');
     }
 
     public function isInheritFromGeneralField():bool{

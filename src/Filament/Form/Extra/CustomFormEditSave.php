@@ -162,9 +162,13 @@ class CustomFormEditSave
         else $rules = $customFieldData["rules"];
 
         $existingIds = [];
+        $executionOrder = 0;
         $toCreate = [];
         $toUpdate = [];
         foreach ($rules as $ruleData){
+            $executionOrder += 1;
+            $ruleData["execution_order"] = $executionOrder;
+
             if(array_key_exists("id",$ruleData)) $rule = $customField->fieldRules->where("id", $ruleData["id"])->first();
             else {
                 $rule = new FieldRule();

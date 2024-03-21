@@ -135,7 +135,6 @@ class CustomFieldRuleEditForm
             ->defaultItems(0)
             ->label("")
             ->collapsed()
-            ->orderable()
             ->deletable()
             ->schema([])
             ->extraItemActions([
