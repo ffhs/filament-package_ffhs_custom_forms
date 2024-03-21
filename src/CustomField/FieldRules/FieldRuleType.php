@@ -62,14 +62,14 @@ abstract class FieldRuleType
         return $component;
     }
 
-    public function mutateLoadeAnswerData(array $answerData, FieldRule $rule, CustomFieldAnswer $answer):array {
+    public function mutateLoadAnswerData(mixed $answerData, FieldRule $rule, CustomFieldAnswer $answer):mixed {
         return $answerData;
     }
-    public function mutateSaveAnswereData(array $answerData, FieldRule $rule, CustomFieldAnswer $answer):array  {
+    public function mutateSaveAnswerData(mixed $answerData, FieldRule $rule, CustomFieldAnswer $answer):mixed  {
         return $answerData;
     }
 
-    public function afterAnswereSave( FieldRule $rule, CustomFieldAnswer $answer):void {
+    public function afterAnswerSave( FieldRule $rule, CustomFieldAnswer $answer):void {
 
     }
 

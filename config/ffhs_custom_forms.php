@@ -15,7 +15,9 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\TextTy
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\ToggleButtonsType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\Types\SectionType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\Anchors\ValueEqualsRuleAnchor;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\Type\IsHiddenRuleType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\Type\IsRequiredRuleType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\TypeOption;
 
 return [
 
@@ -27,7 +29,8 @@ return [
     ],
 
     "field_rule_types"=>[
-        IsRequiredRuleType::class
+        IsRequiredRuleType::class,
+        IsHiddenRuleType::class,
     ],
 
     "forms"=>[

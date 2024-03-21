@@ -166,7 +166,20 @@ class CustomFormRender
                 ]);
             else $customFieldAnswer = $fieldAnswersIdentify[$key];
 
+            $fieldRules  = $customFieldAnswer->customField->fieldRules;
+            foreach ($fieldRules as $rule){
+                /**@var FieldRule $rule */
+                $fieldAnswererData = $rule->getRuleType()->mutateSaveAnswerData($fieldAnswererData,$rule, $customFieldAnswer);
+            }
+
             $customFieldAnswer->answer = $fieldAnswererData;
+
+            foreach ($fieldRules as $rule){
+                /**@var FieldRule $rule */
+                $rule->getRuleType()->afterAnswerSave($rule, $customFieldAnswer);
+            }
+
+
             if(!$customFieldAnswer->exists|| $customFieldAnswer->isDirty())$customFieldAnswer->save();
         }
 
@@ -187,6 +200,13 @@ class CustomFormRender
             $fieldData = $customField
                 ->getType()
                 ->prepareLoadFieldData($fieldAnswer->answer);
+
+            $fieldRules  = $customField->fieldRules;
+            foreach ($fieldRules as $rule){
+                /**@var FieldRule $rule */
+                $fieldData = $rule->getRuleType()->mutateLoadAnswerData($fieldData,$rule, $fieldAnswer);
+            }
+
             $data[$customField->getInheritState()["identify_key"]] = $fieldData;
         }
         return $data;

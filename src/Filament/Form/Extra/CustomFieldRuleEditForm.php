@@ -54,14 +54,15 @@ class CustomFieldRuleEditForm
     private static function getRuleAddAction(CustomForm $customForm, CustomFieldType $type): Actions {
 
         return Actions::make([
-           Action::make("add_rule")
-               ->action(fn($data, $get, $set)=> $set("rules", array_merge($get("rules"), [uniqid() => $data])))
+           Action::make("add-rule")
+               ->label("Regel hinzufügen") //ToDo Translate
                ->form(self::getRuleEditSchema($customForm,$type))
                ->modalWidth(MaxWidth::SixExtraLarge)
-               ->label("Regel hinzufügen") //ToDo Translate, //ToDo Mutate
                ->mutateFormDataUsing(fn(Action $action) =>
                     array_values($action->getLivewire()->getCachedForms())[2]->getRawState()
-               ),
+               )
+               ->action(fn($data, $get, $set)=> $set("rules", array_merge([uniqid()=> $data],$get("rules")))),
+
         ]);
     }
 
@@ -77,7 +78,7 @@ class CustomFieldRuleEditForm
                 ->columns()
                 ->schema([
                     Section::make("Anker")//ToDo Translate
-                    ->columnSpan(1)
+                        ->columnSpan(1)
                         ->schema([
                             Select::make("anchor_identifier")
                                 ->disabled(fn($get)=> !is_null($get("anchor_identifier")))
@@ -138,7 +139,7 @@ class CustomFieldRuleEditForm
                     ->modalWidth(MaxWidth::SixExtraLarge)
                     ->form(self::getRuleEditSchema($customForm,$type))
                     ->label("Regel hinzufügen") //ToDo Translate
-                    ->action(fn($data, $get, $set,$arguments)=> //ToDo Mutate
+                    ->action(fn($data, $get, $set,$arguments)=>
                         $set("rules." . $arguments["item"], $data)
                     )
                     ->mutateFormDataUsing(fn(Action $action) =>
