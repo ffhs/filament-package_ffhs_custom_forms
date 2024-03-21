@@ -10,6 +10,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\FieldRule;
 use Filament\Forms\Components\Group;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
@@ -29,8 +30,23 @@ class CustomFormRender
     }
 
     public static function getFormRender(string $viewMode,CustomForm $form): Closure {
-        return fn(CustomField $customField, array $parameter) =>
-            $customField->getType()->getFormComponent($customField,$form,$viewMode, $parameter);
+        return function(CustomField $customField, array $parameter) use ($viewMode, $form) {
+
+            $rules = $customField->fieldRules;
+
+            $rules->each(function(FieldRule $rule) use (&$customField) {
+                $rule->getRuleType()->beforeRender($customField,$rule);
+            });
+
+            $component = $customField->getType()->getFormComponent($customField, $form, $viewMode, $parameter);
+            $component->live();
+
+            $rules->each(function(FieldRule $rule) use (&$customField, &$component) {
+                $component = $rule->getRuleType()->afterRender($component,$customField,$rule);
+            });
+
+            return $component;
+        };
     }
 
 

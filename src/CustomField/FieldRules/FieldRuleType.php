@@ -3,10 +3,12 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomFieldType;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\FieldRule;
 use Filament\Forms\Components\Component;
+use Filament\Infolists\Components\Component as InfoComponent;
 
 abstract class FieldRuleType
 {
@@ -52,21 +54,22 @@ abstract class FieldRuleType
 
 
 
-    public function beforeRender(bool $anchorActive, FieldRule $rule, CustomFieldAnswer $answer):void {
+    public function beforeRender(CustomField $customField, FieldRule $rule):void {
 
     }
-    public function afterRender(bool $anchorActive, Component $component, FieldRule $rule, CustomFieldAnswer $answer): Component {
+
+    public function afterRender(Component|InfoComponent $component, CustomField $customField, FieldRule $rule): Component|InfoComponent  {
         return $component;
     }
 
-    public function mutateLoadeAnswerData(bool $anchorActive, array $answerData, FieldRule $rule, CustomFieldAnswer $answer):array {
+    public function mutateLoadeAnswerData(array $answerData, FieldRule $rule, CustomFieldAnswer $answer):array {
         return $answerData;
     }
-    public function mutateSaveAnswereData(bool $anchorActive, array $answerData, FieldRule $rule, CustomFieldAnswer $answer):array  {
+    public function mutateSaveAnswereData(array $answerData, FieldRule $rule, CustomFieldAnswer $answer):array  {
         return $answerData;
     }
 
-    public function afterAnswereSave(bool $anchorActive, FieldRule $rule, CustomFieldAnswer $answer):void {
+    public function afterAnswereSave( FieldRule $rule, CustomFieldAnswer $answer):void {
 
     }
 

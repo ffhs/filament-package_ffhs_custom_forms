@@ -17,7 +17,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string rule_name
  *
  * @property array anchor_data
- * @property array rule_type_data
+ * @property array rule_data
  */
 class FieldRule extends Model
 {

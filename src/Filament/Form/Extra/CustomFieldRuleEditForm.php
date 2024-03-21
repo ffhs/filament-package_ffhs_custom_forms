@@ -176,7 +176,6 @@ class CustomFieldRuleEditForm
             $anchor = new $anchorClass();
             if (!$anchor->canAddOnField($type)) continue;
             $anchors[$anchor->identifier()] = $anchor->getTranslatedName();
-
         }
         return $anchors;
     }

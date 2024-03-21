@@ -4,9 +4,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\FieldRule;
 use Filament\Forms\Components\Component;
 
@@ -38,7 +36,12 @@ abstract class FieldRuleAnchorType
     public static abstract function identifier();
 
 
-    public abstract function shouldRuleExecute(CustomFormAnswer $formAnswer, CustomFieldAnswer $fieldAnswer, FieldRule $rule):bool;
+    public abstract function shouldRuleExecute(array $formState, CustomField $customField, FieldRule $rule):bool;
+
+    public function canRuleExecute(Component $component, CustomField $customField, FieldRule $rule ):bool {
+        $rawFormData = array_values($component->getLivewire()->getCachedForms())[0]->getRawState();
+        return $this->shouldRuleExecute($rawFormData,$customField,$rule);
+    }
 
     public abstract function settingsComponent(CustomForm $customForm, array $fieldData):Component;
 
@@ -63,5 +66,9 @@ abstract class FieldRuleAnchorType
     public function mutateDataBeforeSaveInEdit(array $ruleData, FieldRule $rule): array {
         return $ruleData;
     }
+
+
+
+
 
 }
