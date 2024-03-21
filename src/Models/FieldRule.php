@@ -30,7 +30,7 @@ class FieldRule extends Model
         'anchor_data',
         'rule_identifier',
         'rule_data',
-        'rule_name'
+        'execution_order'
     ];
 
 

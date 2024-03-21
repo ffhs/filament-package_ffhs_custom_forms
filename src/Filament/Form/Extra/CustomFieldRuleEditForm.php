@@ -123,7 +123,13 @@ class CustomFieldRuleEditForm
         return Repeater::make("rules")
             ->collapseAllAction(fn(Action $action)=> $action->hidden())
             ->expandAllAction(fn(Action $action)=> $action->hidden())
-            ->itemLabel(fn($state)=> $state["rule_name"])
+            ->orderColumn("execution_order")
+            ->itemLabel(function($state){
+                $fieldRuleAnchorType = FieldRuleAnchorType::getAnchorFromName($state["anchor_identifier"]);
+                $fieldRuleType = FieldRuleType::getRuleFromName($state["rule_identifier"]);
+
+                return $fieldRuleAnchorType->getTranslatedName() . " ==> " . $fieldRuleType->getTranslatedName();
+            })
             ->collapsible(false)
             ->addable(false)
             ->defaultItems(0)
