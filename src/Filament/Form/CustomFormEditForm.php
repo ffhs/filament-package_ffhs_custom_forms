@@ -52,8 +52,7 @@ class CustomFormEditForm
             ->saveRelationshipsUsing(fn()=>empty(null))
             ->mutateRelationshipDataBeforeFillUsing(function($data) use ($record) {
                 $data = CustomFieldEditForm::mutateOptionDatas($data, $record);
-                $data = CustomFieldRuleEditForm::mutateRuleDatasOnLoad($data, $record);
-                return $data;
+                return CustomFieldRuleEditForm::mutateRuleDatasOnLoad($data, $record);
             })
             ->collapsible(false)
             ->addable(false)

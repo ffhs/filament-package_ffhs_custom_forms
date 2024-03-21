@@ -21,8 +21,8 @@ return new class () extends Migration {
             $table->string("anchor_identifier");
             $table->json("anchor_data")->nullable();
 
-            $table->string("rule_type_identifier")->nullable();
-            $table->json("rule_type_data");
+            $table->string("rule_identifier");
+            $table->json("rule_data")->nullable();
 
 
             $table->timestamps();

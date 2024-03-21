@@ -59,13 +59,15 @@ class CustomFieldRuleEditForm
                ->form(self::getRuleEditSchema($customForm,$type))
                ->modalWidth(MaxWidth::SixExtraLarge)
                ->label("Regel hinzufügen") //ToDo Translate, //ToDo Mutate
+               ->mutateFormDataUsing(fn(Action $action) =>
+                    array_values($action->getLivewire()->getCachedForms())[2]->getRawState()
+               ),
         ]);
     }
 
     private static function getRuleEditSchema(CustomForm $customForm, CustomFieldType $type): array {
         $rules = self::getSelectableRules($customForm, $type);
-
-        $anchors = self::getSelectableAnchors($customForm);
+        $anchors = self::getSelectableAnchors($customForm,$type);
 
         return [
             TextInput::make("rule_name")
@@ -91,7 +93,7 @@ class CustomFieldRuleEditForm
                                 ->schema(function($get, EditCustomForm $livewire) use ($customForm) {
                                     if(is_null($get("anchor_identifier"))) return [];
                                     $anchor = FieldRuleAnchorType::getAnchorFromName($get("anchor_identifier"));
-                                    return [$anchor->createComponent($customForm, $livewire->data["custom_fields"])];
+                                    return [$anchor->settingsComponent($customForm, $livewire->data["custom_fields"])];
                                 }),
                         ]),
                     Section::make("Regel")
@@ -101,11 +103,16 @@ class CustomFieldRuleEditForm
                                 ->disabled(fn($get)=> !is_null($get("rule_identifier")))
                                 ->label("Regel") //ToDo Translate
                                 ->options($rules)
-                                ->required(),
+                                ->required()
+                                ->live(),
 
                             Group::make()
-                                ->statePath("rule_type_data")
-                                ->schema(fn($get) => is_null($get("rule_identifier"))? [] : []), //ToDo add rule stuff
+                                ->statePath("rule_data")
+                                ->schema(function($get, EditCustomForm $livewire) use ($customForm) {
+                                    if(is_null($get("rule_identifier"))) return [];
+                                    $rule = FieldRuleType::getRuleFromName($get("rule_identifier"));
+                                    return [$rule->settingsComponent($customForm, $livewire->data["custom_fields"])];
+                                }),
                         ]),
                 ]),
         ];
@@ -161,13 +168,13 @@ class CustomFieldRuleEditForm
      * @param  CustomForm  $customForm
      * @return array
      */
-    private static function getSelectableAnchors(CustomForm $customForm): array {
+    private static function getSelectableAnchors(CustomForm $customForm, CustomFieldType $type): array {
         $allAnchors = $customForm->getFormConfiguration()::typeRuleAnchors();
         $anchors = [];
         foreach ($allAnchors as $anchorClass) {
             /**@var FieldRuleAnchorType $anchor */
             $anchor = new $anchorClass();
-            //Filter
+            if (!$anchor->canAddOnField($type)) continue;
             $anchors[$anchor->identifier()] = $anchor->getTranslatedName();
 
         }
@@ -182,9 +189,8 @@ class CustomFieldRuleEditForm
         foreach ($customField->fieldRules as $rule){
             /**@var FieldRule $rule*/
             $ruleData = $rule->toArray();
-            $ruleData = $rule->getRuleType()->mutateDataBeforeRuleLoadInEdit($ruleData,$rule) ;
-            $ruleData["rules"] =   $rule->getAncherType()->mutateDataBeforeRuleLoadInEdit($ruleData,$rule);
-
+            $ruleData = $rule->getRuleType()->mutateDataBeforeLoadInEdit($ruleData,$rule) ;
+            $ruleData =   $rule->getAnchorType()->mutateDataBeforeLoadInEdit($ruleData,$rule);
             $data["rules"][] = $ruleData;
         }
 

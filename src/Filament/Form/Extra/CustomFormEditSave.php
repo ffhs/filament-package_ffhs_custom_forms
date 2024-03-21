@@ -10,6 +10,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\Filament\Form\CustomFormEditForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\FieldRule;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralFieldForm;
 use Filament\Forms\Components\Repeater;
 use Illuminate\Database\Eloquent\Model;
@@ -156,22 +157,35 @@ class CustomFormEditSave
         return $customFieldData;
     }
 
-    private static function updateFieldRules(CustomField $customField, array $itemData): void { //ToDo make setting which is running first
-        if(!array_key_exists("rules",$itemData)) $rules = [];
-        else $rules = $itemData["rules"];
+    private static function updateFieldRules(CustomField $customField, array $customFieldData): void { //ToDo make setting which is running first
+        if(!array_key_exists("rules",$customFieldData)) $rules = [];
+        else $rules = $customFieldData["rules"];
 
         $existingIds = [];
         $toCreate = [];
+        $toUpdate = [];
         foreach ($rules as $ruleData){
-            if(!array_key_exists("id",$ruleData)){
-                $toCreate[] = $ruleData; //ToDo Mutate Rule Datas
-                continue;
+            if(array_key_exists("id",$ruleData)) $rule = $customField->fieldRules->where("id", $ruleData["id"])->first();
+            else {
+                $rule = new FieldRule();
+                $rule->fill($ruleData);
             }
-            $id= $ruleData["id"];
-            $customField->fieldRules->where("id", $id)->first()?->update($ruleData); //ToDo make with upsert
-            $existingIds[] = $id;
+            $ruleData = $rule->getAnchorType()->mutateDataBeforeSaveInEdit($ruleData, $rule);
+            $ruleData = $rule->getRuleType()->mutateDataBeforeSaveInEdit($ruleData, $rule);
+
+            $rule->fill($ruleData);
+
+            if(!$rule->exists) $toCreate[] = $rule->toArray();
+            else {
+                $existingIds[] = $ruleData["id"];
+                if($rule->isDirty()) $toUpdate[] = $rule->toArray();
+            }
+
         }
+        FieldRule::query()->upsert($toUpdate, ["id"]);
         $customField->fieldRules()->whereNotIn("id",$existingIds)->delete();
         $customField->fieldRules()->createMany($toCreate);
     }
+
+
 }

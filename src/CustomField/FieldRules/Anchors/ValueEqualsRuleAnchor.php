@@ -33,7 +33,7 @@ class ValueEqualsRuleAnchor extends FieldRuleAnchorType
         return $output;
     }
 
-    public function createComponent(CustomForm $customForm, array $fieldData): Component {
+    public function settingsComponent(CustomForm $customForm, array $fieldData): Component {
 
         $options = [];
         $fieldData = $this->mapFieldData($fieldData);

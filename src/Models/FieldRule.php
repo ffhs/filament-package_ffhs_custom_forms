@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $id
  * @property int custom_field_id
  *
- * @property string rule_type_identifier
+ * @property string rule_identifier
  * @property string anchor_identifier
  * @property string rule_name
  *
@@ -28,27 +28,27 @@ class FieldRule extends Model
         'custom_field_id',
         'anchor_identifier',
         'anchor_data',
-        'rule_type_identifier',
-        'rule_type_data',
+        'rule_identifier',
+        'rule_data',
         'rule_name'
     ];
 
 
     protected $casts = [
-        'anchor_data'=>'array',
-        'rule_type_data'=>'array',
+        'anchor_data'=>'json',
+        'rule_data'=>'json',
     ];
 
     public function customField ():BelongsTo {
         return $this->belongsTo(CustomField::class);
     }
 
-    public function getAncherType() :FieldRuleAnchorType{
+    public function getAnchorType() :FieldRuleAnchorType{
         return FieldRuleAnchorType::getAnchorFromName($this->anchor_identifier);
     }
 
     public function getRuleType() :FieldRuleType{
-        return FieldRuleType::getRuleFromName($this->rule_type_identifier);
+        return FieldRuleType::getRuleFromName($this->rule_identifier);
     }
 
 }

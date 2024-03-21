@@ -4,6 +4,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\FieldRule;
 use Filament\Forms\Components\Component;
 
@@ -32,35 +33,40 @@ abstract class FieldRuleType
     }
 
 
-    public abstract function identifier();
-    public function canAddOnField(CustomFieldType $type) {
+    public abstract static function identifier();
+    public abstract function settingsComponent(CustomForm $customForm, array $fieldData):Component;
+
+
+    public function canAddOnField(CustomFieldType $type): bool {
         return true;
     }
 
-    public function mutateDataBeforeRuleLoadInEdit(array $data, FieldRule $rule):array {
-        return $data;
+
+    public function mutateDataBeforeLoadInEdit(array $ruleData, FieldRule $rule): array {
+        return $ruleData;
+    }
+
+    public function mutateDataBeforeSaveInEdit(array $ruleData, FieldRule $rule): array {
+        return $ruleData;
     }
 
 
-    public function mutateDataBeforeRuleSaveInEdit(array $data, FieldRule $rule) {
+
+    public function beforeRender(bool $anchorActive, FieldRule $rule, CustomFieldAnswer $answer):void {
 
     }
-
-    public function runBeforeRender(FieldRule $rule, CustomFieldAnswer $answer):void {
-
-    }
-    public function afterRender(Component $component, FieldRule $rule, CustomFieldAnswer $answer): Component {
+    public function afterRender(bool $anchorActive, Component $component, FieldRule $rule, CustomFieldAnswer $answer): Component {
         return $component;
     }
 
-    public function mutateLoadeAnswerData(array $answerData, FieldRule $rule, CustomFieldAnswer $answer):array {
+    public function mutateLoadeAnswerData(bool $anchorActive, array $answerData, FieldRule $rule, CustomFieldAnswer $answer):array {
         return $answerData;
     }
-    public function mutateSaveAnswere(array $answerData, FieldRule $rule, CustomFieldAnswer $answer):array  {
+    public function mutateSaveAnswereData(bool $anchorActive, array $answerData, FieldRule $rule, CustomFieldAnswer $answer):array  {
         return $answerData;
     }
 
-    public function afterAnswereSave(FieldRule $rule, CustomFieldAnswer $answer):void {
+    public function afterAnswereSave(bool $anchorActive, FieldRule $rule, CustomFieldAnswer $answer):void {
 
     }
 
