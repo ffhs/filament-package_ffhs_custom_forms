@@ -73,9 +73,8 @@ abstract class FieldRuleType
 
     }
 
-    public function getTranslatedName() {
-        //ToDo
-        return $this->identifier();
+    public function getTranslatedName():string {
+        return __("custom_forms.rules." . self::identifier());
     }
 
 }

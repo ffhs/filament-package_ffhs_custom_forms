@@ -4,6 +4,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\Anchors;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\CustomLayoutType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\FieldRuleAnchorType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\HasAnchorPluginTranslate;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Form\CustomFormEditForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
@@ -19,6 +20,12 @@ use Filament\Forms\Components\ToggleButtons;
 
 class ValueEqualsRuleAnchor extends FieldRuleAnchorType
 {
+    use HasAnchorPluginTranslate;
+
+
+    public static function identifier(): string {
+        return "value_equals_anchor";
+    }
 
     private function mapFieldData(array $fieldDatas):array {
         $output = [];
@@ -133,9 +140,7 @@ class ValueEqualsRuleAnchor extends FieldRuleAnchorType
             ]);
     }
 
-    public static function identifier(): string {
-       return "value_equals_anchor";
-    }
+
 
     function flatten($array): array {
         $results = [];

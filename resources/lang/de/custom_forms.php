@@ -50,6 +50,16 @@ return [
             "checkbox_list" => "Kästchen Liste",
             "toggle_buttons"=> "Umschalttasten",
         ],
+
+        'rules'=>[
+            "is_disabled_rule" => "Feld deaktivieren",
+            "is_hidden_rule" => "Feld verstecken",
+            "is_required_rule" => "Feld benötigen",
+        ],
+
+        'anchors'=>[
+            'value_equals_anchor' => 'gleicher Wert Anker'
+        ]
     ],
 
     'form'=>[

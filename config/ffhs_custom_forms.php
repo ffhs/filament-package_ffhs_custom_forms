@@ -15,6 +15,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\TextTy
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\ToggleButtonsType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\Types\SectionType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\Anchors\ValueEqualsRuleAnchor;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\Type\IsDisabledRuleType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\Type\IsHiddenRuleType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\Type\IsRequiredRuleType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\TypeOption;
@@ -25,12 +26,13 @@ return [
     'default_column_count' => 8,
 
     "field_rule_anchor_types"=>[
-        ValueEqualsRuleAnchor::class
+        ValueEqualsRuleAnchor::class,
     ],
 
     "field_rule_types"=>[
         IsRequiredRuleType::class,
         IsHiddenRuleType::class,
+        IsDisabledRuleType::class,
     ],
 
     "forms"=>[

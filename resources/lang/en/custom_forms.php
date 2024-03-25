@@ -47,6 +47,16 @@ return [
             "checkbox_list" => "Checkbox List",
             "toggle_buttons"=> "Toggle Buttons",
         ],
+
+        'rules'=>[
+            "is_disabled_rule" => "Disable field",
+            "is_hidden_rule" => "Hide field",
+            "is_required_rule" => "Require field",
+        ],
+
+        'anchors'=>[
+            'value_equals_anchor' => 'equal value anchor'
+        ]
     ],
 
     'form'=>[

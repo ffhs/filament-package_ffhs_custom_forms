@@ -28,6 +28,7 @@ abstract class CustomFieldType extends CustomFieldTypeMethods
             $output[$typeClass::getFieldIdentifier()]= $typeClass;
         return $output;
     }
+
     public static function getTypeClassFromName(string $typeName): ?string {
         $types = self::getAllTypes();
         if(!array_key_exists($typeName,$types)) return null;

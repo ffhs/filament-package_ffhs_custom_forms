@@ -5,6 +5,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\Type;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\CustomLayoutType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\FieldRuleType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\HasRulePluginTranslate;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\FieldRule;
@@ -14,6 +15,7 @@ use Filament\Forms\Components\Toggle;
 
 class IsHiddenRuleType extends FieldRuleType
 {
+    use HasRulePluginTranslate;
 
     public static function identifier(): string {
         return "is_hidden_rule";
@@ -21,8 +23,8 @@ class IsHiddenRuleType extends FieldRuleType
 
     public function settingsComponent(CustomForm $customForm, array $fieldData): Component {
         return Toggle::make("is_hidden_on_activation")
-            ->label("Versteckt falls Regel ausgeführt wird")// ToDo Translate
-            ->hintIconTooltip("Bei Nein wird das Feld benötigt falls die Regel nicht zuschlägt"); // ToDo Translate
+            ->label("Feld verstecken, falls die Regel ausgeführt wird")// ToDo Translate
+            ->hintIconTooltip("Bei Nein wird das Feld nicht versteckt, falls die Regel nicht zuschlägt"); // ToDo Translate
     }
 
     public function canAddOnField(CustomFieldType $type): bool {
@@ -34,7 +36,7 @@ class IsHiddenRuleType extends FieldRuleType
         $setting =  $rule->rule_data["is_hidden_on_activation"];
         return $component->hidden(function(Component $component) use ($setting, $customField, $rule) {
             $anchor = $rule->getAnchorType()->canRuleExecute($component,$customField,$rule);
-            return $anchor?$setting:!$setting;
+            return (!$anchor)?$setting:!$setting;
         });
     }
 

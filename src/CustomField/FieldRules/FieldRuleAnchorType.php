@@ -47,17 +47,13 @@ abstract class FieldRuleAnchorType
 
 
 
-
-    public function getTranslatedName() {
-        //toDo
-        return $this->identifier();
+    public function getTranslatedName(): string {
+        return __("custom_forms.anchors" . self::identifier());
     }
-
 
     public function canAddOnField(CustomFieldType $type): bool {
         return true;
     }
-
 
     public function mutateDataBeforeLoadInEdit(array $ruleData, FieldRule $rule): array {
         return $ruleData;
@@ -66,8 +62,6 @@ abstract class FieldRuleAnchorType
     public function mutateDataBeforeSaveInEdit(array $ruleData, FieldRule $rule): array {
         return $ruleData;
     }
-
-
 
 
 
