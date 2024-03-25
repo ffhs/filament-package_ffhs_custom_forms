@@ -71,9 +71,9 @@ class CustomFieldRuleEditForm
         $anchors = self::getSelectableAnchors($customForm,$type);
 
         return [
-            TextInput::make("rule_name")
-                ->label("Regelname") //ToDo Translate
-                ->required(),
+           /* TextInput::make("rule_name")
+                ->label("Regelname") //To Do Translate
+                ->required(),*/
             Group::make()
                 ->columns()
                 ->schema([

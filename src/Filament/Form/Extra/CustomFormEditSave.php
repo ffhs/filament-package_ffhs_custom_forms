@@ -177,12 +177,19 @@ class CustomFormEditSave
             $ruleData = $rule->getAnchorType()->mutateDataBeforeSaveInEdit($ruleData, $rule);
             $ruleData = $rule->getRuleType()->mutateDataBeforeSaveInEdit($ruleData, $rule);
 
+            $ruleData["anchor_data"] = json_encode($ruleData["anchor_data"]);
+            $ruleData["rule_data"] = json_encode($ruleData["rule_data"]);
+
             $rule->fill($ruleData);
 
-            if(!$rule->exists) $toCreate[] = $rule->toArray();
+            $cleanedData = $rule->toArray();
+            unset($cleanedData["created_at"]);
+            unset($cleanedData["updated_at"]);
+
+            if(!$rule->exists) $toCreate[] = $cleanedData;
             else {
                 $existingIds[] = $ruleData["id"];
-                if($rule->isDirty()) $toUpdate[] = $rule->toArray();
+                if($rule->isDirty()) $toUpdate[] = $cleanedData;
             }
 
         }

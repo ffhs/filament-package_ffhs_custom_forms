@@ -270,6 +270,7 @@ class CustomFieldEditForm
 
         $type = CustomFormEditForm::getFieldTypeFromRawDate($data);
         $field = $customForm->customFields->where("id",$data["id"])->first();
+        if($field == null) return $data;
 
         foreach ($type->getExtraTypeOptions() as $name => $option){
             /**@var TypeOption $option*/

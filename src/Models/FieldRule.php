@@ -35,8 +35,8 @@ class FieldRule extends Model
 
 
     protected $casts = [
-        'anchor_data'=>'json',
-        'rule_data'=>'json',
+        'anchor_data'=>'array',
+        'rule_data'=>'array',
     ];
 
     public function customField ():BelongsTo {
