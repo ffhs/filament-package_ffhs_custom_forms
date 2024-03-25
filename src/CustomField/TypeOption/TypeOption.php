@@ -20,7 +20,6 @@ abstract class TypeOption
     public function mutateOnSave(mixed $value, CustomField $field):mixed{ //ToDo for GeneralField
         return $value;
     }
-    //ToDo
     public function mutateOnLoad(mixed $value, CustomField $field):mixed{ //ToDo for GeneralField
         return $value;
     }

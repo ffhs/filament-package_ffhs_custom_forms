@@ -42,9 +42,6 @@ class ValueEqualsRuleAnchor extends FieldRuleAnchorType
 
     public function settingsComponent(CustomForm $customForm, array $fieldData): Component {
 
-
-
-
         return Group::make()
             ->columnSpanFull()
             ->columns()

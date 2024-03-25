@@ -14,12 +14,13 @@ abstract class DynamicFormConfiguration
         return CustomFieldType::getAllTypes();
     }
 
-    public static function typeRules(): array{
+    public static function ruleTypes(): array{
         return config("ffhs_custom_forms.field_rule_types");
     }
-    public static function typeRuleAnchors() {
+    public static function anchorRuleTypes(): array {
         return config("ffhs_custom_forms.field_rule_anchor_types");
     }
+
     public static function displayViewMode():String {
         return self::displayMode();
     }
@@ -34,6 +35,7 @@ abstract class DynamicFormConfiguration
     public static function displayMode():String {
         return 'default';
     }
+
 
     public static function overwriteViewModes():array {
         return [];

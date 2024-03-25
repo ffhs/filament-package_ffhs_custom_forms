@@ -36,15 +36,19 @@ abstract class CustomFieldTypeMethods
     public function canBeDeactivate():bool {
         return true;
     }
-
-    // null means that it isn't overwritten
-    public function overwrittenRules():?array {
-        return null;
-    }
-
     public function canBeRequired():bool {
         return true;
     }
 
+
+    // null means that it isn't overwritten
+    public function overwrittenRules():?array { //ToDo
+        return null;
+    }
+
+    // null means that it isn't overwritten
+    public function overwrittenAnchorRules():?array { //ToDo
+        return null;
+    }
 
 }

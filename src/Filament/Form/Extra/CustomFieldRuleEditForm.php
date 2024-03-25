@@ -159,7 +159,8 @@ class CustomFieldRuleEditForm
      * @return array
      */
     private static function getSelectableRules(CustomForm $customForm, CustomFieldType $type): array {
-        $allRules = $customForm->getFormConfiguration()::typeRules();
+        $allRules = $type->overwrittenRules();
+        if(is_null($allRules)) $allRules = $customForm->getFormConfiguration()::ruleTypes();
         $rules = [];
         foreach ($allRules as $ruleClass) {
             /**@var FieldRuleType $rule */
@@ -175,7 +176,8 @@ class CustomFieldRuleEditForm
      * @return array
      */
     private static function getSelectableAnchors(CustomForm $customForm, CustomFieldType $type): array {
-        $allAnchors = $customForm->getFormConfiguration()::typeRuleAnchors();
+        $allAnchors = $type->overwrittenAnchorRules();
+        if(is_null($allAnchors)) $allAnchors = $customForm->getFormConfiguration()::anchorRuleTypes();
         $anchors = [];
         foreach ($allAnchors as $anchorClass) {
             /**@var FieldRuleAnchorType $anchor */
