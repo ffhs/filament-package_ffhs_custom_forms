@@ -44,7 +44,9 @@ class EditCustomFormAnswer extends EditRecord
     public function form(Form $form): Form {
         return $form
             ->schema([
-                CustomFormAnswerInput::make()->autoViewMode(),
+                CustomFormAnswerInput::make()
+                    ->autoViewMode()
+                    ->columnSpanFull(),
             ]);
     }
 

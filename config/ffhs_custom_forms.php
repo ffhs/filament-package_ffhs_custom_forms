@@ -23,7 +23,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\TypeOption;
 return [
 
     'cache_duration'=> 1,
-    'default_column_count' => 8,
+    'default_column_count' => 4,
 
     "field_rule_anchor_types"=>[
         ValueEqualsRuleAnchor::class,

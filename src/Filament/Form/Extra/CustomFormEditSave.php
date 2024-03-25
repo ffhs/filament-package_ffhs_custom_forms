@@ -146,6 +146,7 @@ class CustomFormEditSave
     private static function mutateOptionData(?CustomFieldType $type, CustomField $customField, array $customFieldData): array {
         if(!array_key_exists("options",$customFieldData)) return $customFieldData;
         $options = $customFieldData["options"];
+        if(is_null($options)) $options = [];
         foreach ($type->getExtraTypeOptions() as $name => $option ){
             /**@var TypeOption $option */
             $data = null;

@@ -181,6 +181,9 @@ class GeneralFieldResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\IconColumn::make('icon')
+                    ->label("Icon")
+                    ->icon(fn($state)=> $state),
                 Tables\Columns\TextColumn::make('name')
                     ->label(__(self::langPrefix . 'label'))
                     ->getStateUsing(function ($record){

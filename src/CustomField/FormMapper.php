@@ -25,6 +25,7 @@ class FormMapper
 
     public static function getOptionParameter(CustomField|CustomFieldAnswer $record, string $option){
         if($record instanceof CustomFieldAnswer) $record=$record->customField;
+        if(is_null($record->options)) $record->options = [];
         if(array_key_exists($option, $record->options)) return $record->options[$option];
         //ToDo Rule
         $generalOptions = $record->getType()->getDefaultGeneralOptionValues();
