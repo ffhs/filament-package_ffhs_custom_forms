@@ -19,7 +19,7 @@ class EmailTypeView implements FieldTypeView
             ->columnStart(FormMapper::getOptionParameter($record,"new_line_option"))
             ->columnSpan(FormMapper::getOptionParameter($record,"column_span"))
             ->helperText(FormMapper::getToolTips($record))
-            ->label(FormMapper::getToolTips($record))
+            ->label(FormMapper::getLabelName($record))
             ->required($record->required);
     }
 

@@ -21,7 +21,7 @@ class TextTypeView implements FieldTypeView
             ->maxLength(FormMapper::getOptionParameter($record,"max_length"))
             ->minLength(FormMapper::getOptionParameter($record,"min_length"))
             ->helperText(FormMapper::getToolTips($record))
-            ->label(FormMapper::getToolTips($record))
+            ->label(FormMapper::getLabelName($record))
             ->required($record->required);
     }
 
@@ -29,7 +29,7 @@ class TextTypeView implements FieldTypeView
         array $parameter = []): TextEntry {
         return TextEntry::make(FormMapper::getIdentifyKey($record))
             ->columnStart(FormMapper::getOptionParameter($record,"new_line_option"))
-            ->label(FormMapper::getToolTips($record). ":")
+            ->label(FormMapper::getLabelName($record). ":")
             ->state(FormMapper::getAnswer($record))
             ->columnSpanFull()
             ->inlineLabel();

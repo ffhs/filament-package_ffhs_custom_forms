@@ -22,7 +22,7 @@ class NumberTypeView implements FieldTypeView
             ->columnSpan(FormMapper::getOptionParameter($record,"column_span"))
             ->minValue(FormMapper::getOptionParameter($record,"min_value"))
             ->maxValue(FormMapper::getOptionParameter($record,"max_value"))
-            ->label(FormMapper::getToolTips($record))
+            ->label(FormMapper::getLabelName($record))
             ->required($record->required)
             ->numeric();
     }

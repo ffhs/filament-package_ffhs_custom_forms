@@ -24,7 +24,7 @@ class IconSelectView implements FieldTypeView
         return IconInput::make(FormMapper::getIdentifyKey($record))
             ->columnStart(FormMapper::getOptionParameter($record,"new_line_option"))
             ->columnSpan(FormMapper::getOptionParameter($record,"column_span"))
-            ->label(FormMapper::getToolTips($record))
+            ->label(FormMapper::getLabelName($record))
             ->modifyTextInputUsing(fn(TextInput $textInput)=> $textInput
                 ->inlineLabel(FormMapper::getOptionParameter($record,"in_line_label"))
                 ->helperText(FormMapper::getToolTips($record))
