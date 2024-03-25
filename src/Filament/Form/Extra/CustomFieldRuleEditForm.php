@@ -192,7 +192,7 @@ class CustomFieldRuleEditForm
         $data["rules"] = [];
         /**@var CustomField $customField*/
         $customField = $customForm->customFields->where("id",$data["id"])->first();
-
+        if(is_null($customField)) return $data;
         foreach ($customField->fieldRules as $rule){
             /**@var FieldRule $rule*/
             $ruleData = $rule->toArray();

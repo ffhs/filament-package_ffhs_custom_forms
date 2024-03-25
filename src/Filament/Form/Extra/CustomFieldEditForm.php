@@ -272,7 +272,7 @@ class CustomFieldEditForm
         $field = $customForm->customFields->where("id",$data["id"])->first();
         if($field == null) return $data;
 
-        if(!array_key_exists("options",$data))
+        if(!array_key_exists("options",$data)) $data["options"] = [];
 
         foreach ($type->getExtraTypeOptions() as $name => $option){
             /**@var TypeOption $option*/
