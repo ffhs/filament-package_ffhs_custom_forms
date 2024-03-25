@@ -32,7 +32,6 @@ class CustomFormFactory extends Factory
 
         return $this
             ->afterCreating(function (CustomForm $form){
-                /**@var array $types*/
                 $types = $form->getFormConfiguration()::formFieldTypes();
                 CustomField::factory(sizeof($types))
                     ->state(new Sequence(
@@ -40,19 +39,14 @@ class CustomFormFactory extends Factory
                             'type' => (array_values($types)[$sequence->index])::getFieldIdentifier(),
                             'name_de' => (array_values($types)[$sequence->index])::getFieldIdentifier(),
                             'name_en' => (array_values($types)[$sequence->index])::getFieldIdentifier(),
+                            'is_active' => true,
+                            'required' => false,
+                            'layout_end_position' => is_a (array_values($types)[$sequence->index], CustomLayoutType::class, true) ? $sequence->index+1: null,
                             'form_position' => $sequence->index+1,
-                            'layout_end_position' => is_a (array_values($types)[$sequence->index], CustomLayoutType::class, true) ? $sequence->index+1: null
                         ],
                     ))
                     ->state(["custom_form_id"=> $form->id])
-                    ->afterCreating(function (CustomField $field){
-                        $variation = new CustomFieldVariation();
-                        $variation->custom_field_id = $field->id;
-                        $variation->required = true;
-                        $variation->is_active = true;
-                        $variation->options = $field->getType()->getExtraOptionFields();
-                        $variation->save();
-                    })->create();
+                    ->create();
             });
 
     }

@@ -20,6 +20,8 @@ class CustomFieldFactory extends Factory
         return [
             'name_de' => fake()->name,
             'name_en' => fake()->name,
+            'is_active' => true,
+            'required' => false,
             'identify_key'=> uniqid(),
             'tool_tip_de' => fake()->text(20),
             'tool_tip_en' => fake()->text(20),

@@ -26,6 +26,7 @@ class GeneralFieldFactory extends Factory
             'tool_tip_en' => fake()->text(20),
             'type'=> fake()->randomElement(CustomFieldType::getAllTypes()),
             'is_active'=> true,
+            'icon'=> 'heroicon-o-clipboard-document-check',
         ];
     }
 
