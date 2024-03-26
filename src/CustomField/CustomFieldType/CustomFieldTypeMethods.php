@@ -17,7 +17,7 @@ abstract class CustomFieldTypeMethods
         return ["saved"=> $data];
     }
     public function prepareLoadFieldData(array $data): mixed{
-        if(empty($data["saved"])) return null;
+        if(!array_key_exists("saved",$data) || is_null($data["saved"])) return null;
         return $data["saved"];
     }
 

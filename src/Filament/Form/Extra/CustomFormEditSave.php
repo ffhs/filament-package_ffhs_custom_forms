@@ -171,7 +171,9 @@ class CustomFormEditSave
             $ruleData["execution_order"] = $executionOrder;
 
             if(array_key_exists("id",$ruleData)) $rule = $customField->fieldRules->where("id", $ruleData["id"])->first();
-            else {
+            else $rule = null;
+
+            if(is_null($rule)) {
                 $rule = new FieldRule();
                 $rule->custom_field_id = $customField->id;
                 $rule->fill($ruleData);
@@ -193,7 +195,7 @@ class CustomFormEditSave
 
             if(!$rule->exists) $toCreate[] = $cleanedData;
             else {
-                $existingIds[] = $ruleData["id"];
+                $existingIds[] = $cleanedData["id"];
                 if($rule->isDirty()) $toUpdate[] = $cleanedData;
             }
 
