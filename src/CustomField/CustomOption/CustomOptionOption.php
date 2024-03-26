@@ -56,6 +56,7 @@ class CustomOptionOption extends TypeOption
         }
         $ids = [];
         $toCreate = [];
+        if(is_null($value)) $value = [];
         foreach ($value as $optionData){
             if(!array_key_exists("id",$optionData)){
                 $toCreate[] = array_merge($optionData,["identifier"=> uniqid()]);

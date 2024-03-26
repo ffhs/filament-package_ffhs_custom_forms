@@ -23,16 +23,21 @@ class FormMapper
         return  $record->getInheritState()["name_" . App::currentLocale()];
     }
 
-    public static function getOptionParameter(CustomField|CustomFieldAnswer $record, string $option){
+    public static function getOptionParameter(CustomField|CustomFieldAnswer $record, string $option, bool $canBeNull = false):mixed{
         if($record instanceof CustomFieldAnswer) $record=$record->customField;
         if(is_null($record->options)) $record->options = [];
-        if(array_key_exists($option, $record->options)) return $record->options[$option];
-        //ToDo Rule
+        if(array_key_exists($option, $record->options) ){
+            $return = $record->options[$option];
+            if(is_null($return) &&  $canBeNull) return null;
+            else if(!is_null($return)) return $return;
+        }
+
+        //ToDo make that Rule can change options Data
         $generalOptions = $record->getType()->getDefaultGeneralOptionValues();
         if(array_key_exists($option, $generalOptions)) return $generalOptions[$option];
         $fieldOptions = $record->getType()->getDefaultTypeOptionValues();
         if(array_key_exists($option, $fieldOptions)) return $fieldOptions[$option];
-        return null;
+        return $canBeNull?null:0;
     }
 
     public static function getAnswer(CustomFieldAnswer $answer) {

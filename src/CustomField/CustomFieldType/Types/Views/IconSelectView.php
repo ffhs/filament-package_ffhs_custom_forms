@@ -12,6 +12,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FormMapper;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\TextInput;
 use Filament\Infolists\Components\TextEntry;
+use Guava\FilamentIconPicker\Forms\IconPicker;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\HtmlString;
 
@@ -21,15 +22,12 @@ class IconSelectView implements FieldTypeView
 
     public static function getFormComponent(CustomFieldType $type, CustomField $record,
         array $parameter = []): Component {
-        return IconInput::make(FormMapper::getIdentifyKey($record))
+        return IconPicker::make(FormMapper::getIdentifyKey($record))
             ->columnStart(FormMapper::getOptionParameter($record,"new_line_option"))
             ->columnSpan(FormMapper::getOptionParameter($record,"column_span"))
             ->label(FormMapper::getLabelName($record))
-            ->modifyTextInputUsing(fn(TextInput $textInput)=> $textInput
-                ->inlineLabel(FormMapper::getOptionParameter($record,"in_line_label"))
-                ->helperText(FormMapper::getToolTips($record))
-                ->label(FormMapper::getLabelName($record))
-            );
+            ->inlineLabel(FormMapper::getOptionParameter($record,"in_line_label"))
+            ->helperText(FormMapper::getToolTips($record));
 
     }
 

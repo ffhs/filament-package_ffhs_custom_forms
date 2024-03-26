@@ -39,7 +39,7 @@ class TextAreaType extends CustomFieldType
         return [
             'max_length' => new MaxLenghtOption(),
             'min_length' => new MinLenghtOption(),
-            'auto_size'=> new FastTypeOption(true,$autoSizeComponent),
+            'auto_size'=> new FastTypeOption(false,$autoSizeComponent),
         ];
     }
 
