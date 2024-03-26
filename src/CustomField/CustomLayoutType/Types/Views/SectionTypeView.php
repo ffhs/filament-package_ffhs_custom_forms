@@ -7,7 +7,6 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FormMapper;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\View\FieldTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
-
 use Filament\Forms\Components\Section;
 
 class SectionTypeView implements FieldTypeView
@@ -15,7 +14,7 @@ class SectionTypeView implements FieldTypeView
 
     public static function getFormComponent(CustomFieldType $type, CustomField $record,
         array $parameter = []): \Filament\Forms\Components\Component {
-        return Section::make(FormMapper::getOptionParameter($record,"show_title")? FormMapper::getToolTips($record):"")
+        return Section::make(FormMapper::getOptionParameter($record,"show_title")? FormMapper::getLabelName($record):"")
             ->columnSpan(FormMapper::getOptionParameter($record,"column_span"))
             ->columns(FormMapper::getOptionParameter($record,"columns"))
             ->aside(FormMapper::getOptionParameter($record,"aside"))

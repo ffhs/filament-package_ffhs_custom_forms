@@ -28,8 +28,8 @@ class FormMapper
         if(is_null($record->options)) $record->options = [];
         if(array_key_exists($option, $record->options) ){
             $return = $record->options[$option];
-            if(is_null($return) &&  $canBeNull) return null;
-            else if(!is_null($return)) return $return;
+            if(!is_null($return)) return $return;
+            else if($canBeNull) return null;
         }
 
         //ToDo make that Rule can change options Data

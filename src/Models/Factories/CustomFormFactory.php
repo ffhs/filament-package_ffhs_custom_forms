@@ -4,9 +4,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Models\Factories;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\CustomLayoutType;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
-
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralFieldForm;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\Sequence;
 
@@ -52,7 +50,7 @@ class CustomFormFactory extends Factory
     }
 
 
-    public function generalFields(): Factory
+   /* public function generalFields(): Factory
     {
         return $this
             ->afterCreating(function (CustomForm $form){
@@ -72,7 +70,7 @@ class CustomFormFactory extends Factory
                     })->create();
             });
 
-    }
+    }*/
 
 
 }

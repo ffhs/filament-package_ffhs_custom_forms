@@ -3,12 +3,9 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\Models;
 
 use Ffhs\FilamentPackageFfhsCustomForms\FormConfiguration\DynamicFormConfiguration;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\MorphOne;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 
@@ -16,8 +13,6 @@ use Illuminate\Support\Facades\Cache;
  * @property int $id
  * @property string $custom_form_identifier
  * @property string|null $short_title
- * @property int|null relation_model_id
- * @property string|null relation_model_type
  * @property Collection $customFormAnswers
  * @property Collection $customFields
  */
@@ -31,8 +26,6 @@ class CustomForm extends Model
     protected $fillable = [
         'custom_form_identifier',
         'short_title',
-        'relation_model_id',
-        'relation_model_type',
     ];
 
 
@@ -55,10 +48,6 @@ class CustomForm extends Model
 
     public function makeCached():void {
          Cache::put("custom_form-" .$this->id, $this,config('ffhs_custom_forms.cache_duration'));
-    }
-
-    public function customForm(): MorphOne {
-        return $this->morphOne(CustomForm::class, "relation_model");
     }
 
     public function customFormAnsware(): HasMany {
