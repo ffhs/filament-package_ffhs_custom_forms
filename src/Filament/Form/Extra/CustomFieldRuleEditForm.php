@@ -55,13 +55,14 @@ class CustomFieldRuleEditForm
 
         return Actions::make([
            Action::make("add-rule")
-               ->label("Regel hinzufügen") //ToDo Translate
+               ->action(fn($data, $get, $set)=> $set("rules", array_merge([uniqid()=> $data],$get("rules"))))
                ->form(self::getRuleEditSchema($customForm,$type))
+               ->fillForm(["anchor_data"=>[],"rule_data"=>[]])
                ->modalWidth(MaxWidth::SixExtraLarge)
+               ->label("Regel hinzufügen") //ToDo Translate
                ->mutateFormDataUsing(fn(Action $action) =>
                     array_values($action->getLivewire()->getCachedForms())[2]->getRawState()
                )
-               ->action(fn($data, $get, $set)=> $set("rules", array_merge([uniqid()=> $data],$get("rules")))),
 
         ]);
     }
@@ -71,9 +72,6 @@ class CustomFieldRuleEditForm
         $anchors = self::getSelectableAnchors($customForm,$type);
 
         return [
-           /* TextInput::make("rule_name")
-                ->label("Regelname") //To Do Translate
-                ->required(),*/
             Group::make()
                 ->columns()
                 ->schema([

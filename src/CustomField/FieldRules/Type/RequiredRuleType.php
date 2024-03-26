@@ -33,6 +33,11 @@ class RequiredRuleType extends FieldRuleType
         return !($type instanceof CustomLayoutType);
     }
 
+    public function mutateDataBeforeSaveInEdit(array $ruleData, FieldRule $rule): array {
+        if(!array_key_exists("",$ruleData))$ruleData["is_required_on_activation"] = false;
+        return $ruleData;
+    }
+
     public function afterRender(Component|\Filament\Infolists\Components\Component $component ,CustomField $customField, FieldRule $rule): Component|\Filament\Infolists\Components\Component {
         if(!($component instanceof Field)) return $component;
         $setting =  $rule->rule_data["is_required_on_activation"];

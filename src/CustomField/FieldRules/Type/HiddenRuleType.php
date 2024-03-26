@@ -6,6 +6,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomFieldT
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\CustomLayoutType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\FieldRuleType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\HasRulePluginTranslate;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FormMapper;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\FieldRule;
@@ -30,13 +31,19 @@ class HiddenRuleType extends FieldRuleType
     public function canAddOnField(CustomFieldType $type): bool {
         return !($type instanceof CustomLayoutType);
     }
+    public function mutateDataBeforeSaveInEdit(array $ruleData, FieldRule $rule): array {
+        if(!array_key_exists("",$ruleData))$ruleData["is_hidden_on_activation"] = false;
+        return $ruleData;
+    }
 
     public function afterRender(Component|\Filament\Infolists\Components\Component $component ,CustomField $customField, FieldRule $rule): Component|\Filament\Infolists\Components\Component {
         if(!($component instanceof Component)) return $component;
         $setting =  $rule->rule_data["is_hidden_on_activation"];
-        return $component->hidden(function(Component $component) use ($setting, $customField, $rule) {
+        return $component->hidden(function(Component $component,$set) use ($setting, $customField, $rule) {
             $anchor = $rule->getAnchorType()->canRuleExecute($component,$customField,$rule);
-            return $anchor?!$setting:$setting;
+            $hidden = $anchor?!$setting:$setting;
+            if($hidden) $set(FormMapper::getIdentifyKey($customField),null);
+            return $hidden;
         });
     }
 

@@ -193,11 +193,15 @@ class ValueEqualsRuleAnchor extends FieldRuleAnchorType
         if(!array_key_exists($target, $formState)) return false;
         $type = $rule->anchor_data["field_type"];
 
-        if($customField->getType() instanceof CustomOptionType) {
+        $targetFiletype = $customField->customForm->customFields->where("identify_key",$target)->first()->getType(); //ToDO Optimize
+        if($targetFiletype instanceof CustomOptionType) {
             $options = $rule->anchor_data["values"];
-            return  in_array($formState[$target],$options);
+            if(is_null($options)) return false;
+            return in_array($formState[$target],$options);
         }
-        if($type == "boolean") return $formState[$target] == $rule->anchor_data["value"];
+        if($type == "boolean") {
+            return $formState[$target] == $rule->anchor_data["value"];
+        }
         if($type == "text") {
             $options = $this->flatten($rule->anchor_data["values"]);
             $options = array_values($options);
