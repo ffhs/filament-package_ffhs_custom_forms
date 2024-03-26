@@ -59,7 +59,6 @@ class ChangeOptionRuleType extends FieldRuleType
         $optionsOld = $property->getValue($component);
 
         return $component->options(function ($get,$set) use ($optionsOld, $customField, $component, $rule) {
-            $options = [];
             if(!$rule->getAnchorType()->canRuleExecute($component,$customField,$rule)) $options= $component->evaluate($optionsOld);
             else{
                 $customField->customOptions =  $customField->customOptions->whereIn("identifier",$rule->rule_data["customOptions"]);

@@ -34,7 +34,7 @@ class RequiredRuleType extends FieldRuleType
     }
 
     public function mutateDataBeforeSaveInEdit(array $ruleData, FieldRule $rule): array {
-        if(!array_key_exists("",$ruleData))$ruleData["is_required_on_activation"] = false;
+        if(!array_key_exists("is_required_on_activation",$ruleData))$ruleData["is_required_on_activation"] = false;
         return $ruleData;
     }
 

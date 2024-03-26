@@ -32,7 +32,7 @@ class HiddenRuleType extends FieldRuleType
         return !($type instanceof CustomLayoutType);
     }
     public function mutateDataBeforeSaveInEdit(array $ruleData, FieldRule $rule): array {
-        if(!array_key_exists("",$ruleData))$ruleData["is_hidden_on_activation"] = false;
+        if(!array_key_exists("is_hidden_on_activation",$ruleData))$ruleData["is_hidden_on_activation"] = false;
         return $ruleData;
     }
 

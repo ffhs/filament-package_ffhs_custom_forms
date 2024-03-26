@@ -32,7 +32,7 @@ class DisabledRuleType extends FieldRuleType
     }
 
     public function mutateDataBeforeSaveInEdit(array $ruleData, FieldRule $rule): array {
-        if(!array_key_exists("",$ruleData["rule_data"]))$ruleData["rule_data"]["is_disabled_on_activation"] = false;
+        if(!array_key_exists("is_disabled_on_activation",$ruleData["rule_data"]))$ruleData["rule_data"]["is_disabled_on_activation"] = false;
         return $ruleData;
     }
 
