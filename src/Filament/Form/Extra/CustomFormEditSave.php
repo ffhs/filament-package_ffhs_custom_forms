@@ -173,19 +173,23 @@ class CustomFormEditSave
             if(array_key_exists("id",$ruleData)) $rule = $customField->fieldRules->where("id", $ruleData["id"])->first();
             else {
                 $rule = new FieldRule();
+                $rule->custom_field_id = $customField->id;
                 $rule->fill($ruleData);
             }
             $ruleData = $rule->getAnchorType()->mutateDataBeforeSaveInEdit($ruleData, $rule);
             $ruleData = $rule->getRuleType()->mutateDataBeforeSaveInEdit($ruleData, $rule);
 
-            $ruleData["anchor_data"] = json_encode($ruleData["anchor_data"]);
-            $ruleData["rule_data"] = json_encode($ruleData["rule_data"]);
+            //dd(json_encode($ruleData["rule_data"]));
 
             $rule->fill($ruleData);
+            if(!$rule->exists || $rule->isDirty()) $rule->save();
 
             $cleanedData = $rule->toArray();
             unset($cleanedData["created_at"]);
             unset($cleanedData["updated_at"]);
+
+            $cleanedData["anchor_data"] = json_encode($ruleData["anchor_data"]); //ToDO Change is mist
+            $cleanedData["rule_data"] = json_encode($ruleData["rule_data"]);
 
             if(!$rule->exists) $toCreate[] = $cleanedData;
             else {
@@ -194,7 +198,7 @@ class CustomFormEditSave
             }
 
         }
-        FieldRule::query()->upsert($toUpdate, ["id"]);
+        FieldRule::query()->upsert($toUpdate, ["id"]); //ToDo Optimize
         $customField->fieldRules()->whereNotIn("id",$existingIds)->delete();
         $customField->fieldRules()->createMany($toCreate);
     }

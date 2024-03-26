@@ -24,7 +24,7 @@ class IsHiddenRuleType extends FieldRuleType
     public function settingsComponent(CustomForm $customForm, array $fieldData): Component {
         return Toggle::make("is_hidden_on_activation")
             ->label("Feld verstecken, falls die Regel ausgeführt wird")// ToDo Translate
-            ->hintIconTooltip("Bei Nein wird das Feld nicht versteckt, falls die Regel nicht zuschlägt"); // ToDo Translate
+            ->hintIconTooltip("Bei Nein wird das Feld nicht versteckt, falls die Regel zuschlägt"); // ToDo Translate
     }
 
     public function canAddOnField(CustomFieldType $type): bool {
@@ -36,7 +36,7 @@ class IsHiddenRuleType extends FieldRuleType
         $setting =  $rule->rule_data["is_hidden_on_activation"];
         return $component->hidden(function(Component $component) use ($setting, $customField, $rule) {
             $anchor = $rule->getAnchorType()->canRuleExecute($component,$customField,$rule);
-            return (!$anchor)?$setting:!$setting;
+            return $anchor?$setting:!$setting;
         });
     }
 

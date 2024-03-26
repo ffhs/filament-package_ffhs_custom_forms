@@ -26,7 +26,7 @@ class IsRequiredRuleType extends FieldRuleType
     public function settingsComponent(CustomForm $customForm, array $fieldData): Component {
         return Toggle::make("is_required_on_activation")
             ->label("Feld benötigt, falls die Regel nicht ausgeführt wird")// ToDo Translate
-            ->hintIconTooltip("Bei Nein wird das Feld nicht benötigt, falls die Regel nicht zuschlägt"); // ToDo Translate
+            ->hintIconTooltip("Bei Nein wird das Feld nicht benötigt, falls die Regel zuschlägt"); // ToDo Translate
     }
 
     public function canAddOnField(CustomFieldType $type): bool {
@@ -38,6 +38,7 @@ class IsRequiredRuleType extends FieldRuleType
         $setting =  $rule->rule_data["is_required_on_activation"];
         return $component->required(fn(Field $component) => $rule->getAnchorType()->canRuleExecute($component,$customField,$rule)?$setting:!$setting);
     }
+
 
 
 }

@@ -143,11 +143,8 @@ class ValueEqualsRuleAnchor extends FieldRuleAnchorType
         $results = [];
 
         foreach ($array as $key => $value) {
-            if (is_array($value) && ! empty($value)) {
-                $results = array_merge($results, $this->flatten($value));
-            } else {
-                $results[$key] = $value;
-            }
+            if (is_array($value) && ! empty($value)) $results = array_merge($results, $this->flatten($value));
+            else $results[$key] = $value;
         }
 
         return $results;
@@ -158,7 +155,8 @@ class ValueEqualsRuleAnchor extends FieldRuleAnchorType
         $target = $rule->anchor_data["target_field"];
         if(!array_key_exists($target, $formState)) return false;
         $type = $rule->anchor_data["field_type"];
-        if($type == "bool") return $formState[$target] == $rule->anchor_data["value"];
+
+        if($type == "boolean") return $formState[$target] == $rule->anchor_data["value"];
         if($type == "text") {
             $options = $this->flatten($rule->anchor_data["values"]);
             $options = array_values($options);

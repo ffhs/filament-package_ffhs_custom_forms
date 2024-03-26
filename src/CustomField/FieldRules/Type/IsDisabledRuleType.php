@@ -23,7 +23,7 @@ class IsDisabledRuleType extends FieldRuleType
     public function settingsComponent(CustomForm $customForm, array $fieldData): Component {
         return Toggle::make("is_disabled_on_activation")
             ->label("Deaktivieren des Feldes, falls die Regel nicht ausgeführt wird")// ToDo Translate
-            ->hintIconTooltip("Bei Nein wird das Feld nicht deaktiviert, falls die Regel nicht zuschlägt"); // ToDo Translate
+            ->hintIconTooltip("Bei Nein wird das Feld nicht deaktiviert, falls die Regel zuschlägt"); // ToDo Translate
     }
 
     public function canAddOnField(CustomFieldType $type): bool {

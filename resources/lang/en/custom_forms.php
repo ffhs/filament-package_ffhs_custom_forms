@@ -52,6 +52,7 @@ return [
             "is_disabled_rule" => "Disable field",
             "is_hidden_rule" => "Hide field",
             "is_required_rule" => "Require field",
+            'change_options_rule' => 'Change field options'
         ],
 
         'anchors'=>[
