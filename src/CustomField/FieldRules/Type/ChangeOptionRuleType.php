@@ -50,9 +50,6 @@ class ChangeOptionRuleType extends FieldRuleType
             });
     }
 
-    public function beforeRender(CustomField $customField, FieldRule $rule): void {
-     //   $customField->customOptions =  $customField->customOptions->whereIn("identifier",$rule->rule_data["customOptions"]);
-    }
 
     public function afterRender(Component|InfoComponent $component, CustomField $customField, FieldRule $rule): Component|InfoComponent {
         if(!in_array(HasOptions::class,class_uses_recursive($component::class))) return $component;
@@ -61,13 +58,13 @@ class ChangeOptionRuleType extends FieldRuleType
         $property->setAccessible(true);
         $optionsOld = $property->getValue($component);
 
-        $component->options(function () use ($optionsOld, $customField, $component, $rule) {
+        return $component->options(function () use ($optionsOld, $customField, $component, $rule) {
             if(!$rule->getAnchorType()->canRuleExecute($component,$customField,$rule)) return $component->evaluate($optionsOld);
             $customField->customOptions =  $customField->customOptions->whereIn("identifier",$rule->rule_data["customOptions"]);
             return FormMapper::getAvailableCustomOptions($customField);
         });
 
-        return $component;
+
     }
 
 

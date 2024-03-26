@@ -12,7 +12,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\FieldRule;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Toggle;
 
-class IsDisabledRuleType extends FieldRuleType
+class DisabledRuleType extends FieldRuleType
 {
     use HasRulePluginTranslate;
 
@@ -23,7 +23,7 @@ class IsDisabledRuleType extends FieldRuleType
     public function settingsComponent(CustomForm $customForm, array $fieldData): Component {
         return Toggle::make("is_disabled_on_activation")
             ->label("Deaktivieren des Feldes, falls die Regel nicht ausgeführt wird")// ToDo Translate
-            ->hintIconTooltip("Bei Nein wird das Feld nicht deaktiviert, falls die Regel zuschlägt"); // ToDo Translate
+            ->hintIconTooltip("Bei Ja wird das Feld nicht deaktiviert, falls die Regel zuschlägt"); // ToDo Translate
     }
 
     public function canAddOnField(CustomFieldType $type): bool {
@@ -35,7 +35,7 @@ class IsDisabledRuleType extends FieldRuleType
         $setting =  $rule->rule_data["is_disabled_on_activation"];
         return $component->disabled(function(Component $component) use ($setting, $customField, $rule) {
             $anchor = $rule->getAnchorType()->canRuleExecute($component,$customField,$rule);
-            return (!$anchor)?$setting:!$setting;
+            return $anchor?!$setting:$setting;
         });
     }
 

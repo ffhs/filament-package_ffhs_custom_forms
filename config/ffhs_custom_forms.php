@@ -16,9 +16,9 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\Toggle
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\Types\SectionType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\Anchors\ValueEqualsRuleAnchor;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\Type\ChangeOptionRuleType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\Type\IsDisabledRuleType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\Type\IsHiddenRuleType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\Type\IsRequiredRuleType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\Type\DisabledRuleType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\Type\HiddenRuleType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\Type\RequiredRuleType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\TypeOption;
 
 return [
@@ -31,9 +31,9 @@ return [
     ],
 
     "field_rule_types"=>[
-        IsRequiredRuleType::class,
-        IsHiddenRuleType::class,
-        IsDisabledRuleType::class,
+        RequiredRuleType::class,
+        HiddenRuleType::class,
+        DisabledRuleType::class,
         ChangeOptionRuleType::class,
     ],
 

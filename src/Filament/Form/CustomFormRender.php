@@ -29,25 +29,7 @@ class CustomFormRender
         ];
     }
 
-    public static function getFormRender(string $viewMode,CustomForm $form): Closure {
-        return function(CustomField $customField, array $parameter) use ($viewMode, $form) {
 
-            $rules = $customField->fieldRules;
-
-            $rules->each(function(FieldRule $rule) use (&$customField) {
-                $rule->getRuleType()->beforeRender($customField,$rule);
-            });
-
-            $component = $customField->getType()->getFormComponent($customField, $form, $viewMode, $parameter);
-            $component->live();
-
-            $rules->each(function(FieldRule $rule) use (&$customField, &$component) {
-                $component = $rule->getRuleType()->afterRender($component,$customField,$rule);
-            });
-
-            return $component;
-        };
-    }
 
 
     public static function generateInfoListSchema(CustomFormAnswer $formAnswer, string $viewMode):array {
@@ -67,7 +49,6 @@ class CustomFormRender
     public static function getInfolistRender(string $viewMode,CustomForm $form, Collection $fieldAnswers): Closure {
         return function (CustomField $customField,  array $parameter) use ($form, $viewMode, $fieldAnswers) {
 
-
             /** @var CustomFormAnswer $answer*/
             $answer = $fieldAnswers->firstWhere("custom_field_id", $customField->id);
             if (is_null($answer)) {
@@ -76,12 +57,20 @@ class CustomFormRender
                 $answer->custom_field_id = $customField->id;
             }
 
-
             return $customField->getType()->getInfolistComponent($answer, $form, $viewMode, $parameter);
         };
     }
 
+    public static function getFormRender(string $viewMode,CustomForm $form): Closure {
+        return function(CustomField $customField, array $parameter) use ($viewMode, $form) {
 
+            //Render
+            $component = $customField->getType()->getFormComponent($customField, $form, $viewMode, $parameter);
+            $component->live();
+
+            return $component;
+        };
+    }
 
     public static function render(int $indexOffset, Collection $customFields, Closure &$render): array {
         $customFormSchema = [];
@@ -96,33 +85,57 @@ class CustomFormRender
 
             /** @var CustomField $customField*/
             $customField =  $preparedFields[$index];
+            $parameters = [];
 
             if(!$customField->is_active) continue;
-            if(!($customField->getType() instanceof CustomLayoutType)){
-                $customFormSchema[] = $render($customField, []);
-                continue;
+            if(($customField->getType() instanceof CustomLayoutType)){
+
+                $endLocation = $customField->layout_end_position;
+
+                //Setup Render Data
+                $fieldRenderData = [];
+                for($formPositionSubForm = $customField->form_position+1; $formPositionSubForm <= $endLocation; $formPositionSubForm++){
+                    $fieldRenderData[] =  $preparedFields[$formPositionSubForm];
+                }
+                $fieldRenderData = collect($fieldRenderData);
+
+                //Render Schema Input
+                $renderedOutput = self::render($index, $fieldRenderData, $render);
+                //Get Layout Schema
+                $parameters = [
+                    "customFieldData" => $fieldRenderData,
+                    "rendered"=> $renderedOutput[0],
+                ]; //ToDo Optimize
+
+                //Set Index
+                $index= $renderedOutput[1]-1;
             }
-            $endLocation = $customField->layout_end_position;
 
-            //Setup Render Data
-            $fieldRenderData = [];
-            for($formPositionSubForm = $customField->form_position+1; $formPositionSubForm <= $endLocation; $formPositionSubForm++){
-                $fieldRenderData[] =  $preparedFields[$formPositionSubForm];
-            }
-            $fieldRenderData = collect($fieldRenderData);
+            $rules = $customField->fieldRules;
 
-            //Render Schema Input
-            $renderedOutput = self::render($index, $fieldRenderData, $render);
-            //Get Layout Schema
-            $parameters = [
-                "customFieldData" => $fieldRenderData,
-                "rendered"=> $renderedOutput[0],
-            ]; //ToDo Optimize
+            //Rule before render
+            $rules->each(function(FieldRule $rule) use (&$customField) {
+                $rule->getRuleType()->beforeRender($customField,$rule);
+            });
 
-            //Set Index
-            $index= $renderedOutput[1]-1;
+            //Parameter anchor mutation
+            $rules->each(function(FieldRule $rule) use (&$parameters, &$customField) {
+                $parameters =  $rule->getAnchorType()->mutateRenderParameter($parameters,$customField,$rule);
+            });
 
-            $customFormSchema[] = $render($customField, $parameters);
+            //Parameter rule mutation
+            $rules->each(function(FieldRule $rule) use (&$parameters, &$customField) {
+                $parameters =  $rule->getRuleType()->mutateRenderParameter($parameters,$customField,$rule);
+            });
+
+            //Render
+            $renderedComponent = $render($customField, $parameters);
+
+            //Rule after Render
+            $rules->each(function(FieldRule $rule) use (&$customField, &$renderedComponent) {
+                $renderedComponent = $rule->getRuleType()->afterRender($renderedComponent,$customField,$rule);
+            });
+            $customFormSchema[] = $renderedComponent;
 
         }
         return [$customFormSchema,$index];

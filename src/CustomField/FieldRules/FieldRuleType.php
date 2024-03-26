@@ -12,7 +12,6 @@ use Filament\Infolists\Components\Component as InfoComponent;
 
 abstract class FieldRuleType
 {
-
     /*
      * Static Class Functions
      */
@@ -54,10 +53,13 @@ abstract class FieldRuleType
 
 
 
+
     public function beforeRender(CustomField $customField, FieldRule $rule):void {
 
     }
-
+    public function mutateRenderParameter(array $parameter, CustomField $customField, FieldRule $rule): array {
+        return $parameter;
+    }
     public function afterRender(Component|InfoComponent $component, CustomField $customField, FieldRule $rule): Component|InfoComponent  {
         return $component;
     }

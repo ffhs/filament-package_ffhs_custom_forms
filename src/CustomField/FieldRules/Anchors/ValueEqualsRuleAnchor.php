@@ -2,7 +2,9 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\Anchors;
 
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\CustomLayoutType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomOption\CustomOptionType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\FieldRuleAnchorType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\HasAnchorPluginTranslate;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Form\CustomFormEditForm;
@@ -17,6 +19,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\ToggleButtons;
+use Filament\Forms\Get;
 
 class ValueEqualsRuleAnchor extends FieldRuleAnchorType
 {
@@ -38,6 +41,36 @@ class ValueEqualsRuleAnchor extends FieldRuleAnchorType
         }
 
         return $output;
+    }
+
+    protected static function getSelectedFieldData(Get $get,Component $component):array|null {
+        $identifier = $get("target_field");
+        if(is_null($identifier)) return null;
+        $fields = array_values($component->getLivewire()->getCachedForms())[0]->getRawState()["custom_fields"];
+        $finalField = null;
+
+        foreach ($fields as $field){
+            if(array_key_exists("general_field_id",$field) && !is_null($field["general_field_id"])){
+                $genField = GeneralField::cached($field["general_field_id"]);
+                if($genField?->identify_key != $identifier) continue;
+                $finalField = $field;
+                break;
+            }
+            if($field["identify_key"] != $identifier) continue;
+            $finalField = $field;
+            break;
+        }
+        return $finalField;
+    }
+
+    protected static function getFieldType(array $fieldData): CustomFieldType {
+        if(!array_key_exists("general_field_id",$fieldData) || is_null($fieldData["general_field_id"]))
+            $fieldType = CustomFieldType::getTypeFromName($fieldData["type"]);
+        else{
+            $genField = GeneralField::cached($fieldData["general_field_id"]);
+            $fieldType = $genField->getType();
+        }
+        return $fieldType;
     }
 
     public function settingsComponent(CustomForm $customForm, array $fieldData): Component {
@@ -81,59 +114,63 @@ class ValueEqualsRuleAnchor extends FieldRuleAnchorType
                     ->options([//ToDo Translate
                                "text" => "Text",
                                "boolean" => "Ja/Nein",
-                               "custom_option" => "Optionen",
-                    ]),
+                    ])
+                    ->visible(function($get,$component) {
+                        $fieldData = self::getSelectedFieldData($get,$component);
+                        if(is_null($fieldData)) return true;
+                        $fieldType= self::getFieldType($fieldData);
+                        return !($fieldType instanceof CustomOptionType);
+                    }),
 
 
                 Toggle::make("value")
-                    ->visible(fn($get)=> $get("field_type") == "boolean")
+                    ->label("Wert") //ToDo Translate
                     ->columnSpanFull()
-                    ->label("Wert"),
+                    ->visible(function($get,$component) {
+                        $fieldData = self::getSelectedFieldData($get,$component);
+                        if(is_null($fieldData)) return true;
+                        $fieldType= self::getFieldType($fieldData);
+                        return !($fieldType instanceof CustomOptionType) && $get("field_type") == "boolean";
+                    }),
                 Repeater::make("values")
-                    ->visible(fn($get) => $get("field_type") == "text")
                     ->columnSpanFull()
                     ->label("")
                     ->schema([
                         TextInput::make("value")
                             ->label("Wert")
                             ->required(),
-                    ]),
+                    ])
+                    ->visible(function($get,$component) {
+                        $fieldData = self::getSelectedFieldData($get,$component);
+                        if(is_null($fieldData)) return true;
+                        $fieldType= self::getFieldType($fieldData);
+                        return !($fieldType instanceof CustomOptionType) && $get("field_type") == "text";
+                    }),
                 Select::make("values")
-                    ->visible(fn($get) => $get("field_type") == "custom_option")
+                    ->visible(function($get,$component) {
+                        $fieldData = self::getSelectedFieldData($get,$component);
+                        if(is_null($fieldData)) return false;
+                        $fieldType= self::getFieldType($fieldData);
+                        return $fieldType instanceof CustomOptionType;
+                    })
                     ->columnSpanFull()
                     ->multiple()
                     ->options(function ($get, Select $component) use ($customForm):array {
-                        $identifier = $get("target_field");
-                        if(is_null($identifier)) return [];
-                        $fields = array_values($component->getLivewire()->getCachedForms())[0]->getRawState()["custom_fields"];
-                        $finalField = null;
-
-                        foreach ($fields as $field){
-                            if(array_key_exists("general_field_id",$field) && !is_null($field["general_field_id"])){
-                                $genField = GeneralField::cached($field["general_field_id"]);
-                                if($genField?->identify_key != $identifier) continue;
-                                $finalField = $field;
-                                break;
-                            }
-                            if($field["identify_key"] != $identifier) continue;
-                            $finalField = $field;
-                            break;
-                        }
-
-                        //ToDo get Options identifyer and Translated Name
+                        $finalField = self::getSelectedFieldData($get,$component);
+                        if(is_null($finalField)) return [];
 
                         if(array_key_exists("general_field_id",$finalField) && !is_null($finalField["general_field_id"])){
                             //GeneralFields
                             $genField = GeneralField::cached($finalField["general_field_id"]);
-                            return $genField->customOptions->pluck("name_de","identifier")->toArray();
+                            return $genField->customOptions->pluck("name_de","identifier")->toArray(); //ToDo Translate
                         }else{
                             if(!array_key_exists("options",$finalField)) return [];
                             if(!array_key_exists("customOptions",$finalField["options"])) return [];
                             $options = collect($finalField["options"]["customOptions"]);
-                            return $options->pluck("name_de","identifier")->toArray();
+                            return $options->pluck("name_de","identifier")->toArray(); //ToDo Translate
                         }
 
-                    })
+                    }),
             ]);
     }
 
@@ -156,14 +193,14 @@ class ValueEqualsRuleAnchor extends FieldRuleAnchorType
         if(!array_key_exists($target, $formState)) return false;
         $type = $rule->anchor_data["field_type"];
 
+        if($customField->getType() instanceof CustomOptionType) {
+            $options = $rule->anchor_data["values"];
+            return  in_array($formState[$target],$options);
+        }
         if($type == "boolean") return $formState[$target] == $rule->anchor_data["value"];
         if($type == "text") {
             $options = $this->flatten($rule->anchor_data["values"]);
             $options = array_values($options);
-            return  in_array($formState[$target],$options);
-        }
-        if($type == "custom_option") {
-            $options = $rule->anchor_data["values"];
             return  in_array($formState[$target],$options);
         }
         else return false;

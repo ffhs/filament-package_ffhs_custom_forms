@@ -54,7 +54,9 @@ abstract class FieldRuleAnchorType
     public function canAddOnField(CustomFieldType $type): bool {
         return true;
     }
-
+    public function mutateRenderParameter(array $parameter, CustomField $customField, FieldRule $rule): array {
+        return $parameter;
+    }
     public function mutateDataBeforeLoadInEdit(array $ruleData, FieldRule $rule): array {
         return $ruleData;
     }
