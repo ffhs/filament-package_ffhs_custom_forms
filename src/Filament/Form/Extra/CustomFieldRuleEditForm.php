@@ -12,6 +12,7 @@ use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Group;
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
@@ -42,8 +43,8 @@ class CustomFieldRuleEditForm
                ->modalWidth(MaxWidth::SixExtraLarge)
                ->label("Regel hinzufügen") //ToDo Translate
                ->mutateFormDataUsing(fn(Action $action) =>
-                   // dd(array_values($action->getLivewire()->getCachedForms())[2]->getRawState())
-                    collect(array_values($action->getLivewire()->getCachedForms()))->each(fn($that)=>dump($that->getRawState()))&&dd()
+                    array_values($action->getLivewire()->getCachedForms())[2]->getRawState()
+               //collect(array_values($action->getLivewire()->getCachedForms()))->each(fn($that)=>dump($that->getRawState()))&&dd()
                )
 
         ]);
@@ -111,7 +112,6 @@ class CustomFieldRuleEditForm
                                 ->options($rules)
                                 ->required()
                                 ->live(),
-
                             Group::make()
                                 ->statePath("rule_data")
                                 ->schema(function($get, $livewire) use ($customForm) {
@@ -160,8 +160,8 @@ class CustomFieldRuleEditForm
                         $set("rules." . $arguments["item"], $data)
                     )
                     ->mutateFormDataUsing(fn(Action $action) =>
-                        //array_values($action->getLivewire()->getCachedForms())[2]->getRawState()
-                        collect(array_values($action->getLivewire()->getCachedForms()))->each(fn($that)=>dump($that->getRawState()))&&dd()
+                        array_values($action->getLivewire()->getCachedForms())[2]->getRawState()
+                        //collect(array_values($action->getLivewire()->getCachedForms()))->each(fn($that)=>dump($that->getRawState()))&&dd()
                     ),
             ]);
     }
