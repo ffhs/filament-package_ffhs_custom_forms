@@ -35,9 +35,12 @@ class ChangeOptionRuleType extends FieldRuleType
                 $field = array_values($component->getLivewire()->getCachedForms())[1]->getRawState();
                 if(array_key_exists("general_field_id",$field) && !is_null($field["general_field_id"])){
                     $genField = GeneralField::cached($field["general_field_id"]);
-                    $options = $genField->customOptions;
-                    //ToDo take from field and not from general field
-                    return $options->pluck("name_de","identify_key"); //ToDo translate
+                    if(!array_key_exists("options",$field)) $field["options"] = [];
+                    if(!array_key_exists("customOptions",$field["options"])) $field["customOptions"] = [];
+                    $options = $field["options"]["customOptions"];
+                    $genOptions = $genField->customOptions->whereIn("id", $options);
+
+                    return $genOptions->pluck("name_de","identifier"); //ToDo translate
                 }
                 if(!array_key_exists("options",$field)) $field["options"] = [];
                 if(!array_key_exists("customOptions",$field["options"])) $field["customOptions"] = [];
