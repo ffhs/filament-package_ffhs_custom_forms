@@ -3,14 +3,11 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\Views;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomFieldType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\View\FieldTypeView;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\IconInput;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FormMapper;
-
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\View\FieldTypeView;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Filament\Forms\Components\Component;
-use Filament\Forms\Components\TextInput;
 use Filament\Infolists\Components\TextEntry;
 use Guava\FilamentIconPicker\Forms\IconPicker;
 use Illuminate\Support\Facades\Blade;

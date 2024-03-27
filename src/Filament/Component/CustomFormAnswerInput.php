@@ -7,10 +7,7 @@ use Closure;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Form\CustomFormRender;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
-use Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormAnswerResource;
 use Filament\Forms\Components\Component;
-use Filament\Forms\Components\Group;
-use Illuminate\Database\Eloquent\Model;
 
 class CustomFormAnswerInput extends Component
 {

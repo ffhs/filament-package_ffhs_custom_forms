@@ -19,7 +19,6 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\Type\ChangeOption
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\Type\DisabledRuleType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\Type\HiddenRuleType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\Type\RequiredRuleType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\TypeOption;
 
 return [
 

@@ -7,7 +7,6 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FormMapper;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Filament\Infolists\Components\Component;
 use Filament\Infolists\Components\IconEntry;
-use Filament\Infolists\Components\TextEntry;
 
 trait HasCustomOptionInfoListViewWithBoolean
 {
