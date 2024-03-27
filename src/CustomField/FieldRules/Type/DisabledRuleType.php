@@ -12,6 +12,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\FieldRule;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Toggle;
+use ReflectionClass;
 
 class DisabledRuleType extends FieldRuleType
 {
@@ -40,11 +41,18 @@ class DisabledRuleType extends FieldRuleType
     public function afterRender(Component|\Filament\Infolists\Components\Component $component ,CustomField $customField, FieldRule $rule): Component|\Filament\Infolists\Components\Component {
         if(!($component instanceof Component)) return $component;
         $setting =  $rule->rule_data["is_disabled_on_activation"];
-        return $component->disabled(function(Component $component,$set) use ($setting, $customField, $rule) {
+
+        $reflection = new ReflectionClass($component);
+        $property = $reflection->getProperty("isDisabled");
+        $property->setAccessible(true);
+        $isDisabledOld = $property->getValue($component);
+
+        return $component->disabled(function(Component $component,$set) use ($isDisabledOld, $setting, $customField, $rule) {
             $anchor = $rule->getAnchorType()->canRuleExecute($component,$customField,$rule);
-            $disabled = $anchor?!$setting:$setting;
-            if($disabled) $set(FormMapper::getIdentifyKey($customField),null);
-            return $disabled;
+            $disabled = $setting?!$anchor:$anchor;
+            if(!$disabled) return $component->evaluate($isDisabledOld);
+            $set(FormMapper::getIdentifyKey($customField),null);
+            return true;
         });
     }
 

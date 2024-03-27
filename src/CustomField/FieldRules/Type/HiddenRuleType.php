@@ -10,6 +10,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\FieldRule;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Toggle;
+use ReflectionClass;
 
 class HiddenRuleType extends FieldRuleType
 {
@@ -34,11 +35,18 @@ class HiddenRuleType extends FieldRuleType
     public function afterRender(Component|\Filament\Infolists\Components\Component $component ,CustomField $customField, FieldRule $rule): Component|\Filament\Infolists\Components\Component {
         if(!($component instanceof Component)) return $component;
         $setting =  $rule->rule_data["is_hidden_on_activation"];
-        return $component->hidden(function(Component $component,$set) use ($setting, $customField, $rule) {
+
+        $reflection = new ReflectionClass($component);
+        $property = $reflection->getProperty("isHidden");
+        $property->setAccessible(true);
+        $isHiddenOld = $property->getValue($component);
+
+        return $component->hidden(function(Component $component,$set) use ($isHiddenOld, $setting, $customField, $rule) {
             $anchor = $rule->getAnchorType()->canRuleExecute($component,$customField,$rule);
-            $hidden = $anchor?!$setting:$setting;
-            if($hidden) $set(FormMapper::getIdentifyKey($customField),null);
-            return $hidden;
+            $hidden = $setting?!$anchor:$anchor;
+            if(!$hidden) return $component->evaluate($isHiddenOld);
+            $set(FormMapper::getIdentifyKey($customField),null);
+            return true;
         });
     }
 

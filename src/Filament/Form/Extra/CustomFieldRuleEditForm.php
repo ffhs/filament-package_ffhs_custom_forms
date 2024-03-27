@@ -3,6 +3,7 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Form\Extra;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomFieldType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldUtils;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\FieldRuleAnchorType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\FieldRuleType;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
@@ -26,8 +27,6 @@ class CustomFieldRuleEditForm
                 self::getRuleAddAction($customForm,$type),
                 self::getRuleRepeater($customForm,$type),
             ]);
-
-        //toDo Rules Section
     }
 
 
@@ -43,29 +42,11 @@ class CustomFieldRuleEditForm
                ->label("Regel hinzufügen") //ToDo Translate
                ->mutateFormDataUsing(fn(Action $action) =>
                     array_values($action->getLivewire()->getCachedForms())[2]->getRawState()
-               //collect(array_values($action->getLivewire()->getCachedForms()))->each(fn($that)=>dump($that->getRawState()))&&dd()
                )
 
         ]);
     }
 
-    private static function flatten($array): array {
-        $results = [];
-
-        foreach ($array as $key => $value) {
-            if (is_array($value) && ! empty($value)){
-                $subResult = [];
-                foreach ($value as $key1 => $value1) {
-                    $subResult[$key1]=$value1;
-                }
-                $results = array_merge($results, $subResult);
-            }
-            else $results[$key] = $value;
-        }
-
-
-        return $results;
-    }
 
     private static function getRuleEditSchema(CustomForm $customForm, CustomFieldType $type): array {
         $rules = self::getSelectableRules($customForm, $type);
@@ -97,10 +78,7 @@ class CustomFieldRuleEditForm
                                     if(is_null($get("anchor_identifier"))) return [];
                                     $data = $livewire->data;
 
-                                    for($i=0; $i<=10;$i++){
-                                        if(array_key_exists("custom_fields",$data)) break;
-                                        $data= self::flatten($data);
-                                    }
+                                    $data = CustomFieldUtils::flattDownToCustomFields($data);
 
                                     $anchor = FieldRuleAnchorType::getAnchorFromName($get("anchor_identifier"));
                                     return [$anchor->settingsComponent($customForm, $data["custom_fields"])];
@@ -125,10 +103,7 @@ class CustomFieldRuleEditForm
                                     if(is_null($get("rule_identifier"))) return [];
                                     $data = $livewire->data;
 
-                                    for($i=0; $i<=10;$i++){
-                                        if(array_key_exists("custom_fields",$data)) break;
-                                        $data= self::flatten($data);
-                                    }
+                                    $data = CustomFieldUtils::flattDownToCustomFields($data);
                                     $rule = FieldRuleType::getRuleFromName($get("rule_identifier"));
                                     return [$rule->settingsComponent($customForm, $data["custom_fields"])];
                                 }),
@@ -168,16 +143,11 @@ class CustomFieldRuleEditForm
                     )
                     ->mutateFormDataUsing(fn(Action $action) =>
                         array_values($action->getLivewire()->getCachedForms())[2]->getRawState()
-                        //collect(array_values($action->getLivewire()->getCachedForms()))->each(fn($that)=>dump($that->getRawState()))&&dd()
                     ),
             ]);
     }
 
-    /**
-     * @param  CustomForm  $customForm
-     * @param  CustomFieldType  $type
-     * @return array
-     */
+
     private static function getSelectableRules(CustomForm $customForm, CustomFieldType $type): array {
         $allRules = $type->overwrittenRules();
         if(is_null($allRules)) $allRules = $customForm->getFormConfiguration()::ruleTypes();
@@ -191,10 +161,7 @@ class CustomFieldRuleEditForm
         return $rules;
     }
 
-    /**
-     * @param  CustomForm  $customForm
-     * @return array
-     */
+
     private static function getSelectableAnchors(CustomForm $customForm, CustomFieldType $type): array {
         $allAnchors = $type->overwrittenAnchorRules();
         if(is_null($allAnchors)) $allAnchors = $customForm->getFormConfiguration()::anchorRuleTypes();
@@ -223,6 +190,11 @@ class CustomFieldRuleEditForm
 
         return $data;
     }
+
+
+
+
+
 
 
 }

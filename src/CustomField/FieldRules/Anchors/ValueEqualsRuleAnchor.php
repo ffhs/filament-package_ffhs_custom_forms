@@ -3,6 +3,7 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\Anchors;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomFieldType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldUtils;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\CustomLayoutType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomOption\CustomOptionType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\FieldRuleAnchorType;
@@ -12,14 +13,19 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\FieldRule;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
+use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Group;
+use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Forms\Get;
+use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\HtmlString;
 
 class ValueEqualsRuleAnchor extends FieldRuleAnchorType
 {
@@ -48,7 +54,7 @@ class ValueEqualsRuleAnchor extends FieldRuleAnchorType
 
         for($i=0; $i<=10; $i++){
             if(array_key_exists("custom_fields",$fields)) break;
-            $fields = self::flattenOne($fields);
+            $fields = CustomFieldUtils::flattArrayOneLayer ($fields);
         }
 
         $fields = $fields["custom_fields"];
@@ -80,146 +86,213 @@ class ValueEqualsRuleAnchor extends FieldRuleAnchorType
         return $fieldType;
     }
 
+
+    protected function getTargetFieldToggleList(array $fieldData):ToggleButtons  {
+        return ToggleButtons::make("target_field")
+            // ->required() ToDo Fix
+            ->columns()
+            ->live()
+            ->afterStateUpdated(function($state,$set){
+                $set("values", self::getCreateAnchorData()["values"]);
+                $set("numeric", self::getCreateAnchorData()["numeric"]);
+                $set("boolean", self::getCreateAnchorData()["boolean"]);
+            })
+            ->options(function ($component) use ($fieldData) {
+                $fieldData = self::mapFieldData($fieldData);
+                $thisField = array_values($component->getLivewire()->getCachedForms())[1]->getRawState();
+                if(array_key_exists("identify_key",$thisField)) $identifyKey = $thisField["identify_key"];
+                else $identifyKey = null;
+
+                $options = [];
+                foreach ($fieldData as $field){
+                    if(!array_key_exists("identify_key",$field)) continue;
+                    if($identifyKey == $field["identify_key"]) continue;
+                    $isGeneralField = !empty($field["general_field_id"]);
+                    $type = CustomFormEditForm::getFieldTypeFromRawDate($field);
+                    if($type instanceof CustomLayoutType) continue;
+                    $options[$field["identify_key"]] = ($isGeneralField? "* ":"") .$field["name_de"]; //ToDo Translate
+                }
+
+                return $options;
+            });
+    }
+    protected function getFieldTypeSelect():Select  {
+        return Select::make("field_type")
+            //->selectablePlaceholder(false)
+            ->required()
+            ->label("Feldtypen")
+            ->live()
+            ->afterStateUpdated(function($state,$set){
+                $set("values", self::getCreateAnchorData()["values"]);
+                $set("numeric", self::getCreateAnchorData()["numeric"]);
+                $set("boolean", self::getCreateAnchorData()["boolean"]);
+            })
+            ->options([//ToDo Translate
+                       "text" => "Text",
+                       "boolean" => "Ja/Nein",
+                       "numeric" => "Nummer",
+            ])
+            ->visible(function($get,$component) {
+                $fieldData = self::getSelectedFieldData($get,$component);
+                if(is_null($fieldData)) return true;
+                $fieldType= self::getFieldType($fieldData);
+                return !($fieldType instanceof CustomOptionType);
+            });
+    }
+
+    protected function getDisabilityCloser(string $selectOption): \Closure {
+        return function($get,$component) use ($selectOption) {
+            $fieldData = self::getSelectedFieldData($get,$component);
+            if(is_null($fieldData)) return false;
+            $fieldType= self::getFieldType($fieldData);
+            return !($fieldType instanceof CustomOptionType) && $get("field_type") == $selectOption;
+        };
+    }
+
+    protected function getBooleanToogle():Toggle  {
+        return  Toggle::make("boolean")
+            ->visible($this->getDisabilityCloser("boolean"))
+            ->label("Wert") //ToDo Translate
+            ->columnSpanFull();
+    }
+
+    protected function getTextRepeater():Repeater  {
+        return Repeater::make("values")
+            ->visible($this->getDisabilityCloser("text"))
+            ->columnSpanFull()
+            ->label("")
+            ->schema([
+                TextInput::make("value")
+                    ->label("Wert")
+                    ->required(),
+            ]);
+    }
+
+    protected function getOptionSelector():Select  {
+        return  Select::make("values")
+            ->visible(function($get,$component) {
+                $fieldData = self::getSelectedFieldData($get,$component);
+                if(is_null($fieldData)) return false;
+                $fieldType= self::getFieldType($fieldData);
+                return $fieldType instanceof CustomOptionType;
+            })
+            ->columnSpanFull()
+            ->multiple()
+            ->options(function ($get, Select $component):array {
+                $finalField = self::getSelectedFieldData($get,$component);
+                if(is_null($finalField)) return [];
+
+                if(array_key_exists("general_field_id",$finalField) && !is_null($finalField["general_field_id"])){
+                    //GeneralFields
+                    $genField = GeneralField::cached($finalField["general_field_id"]);
+                    return $genField->customOptions->pluck("name_de","identifier")->toArray(); //ToDo Translate
+                }else{
+                    if(!array_key_exists("options",$finalField)) return [];
+                    if(!array_key_exists("customOptions",$finalField["options"])) return [];
+                    $options = collect($finalField["options"]["customOptions"]);
+                    return $options->pluck("name_de","identifier")->toArray(); //ToDo Translate
+                }
+
+            });
+    }
+    protected function getNumberSection(): Section {
+
+        return Section::make()
+            ->visible($this->getDisabilityCloser("numeric"))
+            ->statePath("numeric")
+            ->columnSpanFull()
+            ->schema([
+                Checkbox::make("exactly_number")
+                    ->label("Genaue Nummer")
+                    ->columnSpanFull()
+                    ->live(),
+
+                TextInput::make("number")
+                    ->prefixIcon("carbon-character-whole-number")
+                    ->visible(fn($get)=> $get("exactly_number"))
+                    ->label("Nummer")
+                    ->required()
+                    ->numeric(),
+
+                Group::make()
+                    ->hidden(fn($get)=> $get("exactly_number"))
+                    ->columns(5)
+                    ->columnSpanFull()
+                    ->schema([
+                        Placeholder::make("")
+                            ->content(fn()=>"Feld leer lassen, damit keine Abfrage ausgeführt wird") //ToDo Translate
+                            ->columnSpanFull()
+                            ->label(""),
+
+                        Checkbox::make("greater_equals")
+                            ->label("Grösser GLEICH als") //ToDo Translate
+                            ->columnStart(1)
+                            ->columnSpan(2)
+                            ->inline()
+                            ->live(),
+                        Checkbox::make("smaller_equals")
+                            ->label("Kleiner GLEICH als") //ToDo Translate
+                            ->columnStart(4)
+                            ->columnSpan(2)
+                            ->inline()
+                            ->live(),
+
+                        TextInput::make("greater_than")
+                            ->suffix(fn($get)=> $get("greater_equals")?"<=":"<")
+                            ->label("Grösser als") //ToDo Translate
+                            ->columnStart(1)
+                            ->columnSpan(2)
+                            ->numeric(),
+                        Placeholder::make("")
+                            ->content(fn()=>new HtmlString(Blade::render("<div class='flex flex-col items-center justify-center'><br><x-bi-input-cursor style='height: auto; width: 40px'/></div>"))) //ToDo Translate
+                            ->label(" "),
+                        TextInput::make("smaller_than")
+                            ->prefix(fn($get)=> $get("smaller_equals")?">=":">")
+                            ->label("Kleiner als") //ToDo Translate
+                            ->columnStart(4)
+                            ->columnSpan(2)
+                            ->numeric(),
+                    ])
+            ]);
+    }
+
     public function settingsComponent(CustomForm $customForm, array $fieldData): Component {
 
         return Group::make()
             ->columnSpanFull()
             ->columns()
             ->schema([
-                ToggleButtons::make("target_field")
-                   // ->required() ToDo Fix
-                    ->columns()
-                    ->live()
-                    ->options(function ($component) use ($fieldData) {
-                        $fieldData = self::mapFieldData($fieldData);
-                        $thisField = array_values($component->getLivewire()->getCachedForms())[1]->getRawState();
-                        if(array_key_exists("identify_key",$thisField)) $identifyKey = $thisField["identify_key"];
-                        else $identifyKey = null;
+                $this->getTargetFieldToggleList($fieldData),
+                $this->getFieldTypeSelect(),
 
-                        $options = [];
-                        foreach ($fieldData as $field){
-                            if(!array_key_exists("identify_key",$field)) continue;
-                            if($identifyKey == $field["identify_key"]) continue;
-                            $isGeneralField = !empty($field["general_field_id"]);
-                            $type = CustomFormEditForm::getFieldTypeFromRawDate($field);
-                            if($type instanceof CustomLayoutType) continue;
-                            $options[$field["identify_key"]] = ($isGeneralField? "* ":"") .$field["name_de"]; //ToDo Translate
-                        }
-
-                        return $options;
-                    }),
-                Select::make("field_type")
-                    //->selectablePlaceholder(false)
-                    ->required()
-                    //->nullable(false) ToDo Fix
-                    ->label("Feldtypen")
-                    ->live()
-                    ->afterStateUpdated(function($state,$set){
-                        $set("values", null);
-                        $set("value", null);
-                    })
-                    ->options([//ToDo Translate
-                               "text" => "Text",
-                               "boolean" => "Ja/Nein",
-                    ])
-                    ->visible(function($get,$component) {
-                        $fieldData = self::getSelectedFieldData($get,$component);
-                        if(is_null($fieldData)) return true;
-                        $fieldType= self::getFieldType($fieldData);
-                        return !($fieldType instanceof CustomOptionType);
-                    }),
-
-
-                Toggle::make("value")
-                    ->label("Wert") //ToDo Translate
-                    ->columnSpanFull()
-                    ->visible(function($get,$component) {
-                        $fieldData = self::getSelectedFieldData($get,$component);
-                        if(is_null($fieldData)) return false;
-                        $fieldType= self::getFieldType($fieldData);
-                        return !($fieldType instanceof CustomOptionType) && $get("field_type") == "boolean";
-                    }),
-                Repeater::make("values")
-                    ->columnSpanFull()
-                    ->label("")
-                    ->schema([
-                        TextInput::make("value")
-                            ->label("Wert")
-                            ->required(),
-                    ])
-                    ->visible(function($get,$component) {
-                        $fieldData = self::getSelectedFieldData($get,$component);
-                        if(is_null($fieldData)) return false;
-                        $fieldType= self::getFieldType($fieldData);
-                        return !($fieldType instanceof CustomOptionType) && $get("field_type") == "text";
-                    }),
-                Select::make("values")
-                    ->visible(function($get,$component) {
-                        $fieldData = self::getSelectedFieldData($get,$component);
-                        if(is_null($fieldData)) return false;
-                        $fieldType= self::getFieldType($fieldData);
-                        return $fieldType instanceof CustomOptionType;
-                    })
-                    ->columnSpanFull()
-                    ->multiple()
-                    ->options(function ($get, Select $component) use ($customForm):array {
-                        $finalField = self::getSelectedFieldData($get,$component);
-                        if(is_null($finalField)) return [];
-
-                        if(array_key_exists("general_field_id",$finalField) && !is_null($finalField["general_field_id"])){
-                            //GeneralFields
-                            $genField = GeneralField::cached($finalField["general_field_id"]);
-                            return $genField->customOptions->pluck("name_de","identifier")->toArray(); //ToDo Translate
-                        }else{
-                            if(!array_key_exists("options",$finalField)) return [];
-                            if(!array_key_exists("customOptions",$finalField["options"])) return [];
-                            $options = collect($finalField["options"]["customOptions"]);
-                            return $options->pluck("name_de","identifier")->toArray(); //ToDo Translate
-                        }
-
-                    }),
+                //SpecificFields
+                $this->getBooleanToogle(),
+                $this->getTextRepeater(),
+                $this->getNumberSection(),
+                $this->getOptionSelector(),
             ]);
     }
     public function getCreateAnchorData(): array {
         return [
             "target_field"=> null,
             "field_type"=> "text",
-            "value"=> false,
+            "boolean"=> false,
             "values"=> [],
+            "numeric"=> [
+                "exactly_number" => false,
+                "number" => 0,
+                "greater_equals" => false,
+                "greater_than" => null,
+                "smaller_equals" => false,
+                "smaller_than" => null,
+
+            ],
         ];
     }
 
-    private static function flattenOne($array): array {
-        $results = [];
-
-        foreach ($array as $key => $value) {
-            if (is_array($value) && ! empty($value)){
-                $subResult = [];
-                foreach ($value as $key1 => $value1) {
-                    $subResult[$key1]=$value1;
-                }
-                $results = array_merge($results, $subResult);
-            }
-            else $results[$key] = $value;
-        }
-
-
-        return $results;
-    }
-
-    function flatten($array): array {
-        $results = [];
-
-        foreach ($array as $key => $value) {
-            if (is_array($value) && ! empty($value)) $results = array_merge($results, $this->flatten($value));
-            else $results[$key] = $value;
-        }
-
-        return $results;
-    }
 
     public function shouldRuleExecute(array $formState, CustomField $customField, FieldRule $rule): bool {
-        $formState = $this->flatten($formState);
+        $formState = CustomFieldUtils::flatten($formState);
         $target = $rule->anchor_data["target_field"];
         if(!array_key_exists($target, $formState)) return false;
         $type = $rule->anchor_data["field_type"];
@@ -231,12 +304,29 @@ class ValueEqualsRuleAnchor extends FieldRuleAnchorType
             return in_array($formState[$target],$options);
         }
         if($type == "boolean") {
-            return $formState[$target] == $rule->anchor_data["value"];
+            return $formState[$target] == $rule->anchor_data["boolean"];
         }
         if($type == "text") {
-            $options = $this->flatten($rule->anchor_data["values"]);
+            $options = CustomFieldUtils::flattenWithoutKeys($rule->anchor_data["values"]);
             $options = array_values($options);
             return  in_array($formState[$target],$options);
+        }
+        if($type == "numeric") {
+            $numericData = $rule->anchor_data["numeric"];
+            $value = intval($formState[$target]);
+            if($numericData["exactly_number"]) return $numericData["number"] == $value;
+
+            if(!empty($numericData["greater_than"])){
+                if($numericData["greater_equals"] && !($value >= $numericData["greater_than"])) return false;
+                if(!$numericData["greater_equals"] && !($value > $numericData["greater_than"])) return false;
+            }
+
+            if(!empty($numericData["smaller_than"])){
+                if($numericData["smaller_equals"] && !($value <= $numericData["smaller_than"])) return false;
+                if(!$numericData["smaller_equals"] && !($value < $numericData["smaller_than"])) return false;
+            }
+
+            return true;
         }
         else return false;
     }

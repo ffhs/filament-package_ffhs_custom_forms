@@ -12,6 +12,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\FieldRule;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Field;
 use Filament\Forms\Components\Toggle;
+use ReflectionClass;
 
 class RequiredRuleType extends FieldRuleType
 {
@@ -38,8 +39,17 @@ class RequiredRuleType extends FieldRuleType
     public function afterRender(Component|\Filament\Infolists\Components\Component $component ,CustomField $customField, FieldRule $rule): Component|\Filament\Infolists\Components\Component {
         if(!($component instanceof Field)) return $component;
         $setting =  $rule->rule_data["is_required_on_activation"];
-        return $component->required(function(Field $component) use ($setting, $customField, $rule) {
-            return $rule->getAnchorType()->canRuleExecute($component,$customField,$rule)?!$setting:$setting;
+
+        $reflection = new ReflectionClass($component);
+        $property = $reflection->getProperty("isRequired");
+        $property->setAccessible(true);
+        $isRequiredOld = $property->getValue($component);
+
+        return $component->required(function(Field $component) use ($isRequiredOld, $setting, $customField, $rule) {
+            $anchor = $rule->getAnchorType()->canRuleExecute($component,$customField,$rule);
+            $isRequired = $setting?!$anchor:$anchor;
+            if(!$isRequired) return $component->evaluate($isRequiredOld);
+            return true;
         });
     }
 
