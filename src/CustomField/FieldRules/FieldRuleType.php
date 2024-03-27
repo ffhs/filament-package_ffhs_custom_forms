@@ -36,7 +36,7 @@ abstract class FieldRuleType
 
     public abstract static function identifier();
     public abstract function settingsComponent(CustomForm $customForm, array $fieldData):Component;
-    public abstract function getCreateRuleData():array;
+    public abstract function getCreateRuleData():array; //ToDo I think it is possible to replace something in the Formmodal of the action to load the default values
 
 
     public function canAddOnField(CustomFieldType $type): bool {

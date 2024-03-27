@@ -37,7 +37,7 @@ abstract class FieldRuleAnchorType
 
 
     public abstract function settingsComponent(CustomForm $customForm, array $fieldData):Component;
-    public abstract function getCreateAnchorData():array;
+    public abstract function getCreateAnchorData():array; //ToDo I think it is possible to replace something in the Formmodal of the action to load the default values
     public abstract function shouldRuleExecute(array $formState, CustomField $customField, FieldRule $rule):bool;
 
     public function canRuleExecute(Component $component, CustomField $customField, FieldRule $rule ):bool {
