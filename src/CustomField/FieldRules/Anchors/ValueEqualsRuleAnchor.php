@@ -110,7 +110,12 @@ class ValueEqualsRuleAnchor extends FieldRuleAnchorType
                     $isGeneralField = !empty($field["general_field_id"]);
                     $type = CustomFormEditForm::getFieldTypeFromRawDate($field);
                     if($type instanceof CustomLayoutType) continue;
-                    $options[$field["identify_key"]] = ($isGeneralField? "* ":"") .$field["name_de"]; //ToDo Translate
+                    if($isGeneralField){
+                        $field = GeneralField::cached($field["general_field_id"]);
+                        $options[$field->identify_key] =$field->name_de; //ToDo Translate
+                        continue;
+                    }
+                    $options[$field["identify_key"]] = $field["name_de"]; //ToDo Translate
                 }
 
                 return $options;
@@ -185,7 +190,12 @@ class ValueEqualsRuleAnchor extends FieldRuleAnchorType
                 if(array_key_exists("general_field_id",$finalField) && !is_null($finalField["general_field_id"])){
                     //GeneralFields
                     $genField = GeneralField::cached($finalField["general_field_id"]);
-                    return $genField->customOptions->pluck("name_de","identifier")->toArray(); //ToDo Translate
+
+                    if(!array_key_exists("options",$finalField)) return [];
+                    if(!array_key_exists("customOptions",$finalField["options"])) return [];
+                    $options = collect($finalField["options"]["customOptions"]);
+
+                    return $genField->customOptions->whereIn("id",$options)->pluck("name_de","identifier")->toArray(); //ToDo Translate
                 }else{
                     if(!array_key_exists("options",$finalField)) return [];
                     if(!array_key_exists("customOptions",$finalField["options"])) return [];
@@ -297,8 +307,16 @@ class ValueEqualsRuleAnchor extends FieldRuleAnchorType
         if(!array_key_exists($target, $formState)) return false;
         $type = $rule->anchor_data["field_type"];
 
-        $targetFiletype = $customField->customForm->customFields->where("identify_key",$target)->first()->getType(); //ToDO Optimize
-        if($targetFiletype instanceof CustomOptionType) {
+        $customForm = $customField->customForm;
+        $targetField = $customForm->customFields->where("identify_key",$target)->first();
+        if(is_null($targetField)) {
+            $genField = GeneralField::query()->where("identify_key",$target)->select("id")->first();
+            if(is_null($genField)) return false;
+            $targetField = $customForm->customFields->where("general_field_id",$genField->id)->first();
+        }
+        if(is_null($targetField)) return false;
+        $targetFieldType = $targetField->getType(); //ToDO Optimize
+        if($targetFieldType instanceof CustomOptionType) {
             $options = $rule->anchor_data["values"];
             if(is_null($options)) return false;
             return in_array($formState[$target],$options);
