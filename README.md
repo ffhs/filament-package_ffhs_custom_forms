@@ -1,12 +1,15 @@
 # 00 Instalation
-## Register package in AdminPanelProvider
+## Registrieren des PAcketes in AdminPanelProvider
 Fügen Sie das Plugin zu einem Panel hinzu, indem Sie die Plugin-Klasse instanziieren (\app\Providers\Filament\AdminPanelProvider.php) und sie an die plugin()-Methode der Konfiguration übergeben:
 ```php  
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFormPlugin;  
   
 public function panel(Panel $panel): Panel  
 {  
-    return $panel        // ...        ->plugin([CustomFormPlugin::make()]);}  
+    return $panel
+	     ... 
+	    ->plugin([CustomFormPlugin::make()]);}        
+	    ...          
 ```  
 
 ## Starten des Installers
@@ -14,9 +17,11 @@ Starten Sie den Installer
 ```bash  
 php artisan filament-package_ffhs_custom_forms:install
 ```
+
 <br>
 
 # 01 Formulararten (DynamicFormConfiguration)
+
 ## Erstellen einer neuen Formularart
 ### Schritt 1: Konfiguration erstellen
 Um ein neue Formularart hinzuzufügen müssen Sie zuerst eine neue Klasse `DynamicFormConfiguration` hinzufügen.
@@ -126,6 +131,7 @@ public static function anchorRuleType(): array{
     ]
 }
 ```
+
 <br>
 
 # 02 CustomForm einbindungs Möglichkeiten
@@ -364,7 +370,7 @@ class LocationSelectorType extends CustomFieldType
 ```
 - `getExtraTypeOptions()`
     - Diese Optionen können beim Bearbeiten des `CustomField`s im Editor angepasst werden
-- `->modifyComponent(fn(Component $component) => ...)`
+- `modifyComponent(fn(Component $component) => ...)`
     - Diese Funktion bietet die Möglichkeit einer vordefinierte `TypeOption` die Komponenten anzupassen
 - `FastTypeOption(mixed $defaultValue, Component $component)`
     - Um schnell eine `TypeOption` hinzuzufügen
@@ -536,8 +542,6 @@ class SectionTypeView implements FieldTypeView
     - In dem Parameter `"rendered"` sind die weiteren Formfelder bzw. die Infolistfelder drinnen.
 - `$parameter["customFieldData"]`
     - In dem Parameter `"customFieldData"` sind die Rohdaten der `CustomField`'s enthalten.
-<br>
-
 
 # 04 ViewModes
 ## Erklärung
@@ -719,6 +723,8 @@ class MyRuleAnchorType extends FieldRuleAnchorType
 
 - `identifier():string`
     - Mit Identifier wird die Formularart den `CustomField`, `GeneralFieldForm` und `CustomForm` zugeordnet. Es ist empfohlen diesen im nachhinein **nicht** zu ändern !!!!
+- - `getCreateAnchorData():array`
+    - Diese Methode soll, die standard Werte zurückgeben. Wieso? Weil in den Actions Modals nicht die Funktion `->default()` funktioniert und es kann zu Speicher-Problemen führen falls man keinen Standard setzt.
 - `settingsComponent(CustomForm $customForm, array $fieldData): Component`
     - Diese Komponente wird, dem User angezeigt, beim Definieren dieser Regel. Die Informationen findet man danach bei `$fieldRule->anchor_data["my_importent_value"]`
 - Andere Methoden zum überschreiben:
@@ -726,8 +732,10 @@ class MyRuleAnchorType extends FieldRuleAnchorType
         - Kann an diesem Typen hinzugefügt werden.
     - `mutateDataBeforeLoadInEdit(array $ruleData, FieldRule $rule): array`
         - Verändern der Daten beim Laden in den Edit Mode (Dort wo das Formular bearbeitet werden kann)
-    - `mutateDataBeforeSaveInEdit(array $ruleData, FieldRule $rule): array``
+    - `mutateDataBeforeSaveInEdit(array $ruleData, FieldRule $rule): array`
         - Verändern der Daten beim Speichern in den Edit Mode (Dort wo das Formular bearbeitet werden kann)
+    - `mutateRenderParameter(array $parameter, CustomField $customField, FieldRule $rule): array`
+        - Verändere die Parameter welche den Felder beim Rendern mitgegeben werden
           </br>
 
 ### Schritt 2 Registrieren
@@ -752,15 +760,27 @@ class IsMyRuleType extends FieldRuleType
 	public static function identifier(): string {  
 		return "value_equals_rule";  
 	}  
-	  
+
+	public function getCreateRuleData(): array {  
+	    return ["my_importent_value"=>"default"];  
+	}
+
 	public function settingsComponent(CustomForm $customForm, array $fieldData): Component {  
 		return TextInput:make("my_importent_value");
-	}  
+	} 
+
+	//Beispiel
+	public function afterRender(Component|\Filament\Infolists\Components\Component $component ,CustomField $customField, FieldRule $rule): Component|\Filament\Infolists\Components\Component {  
+		$anchorDecisions = $rule->getAnchorType()->canRuleExecute($component,$customField,$rule); // Bekomme die Entscheidung des Ankers
+		//Erledige deine Sachen
+	}
 }
 ```
 
 - `identifier():string`
     - Mit Identifier wird die Formularart den `CustomField`, `GeneralFieldForm` und `CustomForm` zugeordnet. Es ist empfohlen diesen im nachhinein **nicht** zu ändern !!!!
+- `getCreateRuleData():array`
+    - Diese Methode soll, die standard Werte zurückgeben. Wieso? Weil in den Actions Modals nicht die Funktion `->default()` funktioniert und es kann zu Speicher-Problemen führen falls man keinen Standard setzt.
 - `settingsComponent(CustomForm $customForm, array $fieldData): Component`
     - Diese Komponente wird, dem User angezeigt, beim Definieren dieser Regel. Die Informationen findet man danach bei `$fieldRule->anchor_data["my_importent_value"]`
 - Andere Methoden zum überschreiben:
@@ -773,7 +793,9 @@ class IsMyRuleType extends FieldRuleType
     - `mutateLoadAnswerData(mixed $answerData, FieldRule $rule, CustomFieldAnswer $answer):mixed`
     - `mutateSaveAnswerData(mixed $answerData, FieldRule $rule, CustomFieldAnswer $answer):mixed`
     - `afterAnswerSave( FieldRule $rule, CustomFieldAnswer $answer):void`
-      </br>
+    - `mutateRenderParameter(array $parameter, CustomField $customField, FieldRule $rule): array`
+        - Verändere die Parameter welche den Felder beim Rendern mitgegeben werden
+          </br>
 
 ### Schritt 2 Registrieren
 1. Gehe in die config `ffhs_custom_forms.php`
