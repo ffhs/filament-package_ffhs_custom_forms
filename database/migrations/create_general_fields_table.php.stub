@@ -17,7 +17,8 @@ return new class () extends Migration {
 
             // general field stuff
             $table->boolean('is_active')->nullable();
-            //ToDo Icon
+
+            $table->string('icon');
 
             $table->string('identify_key')->nullable()->unique();
             $table->json("variation_options")->nullable();
@@ -27,7 +28,6 @@ return new class () extends Migration {
             $table->string('name_de')->nullable();
             $table->string('name_en')->nullable();
             $table->string("type")->nullable();
-
 
             $table->timestamps();
         });

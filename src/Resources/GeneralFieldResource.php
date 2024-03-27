@@ -2,7 +2,8 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Resources;
 
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomFieldType;
+use Ffhs\FilamentPackageFfhsCustomForms\FormConfiguration\DynamicFormConfiguration;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Ffhs\FilamentPackageFfhsCustomForms\Resources\GeneralFieldsResource\Pages\{CreateGeneralField,
     EditGeneralField,
@@ -19,6 +20,7 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Guava\FilamentIconPicker\Forms\IconPicker;
 use Illuminate\Database\Eloquent\Builder;
 
 class GeneralFieldResource extends Resource
@@ -86,25 +88,27 @@ class GeneralFieldResource extends Resource
                                 self::getTranslationTab("en","Englisch"),
                             ]),
 
-                        Select::make("type")
-                            ->options(function (Select $component){
-                                //Skip selectable
-                                $types = CustomFieldType::getAllTypes();
-                                $keys = array_keys($types);
-                                if(!$component->isDisabled()) {
-                                    $disabled = config("ffhs_custom_forms.disabled_general_field_types");
-                                    $keys = array_filter($keys,fn($type) => ! in_array(CustomFieldType::getTypeClassFromName($type),$disabled));
-                                }
-                                $values = array_map(fn(string $type) => CustomFieldType::getTypeFromName($type)->getTranslatedName(), $keys);
-                                return array_combine($keys,$values);
-                            })
-                            ->label(__(self::langPrefix . 'type'))
-                            ->helperText(__(self::langPrefix . 'helper_text.type'))
-                            ->disabledOn("edit")
-                            ->columnStart(1)
-                            ->columnSpan(1)
-                            ->required()
-                            ->live(),
+                       Group::make([
+                           Select::make("type")
+                               ->options(function (Select $component){
+                                   if(!$component->isDisabled()) $types = CustomFieldType::getGeneralFieldTypes();
+                                   else $types = CustomFieldType::getAllTypes();
+                                   $keys = array_keys($types);
+                                   $values = array_map(fn(string $type) => CustomFieldType::getTypeFromName($type)->getTranslatedName(), $keys);
+                                   return array_combine($keys,$values);
+                               })
+                               ->label(__(self::langPrefix . 'type'))
+                               ->helperText(__(self::langPrefix . 'helper_text.type'))
+                               ->disabledOn("edit")
+                               ->columnStart(1)
+                               ->columnSpan(1)
+                               ->required()
+                               ->live(),
+                           IconPicker::make('icon')
+                               ->required()
+                               ->label("Icon"),
+                       ]),
+
 
                         TextInput::make("identify_key")
                             ->label(__(self::langPrefix . 'identify_key'))
@@ -112,56 +116,52 @@ class GeneralFieldResource extends Resource
                             ->columnStart(1)
                             ->columnSpan(1)
                             ->required(),
-
-                       Toggle::make("is_active")
+                        Toggle::make("is_active")
                             ->label(__(self::langPrefix . 'is_general_field_active'))
                             ->helperText(__(self::langPrefix . 'helper_text.is_general_field_active'))
                             ->default(true)
-                            ->columnStart(2)
                             ->columnSpan(1),
+
 
                     ]),
 
 
                 Section::make("Optionen") //ToDo Translate
+                    //ToDo make by saving option and by load option (TypeOption)
+                    //ToDo fix  it  show the field is required (Error) if the field is filled
                     ->columnSpan(1)
                     ->columns(1)
                     ->collapsed()
+                    ->statePath("options")
                     ->visible(function($get){
                         if(is_null($get("type"))) return false;
                         $type = CustomFieldType::getTypeFromName($get("type"));
-                        $array = $type->getGeneralExtraField();
-                        return !empty($array);
+                        return $type->hasExtraGeneralTypeOptions();
                     })
                     ->schema(function($get){
                         if(is_null($get("type"))) return[];
                         $type = CustomFieldType::getTypeFromName($get("type"));
-                        $array = $type->getGeneralExtraField();
-                        if(empty($array)) return [];
-                        $group = Group::make()->schema($array);
-                        return  [
-                            $group
-                        ];
+                        return $type->getExtraGeneralTypeOptionComponents();
                     }),
 
-                Section::make("Variations Einstellungen") //ToDo Translate
+                Section::make("Überschreiben Einstellungen") //ToDo Translate
                     ->columnSpan(1)
                     ->columns(1)
                     ->collapsed()
-                    ->default(function($get){
+                 /*   ->default(function($get){
                         if(is_null($get("type"))) return null;
                         $type = CustomFieldType::getTypeFromName($get("type"));
-                        return $type->mutateCustomFieldDataBeforeFill([""])["options"];
+                      //  return $type->mutateCustomFieldDataBeforeFill([""])["options"];
                     })
                     ->visible(function($get, $record){
                        /* if(is_null($get("type"))) return false;
                         $type = CustomFieldType::getTypeFromName($get("type"));
                         $array = $type->getExtraOptionFields(is_null($record)?new GeneralField():$record);
-                        return !empty($array);*/
+                        return !empty($array);
                         return true;
                     })
                     ->schema(function($get){
-                      /*  if(is_null($get("type"))) return[];
+                        if(is_null($get("type"))) return[];
                         $type = CustomFieldType::getTypeFromName($get("type"));
                         $array = $type->getExtraOptionFields(true);
                         if(empty($array)) return [];
@@ -169,10 +169,10 @@ class GeneralFieldResource extends Resource
                         if($type->getExtraOptionFields(true))  $group->statePath("extra_options");
                         return  [
                             $group
-                        ];*/
+                        ];
                         return [];
-                    })
-                //ToDo add variation settings
+                    })*/
+                //ToDo add overwrite settings
 
             ]);
     }
@@ -181,6 +181,9 @@ class GeneralFieldResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\IconColumn::make('icon')
+                    ->label("Icon")
+                    ->icon(fn($state)=> $state),
                 Tables\Columns\TextColumn::make('name')
                     ->label(__(self::langPrefix . 'label'))
                     ->getStateUsing(function ($record){
@@ -199,7 +202,7 @@ class GeneralFieldResource extends Resource
                     ->state(fn(GeneralField $record) =>
                         $record->generalFieldForms
                             ->map(fn($generalFieldForm) => $generalFieldForm->dynamicFormConfiguration())
-                            ->map(fn(string $class) => ($class)::displayName())
+                            ->map(fn(DynamicFormConfiguration $class) => ($class)::displayName())
                     ),
 
                 Tables\Columns\ToggleColumn::make('is_active')

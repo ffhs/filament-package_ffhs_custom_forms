@@ -1,7 +1,7 @@
 <?php
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Models\Factories;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralFieldForm;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -26,6 +26,7 @@ class GeneralFieldFactory extends Factory
             'tool_tip_en' => fake()->text(20),
             'type'=> fake()->randomElement(CustomFieldType::getAllTypes()),
             'is_active'=> true,
+            'icon'=> 'heroicon-o-clipboard-document-check',
         ];
     }
 

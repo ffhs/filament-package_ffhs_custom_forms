@@ -1,0 +1,42 @@
+<?php
+
+
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class () extends Migration {
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::create('field_rules', function (Blueprint $table) {
+            $table->id();
+            $table->integer("execution_order");
+            $table->foreignIdFor(CustomField::class)->constrained()->cascadeOnDelete();
+            $table->string("anchor_identifier");
+            $table->json("anchor_data")->nullable();
+
+            $table->string("rule_identifier");
+            $table->json("rule_data")->nullable();
+
+
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migration
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::dropIfExists('custom_field_variation');
+    }
+};
+

@@ -2,7 +2,6 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Resources;
 
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormAnswerResource\Pages\CreateCustomFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormAnswerResource\Pages\EditCustomFormAnswer;
@@ -12,7 +11,6 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
 
 class CustomFormAnswerResource extends Resource
 {
@@ -79,6 +77,7 @@ class CustomFormAnswerResource extends Resource
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make()
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

@@ -8,18 +8,22 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * @property GeneralField $generalField
+ * @property string $custom_form_identifier
+ * @property int $general_field_id
  * @property bool $is_required
+ * @property bool $export
  */
 class GeneralFieldForm extends Model
 {
 
-    use HasFormIdentifyer;
+    use HasFormIdentifier;
 
     protected $table = "general_field_form";
     protected $fillable = [
         'general_field_id',
         'custom_form_identifier',
         'is_required',
+        'export',
     ];
 
     public function generalField(): BelongsTo {

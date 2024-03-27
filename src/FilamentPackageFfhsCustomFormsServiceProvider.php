@@ -1,13 +1,10 @@
 <?php
 
 namespace Ffhs\FilamentPackageFfhsCustomForms;
-use Ffhs\FilamentPackageFfhsCustomForms\Commands\Install;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldVariation;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\FormVariation;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralFieldForm;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -28,13 +25,12 @@ class FilamentPackageFfhsCustomFormsServiceProvider extends PackageServiceProvid
                 'create_general_fields_table',
                 'create_custom_fields_table',
                 'create_general_field_form_table',
-                'create_form_variations_table',
-                'create_custom_field_variation_table',
                 'create_custom_form_answers_table',
                 'create_custom_field_answers_table',
                 'create_custom_options_table',
-                'create_option_field_variation_table',
                 'create_option_general_field_table',
+                'create_option_custom_field_table',
+                'create_field_rules_table',
             ])
             ->hasConfigFile('ffhs_custom_forms')
             ->hasTranslations()
@@ -46,10 +42,14 @@ class FilamentPackageFfhsCustomFormsServiceProvider extends PackageServiceProvid
                     ->askToRunMigrations()
                     ->copyAndRegisterServiceProviderInApp()
                     ->endWith(function (InstallCommand $command) {
-                        $command->info("Clear cache and icon cache");
                         // Clear the application cache
-                        Artisan::call('icons:cache');
+                        $command->info("Clear cache and icon cache");
                         Artisan::call('cache:clear');
+                        Artisan::call('icons:cache');
+
+                        // publish config from icon picker
+                        $command->info("Publish config from icon picker plugin");
+                        Artisan::call('vendor:publish', ["tag" => "filament-icon-picker-config"]);
                     })
             );
 
@@ -61,10 +61,8 @@ class FilamentPackageFfhsCustomFormsServiceProvider extends PackageServiceProvid
             $factoryNames = [
                 CustomField::class,
                 CustomFieldAnswer::class,
-                CustomFieldVariation::class,
                 CustomForm::class,
                 CustomFormAnswer::class,
-                FormVariation::class,
                 GeneralField::class,
                 GeneralFieldForm::class
             ];

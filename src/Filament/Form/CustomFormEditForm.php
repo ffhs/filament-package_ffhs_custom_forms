@@ -2,12 +2,12 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Form;
 
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomFieldType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\CustomLayoutType;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Form\Extra\CustomFieldEditForm;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Form\Extra\CustomFieldRuleEditForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Form\Extra\CustomFormEditSave;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\HtmlComponents\HtmlBadge;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Filament\Forms\Components\Actions\Action;
@@ -48,6 +48,10 @@ class CustomFormEditForm
             ->relationship("customFieldInLayout")
             ->orderColumn("form_position")
             ->saveRelationshipsUsing(fn()=>empty(null))
+            ->mutateRelationshipDataBeforeFillUsing(function($data) use ($record) {
+                $data = CustomFieldEditForm::mutateOptionDatas($data, $record);
+                return CustomFieldRuleEditForm::mutateRuleDatasOnLoad($data, $record);
+            })
             ->collapsible(false)
             ->addable(false)
             ->defaultItems(0)
@@ -60,32 +64,36 @@ class CustomFormEditForm
             ->extraItemActions([
                 self::getPullOutLayoutAction(),
                 self::getPullInLayoutAction(),
-                self::getEditCustomFormAction($record),
+                CustomFieldEditForm::getEditCustomFieldAction($record),
             ])
             ->itemLabel(function($state){
                 $styleClasses = "text-sm font-medium ext-gray-950 dark:text-white truncate select-none";
                 $type = self::getFieldTypeFromRawDate($state);
-                $icon = Blade::render('<x-'. $type->icon() .' class="h-4 w-4 "/>') ; //ToDo Fix
-                $badgeCount= null;
+                $generalBadge= null;
 
                 if(!empty($state["general_field_id"])){
-                    $badgeCount = new HtmlBadge("Gen", Color::rgb("rgb(43, 164, 204)")); Blade::render('<x-filament::badge size="Gen">New</x-filament::badge>');
-                    $name = GeneralField::cached($state["general_field_id"])->name_de; //ToDo Translate
+                    $generalBadge = new HtmlBadge("Gen", Color::rgb("rgb(43, 164, 204)")); Blade::render('<x-filament::badge size="Gen">New</x-filament::badge>');
+                    $genField = GeneralField::cached($state["general_field_id"]);
+                    $name = $genField->name_de; //ToDo Translate
+                    $icon = Blade::render('<x-'. $genField->icon .' class="h-4 w-4 "/>') ;
                 }
-                else  $name = $state["name_de"]; //ToDo Translate
+                else  {
+                    $name = $state["name_de"]; //ToDo Translate
+                    $icon = Blade::render('<x-'. $type->icon() .' class="h-4 w-4 "/>') ;
+                }
 
-                $generalBadge =null;
+                $badgeCount =null;
                 if($type instanceof CustomLayoutType){
                     $size = empty($state["custom_fields"])?0:sizeof($state["custom_fields"]);
-                    $generalBadge = new HtmlBadge($size);
+                    $badgeCount = new HtmlBadge($size);
                     $span = '<span x-on:click.stop="isCollapsed = !isCollapsed" class="cursor-pointer flex" >';
                 }
                 else $span = '<span  class="cursor-pointer flex">';
 
                 $h4 = '<h4 class="'.$styleClasses.'">';
                 $html = "</h4>". $span;
-                if(!is_null($generalBadge)) $html .= '<span class="px-1.5">'. $generalBadge. '</span>';
                 if(!is_null($badgeCount)) $html .= '<span class="px-1.5">'. $badgeCount. '</span>';
+                if(!is_null($generalBadge)) $html .= '<span class="px-1.5">'. $generalBadge. '</span>';
                 $html .= '<span class="px-1.5">' .$icon . '</span>'. $h4 . $name . " </h4></span><h4>";
 
                  return  new HtmlString($html);
@@ -128,71 +136,6 @@ class CustomFormEditForm
     }
 
 
-
-
-
-
-    private static function getEditCustomFormAction(CustomForm $customForm): Action {
-        return Action::make('edit')
-            ->closeModalByClickingAway(false)
-            ->icon('heroicon-m-pencil-square')
-            ->modalWidth(fn(array $state,array $arguments)=> CustomFieldEditForm::getEditCustomFormActionModalWith($state[$arguments["item"]]))
-            ->modalHeading(function(array $state,array $arguments){
-                $data = $state[$arguments["item"]];
-                if(!empty($data["general_field_id"]))
-                    return "G. " . GeneralField::cached($data["general_field_id"])->name_de . " Felddaten bearbeiten"; //ToDo Translate
-                else
-                    return $data["name_de"] . " Felddaten bearbeiten "; //ToDo Translate
-            })
-            ->form(fn(Get $get, array $state,array $arguments)=>
-                CustomFieldEditForm::getCustomFieldSchema(
-                    $customForm,
-                    $state[$arguments["item"]]
-                )
-            )
-            ->mutateFormDataUsing(fn(Action $action) =>
-                //Get RawSate (yeah is possible)
-                 array_values($action->getLivewire()->getCachedForms())[1]->getRawState()
-            )
-            ->action(function (Get $get,$set,array $data,array $arguments): void {
-                $fields = $get("custom_fields");
-                $fields[$arguments["item"]] = $data;
-                $set("custom_fields",$fields);
-            })
-            ->fillForm(function($state,$arguments) use ($customForm) {
-                $data = $state[$arguments["item"]];
-                $type = self::getFieldTypeFromRawDate($data);
-
-                //CustomFieldData
-                $customFieldData = array_filter(
-                    $data,
-                    fn($key) =>!str_starts_with($key, "variation-"),
-                    ARRAY_FILTER_USE_KEY
-                );
-
-                $customFieldData = $type->mutateCustomFieldDataBeforeFill($customFieldData);
-
-                //Variation Data's
-                $variations = array_filter(
-                    $data,
-                    fn($key) => str_starts_with($key, "variation-"),
-                    ARRAY_FILTER_USE_KEY
-                );
-
-                if(empty($variations)){
-                    $variations = [];
-                    $customField = CustomField::cachedAllInForm($customForm->id)->firstWhere("id",$data["id"]);
-                    /** @var CustomField $customField*/
-                    foreach ($customField->customFieldVariation as $variation){
-                        $variationData = $variation->toArray();
-                        $variationData = $type->mutateVariationDataBeforeFill($variationData);
-                        $varIdentifier = "variation-" . $variation->variation_id;
-                        $variations[$varIdentifier] = [0=>$variationData];
-                    }
-                }
-                return array_merge($customFieldData,$variations);
-            });
-    }
 
     private static function getPullInLayoutAction(): Action {
         return Action::make("pullIn")

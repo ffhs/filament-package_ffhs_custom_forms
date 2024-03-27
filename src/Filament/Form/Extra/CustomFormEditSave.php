@@ -3,11 +3,13 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Form\Extra;
 
 use Closure;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomFieldType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\CustomLayoutType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\TypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Form\CustomFormEditForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldVariation;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\FieldRule;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralFieldForm;
 use Filament\Forms\Components\Repeater;
 use Illuminate\Database\Eloquent\Model;
@@ -16,66 +18,6 @@ use Illuminate\Support\Collection;
 
 class CustomFormEditSave
 {
-    private static function updateCustomField(CustomForm $customForm,CustomField $customfield,array $itemData): void {
-        $customFieldData = array_filter($itemData, fn($key) =>!str_starts_with($key, "variation-"),ARRAY_FILTER_USE_KEY);
-        $variations = array_filter($itemData, fn($key) => str_starts_with($key, "variation-"),ARRAY_FILTER_USE_KEY);
-
-        $type = CustomFormEditForm::getFieldTypeFromRawDate($itemData);
-
-        if($customfield->exists) $customFieldData = $type->mutateCustomFieldDataBeforeSave($customFieldData);
-        else $customFieldData = $type->mutateCustomFieldDataBeforeCreate($customFieldData);
-        $customfield->fill($customFieldData)->save();
-        $type->afterCustomFieldSave($customfield,$customFieldData);
-
-
-
-        if(empty($variations)) return; //If it is empty, it has also no Template variation what mean it wasn't edit
-
-        $variationsOld = $customfield->customFieldVariation;
-        $updatetVariationIds = [];
-
-        $formConfiguration = $customForm->getFormConfiguration();
-
-        foreach($variations as $variationName => $variationData){
-            $variationData = array_values($variationData)[0];
-            $variationId = explode("variation-",$variationName)[1];
-            if($variationId == "") $variationId = null;
-            else $variationId = intval($variationId);
-
-            /** @var CustomFieldVariation|null $variation */
-            $variation = $variationsOld
-                ->filter(fn(CustomFieldVariation $fieldVariation)=> $fieldVariation->variation_id == $variationId)
-                ->first();
-
-            if($variation == null){
-                //Prepare Variation Data before Create
-                $variationData = $type->mutateVariationDataBeforeCreate($variationData);
-                //Create new Variation
-                $variation = new CustomFieldVariation();
-
-                $variation->variation_id = $variationId;
-                $variation->variation_type = $formConfiguration::variationModel();
-                $variation->custom_field_id = $customfield->id;
-            }else{
-                //Prepare Variation Data
-                $variationData = $type->mutateVariationDataBeforeSave($variationData);
-            }
-
-            $variation->fill($variationData)->save();
-
-            $type->afterCustomFieldVariationSave($variation,$variationData);
-
-            $updatetVariationIds[] = $variationId;
-        }
-
-        //Delete the deleted Variation
-        $variationsOld
-            ->filter(fn(CustomFieldVariation $variation)=>!in_array($variation->variation_id,$updatetVariationIds))
-            ->each(fn(CustomFieldVariation $variation)=>$variation->delete());
-
-
-    }
-
 
     private static function setArrayExistingRecordFromArrayData(Collection &$customFieldsOld, array $state,  array&$statedRecords): void {
         foreach ($state as $key => $fieldData){
@@ -87,42 +29,6 @@ class CustomFormEditSave
             if(empty($fieldData["custom_fields"])) continue;
             self::setArrayExistingRecordFromArrayData($customFieldsOld, $fieldData["custom_fields"], $statedRecords);
         }
-    }
-
-    //Copied from Repeaters and edited
-    public static function saveCustomFields(Repeater $component, CustomForm $customForm, array $state): void {
-
-
-        $relationship = $customForm->customFields();
-
-        $existingRecords = $customForm->customFields;
-        $statedRecords = [];
-        self::setArrayExistingRecordFromArrayData($customForm->customFields, $state,$statedRecords);
-
-        //ToDo Modify CustomField in CustomField
-
-        $recordsToDelete = [];
-
-        foreach (collect($existingRecords)->pluck($relationship->getRelated()->getKeyName()) as $keyToCheckForDeletion) { //ToDo Make
-            if (array_key_exists("record-$keyToCheckForDeletion", $statedRecords)) {
-                continue;
-            }
-            $recordsToDelete[] = $keyToCheckForDeletion;
-        }
-
-        $relationship
-            ->whereKey($recordsToDelete)
-            ->get()
-            ->each(static fn(Model $record) =>  $record->delete());
-
-        $childComponentContainers = $component->getChildComponentContainers();
-        foreach ($childComponentContainers as $itemKey => $item) {
-            // Perform some operation on $value here
-            $childComponentContainers[$itemKey] =$item->getRawState();
-        }
-
-        self::saveCustomFieldFromData(1,$childComponentContainers,$customForm, $relationship,$statedRecords);
-
     }
 
     private static function saveCustomFieldFromData (int  $itemOrderRaw, array $itemInformation, CustomForm $customForm, HasMany $relationship, array &$existingRecords) {
@@ -147,12 +53,59 @@ class CustomFormEditSave
 
             /**@var CustomField $record*/
             $record = ($existingRecords[$itemKey] ?? new CustomField());
-            self::updateCustomField($customForm,$record, $itemData);
-
+            self::updateCustomField($record, $itemData);
+            self::updateFieldRules($record,$itemData);
         }
         return $itemOrder;
     }
 
+
+    //Copied from Repeaters and edited
+    public static function saveCustomFields(Repeater $component, CustomForm $customForm, array $state): void {
+
+        $relationship = $customForm->customFields();
+
+        $existingRecords = $customForm->customFields;
+        $statedRecords = [];
+        self::setArrayExistingRecordFromArrayData($customForm->customFields, $state,$statedRecords);
+
+        //ToDo Modify CustomField in CustomField
+
+        $recordsToDelete = [];
+
+        foreach (collect($existingRecords)->pluck($relationship->getRelated()->getKeyName()) as $keyToCheckForDeletion) { //ToDo Make
+            if (array_key_exists("record-$keyToCheckForDeletion", $statedRecords)) continue;
+            $recordsToDelete[] = $keyToCheckForDeletion;
+        }
+
+        $relationship
+            ->whereKey($recordsToDelete)
+            ->get()
+            ->each(static fn(Model $record) =>  $record->delete());
+
+        $childComponentContainers = $component->getChildComponentContainers();
+        foreach ($childComponentContainers as $itemKey => $item) {
+            // Perform some operation on $value here
+            $childComponentContainers[$itemKey] =$item->getRawState();
+        }
+
+        self::saveCustomFieldFromData(1,$childComponentContainers,$customForm, $relationship,$statedRecords);
+
+    }
+
+    private static function updateCustomField(CustomField &$customField,array $itemData): void {
+        $type = CustomFormEditForm::getFieldTypeFromRawDate($itemData);
+
+        $rawData = $itemData;
+        $customField->fill($itemData);
+        $customFieldData = self::mutateOptionData($type, $customField, $itemData);
+
+        //Check if something hase Change
+        $customField->fill($customFieldData);
+        if(!$customField->exists||$customField->isDirty()) $customField->save();
+        $type->doAfterFieldSave($customField, $rawData);
+
+    }
 
     public static function getGeneralFieldRepeaterValidationRule():Closure {
         return fn (CustomForm $record) =>
@@ -188,4 +141,68 @@ class CustomFormEditSave
                 $fail($failureMessage);
             };
     }
+
+    private static function mutateOptionData(?CustomFieldType $type, CustomField $customField, array $customFieldData): array {
+        if(!array_key_exists("options",$customFieldData)) return $customFieldData;
+        $options = $customFieldData["options"];
+        if(is_null($options)) $options = [];
+        foreach ($type->getExtraTypeOptions() as $name => $option ){
+            /**@var TypeOption $option */
+            $data = null;
+            if(array_key_exists($name,$options)) $data = $options[$name];
+            if($customField->exists) $options[$name] = $option->mutateOnSave($data, $customField);
+            else $options[$name] = $option->mutateOnCreate($data,$customField);
+        }
+        $customFieldData["options"] = $options;
+        return $customFieldData;
+    }
+
+    private static function updateFieldRules(CustomField $customField, array $customFieldData): void { //ToDo make setting which is running first
+        if(!array_key_exists("rules",$customFieldData)) $rules = [];
+        else $rules = $customFieldData["rules"];
+
+        $existingIds = [];
+        $executionOrder = 0;
+        $toCreate = [];
+        $toUpdate = [];
+        foreach ($rules as $ruleData){
+            $executionOrder += 1;
+            $ruleData["execution_order"] = $executionOrder;
+
+            if(array_key_exists("id",$ruleData)) $rule = $customField->fieldRules->where("id", $ruleData["id"])->first();
+            else $rule = null;
+
+            if(is_null($rule)) {
+                $rule = new FieldRule();
+                $rule->custom_field_id = $customField->id;
+                $rule->fill($ruleData);
+            }
+            $ruleData = $rule->getAnchorType()->mutateDataBeforeSaveInEdit($ruleData, $rule);
+            $ruleData = $rule->getRuleType()->mutateDataBeforeSaveInEdit($ruleData, $rule);
+
+            //dd(json_encode($ruleData["rule_data"]));
+
+            $rule->fill($ruleData);
+            if(!$rule->exists || $rule->isDirty()) $rule->save();
+
+            $cleanedData = $rule->toArray();
+            unset($cleanedData["created_at"]);
+            unset($cleanedData["updated_at"]);
+
+            $cleanedData["anchor_data"] = json_encode($ruleData["anchor_data"]); //ToDO Change is mist
+            $cleanedData["rule_data"] = json_encode($ruleData["rule_data"]);
+
+            if(!$rule->exists) $toCreate[] = $cleanedData;
+            else {
+                $existingIds[] = $cleanedData["id"];
+                if($rule->isDirty()) $toUpdate[] = $cleanedData;
+            }
+
+        }
+        FieldRule::query()->upsert($toUpdate, ["id"]); //ToDo Optimize
+        $customField->fieldRules()->whereNotIn("id",$existingIds)->delete();
+        $customField->fieldRules()->createMany($toCreate);
+    }
+
+
 }

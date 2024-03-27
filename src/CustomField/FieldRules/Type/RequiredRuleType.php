@@ -1,0 +1,60 @@
+<?php
+
+namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\Type;
+
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomFieldType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\CustomLayoutType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\FieldRuleType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\HasRulePluginTranslate;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\FieldRule;
+use Filament\Forms\Components\Component;
+use Filament\Forms\Components\Field;
+use Filament\Forms\Components\Toggle;
+use ReflectionClass;
+
+class RequiredRuleType extends FieldRuleType
+{
+    use HasRulePluginTranslate;
+    public static function identifier(): string {
+        return "is_required_rule";
+    }
+
+    public function settingsComponent(CustomForm $customForm, array $fieldData): Component {
+        return Toggle::make("is_required_on_activation")
+            ->label("Feld benötigt, falls die Regel nicht ausgeführt wird")// ToDo Translate
+            ->hintIconTooltip("Bei Ja wird das Feld nicht benötigt, falls die Regel zuschlägt"); // ToDo Translate
+    }
+
+    public function canAddOnField(CustomFieldType $type): bool {
+        return !($type instanceof CustomLayoutType);
+    }
+
+    public function mutateDataBeforeSaveInEdit(array $ruleData, FieldRule $rule): array {
+        if(!array_key_exists("is_required_on_activation",$ruleData["rule_data"]))$ruleData["rule_data"]["is_required_on_activation"] = false;
+        return $ruleData;
+    }
+
+    public function afterRender(Component|\Filament\Infolists\Components\Component $component ,CustomField $customField, FieldRule $rule): Component|\Filament\Infolists\Components\Component {
+        if(!($component instanceof Field)) return $component;
+        $setting =  $rule->rule_data["is_required_on_activation"];
+
+        $reflection = new ReflectionClass($component);
+        $property = $reflection->getProperty("isRequired");
+        $property->setAccessible(true);
+        $isRequiredOld = $property->getValue($component);
+
+        return $component->required(function(Field $component) use ($isRequiredOld, $setting, $customField, $rule) {
+            $anchor = $rule->getAnchorType()->canRuleExecute($component,$customField,$rule);
+            $isRequired = $setting?!$anchor:$anchor;
+            if(!$isRequired) return $component->evaluate($isRequiredOld);
+            return true;
+        });
+    }
+
+
+    public function getCreateRuleData(): array {
+        return ["is_required_on_activation"=>false];
+    }
+}

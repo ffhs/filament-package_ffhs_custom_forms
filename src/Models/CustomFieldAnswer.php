@@ -2,24 +2,32 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 /**
  * @property int $id
  * @property int $custom_form_answer_id
- * @property int $custom_field_variation_id
- * @property CustomFieldVariation $customFieldVariation
- * @property array answer
+ * @property int $custom_field_id
  * @property CustomFormAnswer $customFormAnswer
+ * @property CustomForm $customForm
+ * @property CustomField $customField
+ * @property array $answer
  */
 class CustomFieldAnswer extends Model
 {
+    private array $data = [];
+
+    public function __get($key) {
+        if($key != "customForm") return parent::__get($key);;
+        if(!array_key_exists("customForm",$this->data)) $this->data["customForm"] = $this->customForm()->first();
+        return $this->data["customForm"];
+    }
+
     protected $fillable = [
         'custom_form_answer_id',
-        'custom_field_variation_id',
+        'custom_field_id',
         'answer'
     ];
 
@@ -28,11 +36,15 @@ class CustomFieldAnswer extends Model
         'answer'=>'array',
     ];
 
-    public function customFieldVariation () {
-        return $this->belongsTo(CustomFieldVariation::class);
+
+    public function customForm(): Builder {
+        return CustomForm::query()->whereIn("id", $this->belongsTo(CustomField::class)->select("custom_form_id"));
+    }
+    public function customField (): BelongsTo {
+        return $this->belongsTo(CustomField::class);
     }
 
-    public function customFormAnswer () {
+    public function customFormAnswer (): BelongsTo {
         return $this->belongsTo(CustomFormAnswer::class);
     }
 

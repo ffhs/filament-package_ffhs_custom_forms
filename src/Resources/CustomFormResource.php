@@ -6,7 +6,6 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormResource\Pages\CreateCustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormResource\Pages\EditCustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormResource\Pages\ListCustomFormField;
-use Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormResource\Pages\ViewVariationsFromCustomForm;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -46,7 +45,7 @@ class CustomFormResource extends Resource
     }
 
     public static function getEloquentQuery(): Builder {
-        return parent::getEloquentQuery()->with(["customFields","customFields.customFieldVariations","customFields.customFieldInLayout"]);
+        return parent::getEloquentQuery()->with(["customFields","customFields.customFieldInLayout"]);
     }
 
     public static function table(Table $table): Table
@@ -56,10 +55,8 @@ class CustomFormResource extends Resource
 
             ])
             ->actions([
-                Tables\Actions\Action::make("to_variations")
-                    ->label("Variationen") //ToDo Translate
-                    ->url(fn($record)=>CustomFormResource::getUrl('variations', ['record' => $record->id]))
-                    ->link()
+                Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make()
             ])
             ->columns([
                 Tables\Columns\TextColumn::make("id"),
@@ -89,7 +86,6 @@ class CustomFormResource extends Resource
             'index' => ListCustomFormField::route('/'),
             'create' => CreateCustomForm::route('/create'),
             'edit' => EditCustomForm::route('/{record}/edit'),
-            'variations' => ViewVariationsFromCustomForm::route('/{record}/variations'),
         ];
     }
 }

@@ -21,25 +21,22 @@ class EmbeddedCustomFormAnswerInput extends Component implements CanEntangleWith
 
     protected string $view = 'filament-forms::components.group';
     protected string|Closure $viewMode;
-    protected Model|int|Closure|null $variation;
     protected bool|Closure $isAutoSave;
 
-    public static function make(Closure|string $relationship,string|Closure $viewMode= "default", Model|int|Closure|null $variation=null): static
+    public static function make(Closure|string $relationship,string|Closure $viewMode= "default"): static
     {
         $static = app(static::class, [
             'viewMode' => $viewMode,
             'relationship'=>$relationship,
-            'variation'=>$variation,
         ]);
         $static->configure();
 
         return $static;
     }
 
-    final public function __construct(Closure|string $relationship, string|Closure $viewMode = "default",Model|int|Closure|null $variation=null)
+    final public function __construct(Closure|string $relationship, string|Closure $viewMode = "default")
     {
         $this->viewMode= $viewMode;
-        $this->variation = $variation;
         $this->isAutoSave=false;
         $relationship = $this->evaluate($relationship);
         $this->relationship($relationship);
@@ -49,7 +46,7 @@ class EmbeddedCustomFormAnswerInput extends Component implements CanEntangleWith
         parent::setUp();
         $this->label("");
         $this->schema(fn(EmbeddedCustomFormAnswerInput $component)=>[
-            Group::make(fn(CustomFormAnswer $record)=> CustomFormRender::generateFormSchema(CustomForm::cached($record->custom_form_id),$component->getViewMode(),$component->getVariation())),
+            Group::make(fn(CustomFormAnswer $record)=> CustomFormRender::generateFormSchema(CustomForm::cached($record->custom_form_id),$component->getViewMode())),
         ]);
         $this->mutateRelationshipDataBeforeFillUsing(function(array $data, Model $record, EmbeddedCustomFormAnswerInput $component){
             /**@var CustomFormAnswer $answer*/
@@ -61,9 +58,7 @@ class EmbeddedCustomFormAnswerInput extends Component implements CanEntangleWith
             /**@var CustomFormAnswer $answer*/
             $relationshipName = $component->getRelationshipName();
             $answer = $record->$relationshipName;
-            $variation=$component->getVariation();
-            if(is_null($variation))$variation = -1;
-            CustomFormRender::saveHelper($answer, $data,$variation);
+            CustomFormRender::saveHelper($answer, $data);
             return [];
         });
         $this->columns(1);
@@ -74,18 +69,13 @@ class EmbeddedCustomFormAnswerInput extends Component implements CanEntangleWith
             /**@var CustomFormAnswer $answer*/
             $relationshipName = $component->getRelationshipName();
             $answer = $record->$relationshipName;
-            CustomFormRender::saveHelper($answer, $state,$component->getVariation());
+            CustomFormRender::saveHelper($answer, $state);
         });
 
     }
 
     public function getViewMode(): string|Closure {
         return $this->evaluate($this->viewMode);
-    }
-
-    private function getVariation(): Model|int|null {
-        if(is_null($this->variation)) return null;
-        return $this->evaluate($this->variation);
     }
 
     public function autoViewMode(bool|Closure $autoViewMode = true):static {

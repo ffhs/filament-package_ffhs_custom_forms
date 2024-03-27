@@ -27,7 +27,8 @@
         "stechstudio/filament-impersonate": "^3.5",
         "davidhsianturi/blade-bootstrap-icons": "^1.4",
         "codeat3/blade-carbon-icons": "^2.18.2",
-        "ryangjchandler/blade-tabler-icons": "^2.2.0"
+        "ryangjchandler/blade-tabler-icons": "^2.2.0",
+        "guava/filament-icon-picker": "^2.0"
     },
     "extra": {
         "laravel": {

@@ -3,56 +3,39 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Form;
 
 use Closure;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\CustomLayoutType;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldVariation;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\FieldRule;
 use Filament\Forms\Components\Group;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 
 class CustomFormRender
 {
 
-    public static function generateFormSchema(CustomForm $form, string $viewMode, null|int|Model $variation = null):array{
+    public static function generateFormSchema(CustomForm $form, string $viewMode):array{
         $customFields = $form->cachedFields();
 
-        $fieldVariations = self::getFormFieldVariations($customFields, $variation);
         $render= self::getFormRender($viewMode,$form);
-        $customFormSchema = self::render(0,$fieldVariations,$customFields,$render)[0];
+        $customFormSchema = self::render(0,$customFields,$render)[0];
 
         return  [
             Group::make($customFormSchema)->columns(config("ffhs_custom_forms.default_column_count")),
         ];
     }
 
-    public static function getFormRender(string $viewMode,CustomForm $form): Closure {
-        return function(CustomFieldType $type, CustomFieldVariation $variation, array $parameter) use ($form, $viewMode) {
-            $variation->customField = $form->cachedField($variation->custom_field_id);
-            return $type->getFormComponent($variation,$form,$viewMode, $parameter);
-        };
-    }
 
-    public static function getFormFieldVariations(Collection $customFields,null|int|Model $variation = null) :Collection{
-        if(is_null($variation))
-            $fieldVariations = $customFields->map(fn(CustomField $field) => $field->templateVariation());
-        else
-            $fieldVariations = $customFields->map(fn(CustomField $field) => $field->getVariation($variation));
-        return $fieldVariations;
-    }
 
 
     public static function generateInfoListSchema(CustomFormAnswer $formAnswer, string $viewMode):array {
         $form = CustomForm::cached($formAnswer->custom_form_id);
         $customFields = $form->cachedFields();
-        $fieldVariations = self::getInfoListVariations($formAnswer, $customFields);
         $fieldAnswers = $formAnswer->cachedAnswers();
 
         $render= self::getInfolistRender($viewMode,$form, $fieldAnswers);
-        $customViewSchema = self::render(0,$fieldVariations,$customFields,$render)[0];
+        $customViewSchema = self::render(0,$customFields,$render)[0];
 
         return  [
             \Filament\Infolists\Components\Group::make($customViewSchema)->columns(config("ffhs_custom_forms.default_column_count")),
@@ -61,122 +44,107 @@ class CustomFormRender
 
 
     public static function getInfolistRender(string $viewMode,CustomForm $form, Collection $fieldAnswers): Closure {
-        return function (CustomFieldType $type, CustomFieldVariation $variation, array $parameter) use (
-            $form,
-            $viewMode, $fieldAnswers
-        ) {
-            $answer = $fieldAnswers->firstWhere("custom_field_variation_id", $variation->id);
+        return function (CustomField $customField,  array $parameter) use ($form, $viewMode, $fieldAnswers) {
+
+            /** @var CustomFormAnswer $answer*/
+            $answer = $fieldAnswers->firstWhere("custom_field_id", $customField->id);
             if (is_null($answer)) {
                 $answer = new CustomFieldAnswer();
                 $answer->answer = null;
-                $answer->custom_field_variation_id = $variation->id;
+                $answer->custom_field_id = $customField->id;
             }
 
-            $variation->customField = $form->cachedField($variation->custom_field_id);
-            $answer->customFieldVariation = $variation;
-
-            return $type->getInfolistComponent($answer, $form, $viewMode, $parameter);
+            return $customField->getType()->getInfolistComponent($answer, $form, $viewMode, $parameter);
         };
     }
 
+    public static function getFormRender(string $viewMode,CustomForm $form): Closure {
+        return function(CustomField $customField, array $parameter) use ($viewMode, $form) {
 
-    public static function getInfoListVariations(CustomFormAnswer $formAnswer, Collection|array $customFields, Model|int|null $variationRaw = null): Collection {
-        $customForm = CustomForm::cached($formAnswer->custom_form_id);
-        $customFieldVariations = $customForm
-            ->cachedFields()
-            ->map(fn(CustomField$customField) => $customField->customFieldVariations)
-            ->flatten(1);
-        $fieldAnswers = $formAnswer->cachedAnswers();
+            //Render
+            $component = $customField->getType()->getFormComponent($customField, $form, $viewMode, $parameter);
+            $component->live();
 
-
-        $fieldVariations = $fieldAnswers
-            ->map(fn(CustomFieldAnswer $answer) => $customFieldVariations->firstWhere("id", $answer->custom_field_variation_id));
-
-        //Find Variation
-        $variation = $variationRaw;
-        if (is_null($variationRaw)&& $customForm->getFormConfiguration()::hasVariations()) {
-            $variation = $fieldVariations
-                ->filter(fn(CustomFieldVariation $variation) => !is_null($variation->variation_id))->first();
-            if (!is_null($variation)) $variation = $variation->variation_id;
-        }
-
-        if (is_null($variation) || !$customForm->getFormConfiguration()::hasVariations())
-            $fieldVariationsAddon = $customFields->map(fn(CustomField $field) => $field->templateVariation());
-        else
-            $fieldVariationsAddon = $customFields->map(fn(CustomField $field) => $field->getVariation($variation));
-
-        $fieldVariationsAddon = $fieldVariationsAddon->filter(fn(CustomFieldVariation $variation) => !$fieldVariations->contains($variation->id));
-        $fieldVariationsAddon->each(fn(CustomFieldVariation $variation) => $fieldVariations->add($variation));
-        return $fieldVariations;
+            return $component;
+        };
     }
 
-    public static function render(int $indexOffset, Collection $fieldVariations, Collection &$customFields, Closure &$render) {
+    public static function render(int $indexOffset, Collection $customFields, Closure &$render): array {
         $customFormSchema = [];
 
-        $preparedFieldsVariations = collect(
-            array_combine(
-                $fieldVariations->map(fn(CustomFieldVariation $variation)=> $customFields->firstWhere("id",$variation->custom_field_id)->form_position)->toArray(),
-                $fieldVariations->map(fn(CustomFieldVariation $variation)=> $variation->id)->toArray()
-            )
-        );
+        $preparedFields = [];
+        $customFields->each(function(CustomField $field) use (&$preparedFields){
+            $preparedFields[$field->form_position] = $field;
+        });
 
 
-        for($index = $indexOffset+1; $index<= $fieldVariations->count()+$indexOffset; $index++){
-
-            if(empty($preparedFieldsVariations[$index]))continue;
-
-            /** @var CustomFieldVariation $fieldVariation*/
-            $fieldVariation = $fieldVariations->firstWhere("id",$preparedFieldsVariations[$index]);
-
-
+        for($index = $indexOffset+1; $index<= $customFields->count()+$indexOffset; $index++){
 
             /** @var CustomField $customField*/
-            $customField = $customFields->firstWhere("id",$fieldVariation->custom_field_id);
-            if(!($customField->getType() instanceof CustomLayoutType)){
-                if(!$fieldVariation->is_active) continue;
-                $customFormSchema[] = $render($customField->getType(),$fieldVariation, []);
-                continue;
+            $customField =  $preparedFields[$index];
+            $parameters = [];
+
+            if(!$customField->is_active) continue;
+            if(($customField->getType() instanceof CustomLayoutType)){
+
+                $endLocation = $customField->layout_end_position;
+
+                //Setup Render Data
+                $fieldRenderData = [];
+                for($formPositionSubForm = $customField->form_position+1; $formPositionSubForm <= $endLocation; $formPositionSubForm++){
+                    $fieldRenderData[] =  $preparedFields[$formPositionSubForm];
+                }
+                $fieldRenderData = collect($fieldRenderData);
+
+                //Render Schema Input
+                $renderedOutput = self::render($index, $fieldRenderData, $render);
+                //Get Layout Schema
+                $parameters = [
+                    "customFieldData" => $fieldRenderData,
+                    "rendered"=> $renderedOutput[0],
+                ]; //ToDo Optimize
+
+                //Set Index
+                $index= $renderedOutput[1]-1;
             }
 
-            $endLocation = $customField->layout_end_position;
+            $rules = $customField->fieldRules;
 
-            //Setup Render Data
-            $fieldVariationRenderData = [];
-            for($formPositionSubForm = $customField->form_position+1; $formPositionSubForm <= $endLocation; $formPositionSubForm++){
-                $fieldVariationRenderData[] =  $fieldVariations->firstWhere("id",$preparedFieldsVariations[$formPositionSubForm]);
-            }
-            $fieldVariationRenderData = collect($fieldVariationRenderData);
+            //Rule before render
+            $rules->each(function(FieldRule $rule) use (&$customField) {
+                $rule->getRuleType()->beforeRender($customField,$rule);
+            });
 
+            //Parameter anchor mutation
+            $rules->each(function(FieldRule $rule) use (&$parameters, &$customField) {
+                $parameters =  $rule->getAnchorType()->mutateRenderParameter($parameters,$customField,$rule);
+            });
 
-            //Render Schema Input
-            $renderedOutput = self::render($index, $fieldVariationRenderData,$customFields,$render);
-            //Get Layout Schema
-            $parameters = [
-                "fieldVariationData" => $fieldVariationRenderData,
-                "rendered"=> $renderedOutput[0],
-            ]; //ToDo Optimize
+            //Parameter rule mutation
+            $rules->each(function(FieldRule $rule) use (&$parameters, &$customField) {
+                $parameters =  $rule->getRuleType()->mutateRenderParameter($parameters,$customField,$rule);
+            });
 
-            //Set Index
-            $index= $renderedOutput[1]-1;
+            //Render
+            $renderedComponent = $render($customField, $parameters);
 
-            if(!$fieldVariation->is_active) continue;
-            $customFormSchema[] = $render($customField->getType(),$fieldVariation, $parameters);
+            //Rule after Render
+            $rules->each(function(FieldRule $rule) use (&$customField, &$renderedComponent) {
+                $renderedComponent = $rule->getRuleType()->afterRender($renderedComponent,$customField,$rule);
+            });
+            $customFormSchema[] = $renderedComponent;
 
         }
         return [$customFormSchema,$index];
     }
 
 
-    public static function saveHelper(CustomFormAnswer $fieldAnswerer, array $formData, Model|int|null $variation) :void{
-        $customForm = CustomForm::cached($fieldAnswerer->custom_form_id);
+    public static function saveHelper(CustomFormAnswer $formAnswerer, array $formData) :void{
+        $customForm = CustomForm::cached($formAnswerer->custom_form_id);
 
-        $customFieldAnswers = $fieldAnswerer->customFieldAnswers;
+        $customFieldAnswers = $formAnswerer->customFieldAnswers;
         $keys = $customFieldAnswers
-            ->map(function(CustomFieldAnswer $answer) use ($customForm) {
-                $customFieldId = $answer->customFieldVariation->custom_field_id;
-                $customField = $customForm->cachedField($customFieldId);
-                return $customField->getInheritState()["identify_key"];
-            })
+            ->map(fn(CustomFieldAnswer $answer)=> $answer->customField->getInheritState()["identify_key"])
             ->toArray();
         $customFieldAnswersArray = [];
         $customFieldAnswers->each(function($model) use (&$customFieldAnswersArray) {$customFieldAnswersArray[] = $model;});
@@ -189,9 +157,8 @@ class CustomFormRender
         $customFieldsIdentify = array_combine($keys, $customFieldArray);
 
         foreach($formData as $key => $fieldData){
-            if(empty($customFieldsIdentify[$key])){
-                continue;
-            }
+            if(empty($customFieldsIdentify[$key])) continue;
+
 
             /**@var CustomField $customField*/
             $customField = $customFieldsIdentify[$key];
@@ -204,13 +171,26 @@ class CustomFormRender
             /**@var null|CustomFieldAnswer $customFieldAnswer*/
             if(empty( $fieldAnswersIdentify[$key]))
                 $customFieldAnswer= new CustomFieldAnswer([
-                    "custom_field_variation_id" => $customField->getVariation($variation)->id,
-                    "custom_form_answer_id" => $fieldAnswerer->id,
+                    "custom_field_id" => $customField->id,
+                    "custom_form_answer_id" => $formAnswerer->id,
                 ]);
             else $customFieldAnswer = $fieldAnswersIdentify[$key];
 
+            $fieldRules  = $customFieldAnswer->customField->fieldRules;
+            foreach ($fieldRules as $rule){
+                /**@var FieldRule $rule */
+                $fieldAnswererData = $rule->getRuleType()->mutateSaveAnswerData($fieldAnswererData,$rule, $customFieldAnswer);
+            }
+
             $customFieldAnswer->answer = $fieldAnswererData;
-            $customFieldAnswer->save();
+
+            foreach ($fieldRules as $rule){
+                /**@var FieldRule $rule */
+                $rule->getRuleType()->afterAnswerSave($rule, $customFieldAnswer);
+            }
+
+
+            if(!$customFieldAnswer->exists|| $customFieldAnswer->isDirty())$customFieldAnswer->save();
         }
 
     }
@@ -225,16 +205,18 @@ class CustomFormRender
 
         foreach($answerer->customFieldAnswers as $fieldAnswer){
             /**@var CustomFieldAnswer $fieldAnswer*/
-            $customField = $customFields
-                ->filter(fn(CustomField $field) =>
-                    !is_null(
-                        $field->customFieldVariations->firstWhere("id", $fieldAnswer->custom_field_variation_id)
-                    )
-                )
-                ->first();
+            /**@var CustomField $customField*/
+            $customField = $customFields->where("id", $fieldAnswer->custom_field_id)->first();
             $fieldData = $customField
                 ->getType()
                 ->prepareLoadFieldData($fieldAnswer->answer);
+
+            $fieldRules  = $customField->fieldRules;
+            foreach ($fieldRules as $rule){
+                /**@var FieldRule $rule */
+                $fieldData = $rule->getRuleType()->mutateLoadAnswerData($fieldData,$rule, $fieldAnswer);
+            }
+
             $data[$customField->getInheritState()["identify_key"]] = $fieldData;
         }
         return $data;

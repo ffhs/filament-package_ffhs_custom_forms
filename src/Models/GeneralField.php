@@ -2,13 +2,13 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Models;
 
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Cache;
 
 /**
+ * @property int $id
  * @property string $identify_key
  * @property bool $is_general_field_active
  * @property bool $is_term_bound
@@ -17,8 +17,10 @@ use Illuminate\Support\Facades\Cache;
  * @property string $name_de
  * @property string $name_en
  * @property string $type
+ * @property string $icon
  * @property array $extra_options
  * @property Collection $customOptions
+ * @property Collection $generalFieldForms
  */
 class GeneralField extends ACustomField
 {
@@ -36,6 +38,7 @@ class GeneralField extends ACustomField
         'name_de',
         'name_en',
         'type',
+        'icon',
     ];
 
     protected $casts = [
