@@ -3,7 +3,6 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\Type;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomFieldType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\CustomLayoutType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomOption\CustomOptionType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\FieldRuleType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\HasRulePluginTranslate;
@@ -14,11 +13,8 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\FieldRule;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Concerns\HasOptions;
-use Filament\Forms\Components\Field;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Toggle;
 use Filament\Infolists\Components\Component as InfoComponent;
-use Livewire\Attributes\Rule;
 use ReflectionClass;
 
 class ChangeOptionRuleType extends FieldRuleType
@@ -51,6 +47,11 @@ class ChangeOptionRuleType extends FieldRuleType
     }
 
 
+    public function getCreateRuleData(): array {
+        return [
+            "customOptions" => []
+        ];
+    }
     public function afterRender(Component|InfoComponent $component, CustomField $customField, FieldRule $rule): Component|InfoComponent {
         if(!in_array(HasOptions::class,class_uses_recursive($component::class))) return $component;
         $reflection = new ReflectionClass($component);

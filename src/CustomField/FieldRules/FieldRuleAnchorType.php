@@ -36,6 +36,8 @@ abstract class FieldRuleAnchorType
     public static abstract function identifier();
 
 
+    public abstract function settingsComponent(CustomForm $customForm, array $fieldData):Component;
+    public abstract function getCreateAnchorData():array;
     public abstract function shouldRuleExecute(array $formState, CustomField $customField, FieldRule $rule):bool;
 
     public function canRuleExecute(Component $component, CustomField $customField, FieldRule $rule ):bool {
@@ -43,7 +45,6 @@ abstract class FieldRuleAnchorType
         return $this->shouldRuleExecute($rawFormData,$customField,$rule);
     }
 
-    public abstract function settingsComponent(CustomForm $customForm, array $fieldData):Component;
 
 
 

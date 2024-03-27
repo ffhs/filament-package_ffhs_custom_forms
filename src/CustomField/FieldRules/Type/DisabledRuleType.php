@@ -49,4 +49,7 @@ class DisabledRuleType extends FieldRuleType
     }
 
 
+    public function getCreateRuleData(): array {
+       return ["is_disabled_on_activation"=> false];
+    }
 }

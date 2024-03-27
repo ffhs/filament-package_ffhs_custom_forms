@@ -12,7 +12,6 @@ use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Group;
-use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
@@ -84,6 +83,10 @@ class CustomFieldRuleEditForm
                                 ->label("Regel") //ToDo Translate
                                 ->options($anchors)
                                 ->required()
+                                ->afterStateUpdated(function ($state,$set){
+                                    if(is_null($state)) return;
+                                    $set("anchor_data", FieldRuleAnchorType::getAnchorFromName($state)?->getCreateAnchorData());
+                                })
                                 ->live(),
                             Group::make()
                                 ->statePath("anchor_data")
@@ -111,7 +114,11 @@ class CustomFieldRuleEditForm
                                 ->label("Regel") //ToDo Translate
                                 ->options($rules)
                                 ->required()
-                                ->live(),
+                                ->live()
+                                ->afterStateUpdated(function ($state,$set){
+                                    if(is_null($state)) return;
+                                    $set("rule_data", FieldRuleType::getRuleFromName($state)?->getCreateRuleData());
+                                }),
                             Group::make()
                                 ->statePath("rule_data")
                                 ->schema(function($get, $livewire) use ($customForm) {

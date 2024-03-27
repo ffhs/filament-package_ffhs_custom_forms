@@ -180,7 +180,14 @@ class ValueEqualsRuleAnchor extends FieldRuleAnchorType
                     }),
             ]);
     }
-
+    public function getCreateAnchorData(): array {
+        return [
+            "target_field"=> null,
+            "field_type"=> "text",
+            "value"=> false,
+            "values"=> [],
+        ];
+    }
 
     private static function flattenOne($array): array {
         $results = [];
@@ -233,6 +240,7 @@ class ValueEqualsRuleAnchor extends FieldRuleAnchorType
         }
         else return false;
     }
+
 
 
 }

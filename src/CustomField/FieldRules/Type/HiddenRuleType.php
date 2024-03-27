@@ -43,4 +43,7 @@ class HiddenRuleType extends FieldRuleType
     }
 
 
+    public function getCreateRuleData(): array {
+       return ["is_hidden_on_activation"=>false];
+    }
 }

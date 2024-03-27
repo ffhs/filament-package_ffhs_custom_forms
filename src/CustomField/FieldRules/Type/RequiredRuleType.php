@@ -44,5 +44,7 @@ class RequiredRuleType extends FieldRuleType
     }
 
 
-
+    public function getCreateRuleData(): array {
+        return ["is_required_on_activation"=>false];
+    }
 }

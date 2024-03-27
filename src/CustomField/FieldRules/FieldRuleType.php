@@ -36,6 +36,7 @@ abstract class FieldRuleType
 
     public abstract static function identifier();
     public abstract function settingsComponent(CustomForm $customForm, array $fieldData):Component;
+    public abstract function getCreateRuleData():array;
 
 
     public function canAddOnField(CustomFieldType $type): bool {
