@@ -4,12 +4,10 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Form;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\CustomLayoutType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\TypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Form\Extra\CustomFieldEditForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Form\Extra\CustomFieldRuleEditForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Form\Extra\CustomFormEditSave;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\HtmlComponents\HtmlBadge;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Filament\Forms\Components\Actions\Action;

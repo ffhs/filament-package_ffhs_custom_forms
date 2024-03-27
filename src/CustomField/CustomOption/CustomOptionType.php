@@ -3,10 +3,6 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomOption;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomFieldType;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
-
-use Illuminate\Support\Collection;
 
 abstract class  CustomOptionType extends CustomFieldType
 {

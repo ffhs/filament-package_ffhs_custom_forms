@@ -11,7 +11,6 @@ use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use function PHPUnit\Framework\isEmpty;
 
 class CustomOptionOption extends TypeOption
 {

@@ -7,9 +7,6 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\HasCustomFor
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomOption\CustomOptionType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\ColumnsOption;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\FastTypeOption;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
 
 class CheckboxListType extends CustomOptionType
 {

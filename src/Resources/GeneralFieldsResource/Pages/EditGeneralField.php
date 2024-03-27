@@ -5,6 +5,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Resources\GeneralFieldsResource\Pa
 use Ffhs\FilamentPackageFfhsCustomForms\Resources\GeneralFieldResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
+
 class EditGeneralField extends EditRecord
 {
     protected static string $resource = GeneralFieldResource::class;
