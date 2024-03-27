@@ -30,24 +30,31 @@ class ValueEqualsRuleAnchor extends FieldRuleAnchorType
         return "value_equals_anchor";
     }
 
-    private function mapFieldData(array $fieldDatas):array {
-        $output = [];
-        foreach ($fieldDatas as $fieldKey => $fieldData){
-            if(!array_key_exists("custom_fields",$fieldData)) {
-                $output[$fieldKey] =$fieldData;
-                continue;
-            }
-            $output =  array_merge($this->mapFieldData($fieldData["custom_fields"]), $output);
+    private static function mapFieldData(array $fields):array {
+        $finalField = [];
+        foreach ($fields as $field){
+            if(array_key_exists("custom_fields",$field))
+                $finalField =array_merge($finalField, self::mapFieldData($field["custom_fields"]));
+            unset($field["custom_fields"]);
+            $finalField[] = $field;
         }
-
-        return $output;
+        return $finalField;
     }
 
     protected static function getSelectedFieldData(Get $get,Component $component):array|null {
         $identifier = $get("target_field");
         if(is_null($identifier)) return null;
-        $fields = array_values($component->getLivewire()->getCachedForms())[0]->getRawState()["custom_fields"];
+        $fields = array_values($component->getLivewire()->getCachedForms())[0]->getRawState();
+
+        for($i=0; $i<=10; $i++){
+            if(array_key_exists("custom_fields",$fields)) break;
+            $fields = self::flattenOne($fields);
+        }
+
+        $fields = $fields["custom_fields"];
         $finalField = null;
+
+        $fields = self::mapFieldData($fields);
 
         foreach ($fields as $field){
             if(array_key_exists("general_field_id",$field) && !is_null($field["general_field_id"])){
@@ -84,7 +91,7 @@ class ValueEqualsRuleAnchor extends FieldRuleAnchorType
                     ->columns()
                     ->live()
                     ->options(function ($component) use ($fieldData) {
-                        $fieldData = $this->mapFieldData($fieldData);
+                        $fieldData = self::mapFieldData($fieldData);
                         $thisField = array_values($component->getLivewire()->getCachedForms())[1]->getRawState();
                         if(array_key_exists("identify_key",$thisField)) $identifyKey = $thisField["identify_key"];
                         else $identifyKey = null;
@@ -102,8 +109,8 @@ class ValueEqualsRuleAnchor extends FieldRuleAnchorType
                         return $options;
                     }),
                 Select::make("field_type")
-                    ->selectablePlaceholder(false)
-                    // ->required() ToDo Fix
+                    //->selectablePlaceholder(false)
+                    ->required()
                     //->nullable(false) ToDo Fix
                     ->label("Feldtypen")
                     ->live()
@@ -128,7 +135,7 @@ class ValueEqualsRuleAnchor extends FieldRuleAnchorType
                     ->columnSpanFull()
                     ->visible(function($get,$component) {
                         $fieldData = self::getSelectedFieldData($get,$component);
-                        if(is_null($fieldData)) return true;
+                        if(is_null($fieldData)) return false;
                         $fieldType= self::getFieldType($fieldData);
                         return !($fieldType instanceof CustomOptionType) && $get("field_type") == "boolean";
                     }),
@@ -142,7 +149,7 @@ class ValueEqualsRuleAnchor extends FieldRuleAnchorType
                     ])
                     ->visible(function($get,$component) {
                         $fieldData = self::getSelectedFieldData($get,$component);
-                        if(is_null($fieldData)) return true;
+                        if(is_null($fieldData)) return false;
                         $fieldType= self::getFieldType($fieldData);
                         return !($fieldType instanceof CustomOptionType) && $get("field_type") == "text";
                     }),
@@ -175,6 +182,23 @@ class ValueEqualsRuleAnchor extends FieldRuleAnchorType
     }
 
 
+    private static function flattenOne($array): array {
+        $results = [];
+
+        foreach ($array as $key => $value) {
+            if (is_array($value) && ! empty($value)){
+                $subResult = [];
+                foreach ($value as $key1 => $value1) {
+                    $subResult[$key1]=$value1;
+                }
+                $results = array_merge($results, $subResult);
+            }
+            else $results[$key] = $value;
+        }
+
+
+        return $results;
+    }
 
     function flatten($array): array {
         $results = [];
@@ -209,4 +233,6 @@ class ValueEqualsRuleAnchor extends FieldRuleAnchorType
         }
         else return false;
     }
+
+
 }

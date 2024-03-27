@@ -7,14 +7,11 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\CustomLayou
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\FieldRuleType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\HasRulePluginTranslate;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\FieldRule;
-use Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormAnswerResource\Pages\EditCustomFormAnswer;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Field;
 use Filament\Forms\Components\Toggle;
-use Livewire\Livewire;
 
 class RequiredRuleType extends FieldRuleType
 {
@@ -34,7 +31,7 @@ class RequiredRuleType extends FieldRuleType
     }
 
     public function mutateDataBeforeSaveInEdit(array $ruleData, FieldRule $rule): array {
-        if(!array_key_exists("is_required_on_activation",$ruleData))$ruleData["is_required_on_activation"] = false;
+        if(!array_key_exists("is_required_on_activation",$ruleData["rule_data"]))$ruleData["rule_data"]["is_required_on_activation"] = false;
         return $ruleData;
     }
 

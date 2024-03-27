@@ -3,38 +3,19 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Form\Extra;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomFieldType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\CustomLayoutType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\FieldRuleAnchorType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\FieldRuleType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\TypeOption;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Form\CustomFormEditForm;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\HtmlComponents\HtmlBadge;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\FieldRule;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralFieldForm;
-use Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormResource\Pages\EditCustomForm;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Component;
-use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Group;
-use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Tabs;
-use Filament\Forms\Components\Tabs\Tab;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
-use Filament\Forms\Components\Wizard;
-use Filament\Forms\Get;
-use Filament\Support\Colors\Color;
 use Filament\Support\Enums\MaxWidth;
-use Illuminate\Support\Facades\Blade;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\HtmlString;
 
 class CustomFieldRuleEditForm
 {
@@ -61,10 +42,29 @@ class CustomFieldRuleEditForm
                ->modalWidth(MaxWidth::SixExtraLarge)
                ->label("Regel hinzufügen") //ToDo Translate
                ->mutateFormDataUsing(fn(Action $action) =>
-                    array_values($action->getLivewire()->getCachedForms())[2]->getRawState()
+                   // dd(array_values($action->getLivewire()->getCachedForms())[2]->getRawState())
+                    collect(array_values($action->getLivewire()->getCachedForms()))->each(fn($that)=>dump($that->getRawState()))&&dd()
                )
 
         ]);
+    }
+
+    private static function flatten($array): array {
+        $results = [];
+
+        foreach ($array as $key => $value) {
+            if (is_array($value) && ! empty($value)){
+                $subResult = [];
+                foreach ($value as $key1 => $value1) {
+                    $subResult[$key1]=$value1;
+                }
+                $results = array_merge($results, $subResult);
+            }
+            else $results[$key] = $value;
+        }
+
+
+        return $results;
     }
 
     private static function getRuleEditSchema(CustomForm $customForm, CustomFieldType $type): array {
@@ -89,10 +89,17 @@ class CustomFieldRuleEditForm
                                 ->columnStart(1)
                                 ->columnSpanFull()
                                 ->columns()
-                                ->schema(function($get, EditCustomForm $livewire) use ($customForm) {
+                                ->schema(function($get,  $livewire) use ($customForm) {
                                     if(is_null($get("anchor_identifier"))) return [];
+                                    $data = $livewire->data;
+
+                                    for($i=0; $i<=10;$i++){
+                                        if(array_key_exists("custom_fields",$data)) break;
+                                        $data= self::flatten($data);
+                                    }
+
                                     $anchor = FieldRuleAnchorType::getAnchorFromName($get("anchor_identifier"));
-                                    return [$anchor->settingsComponent($customForm, $livewire->data["custom_fields"])];
+                                    return [$anchor->settingsComponent($customForm, $data["custom_fields"])];
                                 }),
                         ]),
                     Section::make("Regel")
@@ -107,10 +114,16 @@ class CustomFieldRuleEditForm
 
                             Group::make()
                                 ->statePath("rule_data")
-                                ->schema(function($get, EditCustomForm $livewire) use ($customForm) {
+                                ->schema(function($get, $livewire) use ($customForm) {
                                     if(is_null($get("rule_identifier"))) return [];
+                                    $data = $livewire->data;
+
+                                    for($i=0; $i<=10;$i++){
+                                        if(array_key_exists("custom_fields",$data)) break;
+                                        $data= self::flatten($data);
+                                    }
                                     $rule = FieldRuleType::getRuleFromName($get("rule_identifier"));
-                                    return [$rule->settingsComponent($customForm, $livewire->data["custom_fields"])];
+                                    return [$rule->settingsComponent($customForm, $data["custom_fields"])];
                                 }),
                         ]),
                 ]),
@@ -124,6 +137,7 @@ class CustomFieldRuleEditForm
             ->orderColumn("execution_order")
             ->itemLabel(function($state){
                 $fieldRuleAnchorType = FieldRuleAnchorType::getAnchorFromName($state["anchor_identifier"]);
+                if($state["rule_identifier"] == null) return "Error";
                 $fieldRuleType = FieldRuleType::getRuleFromName($state["rule_identifier"]);
 
                 return $fieldRuleAnchorType->getTranslatedName() . " ==> " . $fieldRuleType->getTranslatedName();
@@ -146,7 +160,8 @@ class CustomFieldRuleEditForm
                         $set("rules." . $arguments["item"], $data)
                     )
                     ->mutateFormDataUsing(fn(Action $action) =>
-                        array_values($action->getLivewire()->getCachedForms())[2]->getRawState()
+                        //array_values($action->getLivewire()->getCachedForms())[2]->getRawState()
+                        collect(array_values($action->getLivewire()->getCachedForms()))->each(fn($that)=>dump($that->getRawState()))&&dd()
                     ),
             ]);
     }

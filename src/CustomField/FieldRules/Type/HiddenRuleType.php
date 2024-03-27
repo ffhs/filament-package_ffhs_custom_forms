@@ -2,8 +2,6 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\Type;
 
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomFieldType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\CustomLayoutType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\FieldRuleType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\HasRulePluginTranslate;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FormMapper;
@@ -11,7 +9,6 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\FieldRule;
 use Filament\Forms\Components\Component;
-use Filament\Forms\Components\Field;
 use Filament\Forms\Components\Toggle;
 
 class HiddenRuleType extends FieldRuleType
@@ -28,11 +25,9 @@ class HiddenRuleType extends FieldRuleType
             ->hintIconTooltip("Bei Ja wird das Feld nicht versteckt, falls die Regel zuschlägt"); // ToDo Translate
     }
 
-    public function canAddOnField(CustomFieldType $type): bool {
-        return !($type instanceof CustomLayoutType);
-    }
+
     public function mutateDataBeforeSaveInEdit(array $ruleData, FieldRule $rule): array {
-        if(!array_key_exists("is_hidden_on_activation",$ruleData))$ruleData["is_hidden_on_activation"] = false;
+        if(!array_key_exists("is_hidden_on_activation",$ruleData["rule_data"]))$ruleData["rule_data"]["is_hidden_on_activation"] = false;
         return $ruleData;
     }
 
