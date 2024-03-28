@@ -13,7 +13,7 @@ class TemplateFieldType extends CustomFieldType
 
     public function viewModes(): array {
         return [
-          "default"=> null
+          "default"=> TemplateTypeView::class,
         ];
     }
 
