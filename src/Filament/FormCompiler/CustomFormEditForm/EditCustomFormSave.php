@@ -90,7 +90,6 @@ class EditCustomFormSave
         }
 
         self::saveCustomFieldFromData(1,$childComponentContainers,$customForm, $relationship,$statedRecords);
-
     }
 
     private static function updateCustomField(CustomField &$customField,array $itemData): void {
