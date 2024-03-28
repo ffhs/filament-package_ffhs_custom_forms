@@ -16,7 +16,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection;
 
-class CustomFormEditSave
+class EditCustomFormSave
 {
 
     private static function setArrayExistingRecordFromArrayData(Collection &$customFieldsOld, array $state,  array&$statedRecords): void {

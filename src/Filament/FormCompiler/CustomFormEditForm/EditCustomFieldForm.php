@@ -63,7 +63,7 @@ class EditCustomFieldForm
                     self::getFieldOptionSection($type)
                         ->columnSpan(1),
 
-                    CustomFieldRuleEditForm::getRuleComponent($customForm,$type)
+                    EditCustomFieldRule::getRuleComponent($customForm,$type)
 
                 ]),
         ];

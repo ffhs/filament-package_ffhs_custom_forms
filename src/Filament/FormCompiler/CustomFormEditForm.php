@@ -7,8 +7,8 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\CustomLayou
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\Templates\TemplateFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\CustomFormEditForm\EditCustomFieldAction;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\CustomFormEditForm\EditCustomFieldForm;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\CustomFormEditForm\CustomFieldRuleEditForm;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\CustomFormEditForm\CustomFormEditSave;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\CustomFormEditForm\EditCustomFieldRule;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\CustomFormEditForm\EditCustomFormSave;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\HtmlComponents\HtmlBadge;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
@@ -36,9 +36,9 @@ class CustomFormEditForm
                 ->columnSpan(2)
                 ->schema(fn(CustomForm $record)=>[
                     self::getCustomFieldRepeater($record)
-                        ->saveRelationshipsUsing(fn($component, $state) =>CustomFormEditSave::saveCustomFields($component,$record,$state))
+                        ->saveRelationshipsUsing(fn($component, $state) =>EditCustomFormSave::saveCustomFields($component,$record,$state))
                         //If it is a template it haven't to Check the fields
-                        ->rules($record->is_template?[]:[CustomFormEditSave::getGeneralFieldRepeaterValidationRule()]),
+                        ->rules($record->is_template?[]:[EditCustomFormSave::getGeneralFieldRepeaterValidationRule()]),
                 ]),
         ];
     }
@@ -53,7 +53,7 @@ class CustomFormEditForm
             ->saveRelationshipsUsing(fn()=>empty(null))
             ->mutateRelationshipDataBeforeFillUsing(function($data) use ($record) {
                 $data = EditCustomFieldForm::mutateOptionDatas($data, $record);
-                return CustomFieldRuleEditForm::mutateRuleDatasOnLoad($data, $record);
+                return EditCustomFieldRule::mutateRuleDatasOnLoad($data, $record);
             })
             ->collapsible(false)
             ->addable(false)

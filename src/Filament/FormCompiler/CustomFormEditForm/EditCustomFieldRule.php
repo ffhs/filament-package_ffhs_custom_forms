@@ -18,7 +18,7 @@ use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Support\Enums\MaxWidth;
 
-class CustomFieldRuleEditForm
+class EditCustomFieldRule
 {
 
     public static function getRuleComponent(CustomForm $customForm, CustomFieldType $type): Component {
