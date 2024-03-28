@@ -35,7 +35,8 @@ class CustomFormEditForm
                 ->schema(fn(CustomForm $record)=>[
                     self::getCustomFieldRepeater($record)
                         ->saveRelationshipsUsing(fn($component, $state) =>CustomFormEditSave::saveCustomFields($component,$record,$state))
-                        ->rules([CustomFormEditSave::getGeneralFieldRepeaterValidationRule()]),
+                        //If it is a template it haven't to Check the fields
+                        ->rules($record->is_template?[]:[CustomFormEditSave::getGeneralFieldRepeaterValidationRule()]),
                 ]),
         ];
     }

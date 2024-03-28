@@ -12,7 +12,8 @@ return [
         'forms' => 'Forms',
         'group' => [
             'forms'=> 'Forms'
-        ]
+        ],
+        "templates"=> "Templates"
     ],
 
     "fields" =>[
@@ -67,7 +68,8 @@ return [
         'custom_form_identifier'=> [
             'display_name' => "Form Type Name",
             'raw_name' => "Form Type Identifier"
-        ]
+        ],
+        'template'=> "Template"
     ]
 
 ];

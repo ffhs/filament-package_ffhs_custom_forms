@@ -1,17 +1,17 @@
 <?php
 
-namespace Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormResource\Pages;
+namespace Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormsResource\Pages;
 
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Form\CustomFormEditForm;
-use Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormResource;
+use Ffhs\FilamentPackageFfhsCustomForms\Resources\TemplateResource;
 use Filament\Actions;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Form;
 use Filament\Resources\Pages\EditRecord;
 
-class EditCustomForm extends EditRecord
+class EditTemplate extends EditRecord
 {
-    protected static string $resource = CustomFormResource::class;
+    protected static string $resource = TemplateResource::class;
 
     public function form(Form $form): Form {
         return $form
@@ -24,16 +24,10 @@ class EditCustomForm extends EditRecord
             );
     }
 
-
     protected function getHeaderActions(): array
     {
         return [
             Actions\DeleteAction::make(),
         ];
     }
-
-
-
-
-
 }

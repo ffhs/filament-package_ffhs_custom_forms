@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Cache;
  * @property string|null $short_title
  * @property Collection $customFormAnswers
  * @property Collection $customFields
+ * @property bool $is_template
  */
 class CustomForm extends Model
 {
@@ -26,11 +27,12 @@ class CustomForm extends Model
     protected $fillable = [
         'custom_form_identifier',
         'short_title',
+        'is_template'
     ];
 
 
     public function customFields(): HasMany {
-        return $this->hasMany(CustomField::class)->orderBy("form_position");
+        return $this->hasMany(CustomField::class)->orderBy("form_position"); //ToDo also add Templates field
     }
 
 
@@ -39,8 +41,6 @@ class CustomForm extends Model
     }
 
 
-
-    //toDo get CustomFieldLayout
 
     public static function cached(int $id):CustomForm {
         return Cache::remember("custom_form-" .$id, config('ffhs_custom_forms.cache_duration'), fn()=>CustomForm::query()->firstWhere("id", $id));

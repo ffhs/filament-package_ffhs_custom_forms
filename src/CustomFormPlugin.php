@@ -4,8 +4,8 @@ namespace Ffhs\FilamentPackageFfhsCustomForms;
 
 use Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormAnswerResource;
 use Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormResource;
-use Ffhs\FilamentPackageFfhsCustomForms\Resources\FormVariationResource;
 use Ffhs\FilamentPackageFfhsCustomForms\Resources\GeneralFieldResource;
+use Ffhs\FilamentPackageFfhsCustomForms\Resources\TemplateResource;
 use Filament\Contracts\Plugin;
 use Filament\Panel;
 
@@ -26,6 +26,7 @@ class CustomFormPlugin implements Plugin {
             ->resources([
                 CustomFormResource::class,
                 GeneralFieldResource::class,
+                TemplateResource::class,
                 CustomFormAnswerResource::class,
             ]);
     }
