@@ -24,6 +24,7 @@ return [
 
     'cache_duration'=> 1,
     'default_column_count' => 4,
+    'use_templates' => true,
 
     "field_rule_anchor_types"=>[
         ValueEqualsRuleAnchor::class,

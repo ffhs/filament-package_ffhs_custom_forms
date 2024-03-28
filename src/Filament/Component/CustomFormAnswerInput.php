@@ -4,7 +4,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component;
 
 
 use Closure;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Form\CustomFormRender;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\CustomFormRender;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
 use Filament\Forms\Components\Component;

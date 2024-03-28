@@ -3,6 +3,7 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\Models;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomFieldType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\Templates\TemplateFieldType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
@@ -32,11 +33,14 @@ abstract class ACustomField extends Model
         return  $typeName;
     }
     public function getTypeClass():?string{
+        if($this instanceof CustomField && $this->isTemplate()) return TemplateFieldType::class;
         $typeName = $this->getTypeName();
         if(is_null($typeName)) return null;
         return CustomFieldType::getTypeClassFromName($typeName);
     }
     public function getType():?CustomFieldType{
+        if($this instanceof CustomField && $this->isTemplate()) return new TemplateFieldType();
+
         $typeName = $this->getTypeName();
         if(is_null($typeName)) return null;
         $typeClass = CustomFieldType::getTypeClassFromName($this->getTypeName());

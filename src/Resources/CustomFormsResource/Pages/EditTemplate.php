@@ -2,7 +2,7 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormsResource\Pages;
 
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Form\CustomFormEditForm;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\CustomFormEditForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Resources\TemplateResource;
 use Filament\Actions;
 use Filament\Forms\Components\Section;

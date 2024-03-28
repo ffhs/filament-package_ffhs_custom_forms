@@ -5,6 +5,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Models;
 use Ffhs\FilamentPackageFfhsCustomForms\FormConfiguration\DynamicFormConfiguration;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
@@ -15,6 +16,7 @@ use Illuminate\Support\Facades\Cache;
  * @property string|null $short_title
  * @property Collection $customFormAnswers
  * @property Collection $customFields
+ * @property Collection $generalFields
  * @property bool $is_template
  */
 class CustomForm extends Model
@@ -23,11 +25,10 @@ class CustomForm extends Model
     use HasFactory;
 
 
-
     protected $fillable = [
         'custom_form_identifier',
         'short_title',
-        'is_template'
+        'is_template',
     ];
 
 
@@ -54,6 +55,10 @@ class CustomForm extends Model
         return $this->hasMany(CustomFormAnswer::class);
     }
 
+    public function generalFields(): BelongsToMany {
+        return $this->belongsToMany(GeneralField::class, "custom_fields","custom_form_id","general_field_id");
+    }
+
 
     public function customFieldInLayout(): HasMany {
 
@@ -76,6 +81,23 @@ class CustomForm extends Model
         return $query;
     }
 
+    public static function getTemplatesForFormType (string|DynamicFormConfiguration $formType):Collection {
+        if($formType instanceof DynamicFormConfiguration)  $formType = $formType::identifier();
+
+        $query=  CustomForm::query()
+            ->where("custom_form_identifier", $formType)
+            ->where("is_template",true)
+            ->with([
+                "customFields",
+                "customFields.generalField",
+                "customFields.customOptions",
+                "customFields.generalField.customOptions"
+            ]);
+
+        $key ="form_templates_" . $formType;
+        $duration = config('ffhs_custom_forms.cache_duration');
+        return  Cache::remember($key,$duration, fn() => $query->get());
+    }
 
     public function cachedFields(): Collection {
         return Cache::remember("custom_fields-from-form_" . $this->id,config('ffhs_custom_forms.cache_duration'), fn() => $this->customFields()->with([

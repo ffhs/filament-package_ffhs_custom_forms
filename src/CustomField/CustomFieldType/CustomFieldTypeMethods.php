@@ -22,7 +22,7 @@ abstract class CustomFieldTypeMethods
     }
 
     public function getTranslatedName():String{
-        return __("custom_forms.types." . self::getFieldIdentifier());
+        return __("custom_forms.types." . $this::getFieldIdentifier());
     }
 
     public function getExtraTypeOptions():array{

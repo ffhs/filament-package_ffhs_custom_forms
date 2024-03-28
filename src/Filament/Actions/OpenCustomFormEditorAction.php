@@ -3,7 +3,7 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Actions;
 
 use Closure;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Form\CustomFormEditForm;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\CustomFormEditForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Components\Actions\Action;

@@ -3,6 +3,7 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType;
 
 
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\Templates\TemplateFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\TypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\FormConfiguration\DynamicFormConfiguration;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
@@ -20,6 +21,7 @@ abstract class CustomFieldType extends CustomFieldTypeMethods
         $output = [];
         foreach(config("ffhs_custom_forms.custom_field_types") as $typeClass)
             $output[$typeClass::getFieldIdentifier()]= $typeClass;
+        $output[TemplateFieldType::getFieldIdentifier()] = TemplateFieldType::class;
         return $output;
     }
 

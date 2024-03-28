@@ -8,7 +8,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\CustomLayou
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomOption\CustomOptionType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\FieldRuleAnchorType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\HasAnchorPluginTranslate;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Form\CustomFormEditForm;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\CustomFormEditForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\FieldRule;
