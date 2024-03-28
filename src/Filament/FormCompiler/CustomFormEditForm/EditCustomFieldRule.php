@@ -175,7 +175,7 @@ class EditCustomFieldRule
         return $anchors;
     }
 
-    public static function mutateRuleDatasOnLoad(array $data, CustomForm $customForm): array {
+    public static function mutateRuleDataOnLoad(array $data, CustomForm $customForm): array {
         $data["rules"] = [];
         /**@var CustomField $customField*/
         $customField = $customForm->customFields->where("id",$data["id"])->first();

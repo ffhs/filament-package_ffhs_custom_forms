@@ -22,7 +22,12 @@ class EditCustomFormFieldFunctions
 
         //GeneralFieldIds From GeneralFields
         $generalFields = self::getFieldsWithProperty($customFields,"general_field_id");
-        $generalFieldId = array_map(fn($used) => $used["general_field_id"],$generalFields);
+        try {
+
+            $generalFieldId = array_map(fn($used) => $used["general_field_id"],$generalFields);
+        }catch (\ErrorException){
+            dd($generalFields);
+        }
 
 
         //GeneralFieldIds From Templates
@@ -51,7 +56,7 @@ class EditCustomFormFieldFunctions
 
         if($nestedFields->count() > 0){
             $foundNestedFields = $nestedFields
-                ->map(fn(array $fields)=> self::getUsedGeneralFieldIds($fields))
+                ->map(fn(array $fields)=> self::getFieldsWithProperty($fields,$property))
                 ->flatten(1);
             return array_merge($foundFields, $foundNestedFields->toArray());
         }
@@ -66,7 +71,7 @@ class EditCustomFormFieldFunctions
         $set("custom_fields", $fields);
     }
 
-    public static function useTemplateUsedGeneralFields(int $templateId, Get $get){
+    public static function useTemplateUsedGeneralFields(int $templateId, Get $get): bool {
         $templateGenIds = CustomForm::cached($templateId)->generalFields->pluck("id")->toArray();
         $existingIds = EditCustomFormFieldFunctions::getUsedGeneralFieldIds($get("custom_fields"));
         $commonValues = array_intersect($templateGenIds, $existingIds);
