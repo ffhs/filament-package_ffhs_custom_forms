@@ -8,6 +8,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\Templates\TemplateFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\CustomFormEditForm\EditCustomFieldAction;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\CustomFormEditForm\EditCustomFieldForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\CustomFormEditForm\EditCustomFieldRule;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\CustomFormEditForm\EditCustomFormFieldFunctions;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\CustomFormEditForm\EditCustomFormSave;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\HtmlComponents\HtmlBadge;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
@@ -52,7 +53,7 @@ class CustomFormEditForm
             ->orderColumn("form_position")
             ->saveRelationshipsUsing(fn()=>empty(null))
             ->mutateRelationshipDataBeforeFillUsing(function($data) use ($record) {
-                $data = EditCustomFieldForm::mutateOptionDatas($data, $record);
+                $data = EditCustomFieldForm::mutateOptionData($data, $record);
                 return EditCustomFieldRule::mutateRuleDatasOnLoad($data, $record);
             })
             ->collapsible(false)
@@ -72,7 +73,7 @@ class CustomFormEditForm
             ])
             ->itemLabel(function($state){
                 $styleClasses = "text-sm font-medium ext-gray-950 dark:text-white truncate select-none";
-                $type = self::getFieldTypeFromRawDate($state);
+                $type = EditCustomFormFieldFunctions::getFieldTypeFromRawDate($state);
                 $generalBadge= null;
                 $templateBadge = null;
 
@@ -114,9 +115,9 @@ class CustomFormEditForm
 
             ->schema([
                 Group::make()
-                    ->visible(fn($state)=>self::getFieldTypeFromRawDate($state) instanceof CustomFieldType)
+                    ->visible(fn($state)=>EditCustomFormFieldFunctions::getFieldTypeFromRawDate($state) instanceof CustomFieldType)
                     ->schema(function(Get $get,$state) use ($record) {
-                        $type = self::getFieldTypeFromRawDate($state);
+                        $type = EditCustomFormFieldFunctions::getFieldTypeFromRawDate($state);
                         if($type instanceof CustomLayoutType)
                             return[self::getCustomFieldRepeater($record)];
                         else return [];
@@ -125,55 +126,7 @@ class CustomFormEditForm
     }
 
 
-    public static function getFieldTypeFromRawDate(array $data): ?CustomFieldType {
-        $isGeneral = array_key_exists("general_field_id",$data)&& !is_null($data["general_field_id"]);
-        $isTemplate = array_key_exists("template_id",$data)&& !is_null($data["template_id"]);
-        if($isTemplate) return new TemplateFieldType();
-        return $isGeneral? GeneralField::cached($data["general_field_id"])->getType(): CustomFieldType::getTypeFromName($data["type"]);
-    }
 
-    public static function getUsedGeneralFieldIds(array $customFields):array {
-
-        //GeneralFieldIds From GeneralFields
-        $generalFields = self::getFieldsWithProperty($customFields,"general_field_id");
-        $generalFieldId = array_map(fn($used) => $used["general_field_id"],$generalFields);
-
-
-        //GeneralFieldIds From Templates
-        $templateData = self::getFieldsWithProperty($customFields,"template_id");
-        $templateIds = array_map(fn($used) => $used["template_id"],$templateData);
-        foreach ($templateIds as $templateId){
-            $genFields = CustomForm::cached($templateId)?->generalFields->pluck("id")->toArray();
-            $generalFieldId = array_merge($generalFieldId,$genFields);
-        }
-
-        return $generalFieldId;
-    }
-
-
-
-
-    private static function getFieldsWithProperty (array $customFields, string $property):array  {
-        $foundFields = array_filter(
-            array_values($customFields),
-            fn($field)=> !empty($field[$property])
-        );
-        $nestedFields = collect(array_values($customFields))
-            ->filter(fn($field)=> !empty($field["custom_fields"]))
-            ->map(fn($field)=> $field["custom_fields"]);
-
-
-        $foundFields=  array_filter($foundFields, fn($value)=> !is_null($value));
-
-        if($nestedFields->count() > 0){
-            $foundNestedFields = $nestedFields
-                ->map(fn(array $fields)=> self::getUsedGeneralFieldIds($fields))
-                ->flatten(1);
-            return array_merge($foundFields, $foundNestedFields->toArray());
-        }
-
-        return $foundFields;
-    }
 
 
 }

@@ -43,7 +43,7 @@ class EditCustomFieldForm
     public static function getCustomFieldSchema(array $data, CustomForm $customForm):array{
 
         $isGeneral = array_key_exists("general_field_id",$data)&& !empty($data["general_field_id"]);
-        $type = CustomFormEditForm::getFieldTypeFromRawDate($data);
+        $type = EditCustomFormFieldFunctions::getFieldTypeFromRawDate($data);
         $columns = $isGeneral?1:2;
 
         return [
@@ -92,20 +92,10 @@ class EditCustomFieldForm
             ]);
     }
 
-
-    private static function setCustomField(array $data, Get $get, $set, ?array $arguments = null):void {
-       // $type = CustomFormEditForm::getFieldTypeFromRawDate($data);
-       // $data = self::mutateOptionFieldData($type,$data,false);
-        $fields = $get("custom_fields");
-        if(is_null($arguments)) $fields[uniqid()] = $data;
-        else $fields[$arguments["item"]] = $data;
-        $set("custom_fields",$fields);
-    }
-
-    public static function mutateOptionDatas(array $data, CustomForm $customForm): array {
+    public static function mutateOptionData(array $data, CustomForm $customForm): array {
         if(!array_key_exists("options",$data) || is_null($data["options"])) $data["options"] = [];
 
-        $type = CustomFormEditForm::getFieldTypeFromRawDate($data);
+        $type = EditCustomFormFieldFunctions::getFieldTypeFromRawDate($data);
         $field = $customForm->customFields->where("id",$data["id"])->first();
         if($field == null) return $data;
 

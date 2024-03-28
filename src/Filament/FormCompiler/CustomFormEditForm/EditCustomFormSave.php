@@ -45,7 +45,7 @@ class EditCustomFormSave
                 unset($itemData["custom_fields"]);
                 $itemData["layout_end_position"] = $itemOrder-1;
             }
-            else if(CustomFormEditForm::getFieldTypeFromRawDate($itemData) instanceof CustomLayoutType){
+            else if(EditCustomFormFieldFunctions::getFieldTypeFromRawDate($itemData) instanceof CustomLayoutType){
                 unset($itemData["custom_fields"]);
                 $itemData["layout_end_position"] = $itemOrder-1;
             }
@@ -94,7 +94,7 @@ class EditCustomFormSave
     }
 
     private static function updateCustomField(CustomField &$customField,array $itemData): void {
-        $type = CustomFormEditForm::getFieldTypeFromRawDate($itemData);
+        $type = EditCustomFormFieldFunctions::getFieldTypeFromRawDate($itemData);
 
         $rawData = $itemData;
         $customField->fill($itemData);
@@ -108,7 +108,6 @@ class EditCustomFormSave
     }
 
     public static function getGeneralFieldRepeaterValidationRule():Closure {
-        //ToDo Check in Templates for GeneralFields
         return fn (CustomForm $record) =>
             function (string $attribute, $value, Closure $fail) use($record)  {
                 $formIdentifier = $record->custom_form_identifier;
@@ -122,7 +121,7 @@ class EditCustomFormSave
                 $requiredGeneralIDs = $requiredGeneralFieldForm
                     ->map(fn ($fieldForm) => $fieldForm->general_field_id);
 
-                $usedGeneralIDs =CustomFormEditForm::getUsedGeneralFieldIds($value);
+                $usedGeneralIDs =EditCustomFormFieldFunctions::getUsedGeneralFieldIds($value);
                 $notAddedRequiredFields = $requiredGeneralIDs
                     ->filter(fn($id)=> !in_array($id, $usedGeneralIDs));
 

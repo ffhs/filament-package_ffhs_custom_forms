@@ -61,33 +61,26 @@ class EditCustomFieldAction
                 ->content(""),
 
             Select::make("add_template_id")
+                ->options($templateOptions)
                 ->native(false)
                 ->label("")
                 ->live()
-                ->disableOptionWhen(function ($value, Get $get) {
-                    $templateGenIds = CustomForm::cached($value)->generalFields->pluck("id")->toArray();
-                    $existingIds = CustomFormEditForm::getUsedGeneralFieldIds($get("custom_fields"));
-                    $commonValues = array_intersect($templateGenIds, $existingIds);
+                ->disableOptionWhen(function ($value, Get $get){
+                    return EditCustomFormFieldFunctions::useTemplateUsedGeneralFields($value,$get);
+                }),
 
-                    return !empty($commonValues);
-                })
-                ->options($templateOptions),
             Actions::make([
                 Action::make("add_template")
-                    ->form([]) //ToDo Make Template Form (Needs it realy?)
-                    ->mutateFormDataUsing(fn(Action $action) => array_values($action->getLivewire()->getCachedForms())[1]->getRawState())//Get RawSate (yeah is possible)
-                    ->fillForm(fn($get) => ["template_id" => $get("add_template_id")])
                     ->closeModalByClickingAway(false)
                     ->label(fn() => "Hinzufügen ") //ToDo Translate
-                    ->disabled(fn(Get $get) => is_null($get("add_template_id"))
-                       /* || collect(CustomFormEditForm::getUsedGeneralFieldIds($get("custom_fields")))
-                            ->contains($get("add_general_field_id")) ToDO Check GeneralFields*/
-                    )
-                    ->action(function ($set, Get $get, array $data) {
-                        //Add to the other Fields
-                        $data["template_id"] = $get("add_template_id");
-
-                        self::setCustomField($data, $get, $set);
+                    ->disabled(function(Get $get){
+                        $templateID = $get("add_template_id");
+                        if(is_null($templateID)) return true;
+                        return EditCustomFormFieldFunctions::useTemplateUsedGeneralFields($templateID,$get);
+                    })
+                    ->action(function ($set, Get $get) {
+                        $data=["template_id" => $get("add_template_id")];
+                        EditCustomFormFieldFunctions::setCustomFieldInRepeater($data, $get, $set);
                         $set("add_template_id", null);
                     }),
             ]),
@@ -131,52 +124,57 @@ class EditCustomFieldAction
                 ->label("")
                 ->live()
                 ->disableOptionWhen(function ($value, Get $get) {
-                    return in_array($value, CustomFormEditForm::getUsedGeneralFieldIds($get("custom_fields")));
+                    $usedGenIds = EditCustomFormFieldFunctions::getUsedGeneralFieldIds($get("custom_fields"));
+                    return in_array($value, $usedGenIds);
                 }),
 
             Actions::make([
                 Action::make("add_general_field")
-                    ->modalWidth(fn(Get $get) => self::getEditCustomFormActionModalWith(["general_field_id" => $get("add_general_field_id")]))
-                    ->form(fn(Get $get,
-                        CustomForm $record) => EditCustomFieldForm::getCustomFieldSchema(["general_field_id" => $get("add_general_field_id")],
-                        $record))
-                    ->mutateFormDataUsing(fn(Action $action) => array_values($action->getLivewire()->getCachedForms())[1]->getRawState())//Get RawSate (yeah is possible)
+                    ->mutateFormDataUsing(fn(Action $action)=> self::getRawStateActionForm($action))
+                    ->label(fn() => "Hinzufügen ") //ToDo Translate
+                    ->closeModalByClickingAway(false)
+                    ->modalWidth(function(Get $get)  {
+                        $state = ["general_field_id" => $get("add_general_field_id")];
+                        return self::getEditCustomFormActionModalWith($state);
+                    })
+                    ->form(function(Get $get, CustomForm $record){
+                        $state = ["general_field_id" => $get("add_general_field_id")];
+                        return EditCustomFieldForm::getCustomFieldSchema($state,$record);
+                    })
                     ->fillForm(fn($get) => [
                         "is_active" => true,
                         "general_field_id" => $get("add_general_field_id"),
                         "options" => GeneralField::cached($get("add_general_field_id"))->getType()->getDefaultTypeOptionValues(),
                     ])
-                    ->closeModalByClickingAway(false)
-                    ->label(fn() => "Hinzufügen ") //ToDo Translate
-                    ->disabled(fn(Get $get) => is_null($get("add_general_field_id")) ||
-                        collect(CustomFormEditForm::getUsedGeneralFieldIds($get("custom_fields")))
-                            ->contains($get("add_general_field_id"))
-                    )
+                    ->disabled(function(Get $get):bool{
+                        //Disable if no id is Selected or if it is already imported
+                        if(is_null($get("add_general_field_id"))) return true;
+                        $usedGenIds = EditCustomFormFieldFunctions::getUsedGeneralFieldIds($get("custom_fields"));
+                        return collect($usedGenIds)->contains($get("add_general_field_id"));
+                    })
                     ->action(function ($set, Get $get, array $data) {
                         //Add to the other Fields
-                        self::setCustomField($data, $get, $set);
+                        EditCustomFormFieldFunctions::setCustomFieldInRepeater($data, $get, $set);
                         $set("add_general_field_id", null);
                     }),
             ]),
         ]);
     }
 
+
+    private static function getRawStateActionForm($action):array {
+        //Get RawSate (yeah is possible)
+        return array_values($action->getLivewire()->getCachedForms())[1]->getRawState();
+    }
+
     private static function getEditCustomFormActionModalWith(array $state): string {
-        $type = CustomFormEditForm::getFieldTypeFromRawDate($state);
+        $type = EditCustomFormFieldFunctions::getFieldTypeFromRawDate($state);
         if (!empty($state["general_field_id"])) return 'xl';
         $hasOptions = $type->canBeRequired() || $type->canBeDeactivate() || $type->hasExtraTypeOptions();
         if (!$hasOptions) return 'xl';
         return '5xl';
     }
 
-    private static function setCustomField(array $data, Get $get, $set, ?array $arguments = null): void {
-        // $type = CustomFormEditForm::getFieldTypeFromRawDate($data);
-        // $data = self::mutateOptionFieldData($type,$data,false);
-        $fields = $get("custom_fields");
-        if (is_null($arguments)) $fields[uniqid()] = $data;
-        else $fields[$arguments["item"]] = $data;
-        $set("custom_fields", $fields);
-    }
 
     private static function getAddCustomFielActions(CustomForm $record): Group {
         $actions = [];
@@ -187,8 +185,30 @@ class EditCustomFieldAction
             $actions[] = Actions::make([
                 Action::make("add_".$type::getFieldIdentifier()."_action")
                     ->modalHeading("Hinzufügen eines ".$type->getTranslatedName()." Feldes") //ToDo Translate
-                    ->tooltip($type->getTranslatedName())
+                    ->disabled(fn(Get $get) => is_null($type::getFieldIdentifier()))
                     ->extraAttributes(["style" => "width: 100%; height: 100%;"])
+                    ->closeModalByClickingAway(false)
+                    ->tooltip($type->getTranslatedName())
+                    ->outlined()
+                    ->mutateFormDataUsing(fn(Action $action)=> self::getRawStateActionForm($action))
+                    ->form(function() use ($type, $record) {
+                        $state = ["type" => $type::getFieldIdentifier()];
+                        return EditCustomFieldForm::getCustomFieldSchema($state,$record);
+                    })
+                    ->modalWidth(function(Get $get) use ($type) {
+                        $state = ["type" => $type::getFieldIdentifier()];
+                        return self::getEditCustomFormActionModalWith($state);
+                    })
+                    ->fillForm(fn($get) => [
+                        "type" => $type::getFieldIdentifier(),
+                        "options" => $type->getDefaultTypeOptionValues(),
+                        "is_active" => true,
+                    ])
+                    ->action(function ($set, Get $get, array $data) {
+                        //Add to the other Fields
+                        $data["identify_key"] = uniqid();
+                        EditCustomFormFieldFunctions::setCustomFieldInRepeater($data, $get, $set);
+                    })
                     ->label(new HtmlString(
                         '<div class="flex flex-col items-center justify-center">'. //
                         Blade::render(
@@ -197,24 +217,7 @@ class EditCustomFieldAction
                         ).
                         '<p class="" style="margin-top: 10px;word-break: break-word;">'.$type->getTranslatedName().'</p>'.
                         '</div>'
-                    ))
-                    ->outlined()
-                    ->mutateFormDataUsing(fn(Action $action) => array_values($action->getLivewire()->getCachedForms())[1]->getRawState())//Get RawSate (yeah is possible)
-                    ->form(fn(Get $get) => EditCustomFieldForm::getCustomFieldSchema(["type" => $type::getFieldIdentifier()],
-                        $record))
-                    ->modalWidth(fn(Get $get) => self::getEditCustomFormActionModalWith(["type" => $type::getFieldIdentifier()]))
-                    ->disabled(fn(Get $get) => is_null($type::getFieldIdentifier()))
-                    ->fillForm(fn($get) => [
-                        "type" => $type::getFieldIdentifier(),
-                        "options" => $type->getDefaultTypeOptionValues(),
-                        "is_active" => true,
-                    ])
-                    ->closeModalByClickingAway(false)
-                    ->action(function ($set, Get $get, array $data) {
-                        //Add to the other Fields
-                        $data["identify_key"] = uniqid();
-                        self::setCustomField($data, $get, $set);
-                    }),
+                    )),
             ]);
         }
         return Group::make()
@@ -232,7 +235,8 @@ class EditCustomFieldAction
 
     public static function getEditCustomFieldAction(CustomForm $customForm): Action {
         return Action::make('edit')
-            ->action(fn($get, $set, $data, $arguments) => self::setCustomField($data, $get, $set, $arguments))
+            ->action(fn($get, $set, $data, $arguments) => EditCustomFormFieldFunctions::setCustomFieldInRepeater($data, $get, $set, $arguments))
+            ->mutateFormDataUsing(fn(Action $action)=> self::getRawStateActionForm($action))
             ->fillForm(fn($state, $arguments) => $state[$arguments["item"]])
             ->closeModalByClickingAway(false)
             ->icon('heroicon-m-pencil-square')
@@ -242,9 +246,6 @@ class EditCustomFieldAction
             })
             ->form(function(Get $get, $state, array $arguments) use ($customForm) : array {
                 return EditCustomFieldForm::getCustomFieldSchema($state[$arguments["item"]], $customForm);
-            })
-            ->mutateFormDataUsing(function(Action $action):array { //Get RawSate
-                return array_values($action->getLivewire()->getCachedForms())[1]->getRawState();
             })
             ->hidden(function(array $state, array $arguments): bool{
                 $item = $state[$arguments["item"]];
@@ -304,7 +305,7 @@ class EditCustomFieldAction
                 $itemIndexPostion = self::getKeyPosition($itemIndex, $state);
                 if ($itemIndexPostion == 0) return true;
                 $upperCustomFieldData = $state[array_keys($state)[$itemIndexPostion - 1]];
-                $type = CustomFormEditForm::getFieldTypeFromRawDate($upperCustomFieldData);
+                $type = EditCustomFormFieldFunctions::getFieldTypeFromRawDate($upperCustomFieldData);
                 return !($type instanceof CustomLayoutType);
             });
     }
