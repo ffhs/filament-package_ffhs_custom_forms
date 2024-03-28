@@ -17,6 +17,7 @@ class CreateCustomForm extends CreateRecord
             ->schema([
                 TextInput::make("short_title"),
                 Select::make("custom_form_identifier")
+                    ->required()
                     ->options(function (){
                         $keys = array_map(fn($config) => $config::identifier(),config("ffhs_custom_forms.forms"));
                         $values = array_map(fn($config) => $config::displayName(),config("ffhs_custom_forms.forms"));

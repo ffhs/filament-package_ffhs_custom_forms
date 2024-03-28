@@ -61,13 +61,11 @@ class EditCustomFieldAction
                 ->content(""),
 
             Select::make("add_template_id")
+                ->disableOptionWhen(fn($value, Get $get)=>  self::isTemplateDisabled($value,$get))
                 ->options($templateOptions)
                 ->native(false)
                 ->label("")
-                ->live()
-                ->disableOptionWhen(function ($value, Get $get){
-                    return EditCustomFormFieldFunctions::useTemplateUsedGeneralFields($value,$get);
-                }),
+                ->live(),
 
             Actions::make([
                 Action::make("add_template")
@@ -76,7 +74,7 @@ class EditCustomFieldAction
                     ->disabled(function(Get $get){
                         $templateID = $get("add_template_id");
                         if(is_null($templateID)) return true;
-                        return EditCustomFormFieldFunctions::useTemplateUsedGeneralFields($templateID,$get);
+                        return self::isTemplateDisabled($templateID,$get);
                     })
                     ->action(function ($set, Get $get) {
                         $data=["template_id" => $get("add_template_id")];
@@ -146,16 +144,16 @@ class EditCustomFieldAction
                         "general_field_id" => $get("add_general_field_id"),
                         "options" => GeneralField::cached($get("add_general_field_id"))->getType()->getDefaultTypeOptionValues(),
                     ])
+                    ->action(function ($set, Get $get, array $data) {
+                        //Add to the other Fields
+                        EditCustomFormFieldFunctions::setCustomFieldInRepeater($data, $get, $set);
+                        $set("add_general_field_id", null);
+                    })
                     ->disabled(function(Get $get):bool{
                         //Disable if no id is Selected or if it is already imported
                         if(is_null($get("add_general_field_id"))) return true;
                         $usedGenIds = EditCustomFormFieldFunctions::getUsedGeneralFieldIds($get("custom_fields"));
                         return collect($usedGenIds)->contains($get("add_general_field_id"));
-                    })
-                    ->action(function ($set, Get $get, array $data) {
-                        //Add to the other Fields
-                        EditCustomFormFieldFunctions::setCustomFieldInRepeater($data, $get, $set);
-                        $set("add_general_field_id", null);
                     }),
             ]),
         ]);
@@ -375,5 +373,12 @@ class EditCustomFieldAction
             });
     }
 
+    private static function isTemplateDisabled($value, Get $get): bool {
+        if(EditCustomFormFieldFunctions::useTemplateUsedGeneralFields($value,$get)) return true;
+        $customFields = $get("custom_fields");
+        $templates = EditCustomFormFieldFunctions::getFieldsWithProperty($customFields,"template_id");
+        $usedTemplateIds = array_map(fn($template) => $template["template_id"],$templates);
+        return in_array($value,$usedTemplateIds);
+    }
 
 }

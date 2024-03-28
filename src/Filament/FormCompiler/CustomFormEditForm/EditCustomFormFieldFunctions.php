@@ -22,12 +22,7 @@ class EditCustomFormFieldFunctions
 
         //GeneralFieldIds From GeneralFields
         $generalFields = self::getFieldsWithProperty($customFields,"general_field_id");
-        try {
-
-            $generalFieldId = array_map(fn($used) => $used["general_field_id"],$generalFields);
-        }catch (\ErrorException){
-            dd($generalFields);
-        }
+        $generalFieldId = array_map(fn($used) => $used["general_field_id"],$generalFields);
 
 
         //GeneralFieldIds From Templates
@@ -42,7 +37,7 @@ class EditCustomFormFieldFunctions
     }
 
 
-    private static function getFieldsWithProperty (array $customFields, string $property):array  {
+    public static function getFieldsWithProperty (array $customFields, string $property):array  {
         $foundFields = array_filter(
             array_values($customFields),
             fn($field)=> !empty($field[$property])
