@@ -69,7 +69,7 @@ class CustomFormEditForm
                 EditCustomFieldAction::getPullOutLayoutAction(),
                 EditCustomFieldAction::getPullInLayoutAction(),
                 EditCustomFieldAction::getEditCustomFieldAction($record),
-                EditCustomFieldAction::getTemplateDissolveAction(),
+                EditCustomFieldAction::getTemplateDissolveAction($record),
             ])
             ->itemLabel(function($state){
                 $styleClasses = "text-sm font-medium ext-gray-950 dark:text-white truncate select-none";

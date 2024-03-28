@@ -4,7 +4,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\Templates;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomFieldType;
 
-class TemplateFieldType extends CustomFieldType
+final class TemplateFieldType extends CustomFieldType
 {
 
     public static function getFieldIdentifier(): string {

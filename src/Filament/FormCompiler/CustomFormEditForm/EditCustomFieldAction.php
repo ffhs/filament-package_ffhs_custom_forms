@@ -5,6 +5,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\CustomFormEd
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\CustomLayoutType;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\CustomFormEditForm;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralFieldForm;
@@ -259,7 +260,7 @@ class EditCustomFieldAction
             });
     }
 
-    public static function getTemplateDissolveAction(): Action {
+    public static function getTemplateDissolveAction(CustomForm $record): Action {
         return Action::make('dissolve')
             ->closeModalByClickingAway(false)
             ->icon('carbon-sync-settings')
@@ -277,8 +278,47 @@ class EditCustomFieldAction
 
                 return "Möchten sie Wirklich '" . $name . "' Template auflösen?"; //ToDo Translate
             })
-            ->action(function(Get $get, $set, array $data, array $arguments) {
-                //ToDo make dissolve action
+            ->action(function(Get $get, $set, array $state, array $arguments) use ($record) {
+                $repeaterKey = $arguments["item"];
+                $templateID = $state[$repeaterKey]["template_id"];
+                $customFields = $get("custom_fields");
+
+                $keyLocation = self::getKeyPosition($repeaterKey, $customFields);
+
+                //Splitt the Fields
+                $fieldsBeforeTemplate = array_slice($customFields, 0, $keyLocation,true);
+                $fieldsAfterTemplate = array_diff_key($customFields, $fieldsBeforeTemplate);
+
+
+                //Remove the Template Field
+                unset($fieldsAfterTemplate[$repeaterKey]);
+
+                //Get Template Fields
+                $template = CustomForm::cached($templateID);
+                $templateFields = $template->customFields;
+                $templateFields = $templateFields->map(function (CustomField $field) use ($record) {
+                    //Clone Field
+                    $fieldData = $field->toArray();
+                    unset($fieldData["id"]);
+                    unset($fieldData["created_at"]);
+                    unset($fieldData["deleted_at"]);
+                    unset($fieldData["updated_at"]);
+                    $fieldData["custom_form_id"] = $record->id;
+
+                    return $fieldData;
+                })->toArray();
+
+                //Add unique Keys to the field's array
+                $middleFields = [];
+                foreach ($templateFields as $field){
+                    $middleFields[uniqid()] = $field;
+                }
+
+                //Place the new fields there were the template was
+                $combinedFields = array_merge($fieldsBeforeTemplate,$middleFields,$fieldsAfterTemplate);
+
+                //Set the fields back in the repeater
+                $set("custom_fields",$combinedFields);
             });
     }
 
