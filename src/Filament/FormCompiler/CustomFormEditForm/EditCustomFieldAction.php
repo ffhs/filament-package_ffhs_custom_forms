@@ -4,7 +4,6 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\CustomFormEd
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\CustomLayoutType;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\CustomFormEditForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
@@ -183,42 +182,33 @@ class EditCustomFieldAction
 
         /**@var CustomFieldType $type */
         foreach ($types as $type) {
+            $modalWidth  = self::getEditCustomFormActionModalWith(["type" => $type::getFieldIdentifier()]);
+
             $actions[] = Actions::make([
                 Action::make("add_".$type::getFieldIdentifier()."_action")
                     ->modalHeading("Hinzufügen eines ".$type->getTranslatedName()." Feldes") //ToDo Translate
                     ->disabled(fn(Get $get) => is_null($type::getFieldIdentifier()))
                     ->extraAttributes(["style" => "width: 100%; height: 100%;"])
+                    ->label(self::getCustomFieldAddActionLabel($type))
                     ->closeModalByClickingAway(false)
                     ->tooltip($type->getTranslatedName())
+                    ->modalWidth($modalWidth)
                     ->outlined()
                     ->mutateFormDataUsing(fn(Action $action)=> self::getRawStateActionForm($action))
                     ->form(function() use ($type, $record) {
                         $state = ["type" => $type::getFieldIdentifier()];
                         return EditCustomFieldForm::getCustomFieldSchema($state,$record);
                     })
-                    ->modalWidth(function(Get $get) use ($type) {
-                        $state = ["type" => $type::getFieldIdentifier()];
-                        return self::getEditCustomFormActionModalWith($state);
-                    })
                     ->fillForm(fn($get) => [
                         "type" => $type::getFieldIdentifier(),
                         "options" => $type->getDefaultTypeOptionValues(),
                         "is_active" => true,
+                        "identify_key" => uniqid(),
                     ])
                     ->action(function ($set, Get $get, array $data) {
                         //Add to the other Fields
-                        $data["identify_key"] = uniqid();
                         EditCustomFormFieldFunctions::setCustomFieldInRepeater($data, $get, $set);
-                    })
-                    ->label(new HtmlString(
-                        '<div class="flex flex-col items-center justify-center">'. //
-                        Blade::render(
-                            '<x-'.$type->icon().
-                            ' class="h-6 w-6 text-red-600"/>'
-                        ).
-                        '<p class="" style="margin-top: 10px;word-break: break-word;">'.$type->getTranslatedName().'</p>'.
-                        '</div>'
-                    )),
+                    }),
             ]);
         }
         return Group::make()
@@ -232,6 +222,16 @@ class EditCustomFieldAction
                         ->content(""),
                 ], $actions)
             );
+    }
+
+    private static function getCustomFieldAddActionLabel(CustomFieldType $type):HtmlString {
+        $html =
+            '<div class="flex flex-col items-center justify-center">'. //
+                 Blade::render('<x-'.$type->icon().' class="h-6 w-6 text-red-600"/>').
+                '<p class="" style="margin-top: 10px;word-break: break-word;">'.$type->getTranslatedName().'</p>'.
+            '</div>';
+
+        return  new HtmlString($html);
     }
 
     public static function getEditCustomFieldAction(CustomForm $customForm): Action {
