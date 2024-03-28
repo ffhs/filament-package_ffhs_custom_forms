@@ -9,6 +9,9 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomOption\CustomOptionTyp
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\FieldRuleAnchorType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\HasAnchorPluginTranslate;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\CustomFormEditForm;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\CustomFormEditForm\EditCustomFieldForm;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\CustomFormEditForm\EditCustomFieldRule;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\CustomFormEditForm\EditCustomFormFieldFunctions;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\FieldRule;
@@ -50,17 +53,33 @@ class ValueEqualsRuleAnchor extends FieldRuleAnchorType
     protected static function getSelectedFieldData(Get $get,Component $component):array|null {
         $identifier = $get("target_field");
         if(is_null($identifier)) return null;
+
         $fields = array_values($component->getLivewire()->getCachedForms())[0]->getRawState();
 
+        //Flatt Array if CustomForm is in a sub path
         for($i=0; $i<=10; $i++){
             if(array_key_exists("custom_fields",$fields)) break;
             $fields = CustomFieldUtils::flattArrayOneLayer ($fields);
         }
-
         $fields = $fields["custom_fields"];
+        $fields = self::mapFieldData($fields);
+
+        //Get the templated FormComponents
+        $fieldsFromTemplate = collect($fields)->whereNotNull("template_id")->map(function($templateData){
+
+            $template = CustomForm::cached($templateData["template_id"]);
+            return $template->customFields->map(function(CustomField $customField) use ($template) {
+                $data = $customField->toArray();
+                $data = EditCustomFieldForm::mutateOptionData($data, $template);
+                return EditCustomFieldRule::mutateRuleDataOnLoad($data, $template);
+            });
+        })->flatten(1)->toArray();
+
+        $fields = array_merge($fieldsFromTemplate, $fields);
+
+        //Search the target field
         $finalField = null;
 
-        $fields = self::mapFieldData($fields);
 
         foreach ($fields as $field){
             if(array_key_exists("general_field_id",$field) && !is_null($field["general_field_id"])){
@@ -89,7 +108,7 @@ class ValueEqualsRuleAnchor extends FieldRuleAnchorType
 
     protected function getTargetFieldToggleList(array $fieldData):ToggleButtons  {
         return ToggleButtons::make("target_field")
-            // ->required() ToDo Fix
+            ->required()
             ->columns()
             ->live()
             ->afterStateUpdated(function($state,$set){
@@ -97,30 +116,53 @@ class ValueEqualsRuleAnchor extends FieldRuleAnchorType
                 $set("numeric", self::getCreateAnchorData()["numeric"]);
                 $set("boolean", self::getCreateAnchorData()["boolean"]);
             })
-            ->options(function ($component) use ($fieldData) {
-                $fieldData = self::mapFieldData($fieldData);
-                $thisField = array_values($component->getLivewire()->getCachedForms())[1]->getRawState();
-                if(array_key_exists("identify_key",$thisField)) $identifyKey = $thisField["identify_key"];
-                else $identifyKey = null;
-
-                $options = [];
-                foreach ($fieldData as $field){
-                    if(!array_key_exists("identify_key",$field)) continue;
-                    if($identifyKey == $field["identify_key"]) continue;
-                    $isGeneralField = !empty($field["general_field_id"]);
-                    $type = CustomFormEditForm::getFieldTypeFromRawDate($field);
-                    if($type instanceof CustomLayoutType) continue;
-                    if($isGeneralField){
-                        $field = GeneralField::cached($field["general_field_id"]);
-                        $options[$field->identify_key] =$field->name_de; //ToDo Translate
-                        continue;
-                    }
-                    $options[$field["identify_key"]] = $field["name_de"]; //ToDo Translate
-                }
-
-                return $options;
-            });
+            ->options(fn($component) => $this->getFieldOptions($component,$fieldData) );
     }
+
+    public function getFieldOptions(Component $component, array $fieldData): array {
+        $fieldData = self::mapFieldData($fieldData);
+        $thisField = array_values($component->getLivewire()->getCachedForms())[1]->getRawState();
+        if(array_key_exists("identify_key",$thisField)) $identifyKey = $thisField["identify_key"];
+        else $identifyKey = null;
+
+        $options = [];
+        foreach ($fieldData as $field){
+
+            if(array_key_exists("identify_key",$field) && $identifyKey == $field["identify_key"])  continue;
+
+            $isGeneralField = !empty($field["general_field_id"]);
+            $isTemplate = !empty($field["template_id"]);
+            $type = EditCustomFormFieldFunctions::getFieldTypeFromRawDate($field);
+
+            //Skip Layout Types
+            if($type instanceof CustomLayoutType) continue;
+
+            //Hande GeneralField
+            if($isGeneralField){
+                $field = GeneralField::cached($field["general_field_id"]);
+                $options[$field->identify_key] =$field->name_de; //ToDo Translate
+                continue;
+            }
+
+            //Hande Templates
+            if($isTemplate){
+                $template = CustomForm::cached($field["template_id"]);
+                foreach ($template->customFields as $templateField){
+                    /**@var CustomField $templateField*/
+                    $finalField= $templateField;
+                    if($templateField->isGeneralField()) $finalField = $templateField->generalField;
+                    $options[$finalField->identify_key] =$finalField->name_de; //ToDo Translate
+                }
+                continue;
+            }
+
+
+            $options[$field["identify_key"]] = $field["name_de"]; //ToDo Translate
+        }
+
+        return $options;
+    }
+
     protected function getFieldTypeSelect():Select  {
         return Select::make("field_type")
             //->selectablePlaceholder(false)
@@ -145,7 +187,7 @@ class ValueEqualsRuleAnchor extends FieldRuleAnchorType
             });
     }
 
-    protected function getDisabilityCloser(string $selectOption): \Closure {
+    protected function getDisableCloser(string $selectOption): \Closure {
         return function($get,$component) use ($selectOption) {
             $fieldData = self::getSelectedFieldData($get,$component);
             if(is_null($fieldData)) return false;
@@ -156,14 +198,14 @@ class ValueEqualsRuleAnchor extends FieldRuleAnchorType
 
     protected function getBooleanToogle():Toggle  {
         return  Toggle::make("boolean")
-            ->visible($this->getDisabilityCloser("boolean"))
+            ->visible($this->getDisableCloser("boolean"))
             ->label("Wert") //ToDo Translate
             ->columnSpanFull();
     }
 
     protected function getTextRepeater():Repeater  {
         return Repeater::make("values")
-            ->visible($this->getDisabilityCloser("text"))
+            ->visible($this->getDisableCloser("text"))
             ->columnSpanFull()
             ->label("")
             ->schema([
@@ -208,7 +250,7 @@ class ValueEqualsRuleAnchor extends FieldRuleAnchorType
     protected function getNumberSection(): Section {
 
         return Section::make()
-            ->visible($this->getDisabilityCloser("numeric"))
+            ->visible($this->getDisableCloser("numeric"))
             ->statePath("numeric")
             ->columnSpanFull()
             ->schema([
@@ -262,7 +304,7 @@ class ValueEqualsRuleAnchor extends FieldRuleAnchorType
                             ->columnStart(4)
                             ->columnSpan(2)
                             ->numeric(),
-                    ])
+                    ]),
             ]);
     }
 
