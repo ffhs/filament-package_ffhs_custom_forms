@@ -6,6 +6,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomFieldT
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\CustomLayoutType;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\FieldRule;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralFieldForm;
 use Filament\Forms\Components\Actions;
@@ -258,6 +259,15 @@ class EditCustomFieldAction
             });
     }
 
+
+    private static function unsetAttributesForClone(array $data):array {
+        unset($data["id"]);
+        unset($data["created_at"]);
+        unset($data["deleted_at"]);
+        unset($data["updated_at"]);
+        return $data;
+    }
+
     //CustomFieldAnswerer CustomField id changing is handelt in TemplateFieldType.class on afterEditFieldDelete()
     public static function getTemplateDissolveAction(CustomForm $record): Action {
         return Action::make('dissolve')
@@ -295,14 +305,45 @@ class EditCustomFieldAction
                 //Get Template Fields
                 $template = CustomForm::cached($templateID);
                 $templateFields = $template->customFields;
-                $templateFields = $templateFields->map(function (CustomField $field) use ($record) {
+                $templateFields = $templateFields->map(function (CustomField $field) use ($template, $record) {
+
+
                     //Clone Field
                     $fieldData = $field->toArray();
-                    unset($fieldData["id"]);
-                    unset($fieldData["created_at"]);
-                    unset($fieldData["deleted_at"]);
-                    unset($fieldData["updated_at"]);
+
+                    //Mutate Field Data's
+                    $type = $field->getType();
+
+                    //Load OptionData now, because it needs the field id
+                    $fieldData = EditCustomFieldForm::mutateOptionData($fieldData, $template);
+                    $fieldData = EditCustomFieldRule::mutateRuleDataOnLoad($fieldData, $template);
+
+                    $fieldData = $type->mutateOnTemplateDissolve($fieldData, $field);
+
+                    $fieldData = self::unsetAttributesForClone($fieldData);
                     $fieldData["custom_form_id"] = $record->id;
+
+                    //Clone Ankers and Rules
+                    $rules = $field->fieldRules;
+                    $rulesCloned = [];
+                    foreach ($fieldData["rules"] as $ruleData){
+
+                        /**@var FieldRule $fieldRule*/
+                        $fieldRule = $rules->where("id", $ruleData["id"])->first();
+
+                        $ruleData = $fieldRule->toArray();
+
+                        $ruleData = self::unsetAttributesForClone($ruleData);
+
+                        $ruleData = $fieldRule->getAnchorType()->mutateOnTemplateDissolve($ruleData,$fieldRule,$field);
+                        $ruleData = $fieldRule->getRuleType()->mutateOnTemplateDissolve($ruleData,$fieldRule,$field);
+
+                        unset($ruleData["custom_field_id"]);
+
+                        //Set for Repeaters
+                        $rulesCloned[uniqid()] = $ruleData;
+                    }
+                    $fieldData["rules"] = $rulesCloned;
 
                     return $fieldData;
                 })->toArray();

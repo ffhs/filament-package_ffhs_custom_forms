@@ -68,4 +68,8 @@ abstract class CustomFieldTypeMethods
     public function afterAnswerFieldSave(CustomFieldAnswer $field, mixed $rawData, array $formData):void {
 
     }
+
+    public function mutateOnTemplateDissolve(array $data, CustomField $original):array {
+        return $data;
+    }
 }
