@@ -258,6 +258,7 @@ class EditCustomFieldAction
             });
     }
 
+    //CustomFieldAnswerer CustomField id changing is handelt in TemplateFieldType.class on afterEditFieldDelete()
     public static function getTemplateDissolveAction(CustomForm $record): Action {
         return Action::make('dissolve')
             ->closeModalByClickingAway(false)
@@ -274,7 +275,7 @@ class EditCustomFieldAction
                 $template = CustomForm::cached($data["template_id"]);
                 $name = $template->short_title;
 
-                return "Möchten sie Wirklich '" . $name . "' Template auflösen?"; //ToDo Translate
+                return "Möchten sie Wirklich das Template '" . $name . "'  auflösen?"; //ToDo Translate
             })
             ->action(function(Get $get, $set, array $state, array $arguments) use ($record) {
                 $repeaterKey = $arguments["item"];

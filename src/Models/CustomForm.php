@@ -58,7 +58,7 @@ class CustomForm extends Model
          Cache::put("custom_form-" .$this->id, $this,config('ffhs_custom_forms.cache_duration'));
     }
 
-    public function customFormAnsware(): HasMany {
+    public function customFormAnswers(): HasMany {
         return $this->hasMany(CustomFormAnswer::class);
     }
 

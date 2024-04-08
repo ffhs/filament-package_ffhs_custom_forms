@@ -78,10 +78,7 @@ class EditCustomFormSave
             $recordsToDelete[] = $keyToCheckForDeletion;
         }
 
-        $relationship
-            ->whereKey($recordsToDelete)
-            ->get()
-            ->each(static fn(Model $record) =>  $record->delete());
+
 
         $childComponentContainers = $component->getChildComponentContainers();
         foreach ($childComponentContainers as $itemKey => $item) {
@@ -90,6 +87,14 @@ class EditCustomFormSave
         }
 
         self::saveCustomFieldFromData(1,$childComponentContainers,$customForm, $relationship,$statedRecords);
+
+        $relationship
+            ->whereKey($recordsToDelete)
+            ->get()
+            ->each(static function(CustomField $record){
+                $record->delete();
+                $record->getType()->afterEditFieldDelete($record);
+            });
     }
 
     private static function updateCustomField(CustomField &$customField,array $itemData): void {

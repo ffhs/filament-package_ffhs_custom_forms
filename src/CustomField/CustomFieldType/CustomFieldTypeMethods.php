@@ -61,6 +61,9 @@ abstract class CustomFieldTypeMethods
     public function afterEditFieldSave(CustomField $field, array $rawData):void {
 
     }
+    public function afterEditFieldDelete(CustomField $record):void {
+    }
+
 
     public function afterAnswerFieldSave(CustomFieldAnswer $field, mixed $rawData, array $formData):void {
 

@@ -7,6 +7,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\CustomFormRender;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
 
 final class TemplateFieldType extends CustomFieldType
 {
@@ -47,7 +48,30 @@ final class TemplateFieldType extends CustomFieldType
 
 
         CustomFormRender::saveHelperWithoutPreparation($formData, $customFieldsIdentify, $fieldAnswersIdentify, $formAnswerer);
+    }
 
+    public function afterEditFieldDelete(CustomField $record):void {
+        $templateFields = $record->template->customFields;
+        $formFields = $record->customForm->customFields;
+        $record->customForm->customFormAnswers->each(function (CustomFormAnswer $formAnswer) use ($formFields, $record, $templateFields) {
+            $formAnswer->customFieldAnswers()
+                ->whereIn("custom_field_id",$record->template->customFields()->select("id"))
+                ->each(function(CustomFieldAnswer $fieldAnswer) use ($templateFields, $formFields) {
+                    $templateField = $templateFields->where("id", $fieldAnswer->custom_field_id)->first();
+                    /**@var CustomField $templateField*/
+                    if(!$templateField->isGeneralField()){
+                        $identifier = $templateField->identify_key;
+                        $newField = $formFields->where("identify_key", $identifier)->first();
+                    }
+                    else{
+                        $genField = $templateField->general_field_id;
+                        $newField = $formFields->where("general_field_id", $genField)->first();
+                    }
+                    if(is_null($newField)) return;
+                    $fieldAnswer->custom_field_id = $newField->id;
+                    $fieldAnswer->save();
+                });
+        });
     }
 
 
