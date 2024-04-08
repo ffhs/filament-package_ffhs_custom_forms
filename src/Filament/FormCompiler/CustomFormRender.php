@@ -19,7 +19,7 @@ class CustomFormRender
         $customFields = $form->cachedFields();
 
         $render= self::getFormRender($viewMode,$form);
-        $customFormSchema = self::render(0,$customFields,$render)[0];
+        $customFormSchema = self::render(0,$customFields,$render,$viewMode)[0];
 
         return  [
             Group::make($customFormSchema)->columns(config("ffhs_custom_forms.default_column_count")),
@@ -34,8 +34,8 @@ class CustomFormRender
         $customFields = $form->cachedFields();
         $fieldAnswers = $formAnswer->cachedAnswers();
 
-        $render= self::getInfolistRender($viewMode,$form, $fieldAnswers);
-        $customViewSchema = self::render(0,$customFields,$render)[0];
+        $render= self::getInfolistRender($viewMode,$form,$formAnswer, $fieldAnswers);
+        $customViewSchema = self::render(0,$customFields,$render, $viewMode)[0];
 
         return  [
             \Filament\Infolists\Components\Group::make($customViewSchema)->columns(config("ffhs_custom_forms.default_column_count")),
@@ -43,8 +43,8 @@ class CustomFormRender
     }
 
 
-    public static function getInfolistRender(string $viewMode,CustomForm $form, Collection $fieldAnswers): Closure {
-        return function (CustomField $customField,  array $parameter) use ($form, $viewMode, $fieldAnswers) {
+    public static function getInfolistRender(string $viewMode,CustomForm $form, CustomFormAnswer $formAnswer, Collection $fieldAnswers): Closure {
+        return function (CustomField $customField,  array $parameter) use ($formAnswer, $form, $viewMode, $fieldAnswers) {
 
             /** @var CustomFormAnswer $answer*/
             $answer = $fieldAnswers->firstWhere("custom_field_id", $customField->id);
@@ -52,6 +52,7 @@ class CustomFormRender
                 $answer = new CustomFieldAnswer();
                 $answer->answer = null;
                 $answer->custom_field_id = $customField->id;
+                $answer->custom_form_answer_id = $formAnswer->id;
             }
 
             return $customField->getType()->getInfolistComponent($answer, $form, $viewMode, $parameter);
@@ -69,7 +70,7 @@ class CustomFormRender
         };
     }
 
-    public static function render(int $indexOffset, Collection $customFields, Closure &$render): array {
+    public static function render(int $indexOffset, Collection $customFields, Closure &$render, string $viewMode): array {
         $customFormSchema = [];
 
         $preparedFields = [];
@@ -82,7 +83,9 @@ class CustomFormRender
 
             /** @var CustomField $customField*/
             $customField =  $preparedFields[$index];
-            $parameters = [];
+            $parameters = [
+                "viewMode"=>$viewMode
+            ];
 
             if(!$customField->is_active) continue;
             if(($customField->getType() instanceof CustomLayoutType)){
@@ -97,12 +100,12 @@ class CustomFormRender
                 $fieldRenderData = collect($fieldRenderData);
 
                 //Render Schema Input
-                $renderedOutput = self::render($index, $fieldRenderData, $render);
+                $renderedOutput = self::render($index, $fieldRenderData, $render,$viewMode);
                 //Get Layout Schema
-                $parameters = [
+                $parameters = array_merge([
                     "customFieldData" => $fieldRenderData,
                     "rendered"=> $renderedOutput[0],
-                ]; //ToDo Optimize
+                ]);
 
                 //Set Index
                 $index= $renderedOutput[1]-1;
@@ -156,57 +159,68 @@ class CustomFormRender
         $customFields->each(function($model) use (&$customFieldArray) {$customFieldArray[] = $model;});
         $customFieldsIdentify = array_combine($keys, $customFieldArray);
 
-        foreach($formData as $key => $fieldData){
-            if(empty($customFieldsIdentify[$key])) continue;
+        self::saveHelperWithoutPreparation($formData, $customFieldsIdentify, $fieldAnswersIdentify, $formAnswerer);
+    }
 
+    public static function saveHelperWithoutPreparation(array $formData, array $customFieldsIdentify, array $fieldAnswersIdentify,
+        CustomFormAnswer $formAnswerer): void {
+        foreach ($customFieldsIdentify as $key => $customField) {
+            /**@var CustomField $customField */
 
-            /**@var CustomField $customField*/
-            $customField = $customFieldsIdentify[$key];
-            $fieldAnswererData = $customField->getType()->prepareSaveFieldData($fieldData);
-            if(empty($fieldAnswererData)) {
-                if(!empty($fieldAnswersIdentify[$key])) $fieldAnswersIdentify[$key]->delete();
-                continue;
-            }
+            if (empty($formData[$key])) $fieldData = null;
+            else $fieldData = $formData[$key];
 
-            /**@var null|CustomFieldAnswer $customFieldAnswer*/
-            if(empty( $fieldAnswersIdentify[$key]))
-                $customFieldAnswer= new CustomFieldAnswer([
+            $type = $customField->getType();
+
+            /**@var null|CustomFieldAnswer $customFieldAnswer */
+            if (!empty($fieldAnswersIdentify[$key]))
+                $customFieldAnswer = $fieldAnswersIdentify[$key];
+            else{
+                $customFieldAnswer = new CustomFieldAnswer([
                     "custom_field_id" => $customField->id,
                     "custom_form_answer_id" => $formAnswerer->id,
                 ]);
-            else $customFieldAnswer = $fieldAnswersIdentify[$key];
+            }
 
-            $fieldRules  = $customFieldAnswer->customField->fieldRules;
-            foreach ($fieldRules as $rule){
+            $fieldAnswererData = $customField->getType()->prepareSaveFieldData($fieldData);
+            if (empty($fieldAnswererData)) {
+                if ($customFieldAnswer->exists)$customFieldAnswer->delete();
+                $type->afterAnswerFieldSave($customFieldAnswer, $fieldData, $formData);
+                continue;
+            }
+
+
+
+            $fieldRules = $customField->fieldRules;
+            foreach ($fieldRules as $rule) {
                 /**@var FieldRule $rule */
-                $fieldAnswererData = $rule->getRuleType()->mutateSaveAnswerData($fieldAnswererData,$rule, $customFieldAnswer);
+                $fieldAnswererData = $rule->getRuleType()->mutateSaveAnswerData($fieldAnswererData, $rule,
+                    $customFieldAnswer);
             }
 
             $customFieldAnswer->answer = $fieldAnswererData;
 
-            foreach ($fieldRules as $rule){
+            foreach ($fieldRules as $rule) {
                 /**@var FieldRule $rule */
                 $rule->getRuleType()->afterAnswerSave($rule, $customFieldAnswer);
             }
 
 
-            if(!$customFieldAnswer->exists|| $customFieldAnswer->isDirty())$customFieldAnswer->save();
+            if (!$customFieldAnswer->exists || $customFieldAnswer->isDirty()) $customFieldAnswer->save();
+
+            $type->afterAnswerFieldSave($customFieldAnswer, $fieldData, $formData);
         }
-
     }
-
-
 
     public static function loadHelper(CustomFormAnswer $answerer):array {
         $data = [];
-        $form = CustomForm::cached($answerer->custom_form_id);
-
-        $customFields = $form->cachedFields();
+        //$form = CustomForm::cached($answerer->custom_form_id);
+        //$customFields = $form->cachedFields();
 
         foreach($answerer->customFieldAnswers as $fieldAnswer){
             /**@var CustomFieldAnswer $fieldAnswer*/
             /**@var CustomField $customField*/
-            $customField = $customFields->where("id", $fieldAnswer->custom_field_id)->first();
+            $customField = $fieldAnswer->customField;
             $fieldData = $customField
                 ->getType()
                 ->prepareLoadFieldData($fieldAnswer->answer);

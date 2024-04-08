@@ -137,7 +137,5 @@ abstract class CustomFieldType extends CustomFieldTypeMethods
         return $defaults;
     }
 
-    public function doAfterFieldSave(CustomField $field, array $rawData):void {
 
-    }
 }

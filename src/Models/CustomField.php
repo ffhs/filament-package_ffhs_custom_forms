@@ -63,7 +63,7 @@ class CustomField extends ACustomField
         parent::booted();
         self::creating(function (CustomField $field){#
             //Set identifier key to on other
-            if(is_null($field->identify_key) && !$field->isGeneralField() && !$field->isTemplate()) {
+            if(is_null($field->identify_key) && !$field->isGeneralField() ) {
                 $field->identify_key = uniqid();
             }
             return $field;

@@ -3,6 +3,7 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\Models;
 
 use Ffhs\FilamentPackageFfhsCustomForms\FormConfiguration\DynamicFormConfiguration;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -34,6 +35,12 @@ class CustomForm extends Model
 
     public function customFields(): HasMany {
         return $this->hasMany(CustomField::class)->orderBy("form_position"); //ToDo also add Templates field
+    }
+
+    public function customFieldsWithTemplateFields(): Builder {
+        $baseQuery = CustomField::query()->where("custom_form_id",$this->id);
+        $templateQuery = $baseQuery->clone()->select("template_id")->whereNotNull("template_id");
+        return $baseQuery->orWhereIn("custom_form_id",$templateQuery)->orderBy("form_position"); //$this->hasMany(CustomField::class)->orderBy("form_position"); //ToDo also add Templates field
     }
 
 

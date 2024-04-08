@@ -102,7 +102,7 @@ class EditCustomFormSave
         //Check if something hase Change
         $customField->fill($customFieldData);
         if(!$customField->exists||$customField->isDirty()) $customField->save();
-        $type->doAfterFieldSave($customField, $rawData);
+        $type->afterEditFieldSave($customField, $rawData);
 
     }
 

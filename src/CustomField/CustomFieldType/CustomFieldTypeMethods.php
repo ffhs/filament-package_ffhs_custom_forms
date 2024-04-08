@@ -2,6 +2,11 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType;
 
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
+
 abstract class CustomFieldTypeMethods
 {
 
@@ -51,4 +56,13 @@ abstract class CustomFieldTypeMethods
         return null;
     }
 
+
+
+    public function afterEditFieldSave(CustomField $field, array $rawData):void {
+
+    }
+
+    public function afterAnswerFieldSave(CustomFieldAnswer $field, mixed $rawData, array $formData):void {
+
+    }
 }
