@@ -22,6 +22,7 @@ use Illuminate\Support\Facades\Cache;
  * @property Collection|null $allCustomFieldsInLayout
  * @property Collection $customOptions
  * @property Collection $fieldRules
+ * @property Collection $answers
  *
  * @property string|null $identify_key
  * @property array $options
@@ -58,6 +59,8 @@ class CustomField extends ACustomField
     protected $casts = [
         "options" => "array",
     ];
+
+
 
     protected static function booted() {
         parent::booted();
@@ -135,7 +138,10 @@ class CustomField extends ACustomField
     {
         return $this->belongsTo(GeneralField::class);
     }
-
+    public function answers(): HasMany
+    {
+        return $this->hasMany(CustomFieldAnswer::class);
+    }
 
 
     //Template
