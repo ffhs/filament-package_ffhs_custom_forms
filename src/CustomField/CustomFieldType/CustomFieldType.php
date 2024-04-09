@@ -21,16 +21,22 @@ abstract class CustomFieldType extends CustomFieldTypeMethods
         $output = [];
         foreach(config("ffhs_custom_forms.custom_field_types") as $typeClass)
             $output[$typeClass::getFieldIdentifier()]= $typeClass;
-        $output[TemplateFieldType::getFieldIdentifier()] = TemplateFieldType::class;
         return $output;
     }
 
-    public static function getGeneralFieldTypes():array{
+    public static function getSelectableGeneralFieldTypes():array{
         $output = [];
-        foreach(config("ffhs_custom_forms.general_field_types") as $typeClass)
+        foreach(config("ffhs_custom_forms.selectable_general_field_types") as $typeClass)
             $output[$typeClass::getFieldIdentifier()]= $typeClass;
         return $output;
     }
+    public static function getSelecteableFieldTypes():array{
+        $output = [];
+        foreach(config("ffhs_custom_forms.selectable_field_types") as $typeClass)
+            $output[$typeClass::getFieldIdentifier()]= $typeClass;
+        return $output;
+    }
+
 
     public static function getTypeClassFromName(string $typeName): ?string {
         $types = self::getAllTypes();
@@ -43,8 +49,6 @@ abstract class CustomFieldType extends CustomFieldTypeMethods
         if(is_null($class)) return null;
         return new $class();
     }
-
-
 
 
     public function getFormComponent(CustomField $record, CustomForm $form, string $viewMode = "default", array $parameter = []): Component { //ToDo Remove Parameters?

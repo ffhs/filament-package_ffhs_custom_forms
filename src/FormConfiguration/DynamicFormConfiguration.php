@@ -3,7 +3,6 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\FormConfiguration;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomFieldType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\Templates\TemplateFieldType;
 
 abstract class DynamicFormConfiguration
 {
@@ -12,9 +11,7 @@ abstract class DynamicFormConfiguration
     public abstract static function displayName(): string;
 
     public  static function formFieldTypes():array{
-        $types = CustomFieldType::getAllTypes();
-        unset($types[TemplateFieldType::getFieldIdentifier()]);
-        return $types;
+        return CustomFieldType::getSelecteableFieldTypes();
     }
 
     public static function ruleTypes(): array{

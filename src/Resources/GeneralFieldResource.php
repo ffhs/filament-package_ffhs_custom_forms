@@ -91,7 +91,7 @@ class GeneralFieldResource extends Resource
                        Group::make([
                            Select::make("type")
                                ->options(function (Select $component){
-                                   if(!$component->isDisabled()) $types = CustomFieldType::getGeneralFieldTypes();
+                                   if(!$component->isDisabled()) $types = CustomFieldType::getSelectableGeneralFieldTypes();
                                    else $types = CustomFieldType::getAllTypes();
                                    $keys = array_keys($types);
                                    $values = array_map(fn(string $type) => CustomFieldType::getTypeFromName($type)->getTranslatedName(), $keys);

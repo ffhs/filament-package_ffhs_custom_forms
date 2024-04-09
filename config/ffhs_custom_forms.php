@@ -19,6 +19,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\Type\ChangeOption
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\Type\DisabledRuleType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\Type\HiddenRuleType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\Type\RequiredRuleType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\Templates\TemplateFieldType;
 
 return [
 
@@ -59,8 +60,24 @@ return [
         RadioType::class,
         CheckboxListType::class,
         ToggleButtonsType::class,
+        TemplateFieldType::class
     ],
-    "general_field_types"=>[
+    "selectable_field_types" => [
+        CheckboxType::class,
+        DateTimeType::class,
+        DateType::class,
+        EmailType::class,
+        NumberType::class,
+        TextAreaType::class,
+        TextType::class,
+        SectionType::class,
+        IconSelectType::class,
+        SelectType::class,
+        RadioType::class,
+        CheckboxListType::class,
+        ToggleButtonsType::class,
+    ],
+    "selectable_general_field_types"=>[
         CheckboxType::class,
         DateTimeType::class,
         DateType::class,
