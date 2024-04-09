@@ -5,6 +5,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\Templates;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\RepeaterFieldAction\Actions\EditAction;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\RepeaterFieldAction\Actions\TemplateDissolveAction;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\CustomFormEditForm\EditCustomFormFieldFunctions;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\CustomFormRender;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\HtmlComponents\HtmlBadge;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
@@ -14,6 +15,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Filament\Forms\Get;
 use Filament\Support\Colors\Color;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Blade;
 
 final class TemplateFieldType extends CustomFieldType
@@ -51,8 +53,7 @@ final class TemplateFieldType extends CustomFieldType
     }
 
     public function nameBeforeIconFormEditor(array $state):string {
-        $templateBadge = new HtmlBadge("Template", Color::rgb("rgb(34, 135, 0)"));
-        return $templateBadge. parent::nameFormEditor($state);
+        return new HtmlBadge("Template", Color::rgb("rgb(34, 135, 0)"));
     }
 
     public function afterAnswerFieldSave(CustomFieldAnswer $field, mixed $rawData, array $formData): void {

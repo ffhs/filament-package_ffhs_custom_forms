@@ -22,6 +22,7 @@ abstract class RepeaterFieldAction
     public static function getDefaultTypeClosure(CustomFieldType $type): Closure {
         return function (CustomForm $form,Get $get, $state,$arguments) use ($type):bool {
             $item = $state[$arguments["item"]];
+            if (empty($item["type"]) && empty($item["general_field_id"])) return false;
             if (empty($item["general_field_id"])) return $item["type"] == $type::getFieldIdentifier();
             $gen = GeneralField::cached($item["general_field_id"]);
             return $gen->type == $type::getFieldIdentifier();
