@@ -11,7 +11,7 @@ abstract class DynamicFormConfiguration
     public abstract static function displayName(): string;
 
     public  static function formFieldTypes():array{
-        return CustomFieldType::getSelecteableFieldTypes();
+        return CustomFieldType::getSelectableFieldTypes();
     }
 
     public static function ruleTypes(): array{

@@ -2,13 +2,13 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\Anchors;
 
+use Closure;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldUtils;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\CustomLayoutType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomOption\CustomOptionType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\FieldRuleAnchorType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\HasAnchorPluginTranslate;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\CustomFormEditForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\CustomFormEditForm\EditCustomFieldForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\CustomFormEditForm\EditCustomFieldRule;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\CustomFormEditForm\EditCustomFormFieldFunctions;
@@ -113,6 +113,7 @@ class ValueEqualsRuleAnchor extends FieldRuleAnchorType
             ->live()
             ->afterStateUpdated(function($state,$set){
                 $set("values", self::getCreateAnchorData()["values"]);
+                $set("selected_options", self::getCreateAnchorData()["selected_options"]);
                 $set("numeric", self::getCreateAnchorData()["numeric"]);
                 $set("boolean", self::getCreateAnchorData()["boolean"]);
             })
@@ -187,7 +188,7 @@ class ValueEqualsRuleAnchor extends FieldRuleAnchorType
             });
     }
 
-    protected function getDisableCloser(string $selectOption): \Closure {
+    protected function getDisableCloser(string $selectOption): Closure {
         return function($get,$component) use ($selectOption) {
             $fieldData = self::getSelectedFieldData($get,$component);
             if(is_null($fieldData)) return false;
@@ -196,7 +197,7 @@ class ValueEqualsRuleAnchor extends FieldRuleAnchorType
         };
     }
 
-    protected function getBooleanToogle():Toggle  {
+    protected function getBooleanToggle():Toggle  {
         return  Toggle::make("boolean")
             ->visible($this->getDisableCloser("boolean"))
             ->label("Wert") //ToDo Translate
@@ -216,7 +217,7 @@ class ValueEqualsRuleAnchor extends FieldRuleAnchorType
     }
 
     protected function getOptionSelector():Select  {
-        return  Select::make("values")
+        return  Select::make("selected_options")
             ->visible(function($get,$component) {
                 $fieldData = self::getSelectedFieldData($get,$component);
                 if(is_null($fieldData)) return false;
@@ -318,7 +319,7 @@ class ValueEqualsRuleAnchor extends FieldRuleAnchorType
                 $this->getFieldTypeSelect(),
 
                 //SpecificFields
-                $this->getBooleanToogle(),
+                $this->getBooleanToggle(),
                 $this->getTextRepeater(),
                 $this->getNumberSection(),
                 $this->getOptionSelector(),
@@ -330,6 +331,7 @@ class ValueEqualsRuleAnchor extends FieldRuleAnchorType
             "field_type"=> "text",
             "boolean"=> false,
             "values"=> [],
+            "selected_options"=>[],
             "numeric"=> [
                 "exactly_number" => false,
                 "number" => 0,
@@ -350,7 +352,7 @@ class ValueEqualsRuleAnchor extends FieldRuleAnchorType
         $type = $rule->anchor_data["field_type"];
 
         $customForm = $customField->customForm;
-        $targetField = $customForm->customFields->where("identify_key",$target)->first();
+        $targetField = $customForm->cachedFieldsWithTemplates()->where("identify_key",$target)->first();
         if(is_null($targetField)) {
             $genField = GeneralField::query()->where("identify_key",$target)->select("id")->first();
             if(is_null($genField)) return false;
@@ -358,19 +360,25 @@ class ValueEqualsRuleAnchor extends FieldRuleAnchorType
         }
         if(is_null($targetField)) return false;
         $targetFieldType = $targetField->getType(); //ToDO Optimize
+
+        //Custom Option Types like Select
         if($targetFieldType instanceof CustomOptionType) {
-            $options = $rule->anchor_data["values"];
+            $options = $rule->anchor_data["selected_options"];
             if(is_null($options)) return false;
             return in_array($formState[$target],$options);
         }
-        if($type == "boolean") {
-            return $formState[$target] == $rule->anchor_data["boolean"];
-        }
+
+        //Bool
+        if($type == "boolean")  return $formState[$target] == $rule->anchor_data["boolean"];
+
+        //Text
         if($type == "text") {
             $options = CustomFieldUtils::flattenWithoutKeys($rule->anchor_data["values"]);
             $options = array_values($options);
             return  in_array($formState[$target],$options);
         }
+
+        //Nummer
         if($type == "numeric") {
             $numericData = $rule->anchor_data["numeric"];
             $value = intval($formState[$target]);

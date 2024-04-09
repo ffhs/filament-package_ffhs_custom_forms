@@ -107,7 +107,7 @@ class CustomForm extends Model
     }
 
     public function cachedFields(): Collection {
-        return Cache::remember("custom_fields-from-form_" . $this->id,config('ffhs_custom_forms.cache_duration'), fn() => $this->customFields()->with([
+        return Cache::remember("custom_fields-form_" . $this->id,config('ffhs_custom_forms.cache_duration'), fn() => $this->customFields()->with([
             "generalField.customOptions",
         ])->get());
     }
@@ -116,6 +116,11 @@ class CustomForm extends Model
         return $this->cachedFields()->firstWhere("id",$customFieldId);
     }
 
+    public function cachedFieldsWithTemplates(): Collection {
+        return Cache::remember("custom_fields_with_templates-form_" . $this->id,config('ffhs_custom_forms.cache_duration'), fn() => $this->customFieldsWithTemplateFields()->with([
+            "generalField.customOptions",
+        ])->get());
+    }
 
 
 

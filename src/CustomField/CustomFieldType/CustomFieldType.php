@@ -30,7 +30,7 @@ abstract class CustomFieldType extends CustomFieldTypeMethods
             $output[$typeClass::getFieldIdentifier()]= $typeClass;
         return $output;
     }
-    public static function getSelecteableFieldTypes():array{
+    public static function getSelectableFieldTypes():array{
         $output = [];
         foreach(config("ffhs_custom_forms.selectable_field_types") as $typeClass)
             $output[$typeClass::getFieldIdentifier()]= $typeClass;

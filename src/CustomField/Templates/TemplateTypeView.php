@@ -30,7 +30,7 @@ class TemplateTypeView implements FieldTypeView
 
         $render= CustomFormRender::getInfolistRender($viewMode,$form,$formAnswer, $fieldAnswers);
         $customViewSchema = CustomFormRender::render(0,$customFields,$render,$viewMode)[0];
-
-        return \Filament\Infolists\Components\Group::make($customViewSchema)->columns(config("ffhs_custom_forms.default_column_count"));
+        return \Filament\Infolists\Components\Group::make($customViewSchema)
+            ->columns(config("ffhs_custom_forms.default_column_count"));
     }
 }
