@@ -3,9 +3,13 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType;
 
 
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\CustomLayoutType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\RepeaterFieldAction\Actions\EditAction;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\RepeaterFieldAction\Actions\PullInLayoutAction;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\RepeaterFieldAction\Actions\PullOutLayoutAction;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\RepeaterFieldAction\RepeaterFieldAction;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\TypeOption;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\CustomFormEditForm\EditCustomFormFieldFunctions;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\HtmlComponents\HtmlBadge;
 use Ffhs\FilamentPackageFfhsCustomForms\FormConfiguration\DynamicFormConfiguration;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
@@ -13,6 +17,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Filament\Forms\Components\Component;
+use Filament\Forms\Get;
 use Filament\Support\Colors\Color;
 
 abstract class CustomFieldType
@@ -229,6 +234,17 @@ abstract class CustomFieldType
 
     public function repeaterFunctions():array{
         return [
+            PullInLayoutAction::class => function (CustomForm $record, Get $get, array $state, array $arguments):bool {
+                $itemIndex = $arguments["item"];
+                $itemIndexPostion = PullInLayoutAction::getKeyPosition($itemIndex, $state);
+                if ($itemIndexPostion == 0) return false;
+                $upperCustomFieldData = $state[array_keys($state)[$itemIndexPostion - 1]];
+                $type = EditCustomFormFieldFunctions::getFieldTypeFromRawDate($upperCustomFieldData);
+                return $type instanceof CustomLayoutType;
+            },
+            PullOutLayoutAction::class=> function (CustomForm $record, Get $get,array $state, array $arguments):bool {
+                return !is_null($get("../../custom_fields"));
+            },
             EditAction::class => RepeaterFieldAction::getDefaultTypeClosure($this),
         ];
     }

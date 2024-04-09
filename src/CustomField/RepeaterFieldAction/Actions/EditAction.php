@@ -22,7 +22,7 @@ class EditAction extends RepeaterFieldAction
     public function getAction(CustomForm $record, array $typeClosers): Action {
         return Action::make('edit')
             ->action(fn($get, $set, $data, $arguments) => EditCustomFormFieldFunctions::setCustomFieldInRepeater($data, $get, $set, $arguments))
-            ->visible(fn(array $state, array $arguments)=> $this->isVisible($record,$typeClosers,$state,$arguments))
+            ->visible(fn($get, array $state, array $arguments)=> $this->isVisible($record,$get,$typeClosers,$state,$arguments))
             ->mutateFormDataUsing(fn(Action $action)=> EditCustomFieldAction::getRawStateActionForm($action))
             ->fillForm(fn($state, $arguments) => $state[$arguments["item"]])
             ->closeModalByClickingAway(false)

@@ -4,6 +4,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\CustomLayoutType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\RepeaterFieldAction\RepeaterFieldAction;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\Templates\TemplateFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\CustomFormEditForm\EditCustomFieldAction;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\CustomFormEditForm\EditCustomFieldForm;
@@ -46,6 +47,25 @@ class CustomFormEditForm
 
 
     private static function getCustomFieldRepeater($record): Repeater {
+
+       $repeaterActionClasses = [];
+
+       foreach (CustomFieldType::getAllTypes() as $typeClass){
+           /**@var CustomFieldType $type*/
+           $type = new $typeClass();
+           foreach ($type->repeaterFunctions() as $actionClass => $function){
+               if(empty($repeaterActionClasses[$actionClass])) $repeaterActionClasses[$actionClass] = [];
+               $repeaterActionClasses[$actionClass][] = $function;
+           }
+       }
+
+       $repeaterActions = [];
+       foreach ($repeaterActionClasses as $actionClass => $closures){
+           /**@var RepeaterFieldAction $action*/
+           $action = new $actionClass();
+           $repeaterActions[] = $action->getAction($record,$closures);
+       }
+
         return Repeater::make("custom_fields")
             ->collapseAllAction(fn(Action $action)=> $action->hidden())
             ->expandAllAction(fn(Action $action)=> $action->hidden())
@@ -65,13 +85,7 @@ class CustomFormEditForm
             ->reorderable()
             ->collapsed()
             ->lazy()
-            ->extraItemActions([
-                EditCustomFieldAction::getPullOutLayoutAction(),
-                EditCustomFieldAction::getPullInLayoutAction(),
-                EditCustomFieldAction::getEditCustomFieldAction($record),
-                EditCustomFieldAction::getTemplateDissolveAction($record),
-                //ToDo make that the actions can be set in the FieldType's
-            ])
+            ->extraItemActions($repeaterActions)
             ->itemLabel(function($state){
                 $type = EditCustomFormFieldFunctions::getFieldTypeFromRawDate($state);
 
