@@ -30,14 +30,14 @@ final class TemplateFieldType extends CustomFieldType
         return "carbon-copy-file";
     }
 
-    public function editModeName(array $state):string {
+    public function nameFormEditor(array $state):string {
         $template = CustomForm::cached($state["template_id"]);
         return $template->short_title;
     }
 
-    public function editModeNameBeforeIcon(array $state):string {
+    public function nameBeforeIconFormEditor(array $state):string {
         $templateBadge = new HtmlBadge("Template", Color::rgb("rgb(34, 135, 0)"));
-        return $templateBadge. parent::editModeName($state);
+        return $templateBadge. parent::nameFormEditor($state);
     }
 
     public function afterAnswerFieldSave(CustomFieldAnswer $field, mixed $rawData, array $formData): void {

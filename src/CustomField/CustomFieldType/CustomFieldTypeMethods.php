@@ -5,11 +5,8 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\HtmlComponents\HtmlBadge;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Filament\Support\Colors\Color;
-use Illuminate\Support\Facades\Blade;
 
 abstract class CustomFieldTypeMethods
 {
@@ -78,13 +75,13 @@ abstract class CustomFieldTypeMethods
     }
 
 
-    public function editModeName(array $state): string|null {
+    public function nameFormEditor(array $state): string|null {
         if(empty($state["general_field_id"])) return $state["name_de"];//ToDo Translate;
         $genField = GeneralField::cached($state["general_field_id"]);
         return $genField->name_de; //ToDo Translate;
     }
 
-    public function editModeNameBeforeIcon(array $state):string|null {
+    public function nameBeforeIconFormEditor(array $state):string|null {
         if(empty($state["general_field_id"])) return '';
         return new HtmlBadge("Gen", Color::rgb("rgb(43, 164, 204)"));
     }

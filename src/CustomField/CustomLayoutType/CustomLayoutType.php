@@ -13,10 +13,10 @@ abstract class CustomLayoutType extends CustomFieldType
         return false;
     }
 
-    public function editModeNameBeforeIcon(array $state):string {
+    public function nameBeforeIconFormEditor(array $state):string {
         $size = empty($state["custom_fields"])?0:sizeof($state["custom_fields"]);
         $badgeCount = new HtmlBadge($size);
-        return $badgeCount . parent::editModeName($state);
+        return $badgeCount . parent::nameFormEditor($state);
     }
 
 

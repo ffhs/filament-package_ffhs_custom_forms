@@ -76,7 +76,7 @@ class CustomFormEditForm
                 $type = EditCustomFormFieldFunctions::getFieldTypeFromRawDate($state);
 
                 //Before Icon
-                $html = $type->editModeNameBeforeIcon($state);
+                $html = $type->nameBeforeIconFormEditor($state);
 
                 //Prepare the Icon
                 $icon = Blade::render('<x-'. $type->icon() .' class="h-4 w-4"/>');
@@ -85,7 +85,7 @@ class CustomFormEditForm
 
                 //Name
                 $nameStyle = 'class="text-sm font-medium ext-gray-950 dark:text-white truncate select-none"';
-                $name = $type->editModeName($state);
+                $name = $type->nameFormEditor($state);
                 $html.= '<h4'.$nameStyle.'>' . $name . '</h4>';
 
                 //flex Body
