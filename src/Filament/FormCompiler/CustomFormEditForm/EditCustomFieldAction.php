@@ -3,10 +3,7 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\CustomFormEditForm;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomFieldType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\CustomLayoutType;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\FieldRule;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralFieldForm;
 use Filament\Forms\Components\Actions;
@@ -15,7 +12,6 @@ use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Get;
-use Filament\Support\Colors\Color;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\HtmlString;
@@ -161,12 +157,12 @@ class EditCustomFieldAction
     }
 
 
-    private static function getRawStateActionForm($action):array {
+    public static function getRawStateActionForm($action):array {
         //Get RawSate (yeah is possible)
         return array_values($action->getLivewire()->getCachedForms())[1]->getRawState();
     }
 
-    private static function getEditCustomFormActionModalWith(array $state): string {
+    public static function getEditCustomFormActionModalWith(array $state): string {
         $type = EditCustomFormFieldFunctions::getFieldTypeFromRawDate($state);
         if (!empty($state["general_field_id"])) return 'xl';
         $hasOptions = $type->canBeRequired() || $type->canBeDeactivate() || $type->hasExtraTypeOptions();
@@ -233,187 +229,6 @@ class EditCustomFieldAction
         return  new HtmlString($html);
     }
 
-    public static function getEditCustomFieldAction(CustomForm $customForm): Action {
-        return Action::make('edit')
-            ->action(fn($get, $set, $data, $arguments) => EditCustomFormFieldFunctions::setCustomFieldInRepeater($data, $get, $set, $arguments))
-            ->mutateFormDataUsing(fn(Action $action)=> self::getRawStateActionForm($action))
-            ->fillForm(fn($state, $arguments) => $state[$arguments["item"]])
-            ->closeModalByClickingAway(false)
-            ->icon('heroicon-m-pencil-square')
-            ->label("Bearbeiten") //ToDo Translate
-            ->modalWidth(function(array $state, array $arguments){
-                return EditCustomFieldAction::getEditCustomFormActionModalWith($state[$arguments["item"]]);
-            })
-            ->form(function(Get $get, $state, array $arguments) use ($customForm) : array {
-                return EditCustomFieldForm::getCustomFieldSchema($state[$arguments["item"]], $customForm);
-            })
-            ->hidden(function(array $state, array $arguments): bool{
-                $item = $state[$arguments["item"]];
-                return array_key_exists("template_id",$item) &&!is_null($item["template_id"]);
-            })
-            ->modalHeading(function (array $state, array $arguments) {
-                $data = $state[$arguments["item"]];
-                $suffix = " Felddaten bearbeiten ";
-                if (empty($data["general_field_id"])) return $data["name_de"] . $suffix; //ToDo Translate
-                else return "G. ".GeneralField::cached($data["general_field_id"])->name_de. $suffix; //ToDo Translate
-            });
-    }
-
-
-    private static function unsetAttributesForClone(array $data):array {
-        unset($data["id"]);
-        unset($data["created_at"]);
-        unset($data["deleted_at"]);
-        unset($data["updated_at"]);
-        return $data;
-    }
-
-    //CustomFieldAnswerer CustomField id changing is handelt in TemplateFieldType.class on afterEditFieldDelete()
-    public static function getTemplateDissolveAction(CustomForm $record): Action {
-        return Action::make('dissolve')
-            ->closeModalByClickingAway(false)
-            ->icon('carbon-sync-settings')
-            ->color(Color::hex("#de9310"))
-            ->label("Auflösen")//ToDo Translate
-            ->requiresConfirmation()
-            ->visible(function(array $state, array $arguments): bool{
-                $item = $state[$arguments["item"]];
-                return array_key_exists("template_id",$item) &&!is_null($item["template_id"]);
-            })
-            ->modalHeading(function (array $state, array $arguments) {
-                $data = $state[$arguments["item"]];
-                $template = CustomForm::cached($data["template_id"]);
-                $name = $template->short_title;
-
-                return "Möchten sie Wirklich das Template '" . $name . "'  auflösen?"; //ToDo Translate
-            })
-            ->action(function(Get $get, $set, array $state, array $arguments) use ($record) {
-                $repeaterKey = $arguments["item"];
-                $templateID = $state[$repeaterKey]["template_id"];
-                $customFields = $get("custom_fields");
-
-                $keyLocation = self::getKeyPosition($repeaterKey, $customFields);
-
-                //Splitt the Fields
-                $fieldsBeforeTemplate = array_slice($customFields, 0, $keyLocation,true);
-                $fieldsAfterTemplate = array_diff_key($customFields, $fieldsBeforeTemplate);
-
-
-                //Remove the Template Field
-                unset($fieldsAfterTemplate[$repeaterKey]);
-
-                //Get Template Fields
-                $template = CustomForm::cached($templateID);
-                $templateFields = $template->customFields;
-                $templateFields = $templateFields->map(function (CustomField $field) use ($template, $record) {
-
-
-                    //Clone Field
-                    $fieldData = $field->toArray();
-
-                    //Mutate Field Data's
-                    $type = $field->getType();
-
-                    //Load OptionData now, because it needs the field id
-                    $fieldData = EditCustomFieldForm::mutateOptionData($fieldData, $template);
-                    $fieldData = EditCustomFieldRule::mutateRuleDataOnLoad($fieldData, $template);
-
-                    $fieldData = $type->mutateOnTemplateDissolve($fieldData, $field);
-
-                    $fieldData = self::unsetAttributesForClone($fieldData);
-                    $fieldData["custom_form_id"] = $record->id;
-
-                    //Clone Ankers and Rules
-                    $rules = $field->fieldRules;
-                    $rulesCloned = [];
-                    foreach ($fieldData["rules"] as $ruleData){
-
-                        /**@var FieldRule $fieldRule*/
-                        $fieldRule = $rules->where("id", $ruleData["id"])->first();
-
-                        $ruleData = $fieldRule->toArray();
-
-                        $ruleData = self::unsetAttributesForClone($ruleData);
-
-                        $ruleData = $fieldRule->getAnchorType()->mutateOnTemplateDissolve($ruleData,$fieldRule,$field);
-                        $ruleData = $fieldRule->getRuleType()->mutateOnTemplateDissolve($ruleData,$fieldRule,$field);
-
-                        unset($ruleData["custom_field_id"]);
-
-                        //Set for Repeaters
-                        $rulesCloned[uniqid()] = $ruleData;
-                    }
-                    $fieldData["rules"] = $rulesCloned;
-
-                    return $fieldData;
-                })->toArray();
-
-                //Add unique Keys to the field's array
-                $middleFields = [];
-                foreach ($templateFields as $field){
-                    $middleFields[uniqid()] = $field;
-                }
-
-                //Place the new fields there were the template was
-                $combinedFields = array_merge($fieldsBeforeTemplate,$middleFields,$fieldsAfterTemplate);
-
-                //Set the fields back in the repeater
-                $set("custom_fields",$combinedFields);
-            });
-    }
-
-
-    public static function getPullInLayoutAction(): Action {
-        return Action::make("pullIn")
-            ->icon('heroicon-m-arrow-long-up')
-            ->action(function (array $arguments, array $state, $set, Get $get) {
-                $itemIndex = $arguments["item"];
-                $itemIndexPostion = self::getKeyPosition($itemIndex, $state);
-                $upperKey = array_keys($state)[$itemIndexPostion - 1];
-
-                $newUpperState = $get("custom_fields.$upperKey.custom_fields");
-                $newUpperState[$itemIndex] = $state[$itemIndex];
-                $set("custom_fields.$upperKey.custom_fields", $newUpperState);
-
-                $newState = $get("custom_fields");
-                unset($newState[$itemIndex]);
-                $set("custom_fields", $newState);
-
-            })
-            ->hidden(function ($arguments, $state) {
-                $itemIndex = $arguments["item"];
-                $itemIndexPostion = self::getKeyPosition($itemIndex, $state);
-                if ($itemIndexPostion == 0) return true;
-                $upperCustomFieldData = $state[array_keys($state)[$itemIndexPostion - 1]];
-                $type = EditCustomFormFieldFunctions::getFieldTypeFromRawDate($upperCustomFieldData);
-                return !($type instanceof CustomLayoutType);
-            });
-    }
-
-    private static function getKeyPosition($key, $array): int {
-        //Position in Repeater
-        $keys = array_keys($array);
-        return array_search($key, $keys);
-    }
-
-    public static function getPullOutLayoutAction(): Action {
-        return Action::make("pullOut")
-            ->icon('heroicon-m-arrow-long-left')
-            ->action(function (array $arguments, array $state, $set, Get $get) {
-                $itemIndex = $arguments["item"];
-                $newUpperState = $get("../../custom_fields");
-
-                $newUpperState[$itemIndex] = $state[$itemIndex];
-                $set("../../custom_fields", $newUpperState);
-
-                $newState = $get("custom_fields");
-                unset($newState[$itemIndex]);
-                $set("custom_fields", $newState);
-            })
-            ->hidden(function ($arguments, $state, $get) {
-                return is_null($get("../../custom_fields"));
-            });
-    }
 
     private static function isTemplateDisabled($value, Get $get): bool {
         if(EditCustomFormFieldFunctions::useTemplateUsedGeneralFields($value,$get)) return true;

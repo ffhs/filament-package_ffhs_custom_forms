@@ -45,7 +45,7 @@ class CustomFormEditForm
     }
 
 
-    private static function getCustomFieldRepeater(CustomForm $record): Repeater {
+    private static function getCustomFieldRepeater($record): Repeater {
         return Repeater::make("custom_fields")
             ->collapseAllAction(fn(Action $action)=> $action->hidden())
             ->expandAllAction(fn(Action $action)=> $action->hidden())
