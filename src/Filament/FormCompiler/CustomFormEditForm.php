@@ -73,44 +73,27 @@ class CustomFormEditForm
                 //ToDo make that the actions can be set in the FieldType's
             ])
             ->itemLabel(function($state){
-                $styleClasses = "text-sm font-medium ext-gray-950 dark:text-white truncate select-none";
                 $type = EditCustomFormFieldFunctions::getFieldTypeFromRawDate($state);
-                $generalBadge= null;
-                $templateBadge = null;
 
-                if(!empty($state["general_field_id"])){
-                    $generalBadge = new HtmlBadge("Gen", Color::rgb("rgb(43, 164, 204)")); Blade::render('<x-filament::badge size="Gen">New</x-filament::badge>');
-                    $genField = GeneralField::cached($state["general_field_id"]);
-                    $name = $genField->name_de; //ToDo Translate
-                    $icon = Blade::render('<x-'. $genField->icon .' class="h-4 w-4 "/>') ;
-                }
-                else if(!empty($state["template_id"])){
-                    $templateBadge = new HtmlBadge("Template", Color::rgb("rgb(34, 135, 0)")); Blade::render('<x-filament::badge size="Gen">New</x-filament::badge>');
-                    $template = CustomForm::cached($state["template_id"]);
-                    $name = $template->short_title;
-                    $icon = Blade::render('<x-'. $type->icon() .' class="h-4 w-4 "/>') ;
-                }
-                else  {
-                    $name = $state["name_de"]; //ToDo Translate
-                    $icon = Blade::render('<x-'. $type->icon() .' class="h-4 w-4 "/>') ;
-                }
+                //Before Icon
+                $html = $type->editModeNameBeforeIcon($state);
 
-                $badgeCount =null;
-                if($type instanceof CustomLayoutType){
-                    $size = empty($state["custom_fields"])?0:sizeof($state["custom_fields"]);
-                    $badgeCount = new HtmlBadge($size);
-                    $span = '<span x-on:click.stop="isCollapsed = !isCollapsed" class="cursor-pointer flex" >';
-                }
-                else $span = '<span  class="cursor-pointer flex">';
+                //Prepare the Icon
+                $icon = Blade::render('<x-'. $type->icon() .' class="h-4 w-4"/>');
+                $icon = '<span class="px-2 py-1"> ' .$icon . '</span>';
+                $html.= $icon;
 
-                $h4 = '<h4 class="'.$styleClasses.'">';
-                $html = "</h4>". $span;
-                if(!is_null($badgeCount)) $html .= '<span class="px-1.5">'. $badgeCount. '</span>';
-                if(!is_null($generalBadge)) $html .= '<span class="px-1.5">'. $generalBadge. '</span>';
-                if(!is_null($templateBadge)) $html .= '<span class="px-1.5">'. $templateBadge. '</span>';
-                $html .= '<span class="px-1.5">' .$icon . '</span>'. $h4 . $name . " </h4></span><h4>";
+                //Name
+                $nameStyle = 'class="text-sm font-medium ext-gray-950 dark:text-white truncate select-none"';
+                $name = $type->editModeName($state);
+                $html.= '<h4'.$nameStyle.'>' . $name . '</h4>';
 
-                 return  new HtmlString($html);
+                //flex Body
+                $html=  '<span  class="cursor-pointer flex">'.$html . '</span>';
+
+                //Close existing heading and after that reopen it
+                $html=  '</h4>'.$html . '<h4>';
+                return  new HtmlString($html);
                }
             )
 
