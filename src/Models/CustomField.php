@@ -11,21 +11,25 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 
 /**
- * @property int|null general_field_id
- * @property int  custom_form_id
+ * @property int|null $general_field_id
+ * @property int|null $template_id
+ * @property int  $custom_form_id
  * @property bool $required
  * @property bool $is_active
  * @property int $form_position
  * @property int|null $layout_end_position
  *
- * @property Collection|null allCustomFieldsInLayout
- * @property Collection customOptions
- * @property Collection fieldRules
+ * @property Collection|null $allCustomFieldsInLayout
+ * @property Collection $customOptions
+ * @property Collection $fieldRules
+ * @property Collection $answers
+ * @property Collection $customFieldInLayout
  *
- * @property string|null identify_key
- * @property array options
+ * @property string|null $identify_key
+ * @property array $options
  *
- * @property CustomForm customForm
+ * @property CustomForm $customForm
+ * @property CustomForm|null $template
  * @property GeneralField|null $generalField
 */
 
@@ -50,17 +54,22 @@ class CustomField extends ACustomField
         'form_position',
         'layout_end_position',
         'identify_key',
+        'template_id',
     ];
 
     protected $casts = [
         "options" => "array",
     ];
 
+
+
     protected static function booted() {
         parent::booted();
         self::creating(function (CustomField $field){#
             //Set identifier key to on other
-            if(is_null($field->identify_key) && is_null($field->general_field_id)) $field->identify_key = uniqid();
+            if(is_null($field->identify_key) && !$field->isGeneralField() ) {
+                $field->identify_key = uniqid();
+            }
             return $field;
         });
     }
@@ -75,6 +84,7 @@ class CustomField extends ACustomField
         unset($output["updated_at"]);
         return $output; //ToDo Merge Options (Or overwrite)
     }
+
 
     /**
      * @return array there are the stat from this Field and the Stats from the GeneralField
@@ -93,6 +103,26 @@ class CustomField extends ACustomField
         return $this->getInheritStateFromArrays($this->getOriginal(), $generalFieldArray);
     }
 
+
+    //Custom Form
+    public function customForm(): BelongsTo {
+        return $this->belongsTo(CustomForm::class);
+    }
+    public static function cached(mixed $custom_field_id): ?CustomField{
+        return Cache::remember("custom_field-" .$custom_field_id, config('ffhs_custom_forms.cache_duration'), fn()=>CustomField::query()->firstWhere("id", $custom_field_id));
+    }
+    public static function cachedAllInForm(int $formId): Collection{
+        return Cache::remember("custom_field-form_id" .$formId, config('ffhs_custom_forms.cache_duration'), fn()=>CustomForm::cached($formId)->cachedFields());
+    }
+
+
+    //Options
+    public function customOptions (): BelongsToMany {
+        return $this->belongsToMany(CustomOption::class, "option_custom_field");
+    }
+
+
+    //GeneralField
     public function isGeneralField():bool{
         return !is_null($this->general_field_id);
     }
@@ -105,28 +135,27 @@ class CustomField extends ACustomField
         return !is_null($this->general_field_id);
     }
 
-    public function customForm(): BelongsTo {
-        return $this->belongsTo(CustomForm::class);
-    }
-
     public function generalField(): BelongsTo
     {
         return $this->belongsTo(GeneralField::class);
     }
-
-    public function customOptions (): BelongsToMany {
-        return $this->belongsToMany(CustomOption::class, "option_custom_field");
+    public function answers(): HasMany
+    {
+        return $this->hasMany(CustomFieldAnswer::class);
     }
 
 
-    public static function cached(mixed $custom_field_id): ?CustomField{
-        return Cache::remember("custom_field-" .$custom_field_id, config('ffhs_custom_forms.cache_duration'), fn()=>CustomField::query()->firstWhere("id", $custom_field_id));
+    //Template
+    public function isTemplate(): bool {
+        return !empty($this->template_id);
+    }
+    public function template(): BelongsTo {
+        return $this->belongsTo(CustomForm::class, "template_id");
     }
 
-    public static function cachedAllInForm(int $formId): Collection{
-        return Cache::remember("custom_field-form_id" .$formId, config('ffhs_custom_forms.cache_duration'), fn()=>CustomField::query()->where("custom_form_id", $formId)->get());
-    }
 
+
+    //Layout
     public function allCustomFieldsInLayout(): HasMany {
         if(!($this->getType() instanceof CustomLayoutType))
             return $this->hasMany(CustomField::class, "custom_form_id","custom_form_id")

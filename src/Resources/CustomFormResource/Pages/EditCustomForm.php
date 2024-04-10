@@ -2,7 +2,7 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormResource\Pages;
 
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Form\CustomFormEditForm;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\CustomFormEditForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormResource;
 use Filament\Actions;
 use Filament\Forms\Components\Section;
@@ -20,13 +20,6 @@ class EditCustomForm extends EditRecord
                     Section::make()
                         ->schema(CustomFormEditForm::formSchema())
                         ->columns(3),
-
-                   /* \Filament\Forms\Components\Actions::make([ //ToDo remove
-                         Action::make("test1")
-                             ->modalWidth('7xl')
-                             ->form(fn($record)=>CustomFormRender::generateFormSchema($record,"default"))
-                             ->action(fn()=> dd("??"))
-                    ])*/
                 ]
             );
     }

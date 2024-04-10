@@ -1,6 +1,6 @@
 <?php
 
-namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Form\Extra;
+namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\CustomFormEditForm;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldUtils;
@@ -18,7 +18,7 @@ use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Support\Enums\MaxWidth;
 
-class CustomFieldRuleEditForm
+class EditCustomFieldRule
 {
 
     public static function getRuleComponent(CustomForm $customForm, CustomFieldType $type): Component {
@@ -175,7 +175,7 @@ class CustomFieldRuleEditForm
         return $anchors;
     }
 
-    public static function mutateRuleDatasOnLoad(array $data, CustomForm $customForm): array {
+    public static function mutateRuleDataOnLoad(array $data, CustomForm $customForm): array {
         $data["rules"] = [];
         /**@var CustomField $customField*/
         $customField = $customForm->customFields->where("id",$data["id"])->first();

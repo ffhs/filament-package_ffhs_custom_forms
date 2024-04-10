@@ -1,4 +1,4 @@
-# 00 Instalation
+# 00 Installation
 ## Registrieren des PAcketes in AdminPanelProvider
 Fügen Sie das Plugin zu einem Panel hinzu, indem Sie die Plugin-Klasse instanziieren (\app\Providers\Filament\AdminPanelProvider.php) und sie an die plugin()-Methode der Konfiguration übergeben:
 ```php  
@@ -21,6 +21,7 @@ php artisan filament-package_ffhs_custom_forms:install
 <br>
 
 # 01 Formulararten (DynamicFormConfiguration)
+
 
 ## Erstellen einer neuen Formularart
 ### Schritt 1: Konfiguration erstellen
@@ -131,15 +132,13 @@ public static function anchorRuleType(): array{
     ]
 }
 ```
+</br>
 
-<br>
+# 02 CustomForm Möglichkeiten zur Einbindung ToDo
 
-# 02 CustomForm einbindungs Möglichkeiten
-<br>
-//ToDo
+</br>
 
 # 03 CustomFieldType
-
 ## Neuer Feldtypen erstellen
 ### Schritt 1: Feldtyp Klasse erstellen
 
@@ -220,13 +219,30 @@ public static function getInfolistComponent(CustomFieldType $type, CustomFieldAn
 2. Füge die `DynamicFormConfiguration` bei `forms` hinzu
 ```php
 return [  
-    "custom_field_types" => [  
+    'custom_field_types' => [
 	LocationSelectorType:class,
 	...
     ],  
+      
+     'selectable_field_types' => [  
+	LocationSelectorType:class,
+	...
+     ],  
+     
+     'selectable_general_field_types'=>[ 
+	LocationSelectorType:class,
+	...
+     ],  
+
 ];
 ```
-</br>
+- `custom_field_types`
+    - Allgemeine Registration, hier müssen alle Type eingetragen werden
+- `selectable_field_types`
+    - Die hier eingetragenen Typen, können im Formular Editor hinzugefügt werden.
+- `selectable_general_field_types``
+    - Die hier eingetragenen Typen, können als Typen für die generellen Felder gebraucht werden.
+      </br>
 
 ### Schritt 4: Translation
 Der Feldtypen benötigt noch einen übersetzen Namen
@@ -436,16 +452,6 @@ class LocationSelectorType extends CustomFieldType
     - `extraOptionsAfterBasic()`
       </br>
 
-## Andere Methoden zum überschreiben
-- `prepareSaveFieldData(mixed $data): ?array`
-- `prepareLoadFieldData(array $data): mixed`
-- `overwrittenRules():?array`
-    - Überschreiben von den RuleType (Schaue 05 Regel und Anker)
-- `overwrittenAnchorRules():?array`
-    - Überschreiben von den AnchorRuleType (Schaue 05 Regel und Anker)
-
-</br>
-
 ## Feldtypen mit Auswahloptionen (CustomOption's)
 
 ```php
@@ -542,6 +548,89 @@ class SectionTypeView implements FieldTypeView
     - In dem Parameter `"rendered"` sind die weiteren Formfelder bzw. die Infolistfelder drinnen.
 - `$parameter["customFieldData"]`
     - In dem Parameter `"customFieldData"` sind die Rohdaten der `CustomField`'s enthalten.
+      </br>
+
+## Anpassen des Repeaters in dem Formular Editor
+
+### Item-Label
+- Das Item-Label kann mit `nameFormEditor` und `nameBeforeIconFormEditor` angepasst werden.
+    - `$state` sind die Daten des `CustomFields`
+- `nameFormEditor` Ist für den Namen und das nach dem Namen folgende angedacht
+- `nameBeforeIconFormEditor` Ist für Badge's angedacht
+```php 
+class LocationSelectorType extends CustomFieldType   
+{
+	...
+	public function nameFormEditor(array $state):string {  
+	    return $state["name_de"] . " Something very special";  
+	}  
+	  
+	public function nameBeforeIconFormEditor(array $state):string {  
+	    $newBadge = new HtmlBadge("Neuer Badge", Color::rgb("rgb(34, 135, 0)"));
+	    return parent::nameBeforeIconFormEditor() . $newBadge;  
+	}
+}
+```
+
+### Funktionen
+- Die im Repeater angezeigten Item-Funktionen angepasst werden.
+#### Aufbau
+```php 
+class LocationSelectorType extends CustomFieldType   
+{
+	public function repeaterFunctions(): array {
+		return [
+			RepeaterFieldAction::class => function(CustomForm $form, Get $get, array $state, array $arguments):bool {  
+			    $customField = $state[$arguments["item"]];
+			    return true;
+			} 
+		];
+	}
+}
+```
+- In den `RepeaterFieldAction` sind die Actions Gespeichert.
+- Die Closure-Funktion gibt einen boolean zurück die entscheidet, ob die Action angezeigt werden soll. (ACHTUNG: Die Funktion gilt für jedes Feld und sit nicht beschränkt auf den Typen)
+
+#### Standard Type Closure
+- Wie anschliessend dargestellt, kann man die Action auf den aktuellen typen begrenzen, ohne eine eigene Methode zu schreiben
+```php 
+class LocationSelectorType extends CustomFieldType   
+{
+	public function repeaterFunctions(): array {
+		return [
+			EditAction::class => EditAction::getDefaultTypeClosure($this::getFieldIdentifier())
+		];
+	}
+}
+```
+
+#### RepeaterFieldAction's
+```php
+class MyRepeaterFieldAction extends RepeaterFieldAction  
+{  
+  
+	public function getAction(CustomForm $record, array $typeClosers): Action {  
+	   return Action::make('edit')  
+			->action(fn() => dd("somme action"))   
+		     ->visible($this->isVisibleClosure($record,$typeClosers)) //<===============
+	}  
+}
+```
+- `array $typeClosers` Hier sind alle Closure-Funktionen hinterlegt.
+- Am einfachsten benutzen Sie die vordefinierte `isVisibleClousure` Funktion um den benötigten Closure zu erhalten
+
+
+## Andere Methoden zum Überschreiben
+- `prepareSaveFieldData(mixed $data): ?array`
+- `prepareLoadFieldData(array $data): mixed`
+- `overwrittenRules():?array`
+    - Überschreiben von den RuleType (Schaue __05 Regel und Anker__)
+- `overwrittenAnchorRules():?array`
+    - Überschreiben von den AnchorRuleType (Schaue __05 Regel und Anker__)
+- `afterEditFieldSave(CustomField $field, array $rawData):void`
+- `afterEditFieldDelete(CustomField $record):void`
+- `afterAnswereFieldSave(CustomFieldAnswer $field, array $rawData, array $formData):void`
+- `mutateOnTemplateDissolve(array $data):array`
 
 # 04 ViewModes
 ## Erklärung
@@ -693,7 +782,7 @@ class CourseApplications extends DynamicFormConfiguration
 	}
 }
 ```
-<br>
+</br>
 
 # 05 Regeln und Anker (FieldRule)
 ## Erklärung
@@ -736,6 +825,8 @@ class MyRuleAnchorType extends FieldRuleAnchorType
         - Verändern der Daten beim Speichern in den Edit Mode (Dort wo das Formular bearbeitet werden kann)
     - `mutateRenderParameter(array $parameter, CustomField $customField, FieldRule $rule): array`
         - Verändere die Parameter welche den Felder beim Rendern mitgegeben werden
+    - `mutateOnTemplateDissolve(array $data, FieldRule $originalRule, CustomField $originalField):arra`
+        - //ToDo
           </br>
 
 ### Schritt 2 Registrieren
@@ -795,6 +886,8 @@ class IsMyRuleType extends FieldRuleType
     - `afterAnswerSave( FieldRule $rule, CustomFieldAnswer $answer):void`
     - `mutateRenderParameter(array $parameter, CustomField $customField, FieldRule $rule): array`
         - Verändere die Parameter welche den Felder beim Rendern mitgegeben werden
+    - `mutateOnTemplateDissolve(array $data, FieldRule $originalRule, CustomField $originalField):arra`
+        - //ToDo
           </br>
 
 ### Schritt 2 Registrieren
@@ -810,5 +903,12 @@ return [
 ```
 </br>
 
-
-
+# 06 Benutzer und UI ToDo
+# Formulare
+##   Formulare Erstellen
+##   Bearbeiten
+##   Neues Formular zum ausfüllen
+##   Ausfüllen
+#  Generelle Felder
+# Templates
+# Regeln

@@ -3,14 +3,24 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType;
 
 
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\CustomLayoutType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\RepeaterFieldAction\Actions\EditAction;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\RepeaterFieldAction\Actions\PullInLayoutAction;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\RepeaterFieldAction\Actions\PullOutLayoutAction;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\RepeaterFieldAction\RepeaterFieldAction;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\TypeOption;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\CustomFormEditForm\EditCustomFormFieldFunctions;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\HtmlComponents\HtmlBadge;
 use Ffhs\FilamentPackageFfhsCustomForms\FormConfiguration\DynamicFormConfiguration;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Filament\Forms\Components\Component;
+use Filament\Forms\Get;
+use Filament\Support\Colors\Color;
 
-abstract class CustomFieldType extends CustomFieldTypeMethods
+abstract class CustomFieldType
 {
 
     /*
@@ -23,12 +33,19 @@ abstract class CustomFieldType extends CustomFieldTypeMethods
         return $output;
     }
 
-    public static function getGeneralFieldTypes():array{
+    public static function getSelectableGeneralFieldTypes():array{
         $output = [];
-        foreach(config("ffhs_custom_forms.general_field_types") as $typeClass)
+        foreach(config("ffhs_custom_forms.selectable_general_field_types") as $typeClass)
             $output[$typeClass::getFieldIdentifier()]= $typeClass;
         return $output;
     }
+    public static function getSelectableFieldTypes():array{
+        $output = [];
+        foreach(config("ffhs_custom_forms.selectable_field_types") as $typeClass)
+            $output[$typeClass::getFieldIdentifier()]= $typeClass;
+        return $output;
+    }
+
 
     public static function getTypeClassFromName(string $typeName): ?string {
         $types = self::getAllTypes();
@@ -41,8 +58,6 @@ abstract class CustomFieldType extends CustomFieldTypeMethods
         if(is_null($class)) return null;
         return new $class();
     }
-
-
 
 
     public function getFormComponent(CustomField $record, CustomForm $form, string $viewMode = "default", array $parameter = []): Component { //ToDo Remove Parameters?
@@ -135,7 +150,104 @@ abstract class CustomFieldType extends CustomFieldTypeMethods
         return $defaults;
     }
 
-    public function doAfterFieldSave(CustomField $field, array $rawData):void {
+
+
+
+    /*
+     * User Stuff
+     */
+
+    public static abstract function getFieldIdentifier():String;
+    public abstract function viewModes():array;
+    public abstract function icon():String;
+
+
+
+    public function prepareSaveFieldData(mixed $data): ?array{
+        if(is_null($data)) return null;
+        return ["saved"=> $data];
+    }
+    public function prepareLoadFieldData(array $data): mixed{
+        if(!array_key_exists("saved",$data) || is_null($data["saved"])) return null;
+        return $data["saved"];
+    }
+
+    public function getTranslatedName():String{
+        return __("custom_forms.types." . $this::getFieldIdentifier());
+    }
+
+    public function getExtraTypeOptions():array{
+        return [];
+    }
+    public function getExtraGeneralTypeOptions():array{
+        return [];
+    }
+
+    //ToDo Mutate answerers (Save,  Create)
+    public function canBeDeactivate():bool {
+        return true;
+    }
+    public function canBeRequired():bool {
+        return true;
+    }
+
+
+    // null means that it isn't overwritten
+    public function overwrittenRules():?array { //ToDo
+        return null;
+    }
+
+    // null means that it isn't overwritten
+    public function overwrittenAnchorRules():?array { //ToDo
+        return null;
+    }
+
+
+
+    public function afterEditFieldSave(CustomField $field, array $rawData):void {
 
     }
+    public function afterEditFieldDelete(CustomField $field):void {
+    }
+
+
+    public function afterAnswerFieldSave(CustomFieldAnswer $field, mixed $rawData, array $formData):void {
+
+    }
+
+    public function mutateOnTemplateDissolve(array $data, CustomField $original):array {
+        return $data;
+    }
+
+
+    public function nameFormEditor(array $state): string|null {
+        if(empty($state["general_field_id"])) return $state["name_de"];//ToDo Translate;
+        $genField = GeneralField::cached($state["general_field_id"]);
+        return $genField->name_de; //ToDo Translate;
+    }
+
+    public function nameBeforeIconFormEditor(array $state):string|null {
+        if(empty($state["general_field_id"])) return '';
+        return new HtmlBadge("Gen", Color::rgb("rgb(43, 164, 204)"));
+    }
+
+
+    public function repeaterFunctions():array{
+        return [
+            PullInLayoutAction::class => function (CustomForm $record, Get $get, array $state, array $arguments):bool {
+                $itemIndex = $arguments["item"];
+                $itemIndexPostion = PullInLayoutAction::getKeyPosition($itemIndex, $state);
+                if ($itemIndexPostion == 0) return false;
+                $upperCustomFieldData = $state[array_keys($state)[$itemIndexPostion - 1]];
+                $type = EditCustomFormFieldFunctions::getFieldTypeFromRawDate($upperCustomFieldData);
+                return $type instanceof CustomLayoutType;
+            },
+            PullOutLayoutAction::class=> function (CustomForm $record, Get $get,array $state, array $arguments):bool {
+                return !is_null($get("../../custom_fields"));
+            },
+            EditAction::class => RepeaterFieldAction::getDefaultTypeClosure($this),
+        ];
+    }
+
+
 }

@@ -21,9 +21,13 @@ return new class () extends Migration {
             $table->foreignId("general_field_id")->nullable()
                 ->constrained()->references('id')->on('general_fields')->cascadeOnDelete();
 
+            //Template
+            $table->foreignId("template_id")->nullable()
+                ->constrained()->references('id')->on('custom_forms')->cascadeOnDelete();
+
 
             //That doesn't can be null if general_field_id are null
-            $table->string('identify_key')->nullable()->unique();
+            $table->string('identify_key')->nullable();
 
 
             //FieldOptions
@@ -39,6 +43,7 @@ return new class () extends Migration {
             $table->boolean("is_active")->default(true);
 
 
+            $table->unique(['identify_key', 'custom_form_id']);
             $table->timestamps();
         });
     }

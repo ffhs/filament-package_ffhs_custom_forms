@@ -67,5 +67,8 @@ abstract class FieldRuleAnchorType
     }
 
 
-
+    public function mutateOnTemplateDissolve(array $data, FieldRule $originalRule, CustomField $originalField):array {
+        unset($data["id"]);
+        return $data;
+    }
 }

@@ -7,6 +7,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Pages\CreateRecord;
+use Illuminate\Database\Query\Builder;
 
 class CreateCustomFormAnswer extends CreateRecord
 {
@@ -18,7 +19,7 @@ class CreateCustomFormAnswer extends CreateRecord
                 ->label("Name"), //ToDo Translate
             Select::make("custom_form_id")
                 ->label("Formular") //ToDo Translate
-                ->relationship("customForm","short_title")
+                ->relationship("customForm","short_title", fn( $query) => $query->where("is_template",false))
                 ->required(),
         ]);
     }

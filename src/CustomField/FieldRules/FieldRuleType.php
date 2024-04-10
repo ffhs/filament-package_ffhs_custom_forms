@@ -80,4 +80,9 @@ abstract class FieldRuleType
         return __("custom_forms.rules." . self::identifier());
     }
 
+    public function mutateOnTemplateDissolve(array $data, FieldRule $originalRule, CustomField $originalField):array {
+        unset($data["id"]);
+        return $data;
+    }
+
 }

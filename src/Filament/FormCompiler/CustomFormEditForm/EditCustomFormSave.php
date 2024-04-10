@@ -1,12 +1,12 @@
 <?php
 
-namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Form\Extra;
+namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\CustomFormEditForm;
 
 use Closure;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\CustomLayoutType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\TypeOption;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Form\CustomFormEditForm;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\CustomFormEditForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\FieldRule;
@@ -16,7 +16,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection;
 
-class CustomFormEditSave
+class EditCustomFormSave
 {
 
     private static function setArrayExistingRecordFromArrayData(Collection &$customFieldsOld, array $state,  array&$statedRecords): void {
@@ -45,7 +45,7 @@ class CustomFormEditSave
                 unset($itemData["custom_fields"]);
                 $itemData["layout_end_position"] = $itemOrder-1;
             }
-            else if(CustomFormEditForm::getFieldTypeFromRawDate($itemData) instanceof CustomLayoutType){
+            else if(EditCustomFormFieldFunctions::getFieldTypeFromRawDate($itemData) instanceof CustomLayoutType){
                 unset($itemData["custom_fields"]);
                 $itemData["layout_end_position"] = $itemOrder-1;
             }
@@ -78,10 +78,7 @@ class CustomFormEditSave
             $recordsToDelete[] = $keyToCheckForDeletion;
         }
 
-        $relationship
-            ->whereKey($recordsToDelete)
-            ->get()
-            ->each(static fn(Model $record) =>  $record->delete());
+
 
         $childComponentContainers = $component->getChildComponentContainers();
         foreach ($childComponentContainers as $itemKey => $item) {
@@ -91,10 +88,17 @@ class CustomFormEditSave
 
         self::saveCustomFieldFromData(1,$childComponentContainers,$customForm, $relationship,$statedRecords);
 
+        $relationship
+            ->whereKey($recordsToDelete)
+            ->get()
+            ->each(static function(CustomField $record){
+                $record->delete();
+                $record->getType()->afterEditFieldDelete($record);
+            });
     }
 
     private static function updateCustomField(CustomField &$customField,array $itemData): void {
-        $type = CustomFormEditForm::getFieldTypeFromRawDate($itemData);
+        $type = EditCustomFormFieldFunctions::getFieldTypeFromRawDate($itemData);
 
         $rawData = $itemData;
         $customField->fill($itemData);
@@ -103,7 +107,7 @@ class CustomFormEditSave
         //Check if something hase Change
         $customField->fill($customFieldData);
         if(!$customField->exists||$customField->isDirty()) $customField->save();
-        $type->doAfterFieldSave($customField, $rawData);
+        $type->afterEditFieldSave($customField, $rawData);
 
     }
 
@@ -121,7 +125,7 @@ class CustomFormEditSave
                 $requiredGeneralIDs = $requiredGeneralFieldForm
                     ->map(fn ($fieldForm) => $fieldForm->general_field_id);
 
-                $usedGeneralIDs =CustomFormEditForm::getUsedGeneralFieldIds($value);
+                $usedGeneralIDs =EditCustomFormFieldFunctions::getUsedGeneralFieldIds($value);
                 $notAddedRequiredFields = $requiredGeneralIDs
                     ->filter(fn($id)=> !in_array($id, $usedGeneralIDs));
 

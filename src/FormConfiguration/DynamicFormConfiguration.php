@@ -11,7 +11,7 @@ abstract class DynamicFormConfiguration
     public abstract static function displayName(): string;
 
     public  static function formFieldTypes():array{
-        return CustomFieldType::getAllTypes();
+        return CustomFieldType::getSelectableFieldTypes();
     }
 
     public static function ruleTypes(): array{
@@ -45,8 +45,5 @@ abstract class DynamicFormConfiguration
     public final static function getFormConfigurationClass(string $custom_form_identifier):String {
         return collect(config("ffhs_custom_forms.forms"))->where(fn(string $class)=> $class::identifier() == $custom_form_identifier)->first();
     }
-
-
-
 
 }

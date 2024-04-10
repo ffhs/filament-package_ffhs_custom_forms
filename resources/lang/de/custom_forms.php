@@ -16,6 +16,7 @@ return [
             'forms'=> 'Formulare'
         ],
         'custom_form_answer'=> "Ausgefüllte Formulare",
+        "templates"=> "Templates"
     ],
 
     "fields" =>[
@@ -70,7 +71,8 @@ return [
         'custom_form_identifier'=> [
             'display_name' => "Formulartype Name",
             'raw_name' => "Formulartype Identifier"
-        ]
+        ],
+        'template'=> "Template"
     ]
 
 ];
