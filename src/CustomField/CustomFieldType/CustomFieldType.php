@@ -207,7 +207,7 @@ abstract class CustomFieldType
     public function afterEditFieldSave(CustomField $field, array $rawData):void {
 
     }
-    public function afterEditFieldDelete(CustomField $record):void {
+    public function afterEditFieldDelete(CustomField $field):void {
     }
 
 

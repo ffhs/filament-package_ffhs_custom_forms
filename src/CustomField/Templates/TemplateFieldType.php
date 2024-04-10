@@ -2,6 +2,7 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\Templates;
 
+use Closure;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\RepeaterFieldAction\Actions\EditAction;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\RepeaterFieldAction\Actions\TemplateDissolveAction;
@@ -16,6 +17,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Filament\Forms\Get;
 use Filament\Support\Colors\Color;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Blade;
 
 final class TemplateFieldType extends CustomFieldType
@@ -82,28 +84,46 @@ final class TemplateFieldType extends CustomFieldType
         CustomFormRender::saveHelperWithoutPreparation($formData, $customFieldsIdentify, $fieldAnswersIdentify, $formAnswerer);
     }
 
-    public function afterEditFieldDelete(CustomField $record):void {
-        $templateFields = $record->template->customFields;
-        $formFields = $record->customForm->customFields;
-        $record->customForm->customFormAnswers->each(function (CustomFormAnswer $formAnswer) use ($formFields, $record, $templateFields) {
-            $formAnswer->customFieldAnswers()
-                ->whereIn("custom_field_id",$record->template->customFields()->select("id"))
-                ->each(function(CustomFieldAnswer $fieldAnswer) use ($templateFields, $formFields) {
-                    $templateField = $templateFields->where("id", $fieldAnswer->custom_field_id)->first();
-                    /**@var CustomField $templateField*/
-                    if(!$templateField->isGeneralField()){
-                        $identifier = $templateField->identify_key;
-                        $newField = $formFields->where("identify_key", $identifier)->first();
-                    }
-                    else{
-                        $genField = $templateField->general_field_id;
-                        $newField = $formFields->where("general_field_id", $genField)->first();
-                    }
-                    if(is_null($newField)) return;
-                    $fieldAnswer->custom_field_id = $newField->id;
-                    $fieldAnswer->save();
-                });
+    public function afterEditFieldDelete(CustomField $field):void {
+        $templateFields = $field->template->customFields;
+        $formFields = $field->customForm->customFields;
+        $field->customForm->customFormAnswers->each(function (CustomFormAnswer $formAnswer) use ($formFields, $field, $templateFields) {
+            $formAnswer->customFieldAnswers
+                ->whereIn("custom_field_id",$templateFields->pluck("id"))
+                ->each($this->getFieldTransferClosure($formFields,  $templateFields));
         });
+    }
+
+    public function afterEditFieldSave(CustomField $field, array $rawData): void {
+        $templateFields = $field->template->customFields;
+        $formFields = $field->customForm->customFields;
+
+        $field->customForm->customFormAnswers->each(function (CustomFormAnswer $formAnswer) use ($formFields, $field, $templateFields) {
+            $templateIdentifiers = $templateFields->pluck("identify_key");
+            $formFieldIds = $formFields->whereIn("identify_key",$templateIdentifiers)->pluck("id");
+            $formAnswer->customFieldAnswers
+                ->whereIn("custom_field_id",$formFieldIds)
+                ->each($this->getFieldTransferClosure($templateFields, $formFields));
+        });
+    }
+
+
+    function getFieldTransferClosure(Collection $newFields, Collection $originalFields): Closure {
+        return function (CustomFieldAnswer $fieldAnswer) use ($newFields, $originalFields):void {
+            /**@var CustomField $oldField */
+            $oldField = $originalFields->where("id", $fieldAnswer->custom_field_id)->first();
+            if(is_null($oldField)) return;
+
+
+            $identifier = $oldField->getInheritState()["identify_key"];
+            $newField = $newFields
+                ->filter(fn(CustomField $customField) => $customField->getInheritState()["identify_key"]==$identifier)
+                ->first();
+
+            if (is_null($newField)) return;
+            $fieldAnswer->custom_field_id = $newField->id;
+            $fieldAnswer->save();
+        };
     }
 
 
