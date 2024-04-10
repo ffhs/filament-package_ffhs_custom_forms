@@ -18,7 +18,7 @@ class TemplateDissolveAction extends RepeaterFieldAction
     //CustomFieldAnswerer CustomField id changing is handelt in TemplateFieldType.class on afterEditFieldDelete()
     public function getAction(CustomForm $record, array $typeClosers): Action {
         return Action::make('dissolve')
-            ->visible(fn($get,array $state, array $arguments)=> $this->isVisible($record,$get,$typeClosers,$state,$arguments))
+            ->visible($this->isVisibleClosure($record,$typeClosers))
             ->closeModalByClickingAway(false)
             ->icon('carbon-sync-settings')
             ->color(Color::hex("#de9310"))

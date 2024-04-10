@@ -18,6 +18,10 @@ abstract class RepeaterFieldAction
         return false;
     }
 
+    protected function isVisibleClosure(CustomForm $record, array $typeClosers): Closure {
+        return fn($get, array $state, array $arguments)=> $this->isVisible($record,$get,$typeClosers,$state,$arguments);
+    }
+
 
     public static function getDefaultTypeClosure(CustomFieldType $type): Closure {
         return function (CustomForm $form,Get $get, $state,$arguments) use ($type):bool {

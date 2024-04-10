@@ -18,11 +18,10 @@ use Filament\Support\Colors\Color;
 class EditAction extends RepeaterFieldAction
 {
 
-    //CustomFieldAnswerer CustomField id changing is handelt in TemplateFieldType.class on afterEditFieldDelete()
     public function getAction(CustomForm $record, array $typeClosers): Action {
         return Action::make('edit')
             ->action(fn($get, $set, $data, $arguments) => EditCustomFormFieldFunctions::setCustomFieldInRepeater($data, $get, $set, $arguments))
-            ->visible(fn($get, array $state, array $arguments)=> $this->isVisible($record,$get,$typeClosers,$state,$arguments))
+            ->visible($this->isVisibleClosure($record,$typeClosers))
             ->mutateFormDataUsing(fn(Action $action)=> EditCustomFieldAction::getRawStateActionForm($action))
             ->fillForm(fn($state, $arguments) => $state[$arguments["item"]])
             ->closeModalByClickingAway(false)

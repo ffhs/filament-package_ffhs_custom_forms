@@ -56,6 +56,7 @@ final class TemplateFieldType extends CustomFieldType
         return new HtmlBadge("Template", Color::rgb("rgb(34, 135, 0)"));
     }
 
+
     public function afterAnswerFieldSave(CustomFieldAnswer $field, mixed $rawData, array $formData): void {
         $templateId = $field->customField->template_id;
         $template = CustomForm::cached($templateId);

@@ -15,7 +15,7 @@ class PullInLayoutAction extends RepeaterFieldAction
     //CustomFieldAnswerer CustomField id changing is handelt in TemplateFieldType.class on afterEditFieldDelete()
     public function getAction(CustomForm $record, array $typeClosers): Action {
         return Action::make("pullIn")
-            ->visible(fn($get,array $state, array $arguments)=> $this->isVisible($record,$get,$typeClosers,$state,$arguments))
+            ->visible($this->isVisibleClosure($record,$typeClosers))
             ->icon('heroicon-m-arrow-long-up')
             ->action(function (array $arguments, array $state, $set, Get $get) {
                 $itemIndex = $arguments["item"];
