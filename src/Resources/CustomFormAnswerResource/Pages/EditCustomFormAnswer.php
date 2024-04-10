@@ -3,7 +3,7 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormAnswerResource\Pages;
 
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormAnswerInput;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\CustomFormRender;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Render\CustomFormRender;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormAnswerResource;
 use Filament\Actions;
