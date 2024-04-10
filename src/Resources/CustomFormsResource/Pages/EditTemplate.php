@@ -13,6 +13,9 @@ use Filament\Forms\Components\Section;
 use Filament\Forms\Form;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Cache;
+use Throwable;
 
 class EditTemplate extends EditRecord
 {
@@ -39,9 +42,9 @@ class EditTemplate extends EditRecord
     }
 
 
-    protected function getGeneralFieldsOverwritten($livewire,CustomForm $record): Builder {
+    protected function getGeneralFieldsOverwritten($livewire,CustomForm $record): Builder { //ToDo Optimize Cache
         $customFields = array_values($livewire->getCachedForms())[0]->getRawState()["custom_fields"];
-        $usedGeneralIDs =EditCustomFormFieldFunctions::getUsedGeneralFieldIds($customFields);
+        $usedGeneralIDs = EditCustomFormFieldFunctions::getUsedGeneralFieldIds($customFields);
 
         $templateFieldsQuery = CustomField::query()
             ->where("template_id", $record->id);
@@ -51,24 +54,48 @@ class EditTemplate extends EditRecord
             ->whereIn("general_field_id",$usedGeneralIDs);
     }
 
-    protected function getSaveFormAction(): Action { //ToDo fixing
-        return parent::getSaveFormAction();
-          /*  ->modalSubmitActionLabel("Bestätigen") //ToDo Translate
-            ->action(fn()=> $this->save())
-            ->submit(null)
-            ->modalDescription("Es existieren generelle Felder in den Formularen,
-                welche dieses Template importiert haben.  Diese Felder werden Gelöscht und die
-                Existierenden Antworten auf das Template umgeleitet"//ToDo Translate
-            )
-            ->modalHeading(function ($livewire, $record){
-                $count = $this->getGeneralFieldsOverwritten($livewire,$record)->get()->count();
-                return "Achtung es werden ". $count . " Felder gelöscht!"; //ToDo Translate
-            })
-            ->requiresConfirmation(fn ($livewire, $record) =>
-                $this->getGeneralFieldsOverwritten($livewire,$record)->count() > 0 //WTF FILAMENT ToDo fixing
-            );*/
+    public function getGeneralFieldsOverwrittenCached($livewire, $record): Collection {
+        $customFields = array_values($livewire->getCachedForms())[0]->getRawState()["custom_fields"];
+        $key = hash('sha256', json_encode($customFields));
+        return Cache::remember("template_overwritten_gen_fields-".$key, 5,function() use ($record, $livewire) {
+            return $this->getGeneralFieldsOverwritten($livewire,$record)->get();
+        });
     }
 
+    public function showSaveConfirmation($livewire, $record):bool {
+        return $this->getGeneralFieldsOverwrittenCached($livewire, $record)->count() > 0;
+    }
+
+    protected function getSaveFormAction(): Action { //ToDo fixing
+        return parent::getSaveFormAction()
+            ->modalSubmitActionLabel("Bestätigen") //ToDo Translate
+            ->action(fn()=> $this->save())
+            ->submit(null)
+            ->requiresConfirmation(fn ($livewire, $record) => $this->showSaveConfirmation($livewire, $record))
+            ->modalDescription(function ($livewire,$record){
+                if(!$this->showSaveConfirmation($livewire, $record)) return null;
+
+                return "Es existieren gleiche generelle Felder in anderen Formularen,
+                welche dieses Template importiert haben. Diese Felder werden Gelöscht und die
+                existierenden Antworten übernommen"; //ToDo Translate
+            })
+            ->modalSubmitActionLabel(function ($livewire,$record): ?string {
+                return $this->showSaveConfirmation($livewire, $record)?
+                    __('filament-panels::resources/pages/edit-record.form.actions.save.label'):
+                    null;
+            })
+            ->modalHeading(function ($livewire, $record){
+                $count = $this->getGeneralFieldsOverwrittenCached($livewire,$record)->count();
+                return $this->showSaveConfirmation($livewire, $record)?
+                    "Achtung es werden ". $count . " Feld/er in den anderen Formularen gelöscht!": //ToDo Translate
+                    null;
+            });
+    }
+
+
+    /**
+     * @throws Throwable
+     */
     public function save(bool $shouldRedirect = true): void {
         parent::save($shouldRedirect);
 
