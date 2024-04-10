@@ -15,7 +15,9 @@ abstract class CustomLayoutType extends CustomFieldType
 
     public function nameBeforeIconFormEditor(array $state):string {
         $size = empty($state["custom_fields"])?0:sizeof($state["custom_fields"]);
-        return '<span x-on:click.stop="isCollapsed = !isCollapsed" class="cursor-pointer flex" >' .new HtmlBadge($size);
+        return '<span x-on:click.stop="isCollapsed = !isCollapsed" class="cursor-pointer flex" >'
+            . new HtmlBadge($size)
+            . parent::nameBeforeIconFormEditor($state);
     }
 
     public function nameFormEditor(array $state):string {
