@@ -89,7 +89,7 @@ class CustomForm extends Model
         return $query;
     }
 
-    public static function getTemplatesForFormType (string|DynamicFormConfiguration $formType):Collection {
+    public static function getTemplateTypesToAdd (string|DynamicFormConfiguration $formType):Collection {
         if($formType instanceof DynamicFormConfiguration)  $formType = $formType::identifier();
 
         $query=  CustomForm::query()

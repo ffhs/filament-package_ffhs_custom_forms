@@ -48,7 +48,7 @@ class EditCustomFieldAction
     private static function getTemplateAddAction(CustomForm $record): Group  {
 
         $templateOptions =
-            CustomForm::getTemplatesForFormType($record->getFormConfiguration())
+            CustomForm::getTemplateTypesToAdd($record->getFormConfiguration())
                 ->pluck("short_title", "id");
 
         return Group::make([
