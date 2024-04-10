@@ -6,15 +6,18 @@ use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\CustomFormEditForm
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\CustomFormEditForm\EditCustomFormFieldFunctions;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Ffhs\FilamentPackageFfhsCustomForms\Resources\TemplateResource;
 use Filament\Actions;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Form;
 use Filament\Resources\Pages\EditRecord;
+use Filament\Support\Enums\MaxWidth;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\HtmlString;
 use Throwable;
 
 class EditTemplate extends EditRecord
@@ -42,61 +45,187 @@ class EditTemplate extends EditRecord
     }
 
 
-    protected function getGeneralFieldsOverwritten($livewire,CustomForm $record): Builder { //ToDo Optimize Cache
+
+    protected function getSaveFormAction(): Action {
+        return parent::getSaveFormAction()
+            ->action(fn()=> $this->save())
+            ->submit(null)
+            ->requiresConfirmation(function ($livewire){
+                return $this->showSaveConfirmation($livewire) || $this->showCollideMessage($livewire);
+            })
+            ->modalWidth(MaxWidth::ExtraLarge)
+            ->modalSubmitAction(function ($action,$livewire){
+                if($this->showCollideMessage($livewire)) $action->hidden();
+                return $action;
+            })
+            ->modalSubmitActionLabel(function ($livewire): ?string {
+                return $this->showSaveConfirmation($livewire)?
+                    __('filament-panels::resources/pages/edit-record.form.actions.save.label'):
+                    null;
+            })
+            ->modalDescription(function ($livewire){
+                if($this->showCollideMessage($livewire)) return $this->collideMessageDescription($livewire);
+                if($this->showSaveConfirmation($livewire)) return $this->saveConfirmationDescription($livewire);
+                return null;
+            })
+            ->modalHeading(function ($livewire){
+                if($this->showCollideMessage($livewire)) return $this->collideMessageHeading($livewire);
+                if($this->showSaveConfirmation($livewire)) return $this->saveConfirmationHeading($livewire);
+                return null;
+            });
+    }
+
+
+    protected function getTemplateGeneralFieldCollisionQuery($livewire): Builder {
+        $customFields = array_values($livewire->getCachedForms())[0]->getRawState()["custom_fields"];
+
+        $templateFieldsQuery = CustomField::query()
+            ->where("template_id", $this->record->id);
+
+        $otherTemplatesQuery= CustomField::query()
+            ->whereIn("custom_form_id",$templateFieldsQuery->select("custom_form_id"))
+            ->whereNotNull("template_id")
+            ->whereNot("template_id",$this->record->id);
+
+        return CustomField::query()
+            ->whereIn("custom_form_id", $otherTemplatesQuery->select("template_id"))
+            ->whereIn("general_field_id",EditCustomFormFieldFunctions::getUsedGeneralFieldIds($customFields));
+    }
+
+    protected function cachedTemplateGeneralFieldCollision($livewire):Collection {
+        $customFields = array_values($livewire->getCachedForms())[0]->getRawState()["custom_fields"];
+        $key = hash('sha256', json_encode($customFields));
+        return Cache::remember("template_collide_gen_fields-".$key, 5,function() use ($livewire) {
+            return $this->getTemplateGeneralFieldCollisionQuery($livewire)->get();
+        });
+    }
+
+
+    //If one Form existing witch have a template and this template has the same GeneralFields
+    protected function showCollideMessage($livewire):bool {
+        return $this->cachedTemplateGeneralFieldCollision($livewire)->count() > 0;
+    }
+
+
+
+    protected function getGeneralFieldsOverwritten($livewire): Builder { //ToDo Optimize Cache
         $customFields = array_values($livewire->getCachedForms())[0]->getRawState()["custom_fields"];
         $usedGeneralIDs = EditCustomFormFieldFunctions::getUsedGeneralFieldIds($customFields);
 
         $templateFieldsQuery = CustomField::query()
-            ->where("template_id", $record->id);
+            ->where("template_id", $this->record->id);
 
         return CustomField::query()
             ->whereIn("custom_form_id",$templateFieldsQuery->select("custom_form_id"))
             ->whereIn("general_field_id",$usedGeneralIDs);
     }
 
-    public function getGeneralFieldsOverwrittenCached($livewire, $record): Collection {
+    protected function cachedGeneralFieldsOverwritten($livewire): Collection {
         $customFields = array_values($livewire->getCachedForms())[0]->getRawState()["custom_fields"];
         $key = hash('sha256', json_encode($customFields));
-        return Cache::remember("template_overwritten_gen_fields-".$key, 5,function() use ($record, $livewire) {
-            return $this->getGeneralFieldsOverwritten($livewire,$record)->get();
+        return Cache::remember("template_overwritten_gen_fields-".$key, 5,function() use ($livewire) {
+            return $this->getGeneralFieldsOverwritten($livewire)->get();
         });
     }
 
-    public function showSaveConfirmation($livewire, $record):bool {
-        return $this->getGeneralFieldsOverwrittenCached($livewire, $record)->count() > 0;
+    //If one Form existing witch have a template and this template has the same GeneralFields
+    protected function showSaveConfirmation($livewire):bool {
+        return $this->cachedGeneralFieldsOverwritten($livewire)->count() > 0;
     }
 
-    protected function getSaveFormAction(): Action { //ToDo fixing
-        return parent::getSaveFormAction()
-            ->modalSubmitActionLabel("Bestätigen") //ToDo Translate
-            ->action(fn()=> $this->save())
-            ->submit(null)
-            ->requiresConfirmation(fn ($livewire, $record) => $this->showSaveConfirmation($livewire, $record))
-            ->modalDescription(function ($livewire,$record){
-                if(!$this->showSaveConfirmation($livewire, $record)) return null;
 
-                return "Es existieren gleiche generelle Felder in anderen Formularen,
+    protected function getCollidedFormQuery($livewire): Builder {
+        $collidedFields = $this->cachedTemplateGeneralFieldCollision($livewire);
+        $collidedTemplates = [];
+        $collidedFields->each(function (CustomField $field) use (&$collidedTemplates){
+            $collidedTemplates[$field->custom_form_id] = $field->custom_form_id;
+        });
+
+        $collideTemplatesUsedFields = CustomField::query()->whereIn("template_id", $collidedTemplates);
+        $collidedFormsIds = CustomField::query()
+            ->whereIn("custom_form_id",$collideTemplatesUsedFields->select("custom_form_id"))
+            ->where("template_id", $this->record->id)
+            ->select("custom_form_id");
+
+        return CustomForm::query()->whereIn("id", $collidedFormsIds);
+    }
+
+
+
+
+    protected function saveConfirmationDescription($livewire): HtmlString {
+
+        $styleClasses = "class='fi-modal-description text-sm text-gray-500 dark:text-gray-400 mt-2'";
+        $generalFields= GeneralField::query()
+            ->whereIn("id",$this->cachedGeneralFieldsOverwritten($livewire)->select("general_field_id"))
+            ->select("name_de")
+            ->get()
+            ->pluck("name_de");  //ToDo Translate
+
+        $forms= CustomForm::query()
+            ->whereIn("id",$this->cachedGeneralFieldsOverwritten($livewire)->select("custom_form_id"))
+            ->select("short_title")
+            ->get()
+            ->pluck("short_title");
+
+        return
+            new HtmlString(
+                "Es existieren gleiche generelle Felder in anderen Formularen,
                 welche dieses Template importiert haben. Diese Felder werden Gelöscht und die
-                existierenden Antworten übernommen"; //ToDo Translate
-            })
-            ->modalSubmitActionLabel(function ($livewire,$record): ?string {
-                return $this->showSaveConfirmation($livewire, $record)?
-                    __('filament-panels::resources/pages/edit-record.form.actions.save.label'):
-                    null;
-            })
-            ->modalHeading(function ($livewire, $record){
-                $count = $this->getGeneralFieldsOverwrittenCached($livewire,$record)->count();
-                return $this->showSaveConfirmation($livewire, $record)?
-                    "Achtung es werden ". $count . " Feld/er in den anderen Formularen gelöscht!": //ToDo Translate
-                    null;
-            });
+                existierenden Antworten übernommen.
+                <ul>
+                    <li><p ".$styleClasses.">Folgende generelle Felder sind betroffen: " . $generalFields . "</p></li>
+                    <li><p ".$styleClasses.">Folgende Formulare sind betroffen: " . $forms. "</p></li>
+                </ul>"
+            ); //ToDo Translate
     }
+//
+    protected function collideMessageDescription($livewire): HtmlString {
+        $generalFields = GeneralField::query()
+            ->where("id",$this->getTemplateGeneralFieldCollisionQuery($livewire)->select("general_field_id"))
+            ->get()->pluck("name_de"); //ToDo Translate
+
+        $templates = CustomForm::query()
+            ->where("id", $this->getTemplateGeneralFieldCollisionQuery($livewire)->select("custom_form_id"))
+            ->get();
+
+        $collidedForms = $this->getCollidedFormQuery($livewire)->get();
+
+        $styleClasses = 'class="fi-modal-description text-sm text-gray-500 dark:text-gray-400 mt-2"';
+        return
+            new HtmlString("Es existieren Formulare, mit mehren Importierten Templates,
+            diese Templates haben überschneidende generelle Felder. Entfernen sie die überschneidende
+            generelle Felder oder lösen sie das Template in den anderen Formularen auf.
+            <ul>
+                <li><p ".$styleClasses.">Folgende generelle Felder sind betroffen: " . $generalFields . "</p></li>
+                <li><p ".$styleClasses.">Folgende Templates sind betroffen: " . $templates->pluck("short_title") . "</p></li>
+                <li><p ".$styleClasses.">Folgende Formulare sind betroffen: " . $collidedForms->pluck("short_title"). "</p></li>
+            </ul>"); //ToDo Translate
+    }
+
+
+
+
+    protected function saveConfirmationHeading($livewire): string {
+        $count = $this->cachedGeneralFieldsOverwritten($livewire)->count();
+        if($count == 1) return "Achtung es wird ein Feld in dem anderen Formular gelöscht!"; //ToDo Translate
+        return "Achtung es werden ". $count . " Felder in den anderen Formularen gelöscht!"; //ToDo Translate
+    }
+    protected function collideMessageHeading($livewire): string {
+        $collidedForms = $this->getCollidedFormQuery($livewire)->get();
+        return "Es gibt Kollisionen mit den Generellen Felder und anderen Templates ("
+            .$collidedForms->count().") "; //ToDo Translate
+    }
+
+
+
 
 
     /**
      * @throws Throwable
      */
     public function save(bool $shouldRedirect = true): void {
+
         parent::save($shouldRedirect);
 
         /*
