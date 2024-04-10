@@ -15,6 +15,55 @@ use Filament\Support\Colors\Color;
 class TemplateDissolveAction extends RepeaterFieldAction
 {
 
+
+    protected function cloneTemplateField(CustomField $field, CustomForm $targetForm, CustomForm $template):array {
+        $fieldData = $field->toArray();
+
+        //Mutate Field Data's
+        $type = $field->getType();
+
+        //Load OptionData now, because it needs the field id
+        $fieldData = EditCustomFieldForm::mutateOptionData($fieldData, $template);
+        $fieldData = EditCustomFieldRule::mutateRuleDataOnLoad($fieldData, $template);
+
+        $fieldData = $type->mutateOnTemplateDissolve($fieldData, $field);
+
+        $fieldData = self::unsetAttributesForClone($fieldData);
+        $fieldData["custom_form_id"] = $targetForm->id;
+
+        //Clone Ankers and Rules
+        $rules = $field->fieldRules;
+        $rulesCloned = [];
+        foreach ($fieldData["rules"] as $ruleData){
+
+            /**@var FieldRule $fieldRule*/
+            $fieldRule = $rules->where("id", $ruleData["id"])->first();
+
+            $ruleData = $fieldRule->toArray();
+
+            $ruleData = self::unsetAttributesForClone($ruleData);
+
+            $ruleData = $fieldRule->getAnchorType()->mutateOnTemplateDissolve($ruleData,$fieldRule,$field);
+            $ruleData = $fieldRule->getRuleType()->mutateOnTemplateDissolve($ruleData,$fieldRule,$field);
+
+            unset($ruleData["custom_field_id"]);
+
+            //Set for Repeaters
+            $rulesCloned[uniqid()] = $ruleData;
+        }
+        $fieldData["rules"] = $rulesCloned;
+
+        $endPos = $field->layout_end_position;
+
+        //LayoutFields
+        if(!is_null($endPos) && $endPos != 0 && $endPos != $field->form_position){
+            foreach ($field->customFieldInLayout as $innerField)
+                $fieldData["custom_fields"][uniqid()] = $this->cloneTemplateField($innerField, $targetForm, $template);
+        }
+
+        return $fieldData;
+    }
+
     //CustomFieldAnswerer CustomField id changing is handelt in TemplateFieldType.class on afterEditFieldDelete()
     public function getAction(CustomForm $record, array $typeClosers): Action {
         return Action::make('dissolve')
@@ -42,60 +91,18 @@ class TemplateDissolveAction extends RepeaterFieldAction
                 $fieldsBeforeTemplate = array_slice($customFields, 0, $keyLocation,true);
                 $fieldsAfterTemplate = array_diff_key($customFields, $fieldsBeforeTemplate);
 
-
                 //Remove the Template Field
                 unset($fieldsAfterTemplate[$repeaterKey]);
 
                 //Get Template Fields
                 $template = CustomForm::cached($templateID);
-                $templateFields = $template->customFields;
-                $templateFields = $templateFields->map(function (CustomField $field) use ($template, $record) {
+                $templateLayoutFields = $template->customFieldInLayout;
 
-
-                    //Clone Field
-                    $fieldData = $field->toArray();
-
-                    //Mutate Field Data's
-                    $type = $field->getType();
-
-                    //Load OptionData now, because it needs the field id
-                    $fieldData = EditCustomFieldForm::mutateOptionData($fieldData, $template);
-                    $fieldData = EditCustomFieldRule::mutateRuleDataOnLoad($fieldData, $template);
-
-                    $fieldData = $type->mutateOnTemplateDissolve($fieldData, $field);
-
-                    $fieldData = self::unsetAttributesForClone($fieldData);
-                    $fieldData["custom_form_id"] = $record->id;
-
-                    //Clone Ankers and Rules
-                    $rules = $field->fieldRules;
-                    $rulesCloned = [];
-                    foreach ($fieldData["rules"] as $ruleData){
-
-                        /**@var FieldRule $fieldRule*/
-                        $fieldRule = $rules->where("id", $ruleData["id"])->first();
-
-                        $ruleData = $fieldRule->toArray();
-
-                        $ruleData = self::unsetAttributesForClone($ruleData);
-
-                        $ruleData = $fieldRule->getAnchorType()->mutateOnTemplateDissolve($ruleData,$fieldRule,$field);
-                        $ruleData = $fieldRule->getRuleType()->mutateOnTemplateDissolve($ruleData,$fieldRule,$field);
-
-                        unset($ruleData["custom_field_id"]);
-
-                        //Set for Repeaters
-                        $rulesCloned[uniqid()] = $ruleData;
-                    }
-                    $fieldData["rules"] = $rulesCloned;
-
-                    return $fieldData;
-                })->toArray();
 
                 //Add unique Keys to the field's array
                 $middleFields = [];
-                foreach ($templateFields as $field){
-                    $middleFields[uniqid()] = $field;
+                foreach ($templateLayoutFields as $field){
+                    $middleFields[uniqid()] = $this->cloneTemplateField($field,$record,$template);
                 }
 
                 //Place the new fields there were the template was

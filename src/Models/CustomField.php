@@ -23,6 +23,7 @@ use Illuminate\Support\Facades\Cache;
  * @property Collection $customOptions
  * @property Collection $fieldRules
  * @property Collection $answers
+ * @property Collection $customFieldInLayout
  *
  * @property string|null $identify_key
  * @property array $options

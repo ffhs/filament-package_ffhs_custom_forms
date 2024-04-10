@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Cache;
  * @property Collection $customFields
  * @property Collection $generalFields
  * @property bool $is_template
+ * @property Collection $customFieldInLayout
  */
 class CustomForm extends Model
 {
