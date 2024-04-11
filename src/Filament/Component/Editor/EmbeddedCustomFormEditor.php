@@ -1,6 +1,6 @@
 <?php
 
-namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component;
+namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor;
 
 
 use Closure;
