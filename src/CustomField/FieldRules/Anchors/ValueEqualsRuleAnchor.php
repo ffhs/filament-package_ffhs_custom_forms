@@ -9,8 +9,6 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\CustomLayou
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomOption\CustomOptionType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\FieldRuleAnchorType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\HasAnchorPluginTranslate;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\CustomFormEditForm\EditCustomFieldForm;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\CustomFormEditForm\EditCustomFieldRule;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor\Helper\CustomFormEditorHelper;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor\Helper\CustomFormEditorMutationHelper;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
@@ -356,6 +354,7 @@ class ValueEqualsRuleAnchor extends FieldRuleAnchorType
         $targetField = $customForm->cachedFieldsWithTemplates()->where("identify_key",$target)->first();
         if(is_null($targetField)) {
             $genField = GeneralField::query()->where("identify_key",$target)->select("id")->first();
+            /**@var null|GeneralField $genField*/
             if(is_null($genField)) return false;
             $targetField = $customForm->customFields->where("general_field_id",$genField->id)->first();
         }

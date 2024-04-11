@@ -9,12 +9,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Filament\Forms\Components\Component;
 use Filament\Infolists\Components\IconEntry;
-use Filament\Infolists\Components\TextEntry;
-use Filament\Support\Colors\Color;
-use Filament\Support\Facades\FilamentColor;
 use Guava\FilamentIconPicker\Forms\IconPicker;
-use Illuminate\Support\Facades\Blade;
-use Illuminate\Support\HtmlString;
 
 class IconSelectView implements FieldTypeView
 {

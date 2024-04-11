@@ -4,11 +4,11 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor\Custo
 
 use Closure;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomFieldType;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor\UseComponentInjection;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Toggle;
 use Illuminate\Contracts\Support\Htmlable;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor\UseComponentInjection;
 
 class FieldModalOptionSection extends Section
 {
