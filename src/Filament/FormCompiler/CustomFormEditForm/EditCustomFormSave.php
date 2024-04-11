@@ -6,13 +6,12 @@ use Closure;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\CustomLayoutType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\TypeOption;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\CustomFormEditForm;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor\CustomFormEditorHelper;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\FieldRule;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralFieldForm;
 use Filament\Forms\Components\Repeater;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection;
 
@@ -45,7 +44,7 @@ class EditCustomFormSave
                 unset($itemData["custom_fields"]);
                 $itemData["layout_end_position"] = $itemOrder-1;
             }
-            else if(EditCustomFormFieldFunctions::getFieldTypeFromRawDate($itemData) instanceof CustomLayoutType){
+            else if(CustomFormEditorHelper::getFieldTypeFromRawDate($itemData) instanceof CustomLayoutType){
                 unset($itemData["custom_fields"]);
                 $itemData["layout_end_position"] = $itemOrder-1;
             }
@@ -98,7 +97,7 @@ class EditCustomFormSave
     }
 
     private static function updateCustomField(CustomField &$customField,array $itemData): void {
-        $type = EditCustomFormFieldFunctions::getFieldTypeFromRawDate($itemData);
+        $type = CustomFormEditorHelper::getFieldTypeFromRawDate($itemData);
 
         $rawData = $itemData;
         $customField->fill($itemData);
@@ -125,7 +124,7 @@ class EditCustomFormSave
                 $requiredGeneralIDs = $requiredGeneralFieldForm
                     ->map(fn ($fieldForm) => $fieldForm->general_field_id);
 
-                $usedGeneralIDs =EditCustomFormFieldFunctions::getUsedGeneralFieldIds($value);
+                $usedGeneralIDs =CustomFormEditorHelper::getUsedGeneralFieldIds($value);
                 $notAddedRequiredFields = $requiredGeneralIDs
                     ->filter(fn($id)=> !in_array($id, $usedGeneralIDs));
 

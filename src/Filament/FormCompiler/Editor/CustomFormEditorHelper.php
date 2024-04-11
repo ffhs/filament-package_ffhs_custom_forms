@@ -1,6 +1,6 @@
 <?php
 
-namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\CustomFormEditForm;
+namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\Templates\TemplateFieldType;
@@ -8,7 +8,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Filament\Forms\Get;
 
-class EditCustomFormFieldFunctions
+class CustomFormEditorHelper
 {
 
     public static function getFieldTypeFromRawDate(array $data): ?CustomFieldType {
@@ -66,12 +66,9 @@ class EditCustomFormFieldFunctions
         $set("custom_fields", $fields);
     }
 
-    public static function useTemplateUsedGeneralFields(int $templateId, Get $get): bool {
-        $templateGenIds = CustomForm::cached($templateId)->generalFields->pluck("id")->toArray();
-        $existingIds = EditCustomFormFieldFunctions::getUsedGeneralFieldIds($get("custom_fields"));
-        $commonValues = array_intersect($templateGenIds, $existingIds);
-
-        return !empty($commonValues);
+    public static function getRawStateForm($livewireComponent, $form):array {
+        //Get RawSate (yeah is possible)
+        return array_values($livewireComponent->getLivewire()->getCachedForms())[$form]->getRawState();
     }
 
 }

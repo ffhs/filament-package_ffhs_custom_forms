@@ -42,9 +42,4 @@ class EmbeddedCustomFormEditor extends Component implements CanEntangleWithSingu
         $this->columns(1);
     }
 
-
-
-
-
-
 }

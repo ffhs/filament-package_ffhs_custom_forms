@@ -1,6 +1,5 @@
 <?php
 
-
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\CheckboxListType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\CheckboxType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\DateTimeType;
@@ -20,6 +19,9 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\Type\DisabledRule
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\Type\HiddenRuleType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\Type\RequiredRuleType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\Templates\TemplateFieldType;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor\FieldAdder\CustomFieldAdder;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor\FieldAdder\GeneralFieldAdder;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor\FieldAdder\TemplateAdder;
 
 return [
 
@@ -44,6 +46,12 @@ return [
 
     'view_modes' => [
 
+    ],
+
+    'editor_field_adder' => [
+        GeneralFieldAdder::class,
+        TemplateAdder::class,
+        CustomFieldAdder::class
     ],
 
     "custom_field_types" => [

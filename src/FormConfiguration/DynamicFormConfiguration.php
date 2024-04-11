@@ -20,6 +20,9 @@ abstract class DynamicFormConfiguration
     public static function anchorRuleTypes(): array {
         return config("ffhs_custom_forms.field_rule_anchor_types");
     }
+    public static function editorFieldAdder() {
+        return config("ffhs_custom_forms.editor_field_adder");
+    }
 
     public static function displayViewMode():String {
         return self::displayMode();

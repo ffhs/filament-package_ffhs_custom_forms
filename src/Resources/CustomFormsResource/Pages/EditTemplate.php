@@ -3,10 +3,11 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormsResource\Pages;
 
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\CustomFormEditForm;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\CustomFormEditForm\EditCustomFormFieldFunctions;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor\CustomFormEditorHelper;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
+use Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormResource\Pages\EditCustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Resources\TemplateResource;
 use Filament\Actions;
 use Filament\Actions\Action;
@@ -20,30 +21,9 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\HtmlString;
 use Throwable;
 
-class EditTemplate extends EditRecord
+class EditTemplate extends EditCustomForm
 {
     protected static string $resource = TemplateResource::class;
-
-
-
-    public function form(Form $form): Form {
-        return $form
-            ->schema(
-                [
-                    Section::make()
-                        ->schema(CustomFormEditForm::formSchema())
-                        ->columns(3),
-                ]
-            );
-    }
-
-    protected function getHeaderActions(): array
-    {
-        return [
-            Actions\DeleteAction::make(),
-        ];
-    }
-
 
 
     protected function getSaveFormAction(): Action {
@@ -89,7 +69,7 @@ class EditTemplate extends EditRecord
 
         return CustomField::query()
             ->whereIn("custom_form_id", $otherTemplatesQuery->select("template_id"))
-            ->whereIn("general_field_id",EditCustomFormFieldFunctions::getUsedGeneralFieldIds($customFields));
+            ->whereIn("general_field_id",CustomFormEditorHelper::getUsedGeneralFieldIds($customFields));
     }
 
     protected function cachedTemplateGeneralFieldCollision($livewire):Collection {
@@ -110,7 +90,7 @@ class EditTemplate extends EditRecord
 
     protected function getGeneralFieldsOverwritten($livewire): Builder { //ToDo Optimize Cache
         $customFields = array_values($livewire->getCachedForms())[0]->getRawState()["custom_fields"];
-        $usedGeneralIDs = EditCustomFormFieldFunctions::getUsedGeneralFieldIds($customFields);
+        $usedGeneralIDs = CustomFormEditorHelper::getUsedGeneralFieldIds($customFields);
 
         $templateFieldsQuery = CustomField::query()
             ->where("template_id", $this->record->id);

@@ -11,7 +11,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\FieldRuleAnchorTy
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\HasAnchorPluginTranslate;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\CustomFormEditForm\EditCustomFieldForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\CustomFormEditForm\EditCustomFieldRule;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\CustomFormEditForm\EditCustomFormFieldFunctions;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor\CustomFormEditorHelper;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\FieldRule;
@@ -133,7 +133,7 @@ class ValueEqualsRuleAnchor extends FieldRuleAnchorType
 
             $isGeneralField = !empty($field["general_field_id"]);
             $isTemplate = !empty($field["template_id"]);
-            $type = EditCustomFormFieldFunctions::getFieldTypeFromRawDate($field);
+            $type = CustomFormEditorHelper::getFieldTypeFromRawDate($field);
 
             //Skip Layout Types
             if($type instanceof CustomLayoutType) continue;

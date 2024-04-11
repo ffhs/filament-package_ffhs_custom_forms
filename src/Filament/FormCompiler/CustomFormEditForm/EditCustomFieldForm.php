@@ -4,25 +4,15 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\CustomFormEd
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\TypeOption;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\CustomFormEditForm;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor\CustomFormEditorHelper;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralFieldForm;
-use Filament\Forms\Components\Actions;
-use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Group;
-use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Get;
-use Illuminate\Support\Facades\Blade;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\HtmlString;
 
 class EditCustomFieldForm
 {
@@ -43,7 +33,7 @@ class EditCustomFieldForm
     public static function getCustomFieldSchema(array $data, CustomForm $customForm):array{
 
         $isGeneral = array_key_exists("general_field_id",$data)&& !empty($data["general_field_id"]);
-        $type = EditCustomFormFieldFunctions::getFieldTypeFromRawDate($data);
+        $type = CustomFormEditorHelper::getFieldTypeFromRawDate($data);
         $columns = $isGeneral?1:2;
 
         return [
@@ -56,11 +46,11 @@ class EditCustomFieldForm
                         ->columnStart(1)
                         ->hidden($isGeneral)
                         ->tabs([
-                            self::getTranslationTab("de","Deutsch"),
-                            self::getTranslationTab("en","Englisch"),
+                            EditCustomFieldForm::getTranslationTab("de","Deutsch"),
+                            EditCustomFieldForm::getTranslationTab("en","Englisch"),
                         ]),
 
-                    self::getFieldOptionSection($type)
+                    EditCustomFieldForm::getFieldOptionSection($type)
                         ->columnSpan(1),
 
                     EditCustomFieldRule::getRuleComponent($customForm,$type)
@@ -95,7 +85,7 @@ class EditCustomFieldForm
     public static function mutateOptionData(array $data, CustomForm $customForm): array {
         if(!array_key_exists("options",$data) || is_null($data["options"])) $data["options"] = [];
 
-        $type = EditCustomFormFieldFunctions::getFieldTypeFromRawDate($data);
+        $type = CustomFormEditorHelper::getFieldTypeFromRawDate($data);
         $field = $customForm->customFields->where("id",$data["id"])->first();
         if($field == null) return $data;
 

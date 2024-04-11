@@ -9,7 +9,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\RepeaterFieldAction\Actions\
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\RepeaterFieldAction\Actions\PullOutLayoutAction;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\RepeaterFieldAction\RepeaterFieldAction;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\TypeOption;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\CustomFormEditForm\EditCustomFormFieldFunctions;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor\CustomFormEditorHelper;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\HtmlComponents\HtmlBadge;
 use Ffhs\FilamentPackageFfhsCustomForms\FormConfiguration\DynamicFormConfiguration;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
@@ -239,7 +239,7 @@ abstract class CustomFieldType
                 $itemIndexPostion = PullInLayoutAction::getKeyPosition($itemIndex, $state);
                 if ($itemIndexPostion == 0) return false;
                 $upperCustomFieldData = $state[array_keys($state)[$itemIndexPostion - 1]];
-                $type = EditCustomFormFieldFunctions::getFieldTypeFromRawDate($upperCustomFieldData);
+                $type = CustomFormEditorHelper::getFieldTypeFromRawDate($upperCustomFieldData);
                 return $type instanceof CustomLayoutType;
             },
             PullOutLayoutAction::class=> function (CustomForm $record, Get $get,array $state, array $arguments):bool {
