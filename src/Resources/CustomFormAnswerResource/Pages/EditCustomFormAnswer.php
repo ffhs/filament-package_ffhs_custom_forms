@@ -2,7 +2,7 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormAnswerResource\Pages;
 
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormAnswerInput;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\InfolistRender\CustomFormInfolist;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Render\CustomFormRender;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormAnswerResource;
@@ -44,7 +44,7 @@ class EditCustomFormAnswer extends EditRecord
     public function form(Form $form): Form {
         return $form
             ->schema([
-                CustomFormAnswerInput::make()
+                CustomFormInfolist::make()
                     ->autoViewMode()
                     ->columnSpanFull(),
             ]);

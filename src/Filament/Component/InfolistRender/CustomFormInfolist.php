@@ -1,15 +1,17 @@
 <?php
 
-namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component;
+namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\InfolistRender;
 
 
 use Closure;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\CustomLayoutType;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Render\CustomFormRender;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
 use Filament\Forms\Components\Component;
 
-class CustomFormAnswerInput extends Component
+class CustomFormInfolist extends Component
 {
 
 
@@ -17,6 +19,18 @@ class CustomFormAnswerInput extends Component
     protected string|Closure $viewMode;
     protected bool|Closure $isAutoSave;
 
+
+    protected bool|Closure $useLayoutTypeSplit = false;
+    protected CustomLayoutType|Closure|null $layoutTypeSplit = null;
+
+
+    protected bool|Closure $usePoseSplit = false;
+    protected array|Closure|null $poseSplit = null;
+
+
+    protected bool|Closure $useFieldSplit = false;
+
+    protected bool|CustomField $fieldSplit = false;
 
 
 
@@ -39,13 +53,13 @@ class CustomFormAnswerInput extends Component
     protected function setUp(): void {
         parent::setUp();
         $this->label("");
-        $this->schema(fn(CustomFormAnswer $record, CustomFormAnswerInput $component)=>
+        $this->schema(fn(CustomFormAnswer $record, CustomFormInfolist $component)=>
             CustomFormRender::generateFormSchema(CustomForm::cached($record->custom_form_id),$component->getViewMode())
         );
         $this->columns(1);
 
         //SetUp Auto Update
-        $this->afterStateUpdated(function (CustomFormAnswerInput $component, array $state,?CustomFormAnswer $record){
+        $this->afterStateUpdated(function (CustomFormInfolist $component, array $state,?CustomFormAnswer $record){
             if(!$component->getIsAutoSave()) return;
             CustomFormRender::saveHelper($record, $state);
         });

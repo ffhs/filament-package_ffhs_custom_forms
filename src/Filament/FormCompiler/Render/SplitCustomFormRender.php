@@ -77,4 +77,30 @@ class SplitCustomFormRender
     }
 
 
+    public static function renderFormFromField(CustomField $field, string $viewMode = "default") : array{
+        $render= CustomFormRender::getFormRender($viewMode,$field->customForm);
+        return self::renderField($field,$render,$viewMode);
+    }
+
+    public static function renderInfolistFromField(CustomField $fiel,CustomFormAnswer $formAnswer,  string $viewMode  = "default"):array {
+        $fieldAnswers = $formAnswer->customFieldAnswers;
+
+        $render= CustomFormRender::getInfolistRender($viewMode,$formAnswer->customForm, $formAnswer,$fieldAnswers);
+
+        return self::renderField($fiel,$render,$viewMode);
+    }
+
+    protected static function renderField(CustomField $field, Closure $render, string $viewMode  = "default"){
+        $customForm = $field->customForm;
+        $endPos = $field->layout_end_position;
+        $beginPos = $field->form_position;
+        if($endPos == 0){
+            $endPos = $beginPos;
+            $beginPos -= 1;
+        }
+
+        return self::renderPose($beginPos,$endPos,$customForm,$render,$viewMode);
+    }
+
+
 }

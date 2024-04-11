@@ -1,0 +1,33 @@
+<?php
+
+namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component;
+
+use Closure;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
+
+trait UseFieldSplit
+{
+
+    protected bool|Closure $useFieldSplit = false;
+    protected bool|CustomField $fieldSplit = false;
+
+
+    public function useFieldSplit(bool|Closure $useFieldSplit):static {
+        $this->useFieldSplit = $useFieldSplit;
+        return $this;
+    }
+
+    public function fieldSplit(CustomField|Closure|null $layoutTypeSplit):static {
+        $this->fieldSplit = $layoutTypeSplit;
+        return $this;
+    }
+
+    public function isUseFieldSplit(): bool{
+        return $this->evaluate($this->useFieldSplit);
+    }
+
+    public function getFieldSplit(): ?CustomField{
+        return $this->evaluate($this->fieldSplit);
+    }
+
+}
