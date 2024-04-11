@@ -202,8 +202,6 @@ abstract class CustomFieldType
         return null;
     }
 
-
-
     public function afterEditFieldSave(CustomField $field, array $rawData):void {
 
     }
@@ -249,5 +247,9 @@ abstract class CustomFieldType
         ];
     }
 
+    //Empty or null mean that the repeater cant open
+    public function editorRepeaterContent(CustomForm $form, array $fieldData):?array {
+        return null;
+    }
 
 }

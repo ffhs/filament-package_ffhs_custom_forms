@@ -12,10 +12,14 @@ class CustomFormEditorHelper
 {
 
     public static function getFieldTypeFromRawDate(array $data): ?CustomFieldType {
-        $isGeneral = array_key_exists("general_field_id",$data)&& !is_null($data["general_field_id"]);
         $isTemplate = array_key_exists("template_id",$data)&& !is_null($data["template_id"]);
         if($isTemplate) return new TemplateFieldType();
-        return $isGeneral? GeneralField::cached($data["general_field_id"])->getType(): CustomFieldType::getTypeFromName($data["type"]);
+
+        $isGeneral = array_key_exists("general_field_id",$data)&& !is_null($data["general_field_id"]);
+        if($isGeneral){
+            return  GeneralField::cached($data["general_field_id"])->getType();
+        }
+        return  CustomFieldType::getTypeFromName($data["type"]);
     }
 
     public static function getUsedGeneralFieldIds(array $customFields):array {
