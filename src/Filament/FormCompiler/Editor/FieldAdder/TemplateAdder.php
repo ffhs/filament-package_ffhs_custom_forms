@@ -15,7 +15,7 @@ use Filament\Forms\Get;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\HtmlString;
 
-class TemplateAdder extends FormEditorFieldAdder
+class TemplateAdder extends CustomFieldAdder
 {
 
     function getTitle(): string {

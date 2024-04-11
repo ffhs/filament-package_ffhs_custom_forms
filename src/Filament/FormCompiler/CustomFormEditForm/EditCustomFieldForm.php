@@ -30,54 +30,11 @@ class EditCustomFieldForm
     }
 
 
-    public static function getCustomFieldSchema(array $data, CustomForm $customForm):array{
-
-        $isGeneral = array_key_exists("general_field_id",$data)&& !empty($data["general_field_id"]);
-        $type = CustomFormEditorHelper::getFieldTypeFromRawDate($data);
-        $columns = $isGeneral?1:2;
-
-        return [
-            Group::make()
-                ->columns($columns)
-                ->columnSpanFull()
-                ->label("")
-                ->schema([
-                    Tabs::make()
-                        ->columnStart(1)
-                        ->hidden($isGeneral)
-                        ->tabs([
-                            EditCustomFieldForm::getTranslationTab("de","Deutsch"),
-                            EditCustomFieldForm::getTranslationTab("en","Englisch"),
-                        ]),
-
-                    EditCustomFieldForm::getFieldOptionSection($type)
-                        ->columnSpan(1),
-
-                    EditCustomFieldRule::getRuleComponent($customForm,$type)
-
-                ]),
-        ];
-    }
 
     private static function getFieldOptionSection(CustomFieldType $type): Section {
         return Section::make("Optionen") //ToDo Translate
             ->schema([
-                Fieldset::make()
-                    ->schema([
-                        Toggle::make('is_active')
-                            ->visible($type->canBeDeactivate())
-                            ->label("Aktive"), //ToDo Translate
 
-                        // Required
-                        Toggle::make('required')
-                            ->visible($type->canBeRequired())
-                            ->label("Benötigt"), //ToDo Translate
-
-                    ]),
-                Fieldset::make()
-                    ->statePath("options")
-                    ->visible($type->hasExtraTypeOptions())
-                    ->schema($type->getExtraTypeOptionComponents())
 
             ]);
     }

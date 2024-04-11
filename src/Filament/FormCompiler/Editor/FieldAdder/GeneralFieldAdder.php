@@ -2,7 +2,6 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor\FieldAdder;
 
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\CustomFormEditForm\EditCustomFieldForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor\CustomFieldEditModal\CustomFieldEditModal;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor\CustomFormEditorHelper;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
@@ -14,7 +13,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Get;
 use Illuminate\Support\Facades\Cache;
 
-class GeneralFieldAdder extends FormEditorFieldAdder
+class GeneralFieldAdder extends CustomFieldAdder
 {
 
     function getTitle(): string {
@@ -46,7 +45,7 @@ class GeneralFieldAdder extends FormEditorFieldAdder
                     })
                     ->form(function(Get $get, CustomForm $record){
                         $state = ["general_field_id" => $get("add_general_field_id")];
-                        return EditCustomFieldForm::getCustomFieldSchema($state,$record);
+                        return [CustomFieldEditModal::make($record,$state)];
                     })
                     ->fillForm(fn($get) => [
                         "is_active" => true,

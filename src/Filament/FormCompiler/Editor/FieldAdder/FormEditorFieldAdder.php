@@ -10,7 +10,7 @@ use Filament\Forms\Get;
 
 abstract class FormEditorFieldAdder extends Component
 {
-    protected string $view = 'filament-forms::components.group';
+
     protected CustomForm $form;
 
     public static function make(CustomForm $form): static

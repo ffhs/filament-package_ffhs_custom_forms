@@ -8,7 +8,10 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\HasCustomFor
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\CustomLayoutType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\Types\Views\SectionTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\ColumnsOption;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\ColumnSpanOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\FastTypeOption;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\InLineLabelOption;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\NewLineOption;
 use Filament\Forms\Components\Toggle;
 
 class SectionType extends CustomLayoutType
@@ -16,7 +19,6 @@ class SectionType extends CustomLayoutType
 
     use HasBasicSettings;
     use HasCustomFormPackageTranslation;
-    use HasBasicSettings;
 
     public static function getFieldIdentifier(): string {
         return "section";
@@ -32,22 +34,22 @@ class SectionType extends CustomLayoutType
         return  "tabler-section";
     }
 
-
-    protected function extraOptionsBeforeBasic(): array {
-        return [
+    public function getExtraTypeOptions(): array {
+        return[
             "columns" => new ColumnsOption(),
+            'column_span' => new ColumnSpanOption(),
             "show_title" =>  new FastTypeOption(true,
-                    Toggle::make("show_title")
-                        ->label("Titel Anzeigen") //ToDo Translate
-                        ->columnSpan(2)
-                        ->columnStart(1)
-                        ->live(),
-                ),
+                Toggle::make("show_title")
+                    ->label("Titel Anzeigen") //ToDo Translate
+                    ->live(),
+            ),
             'aside' => new FastTypeOption(false,
-                    Toggle::make("aside")
-                        ->label("Titel seitlich Anzeigen") //ToDo Translate,
-                        ->disabled(fn($get) => !$get("show_title"))
-                )
+                Toggle::make("aside")
+                    ->label("Titel seitlich Anzeigen") //ToDo Translate,
+                    ->disabled(fn($get) => !$get("show_title"))
+            ),
+            //'in_line_label' => (new InLineLabelOption())->modifyComponent(fn($toggle) => $toggle->columnStart(1)),
+            'new_line_option' => new NewLineOption(),
         ];
     }
 

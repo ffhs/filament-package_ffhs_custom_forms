@@ -3,8 +3,9 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor\CustomFieldEditModal;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomFieldType;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\CustomFormEditForm\EditCustomFieldForm;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\CustomFormEditForm\EditCustomFieldRule;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor\CustomFormEditorHelper;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor\UseComponentInjection;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Fieldset;
@@ -17,15 +18,11 @@ use Filament\Forms\Components\Toggle;
 
 class CustomFieldEditModal extends Component
 {
-    use UseComponentInjection;
 
-    protected string $view = 'filament-forms::components.group';
-
-    protected array $fieldData;
     protected CustomForm $form;
+    protected array $fielData;
 
     public static function getEditCustomFormActionModalWith(array $state): string {
-
         $type = CustomFormEditorHelper::getFieldTypeFromRawDate($state);
         if (!empty($state["general_field_id"])) return 'xl';
         $hasOptions = $type->canBeRequired() || $type->canBeDeactivate() || $type->hasExtraTypeOptions();
@@ -34,41 +31,53 @@ class CustomFieldEditModal extends Component
     }
 
 
-    public static function make(CustomForm $form, array $fieldData): static {
+    public static function getCustomFieldSchema(array $data, CustomForm $customForm):array{
+        //ToDo change and import it hier
+        return EditCustomFieldForm::getCustomFieldSchema($data,$customForm);
+    }
+
+
+
+    public static function make(CustomForm $form,array $fieldData): static {
         $static = app(static::class, ['form' => $form, 'fieldData'=>$fieldData]);
         $static->configure();
         return $static;
     }
 
-    public function __construct(CustomForm $form, array $fieldData) {
+    public function __construct(CustomForm $form, array $fielData) {
         $this->form = $form;
-        $this->fieldData = $fieldData;
+        $this->fielData = $fielData;
     }
 
 
     protected function setUp(): void {
         parent::setUp();
-        $fieldData = $this->fieldData;
+        $fieldData = $this->fielData;
 
         $isGeneral = array_key_exists("general_field_id",$fieldData)&& !empty($fieldData["general_field_id"]);
         $type = CustomFormEditorHelper::getFieldTypeFromRawDate($fieldData);
         $columns = $isGeneral?1:2;
 
-        $this
-            ->columnSpanFull()
-            ->columns($columns)
-            ->schema([
-                Tabs::make()
-                    ->columnStart(1)
-                    ->hidden($isGeneral)
-                    ->tabs([
-                        $this->getTranslationTab("de","Deutsch"),
-                        $this->getTranslationTab("en","Englisch"),
-                    ]),
+        $this->schema([
+            Group::make()
+                ->columns($columns)
+                ->columnSpanFull()
+                ->label("")
+                ->schema([
+                    Tabs::make()
+                        ->columnStart(1)
+                        ->hidden($isGeneral)
+                        ->tabs([
+                            $this->getTranslationTab("de","Deutsch"),
+                            $this->getTranslationTab("en","Englisch"),
+                        ]),
 
-                FieldModalOptionSection::make($type)->columnSpan(1),
+                    EditCustomFieldForm::getFieldOptionSection($type)
+                        ->columnSpan(1),
 
-                /*EditCustomFieldRule::getRuleComponent($customForm,$type)*/
+                    EditCustomFieldRule::getRuleComponent($customForm,$type)
+
+                ]),
         ]);
     }
 

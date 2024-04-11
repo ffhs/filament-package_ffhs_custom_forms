@@ -28,7 +28,7 @@ class EditAction extends RepeaterFieldAction
                 return CustomFieldEditModal::getEditCustomFormActionModalWith($state[$arguments["item"]]);
             })
             ->form(function(Get $get, $state, array $arguments) use ($record) : array {
-                    return EditCustomFieldForm::getCustomFieldSchema($state[$arguments["item"]], $record);
+                return [CustomFieldEditModal::make($record,$state[$arguments["item"]])];
             })
             ->modalHeading(function (array $state, array $arguments) {
                 $data = $state[$arguments["item"]];

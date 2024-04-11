@@ -15,6 +15,8 @@ use Illuminate\Support\HtmlString;
 class CustomFieldAdder extends FormEditorFieldAdder
 {
 
+    protected string $view = 'filament-forms::components.group';
+
     function getTitle(): string {
         return  "Spezifische Felder"; //ToDo Translate
     }
@@ -42,7 +44,7 @@ class CustomFieldAdder extends FormEditorFieldAdder
                     ->outlined()
                     ->form(function() use ($type) {
                         $state = ["type" => $type::getFieldIdentifier()];
-                        return CustomFieldEditModal::getCustomFieldSchema($state,$this->form);
+                        return [CustomFieldEditModal::make($this->form, $state)];
                     })
                     ->action(function ($set, Get $get, array $data) {
                         $this->addCustomFieldInRepeater($data, $get, $set);

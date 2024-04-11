@@ -2,12 +2,12 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor\CustomFieldList;
 
-use ErrorException;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\RepeaterFieldAction\RepeaterFieldAction;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\CustomFormEditForm\EditCustomFieldForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\CustomFormEditForm\EditCustomFieldRule;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor\CustomFormEditorHelper;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor\UseComponentInjection;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Group;
@@ -15,24 +15,20 @@ use Filament\Forms\Components\Repeater;
 use Filament\Forms\Get;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\HtmlString;
-use RuntimeException;
 
 final class EditorCustomFieldList extends Repeater
 {
+    use UseComponentInjection;
 
-    protected CustomForm $form ;
+    protected CustomForm $form;
 
     public static function make(CustomForm|string $name): static {
-        if(!($name instanceof CustomForm)) throw  new RuntimeException("pls use a CustomForm and not a string");
-        $static = app(static::class, ['name' => "custom_fields", 'form'=>"dd"]);
-        /**@var EditorCustomFieldList $static*/
-        $static->setForm($name);
-        $static->configure();
-        return $static;
+        return self::injectIt($name, ['name' => "custom_fields"]);
     }
 
 
     protected function setUp(): void {
+        $this->form = $this->injection;
         parent::setUp();
         $repeaterActionClasses = [];
 
@@ -49,33 +45,33 @@ final class EditorCustomFieldList extends Repeater
         foreach ($repeaterActionClasses as $actionClass => $closures){
             /**@var RepeaterFieldAction $action*/
             $action = new $actionClass();
-            $repeaterActions[] = $action->getAction($this->form,$closures);
+            $repeaterActions[] = $action->getAction($this->injection,$closures);
         }
 
         $this->collapseAllAction(fn(Action $action)=> $action->hidden())
-            ->expandAllAction(fn(Action $action)=> $action->hidden())
-            ->relationship("customFieldInLayout")
+            ->label("")
             ->orderColumn("form_position")
-            ->saveRelationshipsUsing(fn()=>empty(null))
-            ->mutateRelationshipDataBeforeFillUsing(function($data){
-                $data = EditCustomFieldForm::mutateOptionData($data, $this->form);
-                return EditCustomFieldRule::mutateRuleDataOnLoad($data, $this->form);
-            })
+            ->relationship("customFieldInLayout")
             ->collapsible(false)
+            ->extraItemActions($repeaterActions)
             ->addable(false)
             ->defaultItems(0)
             ->columnSpan(2)
             ->persistCollapsed()
-            ->label("")
             ->reorderable()
-            ->collapsed()
             ->lazy()
-            ->extraItemActions($repeaterActions)
+            ->saveRelationshipsUsing(fn()=>empty(null))
+            ->expandAllAction(fn(Action $action)=> $action->hidden())
+            ->collapsed()
             ->itemLabel(fn(array $state)=> $this->getFieldRepeaterItemLabel($state))
+            ->mutateRelationshipDataBeforeFillUsing(function($data){
+                $data = EditCustomFieldForm::mutateOptionData($data, $this->injection);
+                return EditCustomFieldRule::mutateRuleDataOnLoad($data, $this->injection);
+            })
             ->schema([
                 Group::make(function(Get $get,$state) {
                     $type = CustomFormEditorHelper::getFieldTypeFromRawDate($state);
-                    $contend = $type->editorRepeaterContent($this->form,$state);
+                    $contend = $type->editorRepeaterContent($this->injection,$state);
                     return empty($contend)?[]:$contend;
                 }),
             ]);
@@ -100,7 +96,7 @@ final class EditorCustomFieldList extends Repeater
 
         //Do Open the Record if possible
         $clickAction = '';
-        if(!empty($type->editorRepeaterContent($this->form,$state)))
+        if(!empty($type->editorRepeaterContent($this->injection,$state)))
             $clickAction= 'x-on:click.stop="isCollapsed = !isCollapsed"';
 
 
@@ -109,10 +105,6 @@ final class EditorCustomFieldList extends Repeater
         //Close existing heading and after that reopen it
         $html=  '</h4>'.$html . '<h4>';
         return  new HtmlString($html);
-    }
-
-    private function setForm($form):void {
-        $this->form = $form;
     }
 
 
