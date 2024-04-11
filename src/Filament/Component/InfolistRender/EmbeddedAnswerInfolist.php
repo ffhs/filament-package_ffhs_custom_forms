@@ -15,7 +15,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
 use Filament\Infolists\Components\Component;
 use Filament\Infolists\Components\Group;
 
-class EmbeddedInfolist extends Component
+class EmbeddedAnswerInfolist extends Component
 {
 
     protected string $view = 'filament-infolists::components.group';
@@ -57,7 +57,7 @@ class EmbeddedInfolist extends Component
 
     public function autoViewMode(bool|Closure $autoViewMode = true):static {
         if(!$this->evaluate($autoViewMode)) return $this;
-        $this->viewMode = function (EmbeddedInfolist $component){
+        $this->viewMode = function (EmbeddedAnswerInfolist $component){
             $customForm = CustomForm::cached($component->getModel()->custom_form_id);
             return $customForm->getFormConfiguration()::displayViewMode();
         };
@@ -79,7 +79,7 @@ class EmbeddedInfolist extends Component
      * @return void
      */
     private function setSplitPosInfolistSchema(): void {
-        $this->schema(fn(EmbeddedInfolist $component) => [
+        $this->schema(fn(EmbeddedAnswerInfolist $component) => [
             Group::make()->schema(function (CustomFormAnswer|null $record) use ($component) {
                 if (is_null($record)) return [];
 
@@ -99,7 +99,7 @@ class EmbeddedInfolist extends Component
      * @return void
      */
     private function setDefaultInfolistSchema(): void {
-        $this->schema(fn(EmbeddedInfolist $component) => [
+        $this->schema(fn(EmbeddedAnswerInfolist $component) => [
             Group::make(fn($record) => CustomFormRender::generateInfoListSchema($component->getModel(),
                 $component->getViewMode())),
         ]);
@@ -109,7 +109,7 @@ class EmbeddedInfolist extends Component
      * @return void
      */
     private function setSplitFieldInfolistSchema(): void {
-        $this->schema(fn(EmbeddedInfolist $component) => [
+        $this->schema(fn(EmbeddedAnswerInfolist $component) => [
             Group::make(fn($record) => SplitCustomFormRender::renderInfolistFromField(
                 $component->getFieldSplit(),
                 $component->getModel(),
@@ -121,7 +121,7 @@ class EmbeddedInfolist extends Component
      * @return void
      */
     private function setSplitLayoutInfolistSchema(): void {
-        $this->schema(fn(EmbeddedInfolist $component) => [
+        $this->schema(fn(EmbeddedAnswerInfolist $component) => [
             Group::make(fn($record) => SplitCustomFormRender::renderInfoListLayoutType(
                 $component->getLayoutTypeSplit(),
                 $component->getModel(),
