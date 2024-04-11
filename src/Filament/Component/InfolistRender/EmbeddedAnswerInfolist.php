@@ -17,14 +17,15 @@ use Filament\Infolists\Components\Group;
 
 class EmbeddedAnswerInfolist extends Component
 {
-
-    protected string $view = 'filament-infolists::components.group';
-    protected CustomFormAnswer|Closure $model;
-
     use UseLayoutSplit;
     use UseFieldSplit;
     use UsePosSplit;
     use UseViewMode;
+
+
+    protected string $view = 'filament-infolists::components.group';
+    protected CustomFormAnswer|Closure $model;
+
 
     public static function make(CustomFormAnswer|Closure $model, string|Closure $viewMode = "default"): static
     {
@@ -64,15 +65,22 @@ class EmbeddedAnswerInfolist extends Component
     }
 
     private function setupSchema(): void {
-        if($this->isUseLayoutTypeSplit())$this->setSplitLayoutInfolistSchema();
-        else if($this->isUseFieldSplit())$this->setSplitFieldInfolistSchema();
-        else if($this->isUsePoseSplit())$this->setSplitPosInfolistSchema();
-        else$this->setDefaultInfolistSchema();
+        $this->columns(1);
+        $this->schema(function(EmbeddedAnswerInfolist $component){
+            if ($this->isUseLayoutTypeSplit()) return $this->getSplitLayoutInfolistSchema($component);
+            //Field Splitting
+            else if ($this->isUseFieldSplit()) return $this->getSplitFieldInfolistSchema($component);
+            //Position Splitting
+            else if ($this->isUsePoseSplit()) return $this->getSplitPosInfolistSchema($component);
+            //Default
+            else return $this->getDefaultInfolistSchema($component);
+        });
+
     }
 
 
-    private function setSplitPosInfolistSchema(): void {
-        $this->schema(fn(EmbeddedAnswerInfolist $component) => [
+    private function getSplitPosInfolistSchema(EmbeddedAnswerInfolist $component): array {
+        return [
             Group::make()->schema(function (CustomFormAnswer|null $record) use ($component) {
                 if (is_null($record)) return [];
 
@@ -85,35 +93,35 @@ class EmbeddedAnswerInfolist extends Component
                     $component->getViewMode()
                 );
             }),
-        ]);
+        ];
     }
 
 
-    private function setDefaultInfolistSchema(): void {
-        $this->schema(fn(EmbeddedAnswerInfolist $component) => [
+    private function getDefaultInfolistSchema(EmbeddedAnswerInfolist $component): array {
+        return [
             Group::make(fn($record) => CustomFormRender::generateInfoListSchema($component->getModel(),
                 $component->getViewMode())),
-        ]);
+        ];
     }
 
 
-    private function setSplitFieldInfolistSchema(): void {
-        $this->schema(fn(EmbeddedAnswerInfolist $component) => [
+    private function getSplitFieldInfolistSchema(EmbeddedAnswerInfolist $component): array {
+        return [
             Group::make(fn($record) => SplitCustomFormRender::renderInfolistFromField(
                 $component->getFieldSplit(),
                 $component->getModel(),
                 $component->getViewMode())),
-        ]);
+        ];
     }
 
 
-    private function setSplitLayoutInfolistSchema(): void {
-        $this->schema(fn(EmbeddedAnswerInfolist $component) => [
+    private function getSplitLayoutInfolistSchema(EmbeddedAnswerInfolist $component): array {
+        return [
             Group::make(fn($record) => SplitCustomFormRender::renderInfoListLayoutType(
                 $component->getLayoutTypeSplit(),
                 $component->getModel(),
                 $component->getViewMode())),
-        ]);
+        ];
     }
 
 

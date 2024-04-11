@@ -31,8 +31,6 @@ class EmbeddedCustomForm extends Component implements CanEntangleWithSingularRel
     protected string $view = 'filament-forms::components.group';
     protected bool|Closure $isAutoSave;
 
-
-
     public static function make(Closure|string $relationship, string|Closure $viewMode= "default"): static
     {
         $static = app(static::class, [
@@ -94,23 +92,22 @@ class EmbeddedCustomForm extends Component implements CanEntangleWithSingularRel
     }
 
     private function setupFormSchema(): void {
-        //Type Splitting
-        if ($this->isUseLayoutTypeSplit()) $this->setLayoutTypeSplitFormSchema();
-        //Field Splitting
-        else if ($this->isUseFieldSplit()) $this->setFieldSplitFormSchema();
-        //Position Splitting
-        else if ($this->isUsePoseSplit()) $this->setPosSplitFormSchema();
-        //Default
-        else $this->setDefaultFormSchema();
 
         $this->columns(1);
+        $this->schema(function(EmbeddedCustomForm $component){
+            if ($this->isUseLayoutTypeSplit()) return $this->getLayoutTypeSplitFormSchema($component);
+            //Field Splitting
+            else if ($this->isUseFieldSplit()) return $this->getFieldSplitFormSchema($component);
+            //Position Splitting
+            else if ($this->isUsePoseSplit()) return $this->getPosSplitFormSchema($component);
+            //Default
+            else return $this->getDefaultFormSchema($component);
+        });
     }
 
-    /**
-     * @return void
-     */
-    private function setLayoutTypeSplitFormSchema(): void {
-        $this->schema(fn(EmbeddedCustomForm $component) => [
+
+    private function getLayoutTypeSplitFormSchema(EmbeddedCustomForm $component): array {
+        return [
             Group::make()->schema(fn(CustomFormAnswer|null $record) => is_null($record) ? [] :
                 SplitCustomFormRender::renderFormLayoutType(
                     $component->getLayoutTypeSplit(),
@@ -118,28 +115,22 @@ class EmbeddedCustomForm extends Component implements CanEntangleWithSingularRel
                     $component->getViewMode()
                 )
             ),
-        ]);
+        ];
     }
 
-    /**
-     * @return void
-     */
-    private function setFieldSplitFormSchema(): void {
-        $this->schema(fn(EmbeddedCustomForm $component) => [
+    private function getFieldSplitFormSchema(EmbeddedCustomForm $component): array {
+        return [
             Group::make()->schema(fn(CustomFormAnswer|null $record) => is_null($record) ? [] :
                 SplitCustomFormRender::renderFormFromField(
                     $component->getFieldSplit(),
                     $component->getViewMode()
                 )
             ),
-        ]);
+        ];
     }
 
-    /**
-     * @return void
-     */
-    private function setPosSplitFormSchema(): void {
-        $this->schema(fn(EmbeddedCustomForm $component) => [
+    private function getPosSplitFormSchema(EmbeddedCustomForm $component): array {
+        return [
             Group::make()->schema(function (CustomFormAnswer|null $record) use ($component) {
                 if (is_null($record)) return [];
 
@@ -152,7 +143,15 @@ class EmbeddedCustomForm extends Component implements CanEntangleWithSingularRel
                     $component->getViewMode()
                 );
             }),
-        ]);
+        ];
+    }
+
+
+    private function getDefaultFormSchema(EmbeddedCustomForm $component): array {
+        return [
+            Group::make(fn(CustomFormAnswer $record) => CustomFormRender::generateFormSchema(CustomForm::cached($record->custom_form_id),
+                $component->getViewMode())),
+        ];
     }
 
     /**
@@ -168,19 +167,7 @@ class EmbeddedCustomForm extends Component implements CanEntangleWithSingularRel
     }
 
 
-    /**
-     * @return void
-     */
-    private function setDefaultFormSchema(): void {
-        $this->schema(fn(EmbeddedCustomForm $component) => [
-            Group::make(fn(CustomFormAnswer $record) => CustomFormRender::generateFormSchema(CustomForm::cached($record->custom_form_id),
-                $component->getViewMode())),
-        ]);
-    }
 
-    /**
-     * @return void
-     */
     private function setUpFormLoading(): void {
         $this->mutateRelationshipDataBeforeFillUsing(function (array $data, Model $record,
             EmbeddedCustomForm $component) {
@@ -191,9 +178,6 @@ class EmbeddedCustomForm extends Component implements CanEntangleWithSingularRel
         });
     }
 
-    /**
-     * @return void
-     */
     private function setupFormSaving(): void {
         $this->mutateRelationshipDataBeforeSaveUsing(function (array $data, Model $record,
             EmbeddedCustomForm $component) {
@@ -203,9 +187,7 @@ class EmbeddedCustomForm extends Component implements CanEntangleWithSingularRel
         });
     }
 
-    /**
-     * @return void
-     */
+
     private function setUpAutoSaving(): void {
         $this->afterStateUpdated(function (EmbeddedCustomForm $component, array $state, ?Model $record) {
             if (!$component->getIsAutoSave()) return;

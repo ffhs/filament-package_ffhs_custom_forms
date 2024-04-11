@@ -7,7 +7,6 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\CustomLayou
 
 trait UseLayoutSplit
 {
-
     protected bool|Closure $useLayoutTypeSplit = false;
     protected CustomLayoutType|Closure|null $layoutTypeSplit = null;
 

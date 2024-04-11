@@ -9,8 +9,7 @@ trait UseFieldSplit
 {
 
     protected bool|Closure $useFieldSplit = false;
-    protected bool|CustomField $fieldSplit = false;
-
+    protected null|CustomField $fieldSplit = null;
 
     public function useFieldSplit(bool|Closure $useFieldSplit=true):static {
         $this->useFieldSplit = $useFieldSplit;

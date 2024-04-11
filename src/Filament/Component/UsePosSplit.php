@@ -6,9 +6,8 @@ use Closure;
 
 trait UsePosSplit
 {
-
     protected bool|Closure $usePoseSplit = false;
-    protected array|Closure|null $poseSplit = null;
+    protected array|Closure|null $poseSplit = [];
 
 
     //The array have to look like: [$beginPos,$endPos]
