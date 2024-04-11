@@ -109,40 +109,40 @@ class CustomFormEditorSaveHelper
 
     }
 
-    public static function getGeneralFieldRepeaterValidationRule():Closure {
+   /* public static function getGeneralFieldRepeaterValidationRule():Closure {
         return fn (CustomForm $record) =>
-            function (string $attribute, $value, Closure $fail) use($record)  {
-                $formIdentifier = $record->custom_form_identifier;
-                $requiredGeneralFieldForm = GeneralFieldForm::query()
-                    ->where("custom_form_identifier", $formIdentifier)
-                    ->select("general_field_id")
-                    ->where("is_required", true)
-                    ->with("generalField")
-                    ->get();
+        function (string $attribute, $value, Closure $fail) use($record)  {
+            $formIdentifier = $record->custom_form_identifier;
+            $requiredGeneralFieldForm = GeneralFieldForm::query()
+                ->where("custom_form_identifier", $formIdentifier)
+                ->select("general_field_id")
+                ->where("is_required", true)
+                ->with("generalField")
+                ->get();
 
-                $requiredGeneralIDs = $requiredGeneralFieldForm
-                    ->map(fn ($fieldForm) => $fieldForm->general_field_id);
+            $requiredGeneralIDs = $requiredGeneralFieldForm
+                ->map(fn ($fieldForm) => $fieldForm->general_field_id);
 
-                $usedGeneralIDs =CustomFormEditorHelper::getUsedGeneralFieldIds($value);
-                $notAddedRequiredFields = $requiredGeneralIDs
-                    ->filter(fn($id)=> !in_array($id, $usedGeneralIDs));
+            $usedGeneralIDs =CustomFormEditorHelper::getUsedGeneralFieldIds($value);
+            $notAddedRequiredFields = $requiredGeneralIDs
+                ->filter(fn($id)=> !in_array($id, $usedGeneralIDs));
 
-                if($notAddedRequiredFields->count() == 0) return;
+            if($notAddedRequiredFields->count() == 0) return;
 
-                $fieldName = $requiredGeneralFieldForm
-                    ->filter(function($fieldForm) use ($notAddedRequiredFields) {
-                        $generalFieldId = $fieldForm->general_field_id;
-                        $notAddedField = $notAddedRequiredFields->first();
-                        return $generalFieldId == $notAddedField;
-                    })
-                    ->first()->generalField->name_de;
+            $fieldName = $requiredGeneralFieldForm
+                ->filter(function($fieldForm) use ($notAddedRequiredFields) {
+                    $generalFieldId = $fieldForm->general_field_id;
+                    $notAddedField = $notAddedRequiredFields->first();
+                    return $generalFieldId == $notAddedField;
+                })
+                ->first()->generalField->name_de;
 
-                $failureMessage =
-                    "Du must das generelle Feld \"" . $fieldName . "\" hinzufügen"; //ToDo Translate
+            $failureMessage =
+                "Du must das generelle Feld \"" . $fieldName . "\" hinzufügen"; //ToDo Translate
 
-                $fail($failureMessage);
-            };
-    }
+            $fail($failureMessage);
+        };
+    }*/
 
     private static function mutateOptionData(?CustomFieldType $type, CustomField $customField, array $customFieldData): array {
         if(!array_key_exists("options",$customFieldData)) return $customFieldData;

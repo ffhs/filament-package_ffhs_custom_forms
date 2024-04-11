@@ -19,6 +19,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\Type\DisabledRule
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\Type\HiddenRuleType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\Type\RequiredRuleType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\Templates\TemplateFieldType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormEditorValidation\FormEditorGeneralFieldValidation;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor\FieldAdder\CustomFieldAdder;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor\FieldAdder\GeneralFieldAdder;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor\FieldAdder\TemplateAdder;
@@ -45,6 +46,10 @@ return [
 
     'view_modes' => [
 
+    ],
+
+    'custom_form_editor_validations' => [
+        FormEditorGeneralFieldValidation::class
     ],
 
     'editor_field_adder' => [

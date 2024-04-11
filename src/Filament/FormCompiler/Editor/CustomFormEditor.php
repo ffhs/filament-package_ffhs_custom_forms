@@ -2,12 +2,13 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor;
 
+use Closure;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormEditorValidation\FormEditorValidation;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor\CustomFieldList\EditorCustomFieldList;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor\Helper\CustomFormEditorSaveHelper;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Fieldset;
-use Filament\Forms\Components\Group;
 
 class CustomFormEditor extends Component
 {
@@ -29,30 +30,36 @@ class CustomFormEditor extends Component
         $this->columnSpanFull();
         $this->columns(3);
 
-        $this->schema([
-            //Field Adder
-            Fieldset::make()
-                ->columnStart(1)
-                ->columnSpan(1)
-                ->columns(1)
-                ->schema(function(CustomForm $record){
-                    $record->getFormConfiguration()::editorFieldAdder();
+        $this->schema(fn(CustomForm $record)=>[
+                //Field Adder
+                Fieldset::make()
+                    ->columnStart(1)
+                    ->columnSpan(1)
+                    ->columns(1)
+                    ->schema(function() use ($record) {
+                        return
+                            collect($record->getFormConfiguration()::editorFieldAdder())
+                                ->map(fn (string $class) => $class::make($record))
+                                ->toArray();
+                    }),
 
-                    return collect($record->getFormConfiguration()::editorFieldAdder())
-                        ->map(fn (string $class) => $class::make($record))->toArray();
-                }),
-
-            //Fields Overview
-            Group::make()
-                ->columns(1)
-                ->columnSpan(2)
-                ->schema(fn(CustomForm $record)=>[
+                    //Fields Overview
                     EditorCustomFieldList::make($record)
+                        ->columnSpan(2)
                         ->saveRelationshipsUsing(fn($component, $state) => CustomFormEditorSaveHelper::saveCustomFields($component,$record,$state))
 
-                        //If it is a template it haven't to Check the fields
-                        ->rules($record->is_template?[]:[CustomFormEditorSaveHelper::getGeneralFieldRepeaterValidationRule()]),
-                ]),
+                        ->rules([
+                            fn (CustomForm $record) =>
+                                function (string $attribute, $value, Closure $fail) use($record)  {
+                                    $formConfiguration= $record->getFormConfiguration();
+                                    foreach ($formConfiguration::editorValidations($record) as $editorValidationClass){
+                                        $editorValidation = new $editorValidationClass();
+                                        /**@var FormEditorValidation $editorValidation;*/
+
+                                        $editorValidation->getRepeaterValidation($record,$fail,$value,$attribute);
+                                    }
+                                }
+                        ]),
         ]);
     }
 

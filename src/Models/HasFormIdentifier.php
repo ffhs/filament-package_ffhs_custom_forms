@@ -2,7 +2,7 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Models;
 
-use Ffhs\FilamentPackageFfhsCustomForms\FormConfiguration\DynamicFormConfiguration;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormConfiguration\DynamicFormConfiguration;
 
 trait HasFormIdentifier
 {

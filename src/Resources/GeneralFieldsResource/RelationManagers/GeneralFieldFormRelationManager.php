@@ -55,12 +55,16 @@ class GeneralFieldFormRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('custom_form_identifier_name')
                     ->label(__('filament-package_ffhs_custom_forms::custom_forms.form.custom_form_identifier.display_name'))
                     ->state(fn(GeneralFieldForm $record) => ($record->dynamicFormConfiguration())::displayName()),
-                Tables\Columns\IconColumn::make('is_required')
+               /* Tables\Columns\IconColumn::make('is_required')
                     ->label(__('filament-package_ffhs_custom_forms::custom_forms.fields.is_required'))
                     ->boolean(),
                 Tables\Columns\IconColumn::make('export')
                     ->label("Wird exportiert")//ToDo Translate
-                    ->boolean(),
+                    ->boolean(),*/
+                Tables\Columns\CheckboxColumn::make('is_required')
+                    ->label(__('filament-package_ffhs_custom_forms::custom_forms.fields.is_required')),
+                Tables\Columns\CheckboxColumn::make('export')
+                    ->label("Wird exportiert"),//ToDo Translate
                 /*
                 Tables\Columns\TextColumn::make('custom_form_identifier')
                     ->label(__('filament-package_ffhs_custom_forms::custom_forms.form.custom_form_identifier.raw_name')),
