@@ -12,7 +12,7 @@ trait UseFieldSplit
     protected bool|CustomField $fieldSplit = false;
 
 
-    public function useFieldSplit(bool|Closure $useFieldSplit):static {
+    public function useFieldSplit(bool|Closure $useFieldSplit=true):static {
         $this->useFieldSplit = $useFieldSplit;
         return $this;
     }

@@ -12,7 +12,7 @@ trait UseLayoutSplit
     protected CustomLayoutType|Closure|null $layoutTypeSplit = null;
 
 
-    public function useLayoutTypeSplit(bool|Closure $useLayoutTypeSplit):static {
+    public function useLayoutTypeSplit(bool|Closure $useLayoutTypeSplit = true):static {
         $this->useLayoutTypeSplit = $useLayoutTypeSplit;
         return $this;
     }

@@ -3,7 +3,6 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component;
 
 use Closure;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 
 trait UsePosSplit
 {
@@ -13,7 +12,7 @@ trait UsePosSplit
 
 
     //The array have to look like: [$beginPos,$endPos]
-    public function usePoseSplit(bool|Closure $useFieldSplit):static {
+    public function usePoseSplit(bool|Closure $useFieldSplit=true):static {
         $this->usePoseSplit = $useFieldSplit;
         return $this;
     }

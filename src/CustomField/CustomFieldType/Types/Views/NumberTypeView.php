@@ -30,7 +30,8 @@ class NumberTypeView implements FieldTypeView
         array $parameter = []): TextEntry {
         return TextEntry::make(FormMapper::getIdentifyKey($record))
             ->columnStart(FormMapper::getOptionParameter($record,"new_line_option"))
-            ->label(FormMapper::getToolTips($record). ":")
+            ->tooltip(FormMapper::getToolTips($record). ":")
+            ->label(FormMapper::getLabelName($record). ":")
             ->state(FormMapper::getAnswer($record))
             ->columnSpanFull();
     }
