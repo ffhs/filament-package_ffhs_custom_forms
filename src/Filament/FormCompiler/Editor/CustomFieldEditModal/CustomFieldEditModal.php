@@ -2,18 +2,14 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor\CustomFieldEditModal;
 
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomFieldType;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor\CustomFormEditorHelper;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor\CustomFieldEditModal\Rule\FieldModalRuleSection;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor\Helper\CustomFormEditorHelper;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor\UseComponentInjection;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Filament\Forms\Components\Component;
-use Filament\Forms\Components\Fieldset;
-use Filament\Forms\Components\Group;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
 
 class CustomFieldEditModal extends Component
 {
@@ -25,7 +21,6 @@ class CustomFieldEditModal extends Component
     protected CustomForm $form;
 
     public static function getEditCustomFormActionModalWith(array $state): string {
-
         $type = CustomFormEditorHelper::getFieldTypeFromRawDate($state);
         if (!empty($state["general_field_id"])) return 'xl';
         $hasOptions = $type->canBeRequired() || $type->canBeDeactivate() || $type->hasExtraTypeOptions();
@@ -68,7 +63,7 @@ class CustomFieldEditModal extends Component
 
                 FieldModalOptionSection::make($type)->columnSpan(1),
 
-                /*EditCustomFieldRule::getRuleComponent($customForm,$type)*/
+                FieldModalRuleSection::make([$this->form,$type])->columnSpanFull()
         ]);
     }
 
@@ -84,27 +79,6 @@ class CustomFieldEditModal extends Component
             ]);
     }
 
-    private function getFieldOptionSection(CustomFieldType $type): Section {
-        return Section::make("Optionen") //ToDo Translate
-        ->schema([
-            Fieldset::make()
-                ->schema([
-                    Toggle::make('is_active')
-                        ->visible($type->canBeDeactivate())
-                        ->label("Aktive"), //ToDo Translate
 
-                    // Required
-                    Toggle::make('required')
-                        ->visible($type->canBeRequired())
-                        ->label("Benötigt"), //ToDo Translate
-
-                ]),
-            Fieldset::make()
-                ->statePath("options")
-                ->visible($type->hasExtraTypeOptions())
-                ->schema($type->getExtraTypeOptionComponents())
-
-        ]);
-    }
 
 }

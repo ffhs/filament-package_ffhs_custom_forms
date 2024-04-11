@@ -11,7 +11,8 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\FieldRuleAnchorTy
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\HasAnchorPluginTranslate;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\CustomFormEditForm\EditCustomFieldForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\CustomFormEditForm\EditCustomFieldRule;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor\CustomFormEditorHelper;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor\Helper\CustomFormEditorHelper;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor\Helper\CustomFormEditorMutationHelper;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\FieldRule;
@@ -70,8 +71,8 @@ class ValueEqualsRuleAnchor extends FieldRuleAnchorType
             $template = CustomForm::cached($templateData["template_id"]);
             return $template->customFields->map(function(CustomField $customField) use ($template) {
                 $data = $customField->toArray();
-                $data = EditCustomFieldForm::mutateOptionData($data, $template);
-                return EditCustomFieldRule::mutateRuleDataOnLoad($data, $template);
+                $data = CustomFormEditorMutationHelper::mutateOptionData($data, $template);
+                return CustomFormEditorMutationHelper::mutateRuleDataOnLoad($data, $template);
             });
         })->flatten(1)->toArray();
 

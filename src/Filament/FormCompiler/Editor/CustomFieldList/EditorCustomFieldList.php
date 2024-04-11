@@ -6,7 +6,8 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomFieldT
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\RepeaterFieldAction\RepeaterFieldAction;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\CustomFormEditForm\EditCustomFieldForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\CustomFormEditForm\EditCustomFieldRule;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor\CustomFormEditorHelper;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor\Helper\CustomFormEditorHelper;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor\Helper\CustomFormEditorMutationHelper;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor\UseComponentInjection;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Filament\Forms\Components\Actions\Action;
@@ -65,8 +66,8 @@ final class EditorCustomFieldList extends Repeater
             ->collapsed()
             ->itemLabel(fn(array $state)=> $this->getFieldRepeaterItemLabel($state))
             ->mutateRelationshipDataBeforeFillUsing(function($data){
-                $data = EditCustomFieldForm::mutateOptionData($data, $this->injection);
-                return EditCustomFieldRule::mutateRuleDataOnLoad($data, $this->injection);
+                $data = CustomFormEditorMutationHelper::mutateOptionData($data, $this->injection);
+                return CustomFormEditorMutationHelper::mutateRuleDataOnLoad($data, $this->injection);
             })
             ->schema([
                 Group::make(function(Get $get,$state) {

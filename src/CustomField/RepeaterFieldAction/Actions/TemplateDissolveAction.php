@@ -5,6 +5,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\RepeaterFieldAction\Ac
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\RepeaterFieldAction\RepeaterFieldAction;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\CustomFormEditForm\EditCustomFieldForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\CustomFormEditForm\EditCustomFieldRule;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor\Helper\CustomFormEditorMutationHelper;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\FieldRule;
@@ -23,8 +24,8 @@ class TemplateDissolveAction extends RepeaterFieldAction
         $type = $field->getType();
 
         //Load OptionData now, because it needs the field id
-        $fieldData = EditCustomFieldForm::mutateOptionData($fieldData, $template);
-        $fieldData = EditCustomFieldRule::mutateRuleDataOnLoad($fieldData, $template);
+        $fieldData = CustomFormEditorMutationHelper::mutateOptionData($fieldData, $template);
+        $fieldData = CustomFormEditorMutationHelper::mutateRuleDataOnLoad($fieldData, $template);
 
         $fieldData = $type->mutateOnTemplateDissolve($fieldData, $field);
 
