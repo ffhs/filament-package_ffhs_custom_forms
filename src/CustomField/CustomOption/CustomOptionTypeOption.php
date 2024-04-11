@@ -12,7 +12,7 @@ use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 
-class CustomOptionOption extends TypeOption
+class CustomOptionTypeOption extends TypeOption
 {
 
     private bool $withIdentifikatorField;
@@ -20,7 +20,7 @@ class CustomOptionOption extends TypeOption
         $this->withIdentifikatorField = $withIdentifikatorField;
     }
 
-    public function getDefaultValue(): mixed {
+    public function getDefaultValue(): array {
         return [];
     }
 
@@ -46,9 +46,7 @@ class CustomOptionOption extends TypeOption
         return $this->mutateOnSave($value,$field);
     }
 
-    public function mutateOnSave(mixed $value, CustomField $field): mixed {
-        //CustomOption::query()->
-        //if(is_null($value)) return null;
+    public function mutateOnSave(mixed $value, CustomField $field): null {
         if($field->isGeneralField()){
             $field->customOptions()->sync($value);
             return null;
@@ -97,7 +95,6 @@ class CustomOptionOption extends TypeOption
         $repeater =Repeater::make($name)
             ->collapseAllAction(fn($action) => $action->hidden())
             ->expandAllAction(fn($action) => $action->hidden())
-            ->reorderableWithDragAndDrop(false) //ToDo
             ->itemLabel(fn($state)=> $state["name_de"]) //ToDo Translate
             ->label("Feldoptionen") //ToDo Translate
             ->columnSpanFull()
@@ -105,6 +102,11 @@ class CustomOptionOption extends TypeOption
             ->collapsed()
             ->addable()
             ->columns()
+            ->afterStateUpdated(function($set, array $state) use ($name) {
+                foreach (array_keys($state) as $optionKey)
+                    if(empty($state[$optionKey]["identifier"])) $state[$optionKey]["identifier"] = uniqid();
+                $set($name,$state);
+            })
             ->schema([
                 TextInput::make("name_de")->label("Name De")->required(),
                 TextInput::make("name_en")->label("Name En")->required(),

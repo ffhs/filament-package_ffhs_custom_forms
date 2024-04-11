@@ -45,14 +45,9 @@ class EmbeddedAnswerInfolist extends Component
 
     protected function setUp(): void {
         parent::setUp();
-        $this->label("");
-
-        $this->setupSchema();
-
-
         $this->columns(1);
-
-
+        $this->label("");
+        $this->setupSchema();
     }
 
     public function autoViewMode(bool|Closure $autoViewMode = true):static {
@@ -75,9 +70,7 @@ class EmbeddedAnswerInfolist extends Component
         else$this->setDefaultInfolistSchema();
     }
 
-    /**
-     * @return void
-     */
+
     private function setSplitPosInfolistSchema(): void {
         $this->schema(fn(EmbeddedAnswerInfolist $component) => [
             Group::make()->schema(function (CustomFormAnswer|null $record) use ($component) {
@@ -95,9 +88,7 @@ class EmbeddedAnswerInfolist extends Component
         ]);
     }
 
-    /**
-     * @return void
-     */
+
     private function setDefaultInfolistSchema(): void {
         $this->schema(fn(EmbeddedAnswerInfolist $component) => [
             Group::make(fn($record) => CustomFormRender::generateInfoListSchema($component->getModel(),
@@ -105,9 +96,7 @@ class EmbeddedAnswerInfolist extends Component
         ]);
     }
 
-    /**
-     * @return void
-     */
+
     private function setSplitFieldInfolistSchema(): void {
         $this->schema(fn(EmbeddedAnswerInfolist $component) => [
             Group::make(fn($record) => SplitCustomFormRender::renderInfolistFromField(
@@ -117,9 +106,7 @@ class EmbeddedAnswerInfolist extends Component
         ]);
     }
 
-    /**
-     * @return void
-     */
+
     private function setSplitLayoutInfolistSchema(): void {
         $this->schema(fn(EmbeddedAnswerInfolist $component) => [
             Group::make(fn($record) => SplitCustomFormRender::renderInfoListLayoutType(
