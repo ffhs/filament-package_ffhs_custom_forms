@@ -16,8 +16,8 @@ trait UseFieldSplit
         return $this;
     }
 
-    public function fieldSplit(CustomField|Closure|null $layoutTypeSplit):static {
-        $this->fieldSplit = $layoutTypeSplit;
+    public function fieldSplit(CustomField|Closure|null $fieldSplit):static {
+        $this->fieldSplit = $fieldSplit;
         return $this;
     }
 

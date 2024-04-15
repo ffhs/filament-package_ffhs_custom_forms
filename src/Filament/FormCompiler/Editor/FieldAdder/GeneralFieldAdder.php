@@ -13,7 +13,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Get;
 use Illuminate\Support\Facades\Cache;
 
-class GeneralFieldAdder extends CustomFieldAdder
+final class GeneralFieldAdder extends FormEditorFieldAdder
 {
 
     function getTitle(): string {

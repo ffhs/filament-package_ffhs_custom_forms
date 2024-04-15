@@ -9,7 +9,7 @@ use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Get;
 
-class TemplateAdder extends CustomFieldAdder
+final class TemplateAdder extends FormEditorFieldAdder
 {
 
     function getTitle(): string {

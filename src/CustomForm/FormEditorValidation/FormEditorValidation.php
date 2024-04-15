@@ -7,5 +7,5 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 
 abstract class FormEditorValidation
 {
-    public abstract function getRepeaterValidation(CustomForm $record, Closure $fail, array $value, string $attribute):void ;
+    public abstract function repeaterValidation(CustomForm $record, Closure $fail, array $value, string $attribute):void ;
 }

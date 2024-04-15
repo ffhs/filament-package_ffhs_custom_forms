@@ -12,10 +12,9 @@ use Filament\Forms\Get;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\HtmlString;
 
-class CustomFieldAdder extends FormEditorFieldAdder
+final class CustomFieldAdder extends FormEditorFieldAdder
 {
 
-    protected string $view = 'filament-forms::components.group';
 
     function getTitle(): string {
         return  "Spezifische Felder"; //ToDo Translate

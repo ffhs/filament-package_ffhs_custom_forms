@@ -56,7 +56,7 @@ class CustomFormEditor extends Component
                                         $editorValidation = new $editorValidationClass();
                                         /**@var FormEditorValidation $editorValidation;*/
 
-                                        $editorValidation->getRepeaterValidation($record,$fail,$value,$attribute);
+                                        $editorValidation->repeaterValidation($record,$fail,$value,$attribute);
                                     }
                                 }
                         ]),

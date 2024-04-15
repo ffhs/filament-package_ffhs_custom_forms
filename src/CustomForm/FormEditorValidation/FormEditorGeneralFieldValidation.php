@@ -9,7 +9,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralFieldForm;
 
 class FormEditorGeneralFieldValidation extends FormEditorValidation
 {
-    public function getRepeaterValidation(CustomForm $record, Closure $fail, array $value, string $attribute):void {
+    public function repeaterValidation(CustomForm $record, Closure $fail, array $value, string $attribute):void {
         $formIdentifier = $record->custom_form_identifier;
         $requiredGeneralFieldForm = GeneralFieldForm::query()
             ->where("custom_form_identifier", $formIdentifier)
