@@ -50,6 +50,7 @@ return [
             'tags_input'=> 'Tags',
             'color_input'=>'Color picker',
             'key_value'=> 'Key value',
+            'title' => 'Title',
         ],
 
         'rules'=>[

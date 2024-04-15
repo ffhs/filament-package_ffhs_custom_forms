@@ -16,6 +16,8 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\TextAr
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\TextType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\ToggleButtonsType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\Types\SectionType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\Types\TitleType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\Types\Views\TitleTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\Anchors\ValueEqualsRuleAnchor;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\Type\ChangeOptionRuleType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\Type\DisabledRuleType;
@@ -79,6 +81,7 @@ return [
         TagsType::class,
         ColorPickerType::class,
         KeyValueType::class,
+        TitleType::class,
     ],
     "selectable_field_types" => [
         CheckboxType::class,
@@ -97,6 +100,7 @@ return [
         TagsType::class,
         ColorPickerType::class,
         KeyValueType::class,
+        TitleType::class,
     ],
     "selectable_general_field_types"=>[
         CheckboxType::class,

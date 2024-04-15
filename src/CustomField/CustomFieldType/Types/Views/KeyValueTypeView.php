@@ -10,6 +10,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\KeyValue;
 use Filament\Forms\Components\TagsInput;
+use Filament\Infolists\Components\KeyValueEntry;
 use Filament\Infolists\Components\TextEntry;
 
 class KeyValueTypeView implements FieldTypeView
@@ -38,12 +39,11 @@ class KeyValueTypeView implements FieldTypeView
         $answerer =FormMapper::getAnswer($record);
         $answerer = empty($answerer)?"":$answerer;
 
-        return TextEntry::make(FormMapper::getIdentifyKey($record))
+        return KeyValueEntry::make(FormMapper::getIdentifyKey($record))
                 ->columnStart(FormMapper::getOptionParameter($record,"new_line_option"))
                 ->label(FormMapper::getLabelName($record). ":")
                 ->columnSpanFull()
                 ->inlineLabel()
-                ->state($answerer)
-                ->badge();
+                ->state($answerer);
     }
 }

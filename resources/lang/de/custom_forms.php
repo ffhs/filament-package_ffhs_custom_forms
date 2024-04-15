@@ -53,6 +53,7 @@ return [
             'tags_input'=> 'Etikett',
             'color_input'=>'Farbauswahl',
             'key_value'=> 'Schlüsselpaar',
+            'title' => 'Titel',
         ],
 
         'rules'=>[
