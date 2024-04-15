@@ -51,7 +51,8 @@ return [
             "checkbox_list" => "Kästchen Liste",
             "toggle_buttons"=> "Umschalttasten",
             'tags_input'=> 'Etikett',
-            'color_input'=>'Farbauswahl'
+            'color_input'=>'Farbauswahl',
+            'key_value'=> 'Schlüsselpaar',
         ],
 
         'rules'=>[

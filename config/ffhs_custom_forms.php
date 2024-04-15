@@ -7,6 +7,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\DateTi
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\DateType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\EmailType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\IconSelectType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\KeyValueType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\NumberType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\RadioType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\SelectType;
@@ -76,7 +77,8 @@ return [
         ToggleButtonsType::class,
         TemplateFieldType::class,
         TagsType::class,
-        ColorPickerType::class
+        ColorPickerType::class,
+        KeyValueType::class,
     ],
     "selectable_field_types" => [
         CheckboxType::class,
@@ -93,7 +95,8 @@ return [
         CheckboxListType::class,
         ToggleButtonsType::class,
         TagsType::class,
-        ColorPickerType::class
+        ColorPickerType::class,
+        KeyValueType::class,
     ],
     "selectable_general_field_types"=>[
         CheckboxType::class,
@@ -109,7 +112,8 @@ return [
         CheckboxListType::class,
         ToggleButtonsType::class,
         TagsType::class,
-        ColorPickerType::class
+        ColorPickerType::class,
+        KeyValueType::class,
     ],
 
 ];
