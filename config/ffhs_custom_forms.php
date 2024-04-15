@@ -15,6 +15,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\TagsTy
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\TextAreaType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\TextType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\ToggleButtonsType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\Types\FieldsetType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\Types\SectionType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\Types\TextLayoutType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\Types\TitleType;
@@ -88,6 +89,7 @@ return [
         ToggleButtonsType::class,
 
         SectionType::class,
+        FieldsetType::class,
         TitleType::class,
         TextLayoutType::class,
     ],
@@ -113,6 +115,7 @@ return [
         ToggleButtonsType::class,
 
         SectionType::class,
+        FieldsetType::class,
         TitleType::class,
         TextLayoutType::class,
     ],

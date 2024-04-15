@@ -52,6 +52,7 @@ return [
             'key_value'=> 'Key value',
             'title' => 'Title',
             'layout_text'=>'Layout text',
+            'fieldset' => 'Fieldset',
         ],
 
         'rules'=>[

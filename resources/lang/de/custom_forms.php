@@ -55,6 +55,7 @@ return [
             'key_value'=> 'Schlüsselpaar',
             'title' => 'Titel',
             'layout_text'=>'Layout Text',
+            'fieldset' => 'Fieldset',
         ],
 
         'rules'=>[
