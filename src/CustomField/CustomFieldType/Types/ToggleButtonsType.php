@@ -57,13 +57,13 @@ class ToggleButtonsType extends CustomOptionType
                             ->disabled(fn($get)=> $get("multiple"))
                             ->columnStart(1)
                 ),
-                "multiple" => new FastTypeOption(false,
+              /*  "multiple" => new FastTypeOption(false,
                     Toggle::make("multiple")
                         ->disabled(fn($get)=> $get("boolean"))
                         ->columnStart(2)
                         ->label("Mehre Schalter auswählbar")//ToDo Translate
                         ->live(),
-                ),
+                ),*/
                 parent::getExtraTypeOptions()["customOptions" ]
                     ->modifyComponent(fn(Component $component) => $component->hidden(fn($get) => $get("boolean")))
             ],

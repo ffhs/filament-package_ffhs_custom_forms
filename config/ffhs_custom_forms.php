@@ -9,6 +9,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\IconSe
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\NumberType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\RadioType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\SelectType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\TagsType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\TextAreaType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\TextType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\ToggleButtonsType;
@@ -72,7 +73,8 @@ return [
         RadioType::class,
         CheckboxListType::class,
         ToggleButtonsType::class,
-        TemplateFieldType::class
+        TemplateFieldType::class,
+        TagsType::class
     ],
     "selectable_field_types" => [
         CheckboxType::class,
@@ -88,6 +90,7 @@ return [
         RadioType::class,
         CheckboxListType::class,
         ToggleButtonsType::class,
+        TagsType::class
     ],
     "selectable_general_field_types"=>[
         CheckboxType::class,
@@ -102,6 +105,7 @@ return [
         RadioType::class,
         CheckboxListType::class,
         ToggleButtonsType::class,
+        TagsType::class
     ],
 
 ];
