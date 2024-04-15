@@ -1,6 +1,5 @@
 <?php
 
-
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\CheckboxListType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\CheckboxType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\DateTimeType;
@@ -20,12 +19,15 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\Type\DisabledRule
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\Type\HiddenRuleType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\Type\RequiredRuleType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\Templates\TemplateFieldType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormEditorValidation\FormEditorGeneralFieldValidation;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor\FieldAdder\CustomFieldAdder;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor\FieldAdder\GeneralFieldAdder;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor\FieldAdder\TemplateAdder;
 
 return [
 
     'cache_duration'=> 1,
     'default_column_count' => 4,
-    'use_templates' => true,
 
     "field_rule_anchor_types"=>[
         ValueEqualsRuleAnchor::class,
@@ -44,6 +46,16 @@ return [
 
     'view_modes' => [
 
+    ],
+
+    'custom_form_editor_validations' => [
+        FormEditorGeneralFieldValidation::class
+    ],
+
+    'editor_field_adder' => [
+        GeneralFieldAdder::class,
+        TemplateAdder::class,
+        CustomFieldAdder::class
     ],
 
     "custom_field_types" => [

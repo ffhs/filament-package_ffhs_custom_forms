@@ -43,7 +43,6 @@ class GeneralField extends ACustomField
 
     protected $casts = [
         'extra_options'=>'array',
-        'variation_options'=>'array',
     ];
 
     public static function getTranslatableAttributes(): array

@@ -1,22 +1,20 @@
 <?php
 
-namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\CustomFormEditForm;
+namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor\Helper;
 
 use Closure;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\CustomLayoutType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\TypeOption;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\CustomFormEditForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\FieldRule;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralFieldForm;
 use Filament\Forms\Components\Repeater;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection;
 
-class EditCustomFormSave
+class CustomFormEditorSaveHelper
 {
 
     private static function setArrayExistingRecordFromArrayData(Collection &$customFieldsOld, array $state,  array&$statedRecords): void {
@@ -45,7 +43,7 @@ class EditCustomFormSave
                 unset($itemData["custom_fields"]);
                 $itemData["layout_end_position"] = $itemOrder-1;
             }
-            else if(EditCustomFormFieldFunctions::getFieldTypeFromRawDate($itemData) instanceof CustomLayoutType){
+            else if(CustomFormEditorHelper::getFieldTypeFromRawDate($itemData) instanceof CustomLayoutType){
                 unset($itemData["custom_fields"]);
                 $itemData["layout_end_position"] = $itemOrder-1;
             }
@@ -98,7 +96,7 @@ class EditCustomFormSave
     }
 
     private static function updateCustomField(CustomField &$customField,array $itemData): void {
-        $type = EditCustomFormFieldFunctions::getFieldTypeFromRawDate($itemData);
+        $type = CustomFormEditorHelper::getFieldTypeFromRawDate($itemData);
 
         $rawData = $itemData;
         $customField->fill($itemData);
@@ -111,40 +109,40 @@ class EditCustomFormSave
 
     }
 
-    public static function getGeneralFieldRepeaterValidationRule():Closure {
+   /* public static function getGeneralFieldRepeaterValidationRule():Closure {
         return fn (CustomForm $record) =>
-            function (string $attribute, $value, Closure $fail) use($record)  {
-                $formIdentifier = $record->custom_form_identifier;
-                $requiredGeneralFieldForm = GeneralFieldForm::query()
-                    ->where("custom_form_identifier", $formIdentifier)
-                    ->select("general_field_id")
-                    ->where("is_required", true)
-                    ->with("generalField")
-                    ->get();
+        function (string $attribute, $value, Closure $fail) use($record)  {
+            $formIdentifier = $record->custom_form_identifier;
+            $requiredGeneralFieldForm = GeneralFieldForm::query()
+                ->where("custom_form_identifier", $formIdentifier)
+                ->select("general_field_id")
+                ->where("is_required", true)
+                ->with("generalField")
+                ->get();
 
-                $requiredGeneralIDs = $requiredGeneralFieldForm
-                    ->map(fn ($fieldForm) => $fieldForm->general_field_id);
+            $requiredGeneralIDs = $requiredGeneralFieldForm
+                ->map(fn ($fieldForm) => $fieldForm->general_field_id);
 
-                $usedGeneralIDs =EditCustomFormFieldFunctions::getUsedGeneralFieldIds($value);
-                $notAddedRequiredFields = $requiredGeneralIDs
-                    ->filter(fn($id)=> !in_array($id, $usedGeneralIDs));
+            $usedGeneralIDs =CustomFormEditorHelper::getUsedGeneralFieldIds($value);
+            $notAddedRequiredFields = $requiredGeneralIDs
+                ->filter(fn($id)=> !in_array($id, $usedGeneralIDs));
 
-                if($notAddedRequiredFields->count() == 0) return;
+            if($notAddedRequiredFields->count() == 0) return;
 
-                $fieldName = $requiredGeneralFieldForm
-                    ->filter(function($fieldForm) use ($notAddedRequiredFields) {
-                        $generalFieldId = $fieldForm->general_field_id;
-                        $notAddedField = $notAddedRequiredFields->first();
-                        return $generalFieldId == $notAddedField;
-                    })
-                    ->first()->generalField->name_de;
+            $fieldName = $requiredGeneralFieldForm
+                ->filter(function($fieldForm) use ($notAddedRequiredFields) {
+                    $generalFieldId = $fieldForm->general_field_id;
+                    $notAddedField = $notAddedRequiredFields->first();
+                    return $generalFieldId == $notAddedField;
+                })
+                ->first()->generalField->name_de;
 
-                $failureMessage =
-                    "Du must das generelle Feld \"" . $fieldName . "\" hinzufügen"; //ToDo Translate
+            $failureMessage =
+                "Du must das generelle Feld \"" . $fieldName . "\" hinzufügen"; //ToDo Translate
 
-                $fail($failureMessage);
-            };
-    }
+            $fail($failureMessage);
+        };
+    }*/
 
     private static function mutateOptionData(?CustomFieldType $type, CustomField $customField, array $customFieldData): array {
         if(!array_key_exists("options",$customFieldData)) return $customFieldData;

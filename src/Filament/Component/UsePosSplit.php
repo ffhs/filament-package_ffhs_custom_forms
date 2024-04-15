@@ -11,13 +11,13 @@ trait UsePosSplit
 
 
     //The array have to look like: [$beginPos,$endPos]
-    public function usePoseSplit(bool|Closure $useFieldSplit=true):static {
-        $this->usePoseSplit = $useFieldSplit;
+    public function usePoseSplit(bool|Closure $usePosSplit=true):static {
+        $this->usePoseSplit = $usePosSplit;
         return $this;
     }
 
-    public function poseSplit(array|Closure|null $layoutTypeSplit):static {
-        $this->poseSplit = $layoutTypeSplit;
+    public function poseSplit(array|Closure|null $posSplit):static {
+        $this->poseSplit = $posSplit;
         return $this;
     }
 

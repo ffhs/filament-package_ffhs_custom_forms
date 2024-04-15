@@ -9,9 +9,8 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\CustomLayou
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomOption\CustomOptionType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\FieldRuleAnchorType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\HasAnchorPluginTranslate;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\CustomFormEditForm\EditCustomFieldForm;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\CustomFormEditForm\EditCustomFieldRule;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\CustomFormEditForm\EditCustomFormFieldFunctions;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor\Helper\CustomFormEditorHelper;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor\Helper\CustomFormEditorMutationHelper;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\FieldRule;
@@ -70,8 +69,8 @@ class ValueEqualsRuleAnchor extends FieldRuleAnchorType
             $template = CustomForm::cached($templateData["template_id"]);
             return $template->customFields->map(function(CustomField $customField) use ($template) {
                 $data = $customField->toArray();
-                $data = EditCustomFieldForm::mutateOptionData($data, $template);
-                return EditCustomFieldRule::mutateRuleDataOnLoad($data, $template);
+                $data = CustomFormEditorMutationHelper::mutateOptionData($data, $template);
+                return CustomFormEditorMutationHelper::mutateRuleDataOnLoad($data, $template);
             });
         })->flatten(1)->toArray();
 
@@ -133,7 +132,7 @@ class ValueEqualsRuleAnchor extends FieldRuleAnchorType
 
             $isGeneralField = !empty($field["general_field_id"]);
             $isTemplate = !empty($field["template_id"]);
-            $type = EditCustomFormFieldFunctions::getFieldTypeFromRawDate($field);
+            $type = CustomFormEditorHelper::getFieldTypeFromRawDate($field);
 
             //Skip Layout Types
             if($type instanceof CustomLayoutType) continue;
@@ -355,6 +354,7 @@ class ValueEqualsRuleAnchor extends FieldRuleAnchorType
         $targetField = $customForm->cachedFieldsWithTemplates()->where("identify_key",$target)->first();
         if(is_null($targetField)) {
             $genField = GeneralField::query()->where("identify_key",$target)->select("id")->first();
+            /**@var null|GeneralField $genField*/
             if(is_null($genField)) return false;
             $targetField = $customForm->customFields->where("general_field_id",$genField->id)->first();
         }

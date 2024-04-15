@@ -1,6 +1,6 @@
 <?php
 
-namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\CustomFormEditForm;
+namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor\Helper;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\Templates\TemplateFieldType;
@@ -8,14 +8,18 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Filament\Forms\Get;
 
-class EditCustomFormFieldFunctions
+class CustomFormEditorHelper
 {
 
     public static function getFieldTypeFromRawDate(array $data): ?CustomFieldType {
-        $isGeneral = array_key_exists("general_field_id",$data)&& !is_null($data["general_field_id"]);
         $isTemplate = array_key_exists("template_id",$data)&& !is_null($data["template_id"]);
         if($isTemplate) return new TemplateFieldType();
-        return $isGeneral? GeneralField::cached($data["general_field_id"])->getType(): CustomFieldType::getTypeFromName($data["type"]);
+
+        $isGeneral = array_key_exists("general_field_id",$data)&& !is_null($data["general_field_id"]);
+        if($isGeneral){
+            return  GeneralField::cached($data["general_field_id"])->getType();
+        }
+        return  CustomFieldType::getTypeFromName($data["type"]);
     }
 
     public static function getUsedGeneralFieldIds(array $customFields):array {
@@ -66,12 +70,9 @@ class EditCustomFormFieldFunctions
         $set("custom_fields", $fields);
     }
 
-    public static function useTemplateUsedGeneralFields(int $templateId, Get $get): bool {
-        $templateGenIds = CustomForm::cached($templateId)->generalFields->pluck("id")->toArray();
-        $existingIds = EditCustomFormFieldFunctions::getUsedGeneralFieldIds($get("custom_fields"));
-        $commonValues = array_intersect($templateGenIds, $existingIds);
-
-        return !empty($commonValues);
+    public static function getRawStateForm($livewireComponent, $form):array {
+        //Get RawSate (yeah is possible)
+        return array_values($livewireComponent->getLivewire()->getCachedForms())[$form]->getRawState();
     }
 
 }

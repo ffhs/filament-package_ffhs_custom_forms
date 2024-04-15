@@ -5,7 +5,10 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType;
 
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomFieldType;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor\CustomFieldList\EditorCustomFieldList;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\HtmlComponents\HtmlBadge;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
+use Filament\Forms\Components\Placeholder;
 
 abstract class CustomLayoutType extends CustomFieldType
 {
@@ -15,15 +18,16 @@ abstract class CustomLayoutType extends CustomFieldType
 
     public function nameBeforeIconFormEditor(array $state):string {
         $size = empty($state["custom_fields"])?0:sizeof($state["custom_fields"]);
-        return '<span x-on:click.stop="isCollapsed = !isCollapsed" class="cursor-pointer flex" >'
-            . new HtmlBadge($size)
-            . parent::nameBeforeIconFormEditor($state);
+        return new HtmlBadge($size) . parent::nameBeforeIconFormEditor($state);
     }
 
     public function nameFormEditor(array $state):string {
         return parent::nameFormEditor($state) . '</span>';
     }
 
+    public function editorRepeaterContent(CustomForm $form, array $fieldData): ?array {
+        return [EditorCustomFieldList::make($form)];
+    }
 
 
 }

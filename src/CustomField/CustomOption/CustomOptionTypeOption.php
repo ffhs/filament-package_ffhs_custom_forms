@@ -39,8 +39,6 @@ class CustomOptionTypeOption extends TypeOption
             ]);
     }
 
-
-
     public function mutateOnCreate(mixed $value, CustomField $field): mixed {
         $field->save();
         return $this->mutateOnSave($value,$field);
@@ -77,8 +75,6 @@ class CustomOptionTypeOption extends TypeOption
         });
         return $value;
     }
-
-
 
     private function getCustomOptionsSelector ($name):Component {
         return  Select::make($name)

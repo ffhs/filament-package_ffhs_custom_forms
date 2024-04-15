@@ -15,8 +15,10 @@ class CreateCustomForm extends CreateRecord
     public function form(Form $form): Form {
         return $form
             ->schema([
-                TextInput::make("short_title"),
+                TextInput::make("short_title")
+                    ->label("Namen"), //ToDo Translate
                 Select::make("custom_form_identifier")
+                    ->label("Formularart") //ToDo Translate
                     ->required()
                     ->options(function (){
                         $keys = array_map(fn($config) => $config::identifier(),config("ffhs_custom_forms.forms"));

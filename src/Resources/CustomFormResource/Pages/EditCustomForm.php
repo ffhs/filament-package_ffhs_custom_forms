@@ -2,7 +2,7 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormResource\Pages;
 
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\CustomFormEditForm;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor\CustomFormEditor;
 use Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormResource;
 use Filament\Actions;
 use Filament\Forms\Components\Section;
@@ -14,14 +14,7 @@ class EditCustomForm extends EditRecord
     protected static string $resource = CustomFormResource::class;
 
     public function form(Form $form): Form {
-        return $form
-            ->schema(
-                [
-                    Section::make()
-                        ->schema(CustomFormEditForm::formSchema())
-                        ->columns(3),
-                ]
-            );
+        return $form->schema([Section::make()->schema([CustomFormEditor::make()])]);
     }
 
 
