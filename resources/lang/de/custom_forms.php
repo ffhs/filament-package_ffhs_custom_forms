@@ -27,7 +27,7 @@ return [
         'is_general_field_active' => 'Aktive',
         'label'=> "Name",
         'form_connections'=> 'Verknüpfte Formulare',
-        'general_field' => 'Generelles Felde',
+        'general_field' => 'Generelles Feld',
         'is_required'=> 'Wird benötigt',
 
         'helper_text' => [
@@ -56,6 +56,7 @@ return [
             'title' => 'Titel',
             'layout_text'=>'Layout Text',
             'fieldset' => 'Fieldset',
+            'group' => 'Gruppe'
         ],
 
         'rules'=>[

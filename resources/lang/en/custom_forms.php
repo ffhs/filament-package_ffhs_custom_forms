@@ -53,6 +53,7 @@ return [
             'title' => 'Title',
             'layout_text'=>'Layout text',
             'fieldset' => 'Fieldset',
+            'group' => 'Group',
         ],
 
         'rules'=>[

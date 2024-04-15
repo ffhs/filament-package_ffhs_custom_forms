@@ -16,6 +16,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\TextAr
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\TextType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\ToggleButtonsType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\Types\FieldsetType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\Types\GroupType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\Types\SectionType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\Types\TextLayoutType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\Types\TitleType;
@@ -90,6 +91,7 @@ return [
 
         SectionType::class,
         FieldsetType::class,
+        GroupType::class,
         TitleType::class,
         TextLayoutType::class,
     ],
@@ -116,6 +118,7 @@ return [
 
         SectionType::class,
         FieldsetType::class,
+        GroupType::class,
         TitleType::class,
         TextLayoutType::class,
     ],
