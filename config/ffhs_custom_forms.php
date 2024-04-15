@@ -64,60 +64,75 @@ return [
     ],
 
     "custom_field_types" => [
-        CheckboxType::class,
-        DateTimeType::class,
-        DateType::class,
+        TemplateFieldType::class,
+
+        TextType::class,
         EmailType::class,
         NumberType::class,
         TextAreaType::class,
-        TextType::class,
-        SectionType::class,
+        CheckboxType::class,
+        DateTimeType::class,
+        DateType::class,
+
+        TagsType::class,
+        KeyValueType::class,
+
+
+        ColorPickerType::class,
         IconSelectType::class,
+
         SelectType::class,
         RadioType::class,
         CheckboxListType::class,
         ToggleButtonsType::class,
-        TemplateFieldType::class,
-        TagsType::class,
-        ColorPickerType::class,
-        KeyValueType::class,
+
+        SectionType::class,
         TitleType::class,
     ],
     "selectable_field_types" => [
         CheckboxType::class,
-        DateTimeType::class,
-        DateType::class,
+        TextType::class,
         EmailType::class,
         NumberType::class,
         TextAreaType::class,
-        TextType::class,
-        SectionType::class,
+        DateTimeType::class,
+        DateType::class,
+
+        TagsType::class,
+        KeyValueType::class,
+
+
+        ColorPickerType::class,
         IconSelectType::class,
+
         SelectType::class,
         RadioType::class,
         CheckboxListType::class,
         ToggleButtonsType::class,
-        TagsType::class,
-        ColorPickerType::class,
-        KeyValueType::class,
+
+        SectionType::class,
         TitleType::class,
     ],
     "selectable_general_field_types"=>[
         CheckboxType::class,
-        DateTimeType::class,
-        DateType::class,
+        TextType::class,
         EmailType::class,
         NumberType::class,
         TextAreaType::class,
-        TextType::class,
+        DateTimeType::class,
+        DateType::class,
+
+        TagsType::class,
+        KeyValueType::class,
+
+
+        ColorPickerType::class,
         IconSelectType::class,
+
         SelectType::class,
         RadioType::class,
         CheckboxListType::class,
         ToggleButtonsType::class,
-        TagsType::class,
-        ColorPickerType::class,
-        KeyValueType::class,
     ],
 
 ];
