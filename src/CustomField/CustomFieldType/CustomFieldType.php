@@ -4,6 +4,8 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType;
 
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\CustomLayoutType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\NestedLayoutType\EggLayoutType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\NestedLayoutType\NestLayoutType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\RepeaterFieldAction\Actions\EditAction;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\RepeaterFieldAction\Actions\PullInLayoutAction;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\RepeaterFieldAction\Actions\PullOutLayoutAction;
@@ -233,15 +235,18 @@ abstract class CustomFieldType
     public function repeaterFunctions():array{
         return [
             PullInLayoutAction::class => function (CustomForm $record, Get $get, array $state, array $arguments):bool {
+                if(!PullOutLayoutAction::getDefaultTypeClosure($this)($record,$get,$state,$arguments)) return false;
+
                 $itemIndex = $arguments["item"];
                 $itemIndexPostion = PullInLayoutAction::getKeyPosition($itemIndex, $state);
                 if ($itemIndexPostion == 0) return false;
                 $upperCustomFieldData = $state[array_keys($state)[$itemIndexPostion - 1]];
                 $type = CustomFormEditorHelper::getFieldTypeFromRawDate($upperCustomFieldData);
-                return $type instanceof CustomLayoutType;
+                return $type instanceof CustomLayoutType && !($type instanceof NestLayoutType) && !($type instanceof EggLayoutType);
             },
             PullOutLayoutAction::class=> function (CustomForm $record, Get $get,array $state, array $arguments):bool {
-                return !is_null($get("../../custom_fields"));
+                if(!PullOutLayoutAction::getDefaultTypeClosure($this)($record,$get,$state,$arguments)) return false;
+                return !is_null($get("../../custom_fields")) ;
             },
             EditAction::class => RepeaterFieldAction::getDefaultTypeClosure($this),
         ];
