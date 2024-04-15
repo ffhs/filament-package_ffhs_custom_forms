@@ -16,6 +16,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\TextAr
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\TextType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\ToggleButtonsType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\Types\SectionType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\Types\TextLayoutType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\Types\TitleType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\Types\Views\TitleTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\Anchors\ValueEqualsRuleAnchor;
@@ -88,6 +89,7 @@ return [
 
         SectionType::class,
         TitleType::class,
+        TextLayoutType::class,
     ],
     "selectable_field_types" => [
         CheckboxType::class,
@@ -112,7 +114,9 @@ return [
 
         SectionType::class,
         TitleType::class,
+        TextLayoutType::class,
     ],
+
     "selectable_general_field_types"=>[
         CheckboxType::class,
         TextType::class,

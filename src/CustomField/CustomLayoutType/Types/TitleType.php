@@ -11,6 +11,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\BooleanOp
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\FastTypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\MaxLengthOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\MinLenghtOption;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\ShowInViewOption;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 
@@ -51,11 +52,7 @@ class TitleType extends CustomFieldType
 
     protected function extraOptionsAfterBasic(): array {
         return [
-            'show_in_view'=> new FastTypeOption(true,
-                Toggle::make('show_in_view')
-                    ->label("Sichtbar beim Betrachten") //ToDo Translate
-            ),
-
+            'show_in_view'=> new ShowInViewOption()
         ];
     }
 

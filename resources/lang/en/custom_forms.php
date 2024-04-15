@@ -51,6 +51,7 @@ return [
             'color_input'=>'Color picker',
             'key_value'=> 'Key value',
             'title' => 'Title',
+            'layout_text'=>'Layout text',
         ],
 
         'rules'=>[

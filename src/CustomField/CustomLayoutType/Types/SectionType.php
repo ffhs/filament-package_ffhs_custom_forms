@@ -11,6 +11,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\ColumnsOp
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\ColumnSpanOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\FastTypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\NewLineOption;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\ShowTitleOption;
 use Filament\Forms\Components\Toggle;
 
 class SectionType extends CustomLayoutType
@@ -37,11 +38,7 @@ class SectionType extends CustomLayoutType
         return[
             "columns" => new ColumnsOption(),
             'column_span' => new ColumnSpanOption(),
-            "show_title" =>  new FastTypeOption(true,
-                Toggle::make("show_title")
-                    ->label("Titel Anzeigen") //ToDo Translate
-                    ->live(),
-            ),
+            "show_title" =>  new ShowTitleOption(),
             'aside' => new FastTypeOption(false,
                 Toggle::make("aside")
                     ->label("Titel seitlich Anzeigen") //ToDo Translate,

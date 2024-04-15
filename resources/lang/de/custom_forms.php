@@ -54,6 +54,7 @@ return [
             'color_input'=>'Farbauswahl',
             'key_value'=> 'Schlüsselpaar',
             'title' => 'Titel',
+            'layout_text'=>'Layout Text',
         ],
 
         'rules'=>[
