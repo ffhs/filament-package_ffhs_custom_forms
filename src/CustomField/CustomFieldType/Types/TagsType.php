@@ -11,7 +11,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\BooleanOp
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\ColumnsOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\FastTypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\InlineOption;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\MaxLenghtOption;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\MaxLengthOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\MinLenghtOption;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Toggle;

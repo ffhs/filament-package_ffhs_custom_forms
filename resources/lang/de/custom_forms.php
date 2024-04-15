@@ -50,7 +50,8 @@ return [
             "icon-select" => "Icon Auswahl",
             "checkbox_list" => "Kästchen Liste",
             "toggle_buttons"=> "Umschalttasten",
-            'tags_input'=> 'Etikett'
+            'tags_input'=> 'Etikett',
+            'color_input'=>'Farbauswahl'
         ],
 
         'rules'=>[

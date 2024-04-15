@@ -47,7 +47,8 @@ return [
             "icon-select" => "Icon Selector",
             "checkbox_list" => "Checkbox List",
             "toggle_buttons"=> "Toggle Buttons",
-            'tags_input'=> 'Tags'
+            'tags_input'=> 'Tags',
+            'color_input'=>'Color picker'
         ],
 
         'rules'=>[

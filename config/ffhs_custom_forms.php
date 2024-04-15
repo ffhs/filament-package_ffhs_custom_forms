@@ -2,6 +2,7 @@
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\CheckboxListType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\CheckboxType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\ColorPickerType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\DateTimeType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\DateType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\EmailType;
@@ -74,7 +75,8 @@ return [
         CheckboxListType::class,
         ToggleButtonsType::class,
         TemplateFieldType::class,
-        TagsType::class
+        TagsType::class,
+        ColorPickerType::class
     ],
     "selectable_field_types" => [
         CheckboxType::class,
@@ -90,7 +92,8 @@ return [
         RadioType::class,
         CheckboxListType::class,
         ToggleButtonsType::class,
-        TagsType::class
+        TagsType::class,
+        ColorPickerType::class
     ],
     "selectable_general_field_types"=>[
         CheckboxType::class,
@@ -105,7 +108,8 @@ return [
         RadioType::class,
         CheckboxListType::class,
         ToggleButtonsType::class,
-        TagsType::class
+        TagsType::class,
+        ColorPickerType::class
     ],
 
 ];

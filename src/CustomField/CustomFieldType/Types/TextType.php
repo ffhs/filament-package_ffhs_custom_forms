@@ -6,7 +6,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomFieldT
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\HasBasicSettings;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\HasCustomFormPackageTranslation;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\Views\TextTypeView;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\MaxLenghtOption;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\MaxLengthOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\MinLenghtOption;
 
 class TextType extends CustomFieldType
@@ -28,7 +28,7 @@ class TextType extends CustomFieldType
 
     protected function extraOptionsBeforeBasic(): array {
         return [
-            'max_length' => new MaxLenghtOption(),
+            'max_length' => new MaxLengthOption(),
             'min_length' => new MinLenghtOption(),
         ];
     }
