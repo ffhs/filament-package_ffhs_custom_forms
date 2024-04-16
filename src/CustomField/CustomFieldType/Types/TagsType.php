@@ -2,46 +2,34 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types;
 
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\HasBasicSettings;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\HasCustomFormPackageTranslation;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\Views\TextTypeView;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomOption\CustomOptionType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\BooleanOption;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\ColumnsOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\FastTypeOption;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\InlineOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\MaxLengthOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\MinLenghtOption;
+use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Toggle;
 
-class TextAreaType extends CustomFieldType
+class TagsType extends CustomOptionType
 {
     use HasCustomFormPackageTranslation;
     use HasBasicSettings;
-
-    public static function getFieldIdentifier(): string {return "textarea";}
-
+    public static function getFieldIdentifier(): string { return "tags_input"; }
 
     public function viewModes(): array {
         return  [
-          'default'=>   Types\Views\TextAreaTypeView::class
+            'default'  => Types\Views\TagsTypeView::class,
         ];
     }
 
-    public function icon(): string {
-        return  "bi-textarea-t";
+    public function icon(): String {
+        return  "bi-tags";
     }
-
-    protected function extraOptionsBeforeBasic(): array {
-
-        $autoSizeComponent =
-            Toggle::make("auto_size")
-            ->label("Automatische Grösse") //ToDo Translate
-            ->columnSpan(2);
-
-        return [
-            'max_length' => new MaxLengthOption(),
-            'min_length' => new MinLenghtOption(),
-            'auto_size'=> new FastTypeOption(false,$autoSizeComponent),
-        ];
-    }
-
 
 }

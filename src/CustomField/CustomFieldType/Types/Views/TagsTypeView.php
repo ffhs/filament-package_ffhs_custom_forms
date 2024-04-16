@@ -7,35 +7,41 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomOption\HasCustomOption
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FormMapper;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\View\FieldTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Filament\Forms\Components\Component;
+use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\ToggleButtons;
+use Filament\Infolists\Components\TextEntry;
 
-class ToggleButtonsView implements FieldTypeView
+class TagsTypeView implements FieldTypeView
 {
-
-    use HasCustomOptionInfoListViewWithBoolean;
 
     public static function getFormComponent(CustomFieldType $type, CustomField $record,
         array $parameter = []): Component {
 
-        $toggles = ToggleButtons::make(FormMapper::getIdentifyKey($record))
+        return TagsInput::make(FormMapper::getIdentifyKey($record))
             ->columnStart(FormMapper::getOptionParameter($record,"new_line_option"))
             ->inlineLabel(FormMapper::getOptionParameter($record,"in_line_label"))
-           // ->multiple(FormMapper::getOptionParameter($record,"multiple"))
             ->columns(FormMapper::getOptionParameter($record,"columns"))
             ->helperText(FormMapper::getToolTips($record))
             ->label(FormMapper::getLabelName($record))
-            ->required($record->required);
-
-        if(FormMapper::getOptionParameter($record,"grouped")) $toggles->grouped();
-        else if(FormMapper::getOptionParameter($record,"inline")) $toggles->inline();
-        else $toggles->columnSpan(FormMapper::getOptionParameter($record,"column_span"));
-
-        if(FormMapper::getOptionParameter($record,"boolean")) $toggles->boolean();
-        else $toggles->options(FormMapper::getAvailableCustomOptions($record));
-
-        return $toggles;
+            ->required($record->required)
+            ->columnSpan(FormMapper::getOptionParameter($record,"column_span"));
     }
 
 
+    public static function getInfolistComponent(CustomFieldType $type, CustomFieldAnswer $record,
+        array $parameter = []): \Filament\Infolists\Components\Component {
+
+        $answerer =FormMapper::getAnswer($record);
+        $answerer = empty($answerer)?"":$answerer;
+
+        return TextEntry::make(FormMapper::getIdentifyKey($record))
+                ->columnStart(FormMapper::getOptionParameter($record,"new_line_option"))
+                ->label(FormMapper::getLabelName($record). ":")
+                ->columnSpanFull()
+                ->inlineLabel()
+                ->state($answerer)
+                ->badge();
+    }
 }

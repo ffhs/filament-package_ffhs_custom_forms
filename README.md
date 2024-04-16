@@ -701,7 +701,7 @@ class LocationSelectorType extends CustomFieldType
     - `extraOptionsBeforeBasic()` => Vor der Basic-Setting
     - `extraOptionsAfterBasic()` => Nach den Basic-Settings </br>
 
-# 06 Layout Felder
+# 06 Layout-Felder
 ## 06.00 Layout-Felder
 - Layout Felder sind Felder die eine Verschachtelung aufweisen.
     - Beispiel `Sections`
@@ -763,8 +763,122 @@ class SectionTypeView implements FieldTypeView
 - `$parameter["customFieldData"]`
     - In dem Parameter `"customFieldData"` sind die Rohdaten der `CustomField`'s enthalten. </br>
 
-# 07 Custom-Options Felder
 
+## 06.02 Nested Layout-Felder
+### 06.02.00 Erklärung
+- Die nested Layout-Felder sind Layout Felder, welche nicht alleine Stehen können. Das bedeutet, dass diese Felder noch bestimmte Unterfelder benötigen, beispielsweise Tabs oder Wizards
+- Diese Felder bestehen aus zwei Teilen
+    - `CustomNestLayoutType` => Das Feld welches zu oberste von der Hierarchie sein soll. (Beispiel: `Tabs`)
+        - Die `rendered` Felder, welche Sie zurückbekommen, sind nur Felder von dem Typen Ihres hinterlegten `CustomEggLayoutType`'s
+    - `CustomEggLayoutType` =>Das Feld welches eine Schicht tiefer sein soll. (Beispiel: `Tabs\Tab`)
+        - Die `CustomEggLayoutType` werden nicht unter `selectable_field_types` in der Config eingetragen werden, da diese peer Repeater-Actions hinzugefügt werden können
+- Diese Felder bieten direkt folgende Funktionen:
+    - Es Können über die `(+)` Action neue Eggs zu dem Nest hinzugefügt werden.
+    - Es gibt eine neue `PullInAction` die Alle Felder haben welche unter dem Nest stehen.
+        - Wenn ein Feld hochgeschoben werden soll, kann der User mithilfe von einem Select auswählen wohin das Feld verschoben werden soll.
+    - Es gibt eine neue `PullOuAction` die Alle Felder haben welche in einem Ei sind.
+        - Diese Action verschiebt das Feld ausserhalb des Eies </br>
+
+### 06.02.01 Neuer NestedType erstellen (`CustomNestLayoutType` & `CustomEggLayoutType`)
+#### 06.02.01.00 Erstellen des  `EggLayoutType`
+- Erstellen Sie eine neue Klasse für den Eitypen und erben Sie von `EggLayoutType`
+    - Sie können diese Klasse wie einen normalen `CustomLayoutTypen` behandeln
+```php
+class TabEggType extends CustomEggLayoutType  
+{  
+    public static function getFieldIdentifier(): string {  
+        return "tab";  
+    }  
+  
+    public function viewModes(): array {  
+        return [  
+            "default"=> TabEggTypeView::class  
+        ];  
+    }  
+  
+    public function icon(): string {  
+        return "tabler-slideshow";  
+    }  
+  
+}
+```
+</br>
+
+- Erstellen Sie eine neue Klasse für die View des Eitypen und erben Sie von `FieldTypeView`
+    - Sie können diese Klasse wie einen normalen `FieldTypeView` für einen `CustomLayoutTypen` behandeln
+```php
+class TabEggTypeView implements FieldTypeView  
+{  
+    public static function getFormComponent(CustomFieldType $type, CustomField $record, array $parameter = []): \Filament\Forms\Components\Component { 
+        return Tabs\Tab::make(FormMapper::getLabelName($record))   
+            ->schema($parameter["rendered"]);  
+    }  
+  
+    public static function getInfolistComponent(CustomFieldType $type, CustomFieldAnswer $record, array $parameter = []): \Filament\Infolists\Components\Component {  
+        return Tabs\Tab::make(FormMapper::getLabelName($record))  
+            ->schema($parameter["rendered"])  
+            ->columnSpanFull()
+            ->columnStart(1)  ;  
+    }  
+}
+```
+</br>
+
+#### 06.02.01.00 Erstellen des `CustomNestLayoutType`
+- Erstellen Sie eine neue Klasse für den Nesttypen und erben Sie von `CustomLayoutType`
+    - Sie können diese Klasse grundlegend wie einen normalen `CustomLayoutTypen` behandeln
+```php
+class TabsCustomNestType extends CustomNestLayoutType  
+{  
+    public static function getFieldIdentifier(): string {  
+        return "tabs";  
+    }  
+  
+    public function viewModes(): array {  
+        return  [  
+          'default'=> TabsNestTypeView::class,  
+        ];  
+    }  
+    public function icon(): string {  
+       return "carbon-new-tab";  
+    }  
+
+
+    public function getEggType(): CustomEggLayoutType {  
+        return new CustomTabCustomEggType();  
+    }  
+}
+```
+- Die Funktion `function getEggType(): CustomEggLayoutType` soll den passenden Eitypen zurückgeben.
+    - Die Funktion wird verwendet um neue Eier zum Nest hinzuzufügen.
+      </br>
+
+- Erstellen Sie eine neue Klasse für die View des Nesttypen und erben Sie von `FieldTypeView`
+    - Sie können diese Klasse grundlegend wie einen normalen `FieldTypeView` für einen `CustomLayoutTypen` behandeln
+```php
+class TabsNestTypeView implements FieldTypeView  
+{  
+  
+    public static function getFormComponent(CustomFieldType $type, CustomField $record, array $parameter = []): \Filament\Forms\Components\Component {  
+        
+        return Tabs::make($FormMapper::getLabelName($record))  
+            ->columnSpan(FormMapper::getOptionParameter($record,"column_span"))  
+            ->inlineLabel(FormMapper::getOptionParameter($record,"in_line_label"))  
+            ->columnStart(FormMapper::getOptionParameter($record,"new_line_option"))  
+            ->tabs($parameter["rendered"]);  //<===================
+    }  
+  
+    public static function getInfolistComponent(CustomFieldType $type, CustomFieldAnswer $record, array $parameter = []): \Filament\Infolists\Components\Component {  
+	    return \Filament\Infolists\Components\Tabs::make($FormMapper::getLabelName($record))  
+			->columnStart(1)  
+			->tabs($parameter["rendered"])  
+		      ->columnSpanFull(); //<===================
+	}
+}
+```
+</br>
+
+# 07 Custom-Options Felder
 
 ## 07_00 Feldtypen mit Auswahloptionen (`CustomOption)
 - Feldtypen mit Auswahloptionen sind Typen welche Vordefinierte Antworten haben, wie Beispielsweise ein Select-Feld

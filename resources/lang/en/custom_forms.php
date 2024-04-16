@@ -47,6 +47,17 @@ return [
             "icon-select" => "Icon Selector",
             "checkbox_list" => "Checkbox List",
             "toggle_buttons"=> "Toggle Buttons",
+            'tags_input'=> 'Tags',
+            'color_input'=>'Color picker',
+            'key_value'=> 'Key value',
+            'title' => 'Title',
+            'layout_text'=>'Layout text',
+            'fieldset' => 'Fieldset',
+            'group' => 'Group',
+            'tabs' => 'Tabs',
+            'tab' => 'Tab',
+            'wizard' => 'Step for Step',
+            'wizard_step' => 'Step',
         ],
 
         'rules'=>[

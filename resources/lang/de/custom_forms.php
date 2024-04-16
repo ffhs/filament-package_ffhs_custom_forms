@@ -27,7 +27,7 @@ return [
         'is_general_field_active' => 'Aktive',
         'label'=> "Name",
         'form_connections'=> 'Verknüpfte Formulare',
-        'general_field' => 'Generelles Felde',
+        'general_field' => 'Generelles Feld',
         'is_required'=> 'Wird benötigt',
 
         'helper_text' => [
@@ -50,6 +50,16 @@ return [
             "icon-select" => "Icon Auswahl",
             "checkbox_list" => "Kästchen Liste",
             "toggle_buttons"=> "Umschalttasten",
+            'tags_input'=> 'Etikett',
+            'color_input'=>'Farbauswahl',
+            'key_value'=> 'Schlüsselpaar',
+            'title' => 'Titel',
+            'layout_text'=>'Layout Text',
+            'fieldset' => 'Fieldset',
+            'tabs' => 'Tabs',
+            'tab' => 'Tab',
+            'wizard' => 'Schritt für Schritt',
+            'wizard_step' => 'Schritt',
         ],
 
         'rules'=>[

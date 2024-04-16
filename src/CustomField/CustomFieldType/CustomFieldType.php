@@ -4,9 +4,13 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType;
 
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\CustomLayoutType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\NestedLayoutType\CustomEggLayoutType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\NestedLayoutType\CustomNestLayoutType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\RepeaterFieldAction\Actions\EditAction;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\RepeaterFieldAction\Actions\PullInLayoutAction;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\RepeaterFieldAction\Actions\PullInNestedLayoutAction;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\RepeaterFieldAction\Actions\PullOutLayoutAction;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\RepeaterFieldAction\Actions\PullOutNestedLayoutAction;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\RepeaterFieldAction\RepeaterFieldAction;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\TypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormConfiguration\DynamicFormConfiguration;
@@ -232,17 +236,13 @@ abstract class CustomFieldType
 
     public function repeaterFunctions():array{
         return [
-            PullInLayoutAction::class => function (CustomForm $record, Get $get, array $state, array $arguments):bool {
-                $itemIndex = $arguments["item"];
-                $itemIndexPostion = PullInLayoutAction::getKeyPosition($itemIndex, $state);
-                if ($itemIndexPostion == 0) return false;
-                $upperCustomFieldData = $state[array_keys($state)[$itemIndexPostion - 1]];
-                $type = CustomFormEditorHelper::getFieldTypeFromRawDate($upperCustomFieldData);
-                return $type instanceof CustomLayoutType;
-            },
-            PullOutLayoutAction::class=> function (CustomForm $record, Get $get,array $state, array $arguments):bool {
-                return !is_null($get("../../custom_fields"));
-            },
+            PullInLayoutAction::class => PullInLayoutAction::getDefaultTypeClosure($this),
+            PullOutLayoutAction::class=> PullOutLayoutAction::getDefaultTypeClosure($this),
+
+            //Nested Layout Functions
+            PullInNestedLayoutAction::class => PullInNestedLayoutAction::getDefaultTypeClosure($this),
+            PullOutNestedLayoutAction::class => PullOutNestedLayoutAction::getDefaultTypeClosure($this),
+
             EditAction::class => RepeaterFieldAction::getDefaultTypeClosure($this),
         ];
     }

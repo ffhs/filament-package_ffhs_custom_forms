@@ -2,22 +2,34 @@
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\CheckboxListType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\CheckboxType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\ColorPickerType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\DateTimeType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\DateType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\EmailType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\IconSelectType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\KeyValueType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\NumberType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\RadioType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\SelectType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\TagsType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\TextAreaType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\TextType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\ToggleButtonsType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\Types\FieldsetType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\Types\GroupType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\Types\SectionType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\Types\TextLayoutType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\Types\TitleType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\Types\Views\TitleTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\Anchors\ValueEqualsRuleAnchor;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\Type\ChangeOptionRuleType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\Type\DisabledRuleType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\Type\HiddenRuleType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\Type\RequiredRuleType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\NestedLayoutType\Types\TabsCustomNestType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\NestedLayoutType\Types\CustomTabCustomEggType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\NestedLayoutType\Types\WizardCustomNestType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\NestedLayoutType\Types\WizardStepCustomEggType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\Templates\TemplateFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormEditorValidation\FormEditorGeneralFieldValidation;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor\FieldAdder\CustomFieldAdder;
@@ -59,45 +71,87 @@ return [
     ],
 
     "custom_field_types" => [
-        CheckboxType::class,
-        DateTimeType::class,
-        DateType::class,
+        TemplateFieldType::class,
+
+        TextType::class,
         EmailType::class,
         NumberType::class,
         TextAreaType::class,
-        TextType::class,
-        SectionType::class,
+        CheckboxType::class,
+        DateTimeType::class,
+        DateType::class,
+
+        TagsType::class,
+        KeyValueType::class,
+
+
+        ColorPickerType::class,
         IconSelectType::class,
+
         SelectType::class,
         RadioType::class,
         CheckboxListType::class,
         ToggleButtonsType::class,
-        TemplateFieldType::class
+
+        SectionType::class,
+        FieldsetType::class,
+        GroupType::class,
+        TitleType::class,
+        TextLayoutType::class,
+
+        TabsCustomNestType::class,
+        CustomTabCustomEggType::class,
+        WizardCustomNestType::class,
+        WizardStepCustomEggType::class,
     ],
     "selectable_field_types" => [
         CheckboxType::class,
-        DateTimeType::class,
-        DateType::class,
+        TextType::class,
         EmailType::class,
         NumberType::class,
         TextAreaType::class,
-        TextType::class,
-        SectionType::class,
+        DateTimeType::class,
+        DateType::class,
+
+        TagsType::class,
+        KeyValueType::class,
+
+
+        ColorPickerType::class,
         IconSelectType::class,
+
         SelectType::class,
         RadioType::class,
         CheckboxListType::class,
         ToggleButtonsType::class,
+
+        SectionType::class,
+        FieldsetType::class,
+        GroupType::class,
+        TitleType::class,
+        TextLayoutType::class,
+
+        TabsCustomNestType::class,
+        WizardCustomNestType::class,
+
     ],
+
     "selectable_general_field_types"=>[
         CheckboxType::class,
-        DateTimeType::class,
-        DateType::class,
+        TextType::class,
         EmailType::class,
         NumberType::class,
         TextAreaType::class,
-        TextType::class,
+        DateTimeType::class,
+        DateType::class,
+
+        TagsType::class,
+        KeyValueType::class,
+
+
+        ColorPickerType::class,
         IconSelectType::class,
+
         SelectType::class,
         RadioType::class,
         CheckboxListType::class,

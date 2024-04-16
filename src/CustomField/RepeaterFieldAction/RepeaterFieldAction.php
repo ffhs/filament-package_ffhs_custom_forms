@@ -4,6 +4,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\RepeaterFieldAction;
 
 use Closure;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomFieldType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\Templates\TemplateFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Filament\Forms\Components\Actions\Action;
@@ -24,9 +25,16 @@ abstract class RepeaterFieldAction
 
 
     public static function getDefaultTypeClosure(CustomFieldType $type): Closure {
+
         return function (CustomForm $form,Get $get, $state,$arguments) use ($type):bool {
             $item = $state[$arguments["item"]];
+
+            if (!empty($item["template_id"]) && $type instanceof TemplateFieldType) return true;
+
             if (empty($item["type"]) && empty($item["general_field_id"])) return false;
+
+            if(empty($item["general_field_id"]) && empty($item["type"]) && $type instanceof TemplateFieldType) return true;
+
             if (empty($item["general_field_id"])) return $item["type"] == $type::getFieldIdentifier();
             $gen = GeneralField::cached($item["general_field_id"]);
             return $gen->type == $type::getFieldIdentifier();
