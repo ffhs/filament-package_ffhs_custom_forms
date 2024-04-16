@@ -7,6 +7,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\CustomLayou
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\NestedLayoutType\CustomEggLayoutType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\NestedLayoutType\CustomNestLayoutType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\RepeaterFieldAction\Actions\EditAction;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\RepeaterFieldAction\Actions\NewEggActionComponent;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\RepeaterFieldAction\Actions\PullInLayoutAction;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\RepeaterFieldAction\Actions\PullInNestedLayoutAction;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\RepeaterFieldAction\Actions\PullOutLayoutAction;
@@ -242,6 +243,8 @@ abstract class CustomFieldType
             //Nested Layout Functions
             PullInNestedLayoutAction::class => PullInNestedLayoutAction::getDefaultTypeClosure($this),
             PullOutNestedLayoutAction::class => PullOutNestedLayoutAction::getDefaultTypeClosure($this),
+
+            NewEggActionComponent::class => NewEggActionComponent::getDefaultTypeClosure(null), //<- Only for the position
 
             EditAction::class => RepeaterFieldAction::getDefaultTypeClosure($this),
         ];

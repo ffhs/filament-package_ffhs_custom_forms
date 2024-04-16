@@ -20,11 +20,11 @@ class WizardNestTypeView implements FieldTypeView
     public static function getFormComponent(CustomFieldType $type, CustomField $record,
         array $parameter = []): \Filament\Forms\Components\Component {
 
-
         return Wizard::make()
             ->columnSpan(FormMapper::getOptionParameter($record,"column_span"))
             ->inlineLabel(FormMapper::getOptionParameter($record,"in_line_label"))
             ->columnStart(FormMapper::getOptionParameter($record,"new_line_option"))
+            ->skippable(FormMapper::getOptionParameter($record,"skippable"))
             ->steps($parameter["rendered"]);
     }
 
