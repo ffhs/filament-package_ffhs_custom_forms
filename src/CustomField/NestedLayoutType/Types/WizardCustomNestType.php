@@ -9,6 +9,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\NestedLayoutType\CustomNestL
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\NestedLayoutType\Types\Views\TabsNestTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\NestedLayoutType\Types\Views\WizardNestTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\ColumnSpanOption;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\FastTypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\InLineLabelOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\NewLineOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\ShowAsFieldsetOption;
@@ -38,6 +39,13 @@ class WizardCustomNestType extends CustomNestLayoutType
                     ->columnSpanFull()
             ),
             'new_line_option' => new NewLineOption(),
+            'skippable' => new FastTypeOption(false,
+                Toggle::make("skippable")
+                    ->label("Die Schritte können übersprungen werden")
+                    ->afterStateUpdated(fn($set, bool $state)=> $state?null: $set("has_continue_action", true))
+                    ->columnSpanFull()
+                    ->live()
+            ),
         ];
     }
 
