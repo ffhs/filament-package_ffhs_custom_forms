@@ -54,6 +54,8 @@ return [
             'layout_text'=>'Layout text',
             'fieldset' => 'Fieldset',
             'group' => 'Group',
+            'tabs' => 'Tabs',
+            'tab' => 'Tab',
         ],
 
         'rules'=>[

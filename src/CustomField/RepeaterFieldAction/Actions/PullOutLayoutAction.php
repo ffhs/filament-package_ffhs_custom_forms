@@ -24,6 +24,7 @@ class PullOutLayoutAction extends RepeaterFieldAction
                 if(is_null($type)) return true;
                 return !($type instanceof EggLayoutType || $type instanceof NestLayoutType);
             })
+            ->label("Aus Layout herausnehmen") //ToDo translate
             ->icon('heroicon-m-arrow-long-left')
             ->action(function (array $arguments, array $state, $set, Get $get) {
                 $itemIndex = $arguments["item"];

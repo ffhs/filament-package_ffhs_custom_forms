@@ -26,8 +26,8 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\Type\ChangeOption
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\Type\DisabledRuleType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\Type\HiddenRuleType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\Type\RequiredRuleType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\NestedLayoutType\Types\TabsType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\NestedLayoutType\Types\TabType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\NestedLayoutType\Types\TabsNestType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\NestedLayoutType\Types\TabEggType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\Templates\TemplateFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormEditorValidation\FormEditorGeneralFieldValidation;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor\FieldAdder\CustomFieldAdder;
@@ -96,8 +96,8 @@ return [
         GroupType::class,
         TitleType::class,
         TextLayoutType::class,
-        TabsType::class,
-        TabType::class,
+        TabsNestType::class,
+        TabEggType::class,
     ],
     "selectable_field_types" => [
         CheckboxType::class,
@@ -125,7 +125,7 @@ return [
         GroupType::class,
         TitleType::class,
         TextLayoutType::class,
-        TabsType::class,
+        TabsNestType::class,
     ],
 
     "selectable_general_field_types"=>[

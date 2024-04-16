@@ -18,7 +18,6 @@ use Filament\Forms\Components\Toggle;
 
 class GroupType extends CustomLayoutType
 {
-
     use HasBasicSettings;
     use HasCustomFormPackageTranslation;
 

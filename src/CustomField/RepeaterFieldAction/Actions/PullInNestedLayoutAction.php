@@ -2,21 +2,25 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\RepeaterFieldAction\Actions;
 
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\RepeaterFieldAction\RepeaterFieldAction;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\NestedLayoutType\NestLayoutType;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor\Helper\CustomFormEditorHelper;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Get;
 
-class PullInNestedLayoutAction extends RepeaterFieldAction
+class PullInNestedLayoutAction extends PullInLayoutAction
 {
 
     //CustomFieldAnswerer CustomField id changing is handelt in TemplateFieldType.class on afterEditFieldDelete()
     public function getAction(CustomForm $record, array $typeClosers): Action {
         return Action::make("pullInEgg")
-            ->visible($this->isVisibleClosure($record,$typeClosers))
             ->icon('heroicon-m-arrow-long-up')
             ->label("In Layout verschieben")
+            ->visible(function ($get, array $state, array $arguments) use ($typeClosers, $record) {
+                if(!$this->isVisibleClosure($record,$typeClosers)($get,$state,$arguments)) return false;
+                return $this->getUpperType($state,$arguments) instanceof NestLayoutType;
+            })
             ->form(function (array $arguments, array $state, $set, Get $get) {
                 $itemIndex = $arguments["item"];
                 $upperKey = $this->getUpperKey($itemIndex, $state);
@@ -25,16 +29,17 @@ class PullInNestedLayoutAction extends RepeaterFieldAction
                 $eggs = $upperData["custom_fields"];
 
                 $options = [];
-                foreach ($eggs as $key => $egg) $options[$key] = $egg["name_de"];//ToDo Translate
+                foreach ($eggs as $key => $egg) $options[$key] = $egg["name_de"];//ToDo Translate;
+                $upperType = CustomFormEditorHelper::getFieldTypeFromRawDate($upperData);
 
+                /**@var NestLayoutType $upperType*/
                 return [
                   Select::make("egg_key")
-                    ->label("Ei auswählen") //ToDo Translate
+                    ->label($upperType->getEggType()->getTranslatedName()." auswählen") //ToDo Translate
                     ->options($options)
                     ->required()
                 ];
             })
-
             ->action(function (array $arguments, array $state, $set, Get $get, array $data) {
                 $itemIndex = $arguments["item"];
                 $upperKey = $this->getUpperKey($itemIndex, $state);
@@ -50,24 +55,6 @@ class PullInNestedLayoutAction extends RepeaterFieldAction
                 $set("custom_fields", $newState);
 
             });
-    }
-
-
-
-    public static function getKeyPosition($key, $array): int {
-        //Position in Repeater
-        $keys = array_keys($array);
-        return array_search($key, $keys);
-    }
-
-    /**
-     * @param  mixed  $itemIndex
-     * @param  array  $state
-     * @return int|string
-     */
-    function getUpperKey(mixed $itemIndex, array $state): string|int {
-        $itemIndexPostion = self::getKeyPosition($itemIndex, $state);
-        return array_keys($state)[$itemIndexPostion - 1];
     }
 
 

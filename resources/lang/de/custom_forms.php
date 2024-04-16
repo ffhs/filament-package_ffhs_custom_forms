@@ -56,7 +56,8 @@ return [
             'title' => 'Titel',
             'layout_text'=>'Layout Text',
             'fieldset' => 'Fieldset',
-            'group' => 'Gruppe'
+            'tabs' => 'Tabs',
+            'tab' => 'Tab',
         ],
 
         'rules'=>[

@@ -46,7 +46,6 @@ class TextLayoutType extends CustomFieldType
         ];
 
         return [
-            'show_title'=> new ShowTitleOption(),
             'show_in_view'=> new ShowInViewOption(),
             'text'=> new FastTypeOption("",
                 Tabs::make()

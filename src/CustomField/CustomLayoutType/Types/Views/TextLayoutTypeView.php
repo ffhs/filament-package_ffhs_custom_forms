@@ -17,15 +17,14 @@ class TextLayoutTypeView implements FieldTypeView
     public static function getFormComponent(CustomFieldType $type, CustomField $record,
         array $parameter = []): Placeholder {
 
-        $label = FormMapper::getOptionParameter($record,"show_title")? FormMapper::getLabelName($record):"";
         $text = FormMapper::getOptionParameter($record,"text_de"); //ToDo translate
 
         return  Placeholder::make(FormMapper::getIdentifyKey($record))
             ->columnStart(FormMapper::getOptionParameter($record,"new_line_option"))
+            ->inlineLabel(FormMapper::getOptionParameter($record,"in_line_label"))
             ->columnSpan(FormMapper::getOptionParameter($record,"column_span"))
             ->content(new HtmlString($text))
-            ->label("")
-            ->label($label);
+            ->label("");
     }
 
     public static function getInfolistComponent(CustomFieldType $type, CustomFieldAnswer $record,

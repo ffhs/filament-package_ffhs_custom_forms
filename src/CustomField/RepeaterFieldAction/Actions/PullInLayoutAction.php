@@ -23,15 +23,14 @@ class PullInLayoutAction extends RepeaterFieldAction
                     return false;
 
                 $type = $this->getUpperType($state,$arguments);
-                if(is_null($type)) return false;
+                //if(is_null($type)) return false;
                 return $type instanceof CustomLayoutType && !($type instanceof NestLayoutType) && !($type instanceof EggLayoutType);
             })
            // ->visible($this->isVisibleClosure($record,$typeClosers))
             ->icon('heroicon-m-arrow-long-up')
             ->action(function (array $arguments, array $state, $set, Get $get) {
                 $itemIndex = $arguments["item"];
-                $itemIndexPostion = self::getKeyPosition($itemIndex, $state);
-                $upperKey = array_keys($state)[$itemIndexPostion - 1];
+                $upperKey = $this->getUpperKey($itemIndex,$state);
 
                 $newUpperState = $get("custom_fields.$upperKey.custom_fields");
                 $newUpperState[$itemIndex] = $state[$itemIndex];
@@ -44,19 +43,25 @@ class PullInLayoutAction extends RepeaterFieldAction
             });
     }
 
-    private function getUpperType($state,$arguments): ?CustomFieldType{
+    protected function getUpperType($state,$arguments): ?CustomFieldType{
         $itemIndex = $arguments["item"];
-        $itemIndexPostion = PullInLayoutAction::getKeyPosition($itemIndex, $state);
+        $itemIndexPostion = $this->getKeyPosition($itemIndex, $state);
         if ($itemIndexPostion == 0) return null;
         $upperCustomFieldData = $state[array_keys($state)[$itemIndexPostion - 1]];
         return CustomFormEditorHelper::getFieldTypeFromRawDate($upperCustomFieldData);
     }
 
-    public static function getKeyPosition($key, $array): int {
+    protected function getKeyPosition($key, $array): int {
         //Position in Repeater
         $keys = array_keys($array);
         return array_search($key, $keys);
     }
 
+
+
+    function getUpperKey(mixed $itemIndex, array $state): string|int {
+        $itemIndexPostion = $this->getKeyPosition($itemIndex, $state);
+        return array_keys($state)[$itemIndexPostion - 1];
+    }
 
 }

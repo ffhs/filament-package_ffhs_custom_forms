@@ -2,11 +2,16 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\NestedLayoutType\Types;
 
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\HasBasicSettings;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\HasCustomFormPackageTranslation;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\NestedLayoutType\EggLayoutType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\NestedLayoutType\NestLayoutType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\NestedLayoutType\Types\Views\TabsNestTypeView;
 
-class TabsType extends NestLayoutType
+class TabsNestType extends NestLayoutType
 {
+    use HasBasicSettings;
+    use HasCustomFormPackageTranslation;
 
     public static function getFieldIdentifier(): string {
         return "tabs";
@@ -14,7 +19,7 @@ class TabsType extends NestLayoutType
 
     public function viewModes(): array {
         return  [
-          'default'=> "",
+          'default'=> TabsNestTypeView::class,
         ];
     }
 
@@ -23,6 +28,6 @@ class TabsType extends NestLayoutType
     }
 
     public function getEggType(): EggLayoutType {
-        return new TabType();
+        return new TabEggType();
     }
 }

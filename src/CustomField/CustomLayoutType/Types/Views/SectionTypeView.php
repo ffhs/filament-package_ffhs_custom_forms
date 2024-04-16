@@ -22,6 +22,7 @@ class SectionTypeView implements FieldTypeView
         return Section::make($label)
             ->columnSpan(FormMapper::getOptionParameter($record,"column_span"))
             ->columns(FormMapper::getOptionParameter($record,"columns"))
+            ->columnStart(FormMapper::getOptionParameter($record,"new_line_option"))
             ->aside(FormMapper::getOptionParameter($record,"aside"))
             ->schema($parameter["rendered"]);
     }

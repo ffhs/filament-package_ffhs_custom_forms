@@ -12,7 +12,7 @@ abstract class NestLayoutType extends CustomLayoutType
 {
 
     public function repeaterFunctions(): array {
-        return array_merge(parent::repeaterFunctions(),[
+        return array_merge(parent::repeaterFunctions(), [
             NewEggActionComponent::class => NewEggActionComponent::getDefaultTypeClosure($this),
         ]);
     }

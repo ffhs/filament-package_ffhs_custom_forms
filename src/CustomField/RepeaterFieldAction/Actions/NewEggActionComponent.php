@@ -14,7 +14,6 @@ use Filament\Forms\Get;
 class NewEggActionComponent extends RepeaterFieldAction
 {
 
-
     protected function getFillForm(array $state, array $arguments):array {
         $nestType = CustomFormEditorHelper::getFieldTypeFromRawDate($state[$arguments["item"]]);
         /**@var NestLayoutType $nestType*/
@@ -40,7 +39,11 @@ class NewEggActionComponent extends RepeaterFieldAction
             ->mutateFormDataUsing(fn(Action $action)=> CustomFormEditorHelper::getRawStateForm($action,1))
             ->fillForm(fn($state, $arguments)=> $this->getFillForm($state,$arguments))
             ->icon('carbon-add-alt')
-            ->label("Hinzufügen eines Ei's") //ToDo Translate
+            ->label(function($arguments, $state){
+                /**@var NestLayoutType $type  */
+                $type = CustomFormEditorHelper::getFieldTypeFromRawDate($state[$arguments["item"]]);
+                return $type->getEggType()->getTranslatedName() . " hinzufügen"; //ToDo Translate
+            })
             ->closeModalByClickingAway(false)
             ->modalWidth(function(array $state, array $arguments){
                 return CustomFieldEditModal::getEditCustomFormActionModalWith($this->getFillForm($state,$arguments));
@@ -48,7 +51,6 @@ class NewEggActionComponent extends RepeaterFieldAction
             ->form(function(Get $get, $state, array $arguments) use ($record) : array {
                 return [CustomFieldEditModal::make($record,$state[$arguments["item"]])];
             })
-
             ->modalHeading(function (array $state, array $arguments) {
                 $data = $state[$arguments["item"]];
                 $suffix = " Felddaten bearbeiten ";
