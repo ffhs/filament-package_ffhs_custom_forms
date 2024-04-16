@@ -24,7 +24,9 @@ abstract class RepeaterFieldAction
     }
 
 
-    public static function getDefaultTypeClosure(CustomFieldType $type): Closure {
+    public static function getDefaultTypeClosure(?CustomFieldType $type): Closure {
+
+        if(is_null($type)) return fn()=>false;
 
         return function (CustomForm $form,Get $get, $state,$arguments) use ($type):bool {
             $item = $state[$arguments["item"]];
