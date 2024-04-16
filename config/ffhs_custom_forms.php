@@ -28,6 +28,8 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\Type\HiddenRuleTy
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\Type\RequiredRuleType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\NestedLayoutType\Types\TabsNestType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\NestedLayoutType\Types\TabEggType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\NestedLayoutType\Types\WizardNestType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\NestedLayoutType\Types\WizardStepEggType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\Templates\TemplateFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormEditorValidation\FormEditorGeneralFieldValidation;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor\FieldAdder\CustomFieldAdder;
@@ -96,8 +98,11 @@ return [
         GroupType::class,
         TitleType::class,
         TextLayoutType::class,
+
         TabsNestType::class,
         TabEggType::class,
+        WizardNestType::class,
+        WizardStepEggType::class,
     ],
     "selectable_field_types" => [
         CheckboxType::class,
@@ -125,7 +130,10 @@ return [
         GroupType::class,
         TitleType::class,
         TextLayoutType::class,
+
         TabsNestType::class,
+        WizardNestType::class,
+
     ],
 
     "selectable_general_field_types"=>[

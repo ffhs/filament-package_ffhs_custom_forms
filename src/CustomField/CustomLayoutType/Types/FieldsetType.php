@@ -33,7 +33,7 @@ class FieldsetType extends CustomLayoutType
     }
 
     public function icon(): string {
-        return  "heroicon-m-rectangle-group";
+        return  "bi-columns-gap";
     }
 
     public function getExtraTypeOptions(): array {

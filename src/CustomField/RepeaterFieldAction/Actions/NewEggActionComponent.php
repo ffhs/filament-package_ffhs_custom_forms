@@ -49,7 +49,7 @@ class NewEggActionComponent extends RepeaterFieldAction
                 return CustomFieldEditModal::getEditCustomFormActionModalWith($this->getFillForm($state,$arguments));
             })
             ->form(function(Get $get, $state, array $arguments) use ($record) : array {
-                return [CustomFieldEditModal::make($record,$state[$arguments["item"]])];
+                return [CustomFieldEditModal::make($record,$this->getFillForm($state,$arguments))];
             })
             ->modalHeading(function (array $state, array $arguments) {
                 $data = $state[$arguments["item"]];

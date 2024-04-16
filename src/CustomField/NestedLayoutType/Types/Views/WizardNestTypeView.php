@@ -8,25 +8,24 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\View\FieldTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Filament\Forms\Components\Tabs;
+use Filament\Forms\Components\Wizard;
 use Filament\Infolists\Components\Fieldset;
 use Filament\Infolists\Components\Group;
 use Filament\Infolists\Components\Tabs\Tab;
-use Filament\Infolists\Components\TextEntry;
 use ReflectionClass;
 
-class TabsNestTypeView implements FieldTypeView
+class WizardNestTypeView implements FieldTypeView
 {
 
     public static function getFormComponent(CustomFieldType $type, CustomField $record,
         array $parameter = []): \Filament\Forms\Components\Component {
 
-        $label = FormMapper::getOptionParameter($record,"show_title")? FormMapper::getLabelName($record):"";
 
-        return Tabs::make($label)
+        return Wizard::make()
             ->columnSpan(FormMapper::getOptionParameter($record,"column_span"))
             ->inlineLabel(FormMapper::getOptionParameter($record,"in_line_label"))
             ->columnStart(FormMapper::getOptionParameter($record,"new_line_option"))
-            ->tabs($parameter["rendered"]);
+            ->steps($parameter["rendered"]);
     }
 
     public static function getInfolistComponent(CustomFieldType $type, CustomFieldAnswer $record,
@@ -34,32 +33,13 @@ class TabsNestTypeView implements FieldTypeView
 
         $label = FormMapper::getOptionParameter($record,"show_title")? FormMapper::getLabelName($record):"";
 
-        if (!FormMapper::getOptionParameter($record,"show_as_fieldset"))
-            return \Filament\Infolists\Components\Tabs::make($label)
-                ->columnStart(1)
-                ->tabs($parameter["rendered"])
-                ->columnSpanFull();
-
-        $schema = [];
-        $tabs = $parameter["rendered"];
-
-        $reflection = new ReflectionClass(Tab::class);
-        $propertyLabel = $reflection->getProperty("label");
-        $propertyChildComponents = $reflection->getProperty("childComponents");
-
-        foreach ($tabs as $tab){
-            /**@var Tab $tab*/
-            $schema[] = Fieldset::make($propertyLabel->getValue($tab))
-                ->schema($propertyChildComponents->getValue($tab));
-        }
-
-        if($label == "") $output = Group::make();
-        else $output = Fieldset::make($label);
+        if($label != "") $output = Fieldset::make($label);
+        else $output = Group::make();
 
         return $output
             ->columns(1)
             ->columnSpanFull()
-            ->schema($schema);
+            ->schema($parameter["rendered"]);
     }
 
 }

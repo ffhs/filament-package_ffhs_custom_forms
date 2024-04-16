@@ -56,6 +56,8 @@ return [
             'group' => 'Group',
             'tabs' => 'Tabs',
             'tab' => 'Tab',
+            'wizard' => 'Step for Step',
+            'wizard_step' => 'Step',
         ],
 
         'rules'=>[

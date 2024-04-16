@@ -58,6 +58,8 @@ return [
             'fieldset' => 'Fieldset',
             'tabs' => 'Tabs',
             'tab' => 'Tab',
+            'wizard' => 'Schritt für Schritt',
+            'wizard_step' => 'Schritt',
         ],
 
         'rules'=>[
