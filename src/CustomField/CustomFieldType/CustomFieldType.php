@@ -8,7 +8,9 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\NestedLayoutType\EggLayoutTy
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\NestedLayoutType\NestLayoutType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\RepeaterFieldAction\Actions\EditAction;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\RepeaterFieldAction\Actions\PullInLayoutAction;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\RepeaterFieldAction\Actions\PullInNestedLayoutAction;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\RepeaterFieldAction\Actions\PullOutLayoutAction;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\RepeaterFieldAction\Actions\PullOutNestedLayoutAction;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\RepeaterFieldAction\RepeaterFieldAction;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\TypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormConfiguration\DynamicFormConfiguration;
@@ -234,22 +236,30 @@ abstract class CustomFieldType
 
     public function repeaterFunctions():array{
         return [
-            PullInLayoutAction::class => function (CustomForm $record, Get $get, array $state, array $arguments):bool {
-                if(!PullOutLayoutAction::getDefaultTypeClosure($this)($record,$get,$state,$arguments)) return false;
+            PullInLayoutAction::class => PullInLayoutAction::getDefaultTypeClosure($this),
+            PullOutLayoutAction::class=> PullOutLayoutAction::getDefaultTypeClosure($this),
 
-                $itemIndex = $arguments["item"];
-                $itemIndexPostion = PullInLayoutAction::getKeyPosition($itemIndex, $state);
-                if ($itemIndexPostion == 0) return false;
-                $upperCustomFieldData = $state[array_keys($state)[$itemIndexPostion - 1]];
-                $type = CustomFormEditorHelper::getFieldTypeFromRawDate($upperCustomFieldData);
-                return $type instanceof CustomLayoutType && !($type instanceof NestLayoutType) && !($type instanceof EggLayoutType);
-            },
-            PullOutLayoutAction::class=> function (CustomForm $record, Get $get,array $state, array $arguments):bool {
+            //Nested Layout Functions
+
+           PullInNestedLayoutAction::class => function (CustomForm $record, Get $get, array $state, array $arguments):bool {
                 if(!PullOutLayoutAction::getDefaultTypeClosure($this)($record,$get,$state,$arguments)) return false;
-                return !is_null($get("../../custom_fields")) ;
-            },
-            EditAction::class => RepeaterFieldAction::getDefaultTypeClosure($this),
+                $type = $this->getUpperType($state,$arguments);
+                return $type instanceof NestLayoutType;
+           },
+           PullOutNestedLayoutAction::class => PullOutNestedLayoutAction::getDefaultTypeClosure($this),
+
+
+           EditAction::class => RepeaterFieldAction::getDefaultTypeClosure($this),
         ];
+    }
+
+
+    private function getUpperType($state,$arguments): ?CustomFieldType{
+        $itemIndex = $arguments["item"];
+        $itemIndexPostion = PullInLayoutAction::getKeyPosition($itemIndex, $state);
+        if ($itemIndexPostion == 0) return null;
+        $upperCustomFieldData = $state[array_keys($state)[$itemIndexPostion - 1]];
+        return CustomFormEditorHelper::getFieldTypeFromRawDate($upperCustomFieldData);
     }
 
     //Empty or null mean that the repeater cant open
