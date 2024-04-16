@@ -9,7 +9,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\RepeaterFieldAction\Actions\
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\HtmlComponents\HtmlBadge;
 use Filament\Support\Colors\Color;
 
-abstract class EggLayoutType extends CustomLayoutType
+abstract class CustomEggLayoutType extends CustomLayoutType
 {
 
     public function repeaterFunctions(): array {

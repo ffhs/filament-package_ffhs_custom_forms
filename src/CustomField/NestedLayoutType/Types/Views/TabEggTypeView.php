@@ -16,7 +16,6 @@ use Filament\Infolists\Components\Tabs\Tab;
 
 class TabEggTypeView implements FieldTypeView
 {
-
     public static function getFormComponent(CustomFieldType $type, CustomField $record,
         array $parameter = []): \Filament\Forms\Components\Component {
 
@@ -32,5 +31,4 @@ class TabEggTypeView implements FieldTypeView
             ->columnStart(1)
             ->columnSpanFull();
     }
-
 }

@@ -2,7 +2,7 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\RepeaterFieldAction\Actions;
 
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\NestedLayoutType\NestLayoutType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\NestedLayoutType\CustomNestLayoutType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\RepeaterFieldAction\RepeaterFieldAction;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor\CustomFieldEditModal\CustomFieldEditModal;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor\Helper\CustomFormEditorHelper;
@@ -16,7 +16,7 @@ class NewEggActionComponent extends RepeaterFieldAction
 
     protected function getFillForm(array $state, array $arguments):array {
         $nestType = CustomFormEditorHelper::getFieldTypeFromRawDate($state[$arguments["item"]]);
-        /**@var NestLayoutType $nestType*/
+        /**@var CustomNestLayoutType $nestType*/
         $eggType = $nestType->getEggType();
 
         return [
@@ -40,7 +40,7 @@ class NewEggActionComponent extends RepeaterFieldAction
             ->fillForm(fn($state, $arguments)=> $this->getFillForm($state,$arguments))
             ->icon('carbon-add-alt')
             ->label(function($arguments, $state){
-                /**@var NestLayoutType $type  */
+                /**@var CustomNestLayoutType $type  */
                 $type = CustomFormEditorHelper::getFieldTypeFromRawDate($state[$arguments["item"]]);
                 return $type->getEggType()->getTranslatedName() . " hinzufügen"; //ToDo Translate
             })

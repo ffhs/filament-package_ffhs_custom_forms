@@ -3,8 +3,8 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\RepeaterFieldAction\Actions;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomFieldType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\NestedLayoutType\EggLayoutType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\NestedLayoutType\NestLayoutType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\NestedLayoutType\CustomEggLayoutType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\NestedLayoutType\CustomNestLayoutType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\RepeaterFieldAction\RepeaterFieldAction;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor\Helper\CustomFormEditorHelper;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
@@ -23,7 +23,7 @@ class PullOutNestedLayoutAction extends RepeaterFieldAction
                 if(is_null($typeKey)) return true;
                 $type = CustomFieldType::getTypeFromName($typeKey);
                 if(is_null($type)) return true;
-                return $type instanceof EggLayoutType || $type instanceof NestLayoutType;
+                return $type instanceof CustomEggLayoutType || $type instanceof CustomNestLayoutType;
             })
             ->label("Aus Layout herausnehmen") //ToDo translate
             ->icon('heroicon-m-arrow-long-left')
@@ -42,7 +42,7 @@ class PullOutNestedLayoutAction extends RepeaterFieldAction
 
                 if(is_null($get("../../../../custom_fields")) || is_null($get("../../type"))) return true;
                 $type = CustomFieldType::getTypeFromName($get("../../type"));
-                return $type instanceof EggLayoutType;
+                return $type instanceof CustomEggLayoutType;
             });
     }
 

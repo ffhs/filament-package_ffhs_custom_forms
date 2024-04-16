@@ -4,8 +4,8 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\RepeaterFieldAction\Ac
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\CustomLayoutType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\NestedLayoutType\EggLayoutType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\NestedLayoutType\NestLayoutType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\NestedLayoutType\CustomEggLayoutType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\NestedLayoutType\CustomNestLayoutType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\RepeaterFieldAction\RepeaterFieldAction;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor\Helper\CustomFormEditorHelper;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
@@ -24,7 +24,7 @@ class PullInLayoutAction extends RepeaterFieldAction
 
                 $type = $this->getUpperType($state,$arguments);
                 //if(is_null($type)) return false;
-                return $type instanceof CustomLayoutType && !($type instanceof NestLayoutType) && !($type instanceof EggLayoutType);
+                return $type instanceof CustomLayoutType && !($type instanceof CustomNestLayoutType) && !($type instanceof CustomEggLayoutType);
             })
            // ->visible($this->isVisibleClosure($record,$typeClosers))
             ->icon('heroicon-m-arrow-long-up')

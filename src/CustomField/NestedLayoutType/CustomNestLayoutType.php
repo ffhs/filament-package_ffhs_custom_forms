@@ -8,7 +8,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\RepeaterFieldAction\Actions\
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\HtmlComponents\HtmlBadge;
 use Filament\Support\Colors\Color;
 
-abstract class NestLayoutType extends CustomLayoutType
+abstract class CustomNestLayoutType extends CustomLayoutType
 {
 
     public function repeaterFunctions(): array {
@@ -16,7 +16,7 @@ abstract class NestLayoutType extends CustomLayoutType
             NewEggActionComponent::class => NewEggActionComponent::getDefaultTypeClosure($this),
         ]);
     }
-    abstract public function getEggType():EggLayoutType;
+    abstract public function getEggType():CustomEggLayoutType;
 
     public function nameBeforeIconFormEditor(array $state):string {
         $size = empty($state["custom_fields"])?0:sizeof($state["custom_fields"]);

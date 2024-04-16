@@ -3,34 +3,31 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\NestedLayoutType\Types;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\HasCustomFormPackageTranslation;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\NestedLayoutType\EggLayoutType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\NestedLayoutType\CustomEggLayoutType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\NestedLayoutType\Types\Views\TabEggTypeView;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\NestedLayoutType\Types\Views\WizardStepEggTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\ColumnsOption;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\IconOption;
 
-class WizardStepEggType extends EggLayoutType
+class CustomTabCustomEggType extends CustomEggLayoutType
 {
     use HasCustomFormPackageTranslation;
 
     public static function getFieldIdentifier(): string {
-        return "wizard_step";
+        return "tab";
     }
 
     public function viewModes(): array {
         return [
-            "default"=> WizardStepEggTypeView::class
+            "default"=> TabEggTypeView::class
         ];
     }
 
     public function icon(): string {
-        return "tabler-column-insert-right";
+        return "tabler-slideshow";
     }
 
     public function getExtraTypeOptions(): array{
         return [
             'columns' => new ColumnsOption(),
-            'icon' => new IconOption(),
         ];
     }
 

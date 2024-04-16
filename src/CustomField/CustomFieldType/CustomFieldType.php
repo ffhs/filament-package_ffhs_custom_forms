@@ -4,8 +4,8 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType;
 
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\CustomLayoutType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\NestedLayoutType\EggLayoutType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\NestedLayoutType\NestLayoutType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\NestedLayoutType\CustomEggLayoutType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\NestedLayoutType\CustomNestLayoutType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\RepeaterFieldAction\Actions\EditAction;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\RepeaterFieldAction\Actions\PullInLayoutAction;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\RepeaterFieldAction\Actions\PullInNestedLayoutAction;
@@ -240,11 +240,10 @@ abstract class CustomFieldType
             PullOutLayoutAction::class=> PullOutLayoutAction::getDefaultTypeClosure($this),
 
             //Nested Layout Functions
-           PullInNestedLayoutAction::class => PullInNestedLayoutAction::getDefaultTypeClosure($this),
-           PullOutNestedLayoutAction::class => PullOutNestedLayoutAction::getDefaultTypeClosure($this),
+            PullInNestedLayoutAction::class => PullInNestedLayoutAction::getDefaultTypeClosure($this),
+            PullOutNestedLayoutAction::class => PullOutNestedLayoutAction::getDefaultTypeClosure($this),
 
-
-           EditAction::class => RepeaterFieldAction::getDefaultTypeClosure($this),
+            EditAction::class => RepeaterFieldAction::getDefaultTypeClosure($this),
         ];
     }
 

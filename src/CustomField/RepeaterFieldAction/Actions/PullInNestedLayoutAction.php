@@ -2,7 +2,7 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\RepeaterFieldAction\Actions;
 
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\NestedLayoutType\NestLayoutType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\NestedLayoutType\CustomNestLayoutType;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor\Helper\CustomFormEditorHelper;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Filament\Forms\Components\Actions\Action;
@@ -19,7 +19,7 @@ class PullInNestedLayoutAction extends PullInLayoutAction
             ->label("In Layout verschieben")
             ->visible(function ($get, array $state, array $arguments) use ($typeClosers, $record) {
                 if(!$this->isVisibleClosure($record,$typeClosers)($get,$state,$arguments)) return false;
-                return $this->getUpperType($state,$arguments) instanceof NestLayoutType;
+                return $this->getUpperType($state,$arguments) instanceof CustomNestLayoutType;
             })
             ->form(function (array $arguments, array $state, $set, Get $get) {
                 $itemIndex = $arguments["item"];
@@ -32,7 +32,7 @@ class PullInNestedLayoutAction extends PullInLayoutAction
                 foreach ($eggs as $key => $egg) $options[$key] = $egg["name_de"];//ToDo Translate;
                 $upperType = CustomFormEditorHelper::getFieldTypeFromRawDate($upperData);
 
-                /**@var NestLayoutType $upperType*/
+                /**@var CustomNestLayoutType $upperType*/
                 return [
                   Select::make("egg_key")
                     ->label($upperType->getEggType()->getTranslatedName()." auswählen") //ToDo Translate
