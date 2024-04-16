@@ -11,6 +11,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\ColumnsOp
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\ColumnSpanOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\FastTypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\NewLineOption;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\ShowAsFieldsetOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\ShowInViewOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\ShowTitleOption;
 use Filament\Forms\Components\Toggle;
@@ -48,12 +49,7 @@ class SectionType extends CustomLayoutType
             //'in_line_label' => (new InLineLabelOption())->modifyComponent(fn($toggle) => $toggle->columnStart(1)),
             'new_line_option' => new NewLineOption(),
 
-            'show_as_fieldset' => new FastTypeOption(false,
-                Toggle::make("show_as_fieldset")
-                    ->columnSpanFull()
-                    ->label("Als Fieldset beim Betrachten anzeigen") //ToDo Translate,
-                    ->disabled(fn($get) => !$get("show_title"))
-            ),
+            'show_as_fieldset' => new ShowAsFieldsetOption(),
             'show_in_view'=> new ShowInViewOption(),
         ];
     }

@@ -12,6 +12,7 @@ use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Tabs;
 use Filament\Infolists\Components\Fieldset;
 use Filament\Infolists\Components\Group;
+use Filament\Infolists\Components\Tabs\Tab;
 
 class TabEggTypeView implements FieldTypeView
 {
@@ -26,7 +27,7 @@ class TabEggTypeView implements FieldTypeView
 
     public static function getInfolistComponent(CustomFieldType $type, CustomFieldAnswer $record,
         array $parameter = []): \Filament\Infolists\Components\Component {
-        return \Filament\Infolists\Components\Tabs\Tab::make(FormMapper::getLabelName($record))
+        return Tab::make(FormMapper::getLabelName($record))
             ->schema($parameter["rendered"])
             ->columnStart(1)
             ->columnSpanFull();

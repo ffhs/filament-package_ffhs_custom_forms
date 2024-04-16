@@ -37,11 +37,9 @@ class TextLayoutType extends CustomFieldType
         $buttons = [
             'bold',
             'bulletList',
-            'h2',
             'italic',
             'link',
             'orderedList',
-            'strike',
             'underline',
         ];
 

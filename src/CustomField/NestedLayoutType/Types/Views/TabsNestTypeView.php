@@ -7,10 +7,12 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FormMapper;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\View\FieldTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Tabs;
 use Filament\Infolists\Components\Fieldset;
 use Filament\Infolists\Components\Group;
+use Filament\Infolists\Components\Tabs\Tab;
+use Filament\Infolists\Components\TextEntry;
+use ReflectionClass;
 
 class TabsNestTypeView implements FieldTypeView
 {
@@ -31,10 +33,33 @@ class TabsNestTypeView implements FieldTypeView
         array $parameter = []): \Filament\Infolists\Components\Component {
 
         $label = FormMapper::getOptionParameter($record,"show_title")? FormMapper::getLabelName($record):"";
-        return \Filament\Infolists\Components\Tabs::make($label)
-            ->columnStart(1)
-            ->tabs($parameter["rendered"])
-            ->columnSpanFull();
+
+        if (!FormMapper::getOptionParameter($record,"show_as_fieldset"))
+            return \Filament\Infolists\Components\Tabs::make($label)
+                ->columnStart(1)
+                ->tabs($parameter["rendered"])
+                ->columnSpanFull();
+
+        $schema = [];
+        $tabs = $parameter["rendered"];
+
+        $reflection = new ReflectionClass(Tab::class);
+        $propertyLabel = $reflection->getProperty("label");
+        $propertyChildComponents = $reflection->getProperty("childComponents");
+
+        foreach ($tabs as $tab){
+            /**@var Tab $tab*/
+            $schema[] = Fieldset::make($propertyLabel->getValue($tab))
+                ->schema($propertyChildComponents->getValue($tab));
+        }
+
+        if($label == "") $output = Fieldset::make($label);
+        else $output = Group::make();
+
+        return $output
+            ->columns(1)
+            ->columnSpanFull()
+            ->schema($schema);
     }
 
 }
