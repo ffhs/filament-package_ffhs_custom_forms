@@ -44,7 +44,7 @@ class FieldModalRuleEditorModal extends Component
 
     protected function getAnchorEditSection(): Section {
         $anchors = $this->getSelectableAnchors($this->form, $this->type);
-        return Section::make("Anker")//ToDo Translate
+        return Section::make("Abhängigkeit")//ToDo Translate
         ->columnSpan(1)
             ->schema([
                 Select::make("anchor_identifier")

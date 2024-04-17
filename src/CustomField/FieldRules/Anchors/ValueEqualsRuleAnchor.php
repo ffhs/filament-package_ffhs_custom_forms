@@ -215,6 +215,7 @@ class ValueEqualsRuleAnchor extends FieldRuleAnchorType
     protected function getTargetFieldToggleList(array $fieldData):ToggleButtons  {
         return ToggleButtons::make("target_field")
             ->options(fn($component) => $this->getFieldOptions($component,$fieldData))
+            ->label("Zielfeld")
             ->required()
             ->columns()
             ->live()
