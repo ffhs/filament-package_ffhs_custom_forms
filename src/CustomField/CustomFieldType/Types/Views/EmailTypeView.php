@@ -19,7 +19,7 @@ class EmailTypeView implements FieldTypeView
             ->columnSpan(FormMapper::getOptionParameter($record,"column_span"))
             ->helperText(FormMapper::getToolTips($record))
             ->label(FormMapper::getLabelName($record))
-            ->required($record->required);
+;
     }
 
     public static function getInfolistComponent(CustomFieldType $type, CustomFieldAnswer $record,

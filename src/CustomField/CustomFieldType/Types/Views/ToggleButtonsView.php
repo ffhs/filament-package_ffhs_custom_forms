@@ -25,7 +25,7 @@ class ToggleButtonsView implements FieldTypeView
             ->columns(FormMapper::getOptionParameter($record,"columns"))
             ->helperText(FormMapper::getToolTips($record))
             ->label(FormMapper::getLabelName($record))
-            ->required($record->required);
+;
 
         if(FormMapper::getOptionParameter($record,"grouped")) $toggles->grouped();
         else if(FormMapper::getOptionParameter($record,"inline")) $toggles->inline();

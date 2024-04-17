@@ -24,7 +24,7 @@ class RadioTypeView implements FieldTypeView
             ->inline(FormMapper::getOptionParameter($record,"inline"))
             ->helperText(FormMapper::getToolTips($record))
             ->label(FormMapper::getLabelName($record))
-            ->required($record->required);
+;
 
         if(FormMapper::getOptionParameter($record,"boolean")) $radio->boolean();
         else $radio->options(FormMapper::getAvailableCustomOptions($record));

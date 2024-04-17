@@ -29,7 +29,7 @@ class KeyValueTypeView implements FieldTypeView
             ->reorderable(FormMapper::getOptionParameter($record,"reorderable"))
             ->editableKeys(FormMapper::getOptionParameter($record,"editableKeys"))
             ->editableValues(FormMapper::getOptionParameter($record,"editableValues"))
-            ->required($record->required);
+;
     }
 
 

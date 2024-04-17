@@ -23,7 +23,7 @@ class NumberTypeView implements FieldTypeView
             ->maxValue(FormMapper::getOptionParameter($record,"max_value"))
             ->helperText(FormMapper::getToolTips($record))
             ->label(FormMapper::getLabelName($record))
-            ->required($record->required)
+
             ->numeric();
     }
 

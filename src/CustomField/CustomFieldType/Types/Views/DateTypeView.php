@@ -22,7 +22,7 @@ class DateTypeView implements FieldTypeView
             ->label(FormMapper::getLabelName($record))
             ->helperText(FormMapper::getToolTips($record))
             ->format(self::getFormat($record))
-            ->required($record->required);
+;
     }
 
     public static function getInfolistComponent(CustomFieldType $type, CustomFieldAnswer $record,
