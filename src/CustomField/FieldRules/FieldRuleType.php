@@ -8,6 +8,8 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\FieldRule;
 use Filament\Forms\Components\Component;
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Get;
 use Filament\Infolists\Components\Component as InfoComponent;
 
 abstract class FieldRuleType
@@ -78,6 +80,10 @@ abstract class FieldRuleType
 
     public function getTranslatedName():string {
         return __("custom_forms.rules." . self::identifier());
+    }
+
+    public function getDisplayName(array $ruleData, Repeater $component, Get $get): string {
+        return $this->getTranslatedName();
     }
 
     public function mutateOnTemplateDissolve(array $data, FieldRule $originalRule, CustomField $originalField):array {
