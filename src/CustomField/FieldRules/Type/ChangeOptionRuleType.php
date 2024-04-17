@@ -52,6 +52,7 @@ class ChangeOptionRuleType extends FieldRuleType
 
     public function settingsComponent(CustomForm $customForm, array $fieldData): Component {
         return Select::make("customOptions")
+            ->label("Anzuzeigende Optionen")
             ->multiple()
             ->options(function ($component){
                 $field = array_values($component->getLivewire()->getCachedForms())[1]->getRawState();

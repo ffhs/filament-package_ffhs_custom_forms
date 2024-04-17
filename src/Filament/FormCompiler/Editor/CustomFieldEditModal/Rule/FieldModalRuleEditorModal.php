@@ -49,7 +49,7 @@ class FieldModalRuleEditorModal extends Component
             ->schema([
                 Select::make("anchor_identifier")
                     ->disabled(fn($get)=> !is_null($get("anchor_identifier")))
-                    ->label("Regel") //ToDo Translate
+                    ->label("Art") //ToDo Translate
                     ->options($anchors)
                     ->required()
                     ->afterStateUpdated(function ($state,$set){
@@ -90,12 +90,12 @@ class FieldModalRuleEditorModal extends Component
 
     protected function getRuleEditSection(): Section {
         $rules = $this->getSelectableRules($this->form, $this->type);
-        return Section::make("Regel")
+        return Section::make("Feldaktion")
             ->columnSpan(1)
             ->schema([
                 Select::make("rule_identifier")
                     ->disabled(fn($get)=> !is_null($get("rule_identifier")))
-                    ->label("Regel") //ToDo Translate
+                    ->label("Aktion") //ToDo Translate
                     ->options($rules)
                     ->required()
                     ->live()
