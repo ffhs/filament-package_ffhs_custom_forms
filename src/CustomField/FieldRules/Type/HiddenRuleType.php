@@ -9,7 +9,9 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\FieldRule;
 use Filament\Forms\Components\Component;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Toggle;
+use Filament\Forms\Get;
 use ReflectionClass;
 
 class HiddenRuleType extends FieldRuleType
@@ -18,6 +20,12 @@ class HiddenRuleType extends FieldRuleType
 
     public static function identifier(): string {
         return "is_hidden_rule";
+    }
+
+    public function getDisplayName(array $ruleData, Repeater $component, Get $get): string { //ToDo translate
+        if($ruleData["rule_data"]["is_hidden_on_activation"])
+            return "Feld anzeigen";
+        return parent::getDisplayName($ruleData, $component, $get);
     }
 
     public function settingsComponent(CustomForm $customForm, array $fieldData): Component {

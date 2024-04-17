@@ -7,6 +7,8 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\FieldRule;
 use Filament\Forms\Components\Component;
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Get;
 
 abstract class FieldRuleAnchorType
 {
@@ -46,10 +48,12 @@ abstract class FieldRuleAnchorType
     }
 
 
-
-
     public function getTranslatedName(): string {
         return __("custom_forms.anchors" . self::identifier());
+    }
+
+    public function getDisplayName(array $ruleData, Repeater $component, Get $get): string {
+        return $this->getTranslatedName();
     }
 
     public function canAddOnField(CustomFieldType $type): bool {

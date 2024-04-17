@@ -188,7 +188,7 @@ class EditTemplate extends EditCustomForm
     }
     protected function collideMessageHeading($livewire): string {
         $collidedForms = $this->getCollidedFormQuery($livewire)->get();
-        return "Es gibt Kollisionen mit den Generellen Felder und anderen Templates ("
+        return "Es gibt Kollisionen mit den generellen Felder und anderen Templates ("
             .$collidedForms->count().") "; //ToDo Translate
     }
 

@@ -73,6 +73,8 @@ class CustomFieldEditModal extends Component
             ->schema([
                 TextInput::make("name_" . $location)
                     ->label(__('filament-package_ffhs_custom_forms::custom_forms.fields.name'))
+                    ->afterStateUpdated(fn($state, $set) => $set("name_en",$state)) //ToDo remove  (Only for testing)
+                    ->live(true)
                     ->required(),
                 TextInput::make("tool_tip_" . $location)
                     ->label(__('filament-package_ffhs_custom_forms::custom_forms.fields.tool_tip')),

@@ -27,16 +27,123 @@ use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Forms\Get;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\HtmlString;
 
 class ValueEqualsRuleAnchor extends FieldRuleAnchorType
 {
     use HasAnchorPluginTranslate;
 
-
     public static function identifier(): string {
         return "value_equals_anchor";
     }
+
+    public function getDisplayName(array $ruleData, Repeater $component, Get $get): string {
+        $componentState = $component->getState();
+
+        $valueState = array_values($componentState);
+        $ruleKeyPosition = array_search($ruleData, $valueState);
+        $ruleKey = array_keys($componentState)[$ruleKeyPosition];
+
+        $getPrefix = "rules.".$ruleKey.".anchor_data.";
+        $targetFieldData = self::getSelectedFieldData($get,$component, $getPrefix);
+
+        if(is_null($targetFieldData)) return "can't find field"; //ToDo translate
+
+        $targetFieldType= self::getFieldType($targetFieldData);
+
+        if($targetFieldType instanceof CustomOptionType)
+            return $this->getCustomOptionDisplayName($ruleData, $targetFieldData);
+
+
+        switch ($ruleData["anchor_data"]["field_type"]){
+            case "text":
+                return $this->getTextDisplayName($ruleData, $targetFieldData);
+            case "numeric":
+                return $this->getNumericDisplayName($ruleData, $targetFieldData);;
+            case "boolean":
+                return $this->getBooleanDisplayName($ruleData, $targetFieldData);
+            default:
+                return parent::getDisplayName($ruleData, $component, $get);
+        }
+    }
+
+    private function getNumericDisplayName($ruleData, $targetFieldData): string {
+        $targetFieldName = $this->getFieldName($targetFieldData);
+
+        $numericData = $ruleData["anchor_data"]["numeric"];
+        if($numericData["exactly_number"]) return $targetFieldName." = " . $numericData["number"];
+
+        $output = "";
+
+        $greaterThan = $numericData["greater_than"];
+        if(!empty($greaterThan)){
+            $output .= $greaterThan;
+            if($numericData["greater_equals"]) $output .= " <= ";
+            else $output .= " < ";
+        }
+
+        $output .= $targetFieldName;
+
+        $smallerThan = $numericData["smaller_than"];
+        if(!empty($smallerThan)){
+            if($numericData["smaller_equals"]) $output .= " >= ";
+            else $output .= " > ";
+            $output .= $smallerThan;
+        }
+
+        return $output;
+    }
+
+    private function getBooleanDisplayName($ruleData, $targetFieldData): string {
+        $targetFieldName = $this->getFieldName($targetFieldData);
+        if($ruleData["anchor_data"]["boolean"]) return $targetFieldName." wahr ist";
+        return $targetFieldName." unwahr ist";
+    }
+
+    private function getTextDisplayName($ruleData, $targetFieldData): string {
+        $targetFieldName = $this->getFieldName($targetFieldData);
+
+        $cleanedValues = [];
+        foreach ($ruleData["anchor_data"]["values"] as $value) $cleanedValues[] = "'".$value["value"]."'";
+
+        if (sizeof($cleanedValues) == 1)
+            return $targetFieldName." entspricht ".array_values($cleanedValues)[0];
+        return $targetFieldName." entspricht [".implode(", ", $cleanedValues)."]";
+    }
+
+    private function getCustomOptionDisplayName($ruleData, $targetFieldData): string {
+        $targetFieldName = $this->getFieldName($targetFieldData);
+
+        $selectedOptions = $ruleData["anchor_data"]["selected_options"];
+        $localisation = Lang::locale();
+        $selectedOptionsName = [];
+
+        $name = "name_".$localisation;
+        if(empty($targetFieldData["general_field_id"])){
+            foreach ($targetFieldData["options"]["customOptions"] as $optionData) {
+                $identifier = $optionData["identifier"];
+                if (!in_array($identifier, $selectedOptions)) continue;
+                $selectedOptionsName[$identifier] = $optionData[$name];
+            }
+        }
+        else{
+            /**@var GeneralField $genField*/
+            $genField =  GeneralField::cached($targetFieldData["general_field_id"]);
+            //GeneralField's
+            foreach ($genField->customOptions as $option) {
+                $identifier = $option->identifier;
+                if (!in_array($identifier, $selectedOptions)) continue;
+                $selectedOptionsName[$identifier] = $option->$name;
+            }
+        }
+
+
+        if (sizeof($selectedOptionsName) == 1)
+            return $targetFieldName." ist ".array_values($selectedOptionsName)[0];
+        return $targetFieldName." in [".implode(", ", $selectedOptionsName)."]";
+    }
+
 
     private static function mapFieldData(array $fields):array {
         $finalField = [];
@@ -49,8 +156,8 @@ class ValueEqualsRuleAnchor extends FieldRuleAnchorType
         return $finalField;
     }
 
-    protected static function getSelectedFieldData(Get $get,Component $component):array|null {
-        $identifier = $get("target_field");
+    protected static function getSelectedFieldData(Get $get,Component $component, string $getPrefix = ""):array|null {
+        $identifier = $get($getPrefix. "target_field");
         if(is_null($identifier)) return null;
 
         $fields = array_values($component->getLivewire()->getCachedForms())[0]->getRawState();
@@ -107,6 +214,8 @@ class ValueEqualsRuleAnchor extends FieldRuleAnchorType
 
     protected function getTargetFieldToggleList(array $fieldData):ToggleButtons  {
         return ToggleButtons::make("target_field")
+            ->options(fn($component) => $this->getFieldOptions($component,$fieldData))
+            ->label("Zielfeld")
             ->required()
             ->columns()
             ->live()
@@ -115,8 +224,7 @@ class ValueEqualsRuleAnchor extends FieldRuleAnchorType
                 $set("selected_options", self::getCreateAnchorData()["selected_options"]);
                 $set("numeric", self::getCreateAnchorData()["numeric"]);
                 $set("boolean", self::getCreateAnchorData()["boolean"]);
-            })
-            ->options(fn($component) => $this->getFieldOptions($component,$fieldData) );
+            });
     }
 
     public function getFieldOptions(Component $component, array $fieldData): array {
@@ -155,7 +263,6 @@ class ValueEqualsRuleAnchor extends FieldRuleAnchorType
                 }
                 continue;
             }
-
 
             $options[$field["identify_key"]] = $field["name_de"]; //ToDo Translate
         }
@@ -205,14 +312,10 @@ class ValueEqualsRuleAnchor extends FieldRuleAnchorType
 
     protected function getTextRepeater():Repeater  {
         return Repeater::make("values")
+            ->simple(TextInput::make("value")->label("Wert")->required())
             ->visible($this->getDisableCloser("text"))
             ->columnSpanFull()
-            ->label("")
-            ->schema([
-                TextInput::make("value")
-                    ->label("Wert")
-                    ->required(),
-            ]);
+            ->label("");
     }
 
     protected function getOptionSelector():Select  {
@@ -338,7 +441,6 @@ class ValueEqualsRuleAnchor extends FieldRuleAnchorType
                 "greater_than" => null,
                 "smaller_equals" => false,
                 "smaller_than" => null,
-
             ],
         ];
     }
@@ -400,5 +502,11 @@ class ValueEqualsRuleAnchor extends FieldRuleAnchorType
     }
 
 
+    private function getFieldName($targetFieldData) {
+        $localisation = Lang::locale();
+        if(empty($targetFieldData["general_field_id"])) return $targetFieldData["name_" . $localisation];
+        $name = "name_".$localisation;
+        return  GeneralField::cached($targetFieldData["general_field_id"])->$name;
+    }
 
 }

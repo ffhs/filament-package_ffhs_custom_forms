@@ -28,7 +28,7 @@ class FieldModalOptionSection extends Section
                 ->schema([
                     Toggle::make('is_active')
                         ->visible($type->canBeDeactivate())
-                        ->label("Aktive"), //ToDo Translate
+                        ->label("Aktiv"), //ToDo Translate
 
                     // Required
                     Toggle::make('required')

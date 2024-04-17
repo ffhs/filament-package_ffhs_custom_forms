@@ -57,12 +57,11 @@ class FieldModalRuleSection extends Section
             ->collapseAllAction(fn(Action $action)=> $action->hidden())
             ->expandAllAction(fn(Action $action)=> $action->hidden())
             ->orderColumn("execution_order")
-            ->itemLabel(function($state){
+            ->itemLabel(function($state,$get,$component){
                 $fieldRuleAnchorType = FieldRuleAnchorType::getAnchorFromName($state["anchor_identifier"]);
                 if($state["rule_identifier"] == null) return "Error";
                 $fieldRuleType = FieldRuleType::getRuleFromName($state["rule_identifier"]);
-
-                return $fieldRuleAnchorType->getTranslatedName() . " ==> " . $fieldRuleType->getTranslatedName();
+                return $fieldRuleAnchorType->getDisplayName($state,$component,$get) . " --> " . $fieldRuleType->getDisplayName($state,$component,$get);
             })
             ->collapsible(false)
             ->addable(false)

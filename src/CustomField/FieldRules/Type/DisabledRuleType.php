@@ -11,7 +11,9 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\FieldRule;
 use Filament\Forms\Components\Component;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Toggle;
+use Filament\Forms\Get;
 use ReflectionClass;
 
 class DisabledRuleType extends FieldRuleType
@@ -20,6 +22,12 @@ class DisabledRuleType extends FieldRuleType
 
     public static function identifier(): string {
         return "is_disabled_rule";
+    }
+
+    public function getDisplayName(array $ruleData, Repeater $component, Get $get): string { //ToDo translate
+        if($ruleData["rule_data"]["is_disabled_on_activation"])
+            return "Feld aktivieren";
+        return parent::getDisplayName($ruleData, $component, $get);
     }
 
     public function settingsComponent(CustomForm $customForm, array $fieldData): Component {
