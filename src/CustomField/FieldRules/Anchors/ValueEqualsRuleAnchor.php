@@ -69,8 +69,7 @@ class ValueEqualsRuleAnchor extends FieldRuleAnchorType
     }
 
     private function getNumericDisplayName($ruleData, $targetFieldData): string {
-        $localisation = Lang::locale();
-        $targetFieldName = $targetFieldData["name_" . $localisation];
+        $targetFieldName = $this->getFieldName($targetFieldData);
 
         $numericData = $ruleData["anchor_data"]["numeric"];
         if($numericData["exactly_number"]) return $targetFieldName." = " . $numericData["number"];
@@ -97,15 +96,13 @@ class ValueEqualsRuleAnchor extends FieldRuleAnchorType
     }
 
     private function getBooleanDisplayName($ruleData, $targetFieldData): string {
-        $localisation = Lang::locale();
-        $targetFieldName = $targetFieldData["name_" . $localisation];
+        $targetFieldName = $this->getFieldName($targetFieldData);
         if($ruleData["anchor_data"]["boolean"]) return $targetFieldName." wahr ist";
         return $targetFieldName." unwahr ist";
     }
 
     private function getTextDisplayName($ruleData, $targetFieldData): string {
-        $localisation = Lang::locale();
-        $targetFieldName = $targetFieldData["name_" . $localisation];
+        $targetFieldName = $this->getFieldName($targetFieldData);
 
         $cleanedValues = [];
         foreach ($ruleData["anchor_data"]["values"] as $value) $cleanedValues[] = "'".$value["value"]."'";
@@ -116,17 +113,31 @@ class ValueEqualsRuleAnchor extends FieldRuleAnchorType
     }
 
     private function getCustomOptionDisplayName($ruleData, $targetFieldData): string {
-        $localisation = Lang::locale();
-        $targetFieldName = $targetFieldData["name_" . $localisation];
+        $targetFieldName = $this->getFieldName($targetFieldData);
 
         $selectedOptions = $ruleData["anchor_data"]["selected_options"];
+        $localisation = Lang::locale();
         $selectedOptionsName = [];
 
-        foreach ($targetFieldData["options"]["customOptions"] as $optionData) {
-            $identifier = $optionData["identifier"];
-            if (!in_array($identifier, $selectedOptions)) continue;
-            $selectedOptionsName[$identifier] = $optionData["name_".$localisation];
+        $name = "name_".$localisation;
+        if(empty($targetFieldData["general_field_id"])){
+            foreach ($targetFieldData["options"]["customOptions"] as $optionData) {
+                $identifier = $optionData["identifier"];
+                if (!in_array($identifier, $selectedOptions)) continue;
+                $selectedOptionsName[$identifier] = $optionData[$name];
+            }
         }
+        else{
+            /**@var GeneralField $genField*/
+            $genField =  GeneralField::cached($targetFieldData["general_field_id"]);
+            //GeneralField's
+            foreach ($genField->customOptions as $option) {
+                $identifier = $option->identifier;
+                if (!in_array($identifier, $selectedOptions)) continue;
+                $selectedOptionsName[$identifier] = $option->$name;
+            }
+        }
+
 
         if (sizeof($selectedOptionsName) == 1)
             return $targetFieldName." ist ".array_values($selectedOptionsName)[0];
@@ -487,6 +498,14 @@ class ValueEqualsRuleAnchor extends FieldRuleAnchorType
             return true;
         }
         else return false;
+    }
+
+
+    private function getFieldName($targetFieldData) {
+        $localisation = Lang::locale();
+        if(empty($targetFieldData["general_field_id"])) return $targetFieldData["name_" . $localisation];
+        $name = "name_".$localisation;
+        return  GeneralField::cached($targetFieldData["general_field_id"])->$name;
     }
 
 }
