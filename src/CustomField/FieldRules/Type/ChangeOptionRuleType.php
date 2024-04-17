@@ -13,8 +13,11 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\FieldRule;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Concerns\HasOptions;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Get;
 use Filament\Infolists\Components\Component as InfoComponent;
+use Illuminate\Support\Facades\Lang;
 use ReflectionClass;
 
 class ChangeOptionRuleType extends FieldRuleType
@@ -27,6 +30,25 @@ class ChangeOptionRuleType extends FieldRuleType
     public function canAddOnField(CustomFieldType $type): bool {
         return $type instanceof CustomOptionType;
     }
+
+    public function getDisplayName(array $ruleData, Repeater $component, Get $get): string { //ToDo translate
+
+        $localisation = Lang::locale();
+        $fieldName = $get("name_" . $localisation);
+        $selectedOptions = $ruleData["rule_data"]["customOptions"];
+
+        $selectedOptionsName = [];
+        $options = $get("options.customOptions");
+
+        foreach ($options as $optionData) {
+            $identifier = $optionData["identifier"];
+            if (!in_array($identifier, $selectedOptions)) continue;
+            $selectedOptionsName[$identifier] = $optionData["name_".$localisation];
+        }
+
+        return $fieldName." Auswahlmöglichkeiten [".implode(", ", $selectedOptionsName)."]";
+    }
+
 
     public function settingsComponent(CustomForm $customForm, array $fieldData): Component {
         return Select::make("customOptions")

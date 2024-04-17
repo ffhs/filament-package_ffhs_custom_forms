@@ -11,7 +11,9 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\FieldRule;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Field;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Toggle;
+use Filament\Forms\Get;
 use ReflectionClass;
 
 class RequiredRuleType extends FieldRuleType
@@ -19,6 +21,12 @@ class RequiredRuleType extends FieldRuleType
     use HasRulePluginTranslate;
     public static function identifier(): string {
         return "is_required_rule";
+    }
+
+    public function getDisplayName(array $ruleData, Repeater $component, Get $get): string { //ToDo translate
+        if($ruleData["rule_data"]["is_required_on_activation"])
+            return "Feld nicht benötigt";
+        return parent::getDisplayName($ruleData, $component, $get);
     }
 
     public function settingsComponent(CustomForm $customForm, array $fieldData): Component {
