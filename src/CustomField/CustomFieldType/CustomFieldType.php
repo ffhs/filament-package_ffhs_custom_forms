@@ -233,8 +233,10 @@ abstract class CustomFieldType
     }
 
     public function nameBeforeIconFormEditor(array $state):string|null {
-        if(empty($state["general_field_id"])) return '';
-        return new HtmlBadge("Gen", Color::rgb("rgb(43, 164, 204)"));
+        $badges = "";
+        if(!empty($state["general_field_id"])) $badges .= new HtmlBadge("Gen", Color::rgb("rgb(43, 164, 204)"));
+        if(!$state["is_active"]) $badges .= new HtmlBadge("Deaktiviert", Color::rgb("rgb(194, 53, 35)")); //ToDo translate
+        return $badges;
     }
 
 

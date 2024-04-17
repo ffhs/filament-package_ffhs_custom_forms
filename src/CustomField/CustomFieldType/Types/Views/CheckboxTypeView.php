@@ -20,7 +20,7 @@ class CheckboxTypeView implements FieldTypeView
             ->inlineLabel(FormMapper::getOptionParameter($record,"in_line_label"))
             ->helperText(FormMapper::getToolTips($record))
             ->label(FormMapper::getLabelName($record))
-            ->required($record->required);
+;
     }
 
     public static function getInfolistComponent(CustomFieldType $type, CustomFieldAnswer $record,

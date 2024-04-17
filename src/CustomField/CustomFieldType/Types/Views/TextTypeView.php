@@ -22,7 +22,7 @@ class TextTypeView implements FieldTypeView
             ->minLength(FormMapper::getOptionParameter($record,"min_length"))
             ->helperText(FormMapper::getToolTips($record))
             ->label(FormMapper::getLabelName($record))
-            ->required($record->required);
+;
     }
 
     public static function getInfolistComponent(CustomFieldType $type, CustomFieldAnswer $record,

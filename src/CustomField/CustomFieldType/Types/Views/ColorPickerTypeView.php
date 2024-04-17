@@ -22,7 +22,7 @@ class ColorPickerTypeView implements FieldTypeView
             ->columnSpan(FormMapper::getOptionParameter($record,"column_span"))
             ->helperText(FormMapper::getToolTips($record))
             ->label(FormMapper::getLabelName($record))
-            ->required($record->required);
+;
 
         $colorType = FormMapper::getOptionParameter($record,"color_type");
 

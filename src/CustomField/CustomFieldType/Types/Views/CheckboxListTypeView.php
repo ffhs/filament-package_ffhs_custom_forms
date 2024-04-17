@@ -25,7 +25,7 @@ class CheckboxListTypeView implements FieldTypeView
             ->options(FormMapper::getAvailableCustomOptions($record))
             ->helperText(FormMapper::getToolTips($record))
             ->label(FormMapper::getLabelName($record))
-            ->required($record->required);
+;
     }
 
 

@@ -25,7 +25,7 @@ class TagsTypeView implements FieldTypeView
             ->columns(FormMapper::getOptionParameter($record,"columns"))
             ->helperText(FormMapper::getToolTips($record))
             ->label(FormMapper::getLabelName($record))
-            ->required($record->required)
+
             ->columnSpan(FormMapper::getOptionParameter($record,"column_span"));
     }
 

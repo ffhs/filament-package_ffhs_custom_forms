@@ -9,6 +9,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\FieldRule;
+use Filament\Forms\Components\Field;
 use Filament\Forms\Components\Group;
 use Illuminate\Support\Collection;
 
@@ -25,8 +26,6 @@ class CustomFormRender
             Group::make($customFormSchema)->columns(config("ffhs_custom_forms.default_column_count")),
         ];
     }
-
-
 
 
     public static function generateInfoListSchema(CustomFormAnswer $formAnswer, string $viewMode):array {
@@ -64,6 +63,7 @@ class CustomFormRender
 
             //Render
             $component = $customField->getType()->getFormComponent($customField, $form, $viewMode, $parameter);
+            if($component instanceof Field) $component->required($customField->required);
             $component->live();
 
             return $component;
@@ -87,7 +87,6 @@ class CustomFormRender
                 "viewMode"=>$viewMode
             ];
 
-            if(!$customField->is_active) continue;
             if(($customField->getType() instanceof CustomLayoutType)){
 
                 $endLocation = $customField->layout_end_position;
@@ -110,6 +109,8 @@ class CustomFormRender
                 //Set Index
                 $index= $renderedOutput[1]-1;
             }
+
+            if(!$customField->is_active) continue;
 
             $rules = $customField->fieldRules;
 
