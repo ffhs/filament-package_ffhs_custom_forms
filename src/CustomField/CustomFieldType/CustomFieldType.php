@@ -3,9 +3,6 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType;
 
 
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\CustomLayoutType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\NestedLayoutType\CustomEggLayoutType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\NestedLayoutType\CustomNestLayoutType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\RepeaterFieldAction\Actions\EditAction;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\RepeaterFieldAction\Actions\NewEggActionComponent;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\RepeaterFieldAction\Actions\PullInLayoutAction;
@@ -15,15 +12,15 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\RepeaterFieldAction\Actions\
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\RepeaterFieldAction\RepeaterFieldAction;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\TypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormConfiguration\DynamicFormConfiguration;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor\Helper\CustomFormEditorHelper;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\HtmlComponents\HtmlBadge;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Filament\Forms\Components\Component;
-use Filament\Forms\Get;
 use Filament\Support\Colors\Color;
+use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\HtmlString;
 
 abstract class CustomFieldType
 {
@@ -258,6 +255,34 @@ abstract class CustomFieldType
     //Empty or null mean that the repeater cant open
     public function editorRepeaterContent(CustomForm $form, array $fieldData):?array {
         return null;
+    }
+
+
+    public function getEditorItemTitle(array $state, CustomForm $form):mixed {
+        //Before Icon
+        $html = $this->nameBeforeIconFormEditor($state);
+
+        //Prepare the Icon
+        $icon = Blade::render('<x-'. $this->icon() .' class="h-4 w-4"/>');
+        $icon = '<span class="px-2 py-1"> ' .$icon . '</span>';
+        $html.= $icon;
+
+        //Name
+        $nameStyle = 'class="text-sm font-medium ext-gray-950 dark:text-white truncate select-none"';
+        $name = $this->nameFormEditor($state);
+        $html.= '<h4'.$nameStyle.'>' . $name . '</h4>';
+
+        //Do Open the Record if possible
+        $clickAction = '';
+        if(!empty($this->editorRepeaterContent($form,$state)))
+            $clickAction= 'x-on:click.stop="isCollapsed = !isCollapsed"';
+
+
+        $html= '<span  class="cursor-pointer flex"'.$clickAction.'>' . $html . '</span>';
+
+        //Close existing heading and after that reopen it
+        $html=  '</h4>'. $html .'<h4>';
+        return  new HtmlString($html);
     }
 
 }

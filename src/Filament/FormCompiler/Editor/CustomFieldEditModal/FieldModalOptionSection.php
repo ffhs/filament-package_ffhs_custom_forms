@@ -20,6 +20,7 @@ class FieldModalOptionSection extends Section
 
 
     protected function setUp(): void {
+        /**@var CustomFieldType $type*/
         $type = $this->injection;
         parent::setUp();
 
