@@ -62,7 +62,7 @@ final class EditorCustomFieldList extends Repeater
             ->saveRelationshipsUsing(fn()=>empty(null))
             ->expandAllAction(fn(Action $action)=> $action->hidden())
             ->collapsed()
-            ->itemLabel(fn(array $state)=> $this->getFieldRepeaterItemLabel($state))
+            ->itemLabel(fn(array $state)=> CustomFormEditorHelper::getFieldTypeFromRawDate($state)->getEditorItemTitle($state,$this->form))
             ->mutateRelationshipDataBeforeFillUsing(function($data){
                 $data = CustomFormEditorMutationHelper::mutateOptionData($data, $this->injection);
                 return CustomFormEditorMutationHelper::mutateRuleDataOnLoad($data, $this->injection);
@@ -75,35 +75,6 @@ final class EditorCustomFieldList extends Repeater
                 }),
             ]);
 
-    }
-
-    private function getFieldRepeaterItemLabel(array $state): mixed {
-        $type = CustomFormEditorHelper::getFieldTypeFromRawDate($state);
-
-        //Before Icon
-        $html = $type->nameBeforeIconFormEditor($state);
-
-        //Prepare the Icon
-        $icon = Blade::render('<x-'. $type->icon() .' class="h-4 w-4"/>');
-        $icon = '<span class="px-2 py-1"> ' .$icon . '</span>';
-        $html.= $icon;
-
-        //Name
-        $nameStyle = 'class="text-sm font-medium ext-gray-950 dark:text-white truncate select-none"';
-        $name = $type->nameFormEditor($state);
-        $html.= '<h4'.$nameStyle.'>' . $name . '</h4>';
-
-        //Do Open the Record if possible
-        $clickAction = '';
-        if(!empty($type->editorRepeaterContent($this->injection,$state)))
-            $clickAction= 'x-on:click.stop="isCollapsed = !isCollapsed"';
-
-
-        $html= '<span  class="cursor-pointer flex"'.$clickAction.'>' . $html . '</span>';
-
-        //Close existing heading and after that reopen it
-        $html=  '</h4>'.$html . '<h4>';
-        return  new HtmlString($html);
     }
 
 

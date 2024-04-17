@@ -14,8 +14,6 @@ use Illuminate\Support\HtmlString;
 
 final class CustomFieldAdder extends FormEditorFieldAdder
 {
-
-
     function getTitle(): string {
         return  "Spezifische Felder"; //ToDo Translate
     }
