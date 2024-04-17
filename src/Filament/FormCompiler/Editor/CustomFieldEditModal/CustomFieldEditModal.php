@@ -2,6 +2,7 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor\CustomFieldEditModal;
 
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor\CustomFieldEditModal\Rule\FieldModalRuleSection;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor\Helper\CustomFormEditorHelper;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor\UseComponentInjection;
@@ -57,8 +58,8 @@ class CustomFieldEditModal extends Component
                     ->columnStart(1)
                     ->hidden($isGeneral)
                     ->tabs([
-                        $this->getTranslationTab("de","Deutsch"),
-                        $this->getTranslationTab("en","Englisch"),
+                        $this->getTranslationTab("de","Deutsch", $type),
+                        $this->getTranslationTab("en","Englisch", $type),
                     ]),
 
                 FieldModalOptionSection::make($type)->columnSpan(1),
@@ -68,7 +69,7 @@ class CustomFieldEditModal extends Component
     }
 
 
-    private function getTranslationTab(string $location, string $label): Tab {
+    private function getTranslationTab(string $location, string $label, CustomFieldType $type): Tab {
         return Tab::make($label)
             ->schema([
                 TextInput::make("name_" . $location)
@@ -77,6 +78,7 @@ class CustomFieldEditModal extends Component
                     ->live(true)
                     ->required(),
                 TextInput::make("tool_tip_" . $location)
+                    ->visible(fn()=> $type->hasToolTips())
                     ->label(__('filament-package_ffhs_custom_forms::custom_forms.fields.tool_tip')),
             ]);
     }

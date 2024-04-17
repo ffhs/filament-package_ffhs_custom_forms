@@ -33,5 +33,8 @@ class WizardStepCustomEggType extends CustomEggLayoutType
             'icon' => new IconOption(),
         ];
     }
+    public function hasToolTips(): bool {
+        return true;
+    }
 
 }

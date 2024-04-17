@@ -195,6 +195,9 @@ abstract class CustomFieldType
     public function canBeRequired():bool {
         return true;
     }
+    public function hasToolTips():bool {
+        return true;
+    }
 
 
     // null means that it isn't overwritten

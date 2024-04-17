@@ -62,5 +62,7 @@ class TextLayoutType extends CustomFieldType
         return false;
     }
 
-
+    public function hasToolTips(): bool {
+        return false;
+    }
 }

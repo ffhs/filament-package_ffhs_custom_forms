@@ -15,6 +15,9 @@ abstract class CustomLayoutType extends CustomFieldType
     public function canBeRequired(): bool {
         return false;
     }
+    public function hasToolTips(): bool {
+        return false;
+    }
 
     public function nameBeforeIconFormEditor(array $state):string {
         $size = empty($state["custom_fields"])?0:sizeof($state["custom_fields"]);
@@ -28,6 +31,4 @@ abstract class CustomLayoutType extends CustomFieldType
     public function editorRepeaterContent(CustomForm $form, array $fieldData): ?array {
         return [EditorCustomFieldList::make($form)];
     }
-
-
 }

@@ -59,6 +59,8 @@ class TitleType extends CustomFieldType
     public function canBeRequired(): bool {
         return false;
     }
-
+    public function hasToolTips(): bool {
+        return false;
+    }
 
 }
