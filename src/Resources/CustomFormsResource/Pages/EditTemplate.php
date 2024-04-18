@@ -199,9 +199,9 @@ class EditTemplate extends EditCustomForm
     /**
      * @throws Throwable
      */
-    public function save(bool $shouldRedirect = true): void {
+    public function save(bool $shouldRedirect = true, bool $shouldSendSavedNotification = true): void {
 
-        parent::save($shouldRedirect);
+        parent::save($shouldRedirect, $shouldSendSavedNotification);
 
         /*
          * Delete GeneralFields in Forms
