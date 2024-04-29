@@ -61,7 +61,27 @@ class CustomField extends ACustomField
         "options" => "array",
     ];
 
+    public function __get($key) {
+        if($key === "general_field_id") return parent::__get($key);
+        if(!$this->isGeneralField()) return parent::__get($key);
 
+        switch ($key){
+            case 'name_de':
+                return $this->generalField->name_de;
+            case 'name_en':
+                return $this->generalField->name_en;
+            case 'tool_tip_de':
+                return $this->generalField->tool_tip_de;
+            case 'tool_tip_en':
+                return $this->generalField->tool_tip_en;
+            case 'type':
+                return $this->generalField->type;
+            case 'identify_key':
+                return $this->generalField->identify_key;
+        }
+
+        return parent::__get($key);
+    }
 
     protected static function booted() {
         parent::booted();
