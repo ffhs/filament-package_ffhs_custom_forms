@@ -2,7 +2,6 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection;
@@ -15,7 +14,7 @@ use Illuminate\Support\Facades\Cache;
  * @property int $id
  * @property string|null $short_title
  */
-class CustomFormAnswer extends Model
+class CustomFormAnswer extends CachedModel
 {
     protected $fillable = [
             'custom_form_id',
@@ -32,7 +31,11 @@ class CustomFormAnswer extends Model
 
     public function cachedAnswers():Collection {
         return Cache::remember("answers-from-custom_form_answers_" . $this->id,config('ffhs_custom_forms.cache_duration'),
-            fn()=>$this->customFieldAnswers()->get()
+            function(){
+                $answares = $this->customFieldAnswers()->with("customField","customField.fieldRules")->get(); //
+                CustomFieldAnswer::addToCachedList($answares);
+                return $answares;
+            }
         );
     }
 }

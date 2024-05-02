@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\Cache;
  * @property Collection $generalFields
  * @property bool $is_template
  * @property Collection $customFieldInLayout
+ * @property Collection customFieldsWithTemplateFields
  */
 class CustomForm extends Model
 {
@@ -96,6 +97,7 @@ class CustomForm extends Model
             ->where("custom_form_identifier", $formType)
             ->where("is_template",true)
             ->with([
+                "customFields.fieldRules",
                 "customFields",
                 "customFields.generalField",
                 "customFields.customOptions",
@@ -108,9 +110,8 @@ class CustomForm extends Model
     }
 
     public function cachedFields(): Collection {
-        return Cache::remember("custom_fields-form_" . $this->id,config('ffhs_custom_forms.cache_duration'), fn() => $this->customFields()->with([
-            "generalField.customOptions",
-        ])->get());
+        return Cache::remember("custom_fields-form_" . $this->id,config('ffhs_custom_forms.cache_duration'),
+            fn() => $this->customFields()->get());
     }
 
     public function cachedField(int $customFieldId): CustomField|null {
@@ -118,11 +119,15 @@ class CustomForm extends Model
     }
 
     public function cachedFieldsWithTemplates(): Collection {
-        return Cache::remember("custom_fields_with_templates-form_" . $this->id,config('ffhs_custom_forms.cache_duration'), fn() => $this->customFieldsWithTemplateFields()->with([
-            "generalField.customOptions",
-        ])->get());
-    }
+        return Cache::remember("custom_fields_with_templates-form_" . $this->id,
+            config('ffhs_custom_forms.cache_duration'),
+            function(){
+                $customFields = $this->customFieldsWithTemplateFields()->get();
+                CustomField::addToCachedList($customFields);
 
+                return $customFields;
+            });
+    }
 
 
 }

@@ -3,7 +3,6 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\Models;
 
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
@@ -15,15 +14,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property CustomField $customField
  * @property array $answer
  */
-class CustomFieldAnswer extends Model
+class CustomFieldAnswer extends CachedModel
 {
     private array $data = [];
-
-    public function __get($key) {
-        if($key != "customForm") return parent::__get($key);;
-        if(!array_key_exists("customForm",$this->data)) $this->data["customForm"] = $this->customForm()->first();
-        return $this->data["customForm"];
-    }
 
     protected $fillable = [
         'custom_form_answer_id',
@@ -35,6 +28,21 @@ class CustomFieldAnswer extends Model
     protected $casts = [
         'answer'=>'array',
     ];
+
+    protected array $cachedRelations = [
+        "customField" => ["custom_field_id", "id"],
+        "customFormAnswer" => ["custom_form_answer_id", "id"],
+    ];
+
+
+
+    public function __get($key) {
+        if($key != "customForm") return parent::__get($key);;
+        if(!array_key_exists("customForm",$this->data)) $this->data["customForm"] = $this->customForm()->first();
+        return $this->data["customForm"];
+    }
+
+
 
 
     public function customForm(): Builder {

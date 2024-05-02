@@ -5,7 +5,6 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Models;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Support\Facades\Cache;
 
 /**
  * @property int $id
@@ -66,13 +65,8 @@ class GeneralField extends ACustomField
     }
 
 
-    public static function cached(mixed $custom_field_id): ?GeneralField{
-        return Cache::remember("custom_field-" .$custom_field_id, config('ffhs_custom_forms.cache_duration'), fn()=>GeneralField::query()->firstWhere("id", $custom_field_id));
-    }
 
-    public static function allCached(): Collection{
-        return Cache::remember("general_fields-all", 5,fn()=>self::all());
-    }
+
 
 
 }

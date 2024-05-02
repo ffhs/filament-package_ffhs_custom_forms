@@ -4,9 +4,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\InfolistRender;
 
 
 use Closure;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\CustomLayoutType;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Render\CustomFormRender;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
 use Filament\Forms\Components\Component;
@@ -18,21 +16,6 @@ class CustomFormInfolist extends Component
     protected string $view = 'filament-forms::components.group';
     protected string|Closure $viewMode;
     protected bool|Closure $isAutoSave;
-
-
-    protected bool|Closure $useLayoutTypeSplit = false;
-    protected CustomLayoutType|Closure|null $layoutTypeSplit = null;
-
-
-    protected bool|Closure $usePoseSplit = false;
-    protected array|Closure|null $poseSplit = null;
-
-
-    protected bool|Closure $useFieldSplit = false;
-
-    protected bool|CustomField $fieldSplit = false;
-
-
 
     public static function make(string|Closure $viewMode= "default"): static
     {

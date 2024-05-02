@@ -112,7 +112,7 @@ class CustomFormRender
 
             if(!$customField->is_active) continue;
 
-            $rules = $customField->fieldRules;
+            $rules = $customField->getOnlyCachedFieldRules();
 
             //Rule before render
             $rules->each(function(FieldRule $rule) use (&$customField) {
@@ -192,7 +192,7 @@ class CustomFormRender
 
 
 
-            $fieldRules = $customField->fieldRules;
+            $fieldRules = $customField->getOnlyCachedFieldRules();
             foreach ($fieldRules as $rule) {
                 /**@var FieldRule $rule */
                 $fieldAnswererData = $rule->getRuleType()->mutateSaveAnswerData($fieldAnswererData, $rule,
@@ -226,7 +226,7 @@ class CustomFormRender
                 ->getType()
                 ->prepareLoadFieldData($fieldAnswer->answer);
 
-            $fieldRules  = $customField->fieldRules;
+            $fieldRules  = $customField->getOnlyCachedFieldRules();
             foreach ($fieldRules as $rule){
                 /**@var FieldRule $rule */
                 $fieldData = $rule->getRuleType()->mutateLoadAnswerData($fieldData,$rule, $fieldAnswer);

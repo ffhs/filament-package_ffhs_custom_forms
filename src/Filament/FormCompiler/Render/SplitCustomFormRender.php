@@ -18,7 +18,7 @@ class SplitCustomFormRender
 
     public static function renderInfoListLayoutType(CustomLayoutType $layoutType,  CustomFormAnswer $formAnswer, string $viewMode = "default"):array {
         $customForm = CustomForm::cached($formAnswer->custom_form_id);
-        $fieldAnswers = $formAnswer->customFieldAnswers;
+        $fieldAnswers = $formAnswer->cachedAnswers();
 
         $render= CustomFormRender::getInfolistRender($viewMode,$customForm, $formAnswer,$fieldAnswers);
 
@@ -36,11 +36,11 @@ class SplitCustomFormRender
 
         if (is_null($layoutField)) return [];
 
-        $customFields = $layoutField->allCustomFieldsInLayout()->with([
-            "customOptions",
-            "generalField.customOptions",
-            "generalField"
-        ])->get();
+        $customFields = $layoutField->customForm->cachedFields()
+            ->where("form_position", ">", $layoutField->form_position)
+            ->where("form_position", "<=", $layoutField->layout_end_position);
+        //ToDo Check if it works fine ^^ $customFieldsOld = $layoutField->allCustomFieldsInLayout()->get();
+
 
         return CustomFormRender::render($layoutField->form_position,$customFields,$render,$viewMode)[0];
     }

@@ -5,8 +5,6 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Models;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\Templates\TemplateFieldType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Cache;
 
 /**
  * @property int $id
@@ -19,7 +17,7 @@ use Illuminate\Support\Facades\Cache;
  *
  * @property String|null $type
  */
-abstract class ACustomField extends Model
+abstract class ACustomField extends CachedModel
 {
     use HasFactory;
     //use SoftDeletes;
@@ -47,8 +45,8 @@ abstract class ACustomField extends Model
         return new $typeClass();
     }
 
-    public static function cached(mixed $custom_field_id): ?ACustomField{
+  /*  public static function cached(mixed $custom_field_id): ?ACustomField{
         return Cache::remember("custom_field-" .$custom_field_id, config('ffhs_custom_forms.cache_duration'), fn()=>GeneralField::query()->firstWhere("id", $custom_field_id));
-    }
+    }*/
 
 }

@@ -24,7 +24,7 @@ class TemplateTypeView implements FieldTypeView
         $viewMode = $parameter["viewMode"];
         $formAnswer = $record->customFormAnswer;
         $form = $record->customField->template;
-        $customFields = $form->customFields;
+        $customFields = $form->cachedFields();
 
         $fieldAnswers = $formAnswer->cachedAnswers()->whereIn("custom_field_id", $customFields->select("id")->flatten());
 

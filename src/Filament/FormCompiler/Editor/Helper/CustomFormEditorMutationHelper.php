@@ -14,7 +14,7 @@ class CustomFormEditorMutationHelper
         /**@var CustomField $customField*/
         $customField = $customForm->customFields->where("id",$data["id"])->first();
         if(is_null($customField)) return $data;
-        foreach ($customField->fieldRules as $rule){
+        foreach ($customField->getOnlyCachedFieldRules() as $rule){
             /**@var FieldRule $rule*/
             $ruleData = $rule->toArray();
             $ruleData = $rule->getRuleType()->mutateDataBeforeLoadInEdit($ruleData,$rule) ;
