@@ -36,7 +36,7 @@ class CustomForm extends Model
 
 
     public function customFields(): HasMany {
-        return $this->hasMany(CustomField::class)->orderBy("form_position"); //ToDo also add Templates field
+        return $this->hasMany(CustomField::class)->with("fieldRules")->orderBy("form_position"); //ToDo also add Templates field
     }
 
     public function customFieldsWithTemplateFields(): Builder {
@@ -56,9 +56,9 @@ class CustomForm extends Model
         return Cache::remember("custom_form-" .$id, config('ffhs_custom_forms.cache_duration'), fn()=>CustomForm::query()->firstWhere("id", $id));
     }
 
-    public function makeCached():void {
+/* public function makeCached():void {
          Cache::put("custom_form-" .$this->id, $this,config('ffhs_custom_forms.cache_duration'));
-    }
+    }*/
 
     public function customFormAnswers(): HasMany {
         return $this->hasMany(CustomFormAnswer::class);
@@ -125,6 +125,15 @@ class CustomForm extends Model
                 $customFields = $this->customFieldsWithTemplateFields()->get();
                 CustomField::addToCachedList($customFields);
 
+                $fieldRules = FieldRule::query()->whereIn("custom_field_id", $customFields->pluck("id"))->get();
+
+
+                $customFields->each(fn(CustomField $customField) =>
+                    Cache::set("fieldRules-form_field-".$customField->id,
+                        $fieldRules->where("custom_field_id", $customField->id),
+                        config('ffhs_custom_forms.cache_duration')
+                    )
+                );
                 return $customFields;
             });
     }

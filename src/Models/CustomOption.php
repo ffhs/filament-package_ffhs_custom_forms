@@ -3,7 +3,6 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 
 /**
  * @property int $id
@@ -14,7 +13,7 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @property CustomOption $customOption
  */
-class CustomOption extends Model
+class CustomOption extends CachedModel
 {
     use HasFormIdentifier;
     use HasFactory;

@@ -112,7 +112,7 @@ class CustomFormRender
 
             if(!$customField->is_active) continue;
 
-            $rules = $customField->getOnlyCachedFieldRules();
+            $rules = $customField->fieldRules;
 
             //Rule before render
             $rules->each(function(FieldRule $rule) use (&$customField) {
@@ -146,7 +146,7 @@ class CustomFormRender
     public static function saveHelper(CustomFormAnswer $formAnswerer, array $formData) :void{
         $customForm = CustomForm::cached($formAnswerer->custom_form_id);
 
-        $customFieldAnswers = $formAnswerer->customFieldAnswers;
+        $customFieldAnswers = $formAnswerer->cachedAnswers();
         $keys = $customFieldAnswers
             ->map(fn(CustomFieldAnswer $answer)=> $answer->customField->getInheritState()["identify_key"])
             ->toArray();
@@ -192,7 +192,7 @@ class CustomFormRender
 
 
 
-            $fieldRules = $customField->getOnlyCachedFieldRules();
+            $fieldRules = $customField->fieldRules;
             foreach ($fieldRules as $rule) {
                 /**@var FieldRule $rule */
                 $fieldAnswererData = $rule->getRuleType()->mutateSaveAnswerData($fieldAnswererData, $rule,
@@ -218,7 +218,7 @@ class CustomFormRender
         //$form = CustomForm::cached($answerer->custom_form_id);
         //$customFields = $form->cachedFields();
 
-        foreach($answerer->customFieldAnswers as $fieldAnswer){
+        foreach($answerer->cachedAnswers() as $fieldAnswer){
             /**@var CustomFieldAnswer $fieldAnswer*/
             /**@var CustomField $customField*/
             $customField = $fieldAnswer->customField;
@@ -226,7 +226,7 @@ class CustomFormRender
                 ->getType()
                 ->prepareLoadFieldData($fieldAnswer->answer);
 
-            $fieldRules  = $customField->getOnlyCachedFieldRules();
+            $fieldRules  = $customField->fieldRules;
             foreach ($fieldRules as $rule){
                 /**@var FieldRule $rule */
                 $fieldData = $rule->getRuleType()->mutateLoadAnswerData($fieldData,$rule, $fieldAnswer);

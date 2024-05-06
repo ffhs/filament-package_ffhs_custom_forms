@@ -62,16 +62,35 @@ class CustomField extends ACustomField
         "options" => "array",
     ];
 
+
     protected array $cachedRelations = [
         "customForm" => ["custom_form_id", "id"],
         "generalField" => ["general_field_id", "id"],
+        "template" => ["template_id", "id"],
     ];
 
     public function __get($key) {
 
+        if($key == "customOptions")
+            return Cache::remember("customFieldOptions-" . $this->id, config('ffhs_custom_forms.cache_duration'), function (){
+                $options = $this->customOptions()->get();
+                CustomOption::addToCachedList($options);
+                return $options;
+            });
+
+        if($key == "fieldRules") {
+            return
+             Cache::remember("fieldRules-form_field-".$this->id, config('ffhs_custom_forms.cache_duration'),
+                function () use ($key) {
+                    return Model::__get($key);
+                });
+        }
+
         if($key === "general_field_id") return Model::__get($key);
+
         if(!$this->isGeneralField()) return parent::__get($key);
 
+        //PERFORMANCE!!!!
         $genFieldF = function() {
             $genField = GeneralField::cached($this->general_field_id,"id",false);
             if(!is_null($genField)) return $genField;
@@ -83,6 +102,7 @@ class CustomField extends ACustomField
         };
 
        // if(!empty(GeneralField::singleListCached()?->count() == 4)) dd(GeneralField::singleListCached());
+
 
         return match ($key) {
             'name_de' => $genFieldF()->name_de,
@@ -146,9 +166,9 @@ class CustomField extends ACustomField
    /* public static function cached(mixed $custom_field_id): ?CustomField{
         return Cache::remember("custom_field-" .$custom_field_id, config('ffhs_custom_forms.cache_duration'), fn()=>CustomField::query()->firstWhere("id", $custom_field_id));
     }*/
-    public static function cachedAllInForm(int $formId): Collection{
+    /*public static function cachedAllInForm(int $formId): Collection{
         return Cache::remember("custom_field-form_id" .$formId, config('ffhs_custom_forms.cache_duration'), fn()=>CustomForm::cached($formId)->cachedFields());
-    }
+    }*/
 
 
     //Options
@@ -225,10 +245,6 @@ class CustomField extends ACustomField
                             ->on('custom_fields.form_position', '<=', 'sub.layout_end_position');
                     })
             );
-    }
-
-    public function getOnlyCachedFieldRules(): Collection {
-        return FieldRule::singleListCached()?->where("custom_field_id",$this->id)?? collect();
     }
 
 }

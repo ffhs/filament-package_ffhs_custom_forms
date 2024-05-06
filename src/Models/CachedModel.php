@@ -46,10 +46,11 @@ abstract class CachedModel extends Model
 
 
     protected static function getFromSingedListName(): string {
-         return (new static())->table. "cached_list";
+         return (new static())->getTable(). "cached_list";
     }
 
     public static function addToCachedList(Collection|CachedModel $toAdd): void {
+        if(static::class === FieldRule::class) dd($toAdd);
         $cachedList = Cache::get(static::getFromSingedListName());
         if(is_null($cachedList)) $cachedList = collect();
         if($toAdd instanceof Collection) $cachedList =

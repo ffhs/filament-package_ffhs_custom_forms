@@ -23,6 +23,10 @@ class FieldRule extends CachedModel
     use HasFormIdentifier;
     use HasFactory;
 
+    protected array $cachedRelations = [
+      "customField"  => ["custom_field_id","id"],
+    ];
+
     protected $fillable = [
         'custom_field_id',
         'anchor_identifier',

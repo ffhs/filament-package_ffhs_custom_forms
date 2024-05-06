@@ -18,9 +18,12 @@ class CustomFormAnswer extends CachedModel
 {
     protected $fillable = [
             'custom_form_id',
-            'short_title'
+            'short_title',
         ];
-
+    protected  array $cachedRelations = [
+        "customForm" => ["custom_form_id", "id"],
+    ];
+    
     public function customForm (): BelongsTo {
         return $this->belongsTo(CustomForm::class);
     }
