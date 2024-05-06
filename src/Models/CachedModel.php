@@ -33,9 +33,9 @@ abstract class CachedModel extends Model
     }
 
 
-    public static function allCached(mixed $custom_field_id): ?Collection{
+    public static function allCached(): ?Collection{
         return Cache::remember(
-            (new static())->table."-all" .$custom_field_id, config('ffhs_custom_forms.cache_duration'),
+            (new static())->table."-all", config('ffhs_custom_forms.cache_duration'),
             fn()=>static::all()
         );
     }
