@@ -91,7 +91,8 @@ class CustomField extends ACustomField
         if(!$this->isGeneralField()) return parent::__get($key);
 
         //PERFORMANCE!!!!
-        $genFieldF = function() {
+        $genFieldF = function(): GeneralField {
+            if(!$this->exists) return parent::__get("generalField");
             $genField = GeneralField::cached($this->general_field_id,"id",false);
             if(!is_null($genField)) return $genField;
 
@@ -100,8 +101,6 @@ class CustomField extends ACustomField
             GeneralField::addToCachedList($generalFields);
             return GeneralField::cached($this->general_field_id,"id",false);
         };
-
-       // if(!empty(GeneralField::singleListCached()?->count() == 4)) dd(GeneralField::singleListCached());
 
 
         return match ($key) {
