@@ -64,7 +64,7 @@ class CustomFormRender
             //Render
             $component = $customField->getType()->getFormComponent($customField, $form, $viewMode, $parameter);
             if($component instanceof Field) $component->required($customField->required);
-            $component->live();
+            $component->live(true);
 
             return $component;
         };
