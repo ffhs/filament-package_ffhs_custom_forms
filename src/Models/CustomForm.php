@@ -96,13 +96,13 @@ class CustomForm extends Model
         $query=  CustomForm::query()
             ->where("custom_form_identifier", $formType)
             ->where("is_template",true)
-            ->with([
+           /* ->with([
                 "customFields.fieldRules",
                 "customFields",
                 "customFields.generalField",
                 "customFields.customOptions",
                 "customFields.generalField.customOptions"
-            ]);
+            ])*/;
 
         $key ="form_templates_" . $formType;
         $duration = config('ffhs_custom_forms.cache_duration');
@@ -110,8 +110,7 @@ class CustomForm extends Model
     }
 
     public function cachedFields(): Collection {
-        return Cache::remember("custom_fields-form_" . $this->id,config('ffhs_custom_forms.cache_duration'),
-            fn() => $this->customFields()->get());
+        return $this->cachedFieldsWithTemplates()->where("custom_form_id", $this->id);
     }
 
     public function cachedField(int $customFieldId): CustomField|null {
@@ -126,7 +125,6 @@ class CustomForm extends Model
                 CustomField::addToCachedList($customFields);
 
                 $fieldRules = FieldRule::query()->whereIn("custom_field_id", $customFields->pluck("id"))->get();
-
 
                 $customFields->each(fn(CustomField $customField) =>
                     Cache::set("fieldRules-form_field-".$customField->id,

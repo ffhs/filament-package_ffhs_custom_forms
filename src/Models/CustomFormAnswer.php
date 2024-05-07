@@ -23,7 +23,7 @@ class CustomFormAnswer extends CachedModel
     protected  array $cachedRelations = [
         "customForm" => ["custom_form_id", "id"],
     ];
-    
+
     public function customForm (): BelongsTo {
         return $this->belongsTo(CustomForm::class);
     }
@@ -35,8 +35,8 @@ class CustomFormAnswer extends CachedModel
     public function cachedAnswers():Collection {
         return Cache::remember("answers-from-custom_form_answers_" . $this->id,config('ffhs_custom_forms.cache_duration'),
             function(){
-                $answares = $this->customFieldAnswers()->with("customField","customField.fieldRules")->get(); //
-                CustomFieldAnswer::addToCachedList($answares);
+                $answares = $this->customFieldAnswers()->get();
+                $this->customForm->cachedFieldsWithTemplates();
                 return $answares;
             }
         );
