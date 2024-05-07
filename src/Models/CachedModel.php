@@ -35,7 +35,7 @@ abstract class CachedModel extends Model
 
     public static function allCached(): ?Collection{
         return Cache::remember(
-            (new static())->table."-all", config('ffhs_custom_forms.cache_duration'),
+            (new static())->getTable()."-all", config('ffhs_custom_forms.cache_duration'),
             fn()=>static::all()
         );
     }
