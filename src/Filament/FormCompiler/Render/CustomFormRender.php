@@ -64,7 +64,7 @@ class CustomFormRender
             //Render
             $component = $customField->getType()->getFormComponent($customField, $form, $viewMode, $parameter);
             if($component instanceof Field) $component->required($customField->required);
-            $component->live();
+            $component->live(true);
 
             return $component;
         };
@@ -146,7 +146,7 @@ class CustomFormRender
     public static function saveHelper(CustomFormAnswer $formAnswerer, array $formData) :void{
         $customForm = CustomForm::cached($formAnswerer->custom_form_id);
 
-        $customFieldAnswers = $formAnswerer->customFieldAnswers;
+        $customFieldAnswers = $formAnswerer->cachedAnswers();
         $keys = $customFieldAnswers
             ->map(fn(CustomFieldAnswer $answer)=> $answer->customField->getInheritState()["identify_key"])
             ->toArray();
@@ -218,7 +218,7 @@ class CustomFormRender
         //$form = CustomForm::cached($answerer->custom_form_id);
         //$customFields = $form->cachedFields();
 
-        foreach($answerer->customFieldAnswers as $fieldAnswer){
+        foreach($answerer->cachedAnswers() as $fieldAnswer){
             /**@var CustomFieldAnswer $fieldAnswer*/
             /**@var CustomField $customField*/
             $customField = $fieldAnswer->customField;

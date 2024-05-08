@@ -117,7 +117,8 @@ class EmbeddedAnswerInfolist extends Component
 
     private function getSplitLayoutInfolistSchema(EmbeddedAnswerInfolist $component): array {
         return [
-            Group::make(fn($record) => SplitCustomFormRender::renderInfoListLayoutType(
+
+            Group::make( SplitCustomFormRender::renderInfoListLayoutType(
                 $component->getLayoutTypeSplit(),
                 $component->getModel(),
                 $component->getViewMode())),

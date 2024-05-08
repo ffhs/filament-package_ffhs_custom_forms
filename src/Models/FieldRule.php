@@ -5,7 +5,6 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Models;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\FieldRuleAnchorType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\FieldRuleType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
@@ -19,10 +18,14 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property array anchor_data
  * @property array rule_data
  */
-class FieldRule extends Model
+class FieldRule extends CachedModel
 {
     use HasFormIdentifier;
     use HasFactory;
+
+    protected array $cachedRelations = [
+      "customField"  => ["custom_field_id","id"],
+    ];
 
     protected $fillable = [
         'custom_field_id',

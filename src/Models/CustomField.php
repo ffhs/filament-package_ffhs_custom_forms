@@ -4,6 +4,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Models;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\CustomLayoutType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -62,6 +63,58 @@ class CustomField extends ACustomField
     ];
 
 
+    protected array $cachedRelations = [
+        "customForm" => ["custom_form_id", "id"],
+        "generalField" => ["general_field_id", "id"],
+        "template" => ["template_id", "id"],
+    ];
+
+    public function __get($key) {
+
+        if($key == "customOptions")
+            return Cache::remember("customFieldOptions-" . $this->id, config('ffhs_custom_forms.cache_duration'), function (){
+                $options = $this->customOptions()->get();
+                CustomOption::addToCachedList($options);
+                return $options;
+            });
+
+        if($key == "fieldRules") {
+            return
+             Cache::remember("fieldRules-form_field-".$this->id, config('ffhs_custom_forms.cache_duration'),
+                function () use ($key) {
+                    return Model::__get($key);
+                });
+        }
+
+        if($key === "general_field_id") return Model::__get($key);
+
+        if(!$this->isGeneralField()) return parent::__get($key);
+
+        //PERFORMANCE!!!!
+        $genFieldF = function(): GeneralField {
+            if(!$this->exists) return parent::__get("generalField");
+            $genField = GeneralField::cached($this->general_field_id,"id",false);
+            if(!is_null($genField)) return $genField;
+
+            $generalFieldIds = $this->customForm->cachedFieldsWithTemplates()->whereNotNull('general_field_id')->pluck("general_field_id");
+            $generalFields = GeneralField::query()->whereIn("id",$generalFieldIds)->get();
+            GeneralField::addToCachedList($generalFields);
+            return GeneralField::cached($this->general_field_id,"id",false);
+        };
+
+
+        return match ($key) {
+            'name_de' => $genFieldF()->name_de,
+            'name_en' => $genFieldF()->name_en,
+            'tool_tip_de' => $genFieldF()->tool_tip_de,
+            'tool_tip_en' => $genFieldF()->tool_tip_en,
+            'type' => $genFieldF()->type,
+            'identify_key' => $genFieldF()->identify_key,
+            'generalField' => $genFieldF(),
+            default => parent::__get($key),
+        };
+
+    }
 
     protected static function booted() {
         parent::booted();
@@ -90,6 +143,7 @@ class CustomField extends ACustomField
      * @return array there are the stat from this Field and the Stats from the GeneralField
      */
     public function getInheritState():array{
+
         $generalFiledArray = $this->isGeneralField()?$this->generalField->toArray():null;
         return $this->getInheritStateFromArrays($this->toArray(), $generalFiledArray);
     }
@@ -108,12 +162,12 @@ class CustomField extends ACustomField
     public function customForm(): BelongsTo {
         return $this->belongsTo(CustomForm::class);
     }
-    public static function cached(mixed $custom_field_id): ?CustomField{
+   /* public static function cached(mixed $custom_field_id): ?CustomField{
         return Cache::remember("custom_field-" .$custom_field_id, config('ffhs_custom_forms.cache_duration'), fn()=>CustomField::query()->firstWhere("id", $custom_field_id));
-    }
-    public static function cachedAllInForm(int $formId): Collection{
+    }*/
+    /*public static function cachedAllInForm(int $formId): Collection{
         return Cache::remember("custom_field-form_id" .$formId, config('ffhs_custom_forms.cache_duration'), fn()=>CustomForm::cached($formId)->cachedFields());
-    }
+    }*/
 
 
     //Options
@@ -191,6 +245,5 @@ class CustomField extends ACustomField
                     })
             );
     }
-
 
 }

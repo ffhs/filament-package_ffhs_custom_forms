@@ -60,7 +60,7 @@ final class TemplateFieldType extends CustomFieldType
         $template = CustomForm::cached($templateId);
         $formAnswerer = $field->customFormAnswer;
 
-        $customFieldAnswers = $formAnswerer->customFieldAnswers;
+        $customFieldAnswers = $formAnswerer->cachedAnswers();
         $keys = $customFieldAnswers
             ->filter(fn(CustomFieldAnswer $answer)=>$answer->customField->custom_form_id = $templateId)
             ->map(fn(CustomFieldAnswer $answer)=> $answer->customField->getInheritState()["identify_key"])
