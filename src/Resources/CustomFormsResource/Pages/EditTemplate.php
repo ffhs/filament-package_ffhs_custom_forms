@@ -215,7 +215,7 @@ class EditTemplate extends EditCustomForm
         $toDeleteGenFieldQuery = CustomField::query()
             ->with(["answers"])
             ->whereIn("general_field_id", $templateGeneralFieldQuery->clone()->select("general_field_id"))
-            ->where("custom_form_id",
+            ->whereIn("custom_form_id",
                 CustomField::query()->where("template_id",$template->id)->select("custom_form_id")
             );
 
