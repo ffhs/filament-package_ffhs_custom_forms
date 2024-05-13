@@ -168,7 +168,7 @@ class CustomFormRender
         foreach ($customFieldsIdentify as $key => $customField) {
             /**@var CustomField $customField */
 
-            if (empty($formData[$key])) $fieldData = null;
+            if (!array_key_exists($key,$formData)) $fieldData = null;
             else $fieldData = $formData[$key];
 
             $type = $customField->getType();
@@ -182,6 +182,8 @@ class CustomFormRender
                     "custom_form_answer_id" => $formAnswerer->id,
                 ]);
             }
+
+
 
             $fieldAnswererData = $customField->getType()->prepareSaveFieldData($fieldData);
             if (empty($fieldAnswererData)) {
