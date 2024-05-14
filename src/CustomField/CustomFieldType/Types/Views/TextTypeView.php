@@ -9,20 +9,26 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Filament\Forms\Components\TextInput;
 use Filament\Infolists\Components\TextEntry;
+use Illuminate\Support\Facades\Lang;
 
 class TextTypeView implements FieldTypeView
 {
 
     public static function getFormComponent(CustomFieldType $type, CustomField $record,
         array $parameter = []): TextInput {
-        return TextInput::make(FormMapper::getIdentifyKey($record))
+
+
+        $input = TextInput::make(FormMapper::getIdentifyKey($record))
             ->columnStart(FormMapper::getOptionParameter($record,"new_line_option"))
             ->columnSpan(FormMapper::getOptionParameter($record,"column_span"))
             ->maxLength(FormMapper::getOptionParameter($record,"max_length"))
             ->minLength(FormMapper::getOptionParameter($record,"min_length"))
             ->helperText(FormMapper::getToolTips($record))
-            ->label(FormMapper::getLabelName($record))
-;
+            ->label(FormMapper::getLabelName($record));
+
+        $suggestions = FormMapper::getOptionParameter($record,"suggestions");
+        if(!empty($suggestions)) $input->datalist(array_map(fn($data) => $data[Lang::locale()], $suggestions));
+        return $input;
     }
 
     public static function getInfolistComponent(CustomFieldType $type, CustomFieldAnswer $record,
