@@ -8,6 +8,7 @@ use Filament\Actions;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Form;
 use Filament\Resources\Pages\EditRecord;
+use Illuminate\Contracts\Support\Htmlable;
 
 class EditCustomForm extends EditRecord
 {
@@ -17,7 +18,9 @@ class EditCustomForm extends EditRecord
         return $form->schema([Section::make()->schema([CustomFormEditor::make()])]);
     }
 
-
+    public function getTitle(): string|Htmlable {
+        return $this->record->short_title . " - " . parent::getTitle();
+    }
     protected function getHeaderActions(): array
     {
         return [
