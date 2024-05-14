@@ -30,7 +30,7 @@ class EditAction extends RepeaterFieldAction
             })
             ->modalHeading(function (array $state, array $arguments) {
                 $data = $state[$arguments["item"]];
-                $suffix = " Felddaten bearbeiten ";
+                $suffix = " - Felddaten bearbeiten ";
                 if (empty($data["general_field_id"])) return $data["name_de"] . $suffix; //ToDo Translate
                 else return "G. ".GeneralField::cached($data["general_field_id"])->name_de. $suffix; //ToDo Translate
             });
