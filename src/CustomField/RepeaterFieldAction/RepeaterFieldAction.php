@@ -29,7 +29,7 @@ abstract class RepeaterFieldAction
         if(is_null($type)) return fn()=>false;
 
         return function (CustomForm $form,Get $get, $state,$arguments) use ($type):bool {
-            if(array_key_exists($arguments["item"], $state)) return false;
+            if(!array_key_exists($arguments["item"], $state)) return false;
 
             $item = $state[$arguments["item"]];
 
