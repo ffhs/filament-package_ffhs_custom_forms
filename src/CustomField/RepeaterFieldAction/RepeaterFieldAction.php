@@ -29,6 +29,8 @@ abstract class RepeaterFieldAction
         if(is_null($type)) return fn()=>false;
 
         return function (CustomForm $form,Get $get, $state,$arguments) use ($type):bool {
+            if(array_key_exists($arguments["item"], $state)) return fn()=>false;
+
             $item = $state[$arguments["item"]];
 
             if (!empty($item["template_id"]) && $type instanceof TemplateFieldType) return true;
