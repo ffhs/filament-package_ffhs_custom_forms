@@ -44,7 +44,7 @@ class ImageTypeView implements FieldTypeView
             ->checkFileExistence(false)
             ->visibility('private')
             ->state(array_values($record->options["image"])[0])
-            ->disk(config("ffhs_custom_forms.field_settings.image_layout.disk"))
+            ->disk(FormMapper::getTypeConfigAttribute($record,"disk"))
             ->columnSpan(2)
             ->height(FormMapper::getOptionParameter($record,'height'))
             ->width(FormMapper::getOptionParameter($record,'width'));

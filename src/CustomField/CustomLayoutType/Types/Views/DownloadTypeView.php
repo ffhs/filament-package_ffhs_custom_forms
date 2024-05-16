@@ -12,7 +12,9 @@ use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Placeholder;
 use Filament\Infolists\Components\Component;
 use Filament\Infolists\Components\TextEntry;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\HtmlString;
+use Nette\Utils\FileSystem;
 
 class DownloadTypeView implements FieldTypeView
 {
@@ -85,7 +87,7 @@ class DownloadTypeView implements FieldTypeView
         $paths = FormMapper::getOptionParameter($record, "files");
         $path = array_values($paths)[0];
         $fileName =   FormMapper::getOptionParameter($record, "file_names")[$path];
-        $pathAbsolute = storage_path('app') . "/". $path;
+        $pathAbsolute = self::getPathOfFileAbsolute($record, $path);
 
         $titelAsFileName = FormMapper::getOptionParameter($record, "title_as_filename") ;
         $label = $titelAsFileName ? FormMapper::getLabelName($record): $fileName;
@@ -112,7 +114,7 @@ class DownloadTypeView implements FieldTypeView
 
         foreach ($filePaths as $path){
             $name = $fileNames[$path];
-            $pathAbsolute = storage_path('app') . "/". $path;
+            $pathAbsolute = self::getPathOfFileAbsolute($record, $path);
 
             $action = ($actionClass . '\Action')::make(FormMapper::getIdentifyKey($record) . "-". $name)
                 ->action(fn()=>response()->download($pathAbsolute, $name))
@@ -123,6 +125,12 @@ class DownloadTypeView implements FieldTypeView
             $actions[] = $action;
         }
         return $actionClass::make($actions);
+    }
+
+    private static function getPathOfFileAbsolute(CustomField $record, mixed $path): string {
+        $disk = FormMapper::getTypeConfigAttribute($record, 'disk');
+        $diskRoot = config('filesystems.disks.'.$disk.'.root');
+        return $diskRoot."/".$path;
     }
 
 

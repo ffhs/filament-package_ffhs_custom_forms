@@ -169,10 +169,12 @@ return [
 
     "field_settings"=>[
         "download_file" => [
-            "save_path" => "/custom-form-plugin/custom-fields/specified-data"
+            "save_path" => "/custom-form-plugin/custom-fields/specified-data",
+            "disk" => "local",
         ],
         'image_layout' => [
-            "save_path" => "/custom-form-plugin/custom-fields/specified-data"
+            "save_path" => "/custom-form-plugin/images",
+            "disk" => "public",
         ]
     ],
 

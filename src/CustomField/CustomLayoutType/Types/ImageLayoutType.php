@@ -39,8 +39,8 @@ class ImageLayoutType extends CustomFieldType
         return [
             'image'=> new FastTypeOption([],
                 FileUpload::make('image')
-                    ->directory(config("ffhs_custom_forms.field_settings.image_layout.save_path"))
-                    ->disk(config("ffhs_custom_forms.field_settings.image_layout.disk"))
+                    ->directory($this->getConfigAttribute("save_path"))
+                    ->disk($this->getConfigAttribute("disk"))
                     ->label("Bild") //ToDo Translate
                     ->visibility('private')
                     ->columnSpanFull()

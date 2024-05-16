@@ -60,4 +60,10 @@ class FormMapper
         else $options = $record->customOptions;
         return $options->pluck("name_de","identifier");//ToDo Translate
     }
+
+    public static function getTypeConfigAttribute(CustomField|CustomFieldAnswer  $record, string $attribute) :mixed{
+        if($record instanceof CustomFieldAnswer) $record = $record->customField;
+        return  $record->getType()->getConfigAttribute($attribute);
+    }
+
 }

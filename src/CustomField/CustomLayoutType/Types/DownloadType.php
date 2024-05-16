@@ -12,7 +12,9 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\ShowInVie
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\ShowTitleOption;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Group;
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Toggle;
+use Filament\Infolists\Components\TextEntry;
 
 class DownloadType extends CustomFieldType
 {
@@ -34,15 +36,15 @@ class DownloadType extends CustomFieldType
 
     public function getExtraTypeOptions(): array {
         return [
-            'file_names' => new FastTypeOption([], Group::make()),
+            'file_names' => new FastTypeOption([], Hidden::make('file_names')),
             'files'=> new FastTypeOption([],
                 FileUpload::make('files')
                     ->afterStateUpdated(fn($set, $state) => sizeof($state) > 1? $set("title_as_filename", false):null)
-                    ->directory(config("ffhs_custom_forms.field_settings.download_file.save_path"))
+                    ->directory($this->getConfigAttribute("save_path"))
+                    ->disk($this->getConfigAttribute("disk"))
                     ->storeFileNamesIn('file_names')
                     ->label("Datei/-en") //ToDo Translate
                     ->visibility('private')
-                    ->disk('local')
                     ->columnSpanFull()
                     ->downloadable()
                     ->previewable()
