@@ -82,7 +82,7 @@ class DownloadTypeView implements FieldTypeView
         $paths = FormMapper::getOptionParameter($record, "files");
         $path = array_values($paths)[0];
         $fileName =   FormMapper::getOptionParameter($record, "file_names")[$path];
-        $pathAbsolute = storage_path('app') . $path;
+        $pathAbsolute = storage_path('app') . "/". $path;
 
         $titelAsFileName = FormMapper::getOptionParameter($record, "title_as_filename") ;
         $label = $titelAsFileName ? FormMapper::getLabelName($record): $fileName;
@@ -109,7 +109,7 @@ class DownloadTypeView implements FieldTypeView
 
         foreach ($filePaths as $path){
             $name = $fileNames[$path];
-            $pathAbsolute = storage_path('app') . $path;
+            $pathAbsolute = storage_path('app') . "/". $path;
 
             $action = ($actionClass . '\Action')::make(FormMapper::getIdentifyKey($record) . "-". $name)
                 ->action(fn()=>response()->download($pathAbsolute, $name))

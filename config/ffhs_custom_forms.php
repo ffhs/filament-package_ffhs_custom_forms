@@ -18,6 +18,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\Toggle
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\Types\DownloadType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\Types\FieldsetType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\Types\GroupType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\Types\ImageLayoutType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\Types\SectionType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\Types\TextLayoutType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\Types\TitleType;
@@ -99,6 +100,7 @@ return [
         TitleType::class,
         TextLayoutType::class,
         DownloadType::class,
+        ImageLayoutType::class,
 
         TabsCustomNestType::class,
         CustomTabCustomEggType::class,
@@ -132,6 +134,7 @@ return [
         TitleType::class,
         TextLayoutType::class,
         DownloadType::class,
+        ImageLayoutType::class,
 
         TabsCustomNestType::class,
         WizardCustomNestType::class,
@@ -163,6 +166,9 @@ return [
 
     "field_settings"=>[
         "download_file" => [
+            "save_path" => "/custom-form-plugin/custom-fields/specified-data"
+        ],
+        'image_layout' => [
             "save_path" => "/custom-form-plugin/custom-fields/specified-data"
         ]
     ],

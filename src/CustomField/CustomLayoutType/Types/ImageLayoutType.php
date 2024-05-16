@@ -5,6 +5,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\Types
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\HasCustomFormPackageTranslation;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\Types\Views\DownloadTypeView;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\Types\Views\ImageTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\ColumnSpanOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\FastTypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\NewLineOption;
@@ -12,58 +13,59 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\ShowInVie
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\ShowTitleOption;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Group;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Nette\Utils\ImageType;
 
-class DownloadType extends CustomFieldType
+class ImageLayoutType extends CustomFieldType
 {
     use HasCustomFormPackageTranslation;
 
     public static function getFieldIdentifier(): string {
-        return "download_file";
+        return "image_layout";
     }
 
     public function viewModes(): array {
         return [
-          'default' => DownloadTypeView::class
+          'default' => ImageTypeView::class
         ];
     }
 
     public function icon(): string {
-       return "tabler-download";
+       return "bi-card-image";
     }
 
     public function getExtraTypeOptions(): array {
         return [
-            'file_names' => new FastTypeOption([], Group::make()),
-            'files'=> new FastTypeOption([],
-                FileUpload::make('files')
-                    ->afterStateUpdated(fn($set, $state) => sizeof($state) > 1? $set("title_as_filename", false):null)
-                    ->directory(config("ffhs_custom_forms.field_settings.download_file.save_path"))
-                    ->storeFileNamesIn('file_names')
-                    ->label("Datei/-en") //ToDo Translate
+            'image'=> new FastTypeOption([],
+                FileUpload::make('image')
+                    ->directory(config("ffhs_custom_forms.field_settings.image_layout.save_path"))
+                    ->disk(config("ffhs_custom_forms.field_settings.image_layout.disk"))
+                    ->label("Bild") //ToDo Translate
                     ->visibility('private')
-                    ->disk('local')
                     ->columnSpanFull()
                     ->downloadable()
                     ->previewable()
-                    ->multiple()
+                    ->image()
                     ->live()
             ),
-
             'column_span' => new ColumnSpanOption(),
-            'new_line_option' => new NewLineOption(),
 
-            'show_in_view'=> new ShowInViewOption(),
-            'show_title'=> new ShowTitleOption(),
-            'show_as_link'=> new FastTypeOption(true,
-                Toggle::make("show_as_link")
-                    ->label("Link") //ToDo Translate
+            'height' => new FastTypeOption(null,
+                TextInput::make('height')
+                    ->columnStart(1)
+                    ->label("Höhe") //ToDo Translate
+                    ->numeric()
             ),
-            'title_as_filename'=> new FastTypeOption(false,
-                Toggle::make("title_as_filename")
-                    ->disabled(fn($get) => sizeof($get('files')?? []) > 1)
-                    ->label("Titel als Filename") //ToDo Translate
-            )
+            'width' =>new FastTypeOption(null,
+                TextInput::make('width')
+                    ->label("Breite") //ToDo Translate
+                    ->numeric()
+            ),
+
+            'new_line_option' => (new NewLineOption())->modifyComponent(fn($component)=> $component->columnStart(1)),
+            'show_title' => (new ShowTitleOption())->modifyDefault(fn($default) => false),
+            'show_in_view'=> (new ShowInViewOption())->modifyDefault(fn($default) => false),
         ];
     }
 

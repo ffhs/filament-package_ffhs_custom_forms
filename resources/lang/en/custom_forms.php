@@ -58,7 +58,8 @@ return [
             'tab' => 'Tab',
             'wizard' => 'Step for step',
             'wizard_step' => 'Step',
-            'download_file' => 'Download field'
+            'download_file' => 'Download field',
+            'image_layout' => 'Image layout',
         ],
 
         'rules'=>[
