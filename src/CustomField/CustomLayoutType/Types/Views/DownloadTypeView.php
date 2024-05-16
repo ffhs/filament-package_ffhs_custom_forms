@@ -7,7 +7,6 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FormMapper;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\View\FieldTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
-use Filament\Actions\Action;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Placeholder;
@@ -22,8 +21,8 @@ class DownloadTypeView implements FieldTypeView
 
         $filePaths = FormMapper::getOptionParameter($record,"files");
 
-        if(sizeof($filePaths) <= 1) $actions = self::getSingleFilDownloadComponentAction($record);
-        else $actions = self::getMultipleFileDownloadComponentAction($record);
+        if(sizeof($filePaths) <= 1) $actions = self::getSingleFilDownloadComponentAction($record, Actions::class);
+        else $actions = self::getMultipleFileDownloadComponentAction($record, Actions::class);
 
         $titelAsFileName = FormMapper::getOptionParameter($record, "title_as_filename") ;
         $showTitle = FormMapper::getOptionParameter($record, "show_title") ;
@@ -51,16 +50,35 @@ class DownloadTypeView implements FieldTypeView
         return $group;
     }
 
-    public static function getInfolistComponent(CustomFieldType $type, CustomFieldAnswer $record,
-        array $parameter = []): Component{
+    public static function getInfolistComponent(CustomFieldType $type, CustomFieldAnswer $record, array $parameter = []): Component{
 
-        if(!FormMapper::getOptionParameter($record,"show_in_view"))
-            return TextEntry::make(FormMapper::getIdentifyKey($record))->label("")->state("");
+        $filePaths = FormMapper::getOptionParameter($record,"files");
 
-        return TextEntry::make("w");
+        if(sizeof($filePaths) <= 1) $actions = self::getSingleFilDownloadComponentAction($record->customField, \Filament\Infolists\Components\Actions::class);
+        else $actions = self::getMultipleFileDownloadComponentAction($record->customField, \Filament\Infolists\Components\Actions::class);
+
+        $titelAsFileName = FormMapper::getOptionParameter($record, "title_as_filename") ;
+        $showTitle = FormMapper::getOptionParameter($record, "show_title") ;
+
+        if(!$titelAsFileName && $showTitle){
+            $actions = [
+                TextEntry::make(FormMapper::getIdentifyKey($record)."-title")
+                    ->label(new HtmlString('</span> <span class="text-sm font-medium leading-6 text-gray-950 dark:text-white" style="margin-bottom: -25px; margin-left: -12px;">'.FormMapper::getLabelName($record).'</span> <span>')),
+                $actions,
+            ];
+        }
+        else  $actions = [$actions];
+
+        //Toll Tip
+        $group = \Filament\Infolists\Components\Group::make($actions);
+
+        $group->columnSpan(FormMapper::getOptionParameter($record, 'column_span'));
+        $group->columnStart(FormMapper::getOptionParameter($record,"new_line_option"));
+
+        return $group;
     }
 
-    private static function getSingleFilDownloadComponentAction(CustomField $record): Actions {
+    private static function getSingleFilDownloadComponentAction(CustomField $record, string $actionClass): mixed {
         $paths = FormMapper::getOptionParameter($record, "files");
         $path = array_values($paths)[0];
         $fileName =   FormMapper::getOptionParameter($record, "file_names")[$path];
@@ -69,20 +87,19 @@ class DownloadTypeView implements FieldTypeView
         $titelAsFileName = FormMapper::getOptionParameter($record, "title_as_filename") ;
         $label = $titelAsFileName ? FormMapper::getLabelName($record): $fileName;
 
-        $action = Actions\Action::make(FormMapper::getIdentifyKey($record))
+        $action = ($actionClass . '\Action')::make(FormMapper::getIdentifyKey($record))
             ->action(fn()=>response()->download($pathAbsolute, $fileName))
-            ->tooltip(FormMapper::getToolTips($record))
             ->icon('tabler-download')
             ->label($label);
 
         if (FormMapper::getOptionParameter($record, 'show_as_link')) $action = $action->link();
 
-        $actions = Actions::make([$action]);
+        $actions = $actionClass::make([$action]);
 
         return $actions;
     }
 
-    private static function getMultipleFileDownloadComponentAction(CustomField $record): Actions {
+    private static function getMultipleFileDownloadComponentAction(CustomField $record, string $actionClass): mixed {
         $filePaths = FormMapper::getOptionParameter($record,"files");
         $fileNames = FormMapper::getOptionParameter($record,"file_names");
 
@@ -94,16 +111,15 @@ class DownloadTypeView implements FieldTypeView
             $name = $fileNames[$path];
             $pathAbsolute = storage_path('app') . $path;
 
-            $action = Actions\Action::make(FormMapper::getIdentifyKey($record))
+            $action = ($actionClass . '\Action')::make(FormMapper::getIdentifyKey($record) . "-". $name)
                 ->action(fn()=>response()->download($pathAbsolute, $name))
-                ->tooltip(FormMapper::getToolTips($record))
                 ->icon('tabler-download')
                 ->label($name);
 
             if ($showAsLink) $action = $action->link();
             $actions[] = $action;
         }
-        return Actions::make($actions);
+        return $actionClass::make($actions);
     }
 
 
