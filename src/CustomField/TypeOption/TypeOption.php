@@ -10,6 +10,7 @@ abstract class TypeOption
 {
 
     protected ?Closure $modifyComponentCloser = null;
+    protected ?Closure $modifyDefault = null;
 
     public abstract function getDefaultValue():mixed;
     public abstract function getComponent(string $name):Component;
@@ -29,9 +30,20 @@ abstract class TypeOption
         return $this;
     }
 
+    public function modifyDefault(Closure $closure):static{
+        $this->modifyDefault = $closure;
+        return $this;
+    }
+
     public function getModifyComponent(string $name):Component{
         if(is_null($this->modifyComponentCloser)) return $this->getComponent($name);
         return ($this->modifyComponentCloser)($this->getComponent($name));
+    }
+
+    public function getModifyDefault():mixed{
+        $default = $this->getDefaultValue();
+        if(is_null($this->modifyDefault)) return $default;
+        return ($this->modifyDefault)($default);
     }
 
 

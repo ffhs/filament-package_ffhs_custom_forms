@@ -138,7 +138,7 @@ abstract class CustomFieldType
         $defaults = [];
         foreach ($this->getExtraTypeOptions() as $key => $extraTypeOption){
             /**@var TypeOption $extraTypeOption*/
-            $defaults[$key] = $extraTypeOption->getDefaultValue();
+            $defaults[$key] = $extraTypeOption->getModifyDefault();
         }
         return $defaults;
     }
@@ -147,7 +147,7 @@ abstract class CustomFieldType
         $defaults = [];
         foreach ($this->getExtraGeneralTypeOptions() as $key => $extraTypeOption){
             /**@var TypeOption $extraTypeOption*/
-            $defaults[$key] = $extraTypeOption->getDefaultValue();
+            $defaults[$key] = $extraTypeOption->getModifyDefault();
         }
         return $defaults;
     }
@@ -283,6 +283,10 @@ abstract class CustomFieldType
         //Close existing heading and after that reopen it
         $html=  '</h4>'. $html .'<h4>';
         return  new HtmlString($html);
+    }
+
+    public function getConfigAttribute(string $attribute):mixed {
+        return config("ffhs_custom_forms.type_settings." . $this::getFieldIdentifier() . "." . $attribute);
     }
 
 }

@@ -6,6 +6,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\ColorP
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\DateTimeType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\DateType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\EmailType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\FileUploadType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\IconSelectType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\KeyValueType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\NumberType;
@@ -15,9 +16,12 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\TagsTy
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\TextAreaType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\TextType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\ToggleButtonsType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\Types\DownloadType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\Types\FieldsetType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\Types\GroupType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\Types\ImageLayoutType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\Types\SectionType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\Types\SpaceType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\Types\TextLayoutType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\Types\TitleType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\Anchors\ValueEqualsRuleAnchor;
@@ -79,6 +83,7 @@ return [
         CheckboxType::class,
         DateTimeType::class,
         DateType::class,
+        FileUploadType::class,
 
         TagsType::class,
         KeyValueType::class,
@@ -97,6 +102,9 @@ return [
         GroupType::class,
         TitleType::class,
         TextLayoutType::class,
+        DownloadType::class,
+        ImageLayoutType::class,
+        SpaceType::class,
 
         TabsCustomNestType::class,
         CustomTabCustomEggType::class,
@@ -111,6 +119,7 @@ return [
         TextAreaType::class,
         DateTimeType::class,
         DateType::class,
+        FileUploadType::class,
 
         TagsType::class,
         KeyValueType::class,
@@ -129,6 +138,9 @@ return [
         GroupType::class,
         TitleType::class,
         TextLayoutType::class,
+        DownloadType::class,
+        ImageLayoutType::class,
+        SpaceType::class,
 
         TabsCustomNestType::class,
         WizardCustomNestType::class,
@@ -156,5 +168,28 @@ return [
         CheckboxListType::class,
         ToggleButtonsType::class,
     ],
+
+
+    "field_settings"=>[
+        "download_file" => [
+            "save_path" => "/custom-form-plugin/custom-fields/specified-data",
+            "disk" => "local",
+        ],
+        'image_layout' => [
+            "save_path" => "/custom-form-plugin/images",
+            "disk" => "public",
+        ],
+        'file_upload' => [
+            'files' => [
+                "save_path" => "/custom-form-plugin/custom-fields/uploaded",
+                "disk" => "local",
+            ],
+           'images' => [
+               "save_path" => "/custom-form-plugin/uploaded-images",
+               "disk" => "public",
+           ]
+        ]
+    ],
+
 
 ];

@@ -43,9 +43,12 @@ class FilamentPackageFfhsCustomFormsServiceProvider extends PackageServiceProvid
                     ->copyAndRegisterServiceProviderInApp()
                     ->endWith(function (InstallCommand $command) {
                         // Clear the application cache
-                        $command->info("Clear cache and icon cache");
+                        $command->info("Clear cache");
                         Artisan::call('cache:clear');
+                        $command->info("Clear icon cache");
                         Artisan::call('icons:cache');
+                        $command->info("Create storage symlink");
+                        Artisan::call('storage:link');
 
                         // publish config from icon picker
                         $command->info("Publish config from icon picker plugin");

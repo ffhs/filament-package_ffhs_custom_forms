@@ -60,6 +60,10 @@ return [
             'tab' => 'Tab',
             'wizard' => 'Schritt für Schritt',
             'wizard_step' => 'Schritt',
+            'download_file' => 'Download Feld',
+            'image_layout' => 'Bild im Layout',
+            'space' => 'Absatz',
+            'file_upload' => 'Dokumente',
         ],
 
         'rules'=>[
