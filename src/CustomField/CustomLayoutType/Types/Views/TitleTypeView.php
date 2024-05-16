@@ -34,7 +34,7 @@ class TitleTypeView implements FieldTypeView
         array $parameter = []): Component {
 
         if(!FormMapper::getOptionParameter($record,"show_in_view"))
-            return \Filament\Infolists\Components\Group::make();
+            return \Filament\Infolists\Components\Group::make()->hidden();
 
         $title = self::getTitle($record);
         return TextEntry::make(FormMapper::getIdentifyKey($record))

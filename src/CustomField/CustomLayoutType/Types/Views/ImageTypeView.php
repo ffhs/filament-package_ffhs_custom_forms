@@ -33,7 +33,7 @@ class ImageTypeView implements FieldTypeView
         array $parameter = []): Component{
 
         if(!FormMapper::getOptionParameter($record,"show_in_view"))
-            return TextEntry::make(FormMapper::getIdentifyKey($record))->label("")->state("");
+            return Group::make()->hidden();
 
         return self::getImageEntry($record->customField);
     }

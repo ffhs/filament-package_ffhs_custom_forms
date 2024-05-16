@@ -32,7 +32,7 @@ class TextLayoutTypeView implements FieldTypeView
         array $parameter = []): Component {
 
         if(!FormMapper::getOptionParameter($record,"show_in_view"))
-            return \Filament\Infolists\Components\Group::make();
+            return \Filament\Infolists\Components\Group::make()->hidden();
 
         $label = FormMapper::getOptionParameter($record,"show_title")? FormMapper::getLabelName($record):"";
         $text = FormMapper::getOptionParameter($record,"text_de"); //ToDo translate

@@ -6,6 +6,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\ColorP
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\DateTimeType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\DateType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\EmailType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\FileUploadType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\IconSelectType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\KeyValueType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\NumberType;
@@ -82,6 +83,7 @@ return [
         CheckboxType::class,
         DateTimeType::class,
         DateType::class,
+        FileUploadType::class,
 
         TagsType::class,
         KeyValueType::class,
@@ -117,6 +119,7 @@ return [
         TextAreaType::class,
         DateTimeType::class,
         DateType::class,
+        FileUploadType::class,
 
         TagsType::class,
         KeyValueType::class,
@@ -175,6 +178,16 @@ return [
         'image_layout' => [
             "save_path" => "/custom-form-plugin/images",
             "disk" => "public",
+        ],
+        'file_upload' => [
+            'files' => [
+                "save_path" => "/custom-form-plugin/custom-fields/uploaded",
+                "disk" => "local",
+            ],
+           'images' => [
+               "save_path" => "/custom-form-plugin/uploaded-images",
+               "disk" => "public",
+           ]
         ]
     ],
 

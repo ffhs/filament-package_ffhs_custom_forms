@@ -36,7 +36,7 @@ class SpaceTypeView implements FieldTypeView
         array $parameter = []): \Filament\Infolists\Components\Group {
 
         if(!FormMapper::getOptionParameter($record,"show_in_view"))
-            return \Filament\Infolists\Components\Group::make();
+            return \Filament\Infolists\Components\Group::make()->hidden();
 
         $spaces = [];
 

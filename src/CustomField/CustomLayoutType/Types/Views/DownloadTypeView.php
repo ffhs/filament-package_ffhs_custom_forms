@@ -12,9 +12,7 @@ use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Placeholder;
 use Filament\Infolists\Components\Component;
 use Filament\Infolists\Components\TextEntry;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\HtmlString;
-use Nette\Utils\FileSystem;
 
 class DownloadTypeView implements FieldTypeView
 {
@@ -55,7 +53,7 @@ class DownloadTypeView implements FieldTypeView
     public static function getInfolistComponent(CustomFieldType $type, CustomFieldAnswer $record, array $parameter = []): Component{
 
         if(!FormMapper::getOptionParameter($record,"show_in_view"))
-            return \Filament\Infolists\Components\Group::make($parameter["rendered"])->columnStart(1)->columnSpanFull();
+            return \Filament\Infolists\Components\Group::make($parameter["rendered"])->columnStart(1)->columnSpanFull()->hidden();
 
         $filePaths = FormMapper::getOptionParameter($record,"files");
 

@@ -61,6 +61,7 @@ return [
             'download_file' => 'Download field',
             'image_layout' => 'Image layout',
             'space' => 'Space',
+            'file_upload' => 'File upload',
         ],
 
         'rules'=>[

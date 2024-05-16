@@ -63,6 +63,7 @@ return [
             'download_file' => 'Download Feld',
             'image_layout' => 'Bild im Layout',
             'space' => 'Absatz',
+            'file_upload' => 'Dokumente',
         ],
 
         'rules'=>[
