@@ -68,6 +68,7 @@ abstract class CachedModel extends Model
     public static function cached(mixed $value, string $attribute = "id", bool $searching = true): ?static{
         $output = Cache::get(static::getFromSingedListName())?->where($attribute,$value)->first();
         if(!is_null($output)) return $output;
+        if(is_null($value)) return $output;
         if(!$searching) return $output;
         $output = static::query()->where($attribute, $value)->with(static::$cacheWith)->first();
         if(is_null($output)) return null;
