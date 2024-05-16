@@ -15,6 +15,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\TagsTy
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\TextAreaType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\TextType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\ToggleButtonsType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\Types\DownloadType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\Types\FieldsetType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\Types\GroupType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\Types\SectionType;
@@ -97,6 +98,7 @@ return [
         GroupType::class,
         TitleType::class,
         TextLayoutType::class,
+        DownloadType::class,
 
         TabsCustomNestType::class,
         CustomTabCustomEggType::class,
@@ -129,6 +131,7 @@ return [
         GroupType::class,
         TitleType::class,
         TextLayoutType::class,
+        DownloadType::class,
 
         TabsCustomNestType::class,
         WizardCustomNestType::class,
@@ -156,5 +159,13 @@ return [
         CheckboxListType::class,
         ToggleButtonsType::class,
     ],
+
+
+    "field_settings"=>[
+        "download_file" => [
+            "save_path" => "/custom-form-plugin/custom-fields/specified-data"
+        ]
+    ],
+
 
 ];
