@@ -9,6 +9,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\TextInput;
+use Filament\Infolists\Components\Component;
 use Filament\Infolists\Components\TextEntry;
 use Illuminate\Support\HtmlString;
 
@@ -30,10 +31,10 @@ class TitleTypeView implements FieldTypeView
     }
 
     public static function getInfolistComponent(CustomFieldType $type, CustomFieldAnswer $record,
-        array $parameter = []): TextEntry {
+        array $parameter = []): Component {
 
         if(!FormMapper::getOptionParameter($record,"show_in_view"))
-            return TextEntry::make(FormMapper::getIdentifyKey($record))->label("")->state("");
+            return \Filament\Infolists\Components\Group::make();
 
         $title = self::getTitle($record);
         return TextEntry::make(FormMapper::getIdentifyKey($record))

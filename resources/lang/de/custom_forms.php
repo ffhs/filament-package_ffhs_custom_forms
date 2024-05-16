@@ -62,6 +62,7 @@ return [
             'wizard_step' => 'Schritt',
             'download_file' => 'Download Feld',
             'image_layout' => 'Bild im Layout',
+            'space' => 'Absatz',
         ],
 
         'rules'=>[

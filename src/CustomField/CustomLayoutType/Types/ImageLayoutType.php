@@ -54,12 +54,14 @@ class ImageLayoutType extends CustomFieldType
             'height' => new FastTypeOption(null,
                 TextInput::make('height')
                     ->columnStart(1)
+                    ->minValue(1)
                     ->label("Höhe") //ToDo Translate
                     ->numeric()
             ),
             'width' =>new FastTypeOption(null,
                 TextInput::make('width')
                     ->label("Breite") //ToDo Translate
+                    ->minValue(1)
                     ->numeric()
             ),
 

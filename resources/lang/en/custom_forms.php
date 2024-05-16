@@ -60,6 +60,7 @@ return [
             'wizard_step' => 'Step',
             'download_file' => 'Download field',
             'image_layout' => 'Image layout',
+            'space' => 'Space',
         ],
 
         'rules'=>[

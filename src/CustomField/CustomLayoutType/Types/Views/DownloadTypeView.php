@@ -52,6 +52,9 @@ class DownloadTypeView implements FieldTypeView
 
     public static function getInfolistComponent(CustomFieldType $type, CustomFieldAnswer $record, array $parameter = []): Component{
 
+        if(!FormMapper::getOptionParameter($record,"show_in_view"))
+            return \Filament\Infolists\Components\Group::make($parameter["rendered"])->columnStart(1)->columnSpanFull();
+
         $filePaths = FormMapper::getOptionParameter($record,"files");
 
         if(sizeof($filePaths) <= 1) $actions = self::getSingleFilDownloadComponentAction($record->customField, \Filament\Infolists\Components\Actions::class);

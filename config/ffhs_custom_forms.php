@@ -20,6 +20,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\Types\Field
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\Types\GroupType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\Types\ImageLayoutType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\Types\SectionType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\Types\SpaceType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\Types\TextLayoutType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\Types\TitleType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\Anchors\ValueEqualsRuleAnchor;
@@ -101,6 +102,7 @@ return [
         TextLayoutType::class,
         DownloadType::class,
         ImageLayoutType::class,
+        SpaceType::class,
 
         TabsCustomNestType::class,
         CustomTabCustomEggType::class,
@@ -135,6 +137,7 @@ return [
         TextLayoutType::class,
         DownloadType::class,
         ImageLayoutType::class,
+        SpaceType::class,
 
         TabsCustomNestType::class,
         WizardCustomNestType::class,
