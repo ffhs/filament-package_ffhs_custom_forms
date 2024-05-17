@@ -7,6 +7,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomFieldT
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\RepeaterFieldAction\Actions\EditAction;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\RepeaterFieldAction\Actions\TemplateDissolveAction;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Render\CustomFormRender;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Render\CustomFormSaveHelper;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\HtmlComponents\HtmlBadge;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
@@ -76,8 +77,7 @@ final class TemplateFieldType extends CustomFieldType
         $customFields->each(function($model) use (&$customFieldArray) {$customFieldArray[] = $model;});
         $customFieldsIdentify = array_combine($keys, $customFieldArray);
 
-
-        CustomFormRender::saveHelperWithoutPreparation($formData, $customFieldsIdentify, $fieldAnswersIdentify, $formAnswerer);
+        CustomFormSaveHelper::saveWithoutPreparation($formData, $customFieldsIdentify, $fieldAnswersIdentify, $formAnswerer);
     }
 
     public function afterEditFieldDelete(CustomField $field):void {

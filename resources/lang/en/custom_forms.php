@@ -73,7 +73,25 @@ return [
 
         'anchors'=>[
             'value_equals_anchor' => 'equal value anchor'
-        ]
+        ],
+
+
+        'type_options' => [
+            "boolean" => "Ja/Nein Feld",
+            "columns" => "Anzahl Spalten",
+            "column_span" => "Zeilenweite",
+            "icon" => "Icon",
+            "inline_label" => "Title in der Zeile",
+            "inline" => "In einer Zeile",
+            "max_length" => "Maximale Länge",
+            "max_value" => "Maximaler Wert",
+            "min_length" => "Minimale Länge",
+            "min_value" => "Minimaler Wert",
+            "new_line" => "Neue Zeile",
+            "show_as_fieldset" => "Als Fieldset beim Betrachten anzeigen",
+            "show_in_view" => "Sichtbar beim Betrachten",
+            "show_title" => "Titel Anzeigen",
+        ],
     ],
 
     'form'=>[

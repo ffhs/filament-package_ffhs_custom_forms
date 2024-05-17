@@ -15,7 +15,7 @@ class MaxValueOption extends TypeOption
     public function getComponent(string $name): Component {
         return
             TextInput::make($name)
-                ->label("Maximale Grösse") //ToDo Translate
+                ->label(__("filament-package_ffhs_custom_forms::custom_forms.fields.type_options.max_value"))
                 ->step(1)
                 ->required()
                 ->integer();

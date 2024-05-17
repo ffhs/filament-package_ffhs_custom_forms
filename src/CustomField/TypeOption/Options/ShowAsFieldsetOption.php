@@ -15,7 +15,7 @@ class ShowAsFieldsetOption extends TypeOption
     public function getComponent(string $name): Component {
        return Toggle::make($name)
            ->columnSpanFull()
-           ->label("Als Fieldset beim Betrachten anzeigen") //ToDo Translate,
+           ->label(__("filament-package_ffhs_custom_forms::custom_forms.fields.type_options.show_as_fieldset"))
            ->disabled(fn($get) => !$get("show_title"));
     }
 }

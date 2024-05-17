@@ -15,7 +15,7 @@ class MaxLengthOption extends TypeOption
     public function getComponent(string $name): Component {
         return
             TextInput::make($name)
-                ->label("Maximale Länge") //ToDo Translate
+                ->label(__("filament-package_ffhs_custom_forms::custom_forms.fields.type_options.max_length"))
                 ->columnStart(1)
                 ->step(1)
                 ->required()

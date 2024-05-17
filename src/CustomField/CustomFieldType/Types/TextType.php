@@ -8,7 +8,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\HasCustomFor
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\Views\TextTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\FastTypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\MaxLengthOption;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\MinLenghtOption;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\MinLengthOption;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Section;
@@ -35,7 +35,7 @@ class TextType extends CustomFieldType
     protected function extraOptionsBeforeBasic(): array {
         return [
             'max_length' => new MaxLengthOption(),
-            'min_length' => new MinLenghtOption(),
+            'min_length' => new MinLengthOption(),
         ];
     }
 

@@ -8,7 +8,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\HasCustomFor
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\FastTypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\MaxLengthOption;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\MinLenghtOption;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\MinLengthOption;
 use Filament\Forms\Components\Toggle;
 
 class TextAreaType extends CustomFieldType
@@ -38,7 +38,7 @@ class TextAreaType extends CustomFieldType
 
         return [
             'max_length' => new MaxLengthOption(),
-            'min_length' => new MinLenghtOption(),
+            'min_length' => new MinLengthOption(),
             'auto_size'=> new FastTypeOption(false,$autoSizeComponent),
         ];
     }

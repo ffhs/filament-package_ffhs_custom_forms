@@ -14,7 +14,7 @@ class ColumnSpanOption extends TypeOption
 
     public function getComponent(string $name): Component {
        return TextInput::make($name)
-           ->label("Zeilenweite")//ToDo Translation
+           ->label(__("filament-package_ffhs_custom_forms::custom_forms.fields.type_options.column_span"))
            ->step(1)
            ->integer()
            ->minValue(1)

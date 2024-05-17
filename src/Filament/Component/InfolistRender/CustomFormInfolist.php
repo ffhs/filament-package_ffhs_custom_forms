@@ -5,6 +5,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\InfolistRender;
 
 use Closure;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Render\CustomFormRender;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Render\CustomFormSaveHelper;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
 use Filament\Forms\Components\Component;
@@ -44,7 +45,7 @@ class CustomFormInfolist extends Component
         //SetUp Auto Update
         $this->afterStateUpdated(function (CustomFormInfolist $component, array $state,?CustomFormAnswer $record){
             if(!$component->getIsAutoSave()) return;
-            CustomFormRender::saveHelper($record, $state);
+            CustomFormSaveHelper::save($record, $state);
         });
 
     }

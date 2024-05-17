@@ -14,6 +14,6 @@ class NewLineOption extends TypeOption
 
     public function getComponent(string $name): Component {
         return Toggle::make($name)
-            ->label("Neue Zeile");//ToDo Translation
+            ->label(__("filament-package_ffhs_custom_forms::custom_forms.fields.type_options.new_line"));
     }
 }

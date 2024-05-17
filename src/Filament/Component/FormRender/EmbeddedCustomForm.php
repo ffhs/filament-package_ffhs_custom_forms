@@ -8,7 +8,9 @@ use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\UseFieldSplit;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\UseLayoutSplit;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\UsePosSplit;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\UseViewMode;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Render\CustomFormLoadHelper;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Render\CustomFormRender;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Render\CustomFormSaveHelper;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Render\SplitCustomFormRender;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
@@ -161,7 +163,7 @@ class EmbeddedCustomForm extends Component implements CanEntangleWithSingularRel
     function saveForm(EmbeddedCustomForm $component, Model $record, array $data): void {
         $relationshipName = $component->getRelationshipName();
         $answer = $record->$relationshipName;
-        CustomFormRender::saveHelper($answer, $data);
+        CustomFormSaveHelper::save($answer, $data);
     }
 
 
@@ -172,7 +174,7 @@ class EmbeddedCustomForm extends Component implements CanEntangleWithSingularRel
             /**@var CustomFormAnswer $answer */
             $relationshipName = $component->getRelationshipName();
             $answer = $record->$relationshipName;
-            return CustomFormRender::loadHelper($answer);
+            return CustomFormLoadHelper::load($answer);
         });
     }
 

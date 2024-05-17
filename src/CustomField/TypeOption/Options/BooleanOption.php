@@ -14,7 +14,7 @@ class BooleanOption extends TypeOption
 
     public function getComponent(string $name): Component {
        return Toggle::make($name)
-           ->label("Ja/Nein Feld") //ToDo Translate
+           ->label(__("filament-package_ffhs_custom_forms::custom_forms.fields.type_options.boolean"))
            ->live();
     }
 }
