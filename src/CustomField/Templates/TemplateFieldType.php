@@ -58,24 +58,21 @@ final class TemplateFieldType extends CustomFieldType
 
     public function afterAnswerFieldSave(CustomFieldAnswer $field, mixed $rawData, array $formData): void {
         $templateId = $field->customField->template_id;
-        $template = CustomForm::cached($templateId);
         $formAnswerer = $field->customFormAnswer;
+        $template = CustomForm::cached($templateId);
 
-        $customFieldAnswers = $formAnswerer->cachedAnswers();
-        $keys = $customFieldAnswers
-            ->filter(fn(CustomFieldAnswer $answer)=>$answer->customField->custom_form_id = $templateId)
-            ->map(fn(CustomFieldAnswer $answer)=> $answer->customField->getInheritState()["identify_key"])
-            ->toArray();
+        // Mapping and combining filtered field answers
+        $fieldAnswersIdentify = CustomFormSaveHelper::mapFields(
+            $formAnswerer->cachedAnswers(),
+            fn(CustomFieldAnswer $answer) => $answer->customField->getInheritState()["identify_key"],
+            fn(CustomFieldAnswer $answer) => $answer->customField->custom_form_id == $templateId
+        );
 
-        $customFieldAnswersArray = [];
-        $customFieldAnswers->each(function($model) use (&$customFieldAnswersArray) {$customFieldAnswersArray[] = $model;});
-        $fieldAnswersIdentify = array_combine($keys, $customFieldAnswersArray);
-
-        $customFields = $template->cachedFields();
-        $keys = $customFields->map(fn(CustomField $customField)=> $customField->getInheritState()["identify_key"])->toArray();
-        $customFieldArray = [];
-        $customFields->each(function($model) use (&$customFieldArray) {$customFieldArray[] = $model;});
-        $customFieldsIdentify = array_combine($keys, $customFieldArray);
+        // Mapping and combining custom fields
+        $customFieldsIdentify = CustomFormSaveHelper::mapFields(
+            $template->cachedFields(),
+            fn(CustomField $customField) => $customField->getInheritState()["identify_key"]
+        );
 
         CustomFormSaveHelper::saveWithoutPreparation($formData, $customFieldsIdentify, $fieldAnswersIdentify, $formAnswerer);
     }

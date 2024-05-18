@@ -63,18 +63,18 @@ class FileUploadView implements FieldTypeView
     public static function getInfolistComponent(CustomFieldType $type, CustomFieldAnswer $record,
         array $parameter = []): \Filament\Infolists\Components\Component {
 
-        $answare = FormMapper::getAnswer($record);
+        $answer = FormMapper::getAnswer($record);
 
-        if(is_null($answare)) {
+        if(is_null($answer) || !isset($answer['file_names'])) {
             $names = [];
             $files = [];
         }
         else if(FormMapper::getOptionParameter($record, "preserve_filenames")){
-            $names = $answare['file_names'];
-            $files= array_values($answare['files']);
+            $names = $answer['file_names'];
+            $files= array_values($answer['files']);
         }else{
-            $names = $answare;
-            $files= array_values($answare);
+            $names = $answer;
+            $files= array_values($answer);
         }
 
         //disk
@@ -130,7 +130,7 @@ class FileUploadView implements FieldTypeView
         $downloadable = FormMapper::getOptionParameter($record,"downloadable");
 
         foreach ($files as $path) {
-            $absulutPath = $diskRoot."/".$path;
+            $absolutePath = $diskRoot."/".$path;
              $action = Action::make($path."-".FormMapper::getIdentifyKey($record)."-action")
                 ->label($names[$path])
                 ->disabled(!$downloadable)
@@ -138,7 +138,7 @@ class FileUploadView implements FieldTypeView
 
             if($downloadable){
                 $action = $action
-                    ->action(fn() => response()->download($absulutPath, $names[$path]))
+                    ->action(fn() => response()->download($absolutePath, $names[$path]))
                     ->icon('tabler-download');
             }
             $actions[] = $action;

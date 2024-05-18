@@ -13,22 +13,18 @@ class CustomFormSaveHelper {
     public static function save(CustomFormAnswer $formAnswerer, array $formData) :void{
         $customForm = CustomForm::cached($formAnswerer->custom_form_id);
 
-        $customFieldAnswers = $formAnswerer->cachedAnswers();
-        $keys = $customFieldAnswers
-            ->map(fn(CustomFieldAnswer $answer)=> $answer->customField->getInheritState()["identify_key"])
-            ->toArray();
+        // Mapping and combining field answers
+        $fieldAnswersIdentify = self::mapFields(
+            $formAnswerer->cachedAnswers(),
+            fn(CustomFieldAnswer $answer) => $answer->customField->getInheritState()["identify_key"]
+        );
 
-        $customFieldAnswersArray = [];
-        $customFieldAnswers->each(function($model) use (&$customFieldAnswersArray) {$customFieldAnswersArray[] = $model;});
-        $fieldAnswersIdentify = array_combine($keys, $customFieldAnswersArray);
+        // Mapping and combining custom fields
+        $customFieldsIdentify = self::mapFields(
+            $customForm->cachedFields(),
+            fn(CustomField $customField) => $customField->getInheritState()["identify_key"]
+        );
 
-        $customFields = $customForm->cachedFields();
-        $keys = $customFields->map(fn(CustomField $customField)=> $customField->getInheritState()["identify_key"])->toArray();
-        $customFieldArray = [];
-        $customFields->each(function($model) use (&$customFieldArray) {$customFieldArray[] = $model;});
-        $customFieldsIdentify = array_combine($keys, $customFieldArray);
-
-        // saveHelperWithoutPreparation
         self::saveWithoutPreparation($formData, $customFieldsIdentify, $fieldAnswersIdentify, $formAnswerer);
     }
 
@@ -77,5 +73,18 @@ class CustomFormSaveHelper {
 
             $type->afterAnswerFieldSave($customFieldAnswer, $fieldData, $formData);
         }
+    }
+
+
+    public static function mapFields($fields, $keyCallback, $filterCallback = null) : array {
+        if ($filterCallback) {
+            $fields = $fields->filter($filterCallback);
+        }
+        $keys = $fields->map($keyCallback)->toArray();
+        $fieldsArray = [];
+        $fields->each(function($model) use (&$fieldsArray) {
+            $fieldsArray[] = $model;
+        });
+        return array_combine($keys, $fieldsArray);
     }
 }
