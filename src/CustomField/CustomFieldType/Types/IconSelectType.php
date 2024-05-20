@@ -20,7 +20,6 @@ class IconSelectType extends CustomFieldType
         ];
     }
 
-
     public function icon(): string {
         return  "tabler-color-picker";
     }

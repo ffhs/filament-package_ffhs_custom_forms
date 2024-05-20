@@ -37,7 +37,7 @@ class ToggleButtonsType extends CustomOptionType
                 "columns" => (new ColumnsOption())
                     ->modifyComponent(fn($component) => $component
                         ->disabled(fn($get)=> $get("grouped") ||  $get("inline")||  $get("boolean"))
-                        ->label("Spalten")//ToDo Translate
+                        ->label(__("filament-package_ffhs_custom_forms::custom_forms.fields.type_options.columns"))
                     )
             ],
             $this->getExtraSettingsOptions(),
@@ -47,7 +47,7 @@ class ToggleButtonsType extends CustomOptionType
                 "grouped" => new FastTypeOption(false,
                     Toggle::make("grouped")
                         ->disabled(fn($get)=> $get("inline"))
-                        ->label("Schalter gruppiert")//ToDo Translate
+                        ->label(__("filament-package_ffhs_custom_forms::custom_forms.fields.type_options.toggle_grouped"))
                         ->columnStart(2)
                         ->live(),
                 ),
@@ -61,7 +61,7 @@ class ToggleButtonsType extends CustomOptionType
                     Toggle::make("multiple")
                         ->disabled(fn($get)=> $get("boolean"))
                         ->columnStart(2)
-                        ->label("Mehre Schalter auswählbar")//ToDo Translate
+                        ->label(__("filament-package_ffhs_custom_forms::custom_forms.fields.type_options.multiple_toggle_selectable"))
                         ->live(),
                 ),*/
                 parent::getExtraTypeOptions()["customOptions" ]

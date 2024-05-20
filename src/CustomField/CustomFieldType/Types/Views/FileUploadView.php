@@ -3,14 +3,12 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\Views;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomFieldType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomOption\HasCustomOptionInfoListViewWithBoolean;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FormMapper;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\View\FieldTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\ToggleButtons;
 use Filament\Infolists\Components\Actions;
 use Filament\Infolists\Components\Actions\Action;
 use Filament\Infolists\Components\Fieldset;
@@ -28,14 +26,14 @@ class FileUploadView implements FieldTypeView
 
         $saveFileNames = FormMapper::getOptionParameter($record,"preserve_filenames");
 
-        $fileUpload = FileUpload::make(FormMapper::getIdentifyKey($record). ($saveFileNames? ".files":""))
+        $fileUpload = FileUpload::make(FormMapper::getIdentifyKey($record) . ($saveFileNames? "files":""))
             ->label(FormMapper::getLabelName($record))
             ->helperText(FormMapper::getToolTips($record))
             ->columnSpan(FormMapper::getOptionParameter($record, "column_span"))
             ->inlineLabel(FormMapper::getOptionParameter($record, "in_line_label"))
             ->columnStart(FormMapper::getOptionParameter($record, "new_line_option"))
             ->multiple(FormMapper::getOptionParameter($record,"multiple"));
-           // ->downloadable(FormMapper::getOptionParameter($record,"downloadable"));
+            //->downloadable(FormMapper::getOptionParameter($record,"downloadable"));
 
 
         if(FormMapper::getOptionParameter($record,"image")){

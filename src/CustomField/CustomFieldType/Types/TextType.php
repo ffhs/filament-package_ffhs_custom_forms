@@ -42,11 +42,11 @@ class TextType extends CustomFieldType
     protected function extraOptionsAfterBasic(): array {
         return [
             'suggestions' => new FastTypeOption([],
-                Section::make("Vorschläge")
+                Section::make(__("filament-package_ffhs_custom_forms::custom_forms.fields.type_options.suggestions"))
                     ->collapsed()
                     ->schema([
                         Repeater::make('suggestions')
-                            ->addActionLabel("Vorschlag hinzufügen")
+                            ->addActionLabel(__("filament-package_ffhs_custom_forms::custom_forms.fields.type_options.add_suggestion"))
                             ->itemLabel(fn($state) => $state[Lang::locale()])
                             ->columnSpanFull()
                             ->collapsed()

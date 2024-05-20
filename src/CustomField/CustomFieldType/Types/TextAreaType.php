@@ -33,7 +33,7 @@ class TextAreaType extends CustomFieldType
 
         $autoSizeComponent =
             Toggle::make("auto_size")
-            ->label("Automatische Grösse") //ToDo Translate
+            ->label(__("filament-package_ffhs_custom_forms::custom_forms.fields.type_options.auto_size"))
             ->columnSpan(2);
 
         return [

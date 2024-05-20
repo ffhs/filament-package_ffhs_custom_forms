@@ -29,21 +29,19 @@ class KeyValueType extends CustomOptionType
         return [
           'reorderable' => new FastTypeOption(false,
               Toggle::make('reorderable')
-                ->label("Kann umgeordnet werden") //ToDo Translate
+                ->label(__("filament-package_ffhs_custom_forms::custom_forms.fields.type_options.reorderable"))
                 ->columnSpanFull()
           ),
           'editableKeys' => new FastTypeOption(true,
             Toggle::make('editableKeys')
-                ->label("Bearbeitbare Schlüssel") //ToDo Translate
+                ->label(__("filament-package_ffhs_custom_forms::custom_forms.fields.type_options.editable_keys"))
                 ->columnSpanFull()
           ),
           'editableValues' => new FastTypeOption(true,
               Toggle::make('editableValues')
-                  ->label("Bearbeitbare Werte") //ToDo Translate
+                  ->label(__("filament-package_ffhs_custom_forms::custom_forms.fields.type_options.editable_values"))
                   ->columnSpanFull()
           )
         ];
     }
-
-
 }

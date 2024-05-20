@@ -25,8 +25,8 @@ class ColorPickerType extends CustomOptionType
     protected function extraOptionsAfterBasic(): array {
         return [
             'color_type' => new FastTypeOption("rgb",
-                Select::make("'color_type'")
-                    ->label("Farbformat") //ToDo translate
+                Select::make("color_type")
+                    ->label(__("filament-package_ffhs_custom_forms::custom_forms.fields.type_options.color_type"))
                     ->columnSpanFull()
                     ->required()
                     ->selectablePlaceholder(false)

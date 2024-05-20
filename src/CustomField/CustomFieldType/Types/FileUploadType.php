@@ -31,31 +31,31 @@ class FileUploadType extends CustomFieldType
                         $set('show_images', false);
                         $set('show_images_in_view', false);
                     })
-                    ->label("Nur Bilder") //ToDo Translate
+                    ->label(__("filament-package_ffhs_custom_forms::custom_forms.fields.type_options.only_images"))
                     ->live()
             ),
             'show_images' => FastTypeOption::make(false,
                 Toggle::make('show_images')
                     ->columnStart(1)
-                    ->label("Bilder Anzeigen") //ToDo Translate
+                    ->label(__("filament-package_ffhs_custom_forms::custom_forms.fields.type_options.show_images"))
                     ->disabled(fn($get) => !$get('image'))
             ),
             'show_images_in_view' => FastTypeOption::make(false,
                 Toggle::make('show_images_in_view')
-                    ->label("Bilder Anzeigen in Ansicht") //ToDo Translate
+                    ->label(__("filament-package_ffhs_custom_forms::custom_forms.fields.type_options.show_images_in_view"))
                     ->disabled(fn($get) => !$get('image'))
             ),
             'downloadable' => FastTypeOption::make(false,
                 Toggle::make('downloadable')
-                    ->label("Herunterladbar") //ToDo Translate
+                    ->label(__("filament-package_ffhs_custom_forms::custom_forms.fields.type_options.downloadable"))
             ),
             'multiple' => FastTypeOption::make(false,
                 Toggle::make('multiple')
-                    ->label("mehrere hochladbar") //ToDo Translate
+                    ->label(__("filament-package_ffhs_custom_forms::custom_forms.fields.type_options.multiple_uploads_allowed"))
             ),
             'preserve_filenames' => FastTypeOption::make(true,
                 Toggle::make('preserve_filenames')
-                    ->label("Ursprungsname speichern") //ToDo Translate
+                    ->label(__("filament-package_ffhs_custom_forms::custom_forms.fields.type_options.preserve_filenames"))
             ),
         ];
     }

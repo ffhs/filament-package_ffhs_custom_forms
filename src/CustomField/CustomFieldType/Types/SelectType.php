@@ -34,16 +34,16 @@ class SelectType extends CustomOptionType
             [
                 "several" => new FastTypeOption(false,
                     Toggle::make("several")
-                        ->label("Mehre auswählbar")//ToDo Translate
+                        ->label(__("filament-package_ffhs_custom_forms::custom_forms.fields.type_options.several"))
                         ->columnSpanFull()
                         ->live()
                 ),
                 "min_select" => new FastTypeOption(1,
                     TextInput::make("min_select")
                         ->hidden(fn($get)=> !$get("several"))
-                        ->label("Mindestanzahl") //ToDo Translate
+                        ->label(__("filament-package_ffhs_custom_forms::custom_forms.fields.type_options.min_select"))
                         ->columnStart(1)
-                        ->helperText("Greift nur bei (Benötigt)")//ToDo Translate
+                        ->helperText(__("filament-package_ffhs_custom_forms::custom_forms.fields.type_options.min_select_helper"))
                         ->minValue(0)
                         ->step(1)
                         ->required()
@@ -52,8 +52,8 @@ class SelectType extends CustomOptionType
                 "max_select" => new FastTypeOption(1,
                     TextInput::make("max_select")
                         ->hidden(fn($get)=> !$get("several"))
-                        ->label("Maximalanzahl") //ToDo Translate
-                        ->helperText("'0' entspricht keine Begrenzung") //ToDo Translate
+                        ->label(__("filament-package_ffhs_custom_forms::custom_forms.fields.type_options.max_select"))
+                        ->helperText(__("filament-package_ffhs_custom_forms::custom_forms.fields.type_options.max_select_helper"))
                         ->minValue(0)
                         ->step(1)
                         ->required()
