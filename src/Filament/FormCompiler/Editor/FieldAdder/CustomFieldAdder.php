@@ -15,10 +15,16 @@ use Illuminate\Support\HtmlString;
 final class CustomFieldAdder extends FormEditorFieldAdder
 {
     function getTitle(): string {
-        return  "Spezifische Felder"; //ToDo Translate
+        return  __("filament-package_ffhs_custom_forms::custom_forms.form.compiler.custom_fields");
     }
 
-
+    /**
+     * Returns a list of actions for every active custom field.
+     * Clicking an action opens a modal to configure that
+     * custom field and finally add it to the form
+     *
+     * @return array
+     */
     function getSchema(): array {
         $actions = [];
         $types = collect($this->form->getFormConfiguration()::formFieldTypes())->map(fn($class) => new $class());
@@ -31,7 +37,7 @@ final class CustomFieldAdder extends FormEditorFieldAdder
             $actions[] = Actions::make([
                 Action::make("add_".$type::getFieldIdentifier()."_action")
                     ->mutateFormDataUsing(fn(Action $action)=> CustomFormEditorHelper::getRawStateForm($action,1))
-                    ->modalHeading("Hinzufügen eines ".$type->getTranslatedName()." Feldes") //ToDo Translate
+                    ->modalHeading(__("filament-package_ffhs_custom_forms::custom_forms.form.compiler.add_a_name_field",['name'=>$type->getTranslatedName()]))
                     ->disabled(fn(Get $get) => is_null($type::getFieldIdentifier()))
                     ->extraAttributes(["style" => "width: 100%; height: 100%;"])
                     ->label(self::getCustomFieldAddActionLabel($type))

@@ -7,6 +7,7 @@ return [
 
     'functions' => [
         'connect' => 'Verknüpfen',
+        'add' => 'Hinzufügen',
     ],
 
     "navigation" => [
@@ -127,6 +128,14 @@ return [
             'display_name' => "Formulartype Name",
             'raw_name' => "Formulartype Identifier"
         ],
-        'template' => "Template"
+        'template' => "Template",
+        "compiler" => [
+            "custom_fields" => "Spezifische Felder",
+            "general_fields" => "Generelle Felder",
+            "add_a_name_field" => "Hinzufügen eines :name Feldes",
+            "template_has_existing_fields" => "Es gibt Felder die ursprünglich von diesem Template stammen",
+            "template_has_existing_fields_description" => "Es gibt Felder die ursprünglich von diesem Template stammen. Diese Felder werden von
+                            diesem Formular gelöscht und die existierenden Antworten übernommen",
+        ]
     ],
 ];

@@ -97,9 +97,7 @@ class DownloadTypeView implements FieldTypeView
 
         if (FormMapper::getOptionParameter($record, 'show_as_link')) $action = $action->link();
 
-        $actions = $actionClass::make([$action]);
-
-        return $actions;
+        return $actionClass::make([$action]);
     }
 
     private static function getMultipleFileDownloadComponentAction(CustomField $record, string $actionClass): mixed {

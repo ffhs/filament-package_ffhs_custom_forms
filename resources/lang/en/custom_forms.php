@@ -5,6 +5,7 @@ return [
 
     'functions'=>[
         'connect'=>'Connect',
+        'add' => 'Add',
     ],
 
     "navigation"=>[
@@ -75,7 +76,6 @@ return [
             'value_equals_anchor' => 'equal value anchor'
         ],
 
-
         'type_options' => [
             "boolean" => "Yes/No Field",
             "columns_count" => "Number of Columns",
@@ -126,7 +126,13 @@ return [
             'display_name' => "Form Type Name",
             'raw_name' => "Form Type Identifier"
         ],
-        'template'=> "Template"
+        'template'=> "Template",
+        "compiler" => [
+            "custom_fields" => "Custom Fields",
+            "general_fields" => "General Fields",
+            "add_a_name_field" => "Add a :name Field",
+            "template_has_existing_fields" => "The template contains existing fields",
+            "template_has_existing_fields_description" => "There are fields that originally come from this template. These fields are deleted from this form and the existing answers are adopted",
+        ]
     ]
-
 ];
