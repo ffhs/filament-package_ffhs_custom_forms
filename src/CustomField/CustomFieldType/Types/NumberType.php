@@ -32,7 +32,6 @@ class NumberType extends CustomFieldType
         return [
             'min_value'=>new MinValueOption(),
             'max_value'=>new MaxValueOption(),
-            'alpine_mask' => new AlpineMaskOption(),
         ];
     }
 

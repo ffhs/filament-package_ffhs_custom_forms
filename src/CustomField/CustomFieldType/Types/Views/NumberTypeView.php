@@ -27,9 +27,6 @@ class NumberTypeView implements FieldTypeView
             ->numeric();
 
 
-        $mask = FormMapper::getOptionParameter($record,"alpine_mask");
-        if(!empty($mask)) $input = $input->mask($mask);
-
         return $input;
     }
 
