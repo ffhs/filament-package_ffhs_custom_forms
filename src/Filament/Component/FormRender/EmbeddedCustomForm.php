@@ -157,15 +157,14 @@ class EmbeddedCustomForm extends Component implements CanEntangleWithSingularRel
     /**
      * @param  EmbeddedCustomForm  $component
      * @param  Model  $record
-     * @param  array  $data
      * @return void
      */
-    function saveForm(EmbeddedCustomForm $component, Model $record, array $data): void {
+    function saveForm(EmbeddedCustomForm $component, Model $record): void {
         $relationshipName = $component->getRelationshipName();
         $answer = $record->$relationshipName;
-        CustomFormSaveHelper::save($answer, $data);
-    }
 
+        CustomFormSaveHelper::save($answer,  $component->getLivewire()->getForm('form'), path: $component->getStatePath(false));
+    }
 
 
     private function setUpFormLoading(): void {

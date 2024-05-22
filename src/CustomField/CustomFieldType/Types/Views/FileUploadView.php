@@ -24,9 +24,8 @@ class FileUploadView implements FieldTypeView
     public static function getFormComponent(CustomFieldType $type, CustomField $record,
         array $parameter = []): Component {
 
-        $saveFileNames = FormMapper::getOptionParameter($record,"preserve_filenames");
 
-        $fileUpload = FileUpload::make(FormMapper::getIdentifyKey($record) . ($saveFileNames? ".files":""))
+        $fileUpload = FileUpload::make(FormMapper::getIdentifyKey($record) . ".files")
             ->label(FormMapper::getLabelName($record))
             ->helperText(FormMapper::getToolTips($record))
             ->columnSpan(FormMapper::getOptionParameter($record, "column_span"))
@@ -50,7 +49,7 @@ class FileUploadView implements FieldTypeView
                 ->previewable(false);
         }
 
-        if($saveFileNames)
+        if(FormMapper::getOptionParameter($record,"preserve_filenames"))
             $fileUpload = $fileUpload->storeFileNamesIn(FormMapper::getIdentifyKey($record). '.file_names');
 
 
@@ -72,9 +71,8 @@ class FileUploadView implements FieldTypeView
             $files= array_values($answer['files']);
         }else{
             $names = $answer;
-            $files= array_values($answer);
+            $files= array_values($answer['files']);
         }
-
 
         //disk
         $image = FormMapper::getOptionParameter($record,"image");
@@ -119,8 +117,6 @@ class FileUploadView implements FieldTypeView
             Grid::make()->schema($groups)->columns(5)
         ])->columnSpanFull()->columns(1);
     }
-
-
 
 
     private static function getInfoListFiles(mixed $files, mixed $diskRoot, CustomFieldAnswer $record, mixed $names): Group {

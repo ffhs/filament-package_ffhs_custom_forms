@@ -7,7 +7,11 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\HasBasicSett
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\HasCustomFormPackageTranslation;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\FastTypeOption;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
+use Filament\Forms\Components\Component;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Toggle;
+use Filament\Forms\Form;
 
 class FileUploadType extends CustomFieldType
 {
@@ -65,6 +69,10 @@ class FileUploadType extends CustomFieldType
         return  "carbon-copy-file";
     }
 
-
+    public function updateFormComponentOnSave(Component $component, CustomField $customField, Form $form): void {
+        $filesComponent = $form->getComponent(fn(Component $component) => str_contains($component->getKey(), $customField->identify_key . ".files"));
+        /**@var FileUpload $filesComponent*/
+        $filesComponent->saveUploadedFiles();
+    }
 
 }

@@ -4,14 +4,25 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Render\Helpe
 
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\FieldRule;
+use Filament\Forms\Components\Component;
+use Filament\Forms\Form;
 
 class CustomFormSaveHelper {
 
-    public static function save(CustomFormAnswer $formAnswerer, array $formData) :void{
-        $customForm = CustomForm::cached($formAnswerer->custom_form_id);
+    public static function save(CustomFormAnswer $formAnswerer, Form $form, string|null $path = null) :void{
+
+        $customForm = $formAnswerer->customForm;
+        // Mapping and combining custom fields
+        $customFieldsIdentify = self::mapFields(
+            $customForm->cachedFieldsWithTemplates(),
+            fn(CustomField $customField) => $customField->getInheritState()["identify_key"]
+        );
+
+
+        self::prepareFormComponents($customFieldsIdentify, $form);
+        $formData = self::getFormData($form, $path);
 
         // Mapping and combining field answers
         $fieldAnswersIdentify = self::mapFields(
@@ -19,11 +30,6 @@ class CustomFormSaveHelper {
             fn(CustomFieldAnswer $answer) => $answer->customField->getInheritState()["identify_key"]
         );
 
-        // Mapping and combining custom fields
-        $customFieldsIdentify = self::mapFields(
-            $customForm->cachedFields(),
-            fn(CustomField $customField) => $customField->getInheritState()["identify_key"]
-        );
 
         self::saveWithoutPreparation($formData, $customFieldsIdentify, $fieldAnswersIdentify, $formAnswerer);
     }
@@ -86,5 +92,27 @@ class CustomFormSaveHelper {
             $fieldsArray[] = $model;
         });
         return array_combine($keys, $fieldsArray);
+    }
+
+
+    private static function getFormData(Form $form, ?string $path): array {
+        $data = $form->getRawState();
+
+        if (is_null($path)) return $data;
+
+        $pathFragments = explode('.', $path);
+        foreach ($pathFragments as $pathFragment) $data = $data[$pathFragment];
+
+        return $data;
+    }
+
+    private static function prepareFormComponents(array $customFieldsIdentify, Form $form):void {
+
+        foreach ($customFieldsIdentify as $identifyKey =>  $customField){
+            /**@var CustomField $customField*/
+            $fieldComponent = $form->getComponent(fn(Component $component) => str_contains($component->getKey(),$identifyKey));
+            if(is_null($fieldComponent)) continue;
+            $customField->getType()->updateFormComponentOnSave($fieldComponent, $customField, $form);
+        }
     }
 }

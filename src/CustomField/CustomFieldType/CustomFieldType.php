@@ -17,8 +17,10 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Filament\Forms\Components\Component;
+use Filament\Forms\Form;
 use Filament\Support\Colors\Color;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\HtmlString;
 
 abstract class CustomFieldType {
@@ -155,6 +157,7 @@ abstract class CustomFieldType {
     public abstract function viewModes(): array;
     public abstract function icon(): string;
 
+
     public function prepareSaveFieldData(mixed $data): ?array {
         if (is_null($data)) return null;
         return ["saved" => $data];
@@ -206,14 +209,20 @@ abstract class CustomFieldType {
 
     }
 
+
+    //You can interact with the Component like in FileUpload
+    public function updateFormComponentOnSave(Component $component, CustomField $customField, Form $form): void {
+
+    }
+
     public function mutateOnTemplateDissolve(array $data, CustomField $original): array {
         return $data;
     }
 
     public function nameFormEditor(array $state): string|null {
-        if (empty($state["general_field_id"])) return $state["name_de"];//ToDo Translate;
+        if (empty($state["general_field_id"])) return $state["name_" . Lang::getLocale()];//ToDo Translate;
         $genField = GeneralField::cached($state["general_field_id"]);
-        return $genField->name_de; //ToDo Translate;
+        return $genField->name;
     }
 
     public function nameBeforeIconFormEditor(array $state): string|null {
@@ -272,5 +281,7 @@ abstract class CustomFieldType {
     public function getConfigAttribute(string $attribute): mixed {
         return config("ffhs_custom_forms.type_settings." . $this::getFieldIdentifier() . "." . $attribute);
     }
+
+
 
 }

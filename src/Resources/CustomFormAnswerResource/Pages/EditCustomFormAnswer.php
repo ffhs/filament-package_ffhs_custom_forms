@@ -2,7 +2,7 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormAnswerResource\Pages;
 
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\InfolistRender\CustomFormInfolist;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\FormRender\CustomFormComponent;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Render\Helper\CustomFormLoadHelper;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Render\Helper\CustomFormSaveHelper;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
@@ -36,7 +36,7 @@ class EditCustomFormAnswer extends EditRecord
     protected function mutateFormDataBeforeSave(array $data): array {
         /**@var CustomFormAnswer  $customFormAnswer*/
         $customFormAnswer = $this->form->getRecord();
-        CustomFormSaveHelper::save($customFormAnswer, $data);
+        CustomFormSaveHelper::save($customFormAnswer, $this->form);
 
         return [];
     }
@@ -45,7 +45,7 @@ class EditCustomFormAnswer extends EditRecord
     public function form(Form $form): Form {
         return $form
             ->schema([
-                CustomFormInfolist::make()
+                CustomFormComponent::make()
                     ->autoViewMode()
                     ->columnSpanFull(),
             ]);

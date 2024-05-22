@@ -44,12 +44,6 @@ class GeneralField extends ACustomField
         'extra_options'=>'array',
     ];
 
-    public static function getTranslatableAttributes(): array
-    {
-        return ['name','tool_tip'];
-    }
-
-
     public function customFields(): HasMany
     {
         return $this->hasMany(CustomField::class);
@@ -63,8 +57,6 @@ class GeneralField extends ACustomField
     public function customOptions(): BelongsToMany {
         return $this->belongsToMany(CustomOption::class, "option_general_field");
     }
-
-
 
 
 
