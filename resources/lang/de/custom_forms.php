@@ -94,7 +94,7 @@ return [
             "show_in_view" => "Sichtbar beim Betrachten",
             "show_title" => "Titel Anzeigen",
 
-            // custom field type
+            // custom field type (FastTypeOption)
             "color_type" => "Farbformat",
             "format" => "Format",
             "only_images" => "Nur Bilder",

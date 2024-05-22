@@ -26,7 +26,7 @@ class FileUploadView implements FieldTypeView
 
         $saveFileNames = FormMapper::getOptionParameter($record,"preserve_filenames");
 
-        $fileUpload = FileUpload::make(FormMapper::getIdentifyKey($record) . ($saveFileNames? "files":""))
+        $fileUpload = FileUpload::make(FormMapper::getIdentifyKey($record) . ($saveFileNames? ".files":""))
             ->label(FormMapper::getLabelName($record))
             ->helperText(FormMapper::getToolTips($record))
             ->columnSpan(FormMapper::getOptionParameter($record, "column_span"))
@@ -74,6 +74,7 @@ class FileUploadView implements FieldTypeView
             $names = $answer;
             $files= array_values($answer);
         }
+
 
         //disk
         $image = FormMapper::getOptionParameter($record,"image");
