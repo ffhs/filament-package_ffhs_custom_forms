@@ -70,7 +70,9 @@ class FileUploadType extends CustomFieldType
     }
 
     public function updateFormComponentOnSave(Component $component, CustomField $customField, Form $form): void {
-        $filesComponent = $form->getComponent(fn(Component $component) => str_contains($component->getKey(), $customField->identify_key . ".files"));
+        $filesComponent = $form->getComponent(fn(Component $component) =>
+            !is_null($component->getKey()) && str_contains($component->getKey(), $customField->identify_key . ".files")
+        );
         /**@var FileUpload $filesComponent*/
         $filesComponent = Types\Views\FileUploadView::prepareFileUploadComponent($filesComponent,$customField);
         $filesComponent->saveUploadedFiles();

@@ -162,8 +162,10 @@ class EmbeddedCustomForm extends Component implements CanEntangleWithSingularRel
     function saveForm(EmbeddedCustomForm $component, Model $record): void {
         $relationshipName = $component->getRelationshipName();
         $answer = $record->$relationshipName;
+        $formDataPath = $component->getStatePath(false);
 
-        CustomFormSaveHelper::save($answer,  $component->getLivewire()->getForm('form'), path: $component->getStatePath(false));
+        //dd($component->getStatePath(false),$component->getLivewire()->getForm('form')->getRawState());
+        CustomFormSaveHelper::save($answer,  $component->getLivewire()->getForm('form'), path: $formDataPath);
     }
 
 
@@ -178,10 +180,11 @@ class EmbeddedCustomForm extends Component implements CanEntangleWithSingularRel
     }
 
     private function setupFormSaving(): void {
-        $this->mutateRelationshipDataBeforeSaveUsing(function (array $data, Model $record,
+        $this->mutateRelationshipDataBeforeSaveUsing(function ( Model $record,
             EmbeddedCustomForm $component) {
             /**@var CustomFormAnswer $answer */
-            $this->saveForm($component, $record, $data);
+            if($component->getIsAutoSave()) return [];
+            $this->saveForm($component, $record);
             return [];
         });
     }
@@ -191,7 +194,7 @@ class EmbeddedCustomForm extends Component implements CanEntangleWithSingularRel
         $this->afterStateUpdated(function (EmbeddedCustomForm $component, array $state, ?Model $record) {
             if (!$component->getIsAutoSave()) return;
             /**@var CustomFormAnswer $answer */
-            $this->saveForm($component, $record, $state);
+            $this->saveForm($component, $record);
         });
     }
 

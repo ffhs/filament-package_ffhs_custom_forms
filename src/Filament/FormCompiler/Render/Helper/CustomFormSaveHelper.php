@@ -12,16 +12,19 @@ use Filament\Forms\Form;
 class CustomFormSaveHelper {
 
     public static function save(CustomFormAnswer $formAnswerer, Form $form, string|null $path = null) :void{
+        // $path is then path to the customFormData in the formData
+        $formData = self::getFormData($form, $path);
 
         $customForm = $formAnswerer->customForm;
         // Mapping and combining custom fields
         $customFieldsIdentify = self::mapFields(
-            $customForm->cachedFieldsWithTemplates(),
+            $customForm->customFieldsWithTemplateFields,
             fn(CustomField $customField) => $customField->getInheritState()["identify_key"]
         );
 
+        self::prepareFormComponents($customFieldsIdentify, $form,$formData);
 
-        self::prepareFormComponents($customFieldsIdentify, $form);
+        //Update form data after modifying components
         $formData = self::getFormData($form, $path);
 
         // Mapping and combining field answers
@@ -39,7 +42,7 @@ class CustomFormSaveHelper {
         foreach ($customFieldsIdentify as $key => $customField) {
             /**@var CustomField $customField */
 
-            if (!array_key_exists($key,$formData)) $fieldData = null;
+            if (!array_key_exists($key,$formData)) continue;//$fieldData = null
             else $fieldData = $formData[$key];
 
             $type = $customField->getType();
@@ -106,11 +109,11 @@ class CustomFormSaveHelper {
         return $data;
     }
 
-    private static function prepareFormComponents(array $customFieldsIdentify, Form $form):void {
+    private static function prepareFormComponents(array $customFieldsIdentify, Form $form): void {
 
-        foreach ($customFieldsIdentify as $identifyKey =>  $customField){
+        foreach ($customFieldsIdentify as $identifyKey => $customField){
             /**@var CustomField $customField*/
-            $fieldComponent = $form->getComponent(fn(Component $component) => str_contains($component->getKey(),$identifyKey));
+            $fieldComponent = $form->getComponent(fn(Component $component) => !is_null($component->getKey()) && str_contains($component->getKey(),$identifyKey));
             if(is_null($fieldComponent)) continue;
             $customField->getType()->updateFormComponentOnSave($fieldComponent, $customField, $form);
         }

@@ -45,8 +45,7 @@ class CustomFormComponent extends Component
         //SetUp Auto Update
         $this->afterStateUpdated(function (CustomFormComponent $component, array $state,?CustomFormAnswer $record){
             if(!$component->getIsAutoSave()) return;
-            dd($component->childComponents);
-            CustomFormSaveHelper::autoSave($record, $state, $components);
+            CustomFormSaveHelper::save($record, $component->getLivewire()->getForm('form'));
         });
 
     }
