@@ -105,7 +105,7 @@ class ValueEqualsRuleAnchor extends FieldRuleAnchorType
         $targetFieldName = $this->getFieldName($targetFieldData);
 
         $cleanedValues = [];
-        foreach ($ruleData["anchor_data"]["values"] as $value) $cleanedValues[] = "'".$value["value"]."'";
+        foreach ($ruleData["anchor_data"]["values"] as $value) dump($value)? $cleanedValues[] = "'"."'":"";
 
         if (sizeof($cleanedValues) == 1)
             return $targetFieldName." entspricht ".array_values($cleanedValues)[0];
@@ -312,7 +312,7 @@ class ValueEqualsRuleAnchor extends FieldRuleAnchorType
 
     protected function getTextRepeater():Repeater  {
         return Repeater::make("values")
-            ->simple(TextInput::make("value")->label("Wert")->required())
+            ->simple(TextInput::make("")->required())
             ->visible($this->getDisableCloser("text"))
             ->columnSpanFull()
             ->label("");
