@@ -3,14 +3,12 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\Views;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomFieldType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomOption\HasCustomOptionInfoListViewWithBoolean;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FormMapper;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\View\FieldTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\ToggleButtons;
 use Filament\Infolists\Components\Actions;
 use Filament\Infolists\Components\Actions\Action;
 use Filament\Infolists\Components\Fieldset;
@@ -26,55 +24,57 @@ class FileUploadView implements FieldTypeView
     public static function getFormComponent(CustomFieldType $type, CustomField $record,
         array $parameter = []): Component {
 
-        $saveFileNames = FormMapper::getOptionParameter($record,"preserve_filenames");
 
-        $fileUpload = FileUpload::make(FormMapper::getIdentifyKey($record). ($saveFileNames? ".files":""))
-            ->label(FormMapper::getLabelName($record))
+        $fileUpload = FileUpload::make(FormMapper::getIdentifyKey($record) . ".files");
+        return self::prepareFileUploadComponent($fileUpload,$record);
+    }
+
+    public static function prepareFileUploadComponent(FileUpload $component,$record): FileUpload {
+        $component->label(FormMapper::getLabelName($record))
             ->helperText(FormMapper::getToolTips($record))
             ->columnSpan(FormMapper::getOptionParameter($record, "column_span"))
             ->inlineLabel(FormMapper::getOptionParameter($record, "in_line_label"))
             ->columnStart(FormMapper::getOptionParameter($record, "new_line_option"))
             ->multiple(FormMapper::getOptionParameter($record,"multiple"));
-           // ->downloadable(FormMapper::getOptionParameter($record,"downloadable"));
+        //->downloadable(FormMapper::getOptionParameter($record,"downloadable"));
 
 
         if(FormMapper::getOptionParameter($record,"image")){
-            $fileUpload = $fileUpload
+            $component = $component
                 ->previewable(FormMapper::getOptionParameter($record,"show_images"))
                 ->downloadable(FormMapper::getOptionParameter($record,"downloadable"))
                 ->directory(FormMapper::getTypeConfigAttribute($record, "images.save_path"))
                 ->disk(FormMapper::getTypeConfigAttribute($record, "images.disk"))
                 ->image();
         }else{
-            $fileUpload = $fileUpload
+            $component = $component
                 ->directory(FormMapper::getTypeConfigAttribute($record, "files.save_path"))
                 ->disk(FormMapper::getTypeConfigAttribute($record, "files.disk"))
                 ->previewable(false);
         }
 
-        if($saveFileNames)
-            $fileUpload = $fileUpload->storeFileNamesIn(FormMapper::getIdentifyKey($record). '.file_names');
+        if(FormMapper::getOptionParameter($record,"preserve_filenames"))
+            $component = $component->storeFileNamesIn(FormMapper::getIdentifyKey($record). '.file_names');
 
-
-        return $fileUpload;
+        return $component;
     }
 
 
     public static function getInfolistComponent(CustomFieldType $type, CustomFieldAnswer $record,
         array $parameter = []): \Filament\Infolists\Components\Component {
 
-        $answare = FormMapper::getAnswer($record);
+        $answer = FormMapper::getAnswer($record);
 
-        if(is_null($answare)) {
+        if(is_null($answer) || !isset($answer['file_names'])) {
             $names = [];
             $files = [];
         }
         else if(FormMapper::getOptionParameter($record, "preserve_filenames")){
-            $names = $answare['file_names'];
-            $files= array_values($answare['files']);
+            $names = $answer['file_names'];
+            $files= array_values($answer['files']);
         }else{
-            $names = $answare;
-            $files= array_values($answare);
+            $names = $answer;
+            $files= array_values($answer['files']);
         }
 
         //disk
@@ -114,6 +114,7 @@ class FileUploadView implements FieldTypeView
                 ->statePath(FormMapper::getIdentifyKey($record));
         }
 
+
         return Group::make([
             TextEntry::make(FormMapper::getIdentifyKey($record)."-title")
                 ->label(new HtmlString('</span> <span class="text-sm font-medium leading-6 text-gray-950 dark:text-white" style="margin-bottom: -25px; margin-left: -12px;">'.FormMapper::getLabelName($record).'</span> <span>')),
@@ -122,15 +123,13 @@ class FileUploadView implements FieldTypeView
     }
 
 
-
-
     private static function getInfoListFiles(mixed $files, mixed $diskRoot, CustomFieldAnswer $record, mixed $names): Group {
         $actions = [];
 
         $downloadable = FormMapper::getOptionParameter($record,"downloadable");
 
         foreach ($files as $path) {
-            $absulutPath = $diskRoot."/".$path;
+            $absolutePath = $diskRoot."/".$path;
              $action = Action::make($path."-".FormMapper::getIdentifyKey($record)."-action")
                 ->label($names[$path])
                 ->disabled(!$downloadable)
@@ -138,7 +137,7 @@ class FileUploadView implements FieldTypeView
 
             if($downloadable){
                 $action = $action
-                    ->action(fn() => response()->download($absulutPath, $names[$path]))
+                    ->action(fn() => response()->download($absolutePath, $names[$path]))
                     ->icon('tabler-download');
             }
             $actions[] = $action;

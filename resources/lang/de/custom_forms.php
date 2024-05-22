@@ -3,58 +3,59 @@
 
 return [
 
-    'cache_duration'=> 1,
+    'cache_duration' => 1,
 
-    'functions'=>[
-        'connect'=>'Verknüpfen',
+    'functions' => [
+        'connect' => 'Verknüpfen',
+        'add' => 'Hinzufügen',
     ],
 
-    "navigation"=>[
-        'general_fields'=> "Generelle Felder",
+    "navigation" => [
+        'general_fields' => "Generelle Felder",
         'forms' => 'Formulare',
         'group' => [
-            'forms'=> 'Formulare'
+            'forms' => 'Formulare'
         ],
-        'custom_form_answer'=> "Ausgefüllte Formulare",
-        "templates"=> "Templates"
+        'custom_form_answer' => "Ausgefüllte Formulare",
+        "templates" => "Templates"
     ],
 
-    "fields" =>[
+    "fields" => [
         'type' => 'Feldtyp',
         'name' => 'Name',
-        'tool_tip'=> 'Kurzbeschreibung',
-        'identify_key'=> 'Identifizierung Schlüssel',
-        'is_general_field_active' => 'Aktive',
-        'label'=> "Name",
-        'form_connections'=> 'Verknüpfte Formulare',
+        'tool_tip' => 'Kurzbeschreibung',
+        'identify_key' => 'Identifikations Schlüssel',
+        'is_general_field_active' => 'Aktiv',
+        'label' => "Name",
+        'form_connections' => 'Verknüpfte Formulare',
         'general_field' => 'Generelles Feld',
-        'is_required'=> 'Wird benötigt',
+        'is_required' => 'Wird benötigt',
 
         'helper_text' => [
-            'type'=> 'Der Feldtyp des Felds. ACHTUNG: Dieser kann nach dem erstellen nicht mehr geändert werden',
-            'identify_key'=> 'Dieser Schlüssel wird benötigt um für die Daten zu exportieren',
-            'is_general_field_active'=> 'Falls dies Deaktiviert wird, werden alle generelle Felder Deaktiviert, welches auf dieses Feld basieren.',
+            'type' => 'Der Feldtyp des Felds. ACHTUNG: Dieser kann nach dem Erstellen nicht mehr geändert werden',
+            'identify_key' => 'Dieser Schlüssel wird benötigt um die Daten zu exportieren',
+            'is_general_field_active' => 'Falls dies deaktiviert wird, werden alle generellen Felder deaktiviert, welches auf diesem Feld basieren.',
         ],
 
-        'types'=>[
+        'types' => [
             "text" => "Text",
             "email" => "Email",
             "number" => "Nummer",
             "select" => "Auswahl",
             "checkbox" => "Kontrollkästchen",
-            "section"=>"Sektion",
+            "section" => "Sektion",
             "radio" => "Radio",
             "date" => "Datum",
             "date-time" => "Datum und Zeit",
             "textarea" => "Textbereich",
             "icon-select" => "Icon Auswahl",
             "checkbox_list" => "Kästchen Liste",
-            "toggle_buttons"=> "Umschalttasten",
-            'tags_input'=> 'Etiketten',
-            'color_input'=>'Farbauswahl',
-            'key_value'=> 'Schlüsselpaar',
+            "toggle_buttons" => "Umschalttasten",
+            'tags_input' => 'Etiketten',
+            'color_input' => 'Farbauswahl',
+            'key_value' => 'Schlüsselpaar',
             'title' => 'Titel',
-            'layout_text'=>'Layout Text',
+            'layout_text' => 'Layout Text',
             'fieldset' => 'Fieldset',
             'tabs' => 'Tabs',
             'tab' => 'Tab',
@@ -66,27 +67,75 @@ return [
             'file_upload' => 'Dokumente',
         ],
 
-        'rules'=>[
+        'rules' => [
             "is_disabled_rule" => "Feld deaktivieren",
             "is_hidden_rule" => "Feld verstecken",
             "is_required_rule" => "Feld benötigen",
             'change_options_rule' => 'Feld Optionen ändern'
         ],
 
-        'anchors'=>[
+        'anchors' => [
             'value_equals_anchor' => 'Bestimmter Wert'
-        ]
+        ],
+
+        'type_options' => [
+            "boolean" => "Ja/Nein Feld",
+            "columns_count" => "Anzahl Spalten",
+            "column_span" => "Zeilenweite",
+            "icon" => "Icon",
+            "inline_label" => "Titel in der Zeile",
+            "inline" => "In einer Zeile",
+            "max_length" => "Maximale Länge",
+            "max_value" => "Maximaler Wert",
+            "min_length" => "Minimale Länge",
+            "min_value" => "Minimaler Wert",
+            "new_line" => "Neue Zeile",
+            "show_as_fieldset" => "Als Fieldset beim Betrachten anzeigen",
+            "show_in_view" => "Sichtbar beim Betrachten",
+            "show_title" => "Titel Anzeigen",
+
+            // custom field type (FastTypeOption)
+            "color_type" => "Farbformat",
+            "format" => "Format",
+            "only_images" => "Nur Bilder",
+            "show_images" => "Bilder anzeigen",
+            "show_images_in_view" => "Bilder anzeigen in der Ansicht",
+            "downloadable" => "Herunterladbar",
+            "multiple_uploads_allowed" => "mehrere hochladbar",
+            "preserve_filenames" => "Ursprungsname erhalten",
+            "reorderable" => "Kann umgeordnet werden",
+            "editable_keys" => "Bearbeitbare Schlüssel",
+            "editable_values" => "Bearbeitbare Werte",
+            "several" => "Mehre auswählbar",
+            "min_select" => "Mindestanzahl",
+            "min_select_helper" => "Greift nur bei (Benötigt)",
+            "max_select" => "Maximalanzahl",
+            "max_select_helper" => "'0' entspricht keiner Begrenzung",
+            "auto_size" => "Automatische Grösse",
+            "suggestions" => "Vorschläge",
+            "add_suggestion" => "Vorschlag hinzufügen",
+            "columns" => "Spalten",
+            "toggle_grouped" => "Schalter gruppiert",
+            "multiple_toggle_selectable" => "Mehre Schalter auswählbar",
+        ],
     ],
 
-    'form'=>[
-        'custom_form' =>'Formular',
-        'short_title'=> 'Title',
-        'custom_fields_amount'=> 'Anzahl der hinzugefügten Felder',
-        'custom_form_identifier'=> [
+    'form' => [
+        'custom_form' => 'Formular',
+        'short_title' => 'Title',
+        'custom_fields_amount' => 'Anzahl der hinzugefügten Felder',
+        'custom_form_identifier' => [
             'display_name' => "Formulartype Name",
             'raw_name' => "Formulartype Identifier"
         ],
-        'template'=> "Template"
-    ]
-
+        'template' => "Template",
+        "compiler" => [
+            "custom_fields" => "Spezifische Felder",
+            "general_fields" => "Generelle Felder",
+            "add_a_name_field" => "Hinzufügen eines :name Feldes",
+            "template_has_existing_fields" => "Es gibt Felder die ursprünglich von diesem Template stammen",
+            "template_has_existing_fields_description" => "Es gibt Felder die ursprünglich von diesem Template stammen. Diese Felder werden von
+                            diesem Formular gelöscht und die existierenden Antworten übernommen",
+        ]
+    ],
 ];

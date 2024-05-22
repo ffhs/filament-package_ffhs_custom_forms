@@ -16,7 +16,7 @@ final class TemplateAdder extends FormEditorFieldAdder
 
     function getTitle(): string {
         if($this->form->is_template) return "";
-        return  "Templates"; //ToDo Translate
+        return  __("filament-package_ffhs_custom_forms::custom_forms.navigation.templates");
     }
 
     function getSchema(): array {
@@ -37,16 +37,15 @@ final class TemplateAdder extends FormEditorFieldAdder
             Actions::make([
                 Action::make("add_template")
                     ->closeModalByClickingAway(false)
-                    ->label(fn() => "Hinzufügen ") //ToDo Translate
+                    ->label(fn() => __("filament-package_ffhs_custom_forms::custom_forms.functions.add"))
                     ->requiresConfirmation(fn($get) => $this->hasExistingFields($get("custom_fields"),$get("add_template_id")))
                     ->modalHeading(function ($get){
                         if(!$this->hasExistingFields($get("custom_fields"), $get("add_template_id"))) return "";
-                        return "Es gibt Felder die ursprünglich von diesem Template stammen"; //ToDo Translate
+                        return __("filament-package_ffhs_custom_forms::custom_forms.form.compiler.template_has_existing_fields");
                     })
                     ->modalDescription(function ($get){
                         if(!$this->hasExistingFields($get("custom_fields"), $get("add_template_id"))) return "";
-                        return "Es gibt Felder die ursprünglich von diesem Template stammen. Diese Felder werden von
-                            diesem Formular gelöscht und die existierenden Antworten übernommen"; //ToDo Translate
+                        return __("filament-package_ffhs_custom_forms::custom_forms.form.compiler.template_has_existing_fields_description");
                     })
                     ->disabled(function(Get $get){
                         $templateID = $get("add_template_id");

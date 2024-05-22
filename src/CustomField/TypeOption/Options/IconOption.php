@@ -14,7 +14,7 @@ class IconOption extends TypeOption
 
     public function getComponent(string $name): Component {
        return IconPicker::make($name)
-           ->label("Icon") //ToDo Translate#
+           ->label(__("filament-package_ffhs_custom_forms::custom_forms.fields.type_options.icon"))
            ->columnSpanFull()
            ->columns()
            ->live();

@@ -10,13 +10,11 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Fieldset;
 
-class CustomFormEditor extends Component
-{
+class CustomFormEditor extends Component {
 
     protected string $view = 'filament-forms::components.group';
 
-    public static function make(): static
-    {
+    public static function make(): static {
         $static = app(static::class);
         $static->configure();
 
@@ -26,45 +24,44 @@ class CustomFormEditor extends Component
     protected function setUp(): void {
         parent::setUp();
         $this->label("");
-
         $this->columnSpanFull();
         $this->columns(3);
 
-        $this->schema(fn(CustomForm $record)=>[
-                //Field Adder
-                Fieldset::make()
-                    ->columnStart(1)
-                    ->columnSpan(1)
-                    ->columns(1)
-                    ->schema(function() use ($record) {
-                        return
-                            collect($record->getFormConfiguration()::editorFieldAdder())
-                                ->map(fn (string $class) => $class::make($record))
-                                ->toArray();
-                    }),
+        $this->schema(fn(CustomForm $record) => [
+            /**
+             * List of custom fields and with icons
+             * Dropdown with general fields
+             * Dropdown with templates
+             */
+            Fieldset::make()
+                ->columnStart(1)
+                ->columnSpan(1)
+                ->columns(1)
+                ->schema(function() use ($record) {
+                    return
+                        collect($record->getFormConfiguration()::editorFieldAdder())
+                            ->map(fn(string $class) => $class::make($record))
+                            ->toArray();
+                }),
 
-                    //Fields Overview
-                    EditorCustomFieldList::make($record)
-                        ->columnSpan(2)
-                        ->saveRelationshipsUsing(fn($component, $state) => CustomFormEditorSaveHelper::saveCustomFields($component,$record,$state))
+            /**
+             * Shows tree of the current form
+             */
+            EditorCustomFieldList::make($record)
+                ->columnSpan(2)
+                ->saveRelationshipsUsing(fn($component, $state) => CustomFormEditorSaveHelper::saveCustomFields($component, $record,
+                    $state))
+                ->rules([
+                    fn(CustomForm $record) => function(string $attribute, $value, Closure $fail) use ($record) {
+                        $formConfiguration = $record->getFormConfiguration();
+                        foreach ($formConfiguration::editorValidations($record) as $editorValidationClass) {
+                            $editorValidation = new $editorValidationClass();
+                            /**@var FormEditorValidation $editorValidation ; */
 
-                        ->rules([
-                            fn (CustomForm $record) =>
-                                function (string $attribute, $value, Closure $fail) use($record)  {
-                                    $formConfiguration= $record->getFormConfiguration();
-                                    foreach ($formConfiguration::editorValidations($record) as $editorValidationClass){
-                                        $editorValidation = new $editorValidationClass();
-                                        /**@var FormEditorValidation $editorValidation;*/
-
-                                        $editorValidation->repeaterValidation($record,$fail,$value,$attribute);
-                                    }
-                                }
-                        ]),
+                            $editorValidation->repeaterValidation($record, $fail, $value, $attribute);
+                        }
+                    }
+                ]),
         ]);
     }
-
-
-
-
-
 }

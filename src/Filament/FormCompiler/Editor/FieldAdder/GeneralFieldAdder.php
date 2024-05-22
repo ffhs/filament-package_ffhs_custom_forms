@@ -17,7 +17,7 @@ final class GeneralFieldAdder extends FormEditorFieldAdder
 {
 
     function getTitle(): string {
-        return  "Generelle Felder"; //ToDo Translate
+        return __("filament-package_ffhs_custom_forms::custom_forms.form.compiler.general_fields");
     }
 
 
@@ -37,7 +37,7 @@ final class GeneralFieldAdder extends FormEditorFieldAdder
             Actions::make([
                 Action::make("add_general_field")
                     ->mutateFormDataUsing(fn(Action $action)=> CustomFormEditorHelper::getRawStateForm($action,1))
-                    ->label(fn() => "Hinzufügen ") //ToDo Translate
+                    ->label(fn() => __("filament-package_ffhs_custom_forms::custom_forms.functions.add"))
                     ->closeModalByClickingAway(false)
                     ->modalWidth(function(Get $get)  {
                         $state = ["general_field_id" => $get("add_general_field_id")];
@@ -58,7 +58,7 @@ final class GeneralFieldAdder extends FormEditorFieldAdder
                         $set("add_general_field_id", null);
                     })
                     ->disabled(function(Get $get):bool{
-                        //Disable if no id is Selected or if it is already imported
+                        // Disable if no id is Selected or if it is already imported
                         if(is_null($get("add_general_field_id"))) return true;
                         $usedGenIds = CustomFormEditorHelper::getUsedGeneralFieldIds($get("custom_fields"));
                         return collect($usedGenIds)->contains($get("add_general_field_id"));

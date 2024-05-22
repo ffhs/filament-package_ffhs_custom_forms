@@ -14,7 +14,7 @@ class ColumnsOption extends TypeOption
 
     public function getComponent(string $name): Component {
        return TextInput::make($name)
-           ->label("Anzahl Spalten") //ToDo Translate
+           ->label(__("filament-package_ffhs_custom_forms::custom_forms.fields.type_options.columns_count"))
            ->maxValue(10)
            ->minValue(1)
            ->step(1)

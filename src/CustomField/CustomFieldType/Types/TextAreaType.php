@@ -8,7 +8,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\HasCustomFor
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\FastTypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\MaxLengthOption;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\MinLenghtOption;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\MinLengthOption;
 use Filament\Forms\Components\Toggle;
 
 class TextAreaType extends CustomFieldType
@@ -33,12 +33,12 @@ class TextAreaType extends CustomFieldType
 
         $autoSizeComponent =
             Toggle::make("auto_size")
-            ->label("Automatische Grösse") //ToDo Translate
+            ->label(__("filament-package_ffhs_custom_forms::custom_forms.fields.type_options.auto_size"))
             ->columnSpan(2);
 
         return [
             'max_length' => new MaxLengthOption(),
-            'min_length' => new MinLenghtOption(),
+            'min_length' => new MinLengthOption(),
             'auto_size'=> new FastTypeOption(false,$autoSizeComponent),
         ];
     }

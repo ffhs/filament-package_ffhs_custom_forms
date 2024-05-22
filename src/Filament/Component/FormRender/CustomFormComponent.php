@@ -1,15 +1,16 @@
 <?php
 
-namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\InfolistRender;
+namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\FormRender;
 
 
 use Closure;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Render\CustomFormRender;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Render\Helper\CustomFormSaveHelper;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
 use Filament\Forms\Components\Component;
 
-class CustomFormInfolist extends Component
+class CustomFormComponent extends Component
 {
 
 
@@ -36,15 +37,15 @@ class CustomFormInfolist extends Component
     protected function setUp(): void {
         parent::setUp();
         $this->label("");
-        $this->schema(fn(CustomFormAnswer $record, CustomFormInfolist $component)=>
+        $this->schema(fn(CustomFormAnswer $record, CustomFormComponent $component)=>
             CustomFormRender::generateFormSchema(CustomForm::cached($record->custom_form_id),$component->getViewMode())
         );
         $this->columns(1);
 
         //SetUp Auto Update
-        $this->afterStateUpdated(function (CustomFormInfolist $component, array $state,?CustomFormAnswer $record){
+        $this->afterStateUpdated(function (CustomFormComponent $component, array $state,?CustomFormAnswer $record){
             if(!$component->getIsAutoSave()) return;
-            CustomFormRender::saveHelper($record, $state);
+            CustomFormSaveHelper::save($record, $component->getLivewire()->getForm('form'));
         });
 
     }

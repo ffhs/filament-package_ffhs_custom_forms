@@ -7,7 +7,11 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\HasBasicSett
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\HasCustomFormPackageTranslation;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\FastTypeOption;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
+use Filament\Forms\Components\Component;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Toggle;
+use Filament\Forms\Form;
 
 class FileUploadType extends CustomFieldType
 {
@@ -31,31 +35,31 @@ class FileUploadType extends CustomFieldType
                         $set('show_images', false);
                         $set('show_images_in_view', false);
                     })
-                    ->label("Nur Bilder") //ToDo Translate
+                    ->label(__("filament-package_ffhs_custom_forms::custom_forms.fields.type_options.only_images"))
                     ->live()
             ),
             'show_images' => FastTypeOption::make(false,
                 Toggle::make('show_images')
                     ->columnStart(1)
-                    ->label("Bilder Anzeigen") //ToDo Translate
+                    ->label(__("filament-package_ffhs_custom_forms::custom_forms.fields.type_options.show_images"))
                     ->disabled(fn($get) => !$get('image'))
             ),
             'show_images_in_view' => FastTypeOption::make(false,
                 Toggle::make('show_images_in_view')
-                    ->label("Bilder Anzeigen in Ansicht") //ToDo Translate
+                    ->label(__("filament-package_ffhs_custom_forms::custom_forms.fields.type_options.show_images_in_view"))
                     ->disabled(fn($get) => !$get('image'))
             ),
             'downloadable' => FastTypeOption::make(false,
                 Toggle::make('downloadable')
-                    ->label("Herunterladbar") //ToDo Translate
+                    ->label(__("filament-package_ffhs_custom_forms::custom_forms.fields.type_options.downloadable"))
             ),
             'multiple' => FastTypeOption::make(false,
                 Toggle::make('multiple')
-                    ->label("mehrere hochladbar") //ToDo Translate
+                    ->label(__("filament-package_ffhs_custom_forms::custom_forms.fields.type_options.multiple_uploads_allowed"))
             ),
             'preserve_filenames' => FastTypeOption::make(true,
                 Toggle::make('preserve_filenames')
-                    ->label("Ursprungsname speichern") //ToDo Translate
+                    ->label(__("filament-package_ffhs_custom_forms::custom_forms.fields.type_options.preserve_filenames"))
             ),
         ];
     }
@@ -65,6 +69,13 @@ class FileUploadType extends CustomFieldType
         return  "carbon-copy-file";
     }
 
-
+    public function updateFormComponentOnSave(Component $component, CustomField $customField, Form $form): void {
+        $filesComponent = $form->getComponent(fn(Component $component) =>
+            !is_null($component->getKey()) && str_contains($component->getKey(), $customField->identify_key . ".files")
+        );
+        /**@var FileUpload $filesComponent*/
+        $filesComponent = Types\Views\FileUploadView::prepareFileUploadComponent($filesComponent,$customField);
+        $filesComponent->saveUploadedFiles();
+    }
 
 }

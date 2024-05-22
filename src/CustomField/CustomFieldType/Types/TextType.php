@@ -2,7 +2,6 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types;
 
-use DanHarrin\LivewireRateLimiting\Tests\Component;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\HasBasicSettings;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\HasCustomFormPackageTranslation;
@@ -10,9 +9,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\Views\
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\AlpineMaskOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\FastTypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\MaxLengthOption;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\MinLenghtOption;
-use Filament\Forms\Components\Field;
-use Filament\Forms\Components\Fieldset;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\MinLengthOption;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
@@ -38,7 +35,7 @@ class TextType extends CustomFieldType
     protected function extraOptionsBeforeBasic(): array {
         return [
             'max_length' => new MaxLengthOption(),
-            'min_length' => new MinLenghtOption(),
+            'min_length' => new MinLengthOption(),
             'alpine_mask' => new AlpineMaskOption(),
         ];
     }
@@ -46,11 +43,11 @@ class TextType extends CustomFieldType
     protected function extraOptionsAfterBasic(): array {
         return [
             'suggestions' => new FastTypeOption([],
-                Section::make("Vorschläge")
+                Section::make(__("filament-package_ffhs_custom_forms::custom_forms.fields.type_options.suggestions"))
                     ->collapsed()
                     ->schema([
                         Repeater::make('suggestions')
-                            ->addActionLabel("Vorschlag hinzufügen")
+                            ->addActionLabel(__("filament-package_ffhs_custom_forms::custom_forms.fields.type_options.add_suggestion"))
                             ->itemLabel(fn($state) => $state[Lang::locale()])
                             ->columnSpanFull()
                             ->collapsed()

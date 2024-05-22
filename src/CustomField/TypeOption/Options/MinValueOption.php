@@ -15,7 +15,7 @@ class MinValueOption extends TypeOption
     public function getComponent(string $name): Component {
         return
             TextInput::make($name)
-                ->label("Mindestgrösse")//ToDo Translation
+                ->label(__("filament-package_ffhs_custom_forms::custom_forms.fields.type_options.min_value"))
                 ->step(1)
                 ->required()
                 ->integer();

@@ -6,7 +6,7 @@ use Closure;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\RepeaterFieldAction\Actions\EditAction;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\RepeaterFieldAction\Actions\TemplateDissolveAction;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Render\CustomFormRender;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Render\Helper\CustomFormSaveHelper;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\HtmlComponents\HtmlBadge;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
@@ -57,27 +57,23 @@ final class TemplateFieldType extends CustomFieldType
 
     public function afterAnswerFieldSave(CustomFieldAnswer $field, mixed $rawData, array $formData): void {
         $templateId = $field->customField->template_id;
-        $template = CustomForm::cached($templateId);
         $formAnswerer = $field->customFormAnswer;
+        $template = CustomForm::cached($templateId);
 
-        $customFieldAnswers = $formAnswerer->cachedAnswers();
-        $keys = $customFieldAnswers
-            ->filter(fn(CustomFieldAnswer $answer)=>$answer->customField->custom_form_id = $templateId)
-            ->map(fn(CustomFieldAnswer $answer)=> $answer->customField->getInheritState()["identify_key"])
-            ->toArray();
+        // Mapping and combining filtered field answers
+        $fieldAnswersIdentify = CustomFormSaveHelper::mapFields(
+            $formAnswerer->cachedAnswers(),
+            fn(CustomFieldAnswer $answer) => $answer->customField->getInheritState()["identify_key"],
+            fn(CustomFieldAnswer $answer) => $answer->customField->custom_form_id == $templateId
+        );
 
-        $customFieldAnswersArray = [];
-        $customFieldAnswers->each(function($model) use (&$customFieldAnswersArray) {$customFieldAnswersArray[] = $model;});
-        $fieldAnswersIdentify = array_combine($keys, $customFieldAnswersArray);
+        // Mapping and combining custom fields
+        $customFieldsIdentify = CustomFormSaveHelper::mapFields(
+            $template->cachedFields(),
+            fn(CustomField $customField) => $customField->getInheritState()["identify_key"]
+        );
 
-        $customFields = $template->cachedFields();
-        $keys = $customFields->map(fn(CustomField $customField)=> $customField->getInheritState()["identify_key"])->toArray();
-        $customFieldArray = [];
-        $customFields->each(function($model) use (&$customFieldArray) {$customFieldArray[] = $model;});
-        $customFieldsIdentify = array_combine($keys, $customFieldArray);
-
-
-        CustomFormRender::saveHelperWithoutPreparation($formData, $customFieldsIdentify, $fieldAnswersIdentify, $formAnswerer);
+        CustomFormSaveHelper::saveWithoutPreparation($formData, $customFieldsIdentify, $fieldAnswersIdentify, $formAnswerer);
     }
 
     public function afterEditFieldDelete(CustomField $field):void {

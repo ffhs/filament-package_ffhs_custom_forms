@@ -14,10 +14,12 @@ class FormMapper
         if($record instanceof  CustomFieldAnswer) $record = $record->customField;
         return  $record->getInheritState()["tool_tip_" . App::currentLocale()];
     }
+
     public static function getIdentifyKey(CustomField|CustomFieldAnswer  $record) :String{
         if($record instanceof  CustomFieldAnswer) $record = $record->customField;
         return  $record->getInheritState()["identify_key"];
     }
+
     public static function getLabelName(CustomField|CustomFieldAnswer  $record) :String{
         if($record instanceof  CustomFieldAnswer) $record = $record->customField;
         return  $record->getInheritState()["name_" . App::currentLocale()];
@@ -45,9 +47,6 @@ class FormMapper
         if(is_null($rawAnswerer)) return null;
         return $answer->customField->getType()->prepareLoadFieldData($rawAnswerer);
     }
-
-
-
 
     public static function getAvailableCustomOptions(CustomField $record) : Collection{
         $options = $record->customOptions;
