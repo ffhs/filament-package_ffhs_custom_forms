@@ -16,7 +16,8 @@ class NumberTypeView implements FieldTypeView
     public static function getFormComponent(CustomFieldType $type, CustomField $record,
         array $parameter = []): TextInput {
 
-        $input =TextInput::make(FormMapper::getIdentifyKey($record))
+        return TextInput::make(FormMapper::getIdentifyKey($record))
+            ->inlineLabel(FormMapper::getOptionParameter($record,"in_line_label"))
             ->columnStart(FormMapper::getOptionParameter($record,"new_line_option"))
             ->columnSpan(FormMapper::getOptionParameter($record,"column_span"))
             ->minValue(FormMapper::getOptionParameter($record,"min_value"))
@@ -25,19 +26,17 @@ class NumberTypeView implements FieldTypeView
             ->label(FormMapper::getLabelName($record))
 
             ->numeric();
-
-
-        return $input;
     }
 
     public static function getInfolistComponent(CustomFieldType $type, CustomFieldAnswer $record,
         array $parameter = []): TextEntry {
-        return TextEntry::make(FormMapper::getIdentifyKey($record))
-            ->columnStart(FormMapper::getOptionParameter($record,"new_line_option"))
+        return TextEntry::make(FormMapper::getIdentifyKey($record). ":")
+           // ->inlineLabel(FormMapper::getOptionParameter($record,"in_line_label"))
             ->tooltip(FormMapper::getToolTips($record). ":")
             ->label(FormMapper::getLabelName($record). ":")
             ->state(FormMapper::getAnswer($record))
-            ->columnSpanFull();
+            ->columnSpanFull()
+            ->inlineLabel();
     }
 
 
