@@ -115,6 +115,8 @@ return [
             "columns" => "Columns",
             "toggle_grouped" => "Toggle Grouped",
             "multiple_toggle_selectable" => "Multiple Toggle Selectable",
+            "alpine_mask" => "Mask",
+            "alpine_mask_help_text" => 'Quick help: a for letters, 9 for numbers * for all characters (Alpine mask)',
         ],
     ],
 

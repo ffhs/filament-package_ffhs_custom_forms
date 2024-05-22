@@ -3,18 +3,20 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\TypeOption;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\TypeOptionPluginTranslate;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Toggle;
 
 class BooleanOption extends TypeOption
 {
+    use TypeOptionPluginTranslate;
     public function getDefaultValue(): bool {
         return false;
     }
 
     public function getComponent(string $name): Component {
        return Toggle::make($name)
-           ->label(__("filament-package_ffhs_custom_forms::custom_forms.form.compiler.boolean"))
+           ->label($this->translate('boolean'))
            ->live();
     }
 }

@@ -117,6 +117,8 @@ return [
             "columns" => "Spalten",
             "toggle_grouped" => "Schalter gruppiert",
             "multiple_toggle_selectable" => "Mehre Schalter auswählbar",
+            "alpine_mask" => "Maske",
+            "alpine_mask_help_text" => "Schnellhilfe: 'a' für Buchstaben, '9' für Zahlen '*' für alle Zeichen. (Alpine Maske)",
         ],
     ],
 
