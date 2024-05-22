@@ -170,7 +170,7 @@ return [
     ],
 
 
-    "field_settings"=>[
+    "type_settings"=>[
         "download_file" => [
             "save_path" => "/custom-form-plugin/custom-fields/specified-data",
             "disk" => "local",

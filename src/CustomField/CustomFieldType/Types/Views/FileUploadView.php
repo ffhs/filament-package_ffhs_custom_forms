@@ -25,35 +25,38 @@ class FileUploadView implements FieldTypeView
         array $parameter = []): Component {
 
 
-        $fileUpload = FileUpload::make(FormMapper::getIdentifyKey($record) . ".files")
-            ->label(FormMapper::getLabelName($record))
+        $fileUpload = FileUpload::make(FormMapper::getIdentifyKey($record) . ".files");
+        return self::prepareFileUploadComponent($fileUpload,$record);
+    }
+
+    public static function prepareFileUploadComponent(FileUpload $component,$record): FileUpload {
+        $component->label(FormMapper::getLabelName($record))
             ->helperText(FormMapper::getToolTips($record))
             ->columnSpan(FormMapper::getOptionParameter($record, "column_span"))
             ->inlineLabel(FormMapper::getOptionParameter($record, "in_line_label"))
             ->columnStart(FormMapper::getOptionParameter($record, "new_line_option"))
             ->multiple(FormMapper::getOptionParameter($record,"multiple"));
-            //->downloadable(FormMapper::getOptionParameter($record,"downloadable"));
+        //->downloadable(FormMapper::getOptionParameter($record,"downloadable"));
 
 
         if(FormMapper::getOptionParameter($record,"image")){
-            $fileUpload = $fileUpload
+            $component = $component
                 ->previewable(FormMapper::getOptionParameter($record,"show_images"))
                 ->downloadable(FormMapper::getOptionParameter($record,"downloadable"))
                 ->directory(FormMapper::getTypeConfigAttribute($record, "images.save_path"))
                 ->disk(FormMapper::getTypeConfigAttribute($record, "images.disk"))
                 ->image();
         }else{
-            $fileUpload = $fileUpload
+            $component = $component
                 ->directory(FormMapper::getTypeConfigAttribute($record, "files.save_path"))
                 ->disk(FormMapper::getTypeConfigAttribute($record, "files.disk"))
                 ->previewable(false);
         }
 
         if(FormMapper::getOptionParameter($record,"preserve_filenames"))
-            $fileUpload = $fileUpload->storeFileNamesIn(FormMapper::getIdentifyKey($record). '.file_names');
+            $component = $component->storeFileNamesIn(FormMapper::getIdentifyKey($record). '.file_names');
 
-
-        return $fileUpload;
+        return $component;
     }
 
 
@@ -110,6 +113,7 @@ class FileUploadView implements FieldTypeView
                 ->columns(1)
                 ->statePath(FormMapper::getIdentifyKey($record));
         }
+
 
         return Group::make([
             TextEntry::make(FormMapper::getIdentifyKey($record)."-title")
