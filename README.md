@@ -380,7 +380,8 @@ public static function getInfolistComponent(CustomFieldType $type, CustomFieldAn
         - `'viewMode'`
         - Bei den `CustomLayoutTypes`, sehe mehr bei __06 Layout Felder__
             - `'customFieldData'`
-            - `'rendered'` </br>
+            - `'rendered'` 
+ </br>
 
 ### 04.01.02 TypeView registrieren
 - Kehren sie zurück in ihre erstellten Typen Klasse zurück
@@ -400,7 +401,8 @@ class LocationSelectorType extends CustomFieldType
 - `viewModes(): array`
     - Die `viewModes` sind verschiedene Ansichten, diese können hier, in der globalen Konfigurationsdatei oder in den `DynamicFormConfiguration` ergänzt oder überschrieben werden
         - Sehe mehr bei __10 View-Modes__
-    - `default` **muss** vorhanden sein. </br>
+    - `default` **muss** vorhanden sein. 
+</br>
 
 ### 04.01.03 Typen registrieren
 1. Gehe in die config `ffhs_custom_forms.php`
@@ -475,7 +477,7 @@ Der `FormMapper` vereinfacht das Rauslesen der Daten aus dem `CustomField`
         - Gibt die für dieses Feld Ausgewählten Optionen Zurück</br>
 
 ## 04.03 Zyklus und Funktionen
-### 04.03.00 Editor
+### 04.03.00 Formular Editor
 #### mutateOnTemplateDissolve(array $data):array
 // ToDo
 #### afterEditFieldSave(CustomField $field, array $rawData):void
@@ -483,15 +485,20 @@ Der `FormMapper` vereinfacht das Rauslesen der Daten aus dem `CustomField`
 #### afterEditFieldDelete(CustomField $field):void
 // ToDo </br>
 
-### 04.03.01 Formular Ausfüllung
+### 04.03.01 Formular Laden
 #### prepareLoadFieldData(array $data): mixed
-// ToDo
+// ToDo </br>
+
+### 04.03.02 Formular Speichern
+#### updateFormComponentOnSave(Component $component, CustomField $customField, Form $form): void
+Die Methode wird aussgeführt, bevor überhaupt die Daten für die Speicherung der Felder erhoben werden.  Dies  meint, dass man hier noch  die Compüonente an sich bearbeiten kann. um beispielsweise die Dateien von einem FileUpload mit `saveUploadedFiles` zu speichern.
+**Diese Funktion ist vorallem wichtig beim Autosave**
 #### prepareSaveFieldData(mixed $data): ?array
 // ToDo
 #### afterAnswerFieldSave(CustomFieldAnswer $field, mixed $rawData, array $formData):void
 // ToDo </br>
 
-### 04.03.02 Anderes
+### 04.03.03 Anderes
 - `overwrittenRules():?array`
     - Überschreiben von den RuleType (Schaue __08 Regeln__)
 - `overwrittenAnchorRules():?array`
@@ -1732,4 +1739,21 @@ return [
 	],
 ];
 ```
+</br>
+
+# 12 Bilder und Dokumente Layoutfelder
+## 12.00 Feldeinstellungen in der Config
+### 12.00.00 Erklärung
+//ToDo
+</br>
+
+
+## 12.01 Bilder und Dokumente Layout-Felder
+### 12.01.00 Erklärung
+//Speicherung
+</br>
+
+### 12.01.1 Einstellungen
+//Disk
+//save_path
 </br>
