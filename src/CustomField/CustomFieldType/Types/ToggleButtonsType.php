@@ -64,7 +64,7 @@ class ToggleButtonsType extends CustomOptionType
                         ->label(__("filament-package_ffhs_custom_forms::custom_forms.fields.type_options.multiple_toggle_selectable"))
                         ->live(),
                 ),*/
-                parent::getExtraTypeOptions()["customOptions" ]
+                'customOptions' => parent::getExtraTypeOptions()["customOptions"]
                     ->modifyComponent(fn(Component $component) => $component->hidden(fn($get) => $get("boolean")))
             ],
 
