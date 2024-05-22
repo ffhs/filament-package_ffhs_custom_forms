@@ -19,6 +19,7 @@ use Filament\Forms\Components\Concerns\EntanglesStateWithSingularRelationship;
 use Filament\Forms\Components\Contracts\CanEntangleWithSingularRelationships;
 use Filament\Forms\Components\Group;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cache;
 
 class EmbeddedCustomForm extends Component implements CanEntangleWithSingularRelationships
 {
@@ -54,6 +55,14 @@ class EmbeddedCustomForm extends Component implements CanEntangleWithSingularRel
 
     protected function setUp(): void {
         parent::setUp();
+
+
+        $this->saveRelationshipsBeforeChildrenUsing(fn() => null);
+        $this->loadStateFromRelationshipsUsing(fn()=>null);
+        $this->saveRelationshipsUsing(fn()=>null);
+
+
+
         $this->label("");
 
         $this->setupFormSchema();
@@ -198,4 +207,16 @@ class EmbeddedCustomForm extends Component implements CanEntangleWithSingularRel
         });
     }
 
+    // f. Filament
+    public function getCachedExistingRecord(): ?Model
+    {
+        if ($this->cachedExistingRecord) return $this->cachedExistingRecord;
+
+        $parentRecord = $this->getRecord();
+        $record = Cache::remember($parentRecord::class. "-". $parentRecord->id . "-customFormAnswerCachedModel-" . $this->relationship,1, fn() => $this->getRelationship()?->getResults());
+
+        if (! $record?->exists) return null;
+
+        return $this->cachedExistingRecord = $record;
+    }
 }
