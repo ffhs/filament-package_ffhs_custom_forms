@@ -34,9 +34,9 @@ class TextType extends CustomFieldType
 
     protected function extraOptionsBeforeBasic(): array {
         return [
+            'alpine_mask' => new AlpineMaskOption(),
             'max_length' => new MaxLengthOption(),
             'min_length' => new MinLengthOption(),
-            'alpine_mask' => new AlpineMaskOption(),
         ];
     }
 
