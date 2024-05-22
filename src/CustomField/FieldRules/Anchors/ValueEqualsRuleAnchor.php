@@ -22,6 +22,7 @@ use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\ToggleButtons;
@@ -105,7 +106,7 @@ class ValueEqualsRuleAnchor extends FieldRuleAnchorType
         $targetFieldName = $this->getFieldName($targetFieldData);
 
         $cleanedValues = [];
-        foreach ($ruleData["anchor_data"]["values"] as $value) dump($value)? $cleanedValues[] = "'"."'":"";
+        foreach ($ruleData["anchor_data"]["values"] as $value) $cleanedValues[] = "'".$value."'";
 
         if (sizeof($cleanedValues) == 1)
             return $targetFieldName." entspricht ".array_values($cleanedValues)[0];
@@ -310,12 +311,16 @@ class ValueEqualsRuleAnchor extends FieldRuleAnchorType
             ->columnSpanFull();
     }
 
-    protected function getTextRepeater():Repeater  {
-        return Repeater::make("values")
-            ->simple(TextInput::make("")->required())
+
+
+    protected function getTextRepeater():TagsInput  {
+        return TagsInput::make("values")
             ->visible($this->getDisableCloser("text"))
+            //  ->afterStateUpdated(fn($state, $set)=> $set("values",array_values($state)))
+            ->reorderable(false)
             ->columnSpanFull()
             ->label("");
+           // ->simple(TextInput::make("")->required());
     }
 
     protected function getOptionSelector():Select  {
