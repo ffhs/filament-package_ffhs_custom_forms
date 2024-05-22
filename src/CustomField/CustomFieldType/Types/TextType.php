@@ -8,7 +8,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\HasCustomFor
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\Views\TextTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\FastTypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\MaxLengthOption;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\MinLenghtOption;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\MinLengthOption;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Section;
@@ -35,18 +35,18 @@ class TextType extends CustomFieldType
     protected function extraOptionsBeforeBasic(): array {
         return [
             'max_length' => new MaxLengthOption(),
-            'min_length' => new MinLenghtOption(),
+            'min_length' => new MinLengthOption(),
         ];
     }
 
     protected function extraOptionsAfterBasic(): array {
         return [
             'suggestions' => new FastTypeOption([],
-                Section::make("Vorschläge")
+                Section::make(__("filament-package_ffhs_custom_forms::custom_forms.fields.type_options.suggestions"))
                     ->collapsed()
                     ->schema([
                         Repeater::make('suggestions')
-                            ->addActionLabel("Vorschlag hinzufügen")
+                            ->addActionLabel(__("filament-package_ffhs_custom_forms::custom_forms.fields.type_options.add_suggestion"))
                             ->itemLabel(fn($state) => $state[Lang::locale()])
                             ->columnSpanFull()
                             ->collapsed()

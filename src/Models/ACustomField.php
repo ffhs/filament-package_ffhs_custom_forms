@@ -5,15 +5,18 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Models;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\Templates\TemplateFieldType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Facades\Lang;
 
 /**
  * @property int $id
  *
  * @property string|null $name_de
  * @property string|null $name_en
+ * @property string|null $name
  *
  * @property string|null tool_tip_de
  * @property string|null tool_tip_en
+ * @property string|null tool_tip
  *
  * @property String|null $type
  */
@@ -22,7 +25,17 @@ abstract class ACustomField extends CachedModel
     use HasFactory;
     //use SoftDeletes;
 
-
+    public function __get($key) {
+        if($key == 'name'){
+            $nameKey = 'name_' . Lang::getLocale();
+            return $this->$nameKey;
+        }
+        if($key == 'tool_tip'){
+            $nameKey = 'tool_tip' . Lang::getLocale();
+            return $this->$nameKey;
+        }
+        return parent::__get($key);
+    }
 
     public function getTypeName():?string{
         if($this->getTable() == "general_fields") $typeName = $this->type;

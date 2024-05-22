@@ -14,6 +14,6 @@ class InLineLabelOption extends TypeOption
 
     public function getComponent(string $name): Component {
         return Toggle::make($name)
-            ->label("Title in der Zeile");//ToDo Translation
+            ->label(__("filament-package_ffhs_custom_forms::custom_forms.fields.type_options.inline_label"));
     }
 }

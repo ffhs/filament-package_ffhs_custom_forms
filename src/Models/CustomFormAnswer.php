@@ -35,9 +35,9 @@ class CustomFormAnswer extends CachedModel
     public function cachedAnswers():Collection {
         return Cache::remember("answers-from-custom_form_answers_" . $this->id,config('ffhs_custom_forms.cache_duration'),
             function(){
-                $answares = $this->customFieldAnswers()->get();
+                $answers = $this->customFieldAnswers()->get();
                 $this->customForm->cachedFieldsWithTemplates();
-                return $answares;
+                return $answers;
             }
         );
     }

@@ -5,6 +5,7 @@ return [
 
     'functions'=>[
         'connect'=>'Connect',
+        'add' => 'Add',
     ],
 
     "navigation"=>[
@@ -73,7 +74,48 @@ return [
 
         'anchors'=>[
             'value_equals_anchor' => 'equal value anchor'
-        ]
+        ],
+
+        'type_options' => [
+            "boolean" => "Yes/No Field",
+            "columns_count" => "Number of Columns",
+            "column_span" => "Row Span",
+            "icon" => "Icon",
+            "inline_label" => "Title in Line",
+            "inline" => "In One Line",
+            "max_length" => "Maximum Length",
+            "max_value" => "Maximum Value",
+            "min_length" => "Minimum Length",
+            "min_value" => "Minimum Value",
+            "new_line" => "New Line",
+            "show_as_fieldset" => "Show as Fieldset in View",
+            "show_in_view" => "Visible in View",
+            "show_title" => "Show Title",
+
+            // custom field type
+            "color_type" => "Color Format",
+            "format" => "Format",
+            "only_images" => "Only Images",
+            "show_images" => "Show Images",
+            "show_images_in_view" => "Show Images in View",
+            "downloadable" => "Downloadable",
+            "multiple_uploads_allowed" => "Multiple Uploads Allowed",
+            "preserve_filenames" => "Preserve Filenames",
+            "reorderable" => "Reorderable",
+            "editable_keys" => "Editable Keys",
+            "editable_values" => "Editable Values",
+            "several" => "Several Selectable",
+            "min_select" => "Minimum Select",
+            "min_select_helper" => "Applies only when (Required)",
+            "max_select" => "Maximum Select",
+            "max_select_helper" => "'0' means no limit",
+            "auto_size" => "Auto Size",
+            "suggestions" => "Suggestions",
+            "add_suggestion" => "Add Suggestion",
+            "columns" => "Columns",
+            "toggle_grouped" => "Toggle Grouped",
+            "multiple_toggle_selectable" => "Multiple Toggle Selectable",
+        ],
     ],
 
     'form'=>[
@@ -84,7 +126,13 @@ return [
             'display_name' => "Form Type Name",
             'raw_name' => "Form Type Identifier"
         ],
-        'template'=> "Template"
+        'template'=> "Template",
+        "compiler" => [
+            "custom_fields" => "Custom Fields",
+            "general_fields" => "General Fields",
+            "add_a_name_field" => "Add a :name Field",
+            "template_has_existing_fields" => "The template contains existing fields",
+            "template_has_existing_fields_description" => "There are fields that originally come from this template. These fields are deleted from this form and the existing answers are adopted",
+        ]
     ]
-
 ];

@@ -5,7 +5,6 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Models;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormConfiguration\DynamicFormConfiguration;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection;
@@ -22,7 +21,7 @@ use Illuminate\Support\Facades\Cache;
  * @property Collection $customFieldInLayout
  * @property Collection customFieldsWithTemplateFields
  */
-class CustomForm extends Model
+class CustomForm extends CachedModel
 {
     use HasFormIdentifier;
     use HasFactory;
@@ -33,6 +32,14 @@ class CustomForm extends Model
         'short_title',
         'is_template',
     ];
+
+    public function __get($key) {
+
+        if($key == 'customFieldsWithTemplateFields') return  $this->cachedFieldsWithTemplates();
+        if($key == 'customFields') return  $this->cachedFields();
+
+        return parent::__get($key);
+    }
 
 
     public function customFields(): HasMany {
@@ -50,11 +57,6 @@ class CustomForm extends Model
         return new (DynamicFormConfiguration::getFormConfigurationClass($this->custom_form_identifier))();
     }
 
-
-
-    public static function cached(int $id):CustomForm {
-        return Cache::remember("custom_form-" .$id, config('ffhs_custom_forms.cache_duration'), fn()=>CustomForm::query()->firstWhere("id", $id));
-    }
 
 /* public function makeCached():void {
          Cache::put("custom_form-" .$this->id, $this,config('ffhs_custom_forms.cache_duration'));

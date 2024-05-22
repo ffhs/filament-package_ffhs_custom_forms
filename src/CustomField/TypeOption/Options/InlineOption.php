@@ -14,7 +14,7 @@ class InlineOption extends TypeOption
 
     public function getComponent(string $name): Component {
        return Toggle::make($name)
-           ->label("In einer Zeile")//ToDo Translate
+           ->label(__("filament-package_ffhs_custom_forms::custom_forms.fields.type_options.inline"))
            ->live();
     }
 }

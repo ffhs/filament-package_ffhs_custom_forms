@@ -34,7 +34,7 @@ class DateType extends CustomFieldType
             'column_span' => new ColumnSpanOption(),
             'format'=> new FastTypeOption("Y-m-d",
                 TextInput::make("format")
-                ->label("Format") //ToDo Translate
+                ->label(__("filament-package_ffhs_custom_forms::custom_forms.fields.type_options.format"))
                 ->placeholder("Y-m-d"),
             ),
             'in_line_label' => new InLineLabelOption(),

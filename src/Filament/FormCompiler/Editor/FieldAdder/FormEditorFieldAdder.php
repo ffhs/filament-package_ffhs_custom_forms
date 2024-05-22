@@ -8,16 +8,14 @@ use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Get;
 
-abstract class FormEditorFieldAdder extends Component
-{
+abstract class FormEditorFieldAdder extends Component {
 
     protected string $view = 'filament-forms::components.group';
     protected CustomForm $form;
 
-    public static function make(CustomForm $form): static
-    {
+    public static function make(CustomForm $form): static {
         $static = app(static::class, [
-            'form'=>$form,
+            'form' => $form,
         ]);
         $static->configure();
 
@@ -28,7 +26,6 @@ abstract class FormEditorFieldAdder extends Component
         $this->form = $form;
     }
 
-
     protected function setUp(): void {
         parent::setUp();
 
@@ -37,17 +34,15 @@ abstract class FormEditorFieldAdder extends Component
                 ->label($this->getTitle())
                 ->content("")
                 ->columnSpanFull()
-        ],$this->getSchema()));
+        ], $this->getSchema()));
     }
 
     protected function addCustomFieldInRepeater(array $data, Get $get, $set): void {
-        CustomFormEditorHelper::setCustomFieldInRepeater($data,$get,$set);
+        CustomFormEditorHelper::setCustomFieldInRepeater($data, $get, $set);
     }
 
-    abstract function getSchema():array;
+    abstract function getSchema(): array;
 
-    abstract function getTitle():string;
-
-
+    abstract function getTitle(): string;
 
 }
