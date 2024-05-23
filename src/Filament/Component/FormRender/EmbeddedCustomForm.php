@@ -56,9 +56,9 @@ class EmbeddedCustomForm extends Component implements CanEntangleWithSingularRel
     protected function setUp(): void {
         parent::setUp();
 
-        $this->saveRelationshipsBeforeChildrenUsing(fn() => null);
-        $this->loadStateFromRelationshipsUsing(fn()=>null);
-        $this->saveRelationshipsUsing(fn()=>null);
+        //$this->saveRelationshipsBeforeChildrenUsing(fn() => null);
+        //$this->loadStateFromRelationshipsUsing(fn()=>null);
+        //$this->saveRelationshipsUsing(fn()=>null);
 
 
         $this->label("");
