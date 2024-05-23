@@ -24,6 +24,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\Types\Secti
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\Types\SpaceType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\Types\TextLayoutType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\Types\TitleType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\Anchors\IsInfolistViewRuleAnchor;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\Anchors\ValueEqualsRuleAnchor;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\Type\ChangeOptionRuleType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\Type\DisabledRuleType;
@@ -47,6 +48,7 @@ return [
 
     "field_rule_anchor_types"=>[
         ValueEqualsRuleAnchor::class,
+        IsInfolistViewRuleAnchor::class,
     ],
 
     "field_rule_types"=>[
