@@ -30,7 +30,7 @@ class HiddenRuleType extends FieldRuleType
 
     public function settingsComponent(CustomForm $customForm, array $fieldData): Component {
         return Toggle::make("is_hidden_on_activation")
-            ->label("Feld verstecken, falls die Regel nicht ausgeführt wird")// ToDo Translate
+            ->label("Feld anzeigen, falls die Regel ausgeführt wird")// ToDo Translate
             ->hintIconTooltip("Bei Ja wird das Feld nicht versteckt, falls die Regel zuschlägt"); // ToDo Translate
     }
 

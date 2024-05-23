@@ -242,6 +242,7 @@ class ValueEqualsRuleAnchor extends FieldRuleAnchorType
             $isGeneralField = !empty($field["general_field_id"]);
             $isTemplate = !empty($field["template_id"]);
             $type = CustomFormEditorHelper::getFieldTypeFromRawDate($field);
+            $name = 'name_' . Lang::getLocale();
 
             //Skip Layout Types
             if($type instanceof CustomLayoutType) continue;
@@ -249,7 +250,7 @@ class ValueEqualsRuleAnchor extends FieldRuleAnchorType
             //Hande GeneralField
             if($isGeneralField){
                 $field = GeneralField::cached($field["general_field_id"]);
-                $options[$field->identify_key] =$field->name_de; //ToDo Translate
+                $options[$field->identify_key] =$field->$name;
                 continue;
             }
 
@@ -260,12 +261,12 @@ class ValueEqualsRuleAnchor extends FieldRuleAnchorType
                     /**@var CustomField $templateField*/
                     $finalField= $templateField;
                     if($templateField->isGeneralField()) $finalField = $templateField->generalField;
-                    $options[$finalField->identify_key] =$finalField->name_de; //ToDo Translate
+                    $options[$finalField->identify_key] =$finalField->$name;
                 }
                 continue;
             }
 
-            $options[$field["identify_key"]] = $field["name_de"]; //ToDo Translate
+            $options[$field["identify_key"]] = $field[$name]; //ToDo Translate
         }
 
         return $options;
@@ -337,6 +338,7 @@ class ValueEqualsRuleAnchor extends FieldRuleAnchorType
                 $finalField = self::getSelectedFieldData($get,$component);
                 if(is_null($finalField)) return [];
 
+                $name = "name_". Lang::getLocale();
                 if(array_key_exists("general_field_id",$finalField) && !is_null($finalField["general_field_id"])){
                     //GeneralFields
                     $genField = GeneralField::cached($finalField["general_field_id"]);
@@ -345,12 +347,12 @@ class ValueEqualsRuleAnchor extends FieldRuleAnchorType
                     if(!array_key_exists("customOptions",$finalField["options"])) return [];
                     $options = collect($finalField["options"]["customOptions"]);
 
-                    return $genField->customOptions->whereIn("id",$options)->pluck("name_de","identifier")->toArray(); //ToDo Translate
+                    return $genField->customOptions->whereIn("id",$options)->pluck($name,"identifier")->toArray();
                 }else{
                     if(!array_key_exists("options",$finalField)) return [];
                     if(!array_key_exists("customOptions",$finalField["options"])) return [];
                     $options = collect($finalField["options"]["customOptions"]);
-                    return $options->pluck("name_de","identifier")->toArray(); //ToDo Translate
+                    return $options->pluck($name,"identifier")->toArray();
                 }
 
             });
@@ -472,7 +474,9 @@ class ValueEqualsRuleAnchor extends FieldRuleAnchorType
         if($targetFieldType instanceof CustomOptionType) {
             $options = $rule->anchor_data["selected_options"];
             if(is_null($options)) return false;
-            return in_array($formState[$target],$options);
+            $answer = $formState[$target];
+            if(is_array($answer)) return sizeof(array_intersect($answer,$options));
+            return in_array($answer,$options);
         }
 
         //Bool
