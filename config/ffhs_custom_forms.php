@@ -42,6 +42,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor\FieldAdder\
 return [
 
     'cache_duration'=> 1,
+    'save_stopper_time'=> 1,
     'default_column_count' => 4,
 
     "field_rule_anchor_types"=>[

@@ -56,11 +56,9 @@ class EmbeddedCustomForm extends Component implements CanEntangleWithSingularRel
     protected function setUp(): void {
         parent::setUp();
 
-
         $this->saveRelationshipsBeforeChildrenUsing(fn() => null);
         $this->loadStateFromRelationshipsUsing(fn()=>null);
         $this->saveRelationshipsUsing(fn()=>null);
-
 
 
         $this->label("");
@@ -213,7 +211,10 @@ class EmbeddedCustomForm extends Component implements CanEntangleWithSingularRel
         if ($this->cachedExistingRecord) return $this->cachedExistingRecord;
 
         $parentRecord = $this->getRecord();
-        $record = Cache::remember($parentRecord::class. "-". $parentRecord->id . "-customFormAnswerCachedModel-" . $this->relationship,1, fn() => $this->getRelationship()?->getResults());
+        $record = Cache::remember($parentRecord::class. "-". $parentRecord->id . "-customFormAnswerCachedModel-" . $this->relationship,
+            config('ffhs_custom_forms.cache_duration'),
+            fn() => $this->getRelationship()?->getResults()
+        );
 
         if (! $record?->exists) return null;
 

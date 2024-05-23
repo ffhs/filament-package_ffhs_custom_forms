@@ -19,6 +19,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Form;
 use Filament\Support\Colors\Color;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\HtmlString;
@@ -211,7 +212,7 @@ abstract class CustomFieldType {
 
 
     //You can interact with the Component like in FileUpload
-    public function updateFormComponentOnSave(Component $component, CustomField $customField, Form $form): void {
+    public function updateFormComponentOnSave(Component $component, CustomField $customField, Form $form, Collection $flattenFormComponents): void {
 
     }
 

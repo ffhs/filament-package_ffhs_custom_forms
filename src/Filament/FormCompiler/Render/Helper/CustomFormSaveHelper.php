@@ -8,13 +8,18 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\FieldRule;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Form;
+use Illuminate\Support\Facades\Cache;
 
 class CustomFormSaveHelper {
 
     public static function save(CustomFormAnswer $formAnswerer, Form $form, string|null $path = null) :void{
-        // $path is then path to the customFormData in the formData
-        $formData = self::getFormData($form, $path);
 
+        $saveStopperKey = auth()->user() . "save-stopper-custom-form-answer";
+        if(Cache::get($saveStopperKey)) return;
+        Cache::set($saveStopperKey,true, config("ffhs_custom_forms.save_stopper_time"));
+
+
+        // $path is then path to the customFormData in the formData
         $customForm = $formAnswerer->customForm;
         // Mapping and combining custom fields
         $customFieldsIdentify = self::mapFields(
@@ -22,17 +27,17 @@ class CustomFormSaveHelper {
             fn(CustomField $customField) => $customField->getInheritState()["identify_key"]
         );
 
-        self::prepareFormComponents($customFieldsIdentify, $form,$formData);
+        self::prepareFormComponents($customFieldsIdentify, $form);
 
         //Update form data after modifying components
         $formData = self::getFormData($form, $path);
 
+
         // Mapping and combining field answers
         $fieldAnswersIdentify = self::mapFields(
-            $formAnswerer->cachedAnswers(),
+            $formAnswerer->customFieldAnswers()->get(),
             fn(CustomFieldAnswer $answer) => $answer->customField->getInheritState()["identify_key"]
         );
-
 
         self::saveWithoutPreparation($formData, $customFieldsIdentify, $fieldAnswersIdentify, $formAnswerer);
     }
@@ -110,12 +115,13 @@ class CustomFormSaveHelper {
     }
 
     private static function prepareFormComponents(array $customFieldsIdentify, Form $form): void {
+        $components = collect($form->getFlatComponents()); //That is sloww (Extream Sloww)
 
         foreach ($customFieldsIdentify as $identifyKey => $customField){
             /**@var CustomField $customField*/
-            $fieldComponent = $form->getComponent(fn(Component $component) => !is_null($component->getKey()) && str_contains($component->getKey(),$identifyKey));
+            $fieldComponent = $components->first(fn(Component $component) => !is_null($component->getKey()) && str_contains($component->getKey(),$identifyKey));
             if(is_null($fieldComponent)) continue;
-            $customField->getType()->updateFormComponentOnSave($fieldComponent, $customField, $form);
+            $customField->getType()->updateFormComponentOnSave($fieldComponent, $customField, $form, $components);
         }
     }
 }

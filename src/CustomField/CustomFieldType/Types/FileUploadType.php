@@ -12,6 +12,7 @@ use Filament\Forms\Components\Component;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
+use Illuminate\Support\Collection;
 
 class FileUploadType extends CustomFieldType
 {
@@ -69,8 +70,8 @@ class FileUploadType extends CustomFieldType
         return  "carbon-copy-file";
     }
 
-    public function updateFormComponentOnSave(Component $component, CustomField $customField, Form $form): void {
-        $filesComponent = $form->getComponent(fn(Component $component) =>
+    public function updateFormComponentOnSave(Component $component, CustomField $customField, Form $form, Collection $flattenFormComponents): void {
+        $filesComponent = $flattenFormComponents->first(fn(Component $component) =>
             !is_null($component->getKey()) && str_contains($component->getKey(), $customField->identify_key . ".files")
         );
         /**@var FileUpload $filesComponent*/
