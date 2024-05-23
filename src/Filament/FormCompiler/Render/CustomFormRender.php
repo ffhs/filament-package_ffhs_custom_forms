@@ -20,10 +20,10 @@ class CustomFormRender
         $customFields = $form->cachedFields();
 
         $render= self::getFormRender($viewMode,$form);
-        $customFormSchema = self::render(0,$customFields,$render,$viewMode)[0];
+        $renderOutput = self::render(0,$customFields,$render,$viewMode);
 
         return  [
-            Group::make($customFormSchema)->columns(config("ffhs_custom_forms.default_column_count")),
+            Group::make($renderOutput[0])->columns(config("ffhs_custom_forms.default_column_count")),
         ];
     }
 
@@ -35,6 +35,8 @@ class CustomFormRender
 
         $render= self::getInfolistRender($viewMode,$form,$formAnswer, $fieldAnswers);
         $customViewSchema = self::render(0,$customFields,$render, $viewMode)[0];
+
+        //ToDo Manage Components
 
         return  [
             \Filament\Infolists\Components\Group::make($customViewSchema)->columns(config("ffhs_custom_forms.default_column_count")),
@@ -64,13 +66,26 @@ class CustomFormRender
             //Render
             $component = $customField->getType()->getFormComponent($customField, $form, $viewMode, $parameter);
             if($component instanceof Field) $component->required($customField->required);
-            $component->live(true);
+           // $component->live(true);
 
             return $component;
         };
     }
 
+
     public static function render(int $indexOffset, Collection $customFields, Closure &$render, string $viewMode): array {
+        $renderOutput = self::renderRaw($indexOffset, $customFields, $render,$viewMode);
+        $components = $renderOutput[3];
+
+        //Run Rules after rendered
+        $renderOutput[2]->each(function(FieldRule $rule) use ($components) {
+            $rule->getAnchorType()->afterAllFormComponentsRendered($rule,$components);
+            $rule->getRuleType()->afterAllFormComponentsRendered($rule,$components);
+        });
+        return $renderOutput;
+    }
+
+    public static function renderRaw(int $indexOffset, Collection $customFields, Closure &$render, string $viewMode): array {
         $customFormSchema = [];
 
         $preparedFields = [];
@@ -78,6 +93,8 @@ class CustomFormRender
             $preparedFields[$field->form_position] = $field;
         });
 
+        $allRules = collect();
+        $allComponents = collect();
 
         for($index = $indexOffset+1; $index<= $customFields->count()+$indexOffset; $index++){
 
@@ -99,7 +116,7 @@ class CustomFormRender
                 $fieldRenderData = collect($fieldRenderData);
 
                 //Render Schema Input
-                $renderedOutput = self::render($index, $fieldRenderData, $render,$viewMode);
+                $renderedOutput = self::renderRaw($index, $fieldRenderData, $render,$viewMode);
                 //Get Layout Schema
                 $parameters = array_merge([
                     "customFieldData" => $fieldRenderData,
@@ -108,6 +125,8 @@ class CustomFormRender
 
                 //Set Index
                 $index= $renderedOutput[1]-1;
+                $allRules = $allRules->merge($renderedOutput[2]);
+                $allComponents = $allComponents->merge($renderedOutput[3]);
             }
 
             if(!$customField->is_active) continue;
@@ -115,30 +134,32 @@ class CustomFormRender
             $rules = $customField->fieldRules;
 
             //Rule before render
-            $rules->each(function(FieldRule $rule) use (&$customField) {
-                $rule->getRuleType()->beforeRender($customField,$rule);
+            $rules->each(function(FieldRule $rule) {
+                $rule->getRuleType()->beforeComponentRender($rule);
             });
 
             //Parameter anchor mutation
-            $rules->each(function(FieldRule $rule) use (&$parameters, &$customField) {
-                $parameters =  $rule->getAnchorType()->mutateRenderParameter($parameters,$customField,$rule);
+            $rules->each(function(FieldRule $rule) use (&$parameters) {
+                $parameters =  $rule->getAnchorType()->mutateRenderParameter($parameters,$rule);
             });
 
             //Parameter rule mutation
-            $rules->each(function(FieldRule $rule) use (&$parameters, &$customField) {
-                $parameters =  $rule->getRuleType()->mutateRenderParameter($parameters,$customField,$rule);
+            $rules->each(function(FieldRule $rule) use (&$parameters,) {
+                $parameters =  $rule->getRuleType()->mutateRenderParameter($parameters,$rule);
             });
 
             //Render
             $renderedComponent = $render($customField, $parameters);
 
             //Rule after Render
-            $rules->each(function(FieldRule $rule) use (&$customField, &$renderedComponent) {
-                $renderedComponent = $rule->getRuleType()->afterRender($renderedComponent,$customField,$rule);
+            $rules->each(function(FieldRule $rule) use (&$renderedComponent) {
+                $renderedComponent = $rule->getRuleType()->afterComponentRender($renderedComponent,$rule);
             });
             $customFormSchema[] = $renderedComponent;
 
+            $allRules = $allRules->merge($rules);
+            $allComponents->add($renderedComponent);
         }
-        return [$customFormSchema,$index];
+        return [$customFormSchema,$index, $allRules, $allComponents];
     }
 }

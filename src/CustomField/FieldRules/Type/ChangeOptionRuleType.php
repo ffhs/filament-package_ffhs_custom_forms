@@ -7,7 +7,6 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomOption\CustomOptionTyp
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\FieldRuleType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\HasRulePluginTranslate;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FormMapper;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\FieldRule;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
@@ -78,12 +77,13 @@ class ChangeOptionRuleType extends FieldRuleType
             "customOptions" => []
         ];
     }
-    public function afterRender(Component|InfoComponent $component, CustomField $customField, FieldRule $rule): Component|InfoComponent {
+    public function afterComponentRender(Component|InfoComponent $component,  FieldRule $rule): Component|InfoComponent {
         if(!in_array(HasOptions::class,class_uses_recursive($component::class))) return $component;
         $reflection = new ReflectionClass($component);
         $property = $reflection->getProperty("options");
         $property->setAccessible(true);
         $optionsOld = $property->getValue($component);
+        $customField = $rule->customField;
 
         return $component->options(function ($get,$set) use ($optionsOld, $customField, $component, $rule) {
             if(!$rule->getAnchorType()->canRuleExecute($component,$customField,$rule)) $options= $component->evaluate($optionsOld);

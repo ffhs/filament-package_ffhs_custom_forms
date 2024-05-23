@@ -3,6 +3,7 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component;
 
 use Closure;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Render\Helper\CustomFormLoadHelper;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 
 trait UseFieldSplit
@@ -27,6 +28,15 @@ trait UseFieldSplit
 
     public function getFieldSplit(): ?CustomField{
         return $this->evaluate($this->fieldSplit);
+    }
+
+    function loadFieldTypeSplitAnswerData(mixed $answer): array {
+        $field = $this->getFieldSplit();
+        if (is_null($field)) return [];
+        if ($field->form_position == $field->layout_end_position) return [];
+
+        return CustomFormLoadHelper::loadSplit($answer, $field->form_position + 1,
+            $field->layout_end_position);
     }
 
 }

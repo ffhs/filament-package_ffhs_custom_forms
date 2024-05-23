@@ -99,7 +99,7 @@ class FieldModalRuleEditorModal extends Component
                     ->options($rules)
                     ->required()
                     ->live()
-                    ->afterStateUpdated(function ($state,$set){
+                    ->afterStateUpdated(function ($state, $set){
                         if(is_null($state)) return;
                         $set("rule_data", FieldRuleType::getRuleFromName($state)?->getCreateRuleData());
                     }),

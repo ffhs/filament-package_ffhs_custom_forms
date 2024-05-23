@@ -8,15 +8,14 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\FieldRule;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Form;
-use Illuminate\Support\Facades\Cache;
 
 class CustomFormSaveHelper {
 
     public static function save(CustomFormAnswer $formAnswerer, Form $form, string|null $path = null) :void{
 
-        $saveStopperKey = auth()->user() . "save-stopper-custom-form-answer";
+        /*$saveStopperKey = auth()->user() . "save-stopper-custom-form-answer";
         if(Cache::get($saveStopperKey)) return;
-        Cache::set($saveStopperKey,true, config("ffhs_custom_forms.save_stopper_time"));
+        Cache::set($saveStopperKey,true, config("ffhs_custom_forms.save_stopper_time"));*/
 
 
         // $path is then path to the customFormData in the formData

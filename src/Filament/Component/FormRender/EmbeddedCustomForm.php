@@ -34,6 +34,7 @@ class EmbeddedCustomForm extends Component implements CanEntangleWithSingularRel
     protected string $view = 'filament-forms::components.group';
     protected bool|Closure $isAutoSave;
 
+
     public static function make(Closure|string $relationship, string|Closure $viewMode= "default"): static
     {
         $static = app(static::class, [
@@ -182,6 +183,10 @@ class EmbeddedCustomForm extends Component implements CanEntangleWithSingularRel
             /**@var CustomFormAnswer $answer */
             $relationshipName = $component->getRelationshipName();
             $answer = $record->$relationshipName;
+
+            if ($this->isUseLayoutTypeSplit()) return $this->loadLayoutTypeSplitAnswerData($answer);
+            else if ($this->isUseFieldSplit()) return $this->loadFieldTypeSplitAnswerData($answer);
+            else if ($this->isUsePoseSplit()) return $this->loadPosTypeSplitAnswerData($answer);
             return CustomFormLoadHelper::load($answer);
         });
     }

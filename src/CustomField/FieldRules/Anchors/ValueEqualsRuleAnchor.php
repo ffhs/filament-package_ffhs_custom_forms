@@ -2,6 +2,7 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\Anchors;
 
+use Barryvdh\Debugbar\Facades\Debugbar;
 use Closure;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldUtils;
@@ -27,9 +28,11 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Forms\Get;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\HtmlString;
+use ReflectionClass;
 
 class ValueEqualsRuleAnchor extends FieldRuleAnchorType
 {
@@ -357,6 +360,24 @@ class ValueEqualsRuleAnchor extends FieldRuleAnchorType
 
             });
     }
+
+    public function afterAllFormComponentsRendered(FieldRule $rule, Collection $components):void {
+        if($components->first() instanceof \Filament\Infolists\Components\Component) return;
+        $target = $rule->anchor_data["target_field"];
+
+        $targetComponent = $components->first(function(Component $component) use ($target) {
+            $reflection = new ReflectionClass($component);
+            $property = $reflection->getProperty("name");
+            $property->setAccessible(true);
+            $key = $property->getValue($component);
+
+            return $key && str_contains($target, $key);
+        });
+
+        $targetComponent?->debounce(100); //ToDo Find sweet Spot
+
+    }
+
     protected function getNumberSection(): Section {
 
         return Section::make()
@@ -453,14 +474,19 @@ class ValueEqualsRuleAnchor extends FieldRuleAnchorType
     }
 
 
-    public function shouldRuleExecute(array $formState, CustomField $customField, FieldRule $rule): bool {
+    public function shouldRuleExecute(array $formState, Component $component,  FieldRule $rule): bool {
+
+        Debugbar::info($formState);
+
         $formState = CustomFieldUtils::flatten($formState);
         $target = $rule->anchor_data["target_field"];
         if(!array_key_exists($target, $formState)) return false;
         $type = $rule->anchor_data["field_type"];
 
+        $customField = $rule->customField;
         $customForm = $customField->customForm;
         $targetField = $customForm->cachedFieldsWithTemplates()->where("identify_key",$target)->first();
+
         if(is_null($targetField)) {
             $genField = GeneralField::query()->where("identify_key",$target)->select("id")->first();
             /**@var null|GeneralField $genField*/
@@ -470,29 +496,31 @@ class ValueEqualsRuleAnchor extends FieldRuleAnchorType
         if(is_null($targetField)) return false;
         $targetFieldType = $targetField->getType(); //ToDO Optimize
 
+        $answer = $formState[$target];
+
         //Custom Option Types like Select
         if($targetFieldType instanceof CustomOptionType) {
             $options = $rule->anchor_data["selected_options"];
             if(is_null($options)) return false;
-            $answer = $formState[$target];
+            if(is_null($answer)) return false;
             if(is_array($answer)) return sizeof(array_intersect($answer,$options));
             return in_array($answer,$options);
         }
 
         //Bool
-        if($type == "boolean")  return $formState[$target] == $rule->anchor_data["boolean"];
+        if($type == "boolean")  return $answer == $rule->anchor_data["boolean"];
 
         //Text
         if($type == "text") {
             $options = CustomFieldUtils::flattenWithoutKeys($rule->anchor_data["values"]);
             $options = array_values($options);
-            return  in_array($formState[$target],$options);
+            return  in_array($answer,$options);
         }
 
         //Nummer
         if($type == "numeric") {
             $numericData = $rule->anchor_data["numeric"];
-            $value = intval($formState[$target]);
+            $value = intval($answer);
             if($numericData["exactly_number"]) return $numericData["number"] == $value;
 
             if(!empty($numericData["greater_than"])){
