@@ -82,7 +82,7 @@ abstract class FieldRuleType
 
     }
 
-    public function canRuleExecute(Component $component, FieldRule $rule):bool {
+    public function canRuleExecute(Component|InfoComponent $component, FieldRule $rule):bool {
         return $rule->getAnchorType()->canRuleExecute($component,$rule);
     }
 

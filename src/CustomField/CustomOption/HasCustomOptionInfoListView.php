@@ -15,13 +15,13 @@ trait HasCustomOptionInfoListView
         array $parameter = []): Component {
 
         $textEntry = TextEntry::make(FormMapper::getIdentifyKey($record));
-        $answerer =FormMapper::getAnswer($record);
+        $answer = FormMapper::getAnswer($record);
 
-        if(empty($answerer)) $state =  "";
-        else if(is_array($answerer))
-            $state = FormMapper::getAllCustomOptions($record)->filter(fn($value, $id) => in_array($id,$answerer));
+        if(empty($answer)) $state =  "";
+        else if(is_array($answer))
+            $stateList = FormMapper::getAllCustomOptions($record)->filter(fn($value, $id) => in_array($id,$answer));
         else {
-            $state = FormMapper::getAllCustomOptions($record)->filter(fn($value, $id) => $id == $answerer);
+            $stateList = FormMapper::getAllCustomOptions($record)->filter(fn($value, $id) => $id == $answer);
             $textEntry->color("info");
         }
 
@@ -31,8 +31,11 @@ trait HasCustomOptionInfoListView
             ->label(FormMapper::getLabelName($record). ":")
             ->columnSpanFull()
             ->inlineLabel()
-            ->state($state)
+            ->state(FormMapper::getAnswer($record))
+            ->formatStateUsing(fn($state) => $stateList->toArray()[$state])
             ->badge();
+
+
 
         return $textEntry;
     }

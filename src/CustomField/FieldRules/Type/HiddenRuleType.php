@@ -40,8 +40,7 @@ class HiddenRuleType extends FieldRuleType
     }
 
     public function afterComponentRender(Component|\Filament\Infolists\Components\Component $component ,FieldRule $rule): Component|\Filament\Infolists\Components\Component {
-        if(!($component instanceof Component)) return $component;
-        $setting =  $rule->rule_data["is_hidden_on_activation"];
+        $setting = $rule->rule_data["is_hidden_on_activation"];
 
         $reflection = new ReflectionClass($component);
         $property = $reflection->getProperty("isHidden");
@@ -49,17 +48,25 @@ class HiddenRuleType extends FieldRuleType
         $isHiddenOld = $property->getValue($component);
         $customField = $rule->customField;
 
-        return $component->hidden(function(Component $component,$set) use ($customField, $isHiddenOld, $setting, $rule) {
-            $anchor = $this->canRuleExecute($component,$rule);
-            $hidden = $setting?!$anchor:$anchor;
-            if(!$hidden) return $component->evaluate($isHiddenOld);
-             $set(FormMapper::getIdentifyKey($customField), null);
+        $hiddenFunction = function (Component|\Filament\Infolists\Components\Component $component, mixed $set) use ($customField, $isHiddenOld, $setting, $rule) {
+            $anchor = $this->canRuleExecute($component, $rule);
+            $hidden = $setting ? !$anchor : $anchor;
+            if (!$hidden) return $component->evaluate($isHiddenOld);
+            if(!is_null($set)) $set(FormMapper::getIdentifyKey($customField), null);
             return true;
-        });
+        };
+
+        if($component instanceof Component)
+            return $component->hidden(fn ($component, $set) => $hiddenFunction($component, $set));
+        else
+            return $component->hidden(fn ($component) => $hiddenFunction($component, null));
     }
 
 
     public function getCreateRuleData(): array {
        return ["is_hidden_on_activation"=>false];
     }
+
+
+
 }

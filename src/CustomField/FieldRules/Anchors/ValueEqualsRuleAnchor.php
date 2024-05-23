@@ -2,7 +2,6 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\Anchors;
 
-use Barryvdh\Debugbar\Facades\Debugbar;
 use Closure;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldUtils;
@@ -28,6 +27,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Forms\Get;
+use Filament\Infolists\Components\Component as InfoComponent;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Lang;
@@ -474,12 +474,10 @@ class ValueEqualsRuleAnchor extends FieldRuleAnchorType
     }
 
 
-    public function shouldRuleExecute(array $formState, Component $component,  FieldRule $rule): bool {
-
-        Debugbar::info($formState);
-
+    public function shouldRuleExecute(array $formState, Component|InfoComponent $component, FieldRule $rule): bool {
         $formState = CustomFieldUtils::flatten($formState);
         $target = $rule->anchor_data["target_field"];
+
         if(!array_key_exists($target, $formState)) return false;
         $type = $rule->anchor_data["field_type"];
 
