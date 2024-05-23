@@ -73,7 +73,8 @@ return [
         ],
 
         'anchors'=>[
-            'value_equals_anchor' => 'equal value anchor'
+            'value_equals_anchor' => 'equal value anchor',
+            'infolist_view' => 'if is infolist'
         ],
 
         'type_options' => [

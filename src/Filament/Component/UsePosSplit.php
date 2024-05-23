@@ -3,6 +3,7 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component;
 
 use Closure;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Render\Helper\CustomFormLoadHelper;
 
 trait UsePosSplit
 {
@@ -27,6 +28,11 @@ trait UsePosSplit
 
     public function getPoseSpilt(): ?array{
         return $this->evaluate($this->poseSplit);
+    }
+
+    function loadPosTypeSplitAnswerData(mixed $answer): array {
+        [$beginPos, $endPos] = $this->getPoseSpilt();
+        return CustomFormLoadHelper::loadSplit($answer, $beginPos, $endPos);
     }
 
 

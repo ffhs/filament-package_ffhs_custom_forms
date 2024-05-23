@@ -10,10 +10,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 /**
  * @property int $id
  * @property int custom_field_id
+ * @property int execution_order
  *
  * @property string rule_identifier
  * @property string anchor_identifier
  * @property string rule_name
+ * @property CustomField customField
+ *
  *
  * @property array anchor_data
  * @property array rule_data

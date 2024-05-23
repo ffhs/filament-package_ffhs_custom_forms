@@ -75,7 +75,8 @@ return [
         ],
 
         'anchors' => [
-            'value_equals_anchor' => 'Bestimmter Wert'
+            'value_equals_anchor' => 'Bestimmter Wert',
+            'infolist_view' => 'Wenn Infolist ist'
         ],
 
         'type_options' => [

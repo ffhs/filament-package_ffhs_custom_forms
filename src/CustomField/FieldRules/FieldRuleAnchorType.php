@@ -9,6 +9,8 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\FieldRule;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Get;
+use Filament\Infolists\Components\Component as InfoComponent;
+use Illuminate\Support\Collection;
 
 abstract class FieldRuleAnchorType
 {
@@ -40,11 +42,18 @@ abstract class FieldRuleAnchorType
 
     public abstract function settingsComponent(CustomForm $customForm, array $fieldData):Component;
     public abstract function getCreateAnchorData():array; //ToDo I think it is possible to replace something in the Formmodal of the action to load the default values
-    public abstract function shouldRuleExecute(array $formState, CustomField $customField, FieldRule $rule):bool;
+    public abstract function shouldRuleExecute(array $formState, Component|InfoComponent $component, FieldRule $rule):bool;
 
-    public function canRuleExecute(Component $component, CustomField $customField, FieldRule $rule ):bool {
-        $rawFormData = array_values($component->getLivewire()->getCachedForms())[0]->getRawState();
-        return $this->shouldRuleExecute($rawFormData,$customField,$rule);
+    public function canRuleExecute(Component|InfoComponent $component, FieldRule $rule ):bool {
+        if($component instanceof Component) $rawFormData = array_values($component->getLivewire()->getCachedForms())[0]->getRawState();
+        else {
+            /** @var InfoComponent $component*/;
+            $allComponents = collect($component->getInfolist()->getFlatComponents(true));
+            $rawFormData = $allComponents->map(function (InfoComponent $value) {
+                return [ "key" => $value->getKey(), "state" => $value->getState()];
+            })->pluck("state","key")->toArray();
+        }
+        return $this->shouldRuleExecute($rawFormData, $component ,$rule);
     }
 
 
@@ -56,10 +65,14 @@ abstract class FieldRuleAnchorType
         return $this->getTranslatedName();
     }
 
+    public function afterAllFormComponentsRendered(FieldRule $rule, Collection $components):void {
+
+    }
+
     public function canAddOnField(CustomFieldType $type): bool {
         return true;
     }
-    public function mutateRenderParameter(array $parameter, CustomField $customField, FieldRule $rule): array {
+    public function mutateRenderParameter(array $parameter, FieldRule $rule): array {
         return $parameter;
     }
     public function mutateDataBeforeLoadInEdit(array $ruleData, FieldRule $rule): array {

@@ -6,7 +6,6 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomFieldT
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\CustomLayoutType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\FieldRuleType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\HasRulePluginTranslate;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\FieldRule;
 use Filament\Forms\Components\Component;
@@ -44,7 +43,7 @@ class RequiredRuleType extends FieldRuleType
         return $ruleData;
     }
 
-    public function afterRender(Component|\Filament\Infolists\Components\Component $component ,CustomField $customField, FieldRule $rule): Component|\Filament\Infolists\Components\Component {
+    public function afterComponentRender(Component|\Filament\Infolists\Components\Component $component ,FieldRule $rule): Component|\Filament\Infolists\Components\Component {
         if(!($component instanceof Field)) return $component;
         $setting =  $rule->rule_data["is_required_on_activation"];
 
@@ -53,8 +52,8 @@ class RequiredRuleType extends FieldRuleType
         $property->setAccessible(true);
         $isRequiredOld = $property->getValue($component);
 
-        return $component->required(function(Field $component) use ($isRequiredOld, $setting, $customField, $rule) {
-            $anchor = $rule->getAnchorType()->canRuleExecute($component,$customField,$rule);
+        return $component->required(function(Field $component) use ($isRequiredOld, $setting, $rule) {
+            $anchor = $this->canRuleExecute($component,$rule);
             $isRequired = $setting?!$anchor:$anchor;
             if(!$isRequired) return $component->evaluate($isRequiredOld);
             return true;

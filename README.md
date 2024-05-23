@@ -954,8 +954,7 @@ class LocationSelectorTypeView implements FieldTypeView
 
 
 # 08 Regeln
-
-## 08.00 Was sind Regeln
+## 08.00 Was sind Regeln?
 ### 08.00 Kurzgefasst
 - Eine Regel im Gesamt Paket wird als `FieldRule` im Code bezeichnet
 - Eine Regel kann an einem Feld hinzugefügt werden
@@ -1039,9 +1038,11 @@ class MyRuleAnchorType extends FieldRuleAnchorType
     }  
   
   
-    public function shouldRuleExecute(array $formState, CustomField $customField, FieldRule $rule): bool {  
+    public function shouldRuleExecute(array $formState, Component $component, FieldRule $rule): bool {  
        return true; //to your decision
     }
+    
+}
 ```
 
 - `identifier():string`
@@ -1060,7 +1061,11 @@ class MyRuleAnchorType extends FieldRuleAnchorType
     - `mutateRenderParameter(array $parameter, CustomField $customField, FieldRule $rule): array`
         - Verändere die Parameter welche den Felder beim Rendern mitgegeben werden
     - `mutateOnTemplateDissolve(array $data, FieldRule $originalRule, CustomField $originalField):array`
-        - //ToDo </br>
+        - //ToDo
+    - `getDisplayName(array $ruleData, Repeater $component, Get $get): string`
+        - **Der Anzeigename in der Regelsektion**
+    - `afterAllFormComponentsRendered(FieldRule $rule, Collection $components):void`
+        - Zugriff auf alle Komponenten von dem Formular (Bzw. von dem gespaltenen Formular). Wir bei dem  ValueEqualsRuleAnchor verwendet um die Felder live zu stellen</br>
 
 #### 08.03.00.01 Schritt 2 Registrieren
 1. Gehe in die config `ffhs_custom_forms.php`
@@ -1095,7 +1100,8 @@ class IsMyRuleType extends FieldRuleType
 
 	//Beispiel
 	public function afterRender(Component|\Filament\Infolists\Components\Component $component ,CustomField $customField, FieldRule $rule): Component|\Filament\Infolists\Components\Component {  
-		$anchorDecisions = $rule->getAnchorType()->canRuleExecute($component,$customField,$rule); // Bekomme die Entscheidung des Ankers
+		$anchorDecisions = $this->>canRuleExecute($component,$rule); // Bekomme die Entscheidung des Ankers 
+		if(!anchorDecisions) return;
 		//Erledige deine Sachen
 	}
 }
@@ -1112,8 +1118,8 @@ class IsMyRuleType extends FieldRuleType
         - Kann an diesem Typen hinzugefügt werden.
     - `mutateDataBeforeLoadInEdit(array $ruleData, FieldRule $rule): array`
         - Verändern der Daten beim Laden in den Edit Mode (Dort wo das Formular bearbeitet werden kann)
-    - `beforeRender(CustomField $customField, FieldRule $rule)`
-    - `afterRender(Component|InfoComponent $component, CustomField $customField, FieldRule $rule): Component|InfoComponent`
+    - `beforeComponentRender(CustomField $customField, FieldRule $rule)`
+    - `afterComponentRender(Component|InfoComponent $component, CustomField $customField, FieldRule $rule): Component|InfoComponent`
     - `mutateLoadAnswerData(mixed $answerData, FieldRule $rule, CustomFieldAnswer $answer):mixed`
     - `mutateSaveAnswerData(mixed $answerData, FieldRule $rule, CustomFieldAnswer $answer):mixed`
     - `afterAnswerSave( FieldRule $rule, CustomFieldAnswer $answer):void`
@@ -1223,6 +1229,10 @@ return [
 - Unter der Config `ffhs_custom_forms` und dem Punkt `field_rule_types`
 - Wenn hier einen Regeltypen entfernt wird, wird dieser nicht mehr zum hinzufügen angezeigt.
 - Diese Einstellungen gelten für alle Formulare </br>
+
+## 08.06 Anker und Regeln Lebenszyklus
+//ToDo </br>
+
 
 # 09 Formulare einbinden
 

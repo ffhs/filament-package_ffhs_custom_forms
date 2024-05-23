@@ -5,7 +5,6 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\Type;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\FieldRuleType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\HasRulePluginTranslate;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FormMapper;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\FieldRule;
 use Filament\Forms\Components\Component;
@@ -40,26 +39,34 @@ class HiddenRuleType extends FieldRuleType
         return $ruleData;
     }
 
-    public function afterRender(Component|\Filament\Infolists\Components\Component $component ,CustomField $customField, FieldRule $rule): Component|\Filament\Infolists\Components\Component {
-        if(!($component instanceof Component)) return $component;
-        $setting =  $rule->rule_data["is_hidden_on_activation"];
+    public function afterComponentRender(Component|\Filament\Infolists\Components\Component $component ,FieldRule $rule): Component|\Filament\Infolists\Components\Component {
+        $setting = $rule->rule_data["is_hidden_on_activation"];
 
         $reflection = new ReflectionClass($component);
         $property = $reflection->getProperty("isHidden");
         $property->setAccessible(true);
         $isHiddenOld = $property->getValue($component);
+        $customField = $rule->customField;
 
-        return $component->hidden(function(Component $component,$set) use ($isHiddenOld, $setting, $customField, $rule) {
-            $anchor = $rule->getAnchorType()->canRuleExecute($component,$customField,$rule);
-            $hidden = $setting?!$anchor:$anchor;
-            if(!$hidden) return $component->evaluate($isHiddenOld);
-            $set(FormMapper::getIdentifyKey($customField),null);
+        $hiddenFunction = function (Component|\Filament\Infolists\Components\Component $component, mixed $set) use ($customField, $isHiddenOld, $setting, $rule) {
+            $anchor = $this->canRuleExecute($component, $rule);
+            $hidden = $setting ? !$anchor : $anchor;
+            if (!$hidden) return $component->evaluate($isHiddenOld);
+            if(!is_null($set)) $set(FormMapper::getIdentifyKey($customField), null);
             return true;
-        });
+        };
+
+        if($component instanceof Component)
+            return $component->hidden(fn ($component, $set) => $hiddenFunction($component, $set));
+        else
+            return $component->hidden(fn ($component) => $hiddenFunction($component, null));
     }
 
 
     public function getCreateRuleData(): array {
        return ["is_hidden_on_activation"=>false];
     }
+
+
+
 }

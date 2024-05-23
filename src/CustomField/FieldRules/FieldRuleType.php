@@ -11,6 +11,7 @@ use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Get;
 use Filament\Infolists\Components\Component as InfoComponent;
+use Illuminate\Support\Collection;
 
 abstract class FieldRuleType
 {
@@ -41,10 +42,10 @@ abstract class FieldRuleType
     public abstract function getCreateRuleData():array; //ToDo I think it is possible to replace something in the Formmodal of the action to load the default values
 
 
+
     public function canAddOnField(CustomFieldType $type): bool {
         return true;
     }
-
 
     public function mutateDataBeforeLoadInEdit(array $ruleData, FieldRule $rule): array {
         return $ruleData;
@@ -56,15 +57,18 @@ abstract class FieldRuleType
 
 
 
-
-    public function beforeRender(CustomField $customField, FieldRule $rule):void {
+    public function beforeComponentRender(FieldRule $rule):void {
 
     }
-    public function mutateRenderParameter(array $parameter, CustomField $customField, FieldRule $rule): array {
+    public function mutateRenderParameter(array $parameter, FieldRule $rule): array {
         return $parameter;
     }
-    public function afterRender(Component|InfoComponent $component, CustomField $customField, FieldRule $rule): Component|InfoComponent  {
+    public function afterComponentRender(Component|InfoComponent $component, FieldRule $rule): Component|InfoComponent  {
         return $component;
+    }
+
+    public function afterAllFormComponentsRendered(FieldRule $rule, Collection $components):void {
+
     }
 
     public function mutateLoadAnswerData(mixed $answerData, FieldRule $rule, CustomFieldAnswer $answer):mixed {
@@ -76,6 +80,10 @@ abstract class FieldRuleType
 
     public function afterAnswerSave( FieldRule $rule, CustomFieldAnswer $answer):void {
 
+    }
+
+    public function canRuleExecute(Component|InfoComponent $component, FieldRule $rule):bool {
+        return $rule->getAnchorType()->canRuleExecute($component,$rule);
     }
 
     public function getTranslatedName():string {
