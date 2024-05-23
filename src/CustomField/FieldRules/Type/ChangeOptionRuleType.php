@@ -86,7 +86,8 @@ class ChangeOptionRuleType extends FieldRuleType
         $customField = $rule->customField;
 
         return $component->options(function ($get,$set) use ($optionsOld, $customField, $component, $rule) {
-            if(!$rule->getAnchorType()->canRuleExecute($component,$customField,$rule)) $options= $component->evaluate($optionsOld);
+            $anchorDecisions = $this->canRuleExecute($component,$rule);
+            if(!$anchorDecisions) $options= $component->evaluate($optionsOld);
             else{
                 $customField->customOptions =  $customField->customOptions->whereIn("identifier",$rule->rule_data["customOptions"]);
                 $options =  FormMapper::getAvailableCustomOptions($customField);

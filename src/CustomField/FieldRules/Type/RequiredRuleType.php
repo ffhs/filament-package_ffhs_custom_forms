@@ -51,10 +51,9 @@ class RequiredRuleType extends FieldRuleType
         $property = $reflection->getProperty("isRequired");
         $property->setAccessible(true);
         $isRequiredOld = $property->getValue($component);
-        $customField = $rule->customField;
 
-        return $component->required(function(Field $component) use ($isRequiredOld, $setting, $customField, $rule) {
-            $anchor = $rule->getAnchorType()->canRuleExecute($component,$customField,$rule);
+        return $component->required(function(Field $component) use ($isRequiredOld, $setting, $rule) {
+            $anchor = $this->canRuleExecute($component,$rule);
             $isRequired = $setting?!$anchor:$anchor;
             if(!$isRequired) return $component->evaluate($isRequiredOld);
             return true;

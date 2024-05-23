@@ -57,17 +57,17 @@ abstract class FieldRuleType
 
 
 
-    public function beforeComponentRender(FieldRule $rule):void { //ToDo Add rename in Readme
+    public function beforeComponentRender(FieldRule $rule):void {
 
     }
     public function mutateRenderParameter(array $parameter, FieldRule $rule): array {
         return $parameter;
     }
-    public function afterComponentRender(Component|InfoComponent $component, FieldRule $rule): Component|InfoComponent  { //ToDo Add rename in Readme
+    public function afterComponentRender(Component|InfoComponent $component, FieldRule $rule): Component|InfoComponent  {
         return $component;
     }
 
-    public function afterAllFormComponentsRendered(FieldRule $rule, Collection $components):void { //ToDo add to Readme
+    public function afterAllFormComponentsRendered(FieldRule $rule, Collection $components):void {
 
     }
 
@@ -80,6 +80,10 @@ abstract class FieldRuleType
 
     public function afterAnswerSave( FieldRule $rule, CustomFieldAnswer $answer):void {
 
+    }
+
+    public function canRuleExecute(Component $component, FieldRule $rule):bool {
+        return $rule->getAnchorType()->canRuleExecute($component,$rule);
     }
 
     public function getTranslatedName():string {

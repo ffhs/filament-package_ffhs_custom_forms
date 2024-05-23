@@ -56,7 +56,7 @@ class DisabledRuleType extends FieldRuleType
         $customField = $rule->customField;
 
         return $component->disabled(function(Component $component,$set) use ($isDisabledOld, $setting, $customField, $rule) {
-            $anchor = $rule->getAnchorType()->canRuleExecute($component,$customField,$rule);
+            $anchor = $this->canRuleExecute($component,$rule);
             $disabled = $setting?!$anchor:$anchor;
             if(!$disabled) return $component->evaluate($isDisabledOld);
             $set(FormMapper::getIdentifyKey($customField),null);

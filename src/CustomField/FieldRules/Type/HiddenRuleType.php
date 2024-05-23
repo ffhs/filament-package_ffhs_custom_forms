@@ -49,8 +49,8 @@ class HiddenRuleType extends FieldRuleType
         $isHiddenOld = $property->getValue($component);
         $customField = $rule->customField;
 
-        return $component->hidden(function(Component $component,$set, $get) use ($customField, $isHiddenOld, $setting, $rule) {
-            $anchor = $rule->getAnchorType()->canRuleExecute($component, $rule);
+        return $component->hidden(function(Component $component,$set) use ($customField, $isHiddenOld, $setting, $rule) {
+            $anchor = $this->canRuleExecute($component,$rule);
             $hidden = $setting?!$anchor:$anchor;
             if(!$hidden) return $component->evaluate($isHiddenOld);
              $set(FormMapper::getIdentifyKey($customField), null);
