@@ -16,7 +16,6 @@ class TemplateTypeView implements FieldTypeView
     public static function getFormComponent(TemplateFieldType|CustomFieldType $type, CustomField $record, array $parameter = []): Component {
 
         return Group::make(CustomFormRender::generateFormSchema($record->template, "default"))
-            ->hiddenWhenAllChildComponentsHidden()
             ->columnSpanFull();
     }
 
