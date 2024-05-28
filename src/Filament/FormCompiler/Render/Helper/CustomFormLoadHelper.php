@@ -38,12 +38,25 @@ class CustomFormLoadHelper {
         //$form = CustomForm::cached($answerer->custom_form_id);
         //$customFields = $form->cachedFields();
 
+        $customFields = $answerer->customForm->customFieldsWithTemplateFields;
+
         foreach($answerer->cachedAnswers() as $fieldAnswer){
             /**@var CustomFieldAnswer $fieldAnswer*/
             /**@var CustomField $customField*/
             $customField = $fieldAnswer->customField;
 
-            if($begin > $customField->form_position || $customField->form_position > $end) continue;
+            if($begin > $customField->form_position || $customField->form_position > $end){
+
+                if($answerer->custom_form_id == $customField->custom_form_id) continue;
+
+                /**@var CustomField|null $templateField*/
+                $templateField = $customFields->where("template_id",$customField->custom_form_id)->first();
+
+                if(!$templateField) continue;
+
+                if($begin > $templateField->form_position || $templateField->form_position > $end) continue;
+
+            }
 
             $fieldData = $customField
                 ->getType()
