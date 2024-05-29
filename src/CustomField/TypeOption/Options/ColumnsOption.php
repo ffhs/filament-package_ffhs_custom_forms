@@ -16,7 +16,7 @@ class ColumnsOption extends TypeOption
 
     public function getComponent(string $name): Component {
        return TextInput::make($name)
-           ->label($this->translate('boolean'))
+           ->label($this->translate('columns_count'))
            ->maxValue(10)
            ->minValue(1)
            ->step(1)
