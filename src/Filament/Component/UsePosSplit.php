@@ -27,6 +27,7 @@ trait UsePosSplit
     }
 
     public function getPoseSpilt(): ?array{
+        if(!$this->isUseFieldSplit()) return null;
         return $this->evaluate($this->poseSplit);
     }
 
