@@ -44,6 +44,12 @@ class GeneralField extends ACustomField
         'extra_options'=>'array',
     ];
 
+    protected array $cachedManyRelations = [
+        'customFields',
+        'generalFieldForms',
+        'customOptions',
+    ];
+
     public function customFields(): HasMany
     {
         return $this->hasMany(CustomField::class);

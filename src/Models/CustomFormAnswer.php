@@ -11,7 +11,6 @@ use Illuminate\Support\Facades\Cache;
  * @property int $custom_form_id
  * @property CustomForm $customForm
  * @property Collection $customFieldAnswers
- * @property int $id
  * @property string|null $short_title
  */
 class CustomFormAnswer extends CachedModel
@@ -23,6 +22,9 @@ class CustomFormAnswer extends CachedModel
     protected  array $cachedRelations = [
         "customForm" => ["custom_form_id", "id"],
     ];
+    protected  array $cachedManyRelations = [
+        "customFieldAnswers",
+    ];
 
     public function customForm (): BelongsTo {
         return $this->belongsTo(CustomForm::class);
@@ -30,6 +32,9 @@ class CustomFormAnswer extends CachedModel
 
     public function customFieldAnswers (): HasMany {
         return $this->hasMany(CustomFieldAnswer::class);
+    }
+    public function cachedCustomFieldAnswers (): Collection {
+        return $this->cachedAnswers();
     }
 
     public function cachedAnswers():Collection {
