@@ -60,7 +60,6 @@ abstract class CachedModel extends Model
     }
 
     public static function addToCachedList(Collection|CachedModel $toAdd): Collection|CachedModel {
-        if(static::class === FieldRule::class) dd($toAdd);
         $cachedList = static::singleListCached();
         if(is_null($cachedList)) $cachedList = collect();
         if($toAdd instanceof Collection) $cachedList =
