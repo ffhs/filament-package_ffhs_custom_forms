@@ -9,7 +9,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Cache;
 
 /**
  * @property int|null $general_field_id
@@ -69,23 +68,13 @@ class CustomField extends ACustomField
         "template" => ["template_id", "id"],
     ];
 
+
+    protected array $cachedManyRelations = [
+        'fieldRules',
+        'customOptions',
+    ];
+
     public function __get($key) {
-
-        if($key == "customOptions")
-            return Cache::remember("customFieldOptions-" . $this->id, config('ffhs_custom_forms.cache_duration'), function (){
-                $options = $this->customOptions()->get();
-                CustomOption::addToCachedList($options);
-                return $options;
-            });
-
-        if($key == "fieldRules") {
-            return
-             Cache::remember("fieldRules-form_field-".$this->id, config('ffhs_custom_forms.cache_duration'),
-                function () use ($key) {
-                    return Model::__get($key);
-                });
-        }
-
         if($key === "general_field_id") return Model::__get($key);
 
         if(!$this->isGeneralField()) return parent::__get($key);
@@ -120,9 +109,7 @@ class CustomField extends ACustomField
         parent::booted();
         self::creating(function (CustomField $field){#
             //Set identifier key to on other
-            if(is_null($field->identify_key) && !$field->isGeneralField() ) {
-                $field->identify_key = uniqid();
-            }
+            if(is_null($field->identify_key) && !$field->isGeneralField() ) $field->identify_key = uniqid();
             return $field;
         });
     }
@@ -162,12 +149,6 @@ class CustomField extends ACustomField
     public function customForm(): BelongsTo {
         return $this->belongsTo(CustomForm::class);
     }
-   /* public static function cached(mixed $custom_field_id): ?CustomField{
-        return Cache::remember("custom_field-" .$custom_field_id, config('ffhs_custom_forms.cache_duration'), fn()=>CustomField::query()->firstWhere("id", $custom_field_id));
-    }*/
-    /*public static function cachedAllInForm(int $formId): Collection{
-        return Cache::remember("custom_field-form_id" .$formId, config('ffhs_custom_forms.cache_duration'), fn()=>CustomForm::cached($formId)->cachedFields());
-    }*/
 
 
     //Options
@@ -210,7 +191,7 @@ class CustomField extends ACustomField
 
 
     //Layout
-    public function allCustomFieldsInLayout(): HasMany {
+    public function allCustomFieldsInLayout(): HasMany { //ToDo can it Remove?
         if(!($this->getType() instanceof CustomLayoutType))
             return $this->hasMany(CustomField::class, "custom_form_id","custom_form_id")
                 ->where("id",null);
@@ -219,7 +200,7 @@ class CustomField extends ACustomField
             ->where("form_position", "<=", $this->layout_end_position);
     }
 
-    public function customFieldInLayout(): HasMany {
+    public function customFieldInLayout(): HasMany { //ToDo can it Remove?
 
         if(!($this->getType() instanceof CustomLayoutType))
             return $this->hasMany(CustomField::class, "custom_form_id","custom_form_id")

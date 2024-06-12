@@ -34,6 +34,10 @@ class CustomFieldAnswer extends CachedModel
         "customFormAnswer" => ["custom_form_answer_id", "id"],
     ];
 
+    protected array $cachedManyRelations = [
+        'customForm'
+    ];
+
 
 
     public function __get($key) {
@@ -42,12 +46,14 @@ class CustomFieldAnswer extends CachedModel
         return $this->data["customForm"];
     }
 
-
-
-
     public function customForm(): Builder {
         return CustomForm::query()->whereIn("id", $this->belongsTo(CustomField::class)->select("custom_form_id"));
     }
+
+    public function cachedCustomForm(): CustomForm {
+        return $this->customFormAnswer->customForm ;
+    }
+
     public function customField (): BelongsTo {
         return $this->belongsTo(CustomField::class);
     }

@@ -27,7 +27,7 @@ class FieldRule extends CachedModel
     use HasFactory;
 
     protected array $cachedRelations = [
-      "customField"  => ["custom_field_id","id"],
+        "customField"  => ["custom_field_id","id"],
     ];
 
     protected $fillable = [
