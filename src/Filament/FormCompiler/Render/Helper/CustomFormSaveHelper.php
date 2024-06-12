@@ -13,11 +13,6 @@ class CustomFormSaveHelper {
 
     public static function save(CustomFormAnswer $formAnswerer, Form $form, string|null $path = null) :void{
 
-        /*$saveStopperKey = auth()->user() . "save-stopper-custom-form-answer";
-        if(Cache::get($saveStopperKey)) return;
-        Cache::set($saveStopperKey,true, config("ffhs_custom_forms.save_stopper_time"));*/
-
-
         // $path is then path to the customFormData in the formData
         $customForm = $formAnswerer->customForm;
         // Mapping and combining custom fields
@@ -102,7 +97,7 @@ class CustomFormSaveHelper {
     }
 
 
-    private static function getFormData(Form $form, ?string $path): array {
+    public static function getFormData(Form $form, ?string $path): array {
         $data = $form->getRawState();
 
         if (is_null($path)) return $data;
@@ -113,7 +108,7 @@ class CustomFormSaveHelper {
         return $data;
     }
 
-    private static function prepareFormComponents(array $customFieldsIdentify, Form $form): void {
+    public static function prepareFormComponents(array $customFieldsIdentify, Form $form): void {
         $components = collect($form->getFlatComponents()); //That is sloww (Extream Sloww)
 
         foreach ($customFieldsIdentify as $identifyKey => $customField){
