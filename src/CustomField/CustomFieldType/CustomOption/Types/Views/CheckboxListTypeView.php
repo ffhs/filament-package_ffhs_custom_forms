@@ -1,35 +1,31 @@
 <?php
 
-namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Types\Views;
+namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomOption\Types\Views;
 
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomOption\HasCustomOptionInfoListView;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\FieldTypeView;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomOption\HasCustomOptionInfoListViewWithBoolean;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldMapper;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
+use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Component;
-use Filament\Forms\Components\Radio;
 
-class RadioTypeView implements FieldTypeView
+class CheckboxListTypeView implements FieldTypeView
 {
-    use HasCustomOptionInfoListViewWithBoolean;
+    use HasCustomOptionInfoListView;
 
     public static function getFormComponent(CustomFieldType $type, CustomField $record,
         array $parameter = []): Component {
 
-        $radio = Radio::make(FieldMapper::getIdentifyKey($record))
-            ->columnStart(FieldMapper::getOptionParameter($record,"new_line_option"))
+        return CheckboxList::make(FieldMapper::getIdentifyKey($record))
+           ->columnStart(FieldMapper::getOptionParameter($record,"new_line_option"))
             ->inlineLabel(FieldMapper::getOptionParameter($record,"in_line_label"))
             ->columnSpan(FieldMapper::getOptionParameter($record,"column_span"))
-            ->inline(FieldMapper::getOptionParameter($record,"inline"))
+            ->columns(FieldMapper::getOptionParameter($record,"columns"))
+            ->options(FieldMapper::getAvailableCustomOptions($record))
             ->helperText(FieldMapper::getToolTips($record))
             ->label(FieldMapper::getLabelName($record))
 ;
-
-        if(FieldMapper::getOptionParameter($record,"boolean")) $radio->boolean();
-        else $radio->options(FieldMapper::getAvailableCustomOptions($record));
-
-        return $radio;
     }
 
 

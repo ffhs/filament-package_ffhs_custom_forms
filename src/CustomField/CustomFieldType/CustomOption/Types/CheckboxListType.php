@@ -1,11 +1,11 @@
 <?php
 
-namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Types;
+namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomOption\Types;
 
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Types\Views\CheckboxListTypeView;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomOption\CustomOptionType;
-use Ffhs\FilamentPackageFfhsCustomForms\Domain\HasBasicSettings;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomOption\CustomOptionType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomOption\Types\Views\CheckboxListTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\ColumnsOption;
+use Ffhs\FilamentPackageFfhsCustomForms\Domain\HasBasicSettings;
 use Ffhs\FilamentPackageFfhsCustomForms\Domain\HasCustomFormPackageTranslation;
 
 class CheckboxListType extends CustomOptionType

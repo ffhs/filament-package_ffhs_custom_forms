@@ -2,6 +2,7 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Models;
 
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\LayoutType\CustomLayoutType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -184,9 +185,8 @@ class CustomField extends ACustomField
     }
 
 
-
-    /* //Layout
-     public function allCustomFieldsInLayout(): HasMany { //ToDo can it Remove?
+    //Layout
+     public function allCustomFieldsInLayout(): HasMany { //ToDo i do it to remove? (Not now)
          if(!($this->getType() instanceof CustomLayoutType))
              return $this->hasMany(CustomField::class, "custom_form_id","custom_form_id")
                  ->where("id",null);
@@ -195,7 +195,7 @@ class CustomField extends ACustomField
              ->where("form_position", "<=", $this->layout_end_position);
      }
 
-     public function customFieldInLayout(): HasMany { //ToDo can it Remove?
+     public function customFieldInLayout(): HasMany { //ToDo i do it to remove? (Not now)
 
          if(!($this->getType() instanceof CustomLayoutType))
              return $this->hasMany(CustomField::class, "custom_form_id","custom_form_id")
@@ -220,6 +220,6 @@ class CustomField extends ACustomField
                              ->on('custom_fields.form_position', '<=', 'sub.layout_end_position');
                      })
              );
-     }*/
+     }
 
 }
