@@ -4,7 +4,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\Type;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\FieldRuleType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\HasRulePluginTranslate;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FormMapper;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldMapper;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\FieldRule;
 use Filament\Forms\Components\Component;
@@ -52,7 +52,7 @@ class HiddenRuleType extends FieldRuleType
             $anchor = $this->canRuleExecute($component, $rule);
             $hidden = $setting ? !$anchor : $anchor;
             if (!$hidden) return $component->evaluate($isHiddenOld);
-            if(!is_null($set)) $set(FormMapper::getIdentifyKey($customField), null);
+            if(!is_null($set)) $set(FieldMapper::getIdentifyKey($customField), null);
             return true;
         };
 

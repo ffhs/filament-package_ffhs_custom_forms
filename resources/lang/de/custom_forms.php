@@ -24,7 +24,7 @@ return [
         'type' => 'Feldtyp',
         'name' => 'Name',
         'tool_tip' => 'Kurzbeschreibung',
-        'identify_key' => 'Identifikations Schlüssel',
+        'identifier' => 'Identifikations Schlüssel',
         'is_general_field_active' => 'Aktiv',
         'label' => "Name",
         'form_connections' => 'Verknüpfte Formulare',
@@ -33,7 +33,7 @@ return [
 
         'helper_text' => [
             'type' => 'Der Feldtyp des Felds. ACHTUNG: Dieser kann nach dem Erstellen nicht mehr geändert werden',
-            'identify_key' => 'Dieser Schlüssel wird benötigt um die Daten zu exportieren',
+            'identifier' => 'Dieser Schlüssel wird benötigt um die Daten zu exportieren',
             'is_general_field_active' => 'Falls dies deaktiviert wird, werden alle generellen Felder deaktiviert, welches auf diesem Feld basieren.',
         ],
 

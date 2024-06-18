@@ -2,7 +2,7 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor\FieldAdder;
 
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomFieldType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor\CustomFieldEditModal\CustomFieldEditModal;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor\Helper\CustomFormEditorHelper;
 use Filament\Forms\Components\Actions;
@@ -32,13 +32,13 @@ final class CustomFieldAdder extends FormEditorFieldAdder
 
         /**@var CustomFieldType $type */
         foreach ($types as $type) {
-            $modalWidth  = CustomFieldEditModal::getEditCustomFormActionModalWith(["type" => $type::getFieldIdentifier()]);
+            $modalWidth  = CustomFieldEditModal::getEditCustomFormActionModalWith(["type" => $type::identifier()]);
 
             $actions[] = Actions::make([
-                Action::make("add_".$type::getFieldIdentifier()."_action")
+                Action::make("add_".$type::identifier()."_action")
                     ->mutateFormDataUsing(fn(Action $action)=> CustomFormEditorHelper::getRawStateForm($action,1))
                     ->modalHeading(__("filament-package_ffhs_custom_forms::custom_forms.form.compiler.add_a_name_field",['name'=>$type->getTranslatedName()]))
-                    ->disabled(fn(Get $get) => is_null($type::getFieldIdentifier()))
+                    ->disabled(fn(Get $get) => is_null($type::identifier()))
                     ->extraAttributes(["style" => "width: 100%; height: 100%;"])
                     ->label(self::getCustomFieldAddActionLabel($type))
                     ->closeModalByClickingAway(false)
@@ -46,17 +46,17 @@ final class CustomFieldAdder extends FormEditorFieldAdder
                     ->modalWidth($modalWidth)
                     ->outlined()
                     ->form(function() use ($type) {
-                        $state = ["type" => $type::getFieldIdentifier()];
+                        $state = ["type" => $type::identifier()];
                         return [CustomFieldEditModal::make($this->form, $state)];
                     })
                     ->action(function ($set, Get $get, array $data) {
                         $this->addCustomFieldInRepeater($data, $get, $set);
                     })
                     ->fillForm(fn($get) => [
-                        "type" => $type::getFieldIdentifier(),
+                        "type" => $type::identifier(),
                         "options" => $type->getDefaultTypeOptionValues(),
                         "is_active" => true,
-                        "identify_key" => uniqid(),
+                        "identifier" => uniqid(),
                     ]),
             ]);
         }

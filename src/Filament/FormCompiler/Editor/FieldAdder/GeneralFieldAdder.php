@@ -24,15 +24,15 @@ final class GeneralFieldAdder extends FormEditorFieldAdder
     function getSchema(): array {
        return [
 
-            Select::make("add_general_field_id")
-                ->options(fn($get)=> self::getGeneralFieldSelectOptions($get))
-                ->native(false)
-                ->label("")
-                ->live()
-                ->disableOptionWhen(function ($value, Get $get) {
-                    $usedGenIds = CustomFormEditorHelper::getUsedGeneralFieldIds($get("custom_fields"));
-                    return in_array($value, $usedGenIds);
-                }),
+           Select::make("add_general_field_id")
+               ->options(fn($get)=> self::getGeneralFieldSelectOptions($get))
+               ->native(false)
+               ->label("")
+               ->live()
+               ->disableOptionWhen(function ($value, Get $get) {
+                   $usedGenIds = CustomFormEditorHelper::getUsedGeneralFieldIds($get("custom_fields"));
+                   return in_array($value, $usedGenIds);
+               }),
 
             Actions::make([
                 Action::make("add_general_field")
@@ -83,13 +83,13 @@ final class GeneralFieldAdder extends FormEditorFieldAdder
             $generalField = $generalFieldForm->generalField;
 
             if ($generalFieldForm->is_required) {
-                $generalField->name_de = "* ".$generalField->name_de;
-                $generalField->name_en = "* ".$generalField->name_en;
+                $generalField->name = "* ".$generalField->name;
+                $generalField->name = "* ".$generalField->name;
             }
             return $generalField;
         });
 
-        return $generalFields->pluck("name_de", "id"); //ToDo Translate
+        return $generalFields->pluck("name", "id"); //ToDo Translate
     }
 
 }

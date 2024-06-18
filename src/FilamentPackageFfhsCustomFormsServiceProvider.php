@@ -36,6 +36,13 @@ class FilamentPackageFfhsCustomFormsServiceProvider extends PackageServiceProvid
             ->hasTranslations()
             ->hasInstallCommand(fn(InstallCommand $command) =>
                 $command
+                    ->startWith(function (InstallCommand $command){
+                        $command->info("Publish translation from Filament\Spatie-Translatable");
+                        Artisan::call('vendor:publish', ["tag" => "filament-spatie-laravel-translatable-plugin-translations"]);
+
+                        $command->info("Publish config from icon picker plugin");
+                        Artisan::call('vendor:publish', ["tag" => "filament-icon-picker-config"]);
+                    })
                     ->publishConfigFile()
                     ->copyAndRegisterServiceProviderInApp()
                     ->publishMigrations()
@@ -45,14 +52,12 @@ class FilamentPackageFfhsCustomFormsServiceProvider extends PackageServiceProvid
                         // Clear the application cache
                         $command->info("Clear cache");
                         Artisan::call('cache:clear');
+
                         $command->info("Clear icon cache");
                         Artisan::call('icons:cache');
+
                         $command->info("Create storage symlink");
                         Artisan::call('storage:link');
-
-                        // publish config from icon picker
-                        $command->info("Publish config from icon picker plugin");
-                        Artisan::call('vendor:publish', ["tag" => "filament-icon-picker-config"]);
                     })
             );
 

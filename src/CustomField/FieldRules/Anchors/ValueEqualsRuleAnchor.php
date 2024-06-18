@@ -3,9 +3,9 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\Anchors;
 
 use Closure;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomFieldType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\LayoutType\CustomLayoutType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldUtils;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\CustomLayoutType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomOption\CustomOptionType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\FieldRuleAnchorType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\HasAnchorPluginTranslate;
@@ -194,11 +194,11 @@ class ValueEqualsRuleAnchor extends FieldRuleAnchorType
         foreach ($fields as $field){
             if(array_key_exists("general_field_id",$field) && !is_null($field["general_field_id"])){
                 $genField = GeneralField::cached($field["general_field_id"]);
-                if($genField?->identify_key != $identifier) continue;
+                if($genField?->getIdentifier != $identifier) continue;
                 $finalField = $field;
                 break;
             }
-            if($field["identify_key"] != $identifier) continue;
+            if($field["identifier"] != $identifier) continue;
             $finalField = $field;
             break;
         }
@@ -207,7 +207,7 @@ class ValueEqualsRuleAnchor extends FieldRuleAnchorType
 
     protected static function getFieldType(array $fieldData): CustomFieldType {
         if(!array_key_exists("general_field_id",$fieldData) || is_null($fieldData["general_field_id"]))
-            $fieldType = CustomFieldType::getTypeFromName($fieldData["type"]);
+            $fieldType = CustomFieldType::getTypeFromIdentifier($fieldData["type"]);
         else{
             $genField = GeneralField::cached($fieldData["general_field_id"]);
             $fieldType = $genField->getType();
@@ -234,13 +234,13 @@ class ValueEqualsRuleAnchor extends FieldRuleAnchorType
     public function getFieldOptions(Component $component, array $fieldData): array {
         $fieldData = self::mapFieldData($fieldData);
         $thisField = array_values($component->getLivewire()->getCachedForms())[1]->getRawState();
-        if(array_key_exists("identify_key",$thisField)) $identifyKey = $thisField["identify_key"];
+        if(array_key_exists("identifier",$thisField)) $identifyKey = $thisField["identifier"];
         else $identifyKey = null;
 
         $options = [];
         foreach ($fieldData as $field){
 
-            if(array_key_exists("identify_key",$field) && $identifyKey == $field["identify_key"])  continue;
+            if(array_key_exists("identifier",$field) && $identifyKey == $field["identifier"])  continue;
 
             $isGeneralField = !empty($field["general_field_id"]);
             $isTemplate = !empty($field["template_id"]);
@@ -253,7 +253,7 @@ class ValueEqualsRuleAnchor extends FieldRuleAnchorType
             //Hande GeneralField
             if($isGeneralField){
                 $field = GeneralField::cached($field["general_field_id"]);
-                $options[$field->identify_key] =$field->$name;
+                $options[$field->identifier] =$field->$name;
                 continue;
             }
 
@@ -264,12 +264,12 @@ class ValueEqualsRuleAnchor extends FieldRuleAnchorType
                     /**@var CustomField $templateField*/
                     $finalField= $templateField;
                     if($templateField->isGeneralField()) $finalField = $templateField->generalField;
-                    $options[$finalField->identify_key] =$finalField->$name;
+                    $options[$finalField->identifier] =$finalField->$name;
                 }
                 continue;
             }
 
-            $options[$field["identify_key"]] = $field[$name]; //ToDo Translate
+            $options[$field["identifier"]] = $field[$name]; //ToDo Translate
         }
 
         return $options;
@@ -483,10 +483,10 @@ class ValueEqualsRuleAnchor extends FieldRuleAnchorType
 
         $customField = $rule->customField;
         $customForm = $customField->customForm;
-        $targetField = $customForm->cachedFieldsWithTemplates()->where("identify_key",$target)->first();
+        $targetField = $customForm->cachedFieldsWithTemplates()->where("identifier",$target)->first();
 
         if(is_null($targetField)) {
-            $genField = GeneralField::query()->where("identify_key",$target)->select("id")->first();
+            $genField = GeneralField::query()->where("identifier",$target)->select("id")->first();
             /**@var null|GeneralField $genField*/
             if(is_null($genField)) return false;
             $targetField = $customForm->customFields->where("general_field_id",$genField->id)->first();
@@ -543,5 +543,4 @@ class ValueEqualsRuleAnchor extends FieldRuleAnchorType
         $name = "name_".$localisation;
         return  GeneralField::cached($targetFieldData["general_field_id"])->$name;
     }
-
 }

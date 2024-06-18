@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * @property int $id
- * @property string $identify_key
+ * @property string $identifier
  * @property bool $is_general_field_active
  * @property bool $is_term_bound
  * @property null|string $tool_tip_de
@@ -30,7 +30,7 @@ class GeneralField extends ACustomField
         'variation_options',
         'is_term_bound',
         'extra_options',
-        'identify_key',
+        'identifier',
         'tool_tip_de',
         'tool_tip_en',
         'is_active',

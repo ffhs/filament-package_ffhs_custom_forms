@@ -76,11 +76,11 @@ final class TemplateAdder extends FormEditorFieldAdder
     private function getOverlappedIdentifier(array $customFields, int $templateId): array {
         //Fields with the same identify key
         $usedFieldIdentifier = [];
-        $customFieldWithIdentifyKey = CustomFormEditorHelper::getFieldsWithProperty($customFields,"identify_key");
-        foreach ($customFieldWithIdentifyKey as $customField) $usedFieldIdentifier[] = $customField["identify_key"];
+        $customFieldWithIdentifyKey = CustomFormEditorHelper::getFieldsWithProperty($customFields,"identifier");
+        foreach ($customFieldWithIdentifyKey as $customField) $usedFieldIdentifier[] = $customField["identifier"];
         return CustomForm::cached($templateId)->customFields
-            ->whereIn("identify_key",$usedFieldIdentifier)
-            ->pluck("identify_key")
+            ->whereIn("identifier",$usedFieldIdentifier)
+            ->pluck("identifier")
             ->toArray();
     }
 
@@ -108,11 +108,11 @@ final class TemplateAdder extends FormEditorFieldAdder
                 $subprefix = $prefix. "custom_fields." . $key . ".";
                 $this->deletingExistingFields($get,$set,$overlappedIdentifier, $subprefix);
                 $newFieldData = $get($prefix. "custom_fields." . $key);
-                $newFieldData["identify_key"] = uniqid();
+                $newFieldData["identifier"] = uniqid();
                 $toSet[$key] = $newFieldData;
             }else{
-                if(empty($customField["identify_key"])) $toSet[$key] = $customField;
-                else if(!in_array($customField["identify_key"],$overlappedIdentifier)) $toSet[$key] = $customField;
+                if(empty($customField["identifier"])) $toSet[$key] = $customField;
+                else if(!in_array($customField["identifier"],$overlappedIdentifier)) $toSet[$key] = $customField;
             }
         }
         $set($prefix. "custom_fields", $toSet);

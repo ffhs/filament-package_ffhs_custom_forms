@@ -2,8 +2,7 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Resources;
 
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomFieldType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormConfiguration\DynamicFormConfiguration;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Ffhs\FilamentPackageFfhsCustomForms\Resources\GeneralFieldsResource\Pages\{CreateGeneralField,
     EditGeneralField,
@@ -94,7 +93,7 @@ class GeneralFieldResource extends Resource
                                    if(!$component->isDisabled()) $types = CustomFieldType::getSelectableGeneralFieldTypes();
                                    else $types = CustomFieldType::getAllTypes();
                                    $keys = array_keys($types);
-                                   $values = array_map(fn(string $type) => CustomFieldType::getTypeFromName($type)->getTranslatedName(), $keys);
+                                   $values = array_map(fn(string $type) => CustomFieldType::getTypeFromIdentifier($type)->getTranslatedName(), $keys);
                                    return array_combine($keys,$values);
                                })
                                ->label(__(self::langPrefix . 'type'))
@@ -110,9 +109,9 @@ class GeneralFieldResource extends Resource
                        ]),
 
 
-                        TextInput::make("identify_key")
-                            ->label(__(self::langPrefix . 'identify_key'))
-                            ->helperText(__(self::langPrefix . 'helper_text.identify_key'))
+                        TextInput::make("identifier")
+                            ->label(__(self::langPrefix . 'identifier'))
+                            ->helperText(__(self::langPrefix . 'helper_text.identifier'))
                             ->columnStart(1)
                             ->columnSpan(1)
                             ->required(),
@@ -135,12 +134,12 @@ class GeneralFieldResource extends Resource
                     ->statePath("options")
                     ->visible(function($get){
                         if(is_null($get("type"))) return false;
-                        $type = CustomFieldType::getTypeFromName($get("type"));
+                        $type = CustomFieldType::getTypeFromIdentifier($get("type"));
                         return $type->hasExtraGeneralTypeOptions();
                     })
                     ->schema(function($get){
                         if(is_null($get("type"))) return[];
-                        $type = CustomFieldType::getTypeFromName($get("type"));
+                        $type = CustomFieldType::getTypeFromIdentifier($get("type"));
                         return $type->getExtraGeneralTypeOptionComponents();
                     }),
 
@@ -150,19 +149,19 @@ class GeneralFieldResource extends Resource
                     ->collapsed()
                  /*   ->default(function($get){
                         if(is_null($get("type"))) return null;
-                        $type = CustomFieldType::getTypeFromName($get("type"));
+                        $type = CustomFieldType::getTypeFromIdentifier($get("type"));
                       //  return $type->mutateCustomFieldDataBeforeFill([""])["options"];
                     })
                     ->visible(function($get, $record){
                        /* if(is_null($get("type"))) return false;
-                        $type = CustomFieldType::getTypeFromName($get("type"));
+                        $type = CustomFieldType::getTypeFromIdentifier($get("type"));
                         $array = $type->getExtraOptionFields(is_null($record)?new GeneralField():$record);
                         return !empty($array);
                         return true;
                     })
                     ->schema(function($get){
                         if(is_null($get("type"))) return[];
-                        $type = CustomFieldType::getTypeFromName($get("type"));
+                        $type = CustomFieldType::getTypeFromIdentifier($get("type"));
                         $array = $type->getExtraOptionFields(true);
                         if(empty($array)) return [];
                         $group = Group::make()->schema($array);

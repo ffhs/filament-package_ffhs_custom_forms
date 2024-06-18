@@ -28,7 +28,7 @@ class CustomFormLoadHelper {
                 $fieldData = $rule->getRuleType()->mutateLoadAnswerData($fieldData,$rule, $fieldAnswer);
             }
 
-            $data[$customField->getInheritState()["identify_key"]] = $fieldData;
+            $data[$customField->identifier] = $fieldData;
         }
         return $data;
     }
@@ -68,7 +68,7 @@ class CustomFormLoadHelper {
                 $fieldData = $rule->getRuleType()->mutateLoadAnswerData($fieldData,$rule, $fieldAnswer);
             }
 
-            $data[$customField->getInheritState()["identify_key"]] = $fieldData;
+            $data[$customField->identifier] = $fieldData;
         }
         return $data;
     }

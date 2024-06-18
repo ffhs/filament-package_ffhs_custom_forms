@@ -2,7 +2,8 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules;
 
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomFieldType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\CustomFieldType;
+use Ffhs\FilamentPackageFfhsCustomForms\Domain\Type;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
@@ -13,31 +14,33 @@ use Filament\Forms\Get;
 use Filament\Infolists\Components\Component as InfoComponent;
 use Illuminate\Support\Collection;
 
-abstract class FieldRuleType
+abstract class FieldRuleType extends Type
 {
     /*
      * Static Class Functions
      */
-    public static function getAllAnchors():array{
+    /*public static function getAllAnchors():array{
         $output = [];
         foreach(config("ffhs_custom_forms.field_rule_types") as $typeClass)
             $output[$typeClass::identifier()]= $typeClass;
         return $output;
     }
-    public static function getTypeClassFromName(string $typeName): ?string {
+    public static function getTypeClassFromIdentifier(string $typeName): ?string {
         $types = self::getAllAnchors();
         if(!array_key_exists($typeName,$types)) return null;
         return self::getAllAnchors()[$typeName];
     }
 
-    public static function getRuleFromName(string $typeName): ?FieldRuleType {
-        $class = self::getTypeClassFromName($typeName);
+    public static function getTypeFromIdentifier(string $typeName): ?FieldRuleType {
+        $class = self::getTypeClassFromIdentifier($typeName);
         if(is_null($class)) return null;
         return new $class();
+    }*/
+    public static function getConfigTypeList():string {
+        return "field_rule_types";
     }
 
 
-    public abstract static function identifier();
     public abstract function settingsComponent(CustomForm $customForm, array $fieldData):Component;
     public abstract function getCreateRuleData():array; //ToDo I think it is possible to replace something in the Formmodal of the action to load the default values
 
@@ -87,7 +90,7 @@ abstract class FieldRuleType
     }
 
     public function getTranslatedName():string {
-        return __("custom_forms.rules." . self::identifier());
+        return __("custom_forms.rules." . $this::identifier());
     }
 
     public function getDisplayName(array $ruleData, Repeater $component, Get $get): string {

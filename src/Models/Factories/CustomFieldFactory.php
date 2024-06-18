@@ -1,7 +1,7 @@
 <?php
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Models\Factories;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomFieldType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -18,13 +18,10 @@ class CustomFieldFactory extends Factory
     public function definition(): array
     {
         return [
-            'name_de' => fake()->name,
-            'name_en' => fake()->name,
+            'name' => fake()->name,
             'is_active' => true,
             'required' => false,
-            'identify_key'=> uniqid(),
-            'tool_tip_de' => fake()->text(20),
-            'tool_tip_en' => fake()->text(20),
+            'identifier'=> uniqid(),
             'type'=> fake()->randomElement(CustomFieldType::getAllTypes()),
         ];
     }

@@ -2,8 +2,8 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor\Helper;
 
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomFieldType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\Templates\TemplateFieldType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\CustomFieldType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\TemplatesType\TemplateFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Filament\Forms\Get;
@@ -13,13 +13,13 @@ class CustomFormEditorHelper
 
     public static function getFieldTypeFromRawDate(array $data): ?CustomFieldType {
         $isTemplate = array_key_exists("template_id",$data)&& !is_null($data["template_id"]);
-        if($isTemplate) return new TemplateFieldType();
+        if($isTemplate) return  TemplateFieldType::make();
 
         $isGeneral = array_key_exists("general_field_id",$data)&& !is_null($data["general_field_id"]);
         if($isGeneral){
             return  GeneralField::cached($data["general_field_id"])->getType();
         }
-        return  CustomFieldType::getTypeFromName($data["type"]);
+        return  CustomFieldType::getTypeFromIdentifier($data["type"]);
     }
 
     public static function getUsedGeneralFieldIds(array $customFields):array {

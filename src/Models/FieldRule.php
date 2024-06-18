@@ -2,8 +2,10 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Models;
 
+use Ffhs\FilamentPackageFfhsCustomForms\Caching\CachedModel;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\FieldRuleAnchorType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\FieldRuleType;
+use Ffhs\FilamentPackageFfhsCustomForms\Domain\HasFormIdentifier;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -50,11 +52,11 @@ class FieldRule extends CachedModel
     }
 
     public function getAnchorType() :FieldRuleAnchorType{
-        return FieldRuleAnchorType::getAnchorFromName($this->anchor_identifier);
+        return FieldRuleAnchorType::getTypeFromIdentifier($this->anchor_identifier);
     }
 
     public function getRuleType() :FieldRuleType{
-        return FieldRuleType::getRuleFromName($this->rule_identifier);
+        return FieldRuleType::getTypeFromIdentifier($this->rule_identifier);
     }
 
 }

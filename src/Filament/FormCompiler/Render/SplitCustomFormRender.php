@@ -3,7 +3,7 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Render;
 
 use Closure;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\CustomLayoutType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\LayoutType\CustomLayoutType;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
@@ -31,7 +31,7 @@ class SplitCustomFormRender
 
         /**@var null|CustomField $layoutField */
         $layoutField = $customFields
-            ->filter(fn(CustomField $field) => $field->getInheritState()["type"] == $layoutType::getFieldIdentifier())
+            ->filter(fn(CustomField $field) => $field->identifier == $layoutType::identifier())
             ->first();
 
         if (is_null($layoutField)) return [];

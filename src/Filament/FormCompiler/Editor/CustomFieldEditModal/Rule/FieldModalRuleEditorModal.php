@@ -2,7 +2,7 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor\CustomFieldEditModal\Rule;
 
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomFieldType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldUtils;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\FieldRuleAnchorType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\FieldRuleType;
@@ -54,7 +54,7 @@ class FieldModalRuleEditorModal extends Component
                     ->required()
                     ->afterStateUpdated(function ($state,$set){
                         if(is_null($state)) return;
-                        $set("anchor_data", FieldRuleAnchorType::getAnchorFromName($state)?->getCreateAnchorData());
+                        $set("anchor_data", FieldRuleAnchorType::getTypeFromIdentifier($state)?->getCreateAnchorData());
                     })
                     ->live(),
                 Group::make()
@@ -68,7 +68,7 @@ class FieldModalRuleEditorModal extends Component
 
                         $data = CustomFieldUtils::flattDownToCustomFields($data);
 
-                        $anchor = FieldRuleAnchorType::getAnchorFromName($get("anchor_identifier"));
+                        $anchor = FieldRuleAnchorType::getTypeFromIdentifier($get("anchor_identifier"));
                         return [$anchor->settingsComponent($this->form, $data["custom_fields"])];
                     }),
             ]);
@@ -101,7 +101,7 @@ class FieldModalRuleEditorModal extends Component
                     ->live()
                     ->afterStateUpdated(function ($state, $set){
                         if(is_null($state)) return;
-                        $set("rule_data", FieldRuleType::getRuleFromName($state)?->getCreateRuleData());
+                        $set("rule_data", FieldRuleType::getTypeFromIdentifier($state)?->getCreateRuleData());
                     }),
                 Group::make()
                     ->statePath("rule_data")
@@ -110,7 +110,7 @@ class FieldModalRuleEditorModal extends Component
                         $data = $livewire->data;
 
                         $data = CustomFieldUtils::flattDownToCustomFields($data);
-                        $rule = FieldRuleType::getRuleFromName($get("rule_identifier"));
+                        $rule = FieldRuleType::getTypeFromIdentifier($get("rule_identifier"));
                         return [$rule->settingsComponent($this->form, $data["custom_fields"])];
                     }),
             ]);

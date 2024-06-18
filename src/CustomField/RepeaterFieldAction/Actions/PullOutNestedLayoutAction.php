@@ -2,11 +2,10 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\RepeaterFieldAction\Actions;
 
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomFieldType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\NestedLayoutType\CustomEggLayoutType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\NestedLayoutType\CustomNestLayoutType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\CustomFieldType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\NestedLayoutType\CustomEggLayoutType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\NestedLayoutType\CustomNestLayoutType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\RepeaterFieldAction\RepeaterFieldAction;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor\Helper\CustomFormEditorHelper;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Get;
@@ -21,7 +20,7 @@ class PullOutNestedLayoutAction extends RepeaterFieldAction
                     return false;
                 $typeKey = $get("../../type");
                 if(is_null($typeKey)) return true;
-                $type = CustomFieldType::getTypeFromName($typeKey);
+                $type = CustomFieldType::getTypeFromIdentifier($typeKey);
                 if(is_null($type)) return true;
                 return $type instanceof CustomEggLayoutType || $type instanceof CustomNestLayoutType;
             })
@@ -41,7 +40,7 @@ class PullOutNestedLayoutAction extends RepeaterFieldAction
             ->hidden(function ($arguments, $state, $get) {
 
                 if(is_null($get("../../../../custom_fields")) || is_null($get("../../type"))) return true;
-                $type = CustomFieldType::getTypeFromName($get("../../type"));
+                $type = CustomFieldType::getTypeFromIdentifier($get("../../type"));
                 return $type instanceof CustomEggLayoutType;
             });
     }

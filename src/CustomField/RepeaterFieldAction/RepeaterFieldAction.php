@@ -3,8 +3,8 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\RepeaterFieldAction;
 
 use Closure;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomFieldType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\Templates\TemplateFieldType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\CustomFieldType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\TemplatesType\TemplateFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Filament\Forms\Components\Actions\Action;
@@ -39,9 +39,9 @@ abstract class RepeaterFieldAction
 
             if(empty($item["general_field_id"]) && empty($item["type"]) && $type instanceof TemplateFieldType) return true;
 
-            if (empty($item["general_field_id"])) return $item["type"] == $type::getFieldIdentifier();
+            if (empty($item["general_field_id"])) return $item["type"] == $type::identifier();
             $gen = GeneralField::cached($item["general_field_id"]);
-            return $gen->type == $type::getFieldIdentifier();
+            return $gen->type == $type::identifier();
         };
     }
 

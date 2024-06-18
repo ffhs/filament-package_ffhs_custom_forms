@@ -3,7 +3,7 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor\CustomFieldEditModal\Rule;
 
 use Closure;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomFieldType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\FieldRuleAnchorType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\FieldRuleType;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor\UseComponentInjection;
@@ -58,9 +58,9 @@ class FieldModalRuleSection extends Section
             ->expandAllAction(fn(Action $action)=> $action->hidden())
             ->orderColumn("execution_order")
             ->itemLabel(function($state,$get,$component){
-                $fieldRuleAnchorType = FieldRuleAnchorType::getAnchorFromName($state["anchor_identifier"]);
+                $fieldRuleAnchorType = FieldRuleAnchorType::getTypeFromIdentifier($state["anchor_identifier"]);
                 if($state["rule_identifier"] == null) return "Error";
-                $fieldRuleType = FieldRuleType::getRuleFromName($state["rule_identifier"]);
+                $fieldRuleType = FieldRuleType::getTypeFromIdentifier($state["rule_identifier"]);
                 return $fieldRuleAnchorType->getDisplayName($state,$component,$get) . " --> " . $fieldRuleType->getDisplayName($state,$component,$get);
             })
             ->collapsible(false)

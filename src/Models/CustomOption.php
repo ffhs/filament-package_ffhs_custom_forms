@@ -2,12 +2,14 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Models;
 
+use Ffhs\FilamentPackageFfhsCustomForms\Caching\CachedModel;
+use Ffhs\FilamentPackageFfhsCustomForms\Domain\HasFormIdentifier;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Spatie\Translatable\HasTranslations;
 
 /**
  * @property int $id
- * @property string $name_de
- * @property string $name_en
+ * @property string $name
  * @property string $identifier
  * @property string|null $icon
  *
@@ -17,10 +19,12 @@ class CustomOption extends CachedModel
 {
     use HasFormIdentifier;
     use HasFactory;
+    use HasTranslations;
+
+    public $translatable = ['name'];
 
     protected $fillable = [
-        'name_de',
-        'name_en',
+        'name',
         'identifier',
         'icon',
     ];

@@ -39,7 +39,6 @@ class CustomFieldUtils
             else $results[$key] = $value;
         }
 
-
         return $results;
     }
 

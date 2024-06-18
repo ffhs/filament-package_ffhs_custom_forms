@@ -2,7 +2,7 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\RepeaterFieldAction\Actions;
 
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\NestedLayoutType\CustomNestLayoutType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\NestedLayoutType\CustomNestLayoutType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\RepeaterFieldAction\RepeaterFieldAction;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor\CustomFieldEditModal\CustomFieldEditModal;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor\Helper\CustomFormEditorHelper;
@@ -20,8 +20,8 @@ class NewEggActionComponent extends RepeaterFieldAction
         $eggType = $nestType->getEggType();
 
         return [
-            "identify_key" => uniqid(),
-            "type" => $eggType::getFieldIdentifier(),
+            "identifier" => uniqid(),
+            "type" => $eggType::identifier(),
             "options" => $eggType->getDefaultTypeOptionValues(),
             "is_active" => true,
         ];

@@ -2,11 +2,11 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\Type;
 
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomFieldType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomOption\CustomOptionType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\FieldRuleType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\HasRulePluginTranslate;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FormMapper;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldMapper;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\FieldRule;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
@@ -90,10 +90,10 @@ class ChangeOptionRuleType extends FieldRuleType
             if(!$anchorDecisions) $options= $component->evaluate($optionsOld);
             else{
                 $customField->customOptions =  $customField->customOptions->whereIn("identifier",$rule->rule_data["customOptions"]);
-                $options =  FormMapper::getAvailableCustomOptions($customField);
+                $options =  FieldMapper::getAvailableCustomOptions($customField);
             }
-            $currentValue = $get(FormMapper::getIdentifyKey($customField));
-            if(!array_key_exists($currentValue,$options->toArray())) $set(FormMapper::getIdentifyKey($customField), null);
+            $currentValue = $get(FieldMapper::getIdentifyKey($customField));
+            if(!array_key_exists($currentValue,$options->toArray())) $set(FieldMapper::getIdentifyKey($customField), null);
             return $options;
         });
 

@@ -2,11 +2,11 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\Type;
 
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomFieldType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\CustomLayoutType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\LayoutType\CustomLayoutType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\FieldRuleType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\HasRulePluginTranslate;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FormMapper;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldMapper;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\FieldRule;
 use Filament\Forms\Components\Component;
@@ -59,7 +59,7 @@ class DisabledRuleType extends FieldRuleType
             $anchor = $this->canRuleExecute($component,$rule);
             $disabled = $setting?!$anchor:$anchor;
             if(!$disabled) return $component->evaluate($isDisabledOld);
-            $set(FormMapper::getIdentifyKey($customField),null);
+            $set(FieldMapper::getIdentifyKey($customField),null);
             return true;
         });
     }

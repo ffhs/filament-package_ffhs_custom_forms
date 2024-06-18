@@ -27,7 +27,7 @@ return new class () extends Migration {
 
 
             //That doesn't can be null if general_field_id are null
-            $table->string('identify_key')->nullable();
+            $table->string('identifier')->nullable();
 
 
             //FieldOptions
@@ -43,7 +43,7 @@ return new class () extends Migration {
             $table->boolean("is_active")->default(true);
 
 
-            $table->unique(['identify_key', 'custom_form_id']);
+            $table->unique(['identifier', 'custom_form_id']);
             $table->timestamps();
         });
     }

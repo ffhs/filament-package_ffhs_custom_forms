@@ -18,7 +18,7 @@ class CustomFormSaveHelper {
         // Mapping and combining custom fields
         $customFieldsIdentify = self::mapFields(
             $customForm->customFieldsWithTemplateFields,
-            fn(CustomField $customField) => $customField->getInheritState()["identify_key"]
+            fn(CustomField $customField) => $customField->identifier
         );
 
         self::prepareFormComponents($customFieldsIdentify, $form);
@@ -30,7 +30,7 @@ class CustomFormSaveHelper {
         // Mapping and combining field answers
         $fieldAnswersIdentify = self::mapFields(
             $formAnswerer->customFieldAnswers()->get(),
-            fn(CustomFieldAnswer $answer) => $answer->customField->getInheritState()["identify_key"]
+            fn(CustomFieldAnswer $answer) => $answer->customField->identifier
         );
 
         self::saveWithoutPreparation($formData, $customFieldsIdentify, $fieldAnswersIdentify, $formAnswerer);
