@@ -3,6 +3,7 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\Resources;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\CustomFieldType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormConfiguration\DynamicFormConfiguration;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Ffhs\FilamentPackageFfhsCustomForms\Resources\GeneralFieldsResource\Pages\{CreateGeneralField,
     EditGeneralField,
@@ -64,10 +65,10 @@ class GeneralFieldResource extends Resource
     private static function getTranslationTab(string $location, string $label): Tab {
         return Tab::make($label)
             ->schema([
-                TextInput::make("name_" . $location)
+                TextInput::make("name")
                     ->label("Name")
                     ->required(),
-                TextInput::make("tool_tip_" . $location)
+                TextInput::make("tool_tip")
                     ->label(__(self::langPrefix . 'tool_tip')),
             ]);
     }
@@ -184,10 +185,7 @@ class GeneralFieldResource extends Resource
                     ->label("Icon")
                     ->icon(fn($state)=> $state),
                 Tables\Columns\TextColumn::make('name')
-                    ->label(__(self::langPrefix . 'label'))
-                    ->getStateUsing(function ($record){
-                        return $record->toArray()["name_" .app()->getLocale()];
-                    }),
+                    ->label(__(self::langPrefix . 'label')),
 
                 Tables\Columns\TextColumn::make('type')
                     ->label(__(self::langPrefix .'type'))
