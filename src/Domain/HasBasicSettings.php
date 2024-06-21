@@ -18,9 +18,9 @@ trait HasBasicSettings
         return array_merge(
             $this->extraOptionsBeforeBasic(),
             [
-                'column_span' => new ColumnSpanOption(),
-                'in_line_label' => (new InLineLabelOption())->modifyComponent(fn($toggle) => $toggle->columnStart(1)),
-                'new_line_option' => new NewLineOption(),
+                'column_span' => ColumnSpanOption::make(),
+                'in_line_label' => InLineLabelOption::make()->modifyComponent(fn($toggle) => $toggle->columnStart(1)),
+                'new_line_option' => NewLineOption::make(),
             ],
             $this->extraOptionsAfterBasic()
         );

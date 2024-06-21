@@ -8,6 +8,8 @@ use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\EditCustomForm
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor\CustomFieldList\EditorCustomFieldList;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor\Helper\CustomFormEditorSaveHelper;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
+use Filament\Forms\Components\Actions;
+use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Fieldset;
 
@@ -34,11 +36,13 @@ class CustomFormEditor extends Component {
 
         $this->schema(fn(CustomForm $record) => [
 
+            Action::make("tets")
+                ->action(fn(Actions\ActionContainer $component) => dd($component->getLivewire()))
+                ->toFormComponent(),
 
-            EditCustomForm::make("custom_fields")
+            EditCustomForm::make("form")
                 ->columnSpanFull(),
             #->live()->afterStateUpdated(fn($state, $old)=> dd($state,$old)),
-
 
         ]);
 

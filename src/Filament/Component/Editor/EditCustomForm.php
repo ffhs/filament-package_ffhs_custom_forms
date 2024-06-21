@@ -4,14 +4,11 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor;
 
 use Closure;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\CustomFieldType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Types\TextType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\LayoutType\Types\GroupType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\LayoutType\Types\SectionType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldUtils;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor\Helper\CustomFormEditorHelper;
 use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Field;
+use Filament\Forms\Components\Group;
 
 class EditCustomForm extends Field
 {
@@ -20,6 +17,7 @@ class EditCustomForm extends Field
     protected string $view = 'filament-package_ffhs_custom_forms::filament.components.custom_field-edit';
 
     protected array $actionComponents = [];
+    protected array $frontOptionsComponents = [];
 
     protected Closure|array $childComponents = [];
 
@@ -27,38 +25,44 @@ class EditCustomForm extends Field
     protected function setUp(): void {
         $this->childComponents(function (): array {
             if(empty($this->actionComponents)) $this->generateChildActions();
+            if(empty($this->frontOptionsComponents)) $this->generateFrontTypeOptions();
             $actionComponents = collect($this->actionComponents)->flatten(2)->toArray();
+            $frontOptionsComponents= collect($this->frontOptionsComponents)->map(fn(ComponentContainer $container) => $container->getComponents())->flatten(2)->toArray();
 
-            return [...$actionComponents];
+            return [...$actionComponents, ...$frontOptionsComponents];
         });
     }
 
+    public function getFieldState(): mixed {
+        return $this->getState()["custom_fields"];
+    }
 
-   /* public function getState(): mixed {
-        $state = parent::getState();
 
-        dump($state);
+    /* public function getState(): mixed {
+         $state = parent::getState();
 
-       if(empty($state)){
-           dd("ewtf");
-            return [
-                uniqid() => ['name' => "Test1" , "type" => TextType::identifier()],
-                uniqid() => ['name' => "Test2", "type" => SectionType::identifier()],
-                uniqid() => ['name' => "Test3", "type" => TextType::identifier()],
-                uniqid() => [
-                    'name' => "Test4",
-                    "type" => GroupType::identifier(),
-                    'custom_fields' => [
-                        uniqid() => ['name' => "Test4-1", "type" => TextType::identifier()],
-                        uniqid() => ['name' => "Test4-2", "type" => TextType::identifier()],
-                    ],
-                ],
-                uniqid() => ['name' => "Test5", "type" => TextType::identifier()],
-            ];
-        }
+         dump($state);
 
-        return $state;
-    }*/
+        if(empty($state)){
+            dd("ewtf");
+             return [
+                 uniqid() => ['name' => "Test1" , "type" => TextType::identifier()],
+                 uniqid() => ['name' => "Test2", "type" => SectionType::identifier()],
+                 uniqid() => ['name' => "Test3", "type" => TextType::identifier()],
+                 uniqid() => [
+                     'name' => "Test4",
+                     "type" => GroupType::identifier(),
+                     'custom_fields' => [
+                         uniqid() => ['name' => "Test4-1", "type" => TextType::identifier()],
+                         uniqid() => ['name' => "Test4-2", "type" => TextType::identifier()],
+                     ],
+                 ],
+                 uniqid() => ['name' => "Test5", "type" => TextType::identifier()],
+             ];
+         }
+
+         return $state;
+     }*/
 
 
 
@@ -79,22 +83,10 @@ class EditCustomForm extends Field
     }
 
 
-    public function getEditFieldActionContainer(string $key) {
-        if(empty($this->actionComponents)) $this->generateChildActions();
-        try {
-            return ComponentContainer::make($this->getLivewire())
-                ->components($this->actionComponents[$key])
-                ->parentComponent($this);
-        }catch (\ErrorException $e){
-            dd($this->getState(), $e);
-        }
-    }
-
-
     public function generateChildActions(): void {
         $this->actionComponents =  [];
 
-        $this->generateFieldActions($this->getState());
+        $this->generateFieldActions($this->getFieldState());
     }
 
     protected function generateFieldActions(array $fields): void {
@@ -111,6 +103,49 @@ class EditCustomForm extends Field
         }
     }
 
+
+    public function getEditFieldActionContainer(string $key) {
+        if(empty($this->actionComponents)) $this->generateChildActions();
+        return ComponentContainer::make($this->getLivewire())
+            ->components($this->actionComponents[$key])
+            ->parentComponent($this);
+    }
+
+
+    public function generateFrontTypeOptions(): void {
+        $this->frontOptionsComponents =  [];
+
+        $this->generateFrontTypeOptionsState($this->getFieldState());
+    }
+
+    protected function generateFrontTypeOptionsState(array $fields): void {
+        foreach ($fields as $key => $field){
+
+            $components = CustomFieldUtils::getFieldTypeFromRawDate($field)?->getExtraFrontTypeOptionComponents() ?? [];
+            $container = ComponentContainer::make($this->getLivewire())
+                ->parentComponent($this)
+                ->components([
+                    Group::make($components)->statePath('frontOptions.' . $key)->columns(),
+                ]);
+
+
+            $this->frontOptionsComponents[$key] = $container;
+
+            if(array_key_exists("custom_fields", $field)) $this->generateFrontTypeOptionsState($field["custom_fields"]);
+        }
+    }
+
+
+    public function getFrontTypeOptions($key): ComponentContainer{
+        if(empty($this->frontOptionsComponents)) $this->generateFrontTypeOptions();
+        return $this->frontOptionsComponents[$key];
+    }
+
+public function getType ($fieldData): string {
+        $type = CustomFieldUtils::getFieldTypeFromRawDate($fieldData);
+        if($type == null) return "text";
+       return CustomFieldUtils::getFieldTypeFromRawDate($fieldData)::identifier();
+    }
 
     public function hasFieldComponent($state):bool{
         return CustomFieldUtils::getFieldTypeFromRawDate($state)?->fieldEditorExtraComponent($state) ?? false;

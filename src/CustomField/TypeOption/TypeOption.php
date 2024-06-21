@@ -8,6 +8,10 @@ use Filament\Forms\Components\Component;
 
 abstract class TypeOption {
 
+    public static function make(): static {
+        return new static();
+    }
+
     protected ?Closure $modifyComponentCloser = null;
     protected ?Closure $modifyDefault = null;
 

@@ -11,7 +11,7 @@ class FastTypeOption extends TypeOption
     private mixed $defaultValue;
     private Component $component;
 
-    public static function make(mixed $defaultValue, Component $component): FastTypeOption {
+    public static function makeFast(mixed $defaultValue, Component $component): FastTypeOption {
         return new FastTypeOption($defaultValue,$component);
     }
 

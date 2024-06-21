@@ -11,6 +11,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\FastTypeO
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\MaxLengthOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\MinLengthOption;
 use Ffhs\FilamentPackageFfhsCustomForms\Domain\HasCustomFormPackageTranslation;
+use Ffhs\FilamentPackageFfhsCustomForms\Domain\HasFrontLayoutSettings;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
@@ -20,6 +21,7 @@ class TextType extends CustomFieldType
 {
     use HasCustomFormPackageTranslation;
     use HasBasicSettings;
+    use HasFrontLayoutSettings;
 
     public static function identifier(): string {return "text";}
 

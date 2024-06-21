@@ -23,7 +23,7 @@ class EditCustomForm extends EditRecord
     }
 
     protected function fillForm(): void {
-        $this->form->fill(EditCustomFormLoadHelper::load($this->getRecord()));
+        $this->form->fill(['form' => EditCustomFormLoadHelper::load($this->getRecord())]);
     }
 
 

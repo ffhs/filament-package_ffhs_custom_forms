@@ -73,7 +73,6 @@
             }
 
 
-
             function runForProperties(callable) {
                  root.querySelectorAll('[customField\\:property]').forEach(component => {
                     let key = null;
@@ -87,7 +86,7 @@
                             currentParent = currentParent.parentNode;
                     }
 
-                    key = key+ '.' + component.getAttribute('customField:property')
+                    key = 'custom_fields.'+key+ '.' + component.getAttribute('customField:property')
                     let staticKey = statePath+ '.' + key
                     callable(key, staticKey, component )
                  })
@@ -95,10 +94,11 @@
 
 
             runForProperties((key, staticKey, component) => {
-                 component.setAttribute('value', getNestedValue(state, key))
+                 let value = getNestedValue(state, key);
+                 if(value == null) component.setAttribute('value', ' ')
+                 else component.setAttribute('value', value)
                  component.setAttribute(wireModel, staticKey)
             })
-
 
             root.querySelectorAll('[customField\\:drag]').forEach(fieldEl =>{
                 fieldEl.addEventListener('dragstart', e => {
@@ -156,7 +156,7 @@
         <x-filament::fieldset custom-form customField:has-fields class>
             <!--- toDo Setze wieder auf config-->
             <div style="--cols-default: repeat(1, minmax(0, 1fr)); --cols-lg: repeat(2, minmax(0, 1fr));" class="grid grid-cols-[--cols-default] lg:grid-cols-[--cols-lg] fi-fo-component-ctn gap-6">
-                @foreach($field->getState() as $key => $fieldData)
+                @foreach($field->getState()['custom_fields'] as $key => $fieldData)
                     @include('filament-package_ffhs_custom_forms::custom_form_edit.custom-field')
                 @endforeach
             </div>

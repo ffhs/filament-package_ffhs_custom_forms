@@ -4,7 +4,8 @@
     use function Filament\Support\prepare_inherited_attributes;
     use Illuminate\View\ComponentAttributeBag;
 
-    $icon = new HtmlString( "<span class='flex'>" . Blade::render('<x-'.$iconMap[$fieldData['type']]. "/>") . "<span style='padding-left: 10px;'>" . $typeNameMap[$fieldData['type']] . "</span></span>") ;
+    $type = $getType($fieldData);
+    $icon = new HtmlString( "<span class='flex'>" . Blade::render('<x-'.$iconMap[$type]. "/>") . "<span style='padding-left: 10px;'>" . $typeNameMap[$type] . "</span></span>") ;
 @endphp
 
 <div draggable="true" customField:drag customField:uuid="{{$key}}" class="col-span-1">
@@ -32,6 +33,10 @@
             />
         </x-filament::input.wrapper>
 
+
+        <div customField:uuid="front-options">
+            {{$getFrontTypeOptions($key)}}
+        </div>
 
         @if($field->hasFieldComponent($fieldData))
             @include($getFieldComponent($fieldData))
