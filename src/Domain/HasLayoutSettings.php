@@ -5,13 +5,16 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Domain;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\ColumnSpanOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\InLineLabelOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\NewLineOption;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\TypeOptionGroup;
 
-trait HasFrontLayoutSettings
+trait HasLayoutSettings
 {
-    public function getFrontTypeOptions(): array{
+    public function getExtraTypeOptions(): array{
         return [
-            'column_span' => ColumnSpanOption::make(),
-            'new_line_option' => NewLineOption::make(),
+            TypeOptionGroup::make("Layout", [ //toDo Tranlsate
+                'column_span' => ColumnSpanOption::make(),
+                'new_line_option' => NewLineOption::make(),
+            ])
         ];
     }
 

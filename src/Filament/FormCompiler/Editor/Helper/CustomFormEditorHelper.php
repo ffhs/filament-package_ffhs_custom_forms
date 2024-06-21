@@ -11,34 +11,6 @@ use Filament\Forms\Get;
 class CustomFormEditorHelper
 {
 
-    public static function getFieldData(array $state, string $fieldKey): ?array{
-        $path = static::getFieldPath($state, $fieldKey);
-        if($path == null) return null;
-        return data_get($state, $path);
-    }
-
-    //ToDo Abhängig vom Typen machen
-    public static function getFieldPath(array $state, string $fieldKey, $path = ""): ?string{
-        if(array_key_exists($fieldKey, $state)) return $path . ($path==""?'':'.'). $fieldKey;
-        foreach ($state as $key => $field) {
-            if(!array_key_exists("custom_fields", $field)) return null;
-            $tempPath = $path . ($path==""?'':'.') . $key . ".custom_fields";
-            $data = static::getFieldPath($field["custom_fields"], $fieldKey, $tempPath);
-            if($data !== null) return $data ;
-        }
-        return null;
-    }
-
-
-
-
-
-
-
-
-
-
-
 
 
     public static function getUsedGeneralFieldIds(array $customFields):array {

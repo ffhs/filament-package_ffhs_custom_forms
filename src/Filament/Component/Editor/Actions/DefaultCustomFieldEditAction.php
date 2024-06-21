@@ -22,7 +22,7 @@ class DefaultCustomFieldEditAction extends Action
 
        $this->closeModalByClickingAway(false);
 
-       $this->action(fn($state, $arguments) =>CustomFormEditorHelper::getFieldData($state, $arguments['item']));
+       $this->action(fn($state, $arguments) => dd($arguments['item'],$state));
        $this->fillForm(fn($state, $arguments) => CustomFormEditorHelper::getFieldData($state,$arguments['item']));
       #$this->form([TextInput::make("")]);
 

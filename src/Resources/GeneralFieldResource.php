@@ -136,7 +136,7 @@ class GeneralFieldResource extends Resource
                     ->visible(function($get){
                         if(is_null($get("type"))) return false;
                         $type = CustomFieldType::getTypeFromIdentifier($get("type"));
-                        return $type->hasExtraGeneralTypeOptions();
+                        return count($type->getExtraGeneralTypeOptions()) > 0;
                     })
                     ->schema(function($get){
                         if(is_null($get("type"))) return[];

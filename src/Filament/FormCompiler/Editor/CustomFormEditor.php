@@ -4,7 +4,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor;
 
 use Closure;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormEditorValidation\FormEditorValidation;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\EditCustomForm;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\EditCustomFormFields;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor\CustomFieldList\EditorCustomFieldList;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor\Helper\CustomFormEditorSaveHelper;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
@@ -40,7 +40,7 @@ class CustomFormEditor extends Component {
                 ->action(fn(Actions\ActionContainer $component) => dd($component->getLivewire()))
                 ->toFormComponent(),
 
-            EditCustomForm::make("form")
+            EditCustomFormFields::make("custom_fields")
                 ->columnSpanFull(),
             #->live()->afterStateUpdated(fn($state, $old)=> dd($state,$old)),
 

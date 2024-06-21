@@ -110,19 +110,20 @@ abstract class CustomFieldType extends Type
 
     // Extra Options
 
-    public function hasExtraGeneralTypeOptions(): bool {
-        return !empty($this->getExtraGeneralTypeOptions());
-    }
+    /* public function hasExtraGeneralTypeOptions(): bool {
+         return !empty($this->getExtraGeneralTypeOptions());
+     }*/
 
-    public function getExtraGeneralTypeOptionComponents(): array {
-        if (!$this->hasExtraGeneralTypeOptions()) return [];
-        $components = [];
-        foreach ($this->getExtraGeneralTypeOptions() as $key => $option) {
-            /**@var TypeOption $option */
+     public function getExtraGeneralTypeOptionComponents(): array {
+         return $this->getOptionsComponents($this->getExtraGeneralTypeOptions());
+        /* if (!$this->hasExtraGeneralTypeOptions()) return [];
+         $components = [];
+         foreach ($this->getExtraGeneralTypeOptions() as $key => $option) {
+             /**@var TypeOption $option *//*
             $component = $option->getModifyComponent($key);
             $components[] = $component;
         }
-        return $components;
+        return $components;*/
     }
 
 
@@ -131,9 +132,6 @@ abstract class CustomFieldType extends Type
         return $this->getOptionsComponents($this->getExtraTypeOptions());
     }
 
-    public function getExtraFrontTypeOptionComponents(): array {
-       return $this->getOptionsComponents($this->getFrontTypeOptions());
-    }
 
     protected function getOptionsComponents(array $options): array {
         if (empty($options)) return [];
@@ -141,7 +139,6 @@ abstract class CustomFieldType extends Type
         foreach ($options as $key => $option) {
             /**@var TypeOption $option */
             $component = $option->getModifyComponent($key);
-            $component = $component->extraAttributes(['customField:filamentproperty'=> $key]);
             $components[] = $component;
         }
         return $components;
@@ -196,22 +193,18 @@ abstract class CustomFieldType extends Type
         return [];
     }
 
-    public function getFrontTypeOptions(): array {
-        return [];
-    }
 
-
-
-    /*   //ToDo Mutate answerers (Save,  Create)
+     //ToDo Mutate answerers (Save,  Create)
     public function canBeDeactivate(): bool {
           return true;
-      }
-      public function canBeRequired(): bool {
-          return true;
-      }
-      public function hasToolTips(): bool {
-          return true;
-      }*/
+         }
+
+    /*public function canBeRequired(): bool {
+                return true;
+            }
+            public function hasToolTips(): bool {
+                return true;
+            }*/
 
 
     // null means that it isn't overwritten

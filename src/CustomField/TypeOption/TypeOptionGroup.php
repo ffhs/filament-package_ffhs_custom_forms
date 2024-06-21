@@ -7,7 +7,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\Domain\Type;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Filament\Forms\Components\Component;
 
-abstract class TypeOptionPack {
+abstract class TypeOptionGroup {
     protected array $typeOptions;
     protected string $name;
     protected ?string $icon;
@@ -46,7 +46,7 @@ abstract class TypeOptionPack {
         return $this->name;
     }
 
-    public function setName(string $name): TypeOptionPack {
+    public function setName(string $name): TypeOptionGroup {
         $this->name = $name;
         return  $this;
     }
@@ -55,7 +55,7 @@ abstract class TypeOptionPack {
         return $this->icon;
     }
 
-    public function setIcon(?string $icon): TypeOptionPack {
+    public function setIcon(?string $icon): TypeOptionGroup {
         $this->icon = $icon;
         return  $this;
     }

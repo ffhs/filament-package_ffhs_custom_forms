@@ -2,9 +2,6 @@
     use function Filament\Support\prepare_inherited_attributes;
     $statePath = $getStatePath();
     $wireModel = 'wire:model' . ($isLive() ? '.live': '');
-    $iconMap = $getIconMap();
-    $typeNameMap = $getTypeNameMap();
-
 @endphp
 
 
@@ -154,9 +151,9 @@
 
 
         <x-filament::fieldset custom-form customField:has-fields class>
-            <!--- toDo Setze wieder auf config-->
+            <!--- toDo Setze wieder auf config coloums-->
             <div style="--cols-default: repeat(1, minmax(0, 1fr)); --cols-lg: repeat(2, minmax(0, 1fr));" class="grid grid-cols-[--cols-default] lg:grid-cols-[--cols-lg] fi-fo-component-ctn gap-6">
-                @foreach($field->getState()['custom_fields'] as $key => $fieldData)
+                @foreach($field->getStructureState() as $key => $structure)
                     @include('filament-package_ffhs_custom_forms::custom_form_edit.custom-field')
                 @endforeach
             </div>
