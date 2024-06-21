@@ -4,7 +4,6 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\Actions;
 
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor\Helper\CustomFormEditorHelper;
 use Filament\Forms\Components\Actions\Action;
-use Filament\Forms\Components\TextInput;
 
 class DefaultCustomFieldEditAction extends Action
 {

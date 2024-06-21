@@ -5,9 +5,11 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldUtils;
 use Filament\Forms\ComponentContainer;
+use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Field;
 use Filament\Forms\Components\TextInput;
+use Filament\Support\Enums\Alignment;
 use Illuminate\Support\Collection;
 
 class EditCustomFormFields extends Field
@@ -78,11 +80,11 @@ class EditCustomFormFields extends Field
         if (is_null($type)) $actions = [];
         else $actions = $type->getEditorActions($key, $field);
 
-        $components = array_map(fn(Action $action) => $action->mergeArguments(["item" => $key])->toFormComponent(), $actions);
+        $components = array_map(fn(Action $action) => $action->mergeArguments(["item" => $key]), $actions);
 
         $container = ComponentContainer::make($this->getLivewire())
             ->parentComponent($this)
-            ->components($components);
+            ->components([Actions::make($components)->columnSpanFull()->alignment(Alignment::Right)]);
 
         $this->actionContainers[$key] = $container;
     }

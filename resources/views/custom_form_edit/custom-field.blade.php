@@ -17,7 +17,7 @@
         :attributes="prepare_inherited_attributes(new ComponentAttributeBag())"
     >
 
-        <div style="width: 20px; margin-left: 95%; margin-top: -20px; ">{{$getFieldActions($key)}}</div>
+        <div style="width: 50%; margin-left: 50%; margin-top: -20px; ">{{$getFieldActions($key)}}</div>
 
 
 

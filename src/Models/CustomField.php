@@ -103,36 +103,6 @@ class CustomField extends ACustomField
     }
 
 
-    /*private function getInheritStateFromArrays($thisValues, $generalFieldArray): array {
-        if(is_null($generalFieldArray)) return $thisValues;
-        $output= array_replace($thisValues, array_filter($generalFieldArray, fn($value) => !is_null($value)));
-        unset($output["id"]);
-        unset($output["general_field_id"]);
-        unset($output["created_at"]);
-        unset($output["updated_at"]);
-        return $output;
-    }*/
-
-
-    /* /**
-      * @return array there are the stat from this Field and the Stats from the GeneralField
-      */
-    /*public function getInheritState():array{
-
-        $generalFiledArray = $this->isGeneralField()?$this->generalField->toArray():null;
-        return $this->getInheritStateFromArrays($this->toArray(), $generalFiledArray);
-    }*/
-
-    /*/**
-     * @return array there are the stat from this Field and the Stats from the GeneralField
-     */
-    /* public function getInheritStatsFromOrigin(): array {
-         $generalFieldId = $this->getOriginal("general_field_id");
-         $generalFieldArray = is_null($generalFieldId)? null: GeneralField::cached($generalFieldId)->toArray();
-         return $this->getInheritStateFromArrays($this->getOriginal(), $generalFieldArray);
-     }*/
-
-
     //Custom Form
     public function customForm(): BelongsTo {
         return $this->belongsTo(CustomForm::class);
@@ -182,47 +152,5 @@ class CustomField extends ACustomField
     public function loadEditData(): array {
         return $this->getType()->loadEditData($this);
     }
-
-
-    /*//Layout
-     public function allCustomFieldsInLayout(): HasMany { //ToDo i do it to remove? (Not now)
-         if(!($this->getType() instanceof CustomLayoutType))
-             return $this->hasMany(CustomField::class, "custom_form_id","custom_form_id")
-                 ->where("id",null);
-         return $this->hasMany(CustomField::class, "custom_form_id", "custom_form_id")
-             ->where("form_position", ">", $this->form_position)
-             ->where("form_position", "<=", $this->layout_end_position);
-     }
-
-
-
-     public function customFieldInLayout(): HasMany { //ToDo i do it to remove? (Not now)
-
-         if(!($this->getType() instanceof CustomLayoutType))
-             return $this->hasMany(CustomField::class, "custom_form_id","custom_form_id")
-                 ->where("id",null);
-
-
-         $subQueryAlLayouts =
-             $this->hasMany(CustomField::class, "custom_form_id","custom_form_id")
-                 ->select('form_position','layout_end_position')
-                 ->where("form_position",">", $this->form_position)
-                 ->where("layout_end_position","!=", null);
-
-
-         return $this->hasMany(CustomField::class, "custom_form_id","custom_form_id")
-             ->where("form_position",">", $this->form_position)
-             ->where("form_position","<=", $this->layout_end_position)
-             ->whereNotIn("id",
-                 $this->hasMany(CustomField::class, "custom_form_id","custom_form_id")
-                     ->select("id")
-                     ->rightJoinSub($subQueryAlLayouts, 'sub', function ($join) {
-                         $join->on('custom_fields.form_position', '>', 'sub.form_position')
-                             ->on('custom_fields.form_position', '<=', 'sub.layout_end_position');
-                     })
-             );
-     }*/
-
-
 
 }
