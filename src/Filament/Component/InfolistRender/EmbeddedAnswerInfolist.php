@@ -4,10 +4,10 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\InfolistRender;
 
 
 use Closure;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\UseFieldSplit;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\UseLayoutSplit;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\UsePosSplit;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\UseViewMode;
+use Ffhs\FilamentPackageFfhsCustomForms\Domain\UseFieldSplit;
+use Ffhs\FilamentPackageFfhsCustomForms\Domain\UseLayoutSplit;
+use Ffhs\FilamentPackageFfhsCustomForms\Domain\UsePosSplit;
+use Ffhs\FilamentPackageFfhsCustomForms\Domain\UseViewMode;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Render\CustomFormRender;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Render\SplitCustomFormRender;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;

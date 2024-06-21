@@ -2,6 +2,10 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField;
 
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\CustomFieldType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\TemplatesType\TemplateFieldType;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
+
 class CustomFieldUtils
 {
 
@@ -50,5 +54,17 @@ class CustomFieldUtils
             $data = CustomFieldUtils::flattArrayOneLayer($data);
         }
         return $data;
+    }
+
+    public static function getFieldTypeFromRawDate(array $data): ?CustomFieldType {
+        $isTemplate = array_key_exists("template_id",$data)&& !is_null($data["template_id"]);
+        if($isTemplate) return  TemplateFieldType::make();
+
+        $isGeneral = array_key_exists("general_field_id",$data)&& !is_null($data["general_field_id"]);
+        if($isGeneral){
+            return  GeneralField::cached($data["general_field_id"])->getType();
+        }
+        if(empty($data["type"])) return null;
+        return  CustomFieldType::getTypeFromIdentifier($data["type"]);
     }
 }

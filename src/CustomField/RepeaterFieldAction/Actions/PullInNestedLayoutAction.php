@@ -30,7 +30,7 @@ class PullInNestedLayoutAction extends PullInLayoutAction
 
                 $options = [];
                 foreach ($eggs as $key => $egg) $options[$key] = $egg["name_de"];//ToDo Translate;
-                $upperType = CustomFormEditorHelper::getFieldTypeFromRawDate($upperData);
+                $upperType = CustomFieldUtils::getFieldTypeFromRawDate($upperData);
 
                 /**@var CustomNestLayoutType $upperType*/
                 return [

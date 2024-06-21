@@ -1,6 +1,7 @@
 <?php
 
 namespace Ffhs\FilamentPackageFfhsCustomForms;
+use Ffhs\FilamentPackageFfhsCustomForms\Livewire\FormEditor\CustomFieldComponent;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
@@ -9,6 +10,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralFieldForm;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Artisan;
+use Livewire\Livewire;
 use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
@@ -59,7 +61,9 @@ class FilamentPackageFfhsCustomFormsServiceProvider extends PackageServiceProvid
                         $command->info("Create storage symlink");
                         Artisan::call('storage:link');
                     })
-            );
+            )
+            ->hasViews('filament-package_ffhs_custom_forms');
+
 
     }
 

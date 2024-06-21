@@ -184,8 +184,15 @@ class CustomField extends ACustomField
         return $this->belongsTo(CustomForm::class, "template_id");
     }
 
+    /**
+     * @return array[int, array] int is the continue position, array is the FieldData
+     */
+    public function loadEditData(): array {
+        return $this->getType()->loadEditData($this);
+    }
 
-    //Layout
+
+    /*//Layout
      public function allCustomFieldsInLayout(): HasMany { //ToDo i do it to remove? (Not now)
          if(!($this->getType() instanceof CustomLayoutType))
              return $this->hasMany(CustomField::class, "custom_form_id","custom_form_id")
@@ -194,6 +201,8 @@ class CustomField extends ACustomField
              ->where("form_position", ">", $this->form_position)
              ->where("form_position", "<=", $this->layout_end_position);
      }
+
+
 
      public function customFieldInLayout(): HasMany { //ToDo i do it to remove? (Not now)
 
@@ -220,6 +229,8 @@ class CustomField extends ACustomField
                              ->on('custom_fields.form_position', '<=', 'sub.layout_end_position');
                      })
              );
-     }
+     }*/
+
+
 
 }

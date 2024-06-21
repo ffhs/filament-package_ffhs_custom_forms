@@ -40,7 +40,7 @@ class CustomFormEditorSaveHelper
                 unset($itemData["custom_fields"]);
                 $itemData["layout_end_position"] = $itemOrder-1;
             }
-            else if(CustomFormEditorHelper::getFieldTypeFromRawDate($itemData) instanceof CustomLayoutType){
+            else if(CustomFieldUtils::getFieldTypeFromRawDate($itemData) instanceof CustomLayoutType){
                 unset($itemData["custom_fields"]);
                 $itemData["layout_end_position"] = $itemOrder-1;
             }
@@ -93,7 +93,7 @@ class CustomFormEditorSaveHelper
     }
 
     private static function updateCustomField(CustomField &$customField,array $itemData): void {
-        $type = CustomFormEditorHelper::getFieldTypeFromRawDate($itemData);
+        $type = CustomFieldUtils::getFieldTypeFromRawDate($itemData);
 
         $rawData = $itemData;
         $customField->fill($itemData);

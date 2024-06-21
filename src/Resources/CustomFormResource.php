@@ -14,8 +14,6 @@ use Illuminate\Database\Eloquent\Builder;
 
 class CustomFormResource extends Resource
 {
-
-
     protected static ?string $model = CustomForm::class;
     protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-check';
 
@@ -45,7 +43,8 @@ class CustomFormResource extends Resource
     }
 
     public static function getEloquentQuery(): Builder {
-        return parent::getEloquentQuery()->with(["customFields","customFields.customFieldInLayout"])->where("is_template", false);
+        #return parent::getEloquentQuery()->with(["customFields","customFields.customFieldInLayout"])->where("is_template", false);
+        return parent::getEloquentQuery();
     }
 
     public static function table(Table $table): Table

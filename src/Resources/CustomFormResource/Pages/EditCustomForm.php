@@ -2,7 +2,9 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormResource\Pages;
 
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\EditCustomFormLoadHelper;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor\CustomFormEditor;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Render\Helper\CustomFormLoadHelper;
 use Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormResource;
 use Filament\Actions;
 use Filament\Forms\Components\Section;
@@ -14,9 +16,16 @@ class EditCustomForm extends EditRecord
 {
     protected static string $resource = CustomFormResource::class;
 
+
+
     public function form(Form $form): Form {
         return $form->schema([Section::make()->schema([CustomFormEditor::make()])]);
     }
+
+    protected function fillForm(): void {
+        $this->form->fill(EditCustomFormLoadHelper::load($this->getRecord()));
+    }
+
 
     public function getTitle(): string|Htmlable {
         return $this->record->short_title . " - " . parent::getTitle();

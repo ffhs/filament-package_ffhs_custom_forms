@@ -5,12 +5,14 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Models;
 use Ffhs\FilamentPackageFfhsCustomForms\Caching\CachedModel;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormConfiguration\DynamicFormConfiguration;
 use Ffhs\FilamentPackageFfhsCustomForms\Domain\HasFormIdentifier;
+use Filament\Resources\Concerns\Translatable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
+use Spatie\Translatable\HasTranslations;
 
 /**
  * @property int $id
@@ -37,27 +39,28 @@ class CustomForm extends CachedModel
     ];
 
     protected array $cachedManyRelations = [
-        'customFieldsWithTemplateFields',
-        'customFields'
+        'customFields',
+        'ownedFields'
     ];
 
 
-    public function __get($key) {
+   /* public function __get($key) {
         if($key == 'customFieldsWithTemplateFields') return  $this->cachedFieldsWithTemplates();
         if($key == 'customFields') return  $this->cachedFields();
 
         return parent::__get($key);
-    }
+    }*/
 
-    public function customFields(): HasMany {
-        return $this->hasMany(CustomField::class)->with("fieldRules")->orderBy("form_position"); //ToDo also add Templates field
-    }
+   /* public function ownedFields(): HasMany {
+        return $this->hasMany(CustomField::class)->orderBy("form_position"); //ToDo also add Templates field
+    }*/
 
-    public function customFieldsWithTemplateFields(): Builder {
+    public function customFields(): Builder {
         $baseQuery = CustomField::query()->where("custom_form_id",$this->id);
         $templateQuery = $baseQuery->clone()->select("template_id")->whereNotNull("template_id");
         return $baseQuery->orWhereIn("custom_form_id",$templateQuery)->orderBy("form_position");
     }
+
 
 
     public function getFormConfiguration():DynamicFormConfiguration{
@@ -107,22 +110,22 @@ class CustomForm extends CachedModel
         return  Cache::remember($key,$duration, fn() => $query->get());
     }
 
-    public function cachedFields(): Collection {
-        return $this->cachedFieldsWithTemplates()->where("custom_form_id", $this->id);
+    public function getOwnedFields(): Collection {
+        return $this->cachedCustomFields()->where("custom_form_id", $this->id);
     }
 
-    public function cachedField(int $customFieldId): CustomField|null {
-        return $this->cachedFields()->firstWhere("id",$customFieldId);
+    public function cachedCustomField(int $customFieldId): CustomField|null {
+        return $this->cachedCustomFields()->firstWhere("id",$customFieldId);
     }
 
 
 
-    public function cachedFieldsWithTemplates(): Collection {
+    public function cachedCustomFields(): Collection {
         $cacheKey = $this->getRelationCacheName("fieldsWithTemplates");
         return Cache::remember($cacheKey,
             static::getCacheDuration(),
             function(){
-                $customFields = $this->customFieldsWithTemplateFields()->get();
+                $customFields = $this->customFields()->get();
                 CustomField::addToCachedList($customFields);
 
                 //Cache FieldRules

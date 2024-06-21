@@ -48,7 +48,7 @@ class PullInLayoutAction extends RepeaterFieldAction
         $itemIndexPostion = $this->getKeyPosition($itemIndex, $state);
         if ($itemIndexPostion == 0) return null;
         $upperCustomFieldData = $state[array_keys($state)[$itemIndexPostion - 1]];
-        return CustomFormEditorHelper::getFieldTypeFromRawDate($upperCustomFieldData);
+        return CustomFieldUtils::getFieldTypeFromRawDate($upperCustomFieldData);
     }
 
     protected function getKeyPosition($key, $array): int {

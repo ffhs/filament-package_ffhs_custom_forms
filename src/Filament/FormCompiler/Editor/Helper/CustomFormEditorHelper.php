@@ -11,16 +11,35 @@ use Filament\Forms\Get;
 class CustomFormEditorHelper
 {
 
-    public static function getFieldTypeFromRawDate(array $data): ?CustomFieldType {
-        $isTemplate = array_key_exists("template_id",$data)&& !is_null($data["template_id"]);
-        if($isTemplate) return  TemplateFieldType::make();
-
-        $isGeneral = array_key_exists("general_field_id",$data)&& !is_null($data["general_field_id"]);
-        if($isGeneral){
-            return  GeneralField::cached($data["general_field_id"])->getType();
-        }
-        return  CustomFieldType::getTypeFromIdentifier($data["type"]);
+    public static function getFieldData(array $state, string $fieldKey): ?array{
+        $path = static::getFieldPath($state, $fieldKey);
+        if($path == null) return null;
+        return data_get($state, $path);
     }
+
+    //ToDo Abhängig vom Typen machen
+    public static function getFieldPath(array $state, string $fieldKey, $path = ""): ?string{
+        if(array_key_exists($fieldKey, $state)) return $path . ($path==""?'':'.'). $fieldKey;
+        foreach ($state as $key => $field) {
+            if(!array_key_exists("custom_fields", $field)) return null;
+            $tempPath = $path . ($path==""?'':'.') . $key . ".custom_fields";
+            $data = static::getFieldPath($field["custom_fields"], $fieldKey, $tempPath);
+            if($data !== null) return $data ;
+        }
+        return null;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
 
     public static function getUsedGeneralFieldIds(array $customFields):array {
 
@@ -41,14 +60,27 @@ class CustomFormEditorHelper
     }
 
 
-    public static function getFieldsWithProperty (array $customFields, string $property):array  {
-        $foundFields = array_filter(
-            array_values($customFields),
-            fn($field)=> !empty($field[$property])
-        );
+
+    public static function getFieldsWithProperty (array $customFields, ?string $property=null):array  {
+
+        if(is_null($property)) {
+            $foundFields = $customFields;
+            $foundFields = array_combine(array_keys($foundFields), array_map(function($field){
+                unset($field["custom_fields"]);
+                return $field;
+            },$foundFields));
+        }
+        else{
+            $foundFields = array_filter(
+                array_values($customFields),
+                fn($field)=> !empty($field[$property])
+            );
+        }
+
         $nestedFields = collect(array_values($customFields))
             ->filter(fn($field)=> !empty($field["custom_fields"]))
             ->map(fn($field)=> $field["custom_fields"]);
+
 
 
         $foundFields=  array_filter($foundFields, fn($value)=> !is_null($value));
@@ -63,12 +95,12 @@ class CustomFormEditorHelper
         return $foundFields;
     }
 
-    public static function setCustomFieldInRepeater(array $data, Get $get, $set, ?array $arguments = null): void {
+  /*  public static function setCustomFieldInRepeater(array $data, Get $get, $set, ?array $arguments = null): void {
         $fields = $get("custom_fields");
         if (is_null($arguments)) $fields[uniqid()] = $data;
         else $fields[$arguments["item"]] = $data;
         $set("custom_fields", $fields);
-    }
+    }*/
 
     public static function getRawStateForm($livewireComponent, $form):array {
         //Get RawSate (yeah is possible)

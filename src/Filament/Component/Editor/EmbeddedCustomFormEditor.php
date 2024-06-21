@@ -35,8 +35,7 @@ class EmbeddedCustomFormEditor extends Component implements CanEntangleWithSingu
     protected function setUp(): void {
         parent::setUp();
         $this->label("");
-        $this->columns(1);
-        $this->schema(function(EmbeddedCustomFormEditor $component):array {
+        $this->columns(1); $this->schema(function(EmbeddedCustomFormEditor $component):array {
             return [CustomFormEditor::make()->label($component->getLabel())];
         });
     }

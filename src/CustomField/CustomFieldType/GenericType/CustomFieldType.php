@@ -12,18 +12,15 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\RepeaterFieldAction\Repeater
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\TypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormConfiguration\DynamicFormConfiguration;
 use Ffhs\FilamentPackageFfhsCustomForms\Domain\Type;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\Actions\DefaultCustomFieldEditAction;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\HtmlComponents\HtmlBadge;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Form;
 use Filament\Support\Colors\Color;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Blade;
-use Illuminate\Support\Facades\Lang;
-use Illuminate\Support\HtmlString;
 
 abstract class CustomFieldType extends Type
 {
@@ -87,6 +84,7 @@ abstract class CustomFieldType extends Type
         return ($viewMods[$viewMode])::getInfolistComponent($this, $record, $parameter);
     }
 
+
     public function getViewModes(null|string|DynamicFormConfiguration $dynamicFormConfiguration = null): array {
         $viewMods = $this->viewModes();
 
@@ -111,6 +109,7 @@ abstract class CustomFieldType extends Type
 
         return $viewMods;
     }
+
 
     public function overwriteViewModes(): array {
         $viewModes = config("ffhs_custom_forms.view_modes");
@@ -265,11 +264,11 @@ abstract class CustomFieldType extends Type
     }
 
     //Empty or null mean that the repeater cant open
-    public function editorRepeaterContent(CustomForm $form, array $fieldData): ?array {
+  /*  public function editorRepeaterContent(CustomForm $form, array $fieldData): ?array {
         return null;
-    }
+    }*/
 
-    public function getEditorItemTitle(array $state, CustomForm $form): mixed {
+   /* public function getEditorItemTitle(array $state, CustomForm $form): mixed {
         //Before Icon
         $html = $this->nameBeforeIconFormEditor($state);
 
@@ -293,11 +292,30 @@ abstract class CustomFieldType extends Type
         //Close existing heading and after that reopen it
         $html = '</h4>' . $html . '<h4>';
         return new HtmlString($html);
-    }
+    }*/
 
-    public function getConfigAttribute(string $attribute): mixed {
+
+   public function fieldEditorExtraComponent(array $fieldData): ?string {
+       return null;
+   }
+
+
+   public function getConfigAttribute(string $attribute): mixed {
         return config("ffhs_custom_forms.type_settings." . $this::identifier() . "." . $attribute);
+   }
+
+    /**
+     * @return array[int, array] int is the continue position, array is the FieldData
+     */
+    public function loadEditData(CustomField $field): array {
+        return [$field->form_position+1, $field->attributesToArray()];
     }
 
+    public function getEditorActions(string $key, array $fieldState): array{
+        return [
+           //Action::make('edit-field')->action()
+           DefaultCustomFieldEditAction::make('edit-field-' . $key)
+        ];
+    }
 
 }

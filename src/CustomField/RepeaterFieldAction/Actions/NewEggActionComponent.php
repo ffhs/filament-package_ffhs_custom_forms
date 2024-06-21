@@ -15,7 +15,7 @@ class NewEggActionComponent extends RepeaterFieldAction
 {
 
     protected function getFillForm(array $state, array $arguments):array {
-        $nestType = CustomFormEditorHelper::getFieldTypeFromRawDate($state[$arguments["item"]]);
+        $nestType = CustomFieldUtils::getFieldTypeFromRawDate($state[$arguments["item"]]);
         /**@var CustomNestLayoutType $nestType*/
         $eggType = $nestType->getEggType();
 
@@ -41,7 +41,7 @@ class NewEggActionComponent extends RepeaterFieldAction
             ->icon('carbon-add-alt')
             ->label(function($arguments, $state){
                 /**@var CustomNestLayoutType $type  */
-                $type = CustomFormEditorHelper::getFieldTypeFromRawDate($state[$arguments["item"]]);
+                $type = CustomFieldUtils::getFieldTypeFromRawDate($state[$arguments["item"]]);
                 return $type->getEggType()->getTranslatedName() . " hinzufügen"; //ToDo Translate
             })
             ->closeModalByClickingAway(false)

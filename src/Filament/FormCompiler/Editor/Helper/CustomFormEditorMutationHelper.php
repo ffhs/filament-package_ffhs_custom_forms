@@ -28,7 +28,7 @@ class CustomFormEditorMutationHelper
     public static function mutateOptionData(array $data, CustomForm $customForm): array {
         if(!array_key_exists("options",$data) || is_null($data["options"])) $data["options"] = [];
 
-        $type = CustomFormEditorHelper::getFieldTypeFromRawDate($data);
+        $type = CustomFieldUtils::getFieldTypeFromRawDate($data);
         $field = $customForm->customFields->where("id",$data["id"])->first();
         if($field == null) return $data;
 

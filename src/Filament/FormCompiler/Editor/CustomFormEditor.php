@@ -4,6 +4,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor;
 
 use Closure;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormEditorValidation\FormEditorValidation;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\EditCustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor\CustomFieldList\EditorCustomFieldList;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor\Helper\CustomFormEditorSaveHelper;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
@@ -21,12 +22,28 @@ class CustomFormEditor extends Component {
         return $static;
     }
 
+
+
+
+
     protected function setUp(): void {
         parent::setUp();
         $this->label("");
         $this->columnSpanFull();
         $this->columns(3);
 
+        $this->schema(fn(CustomForm $record) => [
+
+
+            EditCustomForm::make("custom_fields")
+                ->columnSpanFull(),
+            #->live()->afterStateUpdated(fn($state, $old)=> dd($state,$old)),
+
+
+        ]);
+
+
+        return;
         $this->schema(fn(CustomForm $record) => [
             /**
              * List of custom fields and with icons

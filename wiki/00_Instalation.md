@@ -9,11 +9,26 @@ composer.json
         "type":"path",
         "url": "packages/ffhs/filament-package_ffhs_custom_forms"
     }
-},
+}
+```
+
+In config/app.php hinzufügen den `CustomFormServiceProvider`
+```php
+[
+    "providers"=>[
+        ...
+        CustomFormServiceProvider::class
+    ]
+]
 ```
 
 ```bash
 composer update
+``` 
+
+Können
+```bash
+php artisan vendor:publish --tag=filament-package_ffhs_custom_forms-views
 ``` 
 <br>
 

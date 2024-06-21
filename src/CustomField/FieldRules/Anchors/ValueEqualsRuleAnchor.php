@@ -244,7 +244,7 @@ class ValueEqualsRuleAnchor extends FieldRuleAnchorType
 
             $isGeneralField = !empty($field["general_field_id"]);
             $isTemplate = !empty($field["template_id"]);
-            $type = CustomFormEditorHelper::getFieldTypeFromRawDate($field);
+            $type = CustomFieldUtils::getFieldTypeFromRawDate($field);
             $name = 'name_' . Lang::getLocale();
 
             //Skip Layout Types

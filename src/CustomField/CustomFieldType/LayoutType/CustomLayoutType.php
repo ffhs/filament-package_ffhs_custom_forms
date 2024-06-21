@@ -6,9 +6,12 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Layout
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\LayoutType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\CustomFieldType;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\EditCustomFormLoadHelper;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor\CustomFieldList\EditorCustomFieldList;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\HtmlComponents\HtmlBadge;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
+use Filament\Forms\Components\Section;
 
 abstract class CustomLayoutType extends CustomFieldType
 {
@@ -31,4 +34,28 @@ abstract class CustomLayoutType extends CustomFieldType
     public function editorRepeaterContent(CustomForm $form, array $fieldData): ?array {
         return [EditorCustomFieldList::make($form)];
     }
+
+    public function hasSubFields(): bool {
+        return true;
+    }
+
+    public function fieldEditorExtraComponent(array $fieldData): ?string {
+        return 'filament-package_ffhs_custom_forms::custom_form_edit.extra-type-component.layout';
+    }
+
+    public function loadEditData(CustomField $field): array {
+        $data = $field->attributesToArray();
+
+
+        $fields = $field->customForm->getOwnedFields()
+            ->where("form_position", ">", $field->form_position)
+            ->where("form_position", "<=", $field->layout_end_position);
+
+        $fieldData = EditCustomFormLoadHelper::loadFields($fields);
+
+        $data['custom_fields'] = $fieldData;
+
+        return [$field->layout_end_position+1, $data];
+    }
+
 }

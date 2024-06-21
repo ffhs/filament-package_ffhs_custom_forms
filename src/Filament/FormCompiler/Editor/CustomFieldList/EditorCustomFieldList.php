@@ -60,14 +60,14 @@ final class EditorCustomFieldList extends Repeater
             ->saveRelationshipsUsing(fn()=>empty(null))
             ->expandAllAction(fn(Action $action)=> $action->hidden())
             ->collapsed()
-            ->itemLabel(fn(array $state)=> CustomFormEditorHelper::getFieldTypeFromRawDate($state)->getEditorItemTitle($state,$this->form))
+            ->itemLabel(fn(array $state)=> CustomFieldUtils::getFieldTypeFromRawDate($state)->getEditorItemTitle($state,$this->form))
             ->mutateRelationshipDataBeforeFillUsing(function($data){
                 $data = CustomFormEditorMutationHelper::mutateOptionData($data, $this->injection);
                 return CustomFormEditorMutationHelper::mutateRuleDataOnLoad($data, $this->injection);
             })
             ->schema([
                 Group::make(function(Get $get,$state) {
-                    $type = CustomFormEditorHelper::getFieldTypeFromRawDate($state);
+                    $type = CustomFieldUtils::getFieldTypeFromRawDate($state);
                     $contend = $type->editorRepeaterContent($this->injection,$state);
                     return empty($contend)?[]:$contend;
                 }),

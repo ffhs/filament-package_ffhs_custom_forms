@@ -22,7 +22,7 @@ class CustomFieldEditModal extends Component
     protected CustomForm $form;
 
     public static function getEditCustomFormActionModalWith(array $state): string {
-        $type = CustomFormEditorHelper::getFieldTypeFromRawDate($state);
+        $type = CustomFieldUtils::getFieldTypeFromRawDate($state);
         if (!empty($state["general_field_id"])) return 'xl';
         $hasOptions = $type->canBeRequired() || $type->canBeDeactivate() || $type->hasExtraTypeOptions();
         if (!$hasOptions) return 'xl';
@@ -47,7 +47,7 @@ class CustomFieldEditModal extends Component
         $fieldData = $this->fieldData;
 
         $isGeneral = array_key_exists("general_field_id",$fieldData)&& !empty($fieldData["general_field_id"]);
-        $type = CustomFormEditorHelper::getFieldTypeFromRawDate($fieldData);
+        $type = CustomFieldUtils::getFieldTypeFromRawDate($fieldData);
         $columns = $isGeneral?1:2;
 
         $this
