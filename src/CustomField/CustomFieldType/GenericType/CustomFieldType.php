@@ -3,6 +3,7 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\TypeOption;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\TypeOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormConfiguration\DynamicFormConfiguration;
 use Ffhs\FilamentPackageFfhsCustomForms\Domain\Type;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\Actions\DefaultCustomFieldEditAction;
@@ -145,22 +146,24 @@ abstract class CustomFieldType extends Type
     }
 
 
-    public function getDefaultTypeOptionValues(): array {
+    protected function getDefaultTypeOptionValuesFormArray(array $typeOptions): array {
         $defaults = [];
-        foreach ($this->getExtraTypeOptions() as $key => $extraTypeOption) {
+        foreach ($typeOptions as $key => $extraTypeOption) {
+            if($extraTypeOption instanceof TypeOptionGroup){
+                array_merge($defaults, $extraTypeOption->getDefaultValues());
+                continue;
+            }
             /**@var TypeOption $extraTypeOption */
             $defaults[$key] = $extraTypeOption->getModifyDefault();
         }
         return $defaults;
     }
+    public function getDefaultTypeOptionValues(): array {
+         return $this->getDefaultTypeOptionValuesFormArray($this->getExtraTypeOptions());
+    }
 
     public function getDefaultGeneralOptionValues(): array {
-        $defaults = [];
-        foreach ($this->getExtraGeneralTypeOptions() as $key => $extraTypeOption) {
-            /**@var TypeOption $extraTypeOption */
-            $defaults[$key] = $extraTypeOption->getModifyDefault();
-        }
-        return $defaults;
+        return $this->getDefaultTypeOptionValuesFormArray($this->getExtraGeneralTypeOptions());
     }
 
     /*

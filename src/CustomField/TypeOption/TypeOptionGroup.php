@@ -7,7 +7,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\Domain\Type;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Filament\Forms\Components\Component;
 
-abstract class TypeOptionGroup {
+class TypeOptionGroup {
     protected array $typeOptions;
     protected string $name;
     protected ?string $icon;
@@ -60,6 +60,18 @@ abstract class TypeOptionGroup {
         return  $this;
     }
 
+    public function getDefaultValues(): array {
+        $defaults = [];
+        foreach ($this->getTypeOptions() as $key => $extraTypeOption) {
+            if($extraTypeOption instanceof TypeOptionGroup){
+                array_merge($defaults, $extraTypeOption->getDefaultValues());
+                continue;
+            }
+            /**@var TypeOption $extraTypeOption */
+            $defaults[$key] = $extraTypeOption->getModifyDefault();
+        }
+        return $defaults;
+    }
 
 
 }

@@ -26,11 +26,6 @@
         </div>
 
 
-
-        <div customField:uuid="front-options">
-            {{$getFrontTypeOptions($key)}}
-        </div>
-
         @if(!is_null($getFieldComponent($key)) )
             @include($getFieldComponent($key))
         @endif

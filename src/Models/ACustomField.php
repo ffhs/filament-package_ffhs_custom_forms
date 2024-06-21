@@ -12,8 +12,7 @@ use Spatie\Translatable\HasTranslations;
  * @property int $id
  *
  * @property string|null $name
- *
- * @property string|null tool_tip
+ * @property array $options
  *
  * @property String|null $type
  */
@@ -22,7 +21,7 @@ abstract class ACustomField extends CachedModel
     use HasFactory;
     use HasTranslations;
 
-    public $translatable = ['name', 'tool_tip'];
+    public $translatable = ['name'];
 
 
     public function getTypeClass():?string{

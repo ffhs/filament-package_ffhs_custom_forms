@@ -36,9 +36,7 @@ class CustomFormFactory extends Factory
                         fn (Sequence $sequence) => [
                             'type' => (array_values($types)[$sequence->index])::identifier(),
                             'name' => fake()->name,
-                            'tool_tip' => fake(20)->text,
                             'is_active' => true,
-                            'required' => false,
                             'layout_end_position' => is_a (array_values($types)[$sequence->index], CustomLayoutType::class, true) ? $sequence->index+1: null,
                             'form_position' => $sequence->index+1,
                         ],

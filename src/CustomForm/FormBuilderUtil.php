@@ -24,11 +24,11 @@ class FormBuilderUtil
             $customOptions = $data['customOptions'] ?? [];
 
             $names = $data['name'] ?? [];
-            $toolTips = $data['tool_tip'] ?? [];
+            #$toolTips = $data['tool_tip'] ?? [];
 
 
             unset($data['name']);
-            unset($data['tool_tip']);
+            #unset($data['tool_tip']);
             unset($data['rules']);
             unset($data['customOptions']);
 
@@ -36,7 +36,7 @@ class FormBuilderUtil
             $field->fill($data);
 
             foreach ($names as $local => $name) $field->setTranslation("name", $local, $name);
-            foreach ($toolTips as $local => $toolTip) $field->setTranslation("tool_tip", $local, $toolTip);
+            #foreach ($toolTips as $local => $toolTip) $field->setTranslation("tool_tip", $local, $toolTip);
 
             $field->save();
 
@@ -71,7 +71,7 @@ class FormBuilderUtil
                 'form_position' => $formPosition,
                 'custom_form_id' => $form->id,
                 'is_active' => $field['is_active'] ?? true,
-                'required' => $field['required'] ?? false,
+                #'required' => $field['required'] ?? false,
             ];
 
             $defaultOptions = [];
@@ -96,14 +96,16 @@ class FormBuilderUtil
 
                 //Names and ToolTips
                 $fieldData['name'] = [];
-                $fieldData['tool_tip'] = [];
+                # $fieldData['tool_tip'] = [];
                 foreach ($field as $key => $value){
                     if(str_contains($key, "name_")){
                         $fieldData['name'][str_replace("name_", "", $key)] = $value ;
                     }
 
-                    if(str_contains($key, "tool_tip_"))
+                  /*
+                   *   if(str_contains($key, "tool_tip_"))
                         $fieldData['tool_tip'][str_replace("tool_tip_", "", $key)] = $value ;
+                   */
                 }
 
 
@@ -151,6 +153,8 @@ class FormBuilderUtil
         $fieldData['layout_end_position'] = $formEndPosition;
     }
 
+
+    //ToDo Name Converter
     private static function prepareCustomOptions(array $field, array &$fieldData): void {
         if (!array_key_exists("customOptions", $field)) return;
         $fieldData['customOptions'] = [];

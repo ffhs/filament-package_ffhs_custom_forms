@@ -19,15 +19,11 @@ use Illuminate\Support\Collection;
  * @property int $form_position
  * @property int|null $layout_end_position
  *
- # * @property Collection|null $allCustomFieldsInLayout
- # * @property Collection $customFieldInLayout
- *
  * @property Collection $customOptions
  * @property Collection $fieldRules
  * @property Collection $answers
  *
  * @property string|null $identifier
- * @property array $options
  *
  * @property CustomForm $customForm
  * @property CustomForm|null $template
@@ -40,12 +36,9 @@ class CustomField extends ACustomField
     protected $table = "custom_fields";
 
     protected $fillable = [
-        'tool_tip',
         'name',
         'type',
         'general_field_id',
-
-        'required',
         'is_active',
         'options',
         'custom_form_id',
@@ -92,7 +85,6 @@ class CustomField extends ACustomField
         //ToDo Merge Options (or overwrite)
         return match ($key) {
             'name' => $genFieldF()->name,
-            'tool_tip' => $genFieldF()->tool_tip,
             'type' => $genFieldF()->type,
             'identifier' => $genFieldF()->identifier,
             'generalField' => $genFieldF(),

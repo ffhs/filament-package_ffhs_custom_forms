@@ -31,15 +31,11 @@ return new class () extends Migration {
 
 
             //FieldOptions
-            $table->string('tool_tip_de')->nullable();
-            $table->string('tool_tip_en')->nullable();
-            $table->string('name_de')->nullable();
-            $table->string('name_en')->nullable();
+            $table->json('name')->nullable();
             $table->string("type")->nullable();
             $table->integer('form_position')->nullable();
             $table->integer('layout_end_position')->nullable();
             $table->json('options')->nullable();
-            $table->boolean("required")->default(false);
             $table->boolean("is_active")->default(true);
 
 

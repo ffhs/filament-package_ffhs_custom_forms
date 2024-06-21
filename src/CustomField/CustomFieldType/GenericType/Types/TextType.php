@@ -20,7 +20,7 @@ use Illuminate\Support\Facades\Lang;
 class TextType extends CustomFieldType
 {
     use HasCustomFormPackageTranslation;
-    use HasBasicSettings;
+    //use HasBasicSettings;
     use HasLayoutSettings;
 
     public static function identifier(): string {return "text";}

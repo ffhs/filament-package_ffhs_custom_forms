@@ -20,7 +20,6 @@ class CustomFieldFactory extends Factory
         return [
             'name' => fake()->name,
             'is_active' => true,
-            'required' => false,
             'identifier'=> uniqid(),
             'type'=> fake()->randomElement(CustomFieldType::getAllTypes()),
         ];
@@ -29,10 +28,8 @@ class CustomFieldFactory extends Factory
 
     public function fromGeneralField():Factory {
         return $this->state([
-            'name_de' => null,
-            'name_en' => null,
-            'tool_tip_de' => null,
-            'tool_tip_en' => null,
+            'type' => null,
+            'name' => null,
         ]);
     }
 
