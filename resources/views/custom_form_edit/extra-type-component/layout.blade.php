@@ -8,8 +8,6 @@
 <x-filament::fieldset
     label="Fields"
     :attributes="prepare_inherited_attributes(new ComponentAttributeBag())"
-    customField:has-fields
-    customField:uuid="custom_fields"
     style="background: rgba(200, 200, 200, 0.1)"
 >
 

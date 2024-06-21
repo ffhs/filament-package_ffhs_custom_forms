@@ -23,7 +23,7 @@
           }"
 
         x-init="
-            let root = document.querySelector('[custom-form]')
+            let root = document.querySelector('[customField\\:form]')
 
             function findTarget(target){
 
@@ -37,7 +37,6 @@
 
                 return currentParent
             }
-
 
             function setNestedValue(obj, path, value) {
               const pathArray = path.split('.');
@@ -69,34 +68,6 @@
               return current;
             }
 
-
-            function runForProperties(callable) {
-                 root.querySelectorAll('[customField\\:property]').forEach(component => {
-                    let key = null;
-
-                    let currentParent = component;
-                    while (!currentParent.hasAttribute('custom-form')) {
-                            if(currentParent.hasAttribute('customField:uuid')){
-                                if(key == null) key = currentParent.getAttribute('customField:uuid')
-                                else key = currentParent.getAttribute('customField:uuid') + '.'+ key
-                            }
-                            currentParent = currentParent.parentNode;
-                    }
-
-                    key = 'custom_fields.'+key+ '.' + component.getAttribute('customField:property')
-                    let staticKey = statePath+ '.' + key
-                    callable(key, staticKey, component )
-                 })
-            }
-
-
-            runForProperties((key, staticKey, component) => {
-                 let value = getNestedValue(state, key);
-                 if(value == null) component.setAttribute('value', ' ')
-                 else component.setAttribute('value', value)
-                 component.setAttribute(wireModel, staticKey)
-            })
-
             root.querySelectorAll('[customField\\:drag]').forEach(fieldEl =>{
                 fieldEl.addEventListener('dragstart', e => {
                     e.target.setAttribute('dragging',true)
@@ -115,15 +86,29 @@
                     if(target.hasAttribute('customField:drag')) target.before(draggingEl)
                     else target.insertBefore(draggingEl, target.firstChild)
 
-                   let newState = {};
-
-                    runForProperties((key, staticKey, component) => {
-                        setNestedValue(newState, key, component.value)
-                        component.setAttribute(wireModel, staticKey)
-                    })
-
                     root.querySelectorAll('*').forEach(element => element.classList.remove('custom-field-drag-over'))
 
+
+                    let structure = {};
+
+                    root.querySelectorAll('[customField\\:uuid]').forEach(element => {
+                       let currentParent = element.parentNode
+                       let path = element.getAttribute('customField:uuid')
+
+                       while (!currentParent.hasAttribute('customField:form')) {
+                          if (currentParent.hasAttribute('customField:uuid')){
+                            path = currentParent.getAttribute('customField:uuid') + '.' + path
+                          }
+                          currentParent = currentParent.parentNode
+                       }
+
+                       let value = getNestedValue(structure,path)
+                       if(value == null) value = {};
+                       setNestedValue(structure, path, value)
+                    })
+
+                    let newState = state
+                    newState['structure'] = structure
                     state = newState;
 
                 })
@@ -150,7 +135,7 @@
     >
 
 
-        <x-filament::fieldset custom-form customField:has-fields class>
+        <x-filament::fieldset customField:form customField:has-fields class>
             <!--- toDo Setze wieder auf config coloums-->
             <div style="--cols-default: repeat(1, minmax(0, 1fr)); --cols-lg: repeat(2, minmax(0, 1fr));" class="grid grid-cols-[--cols-default] lg:grid-cols-[--cols-lg] fi-fo-component-ctn gap-6">
                 @foreach($field->getStructureState() as $key => $structure)

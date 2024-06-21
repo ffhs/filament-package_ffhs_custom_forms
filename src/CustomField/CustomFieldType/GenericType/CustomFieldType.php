@@ -312,12 +312,6 @@ abstract class CustomFieldType extends Type
         return config("ffhs_custom_forms.type_settings." . $this::identifier() . "." . $attribute);
    }
 
-    /**
-     * @return array[int, array] int is the continue position, array is the FieldData
-     */
-    public function loadEditData(CustomField $field): array {
-        return [$field->form_position+1, $field->attributesToArray()];
-    }
 
     public function getEditorActions(string $key, array $fieldState): array{
         return [

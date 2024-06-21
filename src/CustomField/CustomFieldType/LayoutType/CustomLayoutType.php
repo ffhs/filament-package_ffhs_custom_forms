@@ -42,20 +42,4 @@ abstract class CustomLayoutType extends CustomFieldType
     public function fieldEditorExtraComponent(array $fieldData): ?string {
         return 'filament-package_ffhs_custom_forms::custom_form_edit.extra-type-component.layout';
     }
-
-    public function loadEditData(CustomField $field): array {
-        $data = $field->attributesToArray();
-
-
-        $fields = $field->customForm->getOwnedFields()
-            ->where("form_position", ">", $field->form_position)
-            ->where("form_position", "<=", $field->layout_end_position);
-
-        $fieldData = EditCustomFormLoadHelper::loadFields($fields);
-
-        $data['custom_fields'] = $fieldData;
-
-        return [$field->layout_end_position+1, $data];
-    }
-
 }

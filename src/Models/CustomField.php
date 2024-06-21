@@ -146,11 +146,5 @@ class CustomField extends ACustomField
         return $this->belongsTo(CustomForm::class, "template_id");
     }
 
-    /**
-     * @return array[int, array] int is the continue position, array is the FieldData
-     */
-    public function loadEditData(): array {
-        return $this->getType()->loadEditData($this);
-    }
 
 }

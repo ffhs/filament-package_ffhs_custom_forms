@@ -14,31 +14,52 @@ class EditCustomFormLoadHelper
 
         $fields = $form->getOwnedFields();
 
-        $fieldData["custom_fields"] = static::loadFields($fields);
+        $fieldData["data"] = static::loadFields($fields);
+        $fieldData["structure"] = static::loadStructure($fields);
 
-        return $fieldData;
+        return ['custom_fields' => $fieldData];
     }
 
 
     public static function loadFields(Collection $fields):array {
+        $data = [];
+        foreach ($fields as $field) {
+            $data[$field->identifier] = $field->attributesToArray();
+        }
+        return $data;
+    }
+
+
+    private static function loadStructure(Collection $fields): array {
         if($fields->count() === 0) return [];
 
         $fields = $fields->sortBy('form_position');
         $start = array_values($fields->toArray())[0]['form_position'];
         $end = array_values($fields->toArray())[$fields->count()-1]['form_position'];
 
-        $fieldDatas = [];
+        $structure = [];
 
-        for ($i = $start; $i <= $end; $i) {
+        for ($i = $start; $i <= $end; $i++) {
             /**@var CustomField $field */
             $field = $fields->firstWhere('form_position', $i);
-            [$newPos, $data] = $field->loadEditData();
 
-            $fieldDatas[$field->identifier] = $data;
-            $i = $newPos;
+            if(empty($field->layout_end_position)) {
+                $structure[$field->identifier] = [];
+                continue;
+            }
+
+            $subFields = $field->customForm->getOwnedFields()
+                ->where("form_position", ">", $field->form_position)
+                ->where("form_position", "<=", $field->layout_end_position);
+
+
+            $i = $field->layout_end_position;
+            $structure[$field->identifier] = static::loadStructure($subFields);
         }
 
-        return $fieldDatas;
+
+        return  $structure;
+
     }
 
 

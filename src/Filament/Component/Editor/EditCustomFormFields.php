@@ -96,7 +96,7 @@ class EditCustomFormFields extends Field
             ->parentComponent($this)
             ->statePath('data.'.$key)
             ->components([
-                TextInput::make('name')
+                TextInput::make('name.'.app()->getLocale())
                     ->label("Name")
             ]);
     }
