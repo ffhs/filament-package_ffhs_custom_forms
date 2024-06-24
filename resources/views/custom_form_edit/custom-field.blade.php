@@ -11,7 +11,13 @@
     $icon = new HtmlString( "<span class='flex'>" . Blade::render('<x-'.$type->icon(). "/>") . "<span style='padding-left: 10px;'>" . $type->getTranslatedName() . "</span></span>") ;
 @endphp
 
-<div draggable="true" customField:drag customField:uuid="{{$key}}" class="col-span-1">
+<div draggable="true" customField:drag customField:uuid="{{$key}}"
+     style="
+        grid-column: {{data_get($getState() ,  'data.' . $key . '.options.column_span' ) ?? 1}} span;
+        {{data_get($getState() ,  'data.' . $key . '.options.new_line_option' )? "grid-column-start: 1;" : ""}};
+     "
+>
+
     <x-filament::fieldset
         :label="$icon"
         :attributes="prepare_inherited_attributes(new ComponentAttributeBag())"

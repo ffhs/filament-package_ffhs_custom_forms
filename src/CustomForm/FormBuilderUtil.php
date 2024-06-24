@@ -65,6 +65,7 @@ class FormBuilderUtil
 
     public static function generateFields(CustomForm $form, array $fields, array &$toCreateFields): void {
         foreach ($fields as $field){
+
             $formPosition = sizeof($toCreateFields) + 1;
 
             $fieldData = [
@@ -101,11 +102,6 @@ class FormBuilderUtil
                     if(str_contains($key, "name_")){
                         $fieldData['name'][str_replace("name_", "", $key)] = $value ;
                     }
-
-                  /*
-                   *   if(str_contains($key, "tool_tip_"))
-                        $fieldData['tool_tip'][str_replace("tool_tip_", "", $key)] = $value ;
-                   */
                 }
 
 
@@ -141,7 +137,9 @@ class FormBuilderUtil
 
 
     private static function setupLayoutFields(CustomForm $form, array $field, array &$fieldData , array &$toCreateFields): void {
-        if (!array_key_exists('fields', $field))  return;
+        if (!array_key_exists('fields', $field))
+            return;
+
 
         $placeHolderId = uniqid();
 

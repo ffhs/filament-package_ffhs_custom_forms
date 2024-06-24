@@ -9,12 +9,13 @@ use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Field;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Concerns\HasStateBindingModifiers;
 use Filament\Support\Enums\Alignment;
 use Illuminate\Support\Collection;
 
 class EditCustomFormFields extends Field
 {
-    //use HasStateBindingModifiers;
+    use HasStateBindingModifiers;
 
     /*
      * [
@@ -22,7 +23,6 @@ class EditCustomFormFields extends Field
      *  data => []
      * ]
      */
-
     protected string $view = 'filament-package_ffhs_custom_forms::filament.components.custom_field-edit';
 
 
@@ -97,7 +97,8 @@ class EditCustomFormFields extends Field
             ->statePath('data.'.$key)
             ->components([
                 TextInput::make('name.'.app()->getLocale())
-                    ->label("Name")
+                    ->hidden(fn($state)=> false)
+                    ->label('')
             ]);
     }
 
