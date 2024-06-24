@@ -137,6 +137,4 @@ class EditCustomFormFields extends Field
         return $this->childrenGenerated;
     }
 
-
-
 }

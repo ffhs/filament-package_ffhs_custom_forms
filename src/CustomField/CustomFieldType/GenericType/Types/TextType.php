@@ -5,13 +5,12 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Generi
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Types\Views\TextTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\CustomFieldType;
-use Ffhs\FilamentPackageFfhsCustomForms\Domain\HasBasicSettings;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\DefaultLayoutTypeOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\AlpineMaskOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\FastTypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\MaxLengthOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\MinLengthOption;
 use Ffhs\FilamentPackageFfhsCustomForms\Domain\HasCustomFormPackageTranslation;
-use Ffhs\FilamentPackageFfhsCustomForms\Domain\HasLayoutSettings;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
@@ -21,8 +20,6 @@ class TextType extends CustomFieldType
 {
     use HasCustomFormPackageTranslation;
     //use HasBasicSettings;
-    use HasLayoutSettings;
-
     public static function identifier(): string {return "text";}
 
     public function viewModes(): array {
@@ -34,6 +31,13 @@ class TextType extends CustomFieldType
     public function icon(): string {
        return "bi-input-cursor-text";
     }
+
+    public function getExtraTypeOptions(): array {
+        return [
+            DefaultLayoutTypeOptionGroup::make()
+        ];
+    }
+
 
     protected function extraOptionsBeforeBasic(): array {
         return [

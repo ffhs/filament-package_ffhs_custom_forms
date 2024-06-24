@@ -37,10 +37,6 @@ class FieldModalOptionSection extends Section
                         ->label("Benötigt"), //ToDo Translate
 
                 ]),
-            Fieldset::make()
-                ->statePath("options")
-                ->visible($type->hasExtraTypeOptions())
-                ->schema($type->getExtraTypeOptionComponents())
         ]);
     }
 

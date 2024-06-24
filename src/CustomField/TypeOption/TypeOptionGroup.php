@@ -6,6 +6,7 @@ use Closure;
 use Ffhs\FilamentPackageFfhsCustomForms\Domain\Type;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Filament\Forms\Components\Component;
+use Filament\Forms\Components\Section;
 
 class TypeOptionGroup {
     protected array $typeOptions;
@@ -36,9 +37,9 @@ class TypeOptionGroup {
         return  $this;
     }
 
-    public function meargTypeOptions(array $typeOptions): static {
-       foreach ($typeOptions as $typeOption)
-           $this->addTypeOptions($typeOption->getKey(), $typeOption);
+    public function mergeTypeOptions(array $typeOptions): static {
+       foreach ($typeOptions as $key => $typeOption)
+           $this->addTypeOptions($key, $typeOption);
         return  $this;
     }
 
@@ -73,5 +74,20 @@ class TypeOptionGroup {
         return $defaults;
     }
 
+
+    public function getModifyComponent(): Section {
+        $data = [];
+        foreach ($this->getTypeOptions() as $key => $extraTypeOption) {
+            /**@var TypeOption $extraTypeOption*/
+            $data[] = $extraTypeOption->getModifyComponent($key);
+        }
+        return Section::make($this->getName())
+            ->icon($this->getIcon())
+            ->collapsible()
+            ->collapsed()
+            ->columnSpanFull()
+            ->columns()
+            ->schema($data);
+    }
 
 }

@@ -6,6 +6,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\TypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\TypeOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormConfiguration\DynamicFormConfiguration;
 use Ffhs\FilamentPackageFfhsCustomForms\Domain\Type;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\Actions\DefaultCustomActivationAction;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\Actions\DefaultCustomFieldDeleteAction;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\Actions\DefaultCustomFieldEditAction;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
@@ -24,14 +25,8 @@ abstract class CustomFieldType extends Type
 
     /*
      * Static Class Functions
+    */
 
-    public static function getAllTypes(): array {
-        $output = [];
-        foreach (config("ffhs_custom_forms.custom_field_types") as $typeClass) {
-            $output[$typeClass::identifier()] = $typeClass;
-        }
-        return $output;
-    } */
     public static function getSelectableGeneralFieldTypes(): array {
         $output = [];
         foreach (config("ffhs_custom_forms.selectable_general_field_types") as $typeClass) {
@@ -47,18 +42,6 @@ abstract class CustomFieldType extends Type
         }
         return $output;
     }
-
-  /*  public static function getTypeClassFromIdentifier(string $typeName): ?string {
-        $types = self::getAllTypes();
-        if (!array_key_exists($typeName, $types)) return null;
-        return self::getAllTypes()[$typeName];
-    }
-
-    public static function getTypeFromIdentifier(string $typeName): ?CustomFieldType {
-        $class = self::getTypeClassFromIdentifier($typeName);
-        if (is_null($class)) return null;
-        return new $class();
-    }*/
 
 
     public function getFormComponent(CustomField $record, CustomForm $form, string $viewMode = "default",
@@ -139,7 +122,7 @@ abstract class CustomFieldType extends Type
         if (empty($options)) return [];
         $components = [];
         foreach ($options as $key => $option) {
-            /**@var TypeOption $option */
+            /**@var TypeOption|TypeOptionGroup $option */
             $component = $option->getModifyComponent($key);
             $components[] = $component;
         }
@@ -159,6 +142,7 @@ abstract class CustomFieldType extends Type
         }
         return $defaults;
     }
+
     public function getDefaultTypeOptionValues(): array {
          return $this->getDefaultTypeOptionValuesFormArray($this->getExtraTypeOptions());
     }
@@ -317,6 +301,7 @@ abstract class CustomFieldType extends Type
         return [
            DefaultCustomFieldDeleteAction::make('delete-field-' . $key),
            DefaultCustomFieldEditAction::make('edit-field-' . $key),
+           DefaultCustomActivationAction::make('active-' . $key)
         ];
     }
 

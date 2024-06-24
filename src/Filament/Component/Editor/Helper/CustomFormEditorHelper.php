@@ -1,11 +1,8 @@
 <?php
 
-namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor\Helper;
+namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\Helper;
 
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\CustomFieldType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\TemplatesType\TemplateFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Filament\Forms\Get;
 
 class CustomFormEditorHelper
@@ -77,6 +74,14 @@ class CustomFormEditorHelper
     public static function getRawStateForm($livewireComponent, $form):array {
         //Get RawSate (yeah is possible)
         return array_values($livewireComponent->getLivewire()->getCachedForms())[$form]->getRawState();
+    }
+
+
+
+    public static function getFieldData(array $state, string $item): array {
+        $data = data_get($state, "data.". $item);
+        $data["key"] = $item;
+        return $data;
     }
 
 }

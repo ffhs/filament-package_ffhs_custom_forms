@@ -2,8 +2,11 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\Actions;
 
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor\Helper\CustomFormEditorHelper;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\Components\CustomFieldEditModal;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\Helper\CustomFormEditorHelper;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\Actions\ActionContainer;
 
 class DefaultCustomFieldEditAction extends Action
 {
@@ -14,32 +17,37 @@ class DefaultCustomFieldEditAction extends Action
        $this->iconButton();
        $this->icon('carbon-settings-edit');
 
-
-
-       #$this->action(fn($get, $set, $data, $arguments) => CustomFormEditorHelper::setCustomFieldInRepeater($data, $get, $set, $arguments));
-       #$this->mutateFormDataUsing(fn(Action $action)=> CustomFormEditorHelper::getRawStateForm($action,1));
-
        $this->closeModalByClickingAway(false);
+       $this->form([
+          CustomFieldEditModal::make()
+       ]);
 
-       $this->action(fn($state, $arguments) => dd($arguments['item'],$state));
        $this->fillForm(fn($state, $arguments) => CustomFormEditorHelper::getFieldData($state,$arguments['item']));
-      #$this->form([TextInput::make("")]);
+       $this->mutateFormDataUsing(function(Action $action, ActionContainer $component){
+           $forms = array_values($action->getLivewire()->getCachedForms());
+           $form = $forms[sizeof($forms) - 1];
+           $state = $form->getRawState();
+           unset($state["key"]);
+           return $state;
+       });
+       $this->action(function($set, $data, $arguments) {
+           $key = $arguments['item'];
+           $set("data.$key", $data);
+       });
 
 
-       /*$this->modalWidth(function(array $state, array $arguments){
-               return CustomFieldEditModal::getEditCustomFormActionModalWith($state[$arguments["item"]]);
-           });
-       $this->form(function(Get $get, $state, array $arguments,$record) : array {
-               return [CustomFieldEditModal::make($record,$state[$arguments["item"]])];
-           });*/
+        /*$this->modalWidth(function(array $state, array $arguments){
+                return CustomFieldEditModal::getEditCustomFormActionModalWith($state[$arguments["item"]]);
+            });*/
 
 
-     /*  $this->modalHeading(function (array $state, array $arguments) {
-               $data = $state[$arguments["item"]];
-               $suffix = " - Felddaten bearbeiten ";
-               if (empty($data["general_field_id"])) return $data["name_de"] . $suffix; //ToDo Translate
-               else return "G. ".GeneralField::cached($data["general_field_id"])->name_de. $suffix; //ToDo Translate
-           });*/
+       $this->modalHeading(function ($get, array $arguments) {
+           $key =$arguments["item"];
+           $data = $get("data.$key");
+           $suffix = " - Feld bearbeiten "; //ToDo Translate
+           if (empty($data["general_field_id"])) return $data["name"][app()->getLocale()] . $suffix;
+           else return "G. ".GeneralField::cached($data["general_field_id"])->name. $suffix;
+       });
     }
 
 

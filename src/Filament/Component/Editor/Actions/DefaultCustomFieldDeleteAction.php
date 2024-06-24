@@ -19,9 +19,56 @@ class DefaultCustomFieldDeleteAction extends Action
         //ToDo Confirm Message
        $this->requiresConfirmation();
 
+       $this->action(function($get, $arguments, $set) {
+           $key = $arguments["item"];
+
+           //Delete Structure
+           $structure = $get("structure");
+           $structurePath = "structure." . $this->getPath($structure, $key);
+
+           $structurePath = str_replace(".". $key,"", $structurePath);
+           $structureFragment = $get($structurePath);
 
 
+           $data = $get("data");
+           unset($data[$key]);
+
+
+           foreach ($this->getSubFields($structureFragment[$key]) as $field){
+               unset($data[$field]);
+           }
+
+           $set("data",$data);
+
+           unset($structureFragment[$key]);
+           $set($structurePath, $structureFragment);
+       });
+    }
+
+    function getPath(array $structure, string $key): ?string {
+        foreach ($structure as $item => $value) {
+            if ($item == $key) {
+                return $item;
+            } else if (!empty($value)) {
+                $pathSegment = $this->getPath($value,$key);
+                if(is_null($pathSegment)) continue;
+                return  $item . "." . $pathSegment;
+            }
+        }
+        return null;
     }
 
 
+    function getSubFields(array $structure): array {
+        $fields = [];
+        foreach ($structure as $item => $value) {
+            $fields[] = $item;
+
+            if (!empty($value)) {
+                $subFields = $this->getSubFields($value);
+                $fields = array_merge($subFields, $fields);
+            }
+        }
+        return $fields;
+    }
 }
