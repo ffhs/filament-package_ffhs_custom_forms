@@ -68,9 +68,6 @@ class CustomFormEditorFieldSaveHelper
         #$savedFields->each(fn(CustomField $field) => $field->getType()->afterSaveField($field));
     }
 
-
-
-
     private static function getPositionOfField(string $targetKey, array $structure, int &$index = 0): ?array {
         foreach ($structure as $key => $fields) {
             $index+= 1;

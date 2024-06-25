@@ -12,10 +12,17 @@
     $icon = new HtmlString( "<span class='flex'>" . Blade::render('<x-'.$type->icon(). "/>") . "<span style='padding-left: 10px;'>" . $type->getTranslatedName() . "</span></span>") ;
 @endphp
 
+<!--
+
+        grid-column: span  / 1 !important;
+
+
+
+-->
+
 <div draggable="true" customField:drag customField:uuid="{{$key}}"
      style="
-        grid-column: {{data_get($getState() ,  'data.' . $key . '.options.column_span' ) ?? 1}} span;
-        {{data_get($getState() ,  'data.' . $key . '.options.new_line_option' )? "grid-column-start: 1;" : ""}};
+        grid-column:  {{data_get($getState() ,  'data.' . $key . '.options.new_line_option' )? " 1 /" : ""}} span {{data_get($getState() ,  'data.' . $key . '.options.column_span' ) ?? 1}} !important;
      "
      x-init="setupField($el, state, $wire)"
 >
