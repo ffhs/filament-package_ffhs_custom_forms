@@ -134,7 +134,7 @@ abstract class CustomFieldType extends Type
         $defaults = [];
         foreach ($typeOptions as $key => $extraTypeOption) {
             if($extraTypeOption instanceof TypeOptionGroup){
-                array_merge($defaults, $extraTypeOption->getDefaultValues());
+                $defaults = array_merge($defaults, $extraTypeOption->getDefaultValues());
                 continue;
             }
             /**@var TypeOption $extraTypeOption */

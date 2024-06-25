@@ -8,6 +8,9 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralFieldForm;
+use Filament\Facades\Filament;
+use Filament\Support\Assets\Js;
+use Filament\Support\Facades\FilamentAsset;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Artisan;
 use Livewire\Livewire;
@@ -40,12 +43,13 @@ class FilamentPackageFfhsCustomFormsServiceProvider extends PackageServiceProvid
                 $command
                     ->startWith(function (InstallCommand $command){
                         $command->info("Publish translation from Filament\Spatie-Translatable");
-                        Artisan::call('vendor:publish', ["tag" => "filament-spatie-laravel-translatable-plugin-translations"]);
+                       // Artisan::call('vendor:publish', ["tag" => "filament-spatie-laravel-translatable-plugin-translations"]); ToDo repair
 
                         $command->info("Publish config from icon picker plugin");
-                        Artisan::call('vendor:publish', ["tag" => "filament-icon-picker-config"]);
+                        // Artisan::call('vendor:publish', ["tag" => "filament-icon-picker-config"]); ToDo repair
                     })
                     ->publishConfigFile()
+                    ->publishAssets()
                     ->copyAndRegisterServiceProviderInApp()
                     ->publishMigrations()
                     ->askToRunMigrations()
@@ -83,6 +87,15 @@ class FilamentPackageFfhsCustomFormsServiceProvider extends PackageServiceProvid
                 return 'Ffhs\\FilamentPackageFfhsCustomForms\\Models\Factories\\' . class_basename($modelName) . 'Factory';
             else return 'Database\Factories\\' . class_basename($modelName) . 'Factory';
         });
+
+        FilamentAsset::register([
+            Js::make('custom_form_script', __DIR__ . '/../resources/js/custom_form_script.js')->loadedOnRequest(),
+        ], 'ffhs/filament-package_ffhs_custom_forms');
+
+        $this->publishes([
+            __DIR__.'/../resources/js/custom_form_script.js' => public_path('js/ffhs/'.$this->package->name.'/custom_form_script.js'),
+        ], 'filament-package_ffhs_custom_forms-assets');
+
     }
 
 }

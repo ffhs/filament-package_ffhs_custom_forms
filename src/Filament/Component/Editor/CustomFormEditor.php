@@ -1,15 +1,15 @@
 <?php
 
-namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor;
+namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor;
 
 use Closure;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormEditorValidation\FormEditorValidation;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\EditCustomFormFields;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor\CustomFieldList\EditorCustomFieldList;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor\Helper\CustomFormEditorSaveHelper;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Fieldset;
+use Filament\Forms\Components\Group;
 
 class CustomFormEditor extends Component {
 
@@ -33,8 +33,27 @@ class CustomFormEditor extends Component {
         $this->columns(3);
 
         $this->schema([
-            EditCustomFormFields::make("custom_fields")
+
+            Group::make([
+                Fieldset::make()
+                    ->columnStart(1)
+                    ->columnSpan(1)
+                    ->columns(1)
+                    ->schema(fn() =>
+                            collect($this->getRecord()->getFormConfiguration()::editorFieldAdder())
+                                ->map(fn(string $class) => $class::make($this->getRecord()))
+                                ->toArray()
+                    ),
+
+                EditCustomFormFields::make("custom_fields")
+                    ->columnStart(2)
+                    ->columnSpan(5),
+
+            ])
+                ->columns(6)
                 ->columnSpanFull(),
+
+
             #->live()->afterStateUpdated(fn($state, $old)=> dd($state,$old)),
 
         ]);

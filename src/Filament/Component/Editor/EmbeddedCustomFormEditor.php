@@ -4,7 +4,6 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor;
 
 
 use Closure;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor\CustomFormEditor;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Concerns\EntanglesStateWithSingularRelationship;
 use Filament\Forms\Components\Contracts\CanEntangleWithSingularRelationships;

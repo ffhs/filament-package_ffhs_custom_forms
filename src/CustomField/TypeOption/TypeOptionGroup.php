@@ -64,10 +64,6 @@ class TypeOptionGroup {
     public function getDefaultValues(): array {
         $defaults = [];
         foreach ($this->getTypeOptions() as $key => $extraTypeOption) {
-            if($extraTypeOption instanceof TypeOptionGroup){
-                array_merge($defaults, $extraTypeOption->getDefaultValues());
-                continue;
-            }
             /**@var TypeOption $extraTypeOption */
             $defaults[$key] = $extraTypeOption->getModifyDefault();
         }

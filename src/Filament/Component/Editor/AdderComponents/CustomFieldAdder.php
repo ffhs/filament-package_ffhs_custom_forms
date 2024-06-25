@@ -1,22 +1,27 @@
 <?php
 
-namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor\FieldAdder;
+namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\AdderComponents;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\CustomFieldType;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\AdderComponents\FormEditorFieldAdder;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\Components\CustomFieldEditModal;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\Helper\CustomFormEditorHelper;
-use Filament\Forms\Components\Actions;
-use Filament\Forms\Components\Actions\Action;
-use Filament\Forms\Components\Group;
-use Filament\Forms\Get;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\HtmlString;
 
 final class CustomFieldAdder extends FormEditorFieldAdder
 {
-    function getTitle(): string {
-        return  __("filament-package_ffhs_custom_forms::custom_forms.form.compiler.custom_fields");
+    protected string $view = 'filament-package_ffhs_custom_forms::filament.components.field_adder';
+
+
+
+    protected function setUp(): void {
+        parent::setUp();
+        $this->live();
+        $this->label(__("filament-package_ffhs_custom_forms::custom_forms.form.compiler.custom_fields"));
+    }
+
+    public function getTypes() {
+        return collect($this->getRecord()->getFormConfiguration()::formFieldTypes())
+            ->map(fn($class) => new $class())->toArray();
+
     }
 
     /**
@@ -26,14 +31,13 @@ final class CustomFieldAdder extends FormEditorFieldAdder
      *
      * @return array
      */
-    function getSchema(): array {
+   /* function getSchema(): array {
         $actions = [];
         $types = collect($this->form->getFormConfiguration()::formFieldTypes())->map(fn($class) => new $class());
 
 
-        /**@var CustomFieldType $type */
+        *@var CustomFieldType $type
         foreach ($types as $type) {
-            $modalWidth  = CustomFieldEditModal::getEditCustomFormActionModalWith(["type" => $type::identifier()]);
 
             $actions[] = Actions::make([
                 Action::make("add_".$type::identifier()."_action")
@@ -44,7 +48,6 @@ final class CustomFieldAdder extends FormEditorFieldAdder
                     ->label(self::getCustomFieldAddActionLabel($type))
                     ->closeModalByClickingAway(false)
                     ->tooltip($type->getTranslatedName())
-                    ->modalWidth($modalWidth)
                     ->outlined()
                     ->form(function() use ($type) {
                         $state = ["type" => $type::identifier()];
@@ -63,9 +66,9 @@ final class CustomFieldAdder extends FormEditorFieldAdder
         }
 
         return [
-            Group::make($actions)->columns()
+            Group::make($actions)->columns(),
         ];
-    }
+    }*/
 
 
     private static function getCustomFieldAddActionLabel(CustomFieldType $type):HtmlString {

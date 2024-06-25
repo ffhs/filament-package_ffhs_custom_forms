@@ -2,13 +2,14 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormResource\Pages;
 
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\CustomFormEditor;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\Helper\EditCustomFormLoadHelper;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor\CustomFormEditor;
 use Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormResource;
 use Filament\Actions;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Form;
 use Filament\Resources\Pages\EditRecord;
+use Filament\Support\Enums\MaxWidth;
 use Illuminate\Contracts\Support\Htmlable;
 
 class EditCustomForm extends EditRecord
@@ -16,6 +17,9 @@ class EditCustomForm extends EditRecord
     protected static string $resource = CustomFormResource::class;
 
 
+    public function getMaxContentWidth(): MaxWidth|string|null {
+        return MaxWidth::Full;
+    }
 
     public function form(Form $form): Form {
         return $form->schema([Section::make()->schema([CustomFormEditor::make()])]);
@@ -35,6 +39,7 @@ class EditCustomForm extends EditRecord
             Actions\DeleteAction::make(),
         ];
     }
+
 
 
 

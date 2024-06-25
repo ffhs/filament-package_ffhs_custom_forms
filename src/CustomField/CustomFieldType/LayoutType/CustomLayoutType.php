@@ -32,9 +32,6 @@ abstract class CustomLayoutType extends CustomFieldType
         return [EditorCustomFieldList::make($form)];
     }
 
-    public function hasSubFields(): bool {
-        return true;
-    }
 
     public function fieldEditorExtraComponent(array $fieldData): ?string {
         return 'filament-package_ffhs_custom_forms::custom_form_edit.extra-type-component.layout';

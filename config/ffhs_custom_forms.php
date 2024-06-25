@@ -1,6 +1,5 @@
 <?php
 
-
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomOption\Types\CheckboxListType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomOption\Types\ColorPickerType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomOption\Types\KeyValueType;
@@ -72,9 +71,9 @@ return [
     ],
 
     'editor_field_adder' => [
-        GeneralFieldAdder::class,
-        TemplateAdder::class,
-        CustomFieldAdder::class
+       // GeneralFieldAdder::class,
+       // TemplateAdder::class,
+       // CustomFieldAdder::class
     ],
 
     "custom_field_types" => [

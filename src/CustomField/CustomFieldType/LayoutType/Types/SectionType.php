@@ -5,6 +5,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Layout
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\LayoutType\CustomLayoutType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\LayoutType\Types\Views\SectionTypeView;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\LayoutTypeDefaultLayoutTypeOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\Domain\HasBasicSettings;
 use Ffhs\FilamentPackageFfhsCustomForms\Domain\HasCustomFormPackageTranslation;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\ColumnsOption;
@@ -14,6 +15,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\NewLineOp
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\ShowAsFieldsetOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\ShowInViewOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\ShowTitleOption;
+use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Toggle;
 
 class SectionType extends CustomLayoutType
@@ -38,19 +40,19 @@ class SectionType extends CustomLayoutType
 
     public function getExtraTypeOptions(): array {
         return[
-            "columns" => new ColumnsOption(),
-            'column_span' => new ColumnSpanOption(),
-            "show_title" =>  new ShowTitleOption(),
-            'aside' => new FastTypeOption(false,
-                Toggle::make("aside")
-                    ->label("Titel seitlich Anzeigen") //ToDo Translate,
-                    ->disabled(fn($get) => !$get("show_title"))
-            ),
-            //'in_line_label' => (new InLineLabelOption())->modifyComponent(fn($toggle) => $toggle->columnStart(1)),
-            'new_line_option' => new NewLineOption(),
-
-            'show_as_fieldset' => new ShowAsFieldsetOption(),
-            'show_in_view'=> new ShowInViewOption(),
+            LayoutTypeDefaultLayoutTypeOptionGroup::make()
+            ->mergeTypeOptions([
+                'show_in_view'=> ShowInViewOption::make()
+                    ->modifyComponent(fn(Component $component) => $component->columnStart(1)),
+                'show_as_fieldset' => ShowAsFieldsetOption::make()
+                    ->modifyComponent(fn(Component $component) => $component->columnStart(2)),
+                "show_title" =>  ShowTitleOption::make(),
+                'aside' => new FastTypeOption(false,
+                    Toggle::make("aside")
+                        ->label("Titel seitlich Anzeigen") //ToDo Translate,
+                        ->disabled(fn($get) => !$get("show_title"))
+                ),
+            ]),
         ];
     }
 

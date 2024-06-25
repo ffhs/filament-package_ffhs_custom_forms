@@ -2,6 +2,7 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor;
 
+use Barryvdh\Debugbar\Facades\Debugbar;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldUtils;
 use Filament\Forms\ComponentContainer;
@@ -12,6 +13,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\HasStateBindingModifiers;
 use Filament\Support\Enums\Alignment;
 use Illuminate\Support\Collection;
+use SebastianBergmann\Environment\Console;
 
 class EditCustomFormFields extends Field
 {
@@ -26,12 +28,19 @@ class EditCustomFormFields extends Field
     protected string $view = 'filament-package_ffhs_custom_forms::filament.components.custom_field-edit';
 
 
+
     protected array $actionContainers = [];
     protected array $nameContainers = [];
 
     protected bool $childrenGenerated = false;
 
     protected function setUp(): void {
+        $this->registerActions([
+            Action::make("createField")
+                ->action(static::createField(...)),
+        ]);
+
+
         $this->childComponents(function (): array {
             $this->generateChildContainers();
             $containers = $this->getCombinedContainers();
@@ -42,6 +51,36 @@ class EditCustomFormFields extends Field
                 ->toArray();
         });
     }
+
+    protected function createField($set, $arguments, $get, $record): void {
+        //Set Field Data
+        //Make custom modes
+        if($arguments["mode"] == "type") $uuid = static::createTypedField($set, $arguments, $record);
+        $this->setStructureNewField($arguments, $get, $uuid, $set);
+
+
+    }
+
+    protected function createTypedField($set, $arguments, $record): string {
+
+        $type = CustomFieldType::getTypeFromIdentifier($arguments["value"]);
+
+        $identifier = uniqid();
+
+        $field = [
+            "custom_form_id" => $record->id,
+            "identifier" => $identifier,
+            "type" => $type::identifier(),
+            "options" => $type->getDefaultTypeOptionValues(),
+            "is_active" => true,
+        ];
+
+        $set($this->getStatePath(false).'.data.'. $identifier, $field);
+
+        return $identifier;
+    }
+
+
 
     protected function getCombinedContainers(): Collection {
         return collect([
@@ -61,22 +100,21 @@ class EditCustomFormFields extends Field
     protected function generateChildContainers(): void {
         if($this->isChildrenGenerated()) return;
 
-
         $this->actionContainers = [];
         $this->nameContainers = [];
 
         foreach ($this->getFieldDataState() as $key => $field) {
-            $type = CustomFieldUtils::getFieldTypeFromRawDate($field);
-
-            $this->generateFieldActions($key, $field, $type);
-            $this->generateNameContainers($key, $field, $type);
+            $this->generateFieldActions($key, $field);
+            $this->generateNameContainers($key, $field);
         }
 
         $this->childrenGenerated = true;
     }
 
 
-    public function generateFieldActions(string $key, array $field, ?CustomFieldType $type): void {
+    public function generateFieldActions(string $key, array $field): void {
+        $type = CustomFieldUtils::getFieldTypeFromRawDate($field);
+
         if (is_null($type)) $actions = [];
         else $actions = $type->getEditorActions($key, $field);
 
@@ -91,14 +129,16 @@ class EditCustomFormFields extends Field
 
 
 
-    public function generateNameContainers(string $key, array $field, ?CustomFieldType $type): void {
+    public function generateNameContainers(string $key, array $field): void {
+        $type = CustomFieldUtils::getFieldTypeFromRawDate($field);
+
         $this->nameContainers[$key] = ComponentContainer::make($this->getLivewire())
             ->parentComponent($this)
             ->statePath('data.'.$key)
             ->components([
                 TextInput::make('name.'.app()->getLocale())
                     ->hidden(fn($state)=> false)
-                    ->label('')
+                    ->label(''),
             ]);
     }
 
@@ -106,11 +146,22 @@ class EditCustomFormFields extends Field
 
     public function getFieldActions(string $key): ComponentContainer {
         $this->generateChildContainers();
+        $actions = $this->getActionContainers();
+
+        if(array_key_exists($key, $actions)) return $actions[$key];
+
+        $this->generateFieldActions($key, $this->getFieldDataState()[$key]);
         return $this->getActionContainers()[$key];
     }
 
     public function getFieldName(string $key): ComponentContainer {
         $this->generateChildContainers();
+
+        $names = $this->getNameContainers();
+
+        if(array_key_exists($key, $names)) return $names[$key];
+        $this->generateNameContainers($key, $this->getFieldDataState()[$key]);
+
         return $this->getNameContainers()[$key];
     }
 
@@ -136,6 +187,27 @@ class EditCustomFormFields extends Field
 
     protected function isChildrenGenerated(): bool {
         return $this->childrenGenerated;
+    }
+
+
+    private function setStructureNewField($arguments, $get, string $uuid, $set): void {
+        //SetStructure
+        $path = $this->getStatePath(false).'.structure.'.$arguments["path"];
+        $structureFragment = $get($path);
+
+        $before = $arguments['before'];
+
+        if ($arguments['before'] == "") $structureFragment[$uuid] = [];
+        else {
+            $pos = array_search($before, array_keys($structureFragment));
+
+            $structureFragment = array_slice($structureFragment, 0, $pos, true) +
+                [$uuid => []] +
+                array_slice($structureFragment, $pos, count($structureFragment), true);
+
+        }
+
+        $set($path, $structureFragment);
     }
 
 }
