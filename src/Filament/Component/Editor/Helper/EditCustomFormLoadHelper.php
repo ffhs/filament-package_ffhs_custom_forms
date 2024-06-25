@@ -31,7 +31,7 @@ class EditCustomFormLoadHelper
             unset($fieldData["updated_at"]);
             unset($fieldData["created_at"]);
 
-            $fieldData = $field->getType()->mutateCustomFieldDataOnLoad($field, $fieldData);
+            $fieldData = $field->getType()->getMutateCustomFieldDataOnLoad($field, $fieldData);
 
             $data[$field->identifier] = $fieldData;
         }

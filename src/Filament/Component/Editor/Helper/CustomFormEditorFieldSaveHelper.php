@@ -37,12 +37,12 @@ class CustomFormEditorFieldSaveHelper
                 $customField = new CustomField();
 
 
-            $field = $customField->getType()->mutateCustomFieldDataOnSave($field);
+            $field = $customField->getType()->getMutateCustomFieldDataOnSave($customField, $field);
 
             $fieldsToSaveData[$key] = $field;
             $customField->fill($field);
 
-            $customField->getType()->beforeSaveField($customField, $field);
+            $customField->getType()->doBeforeSaveField($customField, $field);
 
 
             if(!$customField->exists )$fieldsToSavetoCreate[] = $customField->getAttributes();
@@ -55,9 +55,9 @@ class CustomFormEditorFieldSaveHelper
             ->whereNotIn('id', collect($fieldsToSaveData)->pluck("id"))
             ->whereNotIn("id", $fieldsNotDirty);
 
-        $fieldsToDelete->each(fn(CustomField $field) => $field->getType()->beforeDeleteField($field));
+        $fieldsToDelete->each(fn(CustomField $field) => $field->getType()->doBeforeDeleteField($field));
         CustomField::destroy($fieldsToDelete->pluck("id"));
-        $fieldsToDelete->each(fn(CustomField $field) => $field->getType()->afterDeleteField($field));
+        $fieldsToDelete->each(fn(CustomField $field) => $field->getType()->doAfterDeleteField($field));
 
 
 
@@ -72,7 +72,7 @@ class CustomFormEditorFieldSaveHelper
         $savedFields
             ->whereIn('id', $fieldData->pluck("id"))
             ->each(fn(CustomField $field) =>
-                $field->getType()->afterSaveField($field,
+                $field->getType()->doAfterSaveField($field,
                     $fieldData->where("id", $field->id)->first()
                 )
             );
@@ -83,7 +83,7 @@ class CustomFormEditorFieldSaveHelper
         $savedFields
             ->whereNotIn('id', $fieldData->pluck("id"))
             ->each(fn(CustomField $field) =>
-            $field->getType()->afterCreateField($field,
+            $field->getType()->doAfterCreateField($field,
                 $fieldData->where("identifier", $field->identifier)->first()
             )
         );

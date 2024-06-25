@@ -18,7 +18,7 @@ abstract class TypeOption {
     public abstract function getDefaultValue(): mixed;
     public abstract function getComponent(string $name): Component;
 
-    public function mutateOnCreate(mixed $value, CustomField $field): mixed { //ToDo for GeneralField
+   /* public function mutateOnCreate(mixed $value, CustomField $field): mixed { //ToDo for GeneralField
         return $value;
     }
     public function mutateOnSave(mixed $value, CustomField $field): mixed { //ToDo for GeneralField
@@ -26,7 +26,7 @@ abstract class TypeOption {
     }
     public function mutateOnLoad(mixed $value, CustomField $field): mixed { //ToDo for GeneralField
         return $value;
-    }
+    }*/
 
     public function modifyComponent(Closure $closure): static {
         $this->modifyComponentCloser = $closure;
@@ -48,5 +48,17 @@ abstract class TypeOption {
         if (is_null($this->modifyDefault)) return $default;
         return ($this->modifyDefault)($default);
     }
+
+
+
+
+    //ToDo for GeneralField
+    public function mutateOnFieldSave(mixed $data, string $key, CustomField $field): mixed {return  $data;}
+    public function mutateOnFieldLoad(mixed $data, string $key, CustomField $field): mixed {return  $data;}
+    public function bforeSaveField(mixed &$data, string $key, CustomField $field):void{}
+    public function afterSaveField(mixed &$data, string $key, CustomField $field): void {}
+    public function afterCreateField(mixed &$data, string $key, CustomField $field): void {}
+    public function afterDeleteField(int|string $key, CustomField $field) {}
+    public function beforeDeleteField(int|string $key, CustomField $field) {}
 
 }

@@ -2,6 +2,7 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Traits;
 
+use Barryvdh\Debugbar\Facades\Debugbar;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\TypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\TypeOptionGroup;
 
@@ -11,12 +12,30 @@ trait HasTypeOptions
     public function extraTypeOptions(): array {return [];}
 
 
-    public function getGeneralTypeOptionComponents(): array {
+    public final function getGeneralTypeOptionComponents(): array {
         return $this->getOptionsComponents($this->generalTypeOptions());
     }
-    public function getExtraTypeOptionComponents(): array {
+    public final function getExtraTypeOptionComponents(): array {
         return $this->getOptionsComponents($this->extraTypeOptions());
     }
+
+
+    public final function getFlattenExtraTypeOptions(): array {
+        return $this->getFlattenTypeOptions($this->extraTypeOptions());
+    }
+    public final function getFlattenGeneralTypeOptions(): array {
+        return $this->getFlattenTypeOptions($this->extraTypeOptions());
+    }
+
+
+    public final function getDefaultTypeOptionValues(): array {
+        return $this->getDefaultTypeOptionValuesFormArray($this->getFlattenExtraTypeOptions());
+    }
+    public final function getDefaultGeneralOptionValues(): array {
+        return $this->getDefaultTypeOptionValuesFormArray($this->getFlattenGeneralTypeOptions());
+    }
+
+
     protected function getOptionsComponents(array $options): array {
         if (empty($options)) return [];
         $components = [];
@@ -29,15 +48,6 @@ trait HasTypeOptions
     }
 
 
-
-    public function getFlattenExtraTypeOptions(): array {
-        return $this->getFlattenTypeOptions($this->extraTypeOptions());
-    }
-    public function getFlattenGeneralTypeOptions(): array {
-        return $this->getFlattenTypeOptions($this->extraTypeOptions());
-    }
-
-
     public function getFlattenTypeOptions(array $typeOptions): array {
         $options = [];
         foreach ($typeOptions as $key => $extraTypeOption) {
@@ -46,18 +56,10 @@ trait HasTypeOptions
                 continue;
             }
             /**@var TypeOption $extraTypeOption */
-            $options[$key] = $extraTypeOption->getModifyDefault();
+            $options[$key] = $extraTypeOption;
         }
         return $options;
     }
-
-    public function getDefaultTypeOptionValues(): array {
-        return $this->getDefaultTypeOptionValuesFormArray($this->getFlattenExtraTypeOptions());
-    }
-    public function getDefaultGeneralOptionValues(): array {
-        return $this->getDefaultTypeOptionValuesFormArray($this->getFlattenGeneralTypeOptions());
-    }
-
 
 
     protected function getDefaultTypeOptionValuesFormArray(array $typeOptions): array {
