@@ -28,7 +28,7 @@ class DateType extends CustomFieldType
     }
 
 
-    public function getExtraTypeOptions(): array {
+    public function extraTypeOptions(): array {
         return [
             'column_span' => new ColumnSpanOption(),
             'format'=> new FastTypeOption("Y-m-d",

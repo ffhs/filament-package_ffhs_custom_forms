@@ -61,16 +61,6 @@ class TypeOptionGroup {
         return  $this;
     }
 
-    public function getDefaultValues(): array {
-        $defaults = [];
-        foreach ($this->getTypeOptions() as $key => $extraTypeOption) {
-            /**@var TypeOption $extraTypeOption */
-            $defaults[$key] = $extraTypeOption->getModifyDefault();
-        }
-        return $defaults;
-    }
-
-
     public function getModifyComponent(): Section {
         $data = [];
         foreach ($this->getTypeOptions() as $key => $extraTypeOption) {

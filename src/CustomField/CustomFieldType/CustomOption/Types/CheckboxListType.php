@@ -12,7 +12,7 @@ class CheckboxListType extends CustomOptionType
 {
     use HasCustomFormPackageTranslation;
     use HasBasicSettings {
-        HasBasicSettings::getExtraTypeOptions as getExtraSettingsOptions;
+        HasBasicSettings::extraTypeOptions as getExtraSettingsOptions;
     }
 
     public static function identifier(): string { return "checkbox_list"; }
@@ -26,11 +26,11 @@ class CheckboxListType extends CustomOptionType
         return  "bi-ui-checks-grid";
     }
 
-    public function getExtraTypeOptions(): array {
+    public function extraTypeOptions(): array {
         return array_merge(
             ["columns" => new ColumnsOption()],
             $this->getExtraSettingsOptions(),
-            parent::getExtraTypeOptions()
+            parent::extraTypeOptions()
         );
     }
 

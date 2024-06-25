@@ -32,7 +32,7 @@ class ImageLayoutType extends CustomFieldType
        return "bi-card-image";
     }
 
-    public function getExtraTypeOptions(): array {
+    public function extraTypeOptions(): array {
         return [
             'image'=> new FastTypeOption([],
                 FileUpload::make('image')

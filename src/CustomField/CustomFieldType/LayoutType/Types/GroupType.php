@@ -31,7 +31,7 @@ class GroupType extends CustomLayoutType
         return  "carbon-cics-system-group";
     }
 
-    public function getExtraTypeOptions(): array {
+    public function extraTypeOptions(): array {
         return[
             "columns" => new ColumnsOption(),
             'column_span' => new ColumnSpanOption(),

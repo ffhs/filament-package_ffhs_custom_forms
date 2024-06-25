@@ -25,7 +25,7 @@ class CustomTabCustomEggType extends CustomEggLayoutType
         return "tabler-slideshow";
     }
 
-    public function getExtraTypeOptions(): array{
+    public function extraTypeOptions(): array{
         return [
             'columns' => new ColumnsOption(),
         ];

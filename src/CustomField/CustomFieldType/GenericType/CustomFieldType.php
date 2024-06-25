@@ -2,197 +2,71 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType;
 
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\TypeOption;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\TypeOptionGroup;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormConfiguration\DynamicFormConfiguration;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Traits\HasConfigAttribute;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Traits\HasEditFieldCallbacks;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Traits\HasTypeOptions;
 use Ffhs\FilamentPackageFfhsCustomForms\Domain\Type;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\Actions\DefaultCustomActivationAction;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\Actions\DefaultCustomFieldDeleteAction;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\Actions\DefaultCustomFieldEditAction;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Form;
 use Illuminate\Support\Collection;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Traits\HasTypeView;
 
 abstract class CustomFieldType extends Type
 {
+    use HasTypeView;
+    use HasTypeOptions;
+    use HasConfigAttribute;
+    use HasEditFieldCallbacks;
 
-    public static function getConfigTypeList(): string {
+    /*
+     * Static used functions
+     */
+    public final static function getConfigTypeList(): string {
         return "custom_field_types";
     }
 
-    /*
-     * Static Class Functions
-    */
-
-    public static function getSelectableGeneralFieldTypes(): array {
+    public final static function getSelectableGeneralFieldTypes(): array {
         $output = [];
-        foreach (config("ffhs_custom_forms.selectable_general_field_types") as $typeClass) {
+        foreach (config("ffhs_custom_forms.selectable_general_field_types") as $typeClass)
             $output[$typeClass::identifier()] = $typeClass;
-        }
         return $output;
     }
 
-    public static function getSelectableFieldTypes(): array {
+    public final static function getSelectableFieldTypes(): array {
         $output = [];
-        foreach (config("ffhs_custom_forms.selectable_field_types") as $typeClass) {
+        foreach (config("ffhs_custom_forms.selectable_field_types") as $typeClass)
             $output[$typeClass::identifier()] = $typeClass;
-        }
         return $output;
     }
 
 
-    public function getFormComponent(CustomField $record, CustomForm $form, string $viewMode = "default",
-        array $parameter = []): Component { //ToDo Remove Parameters?
-        $viewMods = $this->getViewModes($form->getFormConfiguration());
-        //FieldTypeView.php
-        if (empty($viewMods[$viewMode])) return ($viewMods["default"])::getFormComponent($this, $record, $parameter);
-        return ($viewMods[$viewMode])::getFormComponent($this, $record, $parameter);
-    }
 
-    public function getInfolistComponent(CustomFieldAnswer $record, CustomForm $form, string $viewMode = "default",
-        array $parameter = []): \Filament\Infolists\Components\Component {
-        $viewMods = $this->getViewModes($form->getFormConfiguration());
-        //FieldTypeView.php
-        if (empty($viewMods[$viewMode])) return ($viewMods["default"])::getFormComponent($this, $record, $parameter);
-        return ($viewMods[$viewMode])::getInfolistComponent($this, $record, $parameter);
-    }
-
-
-    public function getViewModes(null|string|DynamicFormConfiguration $dynamicFormConfiguration = null): array {
-        $viewMods = $this->viewModes();
-
-        /**@var DynamicFormConfiguration $dynamicFormConfig */
-        $dynamicFormConfig = new $dynamicFormConfiguration();
-
-        //Config Overwrite
-        $overWrittenLevelOne = $this->overwriteViewModes();
-        if (!empty($overWrittenLevelOne)) foreach ($overWrittenLevelOne as $key => $value) {
-            $viewMods[$key] = $value;
-        }
-
-        if (is_null($dynamicFormConfiguration)) return $this->viewModes();
-
-        // Form Overwritten
-        $overWrittenLevelTwo = $dynamicFormConfig::overwriteViewModes();
-        if (!empty($overWrittenLevelTwo) && !empty($overWrittenLevelTwo[$this::class])) {
-            foreach ($overWrittenLevelTwo[$this::class] as $key => $value) {
-                $viewMods[$key] = $value;
-            }
-        }
-
-        return $viewMods;
-    }
-
-
-    public function overwriteViewModes(): array {
-        $viewModes = config("ffhs_custom_forms.view_modes");
-        if (empty($viewModes[$this::class])) return [];
-        return $viewModes[$this::class];
-    }
-
-    // Extra Options
-
-    /* public function hasExtraGeneralTypeOptions(): bool {
-         return !empty($this->getExtraGeneralTypeOptions());
-     }*/
-
-     public function getExtraGeneralTypeOptionComponents(): array {
-         return $this->getOptionsComponents($this->getExtraGeneralTypeOptions());
-        /* if (!$this->hasExtraGeneralTypeOptions()) return [];
-         $components = [];
-         foreach ($this->getExtraGeneralTypeOptions() as $key => $option) {
-             /**@var TypeOption $option *//*
-            $component = $option->getModifyComponent($key);
-            $components[] = $component;
-        }
-        return $components;*/
-    }
-
-
-
-    public function getExtraTypeOptionComponents(): array {
-        return $this->getOptionsComponents($this->getExtraTypeOptions());
-    }
-
-
-    protected function getOptionsComponents(array $options): array {
-        if (empty($options)) return [];
-        $components = [];
-        foreach ($options as $key => $option) {
-            /**@var TypeOption|TypeOptionGroup $option */
-            $component = $option->getModifyComponent($key);
-            $components[] = $component;
-        }
-        return $components;
-    }
-
-
-    protected function getDefaultTypeOptionValuesFormArray(array $typeOptions): array {
-        $defaults = [];
-        foreach ($typeOptions as $key => $extraTypeOption) {
-            if($extraTypeOption instanceof TypeOptionGroup){
-                $defaults = array_merge($defaults, $extraTypeOption->getDefaultValues());
-                continue;
-            }
-            /**@var TypeOption $extraTypeOption */
-            $defaults[$key] = $extraTypeOption->getModifyDefault();
-        }
-        return $defaults;
-    }
-
-    public function getDefaultTypeOptionValues(): array {
-         return $this->getDefaultTypeOptionValuesFormArray($this->getExtraTypeOptions());
-    }
-
-    public function getDefaultGeneralOptionValues(): array {
-        return $this->getDefaultTypeOptionValuesFormArray($this->getExtraGeneralTypeOptions());
-    }
-
-    /*
-     * User Stuff
-     */
     public static abstract function identifier(): string;
     public abstract function viewModes(): array;
     public abstract function icon(): string;
 
 
-    public function prepareSaveFieldData(mixed $data): ?array {
+    public function prepareSaveFieldData(mixed $data): ?array { //ToDo Rename and in Template
         if (is_null($data)) return null;
         return ["saved" => $data];
     }
-    public function prepareLoadFieldData(array $data): mixed {
+    public function prepareLoadFieldData(array $data): mixed { //ToDo Rename and in Template
         if (!array_key_exists("saved", $data) || is_null($data["saved"])) return null;
         return $data["saved"];
     }
+
+
 
     public function getTranslatedName(): string {
         return __("custom_forms.types." . $this::identifier());
     }
 
-    public function getExtraGeneralTypeOptions(): array {
-        return [];
-    }
 
-
-    public function getExtraTypeOptions(): array {
-        return [];
-    }
-
-
-     //ToDo Mutate answerers (Save,  Create)
-    public function canBeDeactivate(): bool {
-          return true;
-         }
-
-    /*public function canBeRequired(): bool {
-                return true;
-            }
-            public function hasToolTips(): bool {
-                return true;
-            }*/
 
 
     // null means that it isn't overwritten
@@ -204,27 +78,51 @@ abstract class CustomFieldType extends Type
     public function overwrittenAnchorRules(): ?array { //ToDo
         return null;
     }
-
-
-
-    public function afterEditFieldSave(CustomField $field, array $rawData): void {
-
-    }
-    public function afterEditFieldDelete(CustomField $field): void {
+    public function hasRules(): ?array { //ToDo
+        return null;
     }
 
-    public function afterAnswerFieldSave(CustomFieldAnswer $field, mixed $rawData, array $formData): void {
 
+
+
+    //ToDo Mutate answerers (Save,  Create)
+    public function canBeDeactivate(): bool {
+          return true;
+         }
+
+
+
+    public function fieldEditorExtraComponent(array $fieldData): ?string {
+        return null;
+    }
+
+
+    public function getEditorActions(string $key, array $fieldState): array{
+        return [
+            DefaultCustomFieldDeleteAction::make('delete-field-' . $key),
+            DefaultCustomFieldEditAction::make('edit-field-' . $key),
+            DefaultCustomActivationAction::make('active-' . $key),
+        ];
+    }
+
+
+
+
+
+
+
+    public function afterAnswerFieldSave(CustomFieldAnswer $field, mixed $rawData, array $formData): void { //ToDo to Traits
     }
 
 
     //You can interact with the Component like in FileUpload
-    public function updateFormComponentOnSave(Component $component, CustomField $customField, Form $form, Collection $flattenFormComponents): void {
-
+    public function updateFormComponentOnSave(Component $component, CustomField $customField, Form $form, Collection $flattenFormComponents): void {//ToDo to Traits
     }
 
+
+
     public function mutateOnTemplateDissolve(array $data, CustomField $original): array {
-        return $data;
+        return $data; //ToDo Reimplement
     }
 
     /*  public function nameFormEditor(array $state): string|null {
@@ -286,23 +184,5 @@ abstract class CustomFieldType extends Type
          return new HtmlString($html);
      }*/
 
-
-   public function fieldEditorExtraComponent(array $fieldData): ?string {
-       return null;
-   }
-
-
-   public function getConfigAttribute(string $attribute): mixed {
-        return config("ffhs_custom_forms.type_settings." . $this::identifier() . "." . $attribute);
-   }
-
-
-    public function getEditorActions(string $key, array $fieldState): array{
-        return [
-           DefaultCustomFieldDeleteAction::make('delete-field-' . $key),
-           DefaultCustomFieldEditAction::make('edit-field-' . $key),
-           DefaultCustomActivationAction::make('active-' . $key)
-        ];
-    }
 
 }

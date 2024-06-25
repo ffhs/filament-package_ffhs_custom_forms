@@ -33,7 +33,7 @@ class SpaceType extends CustomFieldType
     }
 
 
-    public function getExtraTypeOptions(): array {
+    public function extraTypeOptions(): array {
         return[
             'amount'=> new FastTypeOption(1,
                 TextInput::make("amount")

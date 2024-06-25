@@ -9,13 +9,13 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomOption;
 abstract class  CustomOptionType extends CustomFieldType
 {
 
-    public function getExtraTypeOptions(): array {
+    public function extraTypeOptions(): array {
         return [
             "customOptions" => new CustomOptionTypeOption(false),
         ];
     }
 
-    public function getExtraGeneralTypeOptions(): array {
+    public function generalTypeOptions(): array {
         return [
             "customOptions" => new CustomOptionTypeOption(true),
         ];

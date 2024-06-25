@@ -14,7 +14,7 @@ trait HasBasicSettings
     protected function extraOptionsAfterBasic(): array{
         return [];
     }
-    public function getExtraTypeOptions(): array{
+    public function extraTypeOptions(): array{
         return array_merge(
             $this->extraOptionsBeforeBasic(),
             [

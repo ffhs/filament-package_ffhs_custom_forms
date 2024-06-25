@@ -38,7 +38,7 @@ class SectionType extends CustomLayoutType
         return  "tabler-section";
     }
 
-    public function getExtraTypeOptions(): array {
+    public function extraTypeOptions(): array {
         return[
             LayoutTypeDefaultLayoutTypeOptionGroup::make()
             ->mergeTypeOptions([

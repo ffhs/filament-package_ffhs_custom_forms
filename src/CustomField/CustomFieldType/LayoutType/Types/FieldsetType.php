@@ -33,7 +33,7 @@ class FieldsetType extends CustomLayoutType
         return  "bi-columns-gap";
     }
 
-    public function getExtraTypeOptions(): array {
+    public function extraTypeOptions(): array {
         return[
             "columns" => new ColumnsOption(),
             'column_span' => new ColumnSpanOption(),

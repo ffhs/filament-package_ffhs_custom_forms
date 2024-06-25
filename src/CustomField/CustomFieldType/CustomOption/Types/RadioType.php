@@ -14,7 +14,7 @@ class RadioType extends CustomOptionType
 {
     use HasCustomFormPackageTranslation;
     use HasBasicSettings {
-        HasBasicSettings::getExtraTypeOptions as getExtraSettingsOptions;
+        HasBasicSettings::extraTypeOptions as getExtraSettingsOptions;
     }
 
     public static function identifier(): string { return "radio"; }
@@ -25,13 +25,13 @@ class RadioType extends CustomOptionType
         ];
     }
 
-    public function getExtraTypeOptions(): array {
+    public function extraTypeOptions(): array {
         return array_merge(
             $this->getExtraSettingsOptions(),
             [
                "boolean" => new BooleanOption(),
                "inline" => new InlineOption(),
-               parent::getExtraTypeOptions()["customOptions" ]
+               parent::extraTypeOptions()["customOptions" ]
                    ->modifyComponent(fn(Component $component) => $component->hidden(fn($get) => $get("boolean")))
             ],
         );

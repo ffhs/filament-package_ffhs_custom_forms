@@ -14,7 +14,7 @@ class SelectType extends CustomOptionType
 {
     use HasCustomFormPackageTranslation;
     use HasBasicSettings {
-        HasBasicSettings::getExtraTypeOptions as getExtraSettingsOptions;
+        HasBasicSettings::extraTypeOptions as getExtraSettingsOptions;
     }
 
     public static function identifier(): string { return "select"; }
@@ -28,7 +28,7 @@ class SelectType extends CustomOptionType
         return  "carbon-select-window";
     }
 
-    public function getExtraTypeOptions(): array {
+    public function extraTypeOptions(): array {
         return array_merge(
             $this->getExtraSettingsOptions(),
             [
@@ -60,7 +60,7 @@ class SelectType extends CustomOptionType
                         ->numeric(),
                 )
             ],
-            parent::getExtraTypeOptions()
+            parent::extraTypeOptions()
         );
     }
 

@@ -26,7 +26,7 @@ class WizardCustomNestType extends CustomNestLayoutType
         ];
     }
 
-    public function getExtraTypeOptions(): array{
+    public function extraTypeOptions(): array{
         return [
             'column_span' => new ColumnSpanOption(),
             'show_title' => (new ShowTitleOption())->modifyComponent(

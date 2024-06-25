@@ -26,7 +26,7 @@ class WizardStepCustomEggType extends CustomEggLayoutType
         return "tabler-column-insert-right";
     }
 
-    public function getExtraTypeOptions(): array{
+    public function extraTypeOptions(): array{
         return [
             'columns' => new ColumnsOption(),
             'icon' => new IconOption(),

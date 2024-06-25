@@ -32,7 +32,7 @@ class DownloadType extends CustomFieldType
        return "tabler-download";
     }
 
-    public function getExtraTypeOptions(): array {
+    public function extraTypeOptions(): array {
         return [
             'file_names' => new FastTypeOption([], Hidden::make('file_names')),
             'files'=> new FastTypeOption([],

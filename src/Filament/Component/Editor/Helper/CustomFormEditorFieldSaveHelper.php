@@ -37,11 +37,12 @@ class CustomFormEditorFieldSaveHelper
                 $customField = new CustomField();
 
 
-           // $field = $customField->getType()->mutateCustomFieldData($field);
+            $field = $customField->getType()->mutateCustomFieldDataOnSave($field);
 
+            $fieldsToSaveData[$key] = $field;
             $customField->fill($field);
 
-            //$customField->getType()->beforeSaveField($customField, $field);
+            $customField->getType()->beforeSaveField($customField, $field);
 
 
             if(!$customField->exists )$fieldsToSavetoCreate[] = $customField->getAttributes();
@@ -54,9 +55,9 @@ class CustomFormEditorFieldSaveHelper
             ->whereNotIn('id', collect($fieldsToSaveData)->pluck("id"))
             ->whereNotIn("id", $fieldsNotDirty);
 
-        #$fieldsToDelete->each(fn(CustomField $field) => $field->getType()->beforeDeleteField($field));
+        $fieldsToDelete->each(fn(CustomField $field) => $field->getType()->beforeDeleteField($field));
         CustomField::destroy($fieldsToDelete->pluck("id"));
-        #$fieldsToDelete->each(fn(CustomField $field) => $field->getType()->afterDeleteField($field));
+        $fieldsToDelete->each(fn(CustomField $field) => $field->getType()->afterDeleteField($field));
 
 
 
@@ -64,8 +65,29 @@ class CustomFormEditorFieldSaveHelper
         CustomField::insert($fieldsToSavetoCreate);
         CustomField::upsert($fieldsToSaveData, ['id']);
 
+        $fieldData = collect($fieldData);
+
+        //Run after Save
         $savedFields = $form->customFields()->get();
-        #$savedFields->each(fn(CustomField $field) => $field->getType()->afterSaveField($field));
+        $savedFields
+            ->whereIn('id', $fieldData->pluck("id"))
+            ->each(fn(CustomField $field) =>
+                $field->getType()->afterSaveField($field,
+                    $fieldData->where("id", $field->id)->first()
+                )
+            );
+
+
+        //Run after Create
+        $savedFields = $form->customFields()->get();
+        $savedFields
+            ->whereNotIn('id', $fieldData->pluck("id"))
+            ->each(fn(CustomField $field) =>
+            $field->getType()->afterCreateField($field,
+                $fieldData->where("identifier", $field->identifier)->first()
+            )
+        );
+
     }
 
     private static function getPositionOfField(string $targetKey, array $structure, int &$index = 0): ?array {

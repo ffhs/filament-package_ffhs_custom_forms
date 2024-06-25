@@ -28,7 +28,7 @@ class DateTimeType extends CustomFieldType
         return  "heroicon-s-clock";
     }
 
-    public function getExtraTypeOptions(): array {
+    public function extraTypeOptions(): array {
         return [
             'column_span' => new ColumnSpanOption(),
             'format'=> new FastTypeOption("Y-m-d H:i:s",

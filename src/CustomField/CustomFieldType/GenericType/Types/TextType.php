@@ -32,7 +32,7 @@ class TextType extends CustomFieldType
        return "bi-input-cursor-text";
     }
 
-    public function getExtraTypeOptions(): array {
+    public function extraTypeOptions(): array {
         return [
             DefaultLayoutTypeOptionGroup::make()
         ];
