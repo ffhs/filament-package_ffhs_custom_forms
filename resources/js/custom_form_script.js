@@ -2,7 +2,7 @@ function findTarget(target){
 
     let currentParent = target;
     while (currentParent) {
-        if (currentParent.hasAttribute('customField:drag') || currentParent.hasAttribute('customField:has-fields')) {
+        if (currentParent.hasAttribute('customField:drag') || currentParent.hasAttribute('customField:hasFields')) {
             break;
         }
         currentParent = currentParent.parentNode;
@@ -65,11 +65,11 @@ function handleDragDrop(target, draggingEl, state) {
     if(target.hasAttribute('customField:drag')) target.before(draggingEl)
     else target.insertBefore(draggingEl, target.firstChild)
 
-    root.querySelectorAll('*').forEach(element => element.classList.remove('custom-field-drag-over'))
+    getParentForm().querySelectorAll('*').forEach(element => element.classList.remove('custom-field-drag-over'))
 
     let structure = {};
 
-    root.querySelectorAll('[customField\\:uuid]').forEach(element => {
+    getParentForm().querySelectorAll('[customField\\:uuid]').forEach(element => {
         let path = getElementFieldStructurePath(element)
 
         let value = getNestedValue(structure,path)
@@ -100,9 +100,9 @@ function handleNewField(target, draggingEl, $wire) {
 function setupField(fieldEl, state, $wire){
     setupDragField(fieldEl)
 
-
     fieldEl.addEventListener('drop', e => {
         e.stopPropagation();
+
         e.target.classList.remove('custom-field-drag-over')
 
         let target = findTarget(e.target)
@@ -126,8 +126,6 @@ function setupField(fieldEl, state, $wire){
     })
 
 }
-
-
 
 
 function setupDragField(fieldEl){

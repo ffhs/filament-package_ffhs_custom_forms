@@ -1,5 +1,6 @@
 @php
-    use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\CustomFieldType;use Illuminate\Support\Facades\Blade;
+    use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\CustomFieldType;
+    use Illuminate\Support\Facades\Blade;
     use Illuminate\Support\HtmlString;
     use function Filament\Support\prepare_inherited_attributes;
     use Illuminate\View\ComponentAttributeBag;
@@ -16,6 +17,7 @@
         grid-column: {{data_get($getState() ,  'data.' . $key . '.options.column_span' ) ?? 1}} span;
         {{data_get($getState() ,  'data.' . $key . '.options.new_line_option' )? "grid-column-start: 1;" : ""}};
      "
+     x-init="setupField($el, state, $wire)"
 >
 
     <x-filament::fieldset
@@ -24,7 +26,6 @@
     >
 
         <div style="width: 50%; margin-left: 50%; margin-top: -20px; ">{{$getFieldActions($key)}}</div>
-
 
 
         <div style="width: 60%;  margin-top: -15px; margin-bottom: 10px;">

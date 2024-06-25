@@ -24,10 +24,11 @@
         @foreach($getTypes() as $type)
 
             <span
-
                 draggable="true"
                 customField:newFieldMode="type"
                 customField:newField="{{$type->identifier()}}"
+
+                x-init="setupDragField($el)"
 
                 style="
                 --c-400:var(--primary-400);
