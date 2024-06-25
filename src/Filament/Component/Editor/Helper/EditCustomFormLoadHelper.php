@@ -24,7 +24,12 @@ class EditCustomFormLoadHelper
     public static function loadFields(Collection $fields):array {
         $data = [];
         foreach ($fields as $field) {
-            $data[$field->identifier] = $field->attributesToArray();
+            $fieldData = $field->attributesToArray();
+
+            unset($fieldData["updated_at"]);
+            unset($fieldData["created_at"]);
+
+            $data[$field->identifier] = $fieldData;
         }
         return $data;
     }

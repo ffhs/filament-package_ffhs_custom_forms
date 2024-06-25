@@ -3,9 +3,12 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormResource\Pages;
 
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\CustomFormEditor;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\Helper\CustomFormEditorFieldSaveHelper;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\Helper\EditCustomFormLoadHelper;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Render\Helper\CustomFormSaveHelper;
 use Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormResource;
 use Filament\Actions;
+use Filament\Actions\Action;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Form;
 use Filament\Resources\Pages\EditRecord;
@@ -29,7 +32,6 @@ class EditCustomForm extends EditRecord
         $this->form->fill(EditCustomFormLoadHelper::load($this->getRecord()));
     }
 
-
     public function getTitle(): string|Htmlable {
         return $this->record->short_title . " - " . parent::getTitle();
     }
@@ -41,8 +43,13 @@ class EditCustomForm extends EditRecord
     }
 
 
+    public function save(bool $shouldRedirect = true, bool $shouldSendSavedNotification = true): void {
 
+        CustomFormEditorFieldSaveHelper::save($this->data["custom_fields"], $this->getRecord());
 
+        parent::save($shouldRedirect, $shouldSendSavedNotification);
+
+    }
 
 
 }

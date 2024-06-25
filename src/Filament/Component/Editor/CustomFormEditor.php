@@ -4,8 +4,8 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor;
 
 use Closure;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormEditorValidation\FormEditorValidation;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\Helper\CustomFormEditorFieldSaveHelper;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor\CustomFieldList\EditorCustomFieldList;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor\Helper\CustomFormEditorSaveHelper;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Fieldset;
@@ -82,7 +82,7 @@ class CustomFormEditor extends Component {
              */
             EditorCustomFieldList::make($record)
                 ->columnSpan(2)
-                ->saveRelationshipsUsing(fn($component, $state) => CustomFormEditorSaveHelper::saveCustomFields($component, $record,
+                ->saveRelationshipsUsing(fn($component, $state) => CustomFormEditorFieldSaveHelper::saveCustomFields($component, $record,
                     $state))
                 ->rules([
                     fn(CustomForm $record) => function(string $attribute, $value, Closure $fail) use ($record) {
