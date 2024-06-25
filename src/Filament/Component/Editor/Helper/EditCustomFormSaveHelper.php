@@ -7,7 +7,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Illuminate\Database\Eloquent\MassAssignmentException;
 
-class CustomFormEditorFieldSaveHelper
+class EditCustomFormSaveHelper
 {
 
     public static function save(array $rawState, CustomForm $form): void {

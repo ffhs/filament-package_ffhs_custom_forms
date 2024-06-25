@@ -9,10 +9,12 @@
 
     /**@var CustomFieldType $type*/
     $type = $getFieldType($key);
-    $icon = new HtmlString( "<span class='flex'>" . Blade::render('<x-'.$type->icon(). "/>") . "<span style='padding-left: 10px;'>" . $type->getTranslatedName() . "</span></span>") ;
+    $label = new HtmlString( "<span class='flex'>" . Blade::render('<x-'.$type->icon(). "/>") .
+        "<span draggable='true' style='padding-left: 10px; cursor: grab;'>" . $type->getEditorFieldTitle($getFieldDataState()[$key]) . "</span></span>"
+    );
 @endphp
 
-<!--
+    <!--
 
         grid-column: span  / 1 !important;
 
@@ -20,7 +22,7 @@
 
 -->
 
-<div draggable="true" customField:drag customField:uuid="{{$key}}"
+<div  customField:drag customField:uuid="{{$key}}"
      style="
         grid-column:  {{data_get($getState() ,  'data.' . $key . '.options.new_line_option' )? " 1 /" : ""}} span {{data_get($getState() ,  'data.' . $key . '.options.column_span' ) ?? 1}} !important;
      "
@@ -28,7 +30,7 @@
 >
 
     <x-filament::fieldset
-        :label="$icon"
+        :label="$label"
         :attributes="prepare_inherited_attributes(new ComponentAttributeBag())"
     >
 

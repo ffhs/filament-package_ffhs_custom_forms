@@ -4,7 +4,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor\Field
 
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\AdderComponents\FormEditorFieldAdder;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\Components\CustomFieldEditModal;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\Helper\CustomFormEditorHelper;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\Helper\EditCustomFormHelper;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralFieldForm;
@@ -31,13 +31,13 @@ final class GeneralFieldAdder extends FormEditorFieldAdder
                ->label("")
                ->live()
                ->disableOptionWhen(function ($value, Get $get) {
-                   $usedGenIds = CustomFormEditorHelper::getUsedGeneralFieldIds($get("custom_fields"));
+                   $usedGenIds = EditCustomFormHelper::getUsedGeneralFieldIds($get("custom_fields"));
                    return in_array($value, $usedGenIds);
                }),
 
             Actions::make([
                 Action::make("add_general_field")
-                    ->mutateFormDataUsing(fn(Action $action)=> CustomFormEditorHelper::getRawStateForm($action,1))
+                    ->mutateFormDataUsing(fn(Action $action)=> EditCustomFormHelper::getRawStateForm($action,1))
                     ->label(fn() => __("filament-package_ffhs_custom_forms::custom_forms.functions.add"))
                     ->closeModalByClickingAway(false)
                     ->modalWidth(function(Get $get)  {
@@ -55,13 +55,13 @@ final class GeneralFieldAdder extends FormEditorFieldAdder
                     ])
                     ->action(function ($set, Get $get, array $data) {
                         //Add to the other Fields
-                        CustomFormEditorHelper::setCustomFieldInRepeater($data, $get, $set);
+                        EditCustomFormHelper::setCustomFieldInRepeater($data, $get, $set);
                         $set("add_general_field_id", null);
                     })
                     ->disabled(function(Get $get):bool{
                         // Disable if no id is Selected or if it is already imported
                         if(is_null($get("add_general_field_id"))) return true;
-                        $usedGenIds = CustomFormEditorHelper::getUsedGeneralFieldIds($get("custom_fields"));
+                        $usedGenIds = EditCustomFormHelper::getUsedGeneralFieldIds($get("custom_fields"));
                         return collect($usedGenIds)->contains($get("add_general_field_id"));
                     }),
             ]),

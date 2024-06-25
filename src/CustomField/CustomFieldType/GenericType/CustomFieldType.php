@@ -9,12 +9,15 @@ use Ffhs\FilamentPackageFfhsCustomForms\Domain\Type;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\Actions\DefaultCustomActivationAction;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\Actions\DefaultCustomFieldDeleteAction;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\Actions\DefaultCustomFieldEditAction;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\HtmlComponents\HtmlBadge;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Form;
+use Filament\Support\Colors\Color;
 use Illuminate\Support\Collection;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Traits\HasTypeView;
+use Illuminate\Support\HtmlString;
 
 abstract class CustomFieldType extends Type
 {
@@ -45,6 +48,9 @@ abstract class CustomFieldType extends Type
     }
 
 
+    /*
+     * Fields
+     */
 
     public static abstract function identifier(): string;
     public abstract function viewModes(): array;
@@ -70,32 +76,40 @@ abstract class CustomFieldType extends Type
 
 
     // null means that it isn't overwritten
-    public function overwrittenRules(): ?array { //ToDo
+    public function overwrittenRules(): ?array { //ToDo implement
         return null;
     }
 
     // null means that it isn't overwritten
-    public function overwrittenAnchorRules(): ?array { //ToDo
+    public function overwrittenAnchorRules(): ?array { //ToDo implement
         return null;
     }
-    public function hasRules(): ?array { //ToDo
+    public function hasRules(): ?array { //ToDo implement
         return null;
     }
 
 
 
 
-    //ToDo Mutate answerers (Save,  Create)
+
     public function canBeDeactivate(): bool {
           return true;
-         }
-
-
+    }
 
     public function fieldEditorExtraComponent(array $fieldData): ?string {
         return null;
     }
 
+
+    public function getEditorFieldTitle(array $fieldData):string {
+        $field = new CustomField();
+        $field->fill($fieldData);
+
+        if(!$field->isGeneralField()) return $this->getTranslatedName();
+
+        return "<div>". new HtmlBadge('Gen', Color::rgb('rgb(43, 164, 204)'))."</div>" .
+            '<p style="margin-left: 40px; margin-top: -20px">'. $this->getTranslatedName().'</p>'; //ToDo Badges function reimplement
+    }
 
     public function getEditorActions(string $key, array $fieldState): array{
         return [
@@ -104,11 +118,6 @@ abstract class CustomFieldType extends Type
             DefaultCustomActivationAction::make('active-' . $key),
         ];
     }
-
-
-
-
-
 
 
     public function afterAnswerFieldSave(CustomFieldAnswer $field, mixed $rawData, array $formData): void { //ToDo to Traits
@@ -124,65 +133,4 @@ abstract class CustomFieldType extends Type
     public function mutateOnTemplateDissolve(array $data, CustomField $original): array {
         return $data; //ToDo Reimplement
     }
-
-    /*  public function nameFormEditor(array $state): string|null {
-         $field = new CustomField();
-         $field->fill($state);
-         return $field->name;
-     }
-
-     public function nameBeforeIconFormEditor(array $state): string|null {
-         $badges = "";
-         if (!empty($state["general_field_id"])) $badges .= new HtmlBadge("Gen", Color::rgb("rgb(43, 164, 204)"));
-         if (!$state["is_active"]) $badges .= new HtmlBadge("Deaktiviert", Color::rgb("rgb(194, 53, 35)")); //ToDo translate
-         return $badges;
-     }
-
-     /*public function repeaterFunctions(): array {
-         return [
-             PullInLayoutAction::class => PullInLayoutAction::getDefaultTypeClosure($this),
-             PullOutLayoutAction::class => PullOutLayoutAction::getDefaultTypeClosure($this),
-
-             //Nested Layout Functions
-             PullInNestedLayoutAction::class => PullInNestedLayoutAction::getDefaultTypeClosure($this),
-             PullOutNestedLayoutAction::class => PullOutNestedLayoutAction::getDefaultTypeClosure($this),
-
-             NewEggActionComponent::class => NewEggActionComponent::getDefaultTypeClosure(null), //<- Only for the position
-
-             EditAction::class => RepeaterFieldAction::getDefaultTypeClosure($this),
-         ];
-     }
-
-     //Empty or null mean that the repeater cant open
-     public function editorRepeaterContent(CustomForm $form, array $fieldData): ?array {
-         return null;
-     }
-
-    public function getEditorItemTitle(array $state, CustomForm $form): mixed {
-         //Before Icon
-         $html = $this->nameBeforeIconFormEditor($state);
-
-         //Prepare the Icon
-         $icon = Blade::render('<x-' . $this->icon() . ' class="h-4 w-4"/>');
-         $icon = '<span class="px-2 py-1"> ' . $icon . '</span>';
-         $html .= $icon;
-
-         //Name
-         $nameStyle = 'class="text-sm font-medium ext-gray-950 dark:text-white truncate select-none"';
-         $name = $this->nameFormEditor($state);
-         $html .= '<h4' . $nameStyle . '>' . $name . '</h4>';
-
-         //Do Open the Record if possible
-         $clickAction = '';
-         if (!empty($this->editorRepeaterContent($form, $state)))
-             $clickAction = 'x-on:click.stop="isCollapsed = !isCollapsed"';
-
-         $html = '<span  class="cursor-pointer flex"' . $clickAction . '>' . $html . '</span>';
-
-         //Close existing heading and after that reopen it
-         $html = '</h4>' . $html . '<h4>';
-         return new HtmlString($html);
-     }*/
-
-
 }

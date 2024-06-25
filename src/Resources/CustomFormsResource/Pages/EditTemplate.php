@@ -2,7 +2,7 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormsResource\Pages;
 
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\Helper\CustomFormEditorHelper;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\Helper\EditCustomFormHelper;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
@@ -64,7 +64,7 @@ class EditTemplate extends EditCustomForm
 
         return CustomField::query()
             ->whereIn("custom_form_id", $otherTemplatesQuery->select("template_id"))
-            ->whereIn("general_field_id",CustomFormEditorHelper::getUsedGeneralFieldIds($customFields));
+            ->whereIn("general_field_id",EditCustomFormHelper::getUsedGeneralFieldIds($customFields));
     }
 
     protected function cachedTemplateGeneralFieldCollision($livewire):Collection {
@@ -85,7 +85,7 @@ class EditTemplate extends EditCustomForm
 
     protected function getGeneralFieldsOverwritten($livewire): Builder { //ToDo Optimize Cache
         $customFields = array_values($livewire->getCachedForms())[0]->getRawState()["custom_fields"];
-        $usedGeneralIDs = CustomFormEditorHelper::getUsedGeneralFieldIds($customFields);
+        $usedGeneralIDs = EditCustomFormHelper::getUsedGeneralFieldIds($customFields);
 
         $templateFieldsQuery = CustomField::query()
             ->where("template_id", $this->record->id);

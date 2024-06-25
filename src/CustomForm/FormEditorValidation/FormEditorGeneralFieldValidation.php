@@ -3,7 +3,7 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormEditorValidation;
 
 use Closure;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\Helper\CustomFormEditorHelper;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\Helper\EditCustomFormHelper;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralFieldForm;
 
@@ -21,7 +21,7 @@ class FormEditorGeneralFieldValidation extends FormEditorValidation
         $requiredGeneralIDs = $requiredGeneralFieldForm
             ->map(fn ($fieldForm) => $fieldForm->general_field_id);
 
-        $usedGeneralIDs =CustomFormEditorHelper::getUsedGeneralFieldIds($value);
+        $usedGeneralIDs =EditCustomFormHelper::getUsedGeneralFieldIds($value);
         $notAddedRequiredFields = $requiredGeneralIDs
             ->filter(fn($id)=> !in_array($id, $usedGeneralIDs));
 

@@ -3,7 +3,7 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\Actions;
 
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\Components\CustomFieldEditModal;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\Helper\CustomFormEditorHelper;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\Helper\EditCustomFormHelper;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Actions\ActionContainer;
@@ -22,7 +22,7 @@ class DefaultCustomFieldEditAction extends Action
           CustomFieldEditModal::make()
        ]);
 
-       $this->fillForm(fn($state, $arguments) => CustomFormEditorHelper::getFieldData($state,$arguments['item']));
+       $this->fillForm(fn($state, $arguments) => EditCustomFormHelper::getFieldData($state, $arguments['item']));
        $this->mutateFormDataUsing(function(Action $action, ActionContainer $component){
            $forms = array_values($action->getLivewire()->getCachedForms());
            $form = $forms[sizeof($forms) - 1];

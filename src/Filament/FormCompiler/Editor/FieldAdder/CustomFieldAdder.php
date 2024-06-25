@@ -5,7 +5,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor\Field
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\AdderComponents\FormEditorFieldAdder;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\Components\CustomFieldEditModal;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\Helper\CustomFormEditorHelper;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\Helper\EditCustomFormHelper;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Group;
@@ -37,7 +37,7 @@ final class CustomFieldAdder extends FormEditorFieldAdder
 
             $actions[] = Actions::make([
                 Action::make("add_".$type::identifier()."_action")
-                    ->mutateFormDataUsing(fn(Action $action)=> CustomFormEditorHelper::getRawStateForm($action,1))
+                    ->mutateFormDataUsing(fn(Action $action)=> EditCustomFormHelper::getRawStateForm($action,1))
                     ->modalHeading(__("filament-package_ffhs_custom_forms::custom_forms.form.compiler.add_a_name_field",['name'=>$type->getTranslatedName()]))
                     ->disabled(fn(Get $get) => is_null($type::identifier()))
                     ->extraAttributes(["style" => "width: 100%; height: 100%;"])

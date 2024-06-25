@@ -3,7 +3,7 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor\FieldAdder;
 
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\AdderComponents\FormEditorFieldAdder;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\Helper\CustomFormEditorHelper;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\Helper\EditCustomFormHelper;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
@@ -54,7 +54,7 @@ final class TemplateAdder extends FormEditorFieldAdder
                     ->action(function ($set, Get $get) {
                         $templateId = $get("add_template_id");
                         $data=["template_id" => $templateId];
-                        CustomFormEditorHelper::setCustomFieldInRepeater($data, $get, $set);
+                        EditCustomFormHelper::setCustomFieldInRepeater($data, $get, $set);
                         $set("add_template_id", null);
 
                         $customFields = $get("custom_fields");
@@ -75,7 +75,7 @@ final class TemplateAdder extends FormEditorFieldAdder
     private function getOverlappedIdentifier(array $customFields, int $templateId): array {
         //Fields with the same identify key
         $usedFieldIdentifier = [];
-        $customFieldWithIdentifyKey = CustomFormEditorHelper::getFieldsWithProperty($customFields,"identifier");
+        $customFieldWithIdentifyKey = EditCustomFormHelper::getFieldsWithProperty($customFields,"identifier");
         foreach ($customFieldWithIdentifyKey as $customField) $usedFieldIdentifier[] = $customField["identifier"];
         return CustomForm::cached($templateId)->customFields
             ->whereIn("identifier",$usedFieldIdentifier)
@@ -86,7 +86,7 @@ final class TemplateAdder extends FormEditorFieldAdder
     private function isTemplateDisabled($templateId, Get $get): bool {
         if($this->useTemplateUsedGeneralFields($templateId,$get)) return true;
         $customFields = $get("custom_fields");
-        $templates = CustomFormEditorHelper::getFieldsWithProperty($customFields,"template_id");
+        $templates = EditCustomFormHelper::getFieldsWithProperty($customFields,"template_id");
         $usedTemplateIds = array_map(fn($template) => $template["template_id"],$templates);
 
         return in_array($templateId,$usedTemplateIds);
@@ -94,7 +94,7 @@ final class TemplateAdder extends FormEditorFieldAdder
 
     public function useTemplateUsedGeneralFields(int $templateId, Get $get): bool {
         $templateGenIds = CustomForm::cached($templateId)->generalFields->pluck("id")->toArray();
-        $existingIds = CustomFormEditorHelper::getUsedGeneralFieldIds($get("custom_fields"));
+        $existingIds = EditCustomFormHelper::getUsedGeneralFieldIds($get("custom_fields"));
         $commonValues = array_intersect($templateGenIds, $existingIds);
 
         return !empty($commonValues);

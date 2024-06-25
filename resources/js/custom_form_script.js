@@ -1,10 +1,10 @@
-function findTarget(target){
+function findTarget(target, onlyDrag = false){
 
     let currentParent = target;
     while (currentParent) {
-        if (currentParent.hasAttribute('customField:drag') || currentParent.hasAttribute('customField:hasFields')) {
-            break;
-        }
+
+        if(!onlyDrag && currentParent.hasAttribute('customField:hasFields')) break;
+        if (currentParent.hasAttribute('customField:drag'))  break;
         currentParent = currentParent.parentNode;
     }
 
@@ -130,11 +130,11 @@ function setupField(fieldEl, state, $wire){
 
 function setupDragField(fieldEl){
     fieldEl.addEventListener('dragstart', e => {
-        e.target.setAttribute('customField:dragging',true)
+        findTarget(e.target, true).setAttribute('customField:dragging',true)
     })
 
     fieldEl.addEventListener('dragend', e => {
-        e.target.removeAttribute('customField:dragging')
+        findTarget(e.target, true).removeAttribute('customField:dragging')
     })
 
     fieldEl.addEventListener('dragover', e => e.preventDefault())

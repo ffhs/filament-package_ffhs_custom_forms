@@ -5,7 +5,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\RepeaterFieldAction\Ac
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\NestedLayoutType\CustomNestLayoutType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\RepeaterFieldAction\RepeaterFieldAction;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\Components\CustomFieldEditModal;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\Helper\CustomFormEditorHelper;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\Helper\EditCustomFormHelper;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Filament\Forms\Components\Actions\Action;
@@ -36,7 +36,7 @@ class NewEggActionComponent extends RepeaterFieldAction
                 $fields[uniqid()] = $data;
                 $set($path,$fields);
             })
-            ->mutateFormDataUsing(fn(Action $action)=> CustomFormEditorHelper::getRawStateForm($action,1))
+            ->mutateFormDataUsing(fn(Action $action)=> EditCustomFormHelper::getRawStateForm($action,1))
             ->fillForm(fn($state, $arguments)=> $this->getFillForm($state,$arguments))
             ->icon('carbon-add-alt')
             ->label(function($arguments, $state){

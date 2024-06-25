@@ -5,7 +5,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\Helper;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Filament\Forms\Get;
 
-class CustomFormEditorHelper
+class EditCustomFormHelper
 {
 
 

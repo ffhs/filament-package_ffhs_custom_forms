@@ -4,7 +4,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\RepeaterFieldAction\Ac
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\RepeaterFieldAction\RepeaterFieldAction;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\Components\CustomFieldEditModal;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\Helper\CustomFormEditorHelper;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\Helper\EditCustomFormHelper;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Filament\Forms\Components\Actions\Action;
@@ -15,9 +15,9 @@ class EditAction extends RepeaterFieldAction
 
     public function getAction(CustomForm $record, array $typeClosers): Action {
         return Action::make('edit')
-            ->action(fn($get, $set, $data, $arguments) => CustomFormEditorHelper::setCustomFieldInRepeater($data, $get, $set, $arguments))
+            ->action(fn($get, $set, $data, $arguments) => EditCustomFormHelper::setCustomFieldInRepeater($data, $get, $set, $arguments))
             ->visible($this->isVisibleClosure($record,$typeClosers))
-            ->mutateFormDataUsing(fn(Action $action)=> CustomFormEditorHelper::getRawStateForm($action,1))
+            ->mutateFormDataUsing(fn(Action $action)=> EditCustomFormHelper::getRawStateForm($action,1))
             ->fillForm(fn($state, $arguments) => $state[$arguments["item"]])
             ->closeModalByClickingAway(false)
             ->icon('heroicon-m-pencil-square')
