@@ -17,7 +17,7 @@ class EditCustomFormLoadHelper
         $fieldData["data"] = static::loadFields($fields);
         $fieldData["structure"] = static::loadStructure($fields);
 
-        return ['custom_fields' => $fieldData];
+        return ['custom_fields' => $fieldData, "custom_form_identifier" => $form->custom_form_identifier];
     }
 
 

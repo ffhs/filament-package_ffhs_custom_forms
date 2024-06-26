@@ -141,7 +141,7 @@ class GeneralFieldResource extends Resource
                     ->schema(function($get){
                         if(is_null($get("type"))) return[];
                         $type = CustomFieldType::getTypeFromIdentifier($get("type"));
-                        return $type->getExtraGeneralTypeOptionComponents();
+                        return $type->getGeneralTypeOptionComponents();
                     }),
 
                 Section::make("Überschreiben Einstellungen") //ToDo Translate

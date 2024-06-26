@@ -4,7 +4,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\AdderCom
 
 final class CustomFieldAdder extends FormEditorFieldAdder
 {
-    protected string $view = 'filament-package_ffhs_custom_forms::filament.components.field_adder';
+    protected string $view = 'filament-package_ffhs_custom_forms::filament.components.field-adder.type_adder';
 
 
     protected function setUp(): void {

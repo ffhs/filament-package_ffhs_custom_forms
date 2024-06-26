@@ -2,10 +2,12 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Models;
 
+use Ffhs\FilamentPackageFfhsCustomForms\Caching\CachedModel;
 use Ffhs\FilamentPackageFfhsCustomForms\Domain\HasFormIdentifier;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Cache;
 
 /**
  * @property GeneralField $generalField
@@ -14,7 +16,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property bool $is_required
  * @property bool $export
  */
-class GeneralFieldForm extends Model
+class GeneralFieldForm extends CachedModel
 {
 
     use HasFormIdentifier;
@@ -27,9 +29,24 @@ class GeneralFieldForm extends Model
         'export',
     ];
 
+
+    protected array $cachedRelations = [
+        "generalField" => ["general_field_id", "id"],
+    ];
+
     public function generalField(): BelongsTo {
         return $this->belongsTo(GeneralField::class);
     }
+
+    public static function getFromFormIdentifier($formIdentifier): Collection {
+        return Cache::remember("general_filed_form-from-identifier_".$formIdentifier, 5,
+            fn() => GeneralFieldForm::query()
+                ->where("custom_form_identifier", $formIdentifier)
+                ->get()
+
+        );
+    }
+
 
     public static function getGeneralFieldQuery(string $identifier): Builder {
         return GeneralField::query()->whereIn("id",

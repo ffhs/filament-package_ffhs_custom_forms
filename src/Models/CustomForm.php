@@ -119,7 +119,6 @@ class CustomForm extends CachedModel
     }
 
 
-
     public function cachedCustomFields(): Collection {
         $cacheKey = $this->getRelationCacheName("fieldsWithTemplates");
         return Cache::remember($cacheKey,
