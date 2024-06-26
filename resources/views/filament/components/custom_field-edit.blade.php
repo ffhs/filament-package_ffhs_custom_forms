@@ -1,6 +1,5 @@
 @php
     use Filament\Support\Facades\FilamentAsset;
-    use function Filament\Support\prepare_inherited_attributes;
     $statePath = $getStatePath();
     $wireModel = 'wire:model' . ($isLive() ? '.live': '');
 @endphp
@@ -23,7 +22,6 @@
             state: $wire.{{ $applyStateBindingModifiers("\$entangle('$statePath')" )}},
           }"
     >
-
 
         <x-filament::fieldset customField:form customField:has-fields class>
             <!--- toDo Setze wieder auf config coloums-->

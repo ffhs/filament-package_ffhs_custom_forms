@@ -1,9 +1,4 @@
-@php
-    $statePath = $getStatePath();
-    $wireModel = 'wire:model' . ($isLive() ? '.live': '');
-@endphp
-
-
+@php use Illuminate\Support\HtmlString; @endphp
 <x-dynamic-component :component="$getFieldWrapperView()">
 
     <legend class="-ms-2 px-2 text-sm font-medium leading-6 text-gray-950 dark:text-white">
@@ -33,30 +28,30 @@
         }
 
 
-        .general-field:hover{
+        .general-field:hover {
             background-color: #cdf4ff;
         }
 
-        .disabled-general-field{
+        .disabled-general-field {
             color: #828f93;
         }
     </style>
 
-   <div style="--cols-default: repeat(1, minmax(0, 1fr)); margin-top: -5px"
-        class="fi-btn card grid grid-cols-[--cols-default] fi-fo-component-ctn gap-4">
+    <div style="--cols-default: repeat(1, minmax(0, 1fr)); margin-top: -5px"
+         class="fi-btn card grid grid-cols-[--cols-default] fi-fo-component-ctn gap-4">
 
         @foreach($getGeneralFieldSelectOptions() as $id => $name)
-                <span
-                    @if(!$isGeneralDisabled($id))
+            <span
+                @if(!$isGeneralDisabled($id))
                     draggable="true"
-                    customField:newFieldMode="general"
-                    customField:newField="{{$id}}"
-                    customField:drag="True"
-                    @endif
+                customField:newFieldMode="general"
+                customField:newField="{{$id}}"
+                customField:drag="True"
+                @endif
 
-                    x-init="setupDragField($el)"
+                x-init="setupDragField($el)"
 
-                    style="
+                style="
                     --c-400:var(--primary-400);
                     --c-500:var(--primary-500);
                     --c-600:var(--primary-600);
@@ -64,7 +59,7 @@
                      width: 100%;
                     height: 30px;"
 
-                    class="
+                class="
                     font-semibold
                     transition duration-75
 
@@ -81,8 +76,8 @@
                     @endif
 
                      "
-                >
-                    <span>Bla</span>{{$name}}
+            >
+                      <span>{{new HtmlString(Blade::render('<x-'.$getIcon($id). " style='width: 25px; margin-top: -5px; margin-bottom: -20px;'/>"))}}</span> {{$name}}
 
                 </span>
 

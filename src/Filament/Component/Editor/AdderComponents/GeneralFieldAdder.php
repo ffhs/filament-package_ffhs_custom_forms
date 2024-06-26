@@ -28,6 +28,10 @@ final class GeneralFieldAdder extends FormEditorFieldAdder
     }
 
 
+    public function getIcon($id): string {
+        return GeneralField::cached($id)->icon;
+    }
+
     public function getGeneralFieldSelectOptions() {
 
         $formIdentifier = data_get($this->getState(), "custom_form_identifier");
