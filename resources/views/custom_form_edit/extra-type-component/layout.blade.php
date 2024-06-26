@@ -10,7 +10,7 @@
     :attributes="prepare_inherited_attributes(new ComponentAttributeBag())"
     style="
         --cols-default: repeat(1, minmax(0, 1fr));
-        --cols-lg: repeat({{data_get($getState() ,  'data.' . $key . '.options.columns' ) ?? 1}} , minmax(0, 1fr));
+        --cols-lg: repeat({{data_get($getState() ,   $key . '.options.columns' ) ?? 1}} , minmax(0, 1fr));
         background: rgba(200, 200, 200, 0.1)
     "
     class="grid grid-cols-[--cols-default] lg:grid-cols-[--cols-lg] fi-fo-component-ctn gap-6"

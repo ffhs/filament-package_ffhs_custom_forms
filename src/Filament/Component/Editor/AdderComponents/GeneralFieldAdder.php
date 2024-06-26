@@ -56,8 +56,9 @@ final class GeneralFieldAdder extends FormEditorFieldAdder
 
 
     public function isGeneralDisabled($id):bool {
+        //ToDo  Improve
         if(empty($usedGeneralFieldIds))
-            $usedGeneralFieldIds = collect($this->getState()['custom_fields']['data'])->pluck("general_field_id");
+            $usedGeneralFieldIds = collect($this->getState()['custom_fields'])->pluck("general_field_id");
 
         return $usedGeneralFieldIds->contains($id);
     }

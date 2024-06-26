@@ -1,7 +1,6 @@
 @php
     use Filament\Support\Facades\FilamentAsset;
     $statePath = $getStatePath();
-    $wireModel = 'wire:model' . ($isLive() ? '.live': '');
 @endphp
 
 
@@ -27,7 +26,7 @@
             <!--- toDo Setze wieder auf config coloums-->
             <div style="--cols-default: repeat(1, minmax(0, 1fr)); --cols-lg: repeat(2, minmax(0, 1fr));"
                  class="grid grid-cols-[--cols-default] lg:grid-cols-[--cols-lg] fi-fo-component-ctn gap-6">
-                @foreach($field->getStructureState() as $key => $structure)
+                @foreach($field->getStructure() as $key => $structure)
                     @include('filament-package_ffhs_custom_forms::custom_form_edit.custom-field')
                 @endforeach
             </div>

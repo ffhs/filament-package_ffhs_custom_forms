@@ -2,16 +2,13 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\Helper;
 
-use Barryvdh\Debugbar\Facades\Debugbar;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldUtils;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
-use Illuminate\Database\Eloquent\MassAssignmentException;
 
 class EditCustomFormSaveHelper
 {
-
     public static function save(array $rawState, CustomForm $form): void {
-        Debugbar::info($rawState);
         $oldFields = $form->customFields;
 
         $fieldData = $rawState["data"];
@@ -24,8 +21,8 @@ class EditCustomFormSaveHelper
 
         //Prepare Save and Create Data
         foreach ($fieldData as $key => $field) {
-
             $locationAndEndLayout = static::getPositionOfField($key, $structure);
+
             $position = $locationAndEndLayout[0];
             $hasFields = $locationAndEndLayout[1];
             $field['form_position'] = $position;
@@ -37,9 +34,9 @@ class EditCustomFormSaveHelper
                 $customField = new CustomField();
 
 
-            $field = $customField->getType()->getMutateCustomFieldDataOnSave($customField, $field);
+            $field = CustomFieldUtils::getFieldTypeFromRawDate($field)
+                ->getMutateCustomFieldDataOnSave($customField, $field);
 
-            $fieldsToSaveData[$key] = $field;
             $customField->fill($field);
 
             $customField->getType()->doBeforeSaveField($customField, $field);
@@ -58,8 +55,6 @@ class EditCustomFormSaveHelper
         $fieldsToDelete->each(fn(CustomField $field) => $field->getType()->doBeforeDeleteField($field));
         CustomField::destroy($fieldsToDelete->pluck("id"));
         $fieldsToDelete->each(fn(CustomField $field) => $field->getType()->doAfterDeleteField($field));
-
-
 
         //Create and Updating
         CustomField::insert($fieldsToSavetoCreate);
@@ -82,10 +77,21 @@ class EditCustomFormSaveHelper
         $savedFields = $form->customFields()->get();
         $savedFields
             ->whereNotIn('id', $fieldData->pluck("id"))
-            ->each(fn(CustomField $field) =>
-            $field->getType()->doAfterCreateField($field,
-                $fieldData->where("identifier", $field->identifier)->first()
-            )
+            ->each(function(CustomField $field) use ($fieldData) {
+
+                if($field->isGeneralField()){
+                    $savedFieldData = $fieldData->where("general_field_id", $field->general_field_id)->first();
+                }
+                else if($field->isTemplate()){
+                    $savedFieldData = $fieldData->where("template_id", $field->template_id)->first();
+                }
+                else{
+                    $savedFieldData = $fieldData->where("identifier", $field->identifier)->first();
+                }
+
+                return $field->getType()->doAfterCreateField($field, $savedFieldData);
+
+            }
         );
 
     }

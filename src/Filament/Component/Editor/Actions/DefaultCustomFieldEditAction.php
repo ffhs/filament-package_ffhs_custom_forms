@@ -32,7 +32,7 @@ class DefaultCustomFieldEditAction extends Action
        });
        $this->action(function($set, $data, $arguments) {
            $key = $arguments['item'];
-           $set("data.$key", $data);
+           $set($key, $data);
        });
 
 
@@ -43,7 +43,7 @@ class DefaultCustomFieldEditAction extends Action
 
        $this->modalHeading(function ($get, array $arguments) {
            $key =$arguments["item"];
-           $data = $get("data.$key");
+           $data = $get($key);
            $suffix = " - Feld bearbeiten "; //ToDo Translate
            if (empty($data["general_field_id"])) return $data["name"][app()->getLocale()] . $suffix;
            else return "G. ".GeneralField::cached($data["general_field_id"])->name. $suffix;

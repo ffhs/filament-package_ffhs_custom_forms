@@ -19,10 +19,11 @@ class DefaultCustomFieldDeleteAction extends Action
         //ToDo Confirm Message
        $this->requiresConfirmation();
 
-       $this->action(function($get, $arguments, $set) {
+       $this->action(function($get, $arguments, $set, $state) {
            $key = $arguments["item"];
 
            //Delete Structure
+           //ToDo repair
            $structure = $get("structure");
            $structurePath = "structure." . $this->getPath($structure, $key);
 
@@ -30,18 +31,15 @@ class DefaultCustomFieldDeleteAction extends Action
            $structureFragment = $get($structurePath);
 
 
-           $data = $get("data");
-           unset($data[$key]);
+           unset($state[$key]);
 
 
            foreach ($this->getSubFields($structureFragment[$key]) as $field){
-               unset($data[$field]);
+               unset($state[$field]);
            }
 
-           $set("data",$data);
+           $set(".",$state); //ToDo show if it work
 
-           unset($structureFragment[$key]);
-           $set($structurePath, $structureFragment);
        });
     }
 

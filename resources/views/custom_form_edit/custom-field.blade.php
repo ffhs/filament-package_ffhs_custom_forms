@@ -5,26 +5,26 @@
     use function Filament\Support\prepare_inherited_attributes;
     use Illuminate\View\ComponentAttributeBag;
 
-    //$fieldData = $getFieldDataState()[$key];
-
     /**@var CustomFieldType $type*/
     $type = $getFieldType($key);
-    $label = new HtmlString( "<span class='flex'>" . Blade::render('<x-'.$type->icon(). "/>") .
-        "<span draggable='true' style='padding-left: 10px; cursor: grab;'>" . $type->getEditorFieldTitle($getFieldDataState()[$key]) . "</span></span>"
-    );
+    $generalField = $getGeneralField($key);
+
+
+    if(is_null($generalField))
+        $icon = Blade::render('<x-'.$type->icon() . " style='width: 25px;' />");
+    else $icon = Blade::render('<x-'.$generalField->icon . " style='width: 20px;' />");
+
+    $name = $type->getEditorFieldTitle($getState()[$key]);
+    $label = new HtmlString("<span class='flex'>" . $icon .
+            "<span draggable='true' style='padding-left: 10px; cursor: grab;'>" . $name . "</span></span>");
+
 @endphp
 
-    <!--
 
-        grid-column: span  / 1 !important;
-
-
-
--->
 
 <div  customField:drag customField:uuid="{{$key}}"
      style="
-        grid-column:  {{data_get($getState() ,  'data.' . $key . '.options.new_line_option' )? " 1 /" : ""}} span {{data_get($getState() ,  'data.' . $key . '.options.column_span' ) ?? 1}} !important;
+        grid-column:  {{data_get($getState() ,   $key . '.options.new_line_option' )? " 1 /" : ""}} span {{data_get($getState() ,  $key . '.options.column_span' ) ?? 1}} !important;
      "
      x-init="setupField($el, state, $wire)"
 >
@@ -40,7 +40,6 @@
         <div style="width: 60%;  margin-top: -15px; margin-bottom: 10px;">
             {{$getFieldName($key)}}
         </div>
-
 
         @if(!is_null($getFieldComponent($key)) )
             @include($getFieldComponent($key))

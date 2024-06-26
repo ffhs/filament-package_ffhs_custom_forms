@@ -108,7 +108,7 @@ abstract class CustomFieldType extends Type
         if(!$field->isGeneralField()) return $this->getTranslatedName();
 
         return "<div>". new HtmlBadge('Gen', Color::rgb('rgb(43, 164, 204)'))."</div>" .
-            '<p style="margin-left: 40px; margin-top: -20px">'. $this->getTranslatedName().'</p>'; //ToDo Badges function reimplement
+            '<p style="margin-left: 40px; margin-top: -20px">'. $field->name.'</p>'; //ToDo Badges function reimplement
     }
 
     public function getEditorActions(string $key, array $fieldState): array{
@@ -128,7 +128,9 @@ abstract class CustomFieldType extends Type
     public function updateFormComponentOnSave(Component $component, CustomField $customField, Form $form, Collection $flattenFormComponents): void {//ToDo to Traits
     }
 
-
+    public function hasEditorNameElement(array $fielData):bool {
+        return empty($fielData['general_field_id']);
+    }
 
     public function mutateOnTemplateDissolve(array $data, CustomField $original): array {
         return $data; //ToDo Reimplement

@@ -77,11 +77,4 @@ class EditCustomFormHelper
     }
 
 
-
-    public static function getFieldData(array $state, string $item): array {
-        $data = data_get($state, "data.". $item);
-        $data["key"] = $item;
-        return $data;
-    }
-
 }

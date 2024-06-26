@@ -76,7 +76,7 @@ class CustomField extends ACustomField
             $genField = GeneralField::cached($this->general_field_id,"id",false);
             if(!is_null($genField)) return $genField;
 
-            $generalFieldIds = $this->customForm->cachedFieldsWithTemplates()->whereNotNull('general_field_id')->pluck("general_field_id");
+            $generalFieldIds = $this->customForm->customFields->whereNotNull('general_field_id')->pluck("general_field_id");
             $generalFields = GeneralField::query()->whereIn("id",$generalFieldIds)->get();
             GeneralField::addToCachedList($generalFields);
             return GeneralField::cached($this->general_field_id,"id",false);

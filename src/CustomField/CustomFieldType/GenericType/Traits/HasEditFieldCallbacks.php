@@ -45,7 +45,7 @@ trait HasEditFieldCallbacks
         $this->beforeSaveField($field, $data);
     }
 
-    public function doAfterSaveField(CustomField $field, array &$data): void {
+    public function doAfterSaveField(CustomField $field, array $data): void {
         $this->doForOptions($data, $field, 'afterSaveField');
         //ToDo For Rules
         $this->afterSaveField($field, $data);

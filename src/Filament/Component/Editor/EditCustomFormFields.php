@@ -2,10 +2,10 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor;
 
-use Barryvdh\Debugbar\Facades\Debugbar;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldUtils;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\EditCreateFieldManager\EditCreateTypeFieldManager;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
@@ -14,18 +14,12 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\HasStateBindingModifiers;
 use Filament\Support\Enums\Alignment;
 use Illuminate\Support\Collection;
-use SebastianBergmann\Environment\Console;
 
 class EditCustomFormFields extends Field
 {
     use HasStateBindingModifiers;
 
-    /*
-     * [
-     *  structure = []
-     *  data => []
-     * ]
-     */
+
     protected string $view = 'filament-package_ffhs_custom_forms::filament.components.custom_field-edit';
 
 
@@ -53,7 +47,7 @@ class EditCustomFormFields extends Field
         });
     }
 
-    protected function createField($set, $arguments, $get, $record): void {
+    protected function createField($set, $arguments, $get): void {
         //Set Field Data
         //Make custom modes
 
@@ -66,7 +60,7 @@ class EditCustomFormFields extends Field
         $fieldData = $managers[$mode]::getFieldData($this, $get($this->getStatePath(false)) ,$arguments, $key);
 
 
-        $set($this->getStatePath(false).'.data.'. $key, $fieldData);
+        $set($this->getStatePath(false). $key, $fieldData);
 
 
         $this->setStructureNewField($arguments, $get, $key, $set);
@@ -81,13 +75,6 @@ class EditCustomFormFields extends Field
         ]);
     }
 
-    public function getFieldDataState(): array {
-        return $this->getState()["data"];
-    }
-    public function getStructureState(): array {
-        return $this->getState()["structure"];
-    }
-
 
     protected function generateChildContainers(): void {
         if($this->isChildrenGenerated()) return;
@@ -95,7 +82,7 @@ class EditCustomFormFields extends Field
         $this->actionContainers = [];
         $this->nameContainers = [];
 
-        foreach ($this->getFieldDataState() as $key => $field) {
+        foreach ($this->getState() as $key => $field) {
             $this->generateFieldActions($key, $field);
             $this->generateNameContainers($key, $field);
         }
@@ -123,17 +110,20 @@ class EditCustomFormFields extends Field
 
     public function generateNameContainers(string $key, array $field): void {
         $type = CustomFieldUtils::getFieldTypeFromRawDate($field);
+        $elements = [];
 
-        $this->nameContainers[$key] = ComponentContainer::make($this->getLivewire())
-            ->parentComponent($this)
-            ->statePath('data.'.$key)
-            ->components([
+        if($type->hasEditorNameElement($field))
+            $elements = [
                 TextInput::make('name.'.app()->getLocale())
                     ->hidden(fn($state)=> false)
                     ->label(''),
-            ]);
-    }
+            ];
 
+        $this->nameContainers[$key] = ComponentContainer::make($this->getLivewire())
+            ->parentComponent($this)
+            ->statePath($key)
+            ->components($elements);
+    }
 
 
     public function getFieldActions(string $key): ComponentContainer {
@@ -142,7 +132,7 @@ class EditCustomFormFields extends Field
 
         if(array_key_exists($key, $actions)) return $actions[$key];
 
-        $this->generateFieldActions($key, $this->getFieldDataState()[$key]);
+        $this->generateFieldActions($key, $this->getState()[$key]);
         return $this->getActionContainers()[$key];
     }
 
@@ -152,20 +142,67 @@ class EditCustomFormFields extends Field
         $names = $this->getNameContainers();
 
         if(array_key_exists($key, $names)) return $names[$key];
-        $this->generateNameContainers($key, $this->getFieldDataState()[$key]);
+
+        $this->generateNameContainers($key, $this->getState()[$key]);
 
         return $this->getNameContainers()[$key];
     }
 
-
-
     public function getFieldComponent(string $key):?string{
-        return $this->getFieldType($key)?->fieldEditorExtraComponent($this->getFieldDataState()[$key]);
+        return $this->getFieldType($key)?->fieldEditorExtraComponent($this->getState()[$key]);
+    }
+
+
+    public function getGeneralField($key): ?GeneralField {
+        $data = $this->getState()[$key];
+        $genId = $data['general_field_id'] ?? null;
+        if(is_null($genId)) return null;
+        return GeneralField::cached($genId);
+    }
+
+
+    public function getStructure(): array {
+        $fields = collect($this->getState());
+        $fields = $fields->map(fn(array $fieldData) => (new CustomField())->fill($fieldData));
+
+        return  $this->loadStructure($fields);
+    }
+
+
+    private function loadStructure(Collection $fields): array {
+        if($fields->count() === 0) return [];
+
+        $fields = $fields->sortBy('form_position');
+        $start = array_values($fields->toArray())[0]['form_position'];
+        $end = array_values($fields->toArray())[$fields->count()-1]['form_position'];
+
+
+        $structure = [];
+
+        for ($i = $start; $i <= $end; $i++) {
+            /**@var CustomField $field */
+            $field = $fields->firstWhere('form_position', $i);
+
+            if(empty($field->layout_end_position)) {
+                $structure[$field->identifier] = [];
+                continue;
+            }
+
+            $subFields = $field->customForm->getOwnedFields()
+                ->where("form_position", ">", $field->form_position)
+                ->where("form_position", "<=", $field->layout_end_position);
+
+
+            $i = $field->layout_end_position;
+            $structure[$field->identifier] = static::loadStructure($subFields);
+        }
+
+        return  $structure;
     }
 
 
     public function getFieldType(string $key): ?CustomFieldType {
-        return CustomFieldUtils::getFieldTypeFromRawDate($this->getFieldDataState()[$key]);
+        return CustomFieldUtils::getFieldTypeFromRawDate($this->getState()[$key]);
     }
 
 
@@ -180,6 +217,7 @@ class EditCustomFormFields extends Field
     protected function isChildrenGenerated(): bool {
         return $this->childrenGenerated;
     }
+
 
 
     private function setStructureNewField($arguments, $get, string $uuid, $set): void {

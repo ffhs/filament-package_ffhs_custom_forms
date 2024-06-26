@@ -67,21 +67,23 @@ function handleDragDrop(target, draggingEl, state) {
 
     getParentForm().querySelectorAll('*').forEach(element => element.classList.remove('custom-field-drag-over'))
 
-    let structure = {};
+    let rawStructure = {};
+
+    let currentPos = 0;
 
     getParentForm().querySelectorAll('[customField\\:uuid]').forEach(element => {
-        let path = getElementFieldStructurePath(element)
+        //let path = getElementFieldStructurePath(element)
+        currentPos++
 
-        let value = getNestedValue(structure,path)
-        if(value == null) value = {};
-        setNestedValue(structure, path, value)
+        let contains =  element.querySelectorAll('[customField\\:uuid]').length
+        let key = element.getAttribute('customField:uuid')
+
+        state['data'][key]['form_position'] = currentPos
+        state['data'][key]['layout_end_position'] = contains === 0? null: (currentPos + contains)
     })
 
-    let newState = state
-    newState['structure'] = structure
-    state = newState;
+    console.log(state);
 }
-
 
 function handleNewField(target, draggingEl, $wire) {
     let mode = draggingEl.getAttribute('customField:newFieldMode')
