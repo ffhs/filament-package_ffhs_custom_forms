@@ -26,7 +26,7 @@ abstract class DynamicFormConfiguration
 
     //Editor Adder's
     public static function editorFieldAdder():array {
-        return config("ffhs_custom_forms.editor_field_adder");
+        return config("ffhs_custom_forms.editor.field_adders");
     }
 
     // ViewModes

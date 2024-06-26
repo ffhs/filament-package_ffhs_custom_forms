@@ -37,6 +37,9 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\Type\HiddenRuleTy
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\Type\RequiredRuleType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormEditorValidation\FormEditorGeneralFieldValidation;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\AdderComponents\CustomFieldAdder;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\AdderComponents\GeneralFieldAdder;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\EditCreateFieldManager\EditCreateGeneralFieldManager;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\EditCreateFieldManager\EditCreateTypeFieldManager;
 
 return [
 
@@ -64,15 +67,26 @@ return [
 
     ],
 
-    'custom_form_editor_validations' => [
-        FormEditorGeneralFieldValidation::class
+
+    'editor' => [
+        'field_adders' => [
+            GeneralFieldAdder::class,
+            //TemplateAdder::class,
+            CustomFieldAdder::class
+        ],
+        /*   'custom_form_editor_validations' => [
+                FormEditorGeneralFieldValidation::class
+            ],
+         */
+        'field_creator_managers' => [
+            'type' => EditCreateTypeFieldManager::class,
+            'general' => EditCreateGeneralFieldManager::class,
+            //EditCreateTemplateFieldManager::class,
+        ],
     ],
 
-    'editor_field_adder' => [
-       // GeneralFieldAdder::class,
-       // TemplateAdder::class,
-       CustomFieldAdder::class
-    ],
+
+
 
     "custom_field_types" => [
         TemplateFieldType::class,
@@ -112,6 +126,7 @@ return [
         WizardCustomNestType::class,
         WizardStepCustomEggType::class,
     ],
+
     "selectable_field_types" => [
         CheckboxType::class,
         TextType::class,
@@ -145,7 +160,6 @@ return [
 
         TabsCustomNestType::class,
         WizardCustomNestType::class,
-
     ],
 
     "selectable_general_field_types"=>[

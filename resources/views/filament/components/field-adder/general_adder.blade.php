@@ -50,8 +50,8 @@
                     @if(!$isGeneralDisabled($id))
                     draggable="true"
                     customField:newFieldMode="general"
-                    customField:newField="$id"
-
+                    customField:newField="{{$id}}"
+                    customField:drag="True"
                     @endif
 
                     x-init="setupDragField($el)"

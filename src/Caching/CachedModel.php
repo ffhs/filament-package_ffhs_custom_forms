@@ -84,7 +84,7 @@ abstract class CachedModel extends Model
     }
 
     public static function cachedMultiple(string $attribute = "id", bool $searching = true, mixed... $values): Collection{
-        $output = Cache::get(static::getFromSingedListName())?->whereIn($attribute, $values)->first();
+        $output = Cache::get(static::getFromSingedListName())?->whereIn($attribute, $values);
         if(is_null($output)) $output = collect();
         /**@var Collection $output*/
         if(!$searching) return $output;

@@ -27,6 +27,7 @@
                 draggable="true"
                 customField:newFieldMode="type"
                 customField:newField="{{$type->identifier()}}"
+                customField:drag="True"
 
                 x-init="setupDragField($el)"
 

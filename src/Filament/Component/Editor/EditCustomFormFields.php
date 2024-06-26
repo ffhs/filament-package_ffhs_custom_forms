@@ -5,6 +5,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor;
 use Barryvdh\Debugbar\Facades\Debugbar;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldUtils;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\EditCreateFieldManager\EditCreateTypeFieldManager;
 use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
@@ -55,29 +56,20 @@ class EditCustomFormFields extends Field
     protected function createField($set, $arguments, $get, $record): void {
         //Set Field Data
         //Make custom modes
-        if($arguments["mode"] == "type") $uuid = static::createTypedField($set, $arguments, $record);
-        $this->setStructureNewField($arguments, $get, $uuid, $set);
+
+        $mode = $arguments["mode"];
+
+        $managers = config("ffhs_custom_forms.editor.field_creator_managers"); //EditCreateFieldManager
+        if(!array_key_exists($mode, $managers)) return;
+
+        $key = uniqid();
+        $fieldData = $managers[$mode]::getFieldData($this, $get($this->getStatePath(false)) ,$arguments, $key);
 
 
-    }
+        $set($this->getStatePath(false).'.data.'. $key, $fieldData);
 
-    protected function createTypedField($set, $arguments, $record): string {
 
-        $type = CustomFieldType::getTypeFromIdentifier($arguments["value"]);
-
-        $identifier = uniqid();
-
-        $field = [
-            "custom_form_id" => $record->id,
-            "identifier" => $identifier,
-            "type" => $type::identifier(),
-            "options" => $type->getDefaultTypeOptionValues(),
-            "is_active" => true,
-        ];
-
-        $set($this->getStatePath(false).'.data.'. $identifier, $field);
-
-        return $identifier;
+        $this->setStructureNewField($arguments, $get, $key, $set);
     }
 
 
