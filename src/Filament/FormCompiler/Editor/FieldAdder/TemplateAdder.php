@@ -68,20 +68,7 @@ final class TemplateAdder extends FormEditorFieldAdder
         ];
     }
 
-    private function hasExistingFields(array $customFields, int $templateId):bool {
-        return !empty($this->getOverlappedIdentifier($customFields, $templateId));
-    }
 
-    private function getOverlappedIdentifier(array $customFields, int $templateId): array {
-        //Fields with the same identify key
-        $usedFieldIdentifier = [];
-        $customFieldWithIdentifyKey = EditCustomFormHelper::getFieldsWithProperty($customFields,"identifier");
-        foreach ($customFieldWithIdentifyKey as $customField) $usedFieldIdentifier[] = $customField["identifier"];
-        return CustomForm::cached($templateId)->customFields
-            ->whereIn("identifier",$usedFieldIdentifier)
-            ->pluck("identifier")
-            ->toArray();
-    }
 
     private function isTemplateDisabled($templateId, Get $get): bool {
         if($this->useTemplateUsedGeneralFields($templateId,$get)) return true;
@@ -98,6 +85,25 @@ final class TemplateAdder extends FormEditorFieldAdder
         $commonValues = array_intersect($templateGenIds, $existingIds);
 
         return !empty($commonValues);
+    }
+
+
+
+
+
+    private function hasExistingFields(array $customFields, int $templateId):bool {
+        return !empty($this->getOverlappedIdentifier($customFields, $templateId));
+    }
+
+    private function getOverlappedIdentifier(array $customFields, int $templateId): array {
+        //Fields with the same identify key
+        $usedFieldIdentifier = [];
+        $customFieldWithIdentifyKey = EditCustomFormHelper::getFieldsWithProperty($customFields,"identifier");
+        foreach ($customFieldWithIdentifyKey as $customField) $usedFieldIdentifier[] = $customField["identifier"];
+        return CustomForm::cached($templateId)->customFields
+            ->whereIn("identifier",$usedFieldIdentifier)
+            ->pluck("identifier")
+            ->toArray();
     }
 
     private function deletingExistingFields(Get $get, $set, array $overlappedIdentifier, string $prefix= ""): void {

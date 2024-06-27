@@ -97,12 +97,16 @@ function handleNewField(target, draggingEl, $wire, staticPath) {
     else targetId = target.getAttribute('customField:uuid');
 
 
-
-    $wire.mountFormComponentAction(staticPath,'createField',
-        {mode:mode, value:value, in:inId, before: targetId}
+    $wire.mountFormComponentAction(staticPath,mode +'-create_field',
+        {value:value, in:inId, before: targetId}
     );
 }
 
+
+function clearBackground() {
+    getParentForm().classList.remove('custom-field-drag-over')
+    getParentForm().querySelectorAll('*').forEach(element => element.classList.remove('custom-field-drag-over'))
+}
 
 function setupField(fieldEl, state, $wire, staticPath){
     setupDragField(fieldEl)
@@ -122,7 +126,7 @@ function setupField(fieldEl, state, $wire, staticPath){
     fieldEl.addEventListener('dragleave', e => {
         e.stopPropagation();
         //let target = findTarget(e.target)
-        getParentForm().querySelectorAll('*').forEach(element => element.classList.remove('custom-field-drag-over'))
+        clearBackground();
     })
 
     fieldEl.addEventListener('dragenter', e => {

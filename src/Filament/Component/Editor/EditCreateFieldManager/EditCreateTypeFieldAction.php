@@ -5,19 +5,20 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\EditCrea
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\EditCustomFormFields;
 
-final class  EditCreateTypeFieldManager extends EditCreateFieldManager
+final class  EditCreateTypeFieldAction extends EditCreateFieldAction
 {
 
-    public static function getFieldData(EditCustomFormFields $editField, array $status, array $arguments, string $key): array{
+    public function createField(array $arguments, $set, $state, EditCustomFormFields $component){
         $type = CustomFieldType::getTypeFromIdentifier($arguments["value"]);
 
-        return [
-            "custom_form_id" => $editField->getRecord()->id,
-            "identifier" => $key,
+        $field = [
+            "identifier" => uniqid(),
             "type" => $type::identifier(),
             "options" => $type->getDefaultTypeOptionValues(),
             "is_active" => true,
         ];
+
+        $this->addNewField($arguments, $field, $state, $set, $component);
     }
 
 }

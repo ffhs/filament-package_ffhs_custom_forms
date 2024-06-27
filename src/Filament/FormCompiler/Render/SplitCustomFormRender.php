@@ -66,11 +66,11 @@ class SplitCustomFormRender
             ->customFields()
             ->where("form_position",">=",$formBeginPos)
             ->where("layout_end_position", "<=", $formEndPos)
-            ->with([
+            /*->with([
                 "customOptions",
                 "generalField.customOptions",
                 "generalField"
-            ])
+            ])*/
             ->get();
 
         return CustomFormRender::render($formBeginPos-1,$customFields,$render,$viewMode)[0];

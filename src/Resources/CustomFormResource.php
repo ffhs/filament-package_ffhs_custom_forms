@@ -43,8 +43,7 @@ class CustomFormResource extends Resource
     }
 
     public static function getEloquentQuery(): Builder {
-        #return parent::getEloquentQuery()->with(["customFields","customFields.customFieldInLayout"])->where("is_template", false);
-        return parent::getEloquentQuery();
+        return parent::getEloquentQuery()->where("is_template", false);
     }
 
     public static function table(Table $table): Table

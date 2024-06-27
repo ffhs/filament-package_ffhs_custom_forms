@@ -4,16 +4,15 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Templa
 
 use Closure;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\CustomFieldType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldType\TemplatesType\TemplateTypeView;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\RepeaterFieldAction\Actions\EditAction;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\RepeaterFieldAction\Actions\TemplateDissolveAction;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\Actions\DefaultCustomActivationAction;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\Actions\DefaultCustomFieldDeleteAction;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\Actions\DefaultCustomFieldEditTypeOptionsAction;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Render\Helper\CustomFormSaveHelper;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\HtmlComponents\HtmlBadge;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
-use Filament\Forms\Get;
 use Filament\Support\Colors\Color;
 use Illuminate\Support\Collection;
 
@@ -34,7 +33,7 @@ final class TemplateFieldType extends CustomFieldType
         return "carbon-copy-file";
     }
 
-    public function repeaterFunctions(): array {
+  /*  public function repeaterFunctions(): array {
         $original = parent::repeaterFunctions();
         unset($original[EditAction::class]);
         return array_merge($original,[
@@ -53,7 +52,34 @@ final class TemplateFieldType extends CustomFieldType
 
     public function nameBeforeIconFormEditor(array $state):string {
         return new HtmlBadge("Template", Color::rgb("rgb(34, 135, 0)"));
+    }*/
+    public function mutateCustomFieldDataOnSave(CustomField $field, array $data): array {
+        unset($data['options']);
+        return  $data;
     }
+
+
+
+
+    public function getEditorActions(string $key, array $fieldState): array {
+        return [
+            DefaultCustomFieldDeleteAction::make('delete-field-' . $key),
+            DefaultCustomActivationAction::make('active-' . $key)->visible($this->canBeDeactivate()),
+        ];
+    }
+    public function getEditorFieldTitle(array $fieldData): string {
+
+        $template = CustomForm::cached($fieldData['template_id']);
+
+        return "<div>". new HtmlBadge('Template', Color::rgb("rgb(34, 135, 0)"))."</div>" .
+            '<p style="margin-left: 70px; margin-top: -20px">'. $template->short_title.'</p>'; //ToDo Badges function reimplement
+    }
+
+    public function hasEditorNameElement(array $fielData): bool {
+        return false;
+    }
+
+
 
 
     public function afterAnswerFieldSave(CustomFieldAnswer $field, mixed $rawData, array $formData): void {

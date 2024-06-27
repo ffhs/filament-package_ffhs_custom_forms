@@ -5,21 +5,21 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\EditCrea
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\EditCustomFormFields;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 
-final class  EditCreateGeneralFieldManager extends EditCreateFieldManager
+final class  EditCreateGeneralFieldAction extends EditCreateFieldAction
 {
 
-    public static function getFieldData(EditCustomFormFields $editField, array $status, array $arguments, string $key): array{
+    public function createField(array $arguments, $set, $state, $component){
         $generalFieldId = $arguments["value"];
 
         $generalField = GeneralField::cached($generalFieldId);
 
 
-        return [
-            "custom_form_id" => $editField->getRecord()->id,
+        $field = [
             "general_field_id" => $generalFieldId,
             "options" => $generalField->getType()->getDefaultTypeOptionValues(),
             "is_active" => true,
         ];
-    }
 
+        $this->addNewField($arguments, $field, $state, $set, $component);
+    }
 }

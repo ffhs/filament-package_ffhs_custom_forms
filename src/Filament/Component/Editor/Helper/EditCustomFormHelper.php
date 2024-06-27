@@ -8,18 +8,17 @@ use Filament\Forms\Get;
 class EditCustomFormHelper
 {
 
-
-
     public static function getUsedGeneralFieldIds(array $customFields):array {
 
         //GeneralFieldIds From GeneralFields
-        $generalFields = self::getFieldsWithProperty($customFields,"general_field_id");
+    /*    $generalFields = self::getFieldsWithProperty($customFields,"general_field_id");*/
+        $generalFields = array_filter($customFields, fn($fieldData) => !empty($fieldData["general_field_id"]));
         $generalFieldId = array_map(fn($used) => $used["general_field_id"],$generalFields);
 
 
         //GeneralFieldIds From Templates
-        $templateData = self::getFieldsWithProperty($customFields,"template_id");
-        $templateIds = array_map(fn($used) => $used["template_id"],$templateData);
+        $templateData = array_filter($customFields, fn($fieldData) => !empty($fieldData["template_id"]));
+        $templateIds = array_map(fn($used) => $used["template_id"], $templateData);
         foreach ($templateIds as $templateId){
             $genFields = CustomForm::cached($templateId)?->generalFields->pluck("id")->toArray();
             $generalFieldId = array_merge($generalFieldId,$genFields);
@@ -64,16 +63,76 @@ class EditCustomFormHelper
         return $foundFields;
     }
 
-  /*  public static function setCustomFieldInRepeater(array $data, Get $get, $set, ?array $arguments = null): void {
-        $fields = $get("custom_fields");
-        if (is_null($arguments)) $fields[uniqid()] = $data;
-        else $fields[$arguments["item"]] = $data;
-        $set("custom_fields", $fields);
-    }*/
+
+
+
+    /*  public static function setCustomFieldInRepeater(array $data, Get $get, $set, ?array $arguments = null): void {
+          $fields = $get("custom_fields");
+          if (is_null($arguments)) $fields[uniqid()] = $data;
+          else $fields[$arguments["item"]] = $data;
+          $set("custom_fields", $fields);
+      }*/
 
     public static function getRawStateForm($livewireComponent, $form):array {
         //Get RawSate (yeah is possible)
         return array_values($livewireComponent->getLivewire()->getCachedForms())[$form]->getRawState();
+    }
+
+
+
+    public static function addField(array $toAdd, string $key, int $position, array $fields): array {
+
+        $finalFields = $fields;
+
+        //Add Field
+        $toAdd["form_position"] = $position;
+        data_set($finalFields, $key, $toAdd);
+
+        //Rearrange Fields
+        foreach ($fields as $fieldKey => $field) {
+            $fieldPosition = $field["form_position"];
+            $fieldEndPosition = $field["layout_end_position"] ?? null;
+
+            if($position <= $fieldPosition) data_set($finalFields, $fieldKey. ".form_position", $fieldPosition +1);
+            if(!is_null($fieldEndPosition) || $position <= $fieldEndPosition)
+                data_set($finalFields, $fieldKey. ".layout_end_position", $fieldEndPosition + 1);
+        }
+
+        return $finalFields;
+    }
+
+
+
+    public static function removeField( string $toRemoveKey, array $fields): array {
+
+        //Delete Structure
+        $toDelete = $fields[$toRemoveKey];
+
+        //Delete Fields
+        unset($fields[$toRemoveKey]);
+
+
+        //Delete Sub Fields
+        $amountDeletedFields = 1;
+        if(!empty($toDelete['layout_end_position'])){
+            foreach ($fields as $keyField => $field){
+                if($toDelete['layout_end_position'] >= $field['form_position']  &&
+                    $toDelete['form_position'] < $field['form_position']){
+                    unset($fields[$keyField]);
+                    $amountDeletedFields++;
+                }
+            }
+        }
+
+        //Rearrange Fields
+        foreach ($fields as $keyField => $field){
+            if($toDelete['form_position'] < $field['form_position'])
+                $fields[$keyField]['form_position'] = $field['form_position'] - $amountDeletedFields;
+            if($toDelete['form_position'] < $field['layout_end_position'])
+                $fields[$keyField]['layout_end_position'] = $field['layout_end_position'] - $amountDeletedFields;
+        }
+
+        return $fields;
     }
 
 

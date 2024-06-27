@@ -15,7 +15,6 @@ class FormEditorGeneralFieldValidation extends FormEditorValidation
             ->where("custom_form_identifier", $formIdentifier)
             ->select("general_field_id")
             ->where("is_required", true)
-            ->with("generalField")
             ->get();
 
         $requiredGeneralIDs = $requiredGeneralFieldForm

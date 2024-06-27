@@ -1,6 +1,6 @@
 <?php
 
-namespace Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormsResource\Pages;
+namespace Ffhs\FilamentPackageFfhsCustomForms\Resources\TemplateResource\Pages;
 
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\Helper\EditCustomFormHelper;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
@@ -213,7 +213,6 @@ class EditTemplate extends EditCustomForm
 
         $templateGeneralFieldQuery = $template->customFields()->whereNotNull("general_field_id");
         $toDeleteGenFieldQuery = CustomField::query()
-            ->with(["answers"])
             ->whereIn("general_field_id", $templateGeneralFieldQuery->clone()->select("general_field_id"))
             ->whereIn("custom_form_id",
                 CustomField::query()->where("template_id",$template->id)->select("custom_form_id")

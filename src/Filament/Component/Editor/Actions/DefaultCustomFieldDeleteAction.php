@@ -2,6 +2,7 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\Actions;
 
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\Helper\EditCustomFormHelper;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Actions\ActionContainer;
 
@@ -29,32 +30,9 @@ class DefaultCustomFieldDeleteAction extends Action
            $path = '../' . $path[count($path)-1];
            $state = $get($path);
 
-           $toDelete = $state[$key];
+           $state = EditCustomFormHelper::removeField($key,$state);
 
-           //Delete Fields
-           unset($state[$key]);
-
-           //Delete Sub Fields
-           $amountDeletedFields = 1;
-           if(!empty($toDelete['layout_end_position'])){
-               foreach ($state as $keyField => $field){
-                   if($field['layout_end_position'] >= $toDelete['form_position']  && $toDelete['form_position'] < $field['form_position']){
-                       unset($state[$keyField]);
-                       $amountDeletedFields++;
-                   }
-               }
-           }
-
-
-           //Rearrange Fields
-           foreach ($state as $keyField => $field){
-               if($toDelete['form_position'] < $field['form_position'])
-                   $state[$keyField]['form_position'] = $field['form_position'] - $amountDeletedFields;
-               if($toDelete['form_position'] < $field['layout_end_position'])
-                   $state[$keyField]['layout_end_position'] = $field['layout_end_position'] - $amountDeletedFields;
-           }
-
-           $set($path,$state); //ToDo show if it work
+           $set($path, $state); //ToDo show if it work
        });
     }
 

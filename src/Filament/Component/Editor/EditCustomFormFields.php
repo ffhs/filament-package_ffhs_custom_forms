@@ -5,6 +5,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor;
 use Barryvdh\Debugbar\Facades\Debugbar;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldUtils;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\Helper\EditCustomFormHelper;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Actions;
@@ -30,10 +31,12 @@ class EditCustomFormFields extends Field
     protected bool $childrenGenerated = false;
 
     protected function setUp(): void {
-        $this->registerActions([
-            Action::make("createField")
-                ->action(static::createField(...)),
-        ]);
+
+        //CreateField Actions
+        $fieldCreateActions = [];
+        foreach (config("ffhs_custom_forms.editor.field_creator_action")  as $mode => $actionClass)
+            $fieldCreateActions[] = $actionClass::make($mode . "-create_field");
+        $this->registerActions($fieldCreateActions);
 
 
         $this->childComponents(function (): array {
@@ -46,26 +49,6 @@ class EditCustomFormFields extends Field
                 ->toArray();
         });
     }
-
-    protected function createField($set, $get, $state, $arguments): void {
-        //Set Field Data
-        //Make custom modes
-
-        $mode = $arguments["mode"];
-
-        $managers = config("ffhs_custom_forms.editor.field_creator_managers"); //EditCreateFieldManager
-        if(!array_key_exists($mode, $managers)) return;
-
-
-        $key = uniqid();
-        $fieldData = $managers[$mode]::getFieldData($this, $get($this->getStatePath(false)) ,$arguments, $key);
-
-        $set($this->getStatePath(false).".". $key, $fieldData);
-
-        $this->setStructureNewField($arguments, $state, $key, $set);
-    }
-
-
 
     protected function getCombinedContainers(): Collection {
         return collect([
@@ -219,34 +202,5 @@ class EditCustomFormFields extends Field
         return $this->childrenGenerated;
     }
 
-
-
-    private function setStructureNewField($arguments, $state, string $key, $set): void {
-        //SetStructure
-
-        $before = $arguments['before'];
-        $in = $arguments['in'];
-
-        $beforeField = $state[$before] ?? [];
-        $inField = $state[$in] ?? [];
-
-        if(!empty($beforeField)) $position = $beforeField["form_position"];
-        else if(!empty($inField)) $position = $inField["form_position"] + 1;
-        else $position = 1;
-
-
-        $set($this->getStatePath(false)."." .$key. ".form_position", $position);
-
-        foreach ($state as $fieldKey => $field) {
-            $fieldPosition = $field["form_position"];
-            $fieldEndPosition = $field["layout_end_position"] ?? null;
-
-            if($position <= $fieldPosition) $set($this->getStatePath(false).".".$fieldKey. ".form_position", $fieldPosition + 1);
-            if(!is_null($fieldEndPosition) || $position <= $fieldEndPosition)
-                $set($this->getStatePath(false)."." . $fieldKey. ".layout_end_position", $fieldEndPosition + 1);
-
-        }
-
-    }
 
 }

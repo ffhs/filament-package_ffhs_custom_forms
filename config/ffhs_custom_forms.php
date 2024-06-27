@@ -38,8 +38,10 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\Type\RequiredRule
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormEditorValidation\FormEditorGeneralFieldValidation;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\AdderComponents\CustomFieldAdder;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\AdderComponents\GeneralFieldAdder;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\EditCreateFieldManager\EditCreateGeneralFieldManager;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\EditCreateFieldManager\EditCreateTypeFieldManager;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\AdderComponents\TemplateFieldAdder;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\EditCreateFieldManager\EditCreateGeneralFieldAction;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\EditCreateFieldManager\EditCreateTemplateFieldAction;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\EditCreateFieldManager\EditCreateTypeFieldAction;
 
 return [
 
@@ -71,17 +73,17 @@ return [
     'editor' => [
         'field_adders' => [
             GeneralFieldAdder::class,
-            //TemplateAdder::class,
+            TemplateFieldAdder::class,
             CustomFieldAdder::class
         ],
         /*   'custom_form_editor_validations' => [
                 FormEditorGeneralFieldValidation::class
             ],
          */
-        'field_creator_managers' => [
-            'type' => EditCreateTypeFieldManager::class,
-            'general' => EditCreateGeneralFieldManager::class,
-            //EditCreateTemplateFieldManager::class,
+        'field_creator_action' => [
+            'type' => EditCreateTypeFieldAction::class,
+            'general' => EditCreateGeneralFieldAction::class,
+            'template'=> EditCreateTemplateFieldAction::class,
         ],
     ],
 

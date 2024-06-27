@@ -14,7 +14,8 @@ class EditCustomFormLoadHelper
 
         return [
             'custom_fields' => static::loadFields($fields),
-            "custom_form_identifier" => $form->custom_form_identifier
+            "custom_form_identifier" => $form->custom_form_identifier,
+            'is_template' => $form->is_template,
         ];
     }
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormsResource\Pages;
+namespace Ffhs\FilamentPackageFfhsCustomForms\Resources\TemplateResource\Pages;
 
 use Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormResource\Pages\CreateCustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Resources\TemplateResource;
