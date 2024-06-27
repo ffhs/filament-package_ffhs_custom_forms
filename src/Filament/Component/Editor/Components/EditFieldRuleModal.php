@@ -6,8 +6,6 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldUtils;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\FieldRuleAnchorType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\FieldRuleType;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor\CustomFieldEditModal\Rule\FieldModalRuleEditorModal;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor\UseComponentInjection;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
@@ -17,7 +15,6 @@ use Filament\Support\Enums\MaxWidth;
 
 class EditFieldRuleModal extends Group
 {
-    use UseComponentInjection;
 
     protected function setUp(): void {
 
@@ -25,8 +22,8 @@ class EditFieldRuleModal extends Group
 
         $this
             ->schema(fn($record, $state)=>[
-                $this->getRuleAddAction($record, CustomFieldUtils::getFieldTypeFromRawDate($state)),
                 $this->getRuleRepeater($record, CustomFieldUtils::getFieldTypeFromRawDate($state)),
+                $this->getRuleAddAction($record, CustomFieldUtils::getFieldTypeFromRawDate($state)),
             ]);
     }
 
@@ -40,14 +37,14 @@ class EditFieldRuleModal extends Group
                 ->fillForm(["anchor_data"=>[],"rule_data"=>[]])
                 ->modalWidth(MaxWidth::SixExtraLarge)
                 ->label("Regel hinzufügen") //ToDo Translate
-                ->mutateFormDataUsing(fn(Action $action) =>
-                array_values($action->getLivewire()->getCachedForms())[2]->getRawState()
-                )
+                ->mutateFormDataUsing(function(Action $action) {
+                    array_values($action->getLivewire()->getCachedForms())[2]->getRawState();
+                })
 
         ]);
     }
 
-    protected function getRuleRepeater($form,$type): Repeater {
+    protected function getRuleRepeater(CustomForm $form, CustomFieldType $type): Repeater {
         return Repeater::make("rules")
             ->collapseAllAction(fn(Action $action)=> $action->hidden())
             ->expandAllAction(fn(Action $action)=> $action->hidden())

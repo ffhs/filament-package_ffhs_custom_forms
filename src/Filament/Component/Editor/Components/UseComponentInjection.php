@@ -1,6 +1,6 @@
 <?php
 
-namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor;
+namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\Components;
 
 trait UseComponentInjection
 {
