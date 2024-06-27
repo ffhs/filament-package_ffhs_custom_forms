@@ -2,9 +2,9 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\EditCreateFieldManager;
 
+use Barryvdh\Debugbar\Facades\Debugbar;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\Helper\EditCustomFormHelper;
 use Filament\Forms\Components\Actions\Action;
-use Filament\Forms\Components\Field;
 
 abstract class EditCreateFieldAction extends Action
 {
@@ -21,12 +21,14 @@ abstract class EditCreateFieldAction extends Action
         $beforeField = $state[$before] ?? [];
         $inField = $state[$in] ?? [];
 
-        $key = $fieldData['identifier'] ?? uniqid();
 
         if(!empty($beforeField)) $position = $beforeField["form_position"];
         else if(!empty($inField)) $position = $inField["form_position"] + 1;
         else $position = 1;
 
+        Debugbar::info($inField, $beforeField,$position);
+
+        $key = $fieldData['identifier'] ?? uniqid();
         $fieldData["custom_form_id"] = $component->getRecord()->id;
         $newState = EditCustomFormHelper::addField($fieldData, $key, $position, $state);
 

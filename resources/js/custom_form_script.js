@@ -92,12 +92,12 @@ function handleNewField(target, draggingEl, $wire, staticPath) {
         targetId = "";
         let inTarget = findTarget(target.parentNode, true)
         if(inTarget != null && !(inTarget instanceof Document))
-            targetId = inTarget.getAttribute('customField:uuid')
+            inId = inTarget.getAttribute('customField:uuid')
     }
     else targetId = target.getAttribute('customField:uuid');
 
 
-    $wire.mountFormComponentAction(staticPath,mode +'-create_field',
+    $wire.mountFormComponentAction(staticPath, mode +'-create_field',
         {value:value, in:inId, before: targetId}
     );
 }

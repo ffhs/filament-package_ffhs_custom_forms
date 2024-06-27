@@ -24,6 +24,7 @@
 
 <div  customField:drag customField:uuid="{{$key}}"
      style="
+  touch-action: pan-y;
         grid-column:  {{data_get($getState() ,   $key . '.options.new_line_option' )? " 1 /" : ""}} span {{data_get($getState() ,  $key . '.options.column_span' ) ?? 1}} !important;
      "
       x-init="setupField($el, state, $wire, '{{$statePath}}')"
