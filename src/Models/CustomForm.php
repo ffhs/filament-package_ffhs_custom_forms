@@ -140,7 +140,7 @@ class CustomForm extends CachedModel
 
                 //Cache Templates and Templates Fields
                 $templateIds = $customFields->whereNotNull('template_id')->pluck('template_id')->toArray();
-                $templates = CustomForm::cachedMultiple(values: $templateIds); //To cache the Templates
+                $templates = CustomForm::cachedMultiple("id",true, $templateIds); //To cache the Templates
 
                 $templates->each(function(CustomForm $customForm) use ($customFields) {
                     $fields = $customFields->where("custom_form_id", $customForm->id);
