@@ -40,7 +40,8 @@ class CustomForm extends CachedModel
 
     protected array $cachedManyRelations = [
         'customFields',
-        'ownedFields'
+        'ownedFields',
+        'generalFields',
     ];
 
 
@@ -75,7 +76,10 @@ class CustomForm extends CachedModel
     public function generalFields(): BelongsToMany {
         return $this->belongsToMany(GeneralField::class, "custom_fields","custom_form_id","general_field_id");
     }
-
+    public function cachedGeneralFields(): Collection { // Access with ->generalFields
+        $ids = $this->customFields->whereNotNull("general_field_id")->pluck("general_field_id")->toArray();
+        return GeneralField::cachedMultiple("id", true, ...$ids);
+    }
 
     public function customFieldInLayout(): HasMany {
 

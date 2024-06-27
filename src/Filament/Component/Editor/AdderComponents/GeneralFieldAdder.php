@@ -19,7 +19,6 @@ final class GeneralFieldAdder extends FormEditorFieldAdder
 
     protected string $view = 'filament-package_ffhs_custom_forms::filament.components.field-adder.general_adder';
 
-    protected $usedGeneralFieldIds;
 
     protected function setUp(): void {
         parent::setUp();
@@ -56,11 +55,16 @@ final class GeneralFieldAdder extends FormEditorFieldAdder
 
 
     public function isGeneralDisabled($id):bool {
-        //ToDo  Improve
-        if(empty($usedGeneralFieldIds))
-            $usedGeneralFieldIds = collect($this->getState()['custom_fields'])->pluck("general_field_id");
 
-        return $usedGeneralFieldIds->contains($id);
+        $fields = $this->getState()['custom_fields'];
+
+        //ToDo  Improve
+        $usedGeneralFieldIds = collect($fields)->whereNotNull("general_field_id")->pluck("general_field_id");
+        $usedGeneralFieldIdsFormTemplates = collect($fields)
+            ->whereNotNull("template_id")
+            ->map(fn($templateField) => CustomForm::cached($templateField['template_id'])->generalFields)->flatten(1)->pluck("id");
+
+        return $usedGeneralFieldIds->contains($id) || $usedGeneralFieldIdsFormTemplates->contains($id);
     }
 
 }
