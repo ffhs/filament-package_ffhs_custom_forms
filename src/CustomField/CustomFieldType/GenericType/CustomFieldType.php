@@ -8,7 +8,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\
 use Ffhs\FilamentPackageFfhsCustomForms\Domain\Type;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\Actions\DefaultCustomActivationAction;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\Actions\DefaultCustomFieldDeleteAction;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\Actions\DefaultCustomFieldEditAction;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\Actions\DefaultCustomFieldEditTypeOptionsAction;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\HtmlComponents\HtmlBadge;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
@@ -114,8 +114,8 @@ abstract class CustomFieldType extends Type
     public function getEditorActions(string $key, array $fieldState): array{
         return [
             DefaultCustomFieldDeleteAction::make('delete-field-' . $key),
-            DefaultCustomFieldEditAction::make('edit-field-' . $key),
-            DefaultCustomActivationAction::make('active-' . $key),
+            DefaultCustomFieldEditTypeOptionsAction::make('edit-field-' . $key),
+            DefaultCustomActivationAction::make('active-' . $key)->visible($this->canBeDeactivate()),
         ];
     }
 

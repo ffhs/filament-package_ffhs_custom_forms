@@ -8,7 +8,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Actions\ActionContainer;
 
-class DefaultCustomFieldEditAction extends Action
+class DefaultCustomFieldEditTypeOptionsAction extends Action
 {
     protected function setUp(): void {
 
@@ -22,8 +22,8 @@ class DefaultCustomFieldEditAction extends Action
           CustomFieldEditModal::make()
        ]);
 
-       $this->fillForm(fn($state, $arguments) => EditCustomFormHelper::getFieldData($state, $arguments['item']));
-       $this->mutateFormDataUsing(function(Action $action, ActionContainer $component){
+       $this->fillForm(fn($state, $arguments) => $state[$arguments['item']]);
+       $this->mutateFormDataUsing(function(Action $action){
            $forms = array_values($action->getLivewire()->getCachedForms());
            $form = $forms[sizeof($forms) - 1];
            $state = $form->getRawState();

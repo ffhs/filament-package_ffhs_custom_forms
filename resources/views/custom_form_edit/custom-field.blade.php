@@ -26,7 +26,7 @@
      style="
         grid-column:  {{data_get($getState() ,   $key . '.options.new_line_option' )? " 1 /" : ""}} span {{data_get($getState() ,  $key . '.options.column_span' ) ?? 1}} !important;
      "
-     x-init="setupField($el, state, $wire)"
+      x-init="setupField($el, state, $wire, '{{$statePath}}')"
 >
 
     <x-filament::fieldset

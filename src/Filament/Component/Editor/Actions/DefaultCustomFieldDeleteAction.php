@@ -3,6 +3,7 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\Actions;
 
 use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\Actions\ActionContainer;
 
 class DefaultCustomFieldDeleteAction extends Action
 {
@@ -19,27 +20,41 @@ class DefaultCustomFieldDeleteAction extends Action
         //ToDo Confirm Message
        $this->requiresConfirmation();
 
-       $this->action(function($get, $arguments, $set, $state) {
+       $this->action(function($get, $set, $state, $arguments, ActionContainer $component) {
            $key = $arguments["item"];
 
            //Delete Structure
-           //ToDo repair
-           $structure = $get("structure");
-           $structurePath = "structure." . $this->getPath($structure, $key);
+           //ToDo move to function
+           $path =  explode('.', $component->getStatePath());
+           $path = '../' . $path[count($path)-1];
+           $state = $get($path);
 
-           $structurePath = str_replace(".". $key,"", $structurePath);
-           $structureFragment = $get($structurePath);
+           $toDelete = $state[$key];
 
-
+           //Delete Fields
            unset($state[$key]);
 
-
-           foreach ($this->getSubFields($structureFragment[$key]) as $field){
-               unset($state[$field]);
+           //Delete Sub Fields
+           $amountDeletedFields = 1;
+           if(!empty($toDelete['layout_end_position'])){
+               foreach ($state as $keyField => $field){
+                   if($field['layout_end_position'] >= $toDelete['form_position']  && $toDelete['form_position'] < $field['form_position']){
+                       unset($state[$keyField]);
+                       $amountDeletedFields++;
+                   }
+               }
            }
 
-           $set(".",$state); //ToDo show if it work
 
+           //Rearrange Fields
+           foreach ($state as $keyField => $field){
+               if($toDelete['form_position'] < $field['form_position'])
+                   $state[$keyField]['form_position'] = $field['form_position'] - $amountDeletedFields;
+               if($toDelete['form_position'] < $field['layout_end_position'])
+                   $state[$keyField]['layout_end_position'] = $field['layout_end_position'] - $amountDeletedFields;
+           }
+
+           $set($path,$state); //ToDo show if it work
        });
     }
 

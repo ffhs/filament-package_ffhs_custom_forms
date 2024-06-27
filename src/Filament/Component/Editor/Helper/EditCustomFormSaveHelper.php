@@ -10,24 +10,14 @@ class EditCustomFormSaveHelper
 {
     public static function save(array $rawState, CustomForm $form): void {
         $oldFields = $form->customFields;
-
-        $fieldData = $rawState["data"];
-        $structure = $rawState["structure"];
-
+        $fieldData = collect($rawState);
 
         $fieldsToSaveData = [];
         $fieldsToSavetoCreate = [];
         $fieldsNotDirty = [];
 
         //Prepare Save and Create Data
-        foreach ($fieldData as $key => $field) {
-            $locationAndEndLayout = static::getPositionOfField($key, $structure);
-
-            $position = $locationAndEndLayout[0];
-            $hasFields = $locationAndEndLayout[1];
-            $field['form_position'] = $position;
-            $field['layout_end_position'] = ($hasFields ?? null) > 0 ? $hasFields + $position : null;
-
+        foreach ($rawState as $field) {
             if(!empty($field["id"]))
                 $customField = $oldFields->where("id",$field["id"] )->first();
             else
@@ -60,7 +50,6 @@ class EditCustomFormSaveHelper
         CustomField::insert($fieldsToSavetoCreate);
         CustomField::upsert($fieldsToSaveData, ['id']);
 
-        $fieldData = collect($fieldData);
 
         //Run after Save
         $savedFields = $form->customFields()->get();

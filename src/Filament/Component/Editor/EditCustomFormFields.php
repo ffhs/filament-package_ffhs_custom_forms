@@ -2,9 +2,9 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor;
 
+use Barryvdh\Debugbar\Facades\Debugbar;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldUtils;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Actions;
@@ -47,7 +47,7 @@ class EditCustomFormFields extends Field
         });
     }
 
-    protected function createField($set, $arguments, $get): void {
+    protected function createField($set, $get, $state, $arguments): void {
         //Set Field Data
         //Make custom modes
 
@@ -56,14 +56,13 @@ class EditCustomFormFields extends Field
         $managers = config("ffhs_custom_forms.editor.field_creator_managers"); //EditCreateFieldManager
         if(!array_key_exists($mode, $managers)) return;
 
+
         $key = uniqid();
         $fieldData = $managers[$mode]::getFieldData($this, $get($this->getStatePath(false)) ,$arguments, $key);
 
+        $set($this->getStatePath(false).".". $key, $fieldData);
 
-        $set($this->getStatePath(false). $key, $fieldData);
-
-
-        $this->setStructureNewField($arguments, $get, $key, $set);
+        $this->setStructureNewField($arguments, $state, $key, $set);
     }
 
 
@@ -131,7 +130,6 @@ class EditCustomFormFields extends Field
         $actions = $this->getActionContainers();
 
         if(array_key_exists($key, $actions)) return $actions[$key];
-
         $this->generateFieldActions($key, $this->getState()[$key]);
         return $this->getActionContainers()[$key];
     }
@@ -163,38 +161,41 @@ class EditCustomFormFields extends Field
 
     public function getStructure(): array {
         $fields = collect($this->getState());
-        $fields = $fields->map(fn(array $fieldData) => (new CustomField())->fill($fieldData));
+       // $fields = $fields->map(fn(array $fieldData) => (new CustomField())->fill($fieldData));
 
-        return  $this->loadStructure($fields);
+        return$this->loadStructure($fields);
     }
 
 
     private function loadStructure(Collection $fields): array {
         if($fields->count() === 0) return [];
 
-        $fields = $fields->sortBy('form_position');
-        $start = array_values($fields->toArray())[0]['form_position'];
-        $end = array_values($fields->toArray())[$fields->count()-1]['form_position'];
 
+
+        $fields = $fields->sortBy('form_position');
+        $start = $fields->first()['form_position'];
+        $end = $fields->last()['form_position'];
 
         $structure = [];
 
         for ($i = $start; $i <= $end; $i++) {
-            /**@var CustomField $field */
+            /**@var array $field */
             $field = $fields->firstWhere('form_position', $i);
 
-            if(empty($field->layout_end_position)) {
-                $structure[$field->identifier] = [];
+            $key = array_search($field, $this->getState());
+
+            if(empty($field['layout_end_position'])) {
+                $structure[$key] = [];
                 continue;
             }
 
-            $subFields = $field->customForm->getOwnedFields()
-                ->where("form_position", ">", $field->form_position)
-                ->where("form_position", "<=", $field->layout_end_position);
+            $subFields = $fields
+                ->where("form_position", ">", $field['form_position'])
+                ->where("form_position", "<=", $field['layout_end_position']);
 
 
-            $i = $field->layout_end_position;
-            $structure[$field->identifier] = static::loadStructure($subFields);
+            $i = $field['layout_end_position'] ;
+            $structure[$key] = static::loadStructure($subFields);
         }
 
         return  $structure;
@@ -220,24 +221,32 @@ class EditCustomFormFields extends Field
 
 
 
-    private function setStructureNewField($arguments, $get, string $uuid, $set): void {
+    private function setStructureNewField($arguments, $state, string $key, $set): void {
         //SetStructure
-        $path = $this->getStatePath(false).'.structure.'.$arguments["path"];
-        $structureFragment = $get($path);
 
         $before = $arguments['before'];
+        $in = $arguments['in'];
 
-        if ($arguments['before'] == "") $structureFragment[$uuid] = [];
-        else {
-            $pos = array_search($before, array_keys($structureFragment));
+        $beforeField = $state[$before] ?? [];
+        $inField = $state[$in] ?? [];
 
-            $structureFragment = array_slice($structureFragment, 0, $pos, true) +
-                [$uuid => []] +
-                array_slice($structureFragment, $pos, count($structureFragment), true);
+        if(!empty($beforeField)) $position = $beforeField["form_position"];
+        else if(!empty($inField)) $position = $inField["form_position"] + 1;
+        else $position = 1;
+
+
+        $set($this->getStatePath(false)."." .$key. ".form_position", $position);
+
+        foreach ($state as $fieldKey => $field) {
+            $fieldPosition = $field["form_position"];
+            $fieldEndPosition = $field["layout_end_position"] ?? null;
+
+            if($position <= $fieldPosition) $set($this->getStatePath(false).".".$fieldKey. ".form_position", $fieldPosition + 1);
+            if(!is_null($fieldEndPosition) || $position <= $fieldEndPosition)
+                $set($this->getStatePath(false)."." . $fieldKey. ".layout_end_position", $fieldEndPosition + 1);
 
         }
 
-        $set($path, $structureFragment);
     }
 
 }

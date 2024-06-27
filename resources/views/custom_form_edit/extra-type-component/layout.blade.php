@@ -14,7 +14,9 @@
         background: rgba(200, 200, 200, 0.1)
     "
     class="grid grid-cols-[--cols-default] lg:grid-cols-[--cols-lg] fi-fo-component-ctn gap-6"
+
     customField:hasFields="True"
+    x-init="setupField($el, state, $wire, '{{$statePath}}')"
 >
 
 

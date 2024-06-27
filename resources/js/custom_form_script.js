@@ -1,7 +1,7 @@
 function findTarget(target, onlyDrag = false){
 
     let currentParent = target;
-    while (currentParent) {
+    while (currentParent && !(currentParent instanceof Document)) {
 
         if(!onlyDrag && currentParent.hasAttribute('customField:hasFields')) break;
         if (currentParent.hasAttribute('customField:drag'))  break;
@@ -50,7 +50,7 @@ function getElementFieldStructurePath(element) {
     let currentParent = element.parentNode
     let path = element.getAttribute('customField:uuid')
 
-    while (!currentParent.hasAttribute('customField:form')) {
+    while (!(currentParent instanceof Document) && !currentParent.hasAttribute('customField:form')) {
         if (currentParent.hasAttribute('customField:uuid')){
             path = currentParent.getAttribute('customField:uuid') + '.' + path
         }
@@ -67,39 +67,44 @@ function handleDragDrop(target, draggingEl, state) {
 
     getParentForm().querySelectorAll('*').forEach(element => element.classList.remove('custom-field-drag-over'))
 
-    let rawStructure = {};
-
     let currentPos = 0;
 
     getParentForm().querySelectorAll('[customField\\:uuid]').forEach(element => {
-        //let path = getElementFieldStructurePath(element)
         currentPos++
 
         let contains =  element.querySelectorAll('[customField\\:uuid]').length
         let key = element.getAttribute('customField:uuid')
 
-        state['data'][key]['form_position'] = currentPos
-        state['data'][key]['layout_end_position'] = contains === 0? null: (currentPos + contains)
+        if(state[key] === undefined) return
+        state[key]['form_position'] = currentPos
+        state[key]['layout_end_position'] = contains === 0? null: (currentPos + contains)
     })
 
-    console.log(state);
 }
 
-function handleNewField(target, draggingEl, $wire) {
+function handleNewField(target, draggingEl, $wire, staticPath) {
     let mode = draggingEl.getAttribute('customField:newFieldMode')
     let value = draggingEl.getAttribute('customField:newField')
 
-    let path = getElementFieldStructurePath(target)
+    let targetId = "";
+    let inId = "";
+    if(target.hasAttribute('customField:hasFields')) {
+        targetId = "";
+        let inTarget = findTarget(target.parentNode, true)
+        if(inTarget != null && !(inTarget instanceof Document))
+            targetId = inTarget.getAttribute('customField:uuid')
+    }
+    else targetId = target.getAttribute('customField:uuid');
 
-    let targetId = target.getAttribute('customField:uuid');
 
-    $wire.mountFormComponentAction('data.custom_fields','createField',
-        {mode:mode, value:value, path:path.replace('.' + targetId,''), before: targetId}
+
+    $wire.mountFormComponentAction(staticPath,'createField',
+        {mode:mode, value:value, in:inId, before: targetId}
     );
 }
 
 
-function setupField(fieldEl, state, $wire){
+function setupField(fieldEl, state, $wire, staticPath){
     setupDragField(fieldEl)
 
     fieldEl.addEventListener('drop', e => {
@@ -111,15 +116,17 @@ function setupField(fieldEl, state, $wire){
         let draggingEl = document.querySelector('[customField\\:dragging]')
         if(draggingEl == null) return;
         if(draggingEl.hasAttribute('customField:drag')) handleDragDrop(target, draggingEl, state)
-        if(draggingEl.hasAttribute('customField:newField')) handleNewField(target, draggingEl, $wire)
+        if(draggingEl.hasAttribute('customField:newField')) handleNewField(target, draggingEl, $wire, staticPath)
     })
 
     fieldEl.addEventListener('dragleave', e => {
+        e.stopPropagation();
         //let target = findTarget(e.target)
         getParentForm().querySelectorAll('*').forEach(element => element.classList.remove('custom-field-drag-over'))
     })
 
     fieldEl.addEventListener('dragenter', e => {
+        e.stopPropagation();
         e.preventDefault()
         setTimeout(() => {
             let target = findTarget(e.target)
@@ -131,11 +138,22 @@ function setupField(fieldEl, state, $wire){
 
 
 function setupDragField(fieldEl){
+
+    fieldEl.addEventListener('drop', e => {
+        e.stopPropagation();
+
+        e.target.classList.remove('custom-field-drag-over')
+    })
+
     fieldEl.addEventListener('dragstart', e => {
+        e.stopPropagation();
+
         findTarget(e.target, true).setAttribute('customField:dragging',true)
     })
 
     fieldEl.addEventListener('dragend', e => {
+        e.stopPropagation();
+
         findTarget(e.target, true).removeAttribute('customField:dragging')
     })
 

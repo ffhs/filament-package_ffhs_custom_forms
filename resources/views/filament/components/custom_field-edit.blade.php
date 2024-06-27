@@ -4,8 +4,7 @@
 @endphp
 
 
-<script
-    src="{{FilamentAsset::getScriptSrc('custom_form_script',  'ffhs/filament-package_ffhs_custom_forms')}}"></script>
+<script src="{{FilamentAsset::getScriptSrc('custom_form_script',  'ffhs/filament-package_ffhs_custom_forms')}}"></script>
 
 <x-dynamic-component :component="$getFieldWrapperView()" :field="$field">
 
@@ -20,9 +19,10 @@
         x-data="{
             state: $wire.{{ $applyStateBindingModifiers("\$entangle('$statePath')" )}},
           }"
+        x-init="setupField($el, state, $wire, '{{$statePath}}')"
     >
 
-        <x-filament::fieldset customField:form customField:has-fields class>
+        <x-filament::fieldset customField:form customField:hasFields class>
             <!--- toDo Setze wieder auf config coloums-->
             <div style="--cols-default: repeat(1, minmax(0, 1fr)); --cols-lg: repeat(2, minmax(0, 1fr));"
                  class="grid grid-cols-[--cols-default] lg:grid-cols-[--cols-lg] fi-fo-component-ctn gap-6">
