@@ -4,7 +4,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\RepeaterFieldAction\Ac
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\NestedLayoutType\CustomNestLayoutType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\RepeaterFieldAction\RepeaterFieldAction;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\Components\CustomFieldEditModal;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\Components\EditTypeOptionModal;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\Helper\EditCustomFormHelper;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
@@ -46,10 +46,10 @@ class NewEggActionComponent extends RepeaterFieldAction
             })
             ->closeModalByClickingAway(false)
             ->modalWidth(function(array $state, array $arguments){
-                return CustomFieldEditModal::getEditCustomFormActionModalWith($this->getFillForm($state,$arguments));
+                return EditTypeOptionModal::getEditCustomFormActionModalWith($this->getFillForm($state,$arguments));
             })
             ->form(function(Get $get, $state, array $arguments) use ($record) : array {
-                return [CustomFieldEditModal::make($record,$this->getFillForm($state,$arguments))];
+                return [EditTypeOptionModal::make($record,$this->getFillForm($state,$arguments))];
             })
             ->modalHeading(function (array $state, array $arguments) {
                 $data = $state[$arguments["item"]];

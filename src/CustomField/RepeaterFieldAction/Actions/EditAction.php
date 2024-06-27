@@ -3,7 +3,7 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\RepeaterFieldAction\Actions;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\RepeaterFieldAction\RepeaterFieldAction;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\Components\CustomFieldEditModal;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\Components\EditTypeOptionModal;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\Helper\EditCustomFormHelper;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
@@ -23,10 +23,10 @@ class EditAction extends RepeaterFieldAction
             ->icon('heroicon-m-pencil-square')
             ->label("Bearbeiten") //ToDo Translate
             ->modalWidth(function(array $state, array $arguments){
-                return CustomFieldEditModal::getEditCustomFormActionModalWith($state[$arguments["item"]]);
+                return EditTypeOptionModal::getEditCustomFormActionModalWith($state[$arguments["item"]]);
             })
             ->form(function(Get $get, $state, array $arguments) use ($record) : array {
-                return [CustomFieldEditModal::make($record,$state[$arguments["item"]])];
+                return [EditTypeOptionModal::make($record, $state[$arguments["item"]])];
             })
             ->modalHeading(function (array $state, array $arguments) {
                 $data = $state[$arguments["item"]];
