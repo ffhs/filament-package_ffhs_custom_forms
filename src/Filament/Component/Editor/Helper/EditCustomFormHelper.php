@@ -135,5 +135,35 @@ class EditCustomFormHelper
         return $fields;
     }
 
+    public static function addMultipleFields(array $toAddFields, int $position, array $fields): array{
+
+        $amountToAdd = count($toAddFields);
+
+        //prepareToAddFields
+        foreach ($toAddFields as $fieldKey => $field){
+            $toAddFields[$fieldKey]["form_position"] = $field["form_position"] + $position -1;
+            if(!empty($fields["layout_end_position"]))
+                $toAddFields[$fieldKey]["form_position"] = $field["layout_end_position"] + $position -1;
+        }
+
+
+        $finalFields = $fields;
+        //Rearrange Fields
+        foreach ($fields as $fieldKey => $field) {
+            $fieldPosition = $field["form_position"];
+            $fieldEndPosition = $field["layout_end_position"] ?? null;
+
+            if($position <= $amountToAdd + $position)
+                data_set($finalFields, $fieldKey. ".form_position", $fieldPosition + $amountToAdd);
+            if(!is_null($fieldEndPosition) || $position <= $fieldEndPosition)
+                data_set($finalFields, $fieldKey. ".layout_end_position", $fieldEndPosition + $amountToAdd);
+        }
+
+
+        //Add Fields
+        return array_merge($finalFields, $toAddFields);
+
+    }
+
 
 }

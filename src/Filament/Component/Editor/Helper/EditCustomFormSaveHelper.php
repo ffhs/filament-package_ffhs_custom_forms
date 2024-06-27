@@ -78,7 +78,9 @@ class EditCustomFormSaveHelper
                     $savedFieldData = $fieldData->where("identifier", $field->identifier)->first();
                 }
 
-                return $field->getType()->doAfterCreateField($field, $savedFieldData);
+
+
+                return $field->getType()->doAfterCreateField($field, $savedFieldData??[]);
 
             }
         );

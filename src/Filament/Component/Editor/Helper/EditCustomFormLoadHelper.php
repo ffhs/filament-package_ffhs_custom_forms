@@ -32,7 +32,8 @@ class EditCustomFormLoadHelper
 
             $fieldData = $field->getType()->getMutateCustomFieldDataOnLoad($field, $fieldData);
 
-            $data[$field->identifier] = $fieldData;
+            $key = empty($field->identifier)?uniqid(): $field->identifier;
+            $data[$key] = $fieldData;
         }
         return $data;
     }

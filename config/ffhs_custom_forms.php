@@ -31,10 +31,10 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\NestedLayout
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\TemplatesType\TemplateFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\Anchors\IsInfolistViewRuleAnchor;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\Anchors\ValueEqualsRuleAnchor;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\Type\ChangeOptionRuleType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\Type\DisabledRuleType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\Type\HiddenRuleType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\Type\RequiredRuleType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\Rules\ChangeOptionRuleType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\Rules\DisabledRuleType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\Rules\HiddenRuleType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\Rules\RequiredRuleType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormEditorValidation\FormEditorGeneralFieldValidation;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\AdderComponents\CustomFieldAdder;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\AdderComponents\GeneralFieldAdder;

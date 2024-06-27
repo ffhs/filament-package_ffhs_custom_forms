@@ -10,7 +10,7 @@ trait HasEditFieldCallbacks
 
 
     private function mutateOptions(array &$data, CustomField $field, string $method): void {
-        $options = $data['options'];
+        $options = $data['options'] ?? [];
 
         foreach ($this->getFlattenExtraTypeOptions() as $key => $option){
             $options[$key] = $option->$method($options[$key], $key, $field);
@@ -19,7 +19,7 @@ trait HasEditFieldCallbacks
     }
 
     private function doForOptions(array &$data, CustomField $field, string $method): void {
-        $options = $data['options'];
+        $options = $data['options'] ?? [];
         foreach ($this->getFlattenExtraTypeOptions() as $key => $option){
             $option->$method($options[$key], $key, $field);
         }
