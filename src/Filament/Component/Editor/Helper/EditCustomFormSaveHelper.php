@@ -2,6 +2,7 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\Helper;
 
+use Barryvdh\Debugbar\Facades\Debugbar;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldUtils;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
@@ -19,7 +20,7 @@ class EditCustomFormSaveHelper
         //Prepare Save and Create Data
         foreach ($rawState as $field) {
             if(!empty($field["id"]))
-                $customField = $oldFields->where("id",$field["id"] )->first();
+                $customField = $oldFields->where("id", $field["id"] )->first();
             else
                 $customField = new CustomField();
 
@@ -45,6 +46,24 @@ class EditCustomFormSaveHelper
         $fieldsToDelete->each(fn(CustomField $field) => $field->getType()->doBeforeDeleteField($field));
         CustomField::destroy($fieldsToDelete->pluck("id"));
         $fieldsToDelete->each(fn(CustomField $field) => $field->getType()->doAfterDeleteField($field));
+
+
+        //cleanUp
+        $columns = [];
+        foreach ($fieldsToSavetoCreate as $rawField)  foreach ($rawField as $name => $value)  $columns[$name] = $name;
+        foreach ($fieldsToSavetoCreate as $key => $rawField)
+            foreach ($columns as $name )  {
+                if(array_key_exists($name, $rawField)) continue;
+                $fieldsToSavetoCreate[$key][$name] = null;
+            }
+
+        $columns = [];
+        foreach ($fieldsToSaveData as $rawField)  foreach ($rawField as $name => $value)  $columns[$name] = $name;
+        foreach ($fieldsToSaveData as $key => $rawField)
+            foreach ($columns as $name )  {
+                if(array_key_exists($name, $rawField)) continue;
+                $fieldsToSaveData[$key][$name] = null;
+            }
 
         //Create and Updating
         CustomField::insert($fieldsToSavetoCreate);

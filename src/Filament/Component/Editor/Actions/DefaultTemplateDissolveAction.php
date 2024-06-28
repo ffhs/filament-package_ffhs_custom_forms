@@ -52,7 +52,7 @@ class DefaultTemplateDissolveAction extends Action
                 $templateFields = $templateFormData['custom_fields'];
 
                 foreach ($templateFields as $key => $field)
-                    $templateFormData[$key] = $this->cloneTemplateField($field,$record);
+                    $templateFields[$key] = $this->cloneTemplateField($field,$record);
 
 
                 //Place the new fields there were the template was
