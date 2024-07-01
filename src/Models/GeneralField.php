@@ -11,7 +11,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property string $identifier
  * @property string $type
  * @property string $icon
- * @property array $extra_options
+ * @property array $overwrite_options
+ * @property array $options
  * @property Collection $customOptions
  * @property Collection $generalFieldForms
  */
@@ -21,9 +22,8 @@ class GeneralField extends ACustomField
     protected $table = "general_fields";
 
     protected $fillable = [
-        'variation_options',
         'is_term_bound',
-        'extra_options',
+        'overwrite_options',
         'options',
         'identifier',
         'is_active',
@@ -34,6 +34,7 @@ class GeneralField extends ACustomField
 
     protected $casts = [
         'extra_options'=>'array',
+        'overwrite_options' => 'array'
     ];
 
     protected array $cachedManyRelations = [

@@ -21,6 +21,13 @@ In config/app.php hinzufügen den `CustomFormServiceProvider`
     ]
 ]
 ```
+PanelProvide
+```php
+
+                new CustomFormPlugin(),
+                SpatieLaravelTranslatablePlugin::make()
+                    ->defaultLocales(['de', 'en']),
+```
 
 ```bash
 composer update
