@@ -26,6 +26,7 @@ class EditCustomFormLoadHelper
         foreach ($fields as $field) {
             /**@var CustomField $field*/
             $fieldData = $field->attributesToArray();
+            $fieldData['options'] = $field->options;
 
             unset($fieldData["updated_at"]);
             unset($fieldData["created_at"]);

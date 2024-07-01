@@ -3,6 +3,10 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\Components;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldUtils;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
+use Filament\Forms\Components\Component;
+use Filament\Forms\Components\Field;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Section;
 
@@ -15,11 +19,31 @@ class EditTypeOptionModal extends Section
         parent::setUp();
 
         $this
-            ->schema(fn($state)=>[
-                Group::make(CustomFieldUtils::getFieldTypeFromRawDate($state)->getExtraTypeOptionComponents())
-                    ->statePath("options")
-                    ->columns()
-            ]);
+            ->schema(function($state, CustomForm $record){
+                $field = new CustomField();
+                $field->fill($state);
+
+                $disabledOption = $field->overwritten_options;
+
+                $components = $field->getType()->getExtraTypeOptionComponents();
+
+                foreach ($components as $item) {
+                    if ($item instanceof Field) $item->disabled(in_array($item->getStatePath(false),$disabledOption));
+
+                    elseif ($item instanceof \Filament\Forms\Components\Section) {
+                        foreach ($item->getChildComponents() as $field) {
+                            $field->disabled(in_array($field->getStatePath(false),$disabledOption));
+                        }
+                    }
+                }
+
+
+                return[
+                    Group::make($components)
+                        ->statePath("options")
+                        ->columns()
+                ];
+        });
     }
 
 }

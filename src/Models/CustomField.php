@@ -18,6 +18,7 @@ use Illuminate\Support\Collection;
  * @property bool $is_active
  * @property int $form_position
  * @property int|null $layout_end_position
+ * @property array $overwritten_options
  *
  * @property Collection $customOptions
  * @property Collection $fieldRules
@@ -68,7 +69,10 @@ class CustomField extends ACustomField
     public function __get($key) {
         if($key === "general_field_id") return Model::__get($key);
 
-        if(!$this->isGeneralField()) return parent::__get($key);
+        if(!$this->isGeneralField()) {
+            if('overwritten_options' === $key) return [];
+            return parent::__get($key);
+        }
 
         //PERFORMANCE!!!!
         $genFieldF = function(): GeneralField {
@@ -86,6 +90,8 @@ class CustomField extends ACustomField
         return match ($key) {
             'name' => $genFieldF()->name,
             'type' => $genFieldF()->type,
+            'options' => array_merge(parent::__get($key), $genFieldF()->overwrite_options),
+            'overwritten_options' => array_keys($genFieldF()->overwrite_options),
             'identifier' => $genFieldF()->identifier,
             'generalField' => $genFieldF(),
             default => parent::__get($key),

@@ -23,6 +23,6 @@ class DefaultCustomFieldEditTypeOptionsAction extends OptionLikeAction
 
 
     protected function getTitleName(): string {
-       return "Feld";
+       return "Field";
     }
 }
