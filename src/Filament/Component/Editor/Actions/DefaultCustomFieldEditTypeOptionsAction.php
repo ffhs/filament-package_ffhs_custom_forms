@@ -2,6 +2,7 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\Actions;
 
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldUtils;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\Components\EditTypeOptionModal;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\Helper\EditCustomFormHelper;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
@@ -15,7 +16,8 @@ class DefaultCustomFieldEditTypeOptionsAction extends OptionLikeAction
        parent::setUp();
 
        $this->icon('carbon-settings-edit');
-
+       //Hidde if it hasn't any options
+       $this->visible(fn($get, $arguments) => CustomFieldUtils::getFieldTypeFromRawDate($get($arguments['item']))->extraTypeOptions());
        $this->form([
            EditTypeOptionModal::make()
        ]);

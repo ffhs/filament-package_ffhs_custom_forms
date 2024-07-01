@@ -27,9 +27,9 @@ class FileUploadType extends CustomFieldType
         ];
     }
 
-    protected function extraOptionsAfterBasic(): array {
+    protected function extraOptionsAfterBasic(): array { //ToDo Make for new type
         return [
-            'image' => FastTypeOption::make(false,
+            'image' => FastTypeOption::makeFast(false,
                 Toggle::make('image')
                     ->afterStateUpdated(function($state, $set){
                         if($state) return;
@@ -39,26 +39,26 @@ class FileUploadType extends CustomFieldType
                     ->label(__("filament-package_ffhs_custom_forms::custom_forms.fields.type_options.only_images"))
                     ->live()
             ),
-            'show_images' => FastTypeOption::make(false,
+            'show_images' => FastTypeOption::makeFast(false,
                 Toggle::make('show_images')
                     ->columnStart(1)
                     ->label(__("filament-package_ffhs_custom_forms::custom_forms.fields.type_options.show_images"))
                     ->disabled(fn($get) => !$get('image'))
             ),
-            'show_images_in_view' => FastTypeOption::make(false,
+            'show_images_in_view' => FastTypeOption::makeFast(false,
                 Toggle::make('show_images_in_view')
                     ->label(__("filament-package_ffhs_custom_forms::custom_forms.fields.type_options.show_images_in_view"))
                     ->disabled(fn($get) => !$get('image'))
             ),
-            'downloadable' => FastTypeOption::make(false,
+            'downloadable' => FastTypeOption::makeFast(false,
                 Toggle::make('downloadable')
                     ->label(__("filament-package_ffhs_custom_forms::custom_forms.fields.type_options.downloadable"))
             ),
-            'multiple' => FastTypeOption::make(false,
+            'multiple' => FastTypeOption::makeFast(false,
                 Toggle::make('multiple')
                     ->label(__("filament-package_ffhs_custom_forms::custom_forms.fields.type_options.multiple_uploads_allowed"))
             ),
-            'preserve_filenames' => FastTypeOption::make(true,
+            'preserve_filenames' => FastTypeOption::makeFast(true,
                 Toggle::make('preserve_filenames')
                     ->label(__("filament-package_ffhs_custom_forms::custom_forms.fields.type_options.preserve_filenames"))
             ),

@@ -3,16 +3,21 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Types;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\CustomFieldType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\DefaultLayoutTypeOptionGroup;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\ValidatioTypeOptionGroup;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\FastTypeOption;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\MaxLengthOption;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\MinLengthOption;
 use Ffhs\FilamentPackageFfhsCustomForms\Domain\HasBasicSettings;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Types\Views\NumberTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\MaxValueOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\MinValueOption;
 use Ffhs\FilamentPackageFfhsCustomForms\Domain\HasCustomFormPackageTranslation;
+use Filament\Forms\Components\Toggle;
 
 class NumberType extends CustomFieldType
 {
     use HasCustomFormPackageTranslation;
-    use HasBasicSettings;
 
     public static function identifier(): string {return "number";}
 
@@ -26,17 +31,15 @@ class NumberType extends CustomFieldType
         return  "tabler-number";
     }
 
-    protected function extraOptionsAfterBasic(): array {
-
+    public function extraTypeOptions(): array {
         return [
-            'min_value'=>new MinValueOption(),
-            'max_value'=>new MaxValueOption(),
+            DefaultLayoutTypeOptionGroup::make(),
+            ValidatioTypeOptionGroup::make(typeOptions: [
+                'min_value'=>new MinValueOption(),
+                'max_value'=>new MaxValueOption(),
+            ] )
         ];
     }
-
-
-
-
 
 
 }

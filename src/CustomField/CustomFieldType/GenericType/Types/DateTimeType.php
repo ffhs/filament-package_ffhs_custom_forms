@@ -5,6 +5,8 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Generi
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Types;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Types\Views\DateTimeTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\CustomFieldType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\DefaultLayoutTypeOptionGroup;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\ValidatioTypeOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\ColumnSpanOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\FastTypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\InLineLabelOption;
@@ -30,15 +32,16 @@ class DateTimeType extends CustomFieldType
 
     public function extraTypeOptions(): array {
         return [
-            'column_span' => new ColumnSpanOption(),
-            'format'=> new FastTypeOption("Y-m-d H:i:s",
-                TextInput::make("format")
-                    ->label(__("filament-package_ffhs_custom_forms::custom_forms.fields.type_options.format"))
-                    ->placeholder("Y-m-d H:i:s"),
-            ),
-            'in_line_label' => new InLineLabelOption(),
-            'new_line_option' => new NewLineOption(),
+            DefaultLayoutTypeOptionGroup::make(),
+            ValidatioTypeOptionGroup::make(typeOptions: [
+                'format'=> new FastTypeOption("Y-m-d H:i:s",
+                    TextInput::make("format")
+                        ->label(__("filament-package_ffhs_custom_forms::custom_forms.fields.type_options.format"))
+                        ->placeholder("Y-m-d H:i:s"),
+                ),
+            ] )
         ];
     }
+
 
 }

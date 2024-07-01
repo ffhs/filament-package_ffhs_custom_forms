@@ -3,6 +3,8 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Types;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\CustomFieldType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\DefaultLayoutTypeOptionGroup;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\ValidatioTypeOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\Domain\HasBasicSettings;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Types\Views\TextAreaTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\FastTypeOption;
@@ -14,7 +16,6 @@ use Filament\Forms\Components\Toggle;
 class TextAreaType extends CustomFieldType
 {
     use HasCustomFormPackageTranslation;
-    use HasBasicSettings;
 
     public static function identifier(): string {return "textarea";}
 
@@ -29,17 +30,23 @@ class TextAreaType extends CustomFieldType
         return  "bi-textarea-t";
     }
 
-    protected function extraOptionsBeforeBasic(): array {
+
+
+    public function extraTypeOptions(): array {
 
         $autoSizeComponent =
             Toggle::make("auto_size")
             ->label(__("filament-package_ffhs_custom_forms::custom_forms.fields.type_options.auto_size"))
             ->columnSpan(2);
 
+        $autoSize = FastTypeOption::makeFast(false, $autoSizeComponent);
+
         return [
-            'max_length' => new MaxLengthOption(),
-            'min_length' => new MinLengthOption(),
-            'auto_size'=> new FastTypeOption(false,$autoSizeComponent),
+            DefaultLayoutTypeOptionGroup::make()->addTypeOptions("auto_size", $autoSize),
+            ValidatioTypeOptionGroup::make(typeOptions: [
+                'max_length' => new MaxLengthOption(),
+                'min_length' => new MinLengthOption(),
+            ] )
         ];
     }
 

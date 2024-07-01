@@ -35,7 +35,7 @@ abstract class OptionLikeAction extends Action
             $key =$arguments["item"];
             $data = $get($key);
             $suffix = " - ". $this->getTitleName() ." bearbeiten "; //ToDo Translate
-            if (empty($data["general_field_id"])) return $data["name"][app()->getLocale()] . $suffix;
+            if (empty($data["general_field_id"])) return ($data["name"][app()->getLocale()]??"") . $suffix;
             else return "G. ".GeneralField::cached($data["general_field_id"])->name. $suffix;
         });
 

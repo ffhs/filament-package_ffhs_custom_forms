@@ -13,6 +13,7 @@ trait HasEditFieldCallbacks
         $options = $data['options'] ?? [];
 
         foreach ($this->getFlattenExtraTypeOptions() as $key => $option){
+            if(!array_key_exists($key, $options)) continue; //ToDo ????
             $options[$key] = $option->$method($options[$key], $key, $field);
         }
         $data['options'] = $options;

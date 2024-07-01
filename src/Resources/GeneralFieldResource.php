@@ -149,6 +149,7 @@ class GeneralFieldResource extends Resource
                     })
                     ->schema([
                         Select::make("extra_option_names")
+                            ->label("")
                             ->multiple()
                             ->live()
                             ->formatStateUsing(fn(GeneralField $record) => array_keys($record->overwrite_options??[]))
