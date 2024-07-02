@@ -30,6 +30,7 @@ class IconSelectType extends CustomFieldType
     public function extraTypeOptions(): array {
         return [
             DefaultLayoutTypeOptionGroup::make(),
+            ValidationTypeOptionGroup::make(),
         ];
     }
 

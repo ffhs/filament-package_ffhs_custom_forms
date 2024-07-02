@@ -8,6 +8,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\Validation
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\FastTypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\MaxLengthOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\MinLengthOption;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\RequiredOption;
 use Ffhs\FilamentPackageFfhsCustomForms\Domain\HasBasicSettings;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Types\Views\NumberTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\MaxValueOption;
@@ -35,6 +36,7 @@ class NumberType extends CustomFieldType
         return [
             DefaultLayoutTypeOptionGroup::make(),
             ValidationTypeOptionGroup::make(typeOptions: [
+                'required' => RequiredOption::make(),
                 'min_value'=>new MinValueOption(),
                 'max_value'=>new MaxValueOption(),
             ] )

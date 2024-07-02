@@ -13,14 +13,13 @@ class RequiredOption extends TypeOption
 {
     use TypeOptionPluginTranslate;
 
-    public function getDefaultValue(): null {
+    public function getDefaultValue(): bool {
         return false;
     }
 
     public function getComponent(string $name): Component {
        return Toggle::make($name)
-           ->helperText("Benötigt") //ToDo Tranlsate
-           ->label($this->translate('alpine_mask'))
+           ->label($this->translate('required'))//ToDo Tranlsate
            ->columnSpanFull()
            ->live();
     }

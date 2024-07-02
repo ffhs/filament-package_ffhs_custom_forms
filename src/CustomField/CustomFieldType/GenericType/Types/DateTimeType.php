@@ -11,6 +11,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\ColumnSpa
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\FastTypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\InLineLabelOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\NewLineOption;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\RequiredOption;
 use Ffhs\FilamentPackageFfhsCustomForms\Domain\HasCustomFormPackageTranslation;
 use Filament\Forms\Components\TextInput;
 
@@ -34,6 +35,7 @@ class DateTimeType extends CustomFieldType
         return [
             DefaultLayoutTypeOptionGroup::make(),
             ValidationTypeOptionGroup::make(typeOptions: [
+                'required' => RequiredOption::make(),
                 'format'=> new FastTypeOption("Y-m-d H:i:s",
                     TextInput::make("format")
                         ->label(__("filament-package_ffhs_custom_forms::custom_forms.fields.type_options.format"))

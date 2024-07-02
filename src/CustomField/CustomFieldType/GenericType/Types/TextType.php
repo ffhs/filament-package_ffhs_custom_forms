@@ -40,9 +40,9 @@ class TextType extends CustomFieldType
             DefaultLayoutTypeOptionGroup::make(),
             ValidationTypeOptionGroup::make(typeOptions: [
                 'required' => RequiredOption::make(),
-                'alpine_mask' => new AlpineMaskOption(),
-                'max_length' => new MaxLengthOption(),
-                'min_length' => new MinLengthOption(),
+                'alpine_mask' => AlpineMaskOption::make(),
+                'max_length' => MaxLengthOption::make(),
+                'min_length' => MinLengthOption::make(),
             ]),
             TypeOptionGroup::make('Vorschläge', [
                 'suggestions' => new FastTypeOption([],

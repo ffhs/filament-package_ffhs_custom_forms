@@ -94,6 +94,7 @@ return [
             "show_as_fieldset" => "Als Fieldset beim Betrachten anzeigen",
             "show_in_view" => "Sichtbar beim Betrachten",
             "show_title" => "Titel Anzeigen",
+            'required' => 'Benötigt',
 
             // custom field type (FastTypeOption)
             "color_type" => "Farbformat",
@@ -120,6 +121,8 @@ return [
             "multiple_toggle_selectable" => "Mehre Schalter auswählbar",
             "alpine_mask" => "Maske",
             "alpine_mask_help_text" => "Schnellhilfe: 'a' für Buchstaben, '9' für Zahlen '*' für alle Zeichen. (Alpine Maske)",
+
+
         ],
     ],
 
