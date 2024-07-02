@@ -5,6 +5,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Layout
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\LayoutType\CustomLayoutType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\LayoutType\Types\Views\GroupTypeView;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\LayoutTypeDefaultLayoutTypeOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\Domain\HasBasicSettings;
 use Ffhs\FilamentPackageFfhsCustomForms\Domain\HasCustomFormPackageTranslation;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\ColumnsOption;
@@ -14,7 +15,6 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\ShowInVie
 
 class GroupType extends CustomLayoutType
 {
-    use HasBasicSettings;
     use HasCustomFormPackageTranslation;
 
     public static function identifier(): string {
@@ -33,10 +33,10 @@ class GroupType extends CustomLayoutType
 
     public function extraTypeOptions(): array {
         return[
-            "columns" => new ColumnsOption(),
-            'column_span' => new ColumnSpanOption(),
-            'new_line_option' => new NewLineOption(),
-            'show_in_view'=> new ShowInViewOption(),
+            LayoutTypeDefaultLayoutTypeOptionGroup::make()
+                ->mergeTypeOptions([
+                    'show_in_view'=> new ShowInViewOption(),
+                ]),
         ];
     }
 

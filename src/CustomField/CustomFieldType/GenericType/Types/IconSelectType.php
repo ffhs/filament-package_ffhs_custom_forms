@@ -3,7 +3,7 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Types;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\DefaultLayoutTypeOptionGroup;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\ValidatioTypeOptionGroup;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\ValidationTypeOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\MaxValueOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\MinValueOption;
 use Ffhs\FilamentPackageFfhsCustomForms\Domain\HasBasicSettings;

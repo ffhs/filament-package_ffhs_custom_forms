@@ -5,6 +5,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Layout
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\LayoutType\Types\Views\SpaceTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\CustomFieldType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\DefaultLayoutTypeOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\Domain\HasCustomFormPackageTranslation;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\FastTypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\ShowInViewOption;
@@ -32,17 +33,25 @@ class SpaceType extends CustomFieldType
         return false;
     }
 
+    public function hasEditorNameElement(array $fielData): bool
+    {
+        return false;
+    }
 
-    public function extraTypeOptions(): array {
+
+    public function extraTypeOptions(): array { //ToDo
         return[
-            'amount'=> new FastTypeOption(1,
-                TextInput::make("amount")
-                    ->label("Grösse")
-                    ->minValue(1)
-                    ->required()
-                    ->numeric()
-            ),
-            'show_in_view'=> new ShowInViewOption(),
+            DefaultLayoutTypeOptionGroup::make()->mergeTypeOptions([
+                'amount'=> new FastTypeOption(1,
+                    TextInput::make("amount")
+                        ->label("Grösse")
+                        ->columnStart(1)
+                        ->minValue(1)
+                        ->required()
+                        ->numeric()
+                ),
+                'show_in_view'=> new ShowInViewOption(),
+            ]),
         ];
     }
 

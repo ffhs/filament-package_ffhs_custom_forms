@@ -4,18 +4,20 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Layout
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\LayoutType\Types\Views\TextLayoutTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\CustomFieldType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\DefaultLayoutTypeOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\Domain\HasBasicSettings;
 use Ffhs\FilamentPackageFfhsCustomForms\Domain\HasCustomFormPackageTranslation;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\FastTypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\ShowInViewOption;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Tabs;
+use Filament\Forms\Components\TextInput;
 use Filament\Resources\Components\Tab;
+use Illuminate\Support\Facades\App;
 
 class TextLayoutType extends CustomFieldType
 {
     use HasCustomFormPackageTranslation;
-    use HasBasicSettings;
 
     public static function identifier(): string {
         return "layout_text";
@@ -32,7 +34,9 @@ class TextLayoutType extends CustomFieldType
     }
 
 
-    protected function extraOptionsAfterBasic(): array {
+
+    public function extraTypeOptions(): array {
+
         $buttons = [
             'bold',
             'bulletList',
@@ -43,25 +47,18 @@ class TextLayoutType extends CustomFieldType
         ];
 
         return [
-            'show_in_view'=> new ShowInViewOption(),
-            'text'=> new FastTypeOption("",
-                Tabs::make()
-                    ->columnSpanFull()
-                    ->tabs([
-                        Tabs\Tab::make("Text Deutsch")
-                            ->schema([RichEditor::make("text_de")->toolbarButtons($buttons)->label("")]),
-                        Tabs\Tab::make("Text Englisch")
-                            ->schema([RichEditor::make("text_en")->toolbarButtons($buttons)->label("")]),
-                    ])
-            )
+            DefaultLayoutTypeOptionGroup::make()
+                ->addTypeOptions('show_in_view', ShowInViewOption::make())
+                ->addTypeOptions('text',
+                    FastTypeOption::makeFast("",
+                        RichEditor::make("text." . App::getLocale())
+                            ->columnSpanFull()
+                            ->toolbarButtons($buttons) //ToDo Add Location Selection, add to FormMapper the language Getter
+                            ->label("Text")
+                    )
+                ),
         ];
     }
 
-    public function canBeRequired(): bool {
-        return false;
-    }
 
-    public function hasToolTips(): bool {
-        return false;
-    }
 }

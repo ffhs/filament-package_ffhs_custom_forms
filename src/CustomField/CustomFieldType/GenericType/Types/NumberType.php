@@ -4,7 +4,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Generi
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\DefaultLayoutTypeOptionGroup;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\ValidatioTypeOptionGroup;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\ValidationTypeOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\FastTypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\MaxLengthOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\MinLengthOption;
@@ -34,7 +34,7 @@ class NumberType extends CustomFieldType
     public function extraTypeOptions(): array {
         return [
             DefaultLayoutTypeOptionGroup::make(),
-            ValidatioTypeOptionGroup::make(typeOptions: [
+            ValidationTypeOptionGroup::make(typeOptions: [
                 'min_value'=>new MinValueOption(),
                 'max_value'=>new MaxValueOption(),
             ] )

@@ -4,11 +4,14 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Layout
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\LayoutType\Types\Views\DownloadTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\CustomFieldType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\DefaultLayoutTypeOptionGroup;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\ValidationTypeOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\ColumnSpanOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\FastTypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\NewLineOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\ShowInViewOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\ShowTitleOption;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\TypeOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\Domain\HasCustomFormPackageTranslation;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Hidden;
@@ -34,36 +37,40 @@ class DownloadType extends CustomFieldType
 
     public function extraTypeOptions(): array {
         return [
-            'file_names' => new FastTypeOption([], Hidden::make('file_names')),
-            'files'=> new FastTypeOption([],
-                FileUpload::make('files')
-                    ->afterStateUpdated(fn($set, $state) => sizeof($state) > 1? $set("title_as_filename", false):null)
-                    ->directory($this->getConfigAttribute("save_path"))
-                    ->disk($this->getConfigAttribute("disk"))
-                    ->storeFileNamesIn('file_names')
-                    ->label("Datei/-en") //ToDo Translate
-                    ->visibility('private')
-                    ->columnSpanFull()
-                    ->downloadable()
-                    ->previewable()
-                    ->multiple()
-                    ->live()
-            ),
+            DefaultLayoutTypeOptionGroup::make()->mergeTypeOptions([
+                'show_in_view'=> new ShowInViewOption(),
+                'show_title'=> new ShowTitleOption(),
+                'show_as_link'=> new FastTypeOption(true,
+                    Toggle::make("show_as_link")
+                        ->label("Link") //ToDo Translate
+                ),
+                'title_as_filename'=> new FastTypeOption(false,
+                    Toggle::make("title_as_filename")
+                        ->disabled(fn($get) => sizeof($get('files')?? []) > 1)
+                        ->label("Titel als Filename") //ToDo Translate
+                )
+            ]),
 
-            'column_span' => new ColumnSpanOption(),
-            'new_line_option' => new NewLineOption(),
+            ValidationTypeOptionGroup::make(typeOptions: [
+                'file_names' => new FastTypeOption([], Hidden::make('file_names')),
+                'files'=> new FastTypeOption([],
+                    FileUpload::make('files')
+                        ->afterStateUpdated(fn($set, $state) => sizeof($state) > 1? $set("title_as_filename", false):null)
+                        ->directory($this->getConfigAttribute("save_path"))
+                        ->disk($this->getConfigAttribute("disk"))
+                        ->storeFileNamesIn('file_names')
+                        ->label("Datei/-en") //ToDo Translate
+                        ->visibility('private')
+                        ->columnSpanFull()
+                        ->downloadable()
+                        ->previewable()
+                        ->multiple()
+                        ->live()
+                ),
+            ]),
 
-            'show_in_view'=> new ShowInViewOption(),
-            'show_title'=> new ShowTitleOption(),
-            'show_as_link'=> new FastTypeOption(true,
-                Toggle::make("show_as_link")
-                    ->label("Link") //ToDo Translate
-            ),
-            'title_as_filename'=> new FastTypeOption(false,
-                Toggle::make("title_as_filename")
-                    ->disabled(fn($get) => sizeof($get('files')?? []) > 1)
-                    ->label("Titel als Filename") //ToDo Translate
-            )
+
+
         ];
     }
 
