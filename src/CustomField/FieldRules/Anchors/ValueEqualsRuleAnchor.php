@@ -122,12 +122,11 @@ class ValueEqualsRuleAnchor extends FieldRuleAnchorType
         $localisation = Lang::locale();
         $selectedOptionsName = [];
 
-        $name = "name_".$localisation;
         if(empty($targetFieldData["general_field_id"])){
             foreach ($targetFieldData["options"]["customOptions"] as $optionData) {
                 $identifier = $optionData["identifier"];
                 if (!in_array($identifier, $selectedOptions)) continue;
-                $selectedOptionsName[$identifier] = $optionData[$name];
+                $selectedOptionsName[$identifier] = $optionData['name'][$localisation];
             }
         }
         else{
@@ -137,7 +136,7 @@ class ValueEqualsRuleAnchor extends FieldRuleAnchorType
             foreach ($genField->customOptions as $option) {
                 $identifier = $option->identifier;
                 if (!in_array($identifier, $selectedOptions)) continue;
-                $selectedOptionsName[$identifier] = $option->$name;
+                $selectedOptionsName[$identifier] = $option->name;
             }
         }
 
@@ -244,7 +243,6 @@ class ValueEqualsRuleAnchor extends FieldRuleAnchorType
             $isGeneralField = !empty($field["general_field_id"]);
             $isTemplate = !empty($field["template_id"]);
             $type = CustomFieldUtils::getFieldTypeFromRawDate($field);
-            $name = 'name_' . Lang::getLocale();
 
             //Skip Layout Types
             if($type instanceof CustomLayoutType) continue;
@@ -252,7 +250,7 @@ class ValueEqualsRuleAnchor extends FieldRuleAnchorType
             //Hande GeneralField
             if($isGeneralField){
                 $field = GeneralField::cached($field["general_field_id"]);
-                $options[$field->identifier] =$field->$name;
+                $options[$field->identifier] =$field->name;
                 continue;
             }
 
@@ -263,12 +261,12 @@ class ValueEqualsRuleAnchor extends FieldRuleAnchorType
                     /**@var CustomField $templateField*/
                     $finalField= $templateField;
                     if($templateField->isGeneralField()) $finalField = $templateField->generalField;
-                    $options[$finalField->identifier] =$finalField->$name;
+                    $options[$finalField->identifier] =$finalField->name;
                 }
                 continue;
             }
 
-            $options[$field["identifier"]] = $field[$name]; //ToDo Translate
+            $options[$field["identifier"]] = $field["name"][Lang::getLocale()];
         }
 
         return $options;
@@ -536,10 +534,10 @@ class ValueEqualsRuleAnchor extends FieldRuleAnchorType
     }
 
 
-    private function getFieldName($targetFieldData) {
-        $localisation = Lang::locale();
-        if(empty($targetFieldData["general_field_id"])) return $targetFieldData["name_" . $localisation];
-        $name = "name_".$localisation;
-        return  GeneralField::cached($targetFieldData["general_field_id"])->$name;
+    private function getFieldName($targetFieldData): ?string
+    {
+        $field = new CustomField();
+        $field->fill($targetFieldData);
+        return $field->name;
     }
 }

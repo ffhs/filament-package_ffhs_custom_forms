@@ -12,11 +12,13 @@ use Filament\Actions\Action;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Form;
 use Filament\Resources\Pages\EditRecord;
+use Filament\Resources\Pages\EditRecord\Concerns\Translatable;
 use Filament\Support\Enums\MaxWidth;
 use Illuminate\Contracts\Support\Htmlable;
 
 class EditCustomForm extends EditRecord
 {
+    use Translatable;
     protected static string $resource = CustomFormResource::class;
 
 
@@ -38,6 +40,7 @@ class EditCustomForm extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
+            Actions\LocaleSwitcher::make(),
             Actions\DeleteAction::make(),
         ];
     }

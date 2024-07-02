@@ -6,6 +6,7 @@ use Barryvdh\Debugbar\Facades\Debugbar;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldUtils;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\Helper\EditCustomFormHelper;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Actions;
@@ -93,11 +94,15 @@ class EditCustomFormFields extends Field
         $type = CustomFieldUtils::getFieldTypeFromRawDate($field);
         $elements = [];
 
+
         if( is_null($type)) return;
+
+        /**@var CustomForm $record*/
+        $record = $this->getRecord();
 
         if($type->hasEditorNameElement($field))
             $elements = [
-                TextInput::make('name.'.app()->getLocale())
+                TextInput::make('name.'. $record->getLocale())
                     ->hidden(fn($state)=> false)
                     ->label(''),
             ];

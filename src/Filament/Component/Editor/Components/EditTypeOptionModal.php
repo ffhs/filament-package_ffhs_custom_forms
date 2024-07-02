@@ -5,18 +5,21 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\Componen
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldUtils;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
+use Filament\Actions\LocaleSwitcher;
+use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Field;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Section;
 
-class EditTypeOptionModal extends Section
+class EditTypeOptionModal extends Group
 {
 
-    protected string $view = 'filament-forms::components.group';
+   // protected string $view = 'filament-forms::components.group';
 
     protected function setUp(): void {
         parent::setUp();
+
 
         $this
             ->schema(function($state, CustomForm $record){
@@ -45,5 +48,7 @@ class EditTypeOptionModal extends Section
                 ];
         });
     }
+
+
 
 }

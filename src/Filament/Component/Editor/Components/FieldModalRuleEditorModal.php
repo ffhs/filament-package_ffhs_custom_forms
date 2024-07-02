@@ -17,33 +17,31 @@ class FieldModalRuleEditorModal extends Component
     protected string $view = 'filament-forms::components.group';
 
     protected CustomFieldType $type;
-    protected CustomForm $form;
 
 
-    public static function make(CustomForm $form, CustomFieldType $type): static {
-        $static = app(static::class, ['form' => $form, 'type'=>$type]);
+    public static function make(CustomFieldType $type): static {
+        $static = app(static::class, ['type'=>$type]);
         $static->configure();
         return $static;
     }
 
 
-    public function __construct(CustomFieldType $type, CustomForm $form) {
+    public function __construct(CustomFieldType $type) {
         $this->type = $type;
-        $this->form = $form;
     }
 
     protected function setUp(): void {
         parent::setUp();
 
         $this->columns();
-        $this->schema([
+        $this->schema(fn()=>[
             $this->getAnchorEditSection(),
             $this->getRuleEditSection()
         ]);
     }
 
     protected function getAnchorEditSection(): Section {
-        $anchors = $this->getSelectableAnchors($this->form, $this->type);
+        $anchors = $this->getSelectableAnchors($this->getRecord(), $this->type);
         return Section::make("Abhängigkeit")//ToDo Translate
         ->columnSpan(1)
             ->schema([
@@ -69,7 +67,7 @@ class FieldModalRuleEditorModal extends Component
                         $data = CustomFieldUtils::flattDownToCustomFields($data);
 
                         $anchor = FieldRuleAnchorType::getTypeFromIdentifier($get("anchor_identifier"));
-                        return [$anchor->settingsComponent($this->form, $data["custom_fields"])];
+                        return [$anchor->settingsComponent($this->getRecord(), $data["custom_fields"])];
                     }),
             ]);
     }
@@ -89,7 +87,9 @@ class FieldModalRuleEditorModal extends Component
 
 
     protected function getRuleEditSection(): Section {
-        $rules = $this->getSelectableRules($this->form, $this->type);
+
+
+        $rules = $this->getSelectableRules($this->type);
         return Section::make("Feldaktion")
             ->columnSpan(1)
             ->schema([
@@ -111,13 +111,14 @@ class FieldModalRuleEditorModal extends Component
 
                         $data = CustomFieldUtils::flattDownToCustomFields($data);
                         $rule = FieldRuleType::getTypeFromIdentifier($get("rule_identifier"));
-                        return [$rule->settingsComponent($this->form, $data["custom_fields"])];
+                        return [$rule->settingsComponent($this->getRecord(), $data["custom_fields"])];
                     }),
             ]);
     }
 
 
-    protected function getSelectableRules(CustomForm $customForm, CustomFieldType $type): array {
+    protected function getSelectableRules(CustomFieldType $type): array {
+        $customForm = $this->getRecord();
         $allRules = $type->overwrittenRules();
         if(is_null($allRules)) $allRules = $customForm->getFormConfiguration()::ruleTypes();
         $rules = [];

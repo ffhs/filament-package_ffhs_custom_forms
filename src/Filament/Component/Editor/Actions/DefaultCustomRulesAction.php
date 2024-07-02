@@ -12,7 +12,6 @@ class DefaultCustomRulesAction extends OptionLikeAction
         parent::setUp();
 
         $this->icon('carbon-rule');
-
         $this->form([
             EditFieldRuleModal::make()
         ]);

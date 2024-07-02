@@ -5,7 +5,6 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Models;
 use Ffhs\FilamentPackageFfhsCustomForms\Caching\CachedModel;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormConfiguration\DynamicFormConfiguration;
 use Ffhs\FilamentPackageFfhsCustomForms\Domain\HasFormIdentifier;
-use Filament\Resources\Concerns\Translatable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -27,6 +26,7 @@ use Spatie\Translatable\HasTranslations;
  */
 class CustomForm extends CachedModel
 {
+    use HasTranslations;
     use HasFormIdentifier;
     use HasFactory;
 
@@ -44,6 +44,9 @@ class CustomForm extends CachedModel
         'generalFields',
     ];
 
+    public array $translatable = [
+        'does_not_exist' // <= It needs something
+    ];
 
    /* public function __get($key) {
         if($key == 'customFieldsWithTemplateFields') return  $this->cachedFieldsWithTemplates();

@@ -7,6 +7,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormResource\Pages\Creat
 use Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormResource\Pages\EditCustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormResource\Pages\ListCustomFormField;
 use Filament\Forms\Form;
+use Filament\Resources\Concerns\Translatable;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -14,6 +15,8 @@ use Illuminate\Database\Eloquent\Builder;
 
 class CustomFormResource extends Resource
 {
+    use Translatable;
+
     protected static ?string $model = CustomForm::class;
     protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-check';
 

@@ -4,6 +4,8 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\Actions;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldUtils;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\Components\EditTypeOptionModal;
+use Filament\Actions\LocaleSwitcher;
+
 class DefaultCustomFieldEditTypeOptionsAction extends OptionLikeAction
 {
     protected function setUp(): void {
@@ -16,6 +18,7 @@ class DefaultCustomFieldEditTypeOptionsAction extends OptionLikeAction
            if(!array_key_exists('item', $arguments)) return false;
            return CustomFieldUtils::getFieldTypeFromRawDate($get($arguments['item']))?->extraTypeOptions() ?? false;
        });
+        $this->closeModalByClickingAway(false);
        $this->form([
            EditTypeOptionModal::make()
        ]);

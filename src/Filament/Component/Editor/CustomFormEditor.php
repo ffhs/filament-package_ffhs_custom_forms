@@ -22,10 +22,6 @@ class CustomFormEditor extends Component {
         return $static;
     }
 
-
-
-
-
     protected function setUp(): void {
         parent::setUp();
         $this->label("");

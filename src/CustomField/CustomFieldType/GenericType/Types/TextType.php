@@ -15,6 +15,8 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\MinLength
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\RequiredOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\TypeOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\Domain\HasCustomFormPackageTranslation;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
+use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
@@ -44,23 +46,17 @@ class TextType extends CustomFieldType
                 'max_length' => MaxLengthOption::make(),
                 'min_length' => MinLengthOption::make(),
             ]),
+            
             TypeOptionGroup::make('Vorschläge', [
                 'suggestions' => new FastTypeOption([],
-                    Repeater::make('suggestions')
-                        ->addActionLabel(__("filament-package_ffhs_custom_forms::custom_forms.fields.type_options.add_suggestion"))
-                        ->itemLabel(fn($state) => $state[Lang::locale()])
+                    Group::make()
+                        ->statePath('suggestions')
                         ->columnSpanFull()
-                        ->collapsed()
-                        ->columns()
-                        ->label("")
-                        ->reactive()
-                        ->schema([
-                            TextInput::make("de")
-                                ->label("Deutsch")
-                                ->required(),
-                            TextInput::make("en")
-                                ->label("Englisch")
-                                ->required(),
+                        ->schema(fn($record) => [
+                            Repeater::make($record->getLocale())
+                                ->addActionLabel(__("filament-package_ffhs_custom_forms::custom_forms.fields.type_options.add_suggestion"))
+                                ->label("")
+                                ->schema([TextInput::make("value")->label("")])
                         ])
                 ),
             ]), //ToDo Translate
