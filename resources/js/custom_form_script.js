@@ -11,94 +11,63 @@ function findTarget(target, onlyDrag = false){
     return currentParent
 }
 
-function setNestedValue(obj, path, value) {
-    const pathArray = path.split('.');
-    let current = obj;
-
-    for (let i = 0; i < pathArray.length - 1; i++) {
-        const key = pathArray[i];
-        if (!current[key]) {
-            current[key] = {};
-        }
-        current = current[key];
-    }
-
-    current[pathArray[pathArray.length - 1]] = value;
-}
-
-function getNestedValue(obj, path) {
-    const pathArray = path.split('.');
-    let current = obj;
-
-    for (let i = 0; i < pathArray.length; i++) {
-        const key = pathArray[i];
-        if (!current || !current.hasOwnProperty(key)) {
-            return null;
-        }
-        current = current[key];
-    }
-
-    return current;
-}
-
-
 function getParentForm(){
-    return  document.querySelector('[customField\\:form]')
+    return document.querySelector('[customField\\:form]')
 }
 
-function getElementFieldStructurePath(element) {
-    let currentParent = element.parentNode
-    let path = element.getAttribute('customField:uuid')
-
-    while (!(currentParent instanceof Document) && !currentParent.hasAttribute('customField:form')) {
-        if (currentParent.hasAttribute('customField:uuid')){
-            path = currentParent.getAttribute('customField:uuid') + '.' + path
-        }
-        currentParent = currentParent.parentNode
-    }
-    return path;
-}
-
-function handleDragDrop(target, draggingEl, state) {
-    if(draggingEl === target) return
-
-    if(target.hasAttribute('customField:drag')) target.before(draggingEl)
-    else target.insertBefore(draggingEl, target.firstChild)
-
-    getParentForm().querySelectorAll('*').forEach(element => element.classList.remove('custom-field-drag-over'))
-
+function updateFieldPositions(state) {
     let currentPos = 0;
 
     getParentForm().querySelectorAll('[customField\\:uuid]').forEach(element => {
         currentPos++
 
-        let contains =  element.querySelectorAll('[customField\\:uuid]').length
+
+        let contains = element.querySelectorAll('[customField\\:uuid]').length
         let key = element.getAttribute('customField:uuid')
 
-        if(state[key] === undefined) return
+        if (state[key] === undefined) state[key] = {}
+
         state[key]['form_position'] = currentPos
-        state[key]['layout_end_position'] = contains === 0? null: (currentPos + contains)
+        state[key]['layout_end_position'] = contains === 0 ? null : (currentPos + contains)
     })
+}
+
+function setFieldToOtherField(target, toSet) {
+    if (target.hasAttribute('customField:drag')) target.before(toSet)
+    else target.insertBefore(toSet, target.firstChild)
+}
+
+function handleDragDrop(target, draggingEl, state) {
+    if(draggingEl === target) return
+
+    setFieldToOtherField(target, draggingEl);
+
+    getParentForm().querySelectorAll('*').forEach(element => element.classList.remove('custom-field-drag-over'))
+
+    updateFieldPositions(state);
 
 }
 
-function handleNewField(target, draggingEl, $wire, staticPath) {
+function handleNewField(target, draggingEl, state, $wire, staticPath) {
+
     let mode = draggingEl.getAttribute('customField:newFieldMode')
     let value = draggingEl.getAttribute('customField:newField')
 
-    let targetId = "";
-    let inId = "";
-    if(target.hasAttribute('customField:hasFields')) {
-        targetId = "";
-        let inTarget = findTarget(target.parentNode, true)
-        if(inTarget != null && !(inTarget instanceof Document))
-            inId = inTarget.getAttribute('customField:uuid')
-    }
-    else targetId = target.getAttribute('customField:uuid');
+    let child = document.createElement("span");
 
+    let keySplit = crypto.randomUUID().split('-');
+    let key = keySplit[0] + keySplit[1];
+    child.setAttribute('customField:uuid', key)
+
+    setFieldToOtherField(target, child);
+
+    updateFieldPositions(state)
+    let position = state[key]['form_position'];
+
+    delete state[key]
 
     $wire.mountFormComponentAction(staticPath, mode +'-create_field',
-        {value:value, in:inId, before: targetId}
+        {value:value,  formPosition:  position}
     );
 }
 
@@ -119,8 +88,9 @@ function setupField(fieldEl, state, $wire, staticPath){
         let target = findTarget(e.target)
         let draggingEl = document.querySelector('[customField\\:dragging]')
         if(draggingEl == null) return;
-        if(draggingEl.hasAttribute('customField:drag')) handleDragDrop(target, draggingEl, state)
-        if(draggingEl.hasAttribute('customField:newField')) handleNewField(target, draggingEl, $wire, staticPath)
+        if(draggingEl.hasAttribute('customField:newField')) handleNewField(target, draggingEl,state, $wire, staticPath)
+        else if(draggingEl.hasAttribute('customField:drag')) handleDragDrop(target, draggingEl, state)
+
     })
 
     fieldEl.addEventListener('dragleave', e => {

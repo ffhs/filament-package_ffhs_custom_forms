@@ -38,7 +38,6 @@ class EditCustomFormFields extends Field
             $fieldCreateActions[] = $actionClass::make($mode . "-create_field");
         $this->registerActions($fieldCreateActions);
 
-
         $this->childComponents(function (): array {
             $this->generateChildContainers();
             $containers = $this->getCombinedContainers();
@@ -94,6 +93,8 @@ class EditCustomFormFields extends Field
         $type = CustomFieldUtils::getFieldTypeFromRawDate($field);
         $elements = [];
 
+        if( is_null($type)) return;
+
         if($type->hasEditorNameElement($field))
             $elements = [
                 TextInput::make('name.'.app()->getLocale())
@@ -144,7 +145,6 @@ class EditCustomFormFields extends Field
 
     public function getStructure(): array {
         $fields = collect($this->getState());
-       // $fields = $fields->map(fn(array $fieldData) => (new CustomField())->fill($fieldData));
 
         return$this->loadStructure($fields);
     }

@@ -8,7 +8,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\EditCustomForm
 final class  EditCreateTypeFieldAction extends EditCreateFieldAction
 {
 
-    public function createField(array $arguments, $set, $state, EditCustomFormFields $component){
+    public function createField(array $arguments,  $set, EditCustomFormFields $component){
         $type = CustomFieldType::getTypeFromIdentifier($arguments["value"]);
 
         $field = [
@@ -18,7 +18,7 @@ final class  EditCreateTypeFieldAction extends EditCreateFieldAction
             "is_active" => true,
         ];
 
-        $this->addNewField($arguments, $field, $state, $set, $component);
+        $this->addNewField($component, $set, $arguments, $field);
     }
 
 }

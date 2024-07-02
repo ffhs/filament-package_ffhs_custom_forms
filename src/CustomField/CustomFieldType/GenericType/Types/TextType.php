@@ -46,25 +46,21 @@ class TextType extends CustomFieldType
             ]),
             TypeOptionGroup::make('Vorschläge', [
                 'suggestions' => new FastTypeOption([],
-                    Section::make(__("filament-package_ffhs_custom_forms::custom_forms.fields.type_options.suggestions"))
+                    Repeater::make('suggestions')
+                        ->addActionLabel(__("filament-package_ffhs_custom_forms::custom_forms.fields.type_options.add_suggestion"))
+                        ->itemLabel(fn($state) => $state[Lang::locale()])
+                        ->columnSpanFull()
                         ->collapsed()
+                        ->columns()
+                        ->label("")
+                        ->reactive()
                         ->schema([
-                            Repeater::make('suggestions')
-                                ->addActionLabel(__("filament-package_ffhs_custom_forms::custom_forms.fields.type_options.add_suggestion"))
-                                ->itemLabel(fn($state) => $state[Lang::locale()])
-                                ->columnSpanFull()
-                                ->collapsed()
-                                ->columns()
-                                ->label("")
-                                ->reactive()
-                                ->schema([
-                                    TextInput::make("de")
-                                        ->label("Deutsch")
-                                        ->required(),
-                                    TextInput::make("en")
-                                        ->label("Englisch")
-                                        ->required(),
-                                ])
+                            TextInput::make("de")
+                                ->label("Deutsch")
+                                ->required(),
+                            TextInput::make("en")
+                                ->label("Englisch")
+                                ->required(),
                         ])
                 ),
             ]), //ToDo Translate

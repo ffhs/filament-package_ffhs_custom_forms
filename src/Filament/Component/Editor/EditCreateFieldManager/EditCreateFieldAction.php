@@ -3,8 +3,11 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\EditCreateFieldManager;
 
 use Barryvdh\Debugbar\Facades\Debugbar;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\EditCustomFormFields;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\Helper\EditCustomFormHelper;
 use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\Actions\ActionContainer;
+use Filament\Forms\Set;
 
 abstract class EditCreateFieldAction extends Action
 {
@@ -14,25 +17,11 @@ abstract class EditCreateFieldAction extends Action
         $this->action($this->createField(...));
     }
 
-    protected function addNewField(array $arguments, array $fieldData, array $state, $set, $component): void {
-        $in = $arguments['in'];
-        $before = $arguments['before'];
-
-        $beforeField = $state[$before] ?? [];
-        $inField = $state[$in] ?? [];
-
-
-        if(!empty($beforeField)) $position = $beforeField["form_position"];
-        else if(!empty($inField)) $position = $inField["form_position"] + 1;
-        else $position = 1;
-
-        Debugbar::info($inField, $beforeField,$position);
-
+    protected function addNewField(EditCustomFormFields $component, Set $set, array $arguments, array $fieldData): void {
+        $fieldData['form_position'] = $arguments['formPosition'];
         $key = $fieldData['identifier'] ?? uniqid();
-        $fieldData["custom_form_id"] = $component->getRecord()->id;
-        $newState = EditCustomFormHelper::addField($fieldData, $key, $position, $state);
 
-        $set($component->getStatePath(false), $newState);
+        $set($component->getStatePath() . "." . $key ,$fieldData , true);
     }
 
 }

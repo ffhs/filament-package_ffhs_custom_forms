@@ -27,14 +27,14 @@ final class  EditCreateTemplateFieldAction extends EditCreateFieldAction
     }
 
 
-    public function createField(array $arguments, $set, $state, $component, $get){
+    public function createField(array $arguments, $set, $component, $get){
         $templateId = $arguments["value"];
 
         $field = [
             "template_id" =>  $arguments["value"],
             "is_active" => true,
         ];
-        $this->addNewField($arguments, $field, $state, $set, $component);
+        $this->addNewField($component, $set, $arguments, $field);
 
 
         $customFields = $get($component->getStatePath(false));
