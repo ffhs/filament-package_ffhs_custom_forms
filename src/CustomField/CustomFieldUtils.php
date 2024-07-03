@@ -19,32 +19,6 @@ class CustomFieldUtils
 
         return $results;
     }
-   /* public static function flattenWithoutKeys($array): array { //ToDo Need its?
-        $results = [];
-
-        foreach ($array as $value) {
-            if (is_array($value) && ! empty($value)) $results = array_merge($results, self::flattenWithoutKeys($value));
-            else $results[] = $value;
-        }
-
-        return $results;
-    }
-    public static function flattArrayOneLayer($array): array {
-        $results = [];
-
-        foreach ($array as $key => $value) {
-            if (is_array($value) && ! empty($value)){
-                $subResult = [];
-                foreach ($value as $key1 => $value1) {
-                    $subResult[$key1]=$value1;
-                }
-                $results = array_merge($results, $subResult);
-            }
-            else $results[$key] = $value;
-        }
-
-        return $results;
-    }*/
 
 
     public static function flattDownToCustomFields(mixed $data): mixed {
@@ -57,7 +31,9 @@ class CustomFieldUtils
         return $data;
     }
 
-    public static function getFieldTypeFromRawDate(array $data): ?CustomFieldType {
+    public static function getFieldTypeFromRawDate(?array $data): ?CustomFieldType {
+        if(is_null($data)) return null;
+
         $isTemplate = array_key_exists("template_id",$data)&& !is_null($data["template_id"]);
         if($isTemplate) return  TemplateFieldType::make();
 

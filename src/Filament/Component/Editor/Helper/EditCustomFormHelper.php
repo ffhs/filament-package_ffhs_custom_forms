@@ -99,42 +99,21 @@ class EditCustomFormHelper
         //Delete Structure
         $toDelete = $fields[$toRemoveKey];
 
-
         $nestedList = NestedFlattenList::make($fields, CustomField::class);
 
         $nestedList->removeFromPosition($toDelete['form_position']);
         return $nestedList->getData();
-
-        /*//Delete Fields
-        unset($fields[$toRemoveKey]);
-
-
-        //Delete Sub Fields
-        $amountDeletedFields = 1;
-        if(!empty($toDelete['layout_end_position'])){
-            foreach ($fields as $keyField => $field){
-                if($toDelete['layout_end_position'] >= $field['form_position']  &&
-                    $toDelete['form_position'] < $field['form_position']){
-                    unset($fields[$keyField]);
-                    $amountDeletedFields++;
-                }
-            }
-        }
-
-        //Rearrange Fields
-        foreach ($fields as $keyField => $field){
-            if($toDelete['form_position'] < $field['form_position'])
-                $fields[$keyField]['form_position'] = $field['form_position'] - $amountDeletedFields;
-            if($toDelete['form_position'] < $field['layout_end_position'])
-                $fields[$keyField]['layout_end_position'] = $field['layout_end_position'] - $amountDeletedFields;
-        }
-
-        return $fields;*/
     }
 
     public static function addMultipleFields(array $toAddFields, int $position, array $fields): array{
 
-        $amountToAdd = count($toAddFields);
+
+        $nestedList = NestedFlattenList::make($fields, CustomField::class);
+        $nestedList->addManyOnPosition($position, $toAddFields, true);
+
+        return $nestedList->getData();
+
+       /* $amountToAdd = count($toAddFields);
 
         //prepareToAddFields
         foreach ($toAddFields as $fieldKey => $field){
@@ -158,7 +137,7 @@ class EditCustomFormHelper
 
 
         //Add Fields
-        return array_merge($finalFields, $toAddFields);
+        return array_merge($finalFields, $toAddFields);*/
 
     }
 

@@ -36,21 +36,48 @@ class NestedFlattenList
 
     public function addOnPosition(int $pos, NestingObject|array $data, ?string $key): void
     {
-        $first = $this->data->first();
-
         $poseAttribute = $this->getPositionAttribute();
         $endPosAttribute = $this->getEndContainerPositionAttribute();
 
         $data[$poseAttribute] = $pos;
 
-        foreach ($this->data  as $item){
+        foreach ($this->data as $itemKey => $item){
             if($item[$poseAttribute] >= $pos) $item[$poseAttribute]+=1;
             if($item[$endPosAttribute] >= $pos) $item[$endPosAttribute]+=1;
+            $this->data->put($itemKey, $item);
         }
 
         if(is_null($key)) $this->data->add($data);
         else $this->data->put($key, $data);
     }
+
+    public function addManyOnPosition(int $startPos, array $elementsToAdd, bool $withKeys = false): void
+    {
+        $poseAttribute = $this->getPositionAttribute();
+        $endPosAttribute = $this->getEndContainerPositionAttribute();
+
+        $amountToAdd = count($elementsToAdd);
+
+        //Rearrange
+        $startPos = $startPos + $amountToAdd;
+        foreach ($this->data as $itemKey => $item){
+            if($item[$poseAttribute] >= $startPos) $item[$poseAttribute]+=$amountToAdd;
+            if($item[$endPosAttribute] >= $startPos) $item[$endPosAttribute]+=$amountToAdd;
+            $this->data->put($itemKey, $item);
+        }
+
+
+        $count = 0;
+        foreach ($elementsToAdd as $key => $newElement){
+            $newElement[$poseAttribute] += $startPos + $count;
+            $count++;
+
+            if($withKeys) $this->data->put($key, $newElement);
+            else  $this->data->add($newElement);
+        }
+
+    }
+
 
     public function removeFromPosition(int $pos): void
     {
@@ -77,11 +104,13 @@ class NestedFlattenList
         $amountDeletedFields = count($keysToDelete);
 
         //Rearrange Fields
-        foreach ($this->data as $item){
+        foreach ($this->data as $key => $item){
             if($item[$poseAttribute] >= $pos) $item[$poseAttribute]-=$amountDeletedFields;
             if(!empty($item[$endPosAttribute]) && $item[$endPosAttribute] >= $pos)
                 $item[$endPosAttribute] -= $amountDeletedFields;
+            $this->data->put($key, $item);
         }
+
     }
 
     protected function loadStructure(Collection $objects, array $keyMapping): array {
