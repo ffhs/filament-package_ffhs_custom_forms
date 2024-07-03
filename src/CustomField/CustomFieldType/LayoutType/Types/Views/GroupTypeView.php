@@ -14,7 +14,7 @@ class GroupTypeView implements FieldTypeView
 {
 
     public static function getFormComponent(CustomFieldType $type, CustomField $record,
-        array $parameter = []): \Filament\Forms\Components\Component {
+                                            array           $parameter = []): \Filament\Forms\Components\Component {
 
         return Group::make()
             ->columnSpan(FieldMapper::getOptionParameter($record,"column_span"))
@@ -24,7 +24,7 @@ class GroupTypeView implements FieldTypeView
     }
 
     public static function getInfolistComponent(CustomFieldType $type, CustomFieldAnswer $record,
-        array $parameter = []): \Filament\Infolists\Components\Component {
+                                                array           $parameter = []): \Filament\Infolists\Components\Component {
 
         if(FieldMapper::getOptionParameter($record,"show_in_view"))
             return Fieldset::make(FieldMapper::getLabelName($record))

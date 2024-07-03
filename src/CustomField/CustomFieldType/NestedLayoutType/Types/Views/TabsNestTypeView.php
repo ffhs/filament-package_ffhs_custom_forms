@@ -17,7 +17,7 @@ class TabsNestTypeView implements FieldTypeView
 {
 
     public static function getFormComponent(CustomFieldType $type, CustomField $record,
-        array $parameter = []): \Filament\Forms\Components\Component {
+                                            array           $parameter = []): \Filament\Forms\Components\Component {
 
         $label = FieldMapper::getOptionParameter($record,"show_title")? FieldMapper::getLabelName($record):"";
 
@@ -29,7 +29,7 @@ class TabsNestTypeView implements FieldTypeView
     }
 
     public static function getInfolistComponent(CustomFieldType $type, CustomFieldAnswer $record,
-        array $parameter = []): \Filament\Infolists\Components\Component {
+                                                array           $parameter = []): \Filament\Infolists\Components\Component {
 
         $label = FieldMapper::getOptionParameter($record,"show_title")? FieldMapper::getLabelName($record):"";
 

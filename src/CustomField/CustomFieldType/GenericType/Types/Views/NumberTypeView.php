@@ -14,7 +14,7 @@ class NumberTypeView implements FieldTypeView
 {
 
     public static function getFormComponent(CustomFieldType $type, CustomField $record,
-        array $parameter = []): TextInput {
+                                            array           $parameter = []): TextInput {
 
         return TextInput::make(FieldMapper::getIdentifyKey($record))
             ->inlineLabel(FieldMapper::getOptionParameter($record,"in_line_label"))
@@ -29,7 +29,7 @@ class NumberTypeView implements FieldTypeView
     }
 
     public static function getInfolistComponent(CustomFieldType $type, CustomFieldAnswer $record,
-        array $parameter = []): TextEntry {
+                                                array           $parameter = []): TextEntry {
         return TextEntry::make(FieldMapper::getIdentifyKey($record). ":")
            // ->inlineLabel(FormMapper::getOptionParameter($record,"in_line_label"))
             ->tooltip(FieldMapper::getToolTips($record). ":")

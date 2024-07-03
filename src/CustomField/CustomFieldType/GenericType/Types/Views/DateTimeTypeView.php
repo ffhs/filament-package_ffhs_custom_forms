@@ -14,7 +14,7 @@ class DateTimeTypeView implements FieldTypeView
 {
 
     public static function getFormComponent(CustomFieldType $type, CustomField $record,
-        array $parameter = []): DateTimePicker {
+                                            array           $parameter = []): DateTimePicker {
         return DateTimePicker::make(FieldMapper::getIdentifyKey($record))
             ->columnStart(FieldMapper::getOptionParameter($record,"new_line_option"))
             ->inlineLabel(FieldMapper::getOptionParameter($record,"in_line_label"))
@@ -26,7 +26,7 @@ class DateTimeTypeView implements FieldTypeView
     }
 
     public static function getInfolistComponent(CustomFieldType $type, CustomFieldAnswer $record,
-        array $parameter = []): TextEntry {
+                                                array           $parameter = []): TextEntry {
         return TextEntry::make(FieldMapper::getIdentifyKey($record))
             ->columnStart(FieldMapper::getOptionParameter($record,"new_line_option"))
             ->dateTime(self::getFormat($record->customField))

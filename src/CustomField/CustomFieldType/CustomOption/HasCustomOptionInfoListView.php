@@ -12,7 +12,7 @@ trait HasCustomOptionInfoListView
 {
 
     public static function getInfolistComponent(CustomFieldType $type, CustomFieldAnswer $record,
-        array $parameter = []): Component {
+                                                array           $parameter = []): Component {
 
         $textEntry = TextEntry::make(FieldMapper::getIdentifyKey($record));
         $answer = FieldMapper::getAnswer($record);

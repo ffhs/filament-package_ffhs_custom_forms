@@ -15,7 +15,7 @@ class TextAreaTypeView implements FieldTypeView
 {
 
     public static function getFormComponent(CustomFieldType $type, CustomField $record,
-        array $parameter = []): Textarea {
+                                            array           $parameter = []): Textarea {
         return Textarea::make(FieldMapper::getIdentifyKey($record))
             ->columnStart(FieldMapper::getOptionParameter($record,"new_line_option"))
             ->inlineLabel(FieldMapper::getOptionParameter($record,"in_line_label"))
@@ -28,7 +28,7 @@ class TextAreaTypeView implements FieldTypeView
     }
 
     public static function getInfolistComponent(CustomFieldType $type, CustomFieldAnswer $record,
-        array $parameter = []): Component {
+                                                array           $parameter = []): Component {
         return TextEntry::make(FieldMapper::getIdentifyKey($record))
             ->columnStart(FieldMapper::getOptionParameter($record,"new_line_option"))
             ->label(FieldMapper::getLabelName($record). ":")

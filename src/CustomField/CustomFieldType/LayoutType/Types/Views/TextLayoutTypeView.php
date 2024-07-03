@@ -16,7 +16,7 @@ class TextLayoutTypeView implements FieldTypeView
 {
 
     public static function getFormComponent(CustomFieldType $type, CustomField $record,
-        array $parameter = []): Placeholder {
+                                            array           $parameter = []): Placeholder {
 
         $text = FieldMapper::getOptionParameter($record,"text_de"); //ToDo translate
 
@@ -29,7 +29,7 @@ class TextLayoutTypeView implements FieldTypeView
     }
 
     public static function getInfolistComponent(CustomFieldType $type, CustomFieldAnswer $record,
-        array $parameter = []): Component {
+                                                array           $parameter = []): Component {
 
         if(!FieldMapper::getOptionParameter($record,"show_in_view"))
             return \Filament\Infolists\Components\Group::make()->hidden();

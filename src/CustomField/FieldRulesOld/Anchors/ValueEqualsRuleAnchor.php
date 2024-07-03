@@ -1,14 +1,14 @@
 <?php
 
-namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\Anchors;
+namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRulesOld\Anchors;
 
 use Closure;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomOption\CustomOptionType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\LayoutType\CustomLayoutType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldUtils;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\FieldRuleAnchorType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\HasAnchorPluginTranslate;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRulesOld\FieldRuleAnchorAbstractType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRulesOld\HasAnchorPluginTranslate;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\EditHelper\CustomFormEditorMutationHelper;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
@@ -33,7 +33,7 @@ use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\HtmlString;
 use ReflectionClass;
 
-class ValueEqualsRuleAnchor extends FieldRuleAnchorType
+class ValueEqualsRuleAnchor extends FieldRuleAnchorAbstractType
 {
     use HasAnchorPluginTranslate;
 

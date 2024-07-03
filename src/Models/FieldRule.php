@@ -2,12 +2,16 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Models;
 
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\FieldRuleAnchorType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\FieldRuleType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRulesOld\FieldRuleAnchorAbstractType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRulesOld\FieldRuleAbstractType;
 use Ffhs\FilamentPackageFfhsCustomForms\Domain\HasFormIdentifier;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\Caching\CachedModel;
 
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\Caching\HasCacheModel;
+use Ffhs\FilamentPackageFfhsCustomForms\Helping\Rules\Event\EventList;
+use Ffhs\FilamentPackageFfhsCustomForms\Helping\Rules\HasRule;
+use Ffhs\FilamentPackageFfhsCustomForms\Helping\Rules\Rule;
+use Ffhs\FilamentPackageFfhsCustomForms\Helping\Rules\Trigger\TriggerList;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -17,16 +21,15 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int custom_field_id
  * @property int execution_order
  *
- * @property string rule_identifier
- * @property string anchor_identifier
+ * @property array event_data
+ * @property array trigger_data
+ *
  * @property string rule_name
  * @property CustomField customField
- *
- * @property array anchor_data
- * @property array rule_data
  */
-class FieldRule extends Model implements CachedModel
+class FieldRule extends Model implements CachedModel, Rule
 {
+    use HasRule;
     use HasCacheModel;
     use HasFormIdentifier;
     use HasFactory;
@@ -37,11 +40,9 @@ class FieldRule extends Model implements CachedModel
 
     protected $fillable = [
         'custom_field_id',
-        'anchor_identifier',
-        'anchor_data',
-        'rule_identifier',
-        'rule_data',
-        'execution_order'
+        'execution_order',
+        'event_data',
+        'trigger_data',
     ];
 
 
@@ -54,12 +55,34 @@ class FieldRule extends Model implements CachedModel
         return $this->belongsTo(CustomField::class);
     }
 
-    public function getAnchorType() :FieldRuleAnchorType{
-        return FieldRuleAnchorType::getTypeFromIdentifier($this->anchor_identifier);
+
+    public function getRawEventData(): array
+    {
+        return $this->event_data;
     }
 
-    public function getRuleType() :FieldRuleType{
-        return FieldRuleType::getTypeFromIdentifier($this->rule_identifier);
+    public function getRawTriggerData(): array
+    {
+        return $this->trigger_data;
     }
 
+    public function setTriggerData(TriggerList|array $data): static
+    {
+        $this->trigger_data = $data;
+        return $this;
+    }
+
+    public function setEventData(EventList|array $data): static
+    {
+        $this->event_data = $data;
+        return $this;
+    }
+
+
+
+    public function handle(array $arguments, mixed $target): mixed
+    {
+        // TODO: Implement handle() method.
+        return null;
+    }
 }

@@ -14,7 +14,7 @@ class CheckboxTypeView implements FieldTypeView
 {
 
     public static function getFormComponent(CustomFieldType $type, CustomField $record,
-        array $parameter = []): Checkbox {
+                                            array           $parameter = []): Checkbox {
         return Checkbox::make(FieldMapper::getIdentifyKey($record))
             ->columnStart(FieldMapper::getOptionParameter($record,"new_line_option"))
             ->inlineLabel(FieldMapper::getOptionParameter($record,"in_line_label"))
@@ -24,7 +24,7 @@ class CheckboxTypeView implements FieldTypeView
     }
 
     public static function getInfolistComponent(CustomFieldType $type, CustomFieldAnswer $record,
-        array $parameter = []): IconEntry {
+                                                array           $parameter = []): IconEntry {
         return IconEntry::make(FieldMapper::getIdentifyKey($record))
             ->columnStart(FieldMapper::getOptionParameter($record,"new_line_option"))
             ->state(is_null(FieldMapper::getAnswer($record))? false : FieldMapper::getAnswer($record))

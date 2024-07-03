@@ -14,7 +14,7 @@ class ColorPickerTypeView implements FieldTypeView
 {
 
     public static function getFormComponent(CustomFieldType $type, CustomField $record,
-        array $parameter = []): ColorPicker {
+                                            array           $parameter = []): ColorPicker {
         $picker =  ColorPicker::make(FieldMapper::getIdentifyKey($record))
             ->columnStart(FieldMapper::getOptionParameter($record,"new_line_option"))
             ->columnSpan(FieldMapper::getOptionParameter($record,"column_span"))
@@ -40,7 +40,7 @@ class ColorPickerTypeView implements FieldTypeView
     }
 
     public static function getInfolistComponent(CustomFieldType $type, CustomFieldAnswer $record,
-        array $parameter = []): ColorEntry {
+                                                array           $parameter = []): ColorEntry {
         return ColorEntry::make(FieldMapper::getIdentifyKey($record))
             ->columnStart(FieldMapper::getOptionParameter($record,"new_line_option"))
             ->label(FieldMapper::getLabelName($record). ":")

@@ -4,8 +4,8 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\Componen
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldUtils;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\FieldRuleAnchorType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\FieldRuleType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRulesOld\FieldRuleAnchorAbstractType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRulesOld\FieldRuleAbstractType;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
@@ -75,9 +75,9 @@ class EditFieldRuleModal extends Group
             ->expandAllAction(fn(Action $action)=> $action->hidden())
             ->orderColumn("execution_order")
             ->itemLabel(function($state,$get,$component){
-                $fieldRuleAnchorType = FieldRuleAnchorType::getTypeFromIdentifier($state["anchor_identifier"]);
+                $fieldRuleAnchorType = FieldRuleAnchorAbstractType::getTypeFromIdentifier($state["anchor_identifier"]);
                 if($state["rule_identifier"] == null) return "Error";
-                $fieldRuleType = FieldRuleType::getTypeFromIdentifier($state["rule_identifier"]);
+                $fieldRuleType = FieldRuleAbstractType::getTypeFromIdentifier($state["rule_identifier"]);
                 return $fieldRuleAnchorType->getDisplayName($state,$component,$get) . " --> " . $fieldRuleType->getDisplayName($state,$component,$get);
             })
             ->collapsible(false)

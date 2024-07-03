@@ -15,7 +15,7 @@ trait HasCustomOptionInfoListViewWithBoolean
     }
 
     public static function getInfolistComponent(CustomFieldType $type, CustomFieldAnswer $record,
-        array $parameter = []): Component {
+                                                array           $parameter = []): Component {
 
         if(!FieldMapper::getOptionParameter($record, "boolean"))
             return self::getBasicInfolistComponent($type,$record,$parameter);

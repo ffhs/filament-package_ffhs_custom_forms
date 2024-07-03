@@ -15,7 +15,7 @@ class SpaceTypeView implements FieldTypeView
 {
 
     public static function getFormComponent(CustomFieldType $type, CustomField $record,
-        array $parameter = []): Group {
+                                            array           $parameter = []): Group {
 
         $spaces = [];
 
@@ -32,7 +32,7 @@ class SpaceTypeView implements FieldTypeView
     }
 
     public static function getInfolistComponent(CustomFieldType $type, CustomFieldAnswer $record,
-        array $parameter = []): \Filament\Infolists\Components\Group {
+                                                array           $parameter = []): \Filament\Infolists\Components\Group {
 
         if(!FieldMapper::getOptionParameter($record,"show_in_view"))
             return \Filament\Infolists\Components\Group::make()->hidden();

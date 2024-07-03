@@ -1,10 +1,10 @@
 <?php
 
-namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\Rules;
+namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRulesOld\Rules;
 
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\FieldRuleType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\HasRulePluginTranslate;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldMapper;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRule\HasRulePluginTranslate;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRulesOld\FieldRuleAbstractType;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\FieldRule;
 use Filament\Forms\Components\Component;
@@ -13,7 +13,7 @@ use Filament\Forms\Components\Toggle;
 use Filament\Forms\Get;
 use ReflectionClass;
 
-class HiddenRuleType extends FieldRuleType
+class HiddenRuleType extends FieldRuleAbstractType
 {
     use HasRulePluginTranslate;
 

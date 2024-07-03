@@ -3,8 +3,8 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomForm;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\CustomFieldType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\FieldRuleAnchorType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\FieldRuleType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRulesOld\FieldRuleAnchorAbstractType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRulesOld\FieldRuleAbstractType;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
@@ -177,10 +177,10 @@ class FormBuilderUtil
             $ruleType = $rule["rule_identifier"];
 
             $anchorData = $rule["anchor_data"] ?? [];
-            $anchorData = array_merge(FieldRuleAnchorType::getTypeFromIdentifier($anchorType)->getCreateAnchorData(),$anchorData);
+            $anchorData = array_merge(FieldRuleAnchorAbstractType::getTypeFromIdentifier($anchorType)->getCreateAnchorData(),$anchorData);
 
             $rule_data = $rule["rule_data"] ?? [];
-            $rule_data = array_merge(FieldRuleType::getTypeFromIdentifier($ruleType)->getCreateRuleData(), $rule_data);
+            $rule_data = array_merge(FieldRuleAbstractType::getTypeFromIdentifier($ruleType)->getCreateRuleData(), $rule_data);
 
             $fieldData['rules'][] = [
                 'anchor_identifier' => $anchorType,

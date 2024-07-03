@@ -22,7 +22,7 @@ use Illuminate\Support\HtmlString;
 class FileUploadView implements FieldTypeView
 {
     public static function getFormComponent(CustomFieldType $type, CustomField $record,
-        array $parameter = []): Component {
+                                            array           $parameter = []): Component {
 
 
         $fileUpload = FileUpload::make(FieldMapper::getIdentifyKey($record) . ".files");
@@ -61,7 +61,7 @@ class FileUploadView implements FieldTypeView
 
 
     public static function getInfolistComponent(CustomFieldType $type, CustomFieldAnswer $record,
-        array $parameter = []): \Filament\Infolists\Components\Component {
+                                                array           $parameter = []): \Filament\Infolists\Components\Component {
 
         $answer = FieldMapper::getAnswer($record);
 

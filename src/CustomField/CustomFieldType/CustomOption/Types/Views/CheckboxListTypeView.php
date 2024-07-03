@@ -15,7 +15,7 @@ class CheckboxListTypeView implements FieldTypeView
     use HasCustomOptionInfoListView;
 
     public static function getFormComponent(CustomFieldType $type, CustomField $record,
-        array $parameter = []): Component {
+                                            array           $parameter = []): Component {
 
         return CheckboxList::make(FieldMapper::getIdentifyKey($record))
            ->columnStart(FieldMapper::getOptionParameter($record,"new_line_option"))

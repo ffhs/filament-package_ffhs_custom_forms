@@ -15,7 +15,7 @@ class KeyValueTypeView implements FieldTypeView
 {
 
     public static function getFormComponent(CustomFieldType $type, CustomField $record,
-        array $parameter = []): Component {
+                                            array           $parameter = []): Component {
 
         return KeyValue::make(FieldMapper::getIdentifyKey($record))
             ->columnStart(FieldMapper::getOptionParameter($record,"new_line_option"))
@@ -32,7 +32,7 @@ class KeyValueTypeView implements FieldTypeView
 
 
     public static function getInfolistComponent(CustomFieldType $type, CustomFieldAnswer $record,
-        array $parameter = []): \Filament\Infolists\Components\Component {
+                                                array           $parameter = []): \Filament\Infolists\Components\Component {
 
         $answerer =FieldMapper::getAnswer($record);
         $answerer = empty($answerer)?"":$answerer;

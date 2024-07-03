@@ -15,7 +15,7 @@ class TextTypeView implements FieldTypeView
 {
 
     public static function getFormComponent(CustomFieldType $type, CustomField $record,
-        array $parameter = []): TextInput {
+                                            array           $parameter = []): TextInput {
 
         $input = TextInput::make(FieldMapper::getIdentifyKey($record))
             ->columnStart(FieldMapper::getOptionParameter($record,"new_line_option"))
@@ -36,7 +36,7 @@ class TextTypeView implements FieldTypeView
     }
 
     public static function getInfolistComponent(CustomFieldType $type, CustomFieldAnswer $record,
-        array $parameter = []): TextEntry {
+                                                array           $parameter = []): TextEntry {
         return TextEntry::make(FieldMapper::getIdentifyKey($record))
             ->columnStart(FieldMapper::getOptionParameter($record,"new_line_option"))
             ->label(FieldMapper::getLabelName($record). ":")

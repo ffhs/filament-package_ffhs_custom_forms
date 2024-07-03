@@ -1,9 +1,9 @@
 <?php
 
-namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules;
+namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRulesOld;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\CustomFieldType;
-use Ffhs\FilamentPackageFfhsCustomForms\Domain\Type;
+use Ffhs\FilamentPackageFfhsCustomForms\Helping\Types\IsType;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
@@ -14,8 +14,11 @@ use Filament\Forms\Get;
 use Filament\Infolists\Components\Component as InfoComponent;
 use Illuminate\Support\Collection;
 
-abstract class FieldRuleType extends Type
+abstract class FieldRuleAbstractType
 {
+    use IsType;
+
+
     /*
      * Static Class Functions
      */

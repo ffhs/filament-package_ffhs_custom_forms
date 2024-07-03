@@ -29,7 +29,7 @@ class ImageTypeView implements FieldTypeView
     }
 
     public static function getInfolistComponent(CustomFieldType $type, CustomFieldAnswer $record,
-        array $parameter = []): Component{
+                                                array           $parameter = []): Component{
 
         if(!FieldMapper::getOptionParameter($record,"show_in_view"))
             return Group::make()->hidden();

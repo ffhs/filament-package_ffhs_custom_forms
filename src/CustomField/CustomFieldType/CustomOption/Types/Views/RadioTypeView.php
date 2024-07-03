@@ -15,7 +15,7 @@ class RadioTypeView implements FieldTypeView
     use HasCustomOptionInfoListViewWithBoolean;
 
     public static function getFormComponent(CustomFieldType $type, CustomField $record,
-        array $parameter = []): Component {
+                                            array           $parameter = []): Component {
 
         $radio = Radio::make(FieldMapper::getIdentifyKey($record))
             ->columnStart(FieldMapper::getOptionParameter($record,"new_line_option"))

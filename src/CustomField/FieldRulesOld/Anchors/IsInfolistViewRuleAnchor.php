@@ -1,16 +1,16 @@
 <?php
 
-namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\Anchors;
+namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRulesOld\Anchors;
 
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\FieldRuleAnchorType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\HasAnchorPluginTranslate;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRulesOld\FieldRuleAnchorAbstractType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRulesOld\HasAnchorPluginTranslate;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\FieldRule;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Group;
 use Filament\Infolists\Components\Component as InfoComponent;
 
-class IsInfolistViewRuleAnchor extends FieldRuleAnchorType
+class IsInfolistViewRuleAnchor extends FieldRuleAnchorAbstractType
 {
     use HasAnchorPluginTranslate;
 

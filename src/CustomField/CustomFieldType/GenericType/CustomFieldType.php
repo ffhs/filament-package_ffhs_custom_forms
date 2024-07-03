@@ -6,12 +6,13 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Traits\HasEditFieldCallbacks;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Traits\HasTypeOptions;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Traits\HasTypeView;
-use Ffhs\FilamentPackageFfhsCustomForms\Domain\Type;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\DefaultEditorComponents\TypeActions\DefaultCustomActivationAction;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\DefaultEditorComponents\TypeActions\DefaultCustomFieldDeleteAction;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\DefaultEditorComponents\TypeActions\DefaultCustomFieldEditTypeOptionsAction;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\DefaultEditorComponents\TypeActions\DefaultCustomRulesAction;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\HtmlComponents\HtmlBadge;
+use Ffhs\FilamentPackageFfhsCustomForms\Helping\Types\IsType;
+use Ffhs\FilamentPackageFfhsCustomForms\Helping\Types\Type;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Filament\Forms\Components\Component;
@@ -19,8 +20,9 @@ use Filament\Forms\Form;
 use Filament\Support\Colors\Color;
 use Illuminate\Support\Collection;
 
-abstract class CustomFieldType extends Type
+abstract class CustomFieldType implements Type
 {
+    use IsType;
     use HasTypeView;
     use HasTypeOptions;
     use HasConfigAttribute;
@@ -52,7 +54,7 @@ abstract class CustomFieldType extends Type
      * Fields
      */
 
-    public static abstract function identifier(): string;
+    //public static abstract function identifier(): string;
     public abstract function viewModes(): array;
     public abstract function icon(): string;
 

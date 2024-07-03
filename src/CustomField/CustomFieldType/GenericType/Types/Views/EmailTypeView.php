@@ -13,7 +13,7 @@ use Filament\Infolists\Components\TextEntry;
 class EmailTypeView implements FieldTypeView
 {
     public static function getFormComponent(CustomFieldType $type, CustomField $record,
-        array $parameter = []): TextInput {
+                                            array           $parameter = []): TextInput {
         return TextInput::make(FieldMapper::getIdentifyKey($record))
             ->columnStart(FieldMapper::getOptionParameter($record,"new_line_option"))
             ->columnSpan(FieldMapper::getOptionParameter($record,"column_span"))
@@ -23,7 +23,7 @@ class EmailTypeView implements FieldTypeView
     }
 
     public static function getInfolistComponent(CustomFieldType $type, CustomFieldAnswer $record,
-        array $parameter = []): TextEntry {
+                                                array           $parameter = []): TextEntry {
         return TextEntry::make(FieldMapper::getIdentifyKey($record))
             ->columnStart(FieldMapper::getOptionParameter($record,"new_line_option"))
             ->label(FieldMapper::getLabelName($record). ":")

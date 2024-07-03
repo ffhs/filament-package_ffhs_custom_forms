@@ -14,7 +14,7 @@ class WizardStepEggTypeView implements FieldTypeView
 {
 
     public static function getFormComponent(CustomFieldType $type, CustomField $record,
-        array $parameter = []): \Filament\Forms\Components\Component {
+                                            array           $parameter = []): \Filament\Forms\Components\Component {
 
         return Wizard\Step::make(FieldMapper::getLabelName($record))
             ->columns(FieldMapper::getOptionParameter($record,"columns"))
@@ -24,7 +24,7 @@ class WizardStepEggTypeView implements FieldTypeView
     }
 
     public static function getInfolistComponent(CustomFieldType $type, CustomFieldAnswer $record,
-        array $parameter = []): \Filament\Infolists\Components\Component {
+                                                array           $parameter = []): \Filament\Infolists\Components\Component {
         return Fieldset::make(FieldMapper::getLabelName($record))
             ->schema($parameter["rendered"])
             ->columnStart(1)

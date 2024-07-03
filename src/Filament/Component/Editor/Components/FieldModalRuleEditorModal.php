@@ -4,8 +4,8 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\Componen
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldUtils;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\FieldRuleAnchorType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\FieldRuleType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRulesOld\FieldRuleAnchorAbstractType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRulesOld\FieldRuleAbstractType;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Group;
@@ -52,7 +52,7 @@ class FieldModalRuleEditorModal extends Component
                     ->required()
                     ->afterStateUpdated(function ($state,$set){
                         if(is_null($state)) return;
-                        $set("anchor_data", FieldRuleAnchorType::getTypeFromIdentifier($state)?->getCreateAnchorData());
+                        $set("anchor_data", FieldRuleAnchorAbstractType::getTypeFromIdentifier($state)?->getCreateAnchorData());
                     })
                     ->live(),
                 Group::make()
@@ -66,7 +66,7 @@ class FieldModalRuleEditorModal extends Component
 
                         $data = CustomFieldUtils::flattDownToCustomFields($data);
 
-                        $anchor = FieldRuleAnchorType::getTypeFromIdentifier($get("anchor_identifier"));
+                        $anchor = FieldRuleAnchorAbstractType::getTypeFromIdentifier($get("anchor_identifier"));
                         return [$anchor->settingsComponent($this->getRecord(), $data["custom_fields"])];
                     }),
             ]);
@@ -77,7 +77,7 @@ class FieldModalRuleEditorModal extends Component
         if(is_null($allAnchors)) $allAnchors = $customForm->getFormConfiguration()::anchorRuleTypes();
         $anchors = [];
         foreach ($allAnchors as $anchorClass) {
-            /**@var FieldRuleAnchorType $anchor */
+            /**@var FieldRuleAnchorAbstractType $anchor */
             $anchor = new $anchorClass();
             if (!$anchor->canAddOnField($type)) continue;
             $anchors[$anchor->identifier()] = $anchor->getTranslatedName();
@@ -101,7 +101,7 @@ class FieldModalRuleEditorModal extends Component
                     ->live()
                     ->afterStateUpdated(function ($state, $set){
                         if(is_null($state)) return;
-                        $set("rule_data", FieldRuleType::getTypeFromIdentifier($state)?->getCreateRuleData());
+                        $set("rule_data", FieldRuleAbstractType::getTypeFromIdentifier($state)?->getCreateRuleData());
                     }),
                 Group::make()
                     ->statePath("rule_data")
@@ -110,7 +110,7 @@ class FieldModalRuleEditorModal extends Component
                         $data = $livewire->data;
 
                         $data = CustomFieldUtils::flattDownToCustomFields($data);
-                        $rule = FieldRuleType::getTypeFromIdentifier($get("rule_identifier"));
+                        $rule = FieldRuleAbstractType::getTypeFromIdentifier($get("rule_identifier"));
                         return [$rule->settingsComponent($this->getRecord(), $data["custom_fields"])];
                     }),
             ]);
@@ -123,7 +123,7 @@ class FieldModalRuleEditorModal extends Component
         if(is_null($allRules)) $allRules = $customForm->getFormConfiguration()::ruleTypes();
         $rules = [];
         foreach ($allRules as $ruleClass) {
-            /**@var FieldRuleType $rule */
+            /**@var FieldRuleAbstractType $rule */
             $rule = new $ruleClass();
             if (!$rule->canAddOnField($type)) continue;
             $rules[$rule->identifier()] = $rule->getTranslatedName();

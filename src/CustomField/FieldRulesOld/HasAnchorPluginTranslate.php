@@ -1,6 +1,6 @@
 <?php
 
-namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules;
+namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRulesOld;
 
 trait HasAnchorPluginTranslate
 {

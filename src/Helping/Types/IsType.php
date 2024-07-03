@@ -1,15 +1,13 @@
 <?php
 
-namespace Ffhs\FilamentPackageFfhsCustomForms\Domain;
+namespace Ffhs\FilamentPackageFfhsCustomForms\Helping\Types;
 
-abstract class Type
+trait IsType
 {
-
-    public abstract static function identifier();
-
     public static function make(): static{
         return new static();
     }
+
 
     public abstract static function getConfigTypeList(): string;
 

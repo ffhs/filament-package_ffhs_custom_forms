@@ -2,10 +2,6 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption;
 
-use Closure;
-use Ffhs\FilamentPackageFfhsCustomForms\Domain\Type;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
-use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Section;
 
 class TypeOptionGroup {

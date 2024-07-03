@@ -16,7 +16,7 @@ class TitleTypeView implements FieldTypeView
 {
 
     public static function getFormComponent(CustomFieldType $type, CustomField $record,
-        array $parameter = []): Placeholder {
+                                            array           $parameter = []): Placeholder {
 
         $title = self::getTitle($record);
 
@@ -30,7 +30,7 @@ class TitleTypeView implements FieldTypeView
     }
 
     public static function getInfolistComponent(CustomFieldType $type, CustomFieldAnswer $record,
-        array $parameter = []): Component {
+                                                array           $parameter = []): Component {
 
         if(!FieldMapper::getOptionParameter($record,"show_in_view"))
             return \Filament\Infolists\Components\Group::make()->hidden();

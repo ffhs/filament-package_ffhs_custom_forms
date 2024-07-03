@@ -16,7 +16,7 @@ class IconSelectView implements FieldTypeView
 
 
     public static function getFormComponent(CustomFieldType $type, CustomField $record,
-        array $parameter = []): Component {
+                                            array           $parameter = []): Component {
         return IconPicker::make(FieldMapper::getIdentifyKey($record))
             ->columnStart(FieldMapper::getOptionParameter($record,"new_line_option"))
             ->columnSpan(FieldMapper::getOptionParameter($record,"column_span"))
@@ -27,7 +27,7 @@ class IconSelectView implements FieldTypeView
     }
 
     public static function getInfolistComponent(CustomFieldType $type, CustomFieldAnswer $record,
-        array $parameter = []): \Filament\Infolists\Components\Component {
+                                                array           $parameter = []): \Filament\Infolists\Components\Component {
         return IconEntry::make(FieldMapper::getIdentifyKey($record))
             ->columnStart(FieldMapper::getOptionParameter($record,"new_line_option"))
             ->label(FieldMapper::getLabelName($record). ":")
