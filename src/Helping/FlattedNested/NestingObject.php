@@ -1,8 +1,9 @@
 <?php
 
-namespace Ffhs\FilamentPackageFfhsCustomForms\FlattedNested;
+namespace Ffhs\FilamentPackageFfhsCustomForms\Helping\FlattedNested;
 
-use Ffhs\FilamentPackageFfhsCustomForms\Identifiers\HasIdentifier;
+use Ffhs\FilamentPackageFfhsCustomForms\Helping\Identifiers\HasIdentifier;
+
 interface NestingObject extends HasIdentifier
 {
     public static function getPositionAttribute(): string;

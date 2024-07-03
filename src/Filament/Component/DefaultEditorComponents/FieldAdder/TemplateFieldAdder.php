@@ -1,8 +1,9 @@
 <?php
 
-namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\AdderComponents;
+namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\DefaultEditorComponents\FieldAdder;
 
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\Helper\EditCustomFormHelper;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\AdderComponents\SimpleAdder;
+use Ffhs\FilamentPackageFfhsCustomForms\Helping\EditHelper\EditCustomFormHelper;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 
 final class TemplateFieldAdder extends SimpleAdder

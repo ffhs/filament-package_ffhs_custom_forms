@@ -2,8 +2,8 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Models;
 
-use Ffhs\FilamentPackageFfhsCustomForms\FlattedNested\NestingObject;
-use Ffhs\FilamentPackageFfhsCustomForms\Identifiers\HasIdentifierParameter;
+use Ffhs\FilamentPackageFfhsCustomForms\Helping\FlattedNested\NestingObject;
+use Ffhs\FilamentPackageFfhsCustomForms\Helping\Identifiers\HasIdentifierParameter;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;

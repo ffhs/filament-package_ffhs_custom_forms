@@ -1,9 +1,6 @@
 <?php
 
-namespace Ffhs\FilamentPackageFfhsCustomForms\FlattedNested;
-
-use Ffhs\FilamentPackageFfhsCustomForms\Domain\HasFormIdentifier;
-use Ffhs\FilamentPackageFfhsCustomForms\Identifiers\HasIdentifierParameter;
+namespace Ffhs\FilamentPackageFfhsCustomForms\Helping\FlattedNested;
 
 trait HasNestingInformation
 {

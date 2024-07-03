@@ -2,8 +2,8 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Models;
 
-use Ffhs\FilamentPackageFfhsCustomForms\Caching\CachedModel;
 use Ffhs\FilamentPackageFfhsCustomForms\Domain\HasFormIdentifier;
+use Ffhs\FilamentPackageFfhsCustomForms\Helping\Caching\CachedModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Spatie\Translatable\HasTranslations;
 

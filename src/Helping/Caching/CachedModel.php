@@ -1,9 +1,8 @@
 <?php
 
 
-namespace Ffhs\FilamentPackageFfhsCustomForms\Caching;
+namespace Ffhs\FilamentPackageFfhsCustomForms\Helping\Caching;
 
-use Barryvdh\Debugbar\Facades\Debugbar;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Collection;

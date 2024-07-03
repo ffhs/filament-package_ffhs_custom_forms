@@ -1,9 +1,9 @@
 <?php
 
-namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\Actions;
+namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\DefaultEditorComponents\TypeActions;
 
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\TypeActions\OptionLikeAction;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\Components\EditFieldRuleModal;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 
 class DefaultCustomRulesAction extends OptionLikeAction
 {

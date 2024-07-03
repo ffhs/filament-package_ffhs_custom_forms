@@ -1,6 +1,6 @@
 <?php
 
-namespace Ffhs\FilamentPackageFfhsCustomForms\Identifiers;
+namespace Ffhs\FilamentPackageFfhsCustomForms\Helping\Identifiers;
 
 trait HasIdentifierParameter{
     public $identifier;

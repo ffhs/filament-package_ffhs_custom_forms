@@ -1,12 +1,9 @@
 <?php
 
-namespace Ffhs\FilamentPackageFfhsCustomForms\FlattedNested;
+namespace Ffhs\FilamentPackageFfhsCustomForms\Helping\FlattedNested;
 
-use ArrayAccess;
-use Barryvdh\Debugbar\Facades\Debugbar;
 use Exception;
 use Illuminate\Support\Collection;
-use Iterator;
 
 class NestedFlattenList
 {

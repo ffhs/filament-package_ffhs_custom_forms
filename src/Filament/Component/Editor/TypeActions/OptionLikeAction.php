@@ -1,6 +1,6 @@
 <?php
 
-namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\Actions;
+namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\TypeActions;
 
 use Closure;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\Components\EditTypeOptionModal;

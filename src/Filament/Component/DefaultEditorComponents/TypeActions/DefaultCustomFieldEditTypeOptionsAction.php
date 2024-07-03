@@ -1,10 +1,10 @@
 <?php
 
-namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\Actions;
+namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\DefaultEditorComponents\TypeActions;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldUtils;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\TypeActions\OptionLikeAction;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\Components\EditTypeOptionModal;
-use Filament\Actions\LocaleSwitcher;
 
 class DefaultCustomFieldEditTypeOptionsAction extends OptionLikeAction
 {

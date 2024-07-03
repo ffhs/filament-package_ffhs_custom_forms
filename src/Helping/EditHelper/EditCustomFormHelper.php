@@ -1,11 +1,10 @@
 <?php
 
-namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\Helper;
+namespace Ffhs\FilamentPackageFfhsCustomForms\Helping\EditHelper;
 
-use Ffhs\FilamentPackageFfhsCustomForms\FlattedNested\NestedFlattenList;
+use Ffhs\FilamentPackageFfhsCustomForms\Helping\FlattedNested\NestedFlattenList;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
-use Filament\Forms\Get;
 
 class EditCustomFormHelper
 {
