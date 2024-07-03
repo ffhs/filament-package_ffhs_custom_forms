@@ -19,7 +19,7 @@ class CustomFieldUtils
 
         return $results;
     }
-    public static function flattenWithoutKeys($array): array {
+   /* public static function flattenWithoutKeys($array): array { //ToDo Need its?
         $results = [];
 
         foreach ($array as $value) {
@@ -44,7 +44,8 @@ class CustomFieldUtils
         }
 
         return $results;
-    }
+    }*/
+
 
     public static function flattDownToCustomFields(mixed $data): mixed {
         for ($i = 0; $i <= 10; $i++) {

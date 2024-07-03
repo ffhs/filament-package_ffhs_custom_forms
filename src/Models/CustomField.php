@@ -2,7 +2,8 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Models;
 
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\LayoutType\CustomLayoutType;
+use Ffhs\FilamentPackageFfhsCustomForms\FlattedNested\NestingObject;
+use Ffhs\FilamentPackageFfhsCustomForms\Identifiers\HasIdentifierParameter;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -30,9 +31,10 @@ use Illuminate\Support\Collection;
  * @property CustomForm|null $template
  * @property GeneralField|null $generalField
 */
-class CustomField extends ACustomField
+class CustomField extends ACustomField implements NestingObject
 {
     use HasFactory;
+    use HasIdentifierParameter;
 
     protected $table = "custom_fields";
 
@@ -152,5 +154,16 @@ class CustomField extends ACustomField
         return $this->belongsTo(CustomForm::class, "template_id");
     }
 
+
+
+    public static function getPositionAttribute(): string
+    {
+        return 'form_position';
+    }
+
+    public static function getEndContainerPositionAttribute(): string
+    {
+        return 'layout_end_position';
+    }
 
 }

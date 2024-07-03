@@ -5,6 +5,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Models;
 use Ffhs\FilamentPackageFfhsCustomForms\Caching\CachedModel;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormConfiguration\DynamicFormConfiguration;
 use Ffhs\FilamentPackageFfhsCustomForms\Domain\HasFormIdentifier;
+use Ffhs\FilamentPackageFfhsCustomForms\FlattedNested\NestedFlattenList;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -56,8 +57,14 @@ class CustomForm extends CachedModel
     }*/
 
    /* public function ownedFields(): HasMany {
-        return $this->hasMany(CustomField::class)->orderBy("form_position"); //ToDo also add Templates field
+        return $this->hasMany(CustomField::class)->orderBy("form_position");
     }*/
+
+
+    public function  getCustomFieldsAsNestedList() : NestedFlattenList{
+        return NestedFlattenList::make($this->getOwnedFields(),CustomField::class);
+    }
+
 
     public function customFields(): Builder {
         $baseQuery = CustomField::query()->where("custom_form_id",$this->id);

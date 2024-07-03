@@ -507,7 +507,8 @@ class ValueEqualsRuleAnchor extends FieldRuleAnchorType
 
         //Text
         if($type == "text") {
-            $options = CustomFieldUtils::flattenWithoutKeys($rule->anchor_data["values"]);
+            $options = $rule->anchor_data["values"];
+            // $options = CustomFieldUtils::flattenWithoutKeys($rule->anchor_data["values"]); //ToDo not in Field Utls
             $options = array_values($options);
             return  in_array($answer,$options);
         }

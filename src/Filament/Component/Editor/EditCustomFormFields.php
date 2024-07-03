@@ -6,6 +6,8 @@ use Barryvdh\Debugbar\Facades\Debugbar;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldUtils;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\Helper\EditCustomFormHelper;
+use Ffhs\FilamentPackageFfhsCustomForms\FlattedNested\NestedFlattenList;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Filament\Forms\ComponentContainer;
@@ -21,11 +23,7 @@ class EditCustomFormFields extends Field
 {
     use HasStateBindingModifiers;
 
-
     protected string $view = 'filament-package_ffhs_custom_forms::filament.components.custom_field-edit';
-
-
-
     protected array $actionContainers = [];
     protected array $nameContainers = [];
 
@@ -149,46 +147,9 @@ class EditCustomFormFields extends Field
 
 
     public function getStructure(): array {
-        $fields = collect($this->getState());
-
-        return$this->loadStructure($fields);
+        $list = NestedFlattenList::make($this->getState(), CustomField::class);
+        return $list->getStructure($this->getState());
     }
-
-
-    private function loadStructure(Collection $fields): array {
-        if($fields->count() === 0) return [];
-
-
-
-        $fields = $fields->sortBy('form_position');
-        $start = $fields->first()['form_position'];
-        $end = $fields->last()['form_position'];
-
-        $structure = [];
-
-        for ($i = $start; $i <= $end; $i++) {
-            /**@var array $field */
-            $field = $fields->firstWhere('form_position', $i);
-
-            $key = array_search($field, $this->getState());
-
-            if(empty($field['layout_end_position'])) {
-                $structure[$key] = [];
-                continue;
-            }
-
-            $subFields = $fields
-                ->where("form_position", ">", $field['form_position'])
-                ->where("form_position", "<=", $field['layout_end_position']);
-
-
-            $i = $field['layout_end_position'] ;
-            $structure[$key] = static::loadStructure($subFields);
-        }
-
-        return  $structure;
-    }
-
 
     public function getFieldType(string $key): ?CustomFieldType {
         return CustomFieldUtils::getFieldTypeFromRawDate($this->getState()[$key]);

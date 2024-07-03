@@ -2,6 +2,8 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\Helper;
 
+use Ffhs\FilamentPackageFfhsCustomForms\FlattedNested\NestedFlattenList;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Filament\Forms\Get;
 
@@ -29,7 +31,7 @@ class EditCustomFormHelper
 
 
 
-    public static function getFieldsWithProperty (array $customFields, ?string $property=null):array  {
+/* public static function getFieldsWithProperty (array $customFields, ?string $property=null):array  {
 
         if(is_null($property)) {
             $foundFields = $customFields;
@@ -61,7 +63,7 @@ class EditCustomFormHelper
         }
 
         return $foundFields;
-    }
+    }*/
 
 
 
@@ -80,25 +82,16 @@ class EditCustomFormHelper
 
 
 
-    public static function addField(array $toAdd, string $key, int $position, array $fields): array {
+    public static function addField(array $toAdd, int $position, array $formFields, ?string $key): array {
 
-        $finalFields = $fields;
+        if($key == null) $key = static::getEditKey($toAdd);
 
-        //Add Field
-        $toAdd["form_position"] = $position;
-        data_set($finalFields, $key, $toAdd);
 
-        //Rearrange Fields
-        foreach ($fields as $fieldKey => $field) {
-            $fieldPosition = $field["form_position"];
-            $fieldEndPosition = $field["layout_end_position"] ?? null;
+        $nestedList = NestedFlattenList::make($formFields, CustomField::class);
 
-            if($position <= $fieldPosition) data_set($finalFields, $fieldKey. ".form_position", $fieldPosition +1);
-            if(!is_null($fieldEndPosition) || $position <= $fieldEndPosition)
-                data_set($finalFields, $fieldKey. ".layout_end_position", $fieldEndPosition + 1);
-        }
+        $nestedList->addOnPosition($position, $toAdd, $key);
 
-        return $finalFields;
+        return dd($nestedList->getData());
     }
 
 
@@ -163,6 +156,18 @@ class EditCustomFormHelper
         //Add Fields
         return array_merge($finalFields, $toAddFields);
 
+    }
+
+    public static function getEditKey(array|CustomField $toAdd)
+    {
+        if($toAdd instanceof CustomField)
+            return  empty($field->identifier)?uniqid(): $field->identifier;
+
+
+        if(array_key_exists("identifier", $toAdd) && !empty($toAdd["identifier"]))
+            return $toAdd["identifier"];
+
+        return uniqid();
     }
 
 
