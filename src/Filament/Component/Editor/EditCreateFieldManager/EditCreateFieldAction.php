@@ -17,11 +17,15 @@ abstract class EditCreateFieldAction extends Action
         $this->action($this->createField(...));
     }
 
-    protected function addNewField(EditCustomFormFields $component, Set $set, array $arguments, array $fieldData): void {
-        $fieldData['form_position'] = $arguments['formPosition'];
-        $key = EditCustomFormHelper::getEditKey($fieldData);
+    protected function addNewField(EditCustomFormFields $component, array $arguments, array $fieldData): void {
+        $pos = $arguments['formPosition'];
 
-        $set($component->getStatePath() . "." . $key ,$fieldData , true);
+        $path = $component->getStatePath();
+        $state = $component->getGetCallback()($path, true);
+
+        $state = EditCustomFormHelper::addField($fieldData, $pos , $state);
+
+        $component->getSetCallback()($path, $state, true);
     }
 
 }

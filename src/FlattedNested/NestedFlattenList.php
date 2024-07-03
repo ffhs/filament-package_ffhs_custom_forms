@@ -29,9 +29,9 @@ class NestedFlattenList
         if(!is_null($type)) $this->fixedType = $type;
     }
 
-    public function getStructure(array $keyMapping = []): array
+    public function getStructure(bool $useKey = false): array
     {
-        return $this->loadStructure($this->data, $keyMapping);
+        return $this->loadStructure($this->data, $useKey);
     }
 
     public function addOnPosition(int $pos, NestingObject|array $data, ?string $key): void
@@ -41,10 +41,11 @@ class NestedFlattenList
 
         $data[$poseAttribute] = $pos;
 
-        foreach ($this->data as $itemKey => $item){
-            if($item[$poseAttribute] >= $pos) $item[$poseAttribute]+=1;
-            if($item[$endPosAttribute] >= $pos) $item[$endPosAttribute]+=1;
-            $this->data->put($itemKey, $item);
+        foreach ($this->data as $elementKey => $element){
+            if($element[$poseAttribute] >= $pos) $element[$poseAttribute]+=1;
+            if(!empty($element[$endPosAttribute]) && $element[$endPosAttribute] >= $pos)
+                $element[$endPosAttribute]+=1;
+            $this->data->put($elementKey, $element);
         }
 
         if(is_null($key)) $this->data->add($data);
@@ -113,40 +114,44 @@ class NestedFlattenList
 
     }
 
-    protected function loadStructure(Collection $objects, array $keyMapping): array {
+    protected function loadStructure(Collection $objects, bool $useKey): array {
 
         if($objects->count() === 0) return [];
 
         $poseAttribute = $this->getPositionAttribute();
         $endPosAttribute = $this->getEndContainerPositionAttribute();
 
-        $fields = $objects->sortBy($poseAttribute);
+        $objects = $objects->sortBy($poseAttribute);
         $start = $objects->first()[$poseAttribute];
         $end = $objects->last()[$poseAttribute];
 
         $structure = [];
 
         for ($i = $start; $i <= $end; $i++) {
-            /**@var array $field */
-            $field = $fields->firstWhere($poseAttribute, $i);
+
+            $result =$objects->where($poseAttribute, $i);
+            $field = $result->first();
+            $originalKey = $result->keys()->first();
 
             if($field == null) continue; //ToDo make a warning that the array is Damaged
 
-            $key = array_search($field, $keyMapping);
-            if(!$key) $key = $field['identifier'];
+            //GetKey
+            $key = null;
+            if($useKey)$key = $originalKey;
+            if(is_null($key)) $key = $field['identifier'];
 
             if(empty($field[$endPosAttribute])) {
                 $structure[$key] = [];
                 continue;
             }
 
-            $subFields = $fields
+            $subFields = $objects
                 ->where($poseAttribute, ">", $field[$poseAttribute])
                 ->where($poseAttribute, "<=", $field[$endPosAttribute]);
 
             $i = $field[$endPosAttribute] ;
 
-            $structure[$key] = static::loadStructure($subFields, $keyMapping);
+            $structure[$key] = static::loadStructure($subFields, $useKey);
         }
 
         return  $structure;

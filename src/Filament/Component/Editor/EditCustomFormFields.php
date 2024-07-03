@@ -2,10 +2,8 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor;
 
-use Barryvdh\Debugbar\Facades\Debugbar;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldUtils;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\Helper\EditCustomFormHelper;
 use Ffhs\FilamentPackageFfhsCustomForms\FlattedNested\NestedFlattenList;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
@@ -148,10 +146,11 @@ class EditCustomFormFields extends Field
 
     public function getStructure(): array {
         $list = NestedFlattenList::make($this->getState(), CustomField::class);
-        return $list->getStructure($this->getState());
+        return $list->getStructure(true);
     }
 
     public function getFieldType(string $key): ?CustomFieldType {
+
         return CustomFieldUtils::getFieldTypeFromRawDate($this->getState()[$key]);
     }
 

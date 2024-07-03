@@ -48,49 +48,6 @@ class CustomFormEditor extends Component {
             ])
                 ->columns(6)
                 ->columnSpanFull(),
-
-
-            #->live()->afterStateUpdated(fn($state, $old)=> dd($state,$old)),
-
-        ]);
-
-
-        return;
-        $this->schema(fn(CustomForm $record) => [
-            /**
-             * List of custom fields and with icons
-             * Dropdown with general fields
-             * Dropdown with templates
-             */
-            Fieldset::make()
-                ->columnStart(1)
-                ->columnSpan(1)
-                ->columns(1)
-                ->schema(function() use ($record) {
-                    return
-                        collect($record->getFormConfiguration()::editorFieldAdder())
-                            ->map(fn(string $class) => $class::make($record))
-                            ->toArray();
-                }),
-
-            /**
-             * Shows tree of the current form
-             */
-            EditorCustomFieldList::make($record)
-                ->columnSpan(2)
-                ->saveRelationshipsUsing(fn($component, $state) => EditCustomFormSaveHelper::saveCustomFields($component, $record,
-                    $state))
-                ->rules([
-                    fn(CustomForm $record) => function(string $attribute, $value, Closure $fail) use ($record) {
-                        $formConfiguration = $record->getFormConfiguration();
-                        foreach ($formConfiguration::editorValidations($record) as $editorValidationClass) {
-                            $editorValidation = new $editorValidationClass();
-                            /**@var FormEditorValidation $editorValidation ; */
-
-                            $editorValidation->repeaterValidation($record, $fail, $value, $attribute);
-                        }
-                    }
-                ]),
         ]);
     }
 }

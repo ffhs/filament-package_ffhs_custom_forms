@@ -82,7 +82,7 @@ class EditCustomFormHelper
 
 
 
-    public static function addField(array $toAdd, int $position, array $formFields, ?string $key): array {
+    public static function addField(array $toAdd, int $position, array $formFields, ?string $key = null): array {
         if($key == null) $key = static::getEditKey($toAdd);
 
         $nestedList = NestedFlattenList::make($formFields, CustomField::class);

@@ -61,10 +61,10 @@ function handleNewField(target, draggingEl, state, $wire, staticPath) {
 
     setFieldToOtherField(target, child);
 
-    updateFieldPositions(state)
-    let position = state[key]['form_position'];
+    let cloneState = JSON.parse(JSON.stringify(state))
 
-    delete state[key]
+    updateFieldPositions(cloneState)
+    let position = cloneState[key]['form_position'];
 
     $wire.mountFormComponentAction(staticPath, mode +'-create_field',
         {value:value,  formPosition:  position}
