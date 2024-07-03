@@ -83,15 +83,13 @@ class EditCustomFormHelper
 
 
     public static function addField(array $toAdd, int $position, array $formFields, ?string $key): array {
-
         if($key == null) $key = static::getEditKey($toAdd);
-
 
         $nestedList = NestedFlattenList::make($formFields, CustomField::class);
 
         $nestedList->addOnPosition($position, $toAdd, $key);
 
-        return dd($nestedList->getData());
+        return $nestedList->getData();
     }
 
 
@@ -101,7 +99,13 @@ class EditCustomFormHelper
         //Delete Structure
         $toDelete = $fields[$toRemoveKey];
 
-        //Delete Fields
+
+        $nestedList = NestedFlattenList::make($fields, CustomField::class);
+
+        $nestedList->removeFromPosition($toDelete['form_position']);
+        return $nestedList->getData();
+
+        /*//Delete Fields
         unset($fields[$toRemoveKey]);
 
 
@@ -125,7 +129,7 @@ class EditCustomFormHelper
                 $fields[$keyField]['layout_end_position'] = $field['layout_end_position'] - $amountDeletedFields;
         }
 
-        return $fields;
+        return $fields;*/
     }
 
     public static function addMultipleFields(array $toAddFields, int $position, array $fields): array{

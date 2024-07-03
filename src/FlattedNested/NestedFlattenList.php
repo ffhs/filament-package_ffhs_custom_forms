@@ -8,7 +8,7 @@ use Exception;
 use Illuminate\Support\Collection;
 use Iterator;
 
-class NestedFlattenList implements ArrayAccess
+class NestedFlattenList
 {
 
     protected Collection $data;
@@ -43,7 +43,7 @@ class NestedFlattenList implements ArrayAccess
 
         $data[$poseAttribute] = $pos;
 
-        foreach ($this as $item){
+        foreach ($this->data  as $item){
             if($item[$poseAttribute] >= $pos) $item[$poseAttribute]+=1;
             if($item[$endPosAttribute] >= $pos) $item[$endPosAttribute]+=1;
         }
@@ -52,20 +52,35 @@ class NestedFlattenList implements ArrayAccess
         else $this->data->put($key, $data);
     }
 
-    public function removeFromPosition(int $pos, array $keyMapping = []): void
+    public function removeFromPosition(int $pos): void
     {
         $poseAttribute = $this->getPositionAttribute();
         $endPosAttribute = $this->getEndContainerPositionAttribute();
 
-        $toRemove = $this->data->where($poseAttribute, $pos);
+        $toRemove = $this->data->where($poseAttribute, $pos)->first();
 
-        foreach ($toRemove as $key => $item){
+
+        //Delete Sub Elements
+
+        $endPos = $toRemove[$endPosAttribute] ?? $pos;
+        $keysToDelete = [];
+
+        foreach ($this->data as $key => $element){
+            if( $pos <= $element[$poseAttribute] && $endPos >= $element[$poseAttribute])
+                $keysToDelete[] = $key;
+        }
+
+        foreach ($keysToDelete as $key){
             $this->data->forget($key);
         }
 
-        foreach ($this as $item){
-            if($item[$poseAttribute] >= $pos) $item[$poseAttribute]-=1;
-            if($item[$endPosAttribute] >= $pos) $item[$endPosAttribute]-=1;
+        $amountDeletedFields = count($keysToDelete);
+
+        //Rearrange Fields
+        foreach ($this->data as $item){
+            if($item[$poseAttribute] >= $pos) $item[$poseAttribute]-=$amountDeletedFields;
+            if(!empty($item[$endPosAttribute]) && $item[$endPosAttribute] >= $pos)
+                $item[$endPosAttribute] -= $amountDeletedFields;
         }
     }
 
@@ -133,26 +148,6 @@ class NestedFlattenList implements ArrayAccess
             throw new Exception("the objects must been instance of NestingObject");
 
         return $first::class;
-    }
-
-    public function offsetExists(mixed $offset): bool
-    {
-        return $this->data->offsetExists($offset);
-    }
-
-    public function offsetGet(mixed $offset): mixed
-    {
-        return $this->data->offsetGet($offset);
-    }
-
-    public function offsetSet(mixed $offset, mixed $value): void
-    {
-         $this->data->offsetSet($offset, $value);
-    }
-
-    public function offsetUnset(mixed $offset): void
-    {
-        $this->data->offsetUnset($offset);
     }
 
 

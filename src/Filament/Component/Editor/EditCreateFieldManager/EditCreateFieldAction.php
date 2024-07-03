@@ -19,7 +19,7 @@ abstract class EditCreateFieldAction extends Action
 
     protected function addNewField(EditCustomFormFields $component, Set $set, array $arguments, array $fieldData): void {
         $fieldData['form_position'] = $arguments['formPosition'];
-        $key = $fieldData['identifier'] ?? uniqid();
+        $key = EditCustomFormHelper::getEditKey($fieldData);
 
         $set($component->getStatePath() . "." . $key ,$fieldData , true);
     }
