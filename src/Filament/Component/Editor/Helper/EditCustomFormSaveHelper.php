@@ -2,7 +2,6 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\Helper;
 
-use Barryvdh\Debugbar\Facades\Debugbar;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldUtils;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
@@ -14,16 +13,20 @@ class EditCustomFormSaveHelper
         $fieldData = collect($rawState);
 
         $fieldsToSaveData = [];
-        $fieldsToSavetoCreate = [];
+        $fieldsToCreate = [];
         $fieldsNotDirty = [];
+
+        $now = now();
 
         //Prepare Save and Create Data
         foreach ($rawState as $field) {
+
             if(!empty($field["id"]))
                 $customField = $oldFields->where("id", $field["id"] )->first();
             else
                 $customField = new CustomField();
 
+            $field['custom_form_id'] = $form->id;
 
             $field = CustomFieldUtils::getFieldTypeFromRawDate($field)
                 ->getMutateCustomFieldDataOnSave($customField, $field);
@@ -33,8 +36,17 @@ class EditCustomFormSaveHelper
             $customField->getType()->doBeforeSaveField($customField, $field);
 
 
-            if(!$customField->exists )$fieldsToSavetoCreate[] = $customField->getAttributes();
-            else if($customField->isDirty()) $fieldsToSaveData[] = $customField->getAttributes();
+            if(!$customField->exists ){
+                $rawField = $customField->getAttributes();
+                $rawField['created_at'] = $now;
+                $rawField['updated_at'] = $now;
+                $fieldsToCreate[] = $rawField;
+            }
+            else if($customField->isDirty()) {
+                $rawField = $customField->getAttributes();
+                $rawField['updated_at'] = $now;
+                $fieldsToSaveData[] = $rawField;
+            }
             else  $fieldsNotDirty[] = $customField->id;
         }
 
@@ -49,26 +61,13 @@ class EditCustomFormSaveHelper
 
 
         //cleanUp
-        $columns = [];
-        foreach ($fieldsToSavetoCreate as $rawField)  foreach ($rawField as $name => $value)  $columns[$name] = $name;
-        foreach ($fieldsToSavetoCreate as $key => $rawField)
-            foreach ($columns as $name )  {
-                if(array_key_exists($name, $rawField)) continue;
-                $fieldsToSavetoCreate[$key][$name] = null;
-            }
+        $fieldsToCreate = self::cleanUpCustomFieldData($fieldsToCreate);
 
-        $columns = [];
-        foreach ($fieldsToSaveData as $rawField)  foreach ($rawField as $name => $value)  $columns[$name] = $name;
-        foreach ($fieldsToSaveData as $key => $rawField)
-            foreach ($columns as $name )  {
-                if(array_key_exists($name, $rawField)) continue;
-                $fieldsToSaveData[$key][$name] = null;
-            }
+        $fieldsToSaveData = self::cleanUpCustomFieldData($fieldsToSaveData);
 
         //Create and Updating
-        CustomField::insert($fieldsToSavetoCreate);
+        CustomField::insert($fieldsToCreate);
         CustomField::upsert($fieldsToSaveData, ['id']);
-
 
         //Run after Save
         $savedFields = $form->customFields()->get();
@@ -97,10 +96,7 @@ class EditCustomFormSaveHelper
                     $savedFieldData = $fieldData->where("identifier", $field->identifier)->first();
                 }
 
-
-
                 return $field->getType()->doAfterCreateField($field, $savedFieldData??[]);
-
             }
         );
 
@@ -123,6 +119,21 @@ class EditCustomFormSaveHelper
         foreach ($toCount as $key => $fields) $count += 1 + self::countFields($fields);
         return $count;
     }
+
+    private static function cleanUpCustomFieldData($fields): array
+    {
+        $columns = ['created_at', 'updated_at', 'id'];
+        foreach ($fields as $rawField)  foreach ($rawField as $name => $value)  $columns[$name] = $name;
+        foreach ($fields as $key => $rawField)
+            foreach ($columns as $name )  {
+                if(array_key_exists($name, $rawField)) continue;
+                $fields[$key][$name] = null;
+            }
+
+        return $fields;
+    }
+
+
 
 
     /*private static function setArrayExistingRecordFromArrayData(Collection &$customFieldsOld, array $state,  array&$statedRecords): void {
@@ -313,6 +324,5 @@ public static function getGeneralFieldRepeaterValidationRule():Closure {
         $customField->fieldRules()->whereNotIn("id",$existingIds)->delete();
         $customField->fieldRules()->createMany($toCreate);
     } */
-
 
 }

@@ -34,7 +34,7 @@ final class  EditCreateTemplateFieldAction extends EditCreateFieldAction
             "template_id" =>  $arguments["value"],
             "is_active" => true,
         ];
-        $this->addNewField($component, $set, $arguments, $field);
+        $this->addNewField($component, $arguments, $field);
 
 
         $customFields = $get($component->getStatePath(false));
@@ -67,8 +67,8 @@ final class  EditCreateTemplateFieldAction extends EditCreateFieldAction
         $toSet = [];
         foreach ($get($prefix. "custom_fields") as $key => $customField) {
             if(!empty($customField["custom_fields"])) {
-                $subprefix = $prefix. "custom_fields." . $key . ".";
-                $this->deletingExistingFields($get,$set,$overlappedIdentifier, $subprefix);
+                $subPrefix = $prefix. "custom_fields." . $key . ".";
+                $this->deletingExistingFields($get,$set,$overlappedIdentifier, $subPrefix);
                 $newFieldData = $get($prefix. "custom_fields." . $key);
                 $newFieldData["identifier"] = uniqid();
                 $toSet[$key] = $newFieldData;

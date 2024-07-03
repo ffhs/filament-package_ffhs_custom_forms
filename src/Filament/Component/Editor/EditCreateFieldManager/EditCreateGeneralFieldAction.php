@@ -8,11 +8,10 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 final class  EditCreateGeneralFieldAction extends EditCreateFieldAction
 {
 
-    public function createField(array $arguments, $set, $component){
+    public function createField(array $arguments, $set, $component): void
+    {
         $generalFieldId = $arguments["value"];
-
         $generalField = GeneralField::cached($generalFieldId);
-
 
         $field = [
             "general_field_id" => $generalFieldId,
@@ -20,6 +19,6 @@ final class  EditCreateGeneralFieldAction extends EditCreateFieldAction
             "is_active" => true,
         ];
 
-        $this->addNewField($component, $set, $arguments, $field);
+        $this->addNewField($component, $arguments, $field);
     }
 }

@@ -160,13 +160,13 @@ class NestedFlattenList
 
     public function getPositionAttribute(): string
     {
-        if(is_null($this->data->first())) return "";
+        if(!$this->getType()) return "";
         return $this->getType()::getPositionAttribute();
 
     }
     public function getEndContainerPositionAttribute(): string
     {
-        if(is_null($this->data->first())) return "";
+        if(!$this->getType()) return "";
         return $this->getType()::getEndContainerPositionAttribute();
     }
 
