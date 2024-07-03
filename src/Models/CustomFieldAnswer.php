@@ -3,7 +3,9 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\Models;
 
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\Caching\CachedModel;
+use Ffhs\FilamentPackageFfhsCustomForms\Helping\Caching\HasCacheModel;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
@@ -15,8 +17,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property CustomField $customField
  * @property array $answer
  */
-class CustomFieldAnswer extends CachedModel
+class CustomFieldAnswer extends Model implements CachedModel
 {
+    use HasCacheModel;
+
     private array $data = [];
 
     protected $fillable = [

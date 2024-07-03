@@ -6,7 +6,10 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\FieldRuleAnchorTy
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\FieldRuleType;
 use Ffhs\FilamentPackageFfhsCustomForms\Domain\HasFormIdentifier;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\Caching\CachedModel;
+
+use Ffhs\FilamentPackageFfhsCustomForms\Helping\Caching\HasCacheModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
@@ -19,12 +22,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string rule_name
  * @property CustomField customField
  *
- *
  * @property array anchor_data
  * @property array rule_data
  */
-class FieldRule extends CachedModel
+class FieldRule extends Model implements CachedModel
 {
+    use HasCacheModel;
     use HasFormIdentifier;
     use HasFactory;
 

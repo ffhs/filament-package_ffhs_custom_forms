@@ -5,9 +5,11 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Models;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormConfiguration\DynamicFormConfiguration;
 use Ffhs\FilamentPackageFfhsCustomForms\Domain\HasFormIdentifier;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\Caching\CachedModel;
+use Ffhs\FilamentPackageFfhsCustomForms\Helping\Caching\HasCacheModel;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\FlattedNested\NestedFlattenList;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection;
@@ -25,8 +27,9 @@ use Spatie\Translatable\HasTranslations;
  * @property Collection $customFieldInLayout
  * @property Collection customFieldsWithTemplateFields
  */
-class CustomForm extends CachedModel
+class CustomForm extends Model implements CachedModel
 {
+    use HasCacheModel;
     use HasTranslations;
     use HasFormIdentifier;
     use HasFactory;

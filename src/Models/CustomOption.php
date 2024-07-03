@@ -4,7 +4,9 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Models;
 
 use Ffhs\FilamentPackageFfhsCustomForms\Domain\HasFormIdentifier;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\Caching\CachedModel;
+use Ffhs\FilamentPackageFfhsCustomForms\Helping\Caching\HasCacheModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Spatie\Translatable\HasTranslations;
 
 /**
@@ -15,8 +17,9 @@ use Spatie\Translatable\HasTranslations;
  *
  * @property CustomOption $customOption
  */
-class CustomOption extends CachedModel
+class CustomOption extends Model implements CachedModel
 {
+    use HasCacheModel;
     use HasFormIdentifier;
     use HasFactory;
     use HasTranslations;
