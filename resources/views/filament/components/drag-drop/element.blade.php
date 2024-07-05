@@ -43,10 +43,14 @@
     >
 
         <div  style="width: 50%; margin-left: 50%; margin-top: -20px; margin-bottom: 10px">
-            {{$getActionContainer($key)}}
+            {{$getItemActionContainer($key)}}
         </div>
 
         {{$getItemContainer($key)}}
+
+        @if($isFlatten() && !$isFlattenViewHidden($key))
+            @include($getFlattenView($key))
+        @endif
 
     </x-filament::fieldset>
 

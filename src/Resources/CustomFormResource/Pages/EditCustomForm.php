@@ -36,19 +36,30 @@ class EditCustomForm extends EditRecord
                 "element-test1" => [
                     "wtf1" => "test",
                     "wtf2" => "test",
-                    'form_position' => 1
+                    'form_position' => 1,
+                    'layout_end_position' => 1,
+                    'subTest1'=> [
+                        'sub1'=>[
+                            'wtf1'=> 'sub1',
+                        ],
+                        'sub2'=>[
+                            'wtf1'=> 'sub2',
+                        ],
+                    ]
                 ],
                 "element-test2" => [
                     "wtf1" => "test2",
                     "wtf2" => "test2",
-                    'form_position' => 2
+                    'form_position' => 2,
+                    'subTest1'=> [],
                 ]
             ],
             'test2' => [
                 "element-test3" => [
                     "wtf3" => "test3",
                     "wtf4" => "test3",
-                    'form_position' => 1
+                    'form_position' => 1,
+                    'layout_end_position' => 2,
                 ],
                 "element-test4" => [
                     "wtf5" => "test3",

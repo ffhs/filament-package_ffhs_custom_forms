@@ -1,12 +1,4 @@
 
-
-
-
-
-
-
-
-
 /*
 function handleNewField(target, draggingEl, state, $wire, staticPath) {
 
@@ -30,40 +22,22 @@ function handleNewField(target, draggingEl, state, $wire, staticPath) {
         {value:value,  formPosition:  position}
     );
 }
-
-
-
-function setupField(fieldEl, state, $wire, staticPath){
-    setupDraggable(fieldEl)
-
-    fieldEl.addEventListener('drop', e => {
-        e.stopPropagation();
-
-        e.target.classList.remove('custom-field-drag-over')
-
-        let target = findTarget(e.target)
-        let draggingEl = document.querySelector('[customField\\:dragging]')
-        if(draggingEl == null) return;
-        if(draggingEl.hasAttribute('customField:newField')) handleNewField(target, draggingEl,state, $wire, staticPath)
-        else if(draggingEl.hasAttribute('customField:drag')) handleDragDrop(target, draggingEl, state)
-
-    })
-
-
-
 }*/
 
-
-
-
-
-
-
-function updatePositions(state, container, group, dragDropPosAttribute, dragDropEndPosAttribute) {
+function updatePositionsFlatten(state, container, group, data) {
     let currentPos = 0;
     let selector = '[ffhs_drag\\:element][ffhs_drag\\:group="'+ group +'"]';
 
+    let dragDropPosAttribute = data.dragDropPosAttribute
+    let dragDropEndPosAttribute = data.dragDropEndPosAttribute
+
+
     container.querySelectorAll(selector).forEach(element => {
+
+        let parentElement = getParent(element)
+        let parentData = Alpine.mergeProxies(parentElement._x_dataStack)
+        if(parentData.statePath !== data.statePath) return
+
         currentPos++
 
         let contains = element.querySelectorAll(selector).length
@@ -74,6 +48,32 @@ function updatePositions(state, container, group, dragDropPosAttribute, dragDrop
         state[key][dragDropPosAttribute] = currentPos
         state[key][dragDropEndPosAttribute] = contains === 0 ? null : (currentPos + contains)
     })
+}
+
+function updatePositionsOrder(state, container, group, data) {
+    let currentPos = 1;
+    let selector = '[ffhs_drag\\:element][ffhs_drag\\:group="'+ group +'"]';
+
+    let orderAttribute = data.orderAttribute;
+
+    let parentContainer = getParent(container)
+
+    container.querySelectorAll(selector).forEach(element => {
+        //Check if is fields are from same Parent
+        let parentElement = getParent(element)
+        if(parentContainer !== parentElement) return
+
+        let key = element.getAttribute('ffhs_drag:element')
+        if (state[key] === undefined) state[key] = {}
+        state[key][orderAttribute] = currentPos
+        currentPos++
+    })
+}
+
+function updatePositions(state, container, group, data) {
+    console.log(state);
+    if(data.flatten) updatePositionsFlatten(state, container, group, data)
+    else if(data.orderAttribute !== null) updatePositionsOrder(state, container, group, data)
 }
 
 
@@ -87,30 +87,31 @@ function updateLiveState(alpineData) {
 
 
 function moveElementToOnOtherElement(target, toSet) {
-    if (target.hasAttribute('ffhs_drag:element')) target.before(toSet)
-    else if (target.hasAttribute('ffhs_drag:container')) target.insertBefore(toSet, target.firstChild)
+    if (target.hasAttribute('ffhs_drag:element')) {
+        target.before(toSet)
+    }
+    else if (target.hasAttribute('ffhs_drag:container')) {
+        target.insertBefore(toSet, target.firstChild)
+    }
 }
 
 function moveField(target, dragElement) {
-    let containerTarget= getUppersContainer(target)
-    let containerSource= getUppersContainer(dragElement)
+    let targetParent = getParent(target)
+    let sourceParent= getParent(dragElement)
 
-    let sameContainer = containerSource=== containerTarget;
+    let sameContainer = sourceParent=== targetParent;
 
-    let group = containerTarget.getAttribute('ffhs_drag:group')
+    let group = targetParent.getAttribute('ffhs_drag:group')
 
-    let targetData = Alpine.mergeProxies(containerTarget._x_dataStack)
-    let sourceData = Alpine.mergeProxies(containerSource._x_dataStack)
+
+    let targetData = Alpine.mergeProxies(targetParent._x_dataStack)
+    let sourceData = Alpine.mergeProxies(sourceParent._x_dataStack)
+
 
     let targetState = targetData.state
     let sourceState = sourceData.state
 
-    let dragDropPosAttribute = targetData.dragDropPosAttribute
-    let dragDropEndPosAttribute = targetData.dragDropEndPosAttribute
-
-
     moveElementToOnOtherElement(target, dragElement);
-
 
     if(!sameContainer){
         let dragKey = dragElement.getAttribute('ffhs_drag:element')
@@ -119,12 +120,11 @@ function moveField(target, dragElement) {
         targetState[dragKey] = sourceState[dragKey];
         delete sourceState[dragKey];
 
-        updatePositions(sourceState, containerSource, group, dragDropPosAttribute, dragDropEndPosAttribute)
+        updatePositions(sourceState, sourceParent, group, sourceData)
     }
 
 
-    updatePositions(targetState, containerTarget, group, dragDropPosAttribute, dragDropEndPosAttribute)
-
+    updatePositions(targetState, targetParent, group, targetData)
 
     if(!sameContainer) targetData.wire.$commit()
     else updateLiveState(targetData);
@@ -140,6 +140,7 @@ function handleDrop(target) {
     if(dragElement == null) return;
     if(dragElement === target) return
 
+    if(!hasSameGroup(dragElement,target)) return;
 
     moveField(target, dragElement);
 
@@ -156,18 +157,15 @@ function commitState($wire) {
 }*/
 
 
-function getUppersContainer(target) {
-    let highest = null
-
+function getParent(target) {
     let currentParent = target;
 
     while (currentParent && !(currentParent instanceof Document)) {
-        if(currentParent.hasAttribute('ffhs_drag:container') && hasSameGroup(target,currentParent))
-            highest = currentParent
+        if(currentParent.hasAttribute('ffhs_drag:parent')) return currentParent;
         currentParent = currentParent.parentNode;
     }
 
-    return highest;
+    return null;
 }
 
 

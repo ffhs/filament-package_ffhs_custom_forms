@@ -11,35 +11,17 @@ use Filament\Support\Enums\Alignment;
 
 trait HasDragDropItemContainers
 {
-
-    protected array $itemContainers = [];
-
-    public function getItemContainers():array
-    {
-        return  $this->itemContainers;
-    }
-
-
     public function getItemContainer($key): ComponentContainer
     {
-        $this->generateChildContainers();
-
-        $components = $this->getItemContainers();
-
-        if(array_key_exists($key, $components)) return $components[$key];
-        $this->generateItemContainer($key);
-        return $this->getItemContainers()[$key];
+        return $this->getChildComponentContainers()[$key];
     }
 
-    protected function generateItemContainer(string $key): void {
-        $components = $this->getItemSchema($key);
-
-        $container = ComponentContainer::make($this->getLivewire())
+    protected function generateItemContainer(string $key): ComponentContainer {
+        return ComponentContainer::make($this->getLivewire())
             ->parentComponent($this)
             ->statePath($key)
-            ->components([Group::make($components)->statePath($key)]); //TODO WHY FILAMENT, WHAT THE FUCK
-
-        $this->itemContainers[$key] = $container;
+            ->components($this->getChildComponents())
+            ->getClone();
     }
 
 }

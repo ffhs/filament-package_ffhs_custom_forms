@@ -11,8 +11,6 @@ use Filament\Support\Enums\Alignment;
 trait HasDragDropItemActions
 {
     protected array|Closure $itemActions = [];
-    protected array $actionContainers = [];
-
 
     public function getItemActions($itemKey): array|Closure|null
     {
@@ -25,33 +23,26 @@ trait HasDragDropItemActions
         return $this;
     }
 
-    public function getItemActionContainers():array
-    {
-        return $this->actionContainers;
-    }
-
 
     public function getItemActionContainer($key): ComponentContainer
     {
-        $actions = $this->getActionContainers();
-
-        if(array_key_exists($key, $actions)) return $actions[$key];
-        $this->generateItemActions($key);
-        return $this->getActionContainers()[$key];
+        return $this->getChildComponentContainers()[$key.'-actions'];
     }
 
 
-    protected function generateItemActions(string $key): void {
+
+
+    protected function generateItemActions(string $key): ComponentContainer {
         $actions = $this->getItemActions($key);
 
         $components = array_map(fn(Action $action) => $action->mergeArguments(["item" => $key]), $actions);
 
-        $container = ComponentContainer::make($this->getLivewire())
+        return ComponentContainer::make($this->getLivewire())
             ->parentComponent($this)
             ->statePath($key)
-            ->components([Actions::make($components)->columnSpanFull()->alignment(Alignment::Right)]);
+            ->components([Actions::make($components)->columnSpanFull()->alignment(Alignment::Right)])
+            ->getClone();
 
-        $this->actionContainers[$key] = $container;
     }
 
 }

@@ -32,31 +32,49 @@ class CustomFormEditor extends Component {
 
              DragDropComponent::make("test1")
                  ->live()
-                 ->afterStateUpdated(fn(DragDropComponent $component)=> Debugbar::info($component->getChildComponents()))
+                 ->afterStateUpdated(fn($state) => Debugbar::info($state, "=====^^^test1^^^==="))
 
+                 ->flatten()
                  ->columnSpanFull()
                  ->nestedFlattenListType(CustomField::class)
                  ->dragDropGroup("testGroup1")
-                ->columns(1)
+                 ->columns(1)
+                 ->flattenViewHidden(false)
                  ->itemActions(fn($item) => [
                      Action::make("test")
                          ->icon("bi-input-cursor-text")
                          ->iconButton()
                          ->action(fn($arguments)=> dd($arguments))
                  ])
-                ->gridSize(4)
+                ->gridSize(2)
                 ->schema([
                     TextInput::make("wtf1"),
                     TextInput::make("wtf2"),
+
+
+                    DragDropComponent::make("subTest1")
+                        ->dragDropGroup("testGroup2")
+                        ->live()
+                        ->orderAttribute('pos')
+                        ->afterStateUpdated(fn($state) => Debugbar::info($state, "=====^^^test1SUB^^^==="))
+                        ->schema([
+                            TextInput::make("wtf1"),
+                        ])
                 ]),
+
+
 
             DragDropComponent::make("test2")
                 ->columnSpanFull()
+                ->orderAttribute("pos")
                 ->nestedFlattenListType(CustomField::class)
                 ->dragDropGroup("testGroup1")
                 ->columns(1)
                 ->gridSize(4)
+                ->flattenViewHidden(false)
                 ->itemIcons('bi-input-cursor-text')
+                ->live()
+                ->afterStateUpdated(fn($state) => Debugbar::info($state, "=====^^^test2^^^==="))
                 ->schema([
                    // TextInput::make("wtf1"),
                     //TextInput::make("wtf2"),
