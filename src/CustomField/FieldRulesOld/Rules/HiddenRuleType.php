@@ -3,7 +3,7 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRulesOld\Rules;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldMapper;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRule\HasRulePluginTranslate;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRule\Translations\HasRuleTriggerPluginTranslate;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRulesOld\FieldRuleAbstractType;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\FieldRule;
@@ -15,7 +15,7 @@ use ReflectionClass;
 
 class HiddenRuleType extends FieldRuleAbstractType
 {
-    use HasRulePluginTranslate;
+    use HasRuleTriggerPluginTranslate;
 
     public static function identifier(): string {
         return "is_hidden_rule";

@@ -87,6 +87,7 @@ class FilamentPackageFfhsCustomFormsServiceProvider extends PackageServiceProvid
 
         FilamentAsset::register([
             Js::make('custom_form_script', __DIR__ . '/../resources/js/custom_form_script.js')->loadedOnRequest(),
+            Js::make('drag_drop_script', __DIR__ . '/../resources/js/drag_drop_script.js')->loadedOnRequest(),
         ], 'ffhs/filament-package_ffhs_custom_forms');
 
         $this->publishes([

@@ -10,6 +10,6 @@ interface TriggerType extends Type
 {
     public function isTrigger(array $arguments, mixed $target, Rule $rule): bool;
 
-    public function getDisplayName();
+    public function getDisplayName(): string;
 
 }
