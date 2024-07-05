@@ -3,19 +3,20 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\DragAndDrop;
 
 
-use Barryvdh\Debugbar\Facades\Debugbar;
+use ArrayObject;
 use Closure;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\FlattedNested\HasNestingInformation;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\FlattedNested\NestedFlattenList;
-use Ffhs\FilamentPackageFfhsCustomForms\Helping\FlattedNested\NestingObject;
 use Filament\Forms\ComponentContainer;
-use Filament\Forms\Components\Actions;
-use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Field;
-use Filament\Support\Enums\Alignment;
+use Filament\Forms\Concerns\HasStateBindingModifiers;
 use Illuminate\Support\Collection;
 
 class DragDropComponent extends Field {
+    use HasStateBindingModifiers;
+    use HasDragDropItemActions;
+    use HasDragDropItemContainers;
+
 
     protected null|string|Closure $itemIcons = null;
 
@@ -23,68 +24,37 @@ class DragDropComponent extends Field {
 
     protected string|Closure $dragDropGroup;
 
-    protected array|Closure $itemActions = [];
-
     protected string|Closure $itemLabel;
 
     protected bool|Closure $useFlattenList = false;
 
     protected int|Closure $gridSize = 1;
-
-    protected array $itemContainers = [];
-    protected array $actionContainers = [];
-
-    protected array | Closure $itemSchema = [];
     private string|Closure|null $nestedFlattenListType = null;
+
+    protected bool $childrenGenerated = false;
 
 
     protected function setUp(): void
     {
         $this->itemLabel(fn($item)=> $item);
         $this->dragDropGroup(uniqid());
-    }
 
-    public function getItemContainer($itemKey): ComponentContainer
-    {
-        $components = $this->getChildComponents();
+        $this->childComponents(function ($get): array {
+            $this->generateChildContainers();
+            $containers = $this->getCombinedContainers();
 
-        if(array_key_exists($itemKey, $components)) return $components[$itemKey];
-        $this->generateItemContainer($itemKey);
-        return $this->getItemContainers()[$itemKey];
-    }
+            return $containers
+                ->map(fn(ComponentContainer $container) => $container->getComponents())
+                ->flatten(1)
+                ->toArray();
+        });
 
-    public function getActionContainer($itemKey): ComponentContainer
-    {
-        $actions = $this->getActionContainers();
-
-        if(array_key_exists($itemKey, $actions)) return $actions[$itemKey];
-        $this->generateItemActions($itemKey);
-        return $this->getActionContainers()[$itemKey];
-    }
-
-    protected function generateItemActions(string $key): void {
-        $actions = $this->getItemActions($key);
-
-        $components = array_map(fn(Action $action) => $action->mergeArguments(["item" => $key]), $actions);
-
-        $container = ComponentContainer::make($this->getLivewire())
-            ->parentComponent($this)
-            ->components([Actions::make($components)->columnSpanFull()->alignment(Alignment::Right)]);
-
-        $this->actionContainers[$key] = $container;
     }
 
 
-    protected function generateItemContainer(string $key): void {
-        $components = $this->getItemSchema($key);
 
-        $container = ComponentContainer::make($this->getLivewire())
-            ->parentComponent($this)
-            ->statePath($key)
-            ->components($components);
 
-        $this->itemContainers[$key] = $container;
-    }
+
 
 
 
@@ -99,8 +69,6 @@ class DragDropComponent extends Field {
         return $this;
     }
 
-
-
     protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
     {
         return match ($parameterName) {
@@ -110,20 +78,11 @@ class DragDropComponent extends Field {
 
     }
 
-    public function getItemActions($itemKey): array|Closure|null
-    {
-        return $this->evaluate($this->itemActions, namedInjections: $this->getItemInjection($itemKey));
-    }
 
-    public function itemActions(array|Closure $itemActions): static
-    {
-        $this->itemActions = $itemActions;
-        return $this;
-    }
 
-    protected function getItemInjection($itemKey): array
+    protected function getItemInjection($key): array
     {
-        return ['item' => $itemKey, 'itemState' => $this->getState()[$itemKey] ?? []];
+        return ['item' => $key, 'itemState' => $this->getState()[$key] ?? []];
     }
 
 
@@ -150,21 +109,21 @@ class DragDropComponent extends Field {
         $this->useFlattenList = $flattened;
     }
 
-    public function getChildComponents(): array
+  /*  public function getChildComponents(): array
     {
+        $this->generateChildContainers();
         $containers = $this->getCombinedContainers();
 
-        return $containers
+
+        $return = $containers
             ->map(fn(ComponentContainer $container) => $container->getComponents())
             ->flatten(1)
             ->toArray();
-    }
 
+        Debugbar::info($containers);
 
-    public function getChildComponentContainers(bool $withHidden = false): array
-    {
-        return $this->getCombinedContainers()->toArray();
-    }
+        return $return;
+    }*/
 
 
     protected function getCombinedContainers(): Collection {
@@ -174,27 +133,9 @@ class DragDropComponent extends Field {
         ]);
     }
 
-    public function getActionContainers():array
-    {
-        return $this->actionContainers;
-    }
-
-    public function getItemContainers():array
-    {
-       return  $this->itemContainers;
-    }
 
 
-    public function schema(array | Closure $schema): static
-    {
-        $this->itemSchema = $schema;
-        return $this;
-    }
 
-    public function getItemSchema(string $key): array
-    {
-        return $this->evaluate($this->itemSchema, $this->getItemInjection($key));
-    }
 
 
     public function getGridSize(): int
@@ -214,7 +155,7 @@ class DragDropComponent extends Field {
         return $this->evaluate($this->itemIcons, $this->getItemInjection($itemKey));
     }
 
-    public function setItemIcons(Closure|string|null $itemIcons): static
+    public function itemIcons(Closure|string|null $itemIcons): static
     {
         $this->itemIcons = $itemIcons;
         return $this;
@@ -231,6 +172,38 @@ class DragDropComponent extends Field {
     public function nestedFlattenListType(null|Closure|string $nestedFlattenList):static {
         $this->nestedFlattenListType = $nestedFlattenList;
         return $this;
+    }
+
+
+    public function getStructure(): array {
+        $list = NestedFlattenList::make($this->getState(), $this->getNestedFlattenListType());
+        return $list->getStructure(true);
+    }
+
+    protected function generateChildContainers(): void {
+        if($this->isChildrenGenerated()) return;
+
+        $this->itemContainers = [];
+        $this->actionContainers = [];
+
+        foreach ($this->getState() as $key => $field) {
+            $this->generateItemActions($key);
+            $this->generateItemContainer($key);
+        }
+
+        $this->childrenGenerated = true;
+    }
+
+    protected function isChildrenGenerated(): bool
+    {
+        return $this->childrenGenerated;
+    }
+
+    public function getState(): mixed
+    {
+        $state = parent::getState();
+        if(is_null($state)) return [];
+        return $state;
     }
 
 

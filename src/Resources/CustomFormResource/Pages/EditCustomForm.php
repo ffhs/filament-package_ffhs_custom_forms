@@ -29,7 +29,34 @@ class EditCustomForm extends EditRecord
     }
 
     protected function fillForm(): void {
-        $this->form->fill(EditCustomFormLoadHelper::load($this->getRecord()));
+       // $this->form->fill(EditCustomFormLoadHelper::load($this->getRecord()));
+
+        $this->form->fill([
+            'test1' => [
+                "element-test1" => [
+                    "wtf1" => "test",
+                    "wtf2" => "test",
+                    'form_position' => 1
+                ],
+                "element-test2" => [
+                    "wtf1" => "test2",
+                    "wtf2" => "test2",
+                    'form_position' => 2
+                ]
+            ],
+            'test2' => [
+                "element-test3" => [
+                    "wtf3" => "test3",
+                    "wtf4" => "test3",
+                    'form_position' => 1
+                ],
+                "element-test4" => [
+                    "wtf5" => "test3",
+                    "wtf6" => "test3",
+                    'form_position' => 2
+                ]
+            ]
+        ]);
     }
 
     public function getTitle(): string|Htmlable {

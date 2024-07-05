@@ -1,19 +1,5 @@
 
 
-function setFieldToOtherField(target, toSet) {
-    if(!hasSameGroup(target, toSet)) return
-
-    if (target.hasAttribute('ffhs_drag:element')){
-        target.before(toSet)
-    }
-
-    else if (target.hasAttribute('ffhs_drag:container')){
-        target.insertBefore(toSet, target.firstChild)
-    }
-}
-
-
-
 
 
 
@@ -81,7 +67,7 @@ function updatePositions(state, container, group, dragDropPosAttribute, dragDrop
         currentPos++
 
         let contains = element.querySelectorAll(selector).length
-        let key = element.getAttribute('customField:uuid')
+        let key = element.getAttribute('ffhs_drag:element')
 
         if (state[key] === undefined) state[key] = {}
 
@@ -90,34 +76,84 @@ function updatePositions(state, container, group, dragDropPosAttribute, dragDrop
     })
 }
 
+
+function updateLiveState(alpineData) {
+    let isLive = alpineData.isLive
+    if (!isLive) return false;
+    let $wire = alpineData.wire
+    $wire.$commit()
+    return true;
+}
+
+
+function moveElementToOnOtherElement(target, toSet) {
+    if (target.hasAttribute('ffhs_drag:element')) target.before(toSet)
+    else if (target.hasAttribute('ffhs_drag:container')) target.insertBefore(toSet, target.firstChild)
+}
+
+function moveField(target, dragElement) {
+    let containerTarget= getUppersContainer(target)
+    let containerSource= getUppersContainer(dragElement)
+
+    let sameContainer = containerSource=== containerTarget;
+
+    let group = containerTarget.getAttribute('ffhs_drag:group')
+
+    let targetData = Alpine.mergeProxies(containerTarget._x_dataStack)
+    let sourceData = Alpine.mergeProxies(containerSource._x_dataStack)
+
+    let targetState = targetData.state
+    let sourceState = sourceData.state
+
+    let dragDropPosAttribute = targetData.dragDropPosAttribute
+    let dragDropEndPosAttribute = targetData.dragDropEndPosAttribute
+
+
+    moveElementToOnOtherElement(target, dragElement);
+
+
+    if(!sameContainer){
+        let dragKey = dragElement.getAttribute('ffhs_drag:element')
+
+        //Move data to the other Field
+        targetState[dragKey] = sourceState[dragKey];
+        delete sourceState[dragKey];
+
+        updatePositions(sourceState, containerSource, group, dragDropPosAttribute, dragDropEndPosAttribute)
+    }
+
+
+    updatePositions(targetState, containerTarget, group, dragDropPosAttribute, dragDropEndPosAttribute)
+
+
+    if(!sameContainer) targetData.wire.$commit()
+    else updateLiveState(targetData);
+
+}
+
+
+
 function handleDrop(target) {
 
     let dragElement = findDragElement()
 
     if(dragElement == null) return;
-
-    let uppersContainer= getUppersContainer(target)
-
-    if(!uppersContainer) return
     if(dragElement === target) return
-    if(dragElement === uppersContainer) return
-
-    let group = uppersContainer.getAttribute('ffhs_drag:group')
-
-    let alpineData = Alpine.mergeProxies(uppersContainer._x_dataStack)
-
-    let state = alpineData.state
-    let dragDropPosAttribute = alpineData.dragDropPosAttribute
-    let dragDropEndPosAttribute = alpineData.dragDropEndPosAttribute
 
 
-    setFieldToOtherField(target, dragElement)
+    moveField(target, dragElement);
 
-    updatePositions(state, uppersContainer,group ,  dragDropPosAttribute, dragDropEndPosAttribute)
+    // commitState($wire)
 }
 
 
+/*
+function commitState($wire) {
+    let canonical = JSON.stringify($wire.__instance.canonical);
+    let ephemeral = JSON.stringify($wire.__instance.ephemeral);
 
+    if (canonical  !== ephemeral )  $wire.$commit();
+}*/
 
 
 function getUppersContainer(target) {
