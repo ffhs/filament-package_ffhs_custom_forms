@@ -31,7 +31,8 @@
 
     style="
         touch-action: pan-y;
-        grid-column:  1 span {{data_get($getState() ,  $key . '.options.column_span' ) ?? 1}} !important;
+
+        grid-column:  {{$getItemGridStart($key)?? ""}} / span {{$getItemGridSize($key)}} !important;
      "
     x-init="setupDomElement($el)"
 >

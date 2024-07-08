@@ -4,22 +4,24 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\DragDrop;
 
 
 use Closure;
+use Filament\Actions\Action;
 use Filament\Forms\Components\Field;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Concerns\HasStateBindingModifiers;
 
 class DragDropComponent extends Field {
     use HasStateBindingModifiers;
     use HasDragDropItemActions;
     use HasDragDropItemContainers;
-    use HasDragDropItemIcon;
-    use HasDragDropItemLabel;
-    use HasDragDropItemGrid;
-    use HasDragDropNestedFlattenList;
+    use HasItemIcon;
+    use HasItemLabel;
+    use HasItemGrid;
+    use HasNestedFlattenList;
+    use HasDragGroup;
 
 
     protected string $view = 'filament-package_ffhs_custom_forms::filament.components.drag-drop.index';
 
-    protected string|Closure $dragDropGroup;
 
 
     protected function setUp(): void
@@ -31,17 +33,6 @@ class DragDropComponent extends Field {
             empty($state[$item][$this->getNestedFlattenListType()::getEndContainerPositionAttribute()])
         );
 
-    }
-
-    public function getDragDropGroup(): string
-    {
-        return $this->evaluate($this->dragDropGroup);
-    }
-
-    public function dragDropGroup(Closure|string $dragDropGroup): static
-    {
-        $this->dragDropGroup = $dragDropGroup;
-        return $this;
     }
 
     protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array

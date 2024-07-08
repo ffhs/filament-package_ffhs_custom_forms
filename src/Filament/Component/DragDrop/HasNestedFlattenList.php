@@ -12,7 +12,7 @@ use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Support\Enums\Alignment;
 
-trait HasDragDropNestedFlattenList //ToDo if not flatten order and stuff
+trait HasNestedFlattenList //ToDo if not flatten order and stuff
 {
 
     protected string|Closure|null $nestedFlattenListType = null;

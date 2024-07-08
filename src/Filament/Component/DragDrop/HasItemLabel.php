@@ -8,7 +8,7 @@ use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Support\Enums\Alignment;
 
-trait HasDragDropItemLabel
+trait HasItemLabel
 {
     protected string|Closure $itemLabel;
 

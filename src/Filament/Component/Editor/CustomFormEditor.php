@@ -3,12 +3,14 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor;
 
 use Barryvdh\Debugbar\Facades\Debugbar;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\DragDrop\Actions\DragDropActions;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\DragDrop\DragDropComponent;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor\CustomFieldList\EditorCustomFieldList;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
+use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\TextInput;
+use Filament\Support\Enums\Alignment;
 
 class CustomFormEditor extends Component {
 
@@ -69,8 +71,12 @@ class CustomFormEditor extends Component {
                 ->orderAttribute("pos")
                 ->nestedFlattenListType(CustomField::class)
                 ->dragDropGroup("testGroup1")
+
                 ->columns(1)
                 ->gridSize(4)
+                //->itemGridSize(2)
+                //->itemGridStart(2)
+
                 ->flattenViewHidden(false)
                 ->itemIcons('bi-input-cursor-text')
                 ->live()
@@ -78,6 +84,22 @@ class CustomFormEditor extends Component {
                    // TextInput::make("wtf1"),
                     //TextInput::make("wtf2"),
                 ]),
+
+            DragDropActions::make([
+                Action::make("testDropAction")
+                    ->action(fn()=>dd("test"))
+            ], Alignment::Right)
+                ->dragDropGroup("testGroup1")
+                ->fullWidth()
+                ->columnSpanFull()->alignment(Alignment::Right),
+
+          Actions::make([
+              Action::make("testDropAction2")
+                  ->action(fn()=>dd("test"))
+          ])
+              ->fullWidth(true)
+              ->alignment(Alignment::Right)
+              ->columnSpanFull(),
 
 
           /* Group::make([

@@ -12,6 +12,7 @@
 
 <x-dynamic-component :component="$getFieldWrapperView()" :field="$field">
 
+
     <!--- ToDo to CSS File--->
     <style>
         .ffhs-drag-over {
