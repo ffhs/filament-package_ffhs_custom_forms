@@ -87,19 +87,13 @@ class CustomFormEditor extends Component {
 
             DragDropActions::make([
                 Action::make("testDropAction")
-                    ->action(fn()=>dd("test"))
+                    ->action(fn($arguments)=>Debugbar::info($arguments))
             ], Alignment::Right)
                 ->dragDropGroup("testGroup1")
                 ->fullWidth()
                 ->columnSpanFull()->alignment(Alignment::Right),
 
-          Actions::make([
-              Action::make("testDropAction2")
-                  ->action(fn()=>dd("test"))
-          ])
-              ->fullWidth(true)
-              ->alignment(Alignment::Right)
-              ->columnSpanFull(),
+
 
 
           /* Group::make([

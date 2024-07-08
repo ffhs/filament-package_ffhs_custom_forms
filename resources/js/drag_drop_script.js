@@ -1,29 +1,4 @@
 
-/*
-function handleNewField(target, draggingEl, state, $wire, staticPath) {
-
-    let mode = draggingEl.getAttribute('customField:newFieldMode')
-    let value = draggingEl.getAttribute('customField:newField')
-
-    let child = document.createElement("span");
-
-    let keySplit = crypto.randomUUID().split('-');
-    let key = keySplit[0] + keySplit[1];
-    child.setAttribute('customField:uuid', key)
-
-    setFieldToOtherField(target, child);
-
-    let cloneState = JSON.parse(JSON.stringify(state))
-
-    updatePositions(cloneState)
-    let position = cloneState[key]['form_position'];
-
-    $wire.mountFormComponentAction(staticPath, mode +'-create_field',
-        {value:value,  formPosition:  position}
-    );
-}
-}*/
-
 function countFlattenChildren(container, data, selector) {
     let count =0
     container.querySelectorAll(selector).forEach(element => {
@@ -144,7 +119,6 @@ function moveField(target, dragElement) {
 
         updatePositions(sourceState, sourceParent, group, sourceData)
         sourceData.wire.set(sourceData.statePath, sourceState)
-        console.log(sourceState)
     }
 
     updatePositions(targetState, targetParent, group, targetData)
@@ -156,6 +130,61 @@ function moveField(target, dragElement) {
 
 }
 
+
+function handleRunAction(target, dragElement) {
+
+    let targetParent = getParent(target)
+
+    let group = targetParent.getAttribute('ffhs_drag:group')
+
+    let targetData = Alpine.mergeProxies(targetParent._x_dataStack)
+    let targetState = targetData.wire.get(targetData.statePath, '')
+
+    let isFlatten = targetData.flatten
+
+    //Fixing JavaScript bullish
+    //if the object is empty it get back an proxy array back that fix this shit.
+    if(Array.isArray(targetState)) targetState = {}
+
+
+    let temporaryChild = document.createElement("span");
+
+    let keySplit = crypto.randomUUID().split('-');
+    let key = keySplit[0] + keySplit[1];
+    temporaryChild.setAttribute('ffhs_drag:element', key)
+    temporaryChild.setAttribute('ffhs_drag:group', group)
+
+    let cloneState = JSON.parse(JSON.stringify(targetState))
+
+    moveElementToOnOtherElement(target, temporaryChild);
+
+    updatePositions(cloneState, targetParent, group ,targetData)
+
+    //position
+    let position
+    if(isFlatten)  position = cloneState[key][targetData.dragDropPosAttribute];
+    else  position = cloneState[key][targetData.orderAttribute];
+
+    //parent of Target
+    let targetIn = null
+    if(isFlatten) targetIn = findTarget(temporaryChild.parentNode, ['ffhs_drag:element'])
+    if(targetIn) targetIn = targetIn.getAttribute('ffhs_drag:element')
+
+    //targetId of Target
+    let targetId = target.getAttribute('ffhs_drag:element');
+
+    //run Action
+    let toHandle = dragElement.getAttribute('ffhs_drag:action')
+
+    let toHandlePath = toHandle.split("'")[1]
+    let toHandleAction = toHandle.split("'")[3]
+
+    targetData.wire.mountFormComponentAction(toHandlePath, toHandleAction,
+        {targetPath:targetData.statePath,  position:  position, flatten:isFlatten, targetIn:targetIn, target:targetId}
+    );
+}
+
+
 function handleDrop(target) {
 
     let dragElement = findDragElement()
@@ -165,9 +194,8 @@ function handleDrop(target) {
 
     if(!hasSameGroup(dragElement,target)) return;
 
-    moveField(target, dragElement);
-
-    // commitState($wire)
+    if(dragElement.hasAttribute('ffhs_drag:action')) handleRunAction(target, dragElement);
+    else moveField(target, dragElement);
 }
 
 
@@ -286,10 +314,6 @@ function setUpDropField(element){
 
         let target = findTarget(e.target)
         handleDrop(target)
-
-        /* if(draggingEl.hasAttribute('customField:newField')) handleNewField(target, draggingEl,state, $wire, staticPath)
-         else if(draggingEl.hasAttribute('customField:drag')) */
-
     })
 }
 
@@ -298,9 +322,3 @@ function setupDomElement(element){
     setupDragOverEffect(element)
     setUpDropField(element)
 }
-
-
-
-
-
-
