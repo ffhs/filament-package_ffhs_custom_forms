@@ -246,9 +246,9 @@ Falls ein Template bearbeitet wird, werden die Validationen disabled. </br>
 2. Entfernen Sie aus `editor_field_adder` den `TemplateAdder`
 ```php
 /* 'editor_field_adder' => [  
-    GeneralFieldAdder::class,  
+    GeneralFieldAdderOld::class,  
     TemplateAdder::class,  
-    CustomFieldAdder::class,  
+    CustomFieldAdderOldOld::class,  
 ],*/
 
 'editor_field_adder' => [  

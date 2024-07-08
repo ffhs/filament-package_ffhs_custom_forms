@@ -15,6 +15,7 @@
     style="
         margin-top: 20px;
         --cols-default: repeat(2, minmax(0, 1fr)); --cols-lg: repeat({{$getFlattenGrid($key)}}, minmax(0, 1fr));
+        background: rgba(200, 200, 200, 0.1)
     "
 
     ffhs_drag:container

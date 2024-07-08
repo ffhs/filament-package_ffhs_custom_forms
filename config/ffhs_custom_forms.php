@@ -35,8 +35,9 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRulesOld\Rules\ChangeOp
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRulesOld\Rules\DisabledRuleType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRulesOld\Rules\HiddenRuleType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRulesOld\Rules\RequiredRuleType;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\DefaultEditorComponents\FieldAdder\CustomFieldAdder;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\DefaultEditorComponents\FieldAdder\GeneralFieldAdder;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\DefaultEditorComponents\FieldAdder\CustomFieldAdderOldOld;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\DefaultEditorComponents\FieldAdder\CustomFieldTypeAdder;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\DefaultEditorComponents\FieldAdder\GeneralFieldAdderOld;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\DefaultEditorComponents\FieldAdder\TemplateFieldAdder;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\EditCreateFieldManager\EditCreateGeneralFieldAction;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\EditCreateFieldManager\EditCreateTemplateFieldAction;
@@ -71,18 +72,9 @@ return [
 
     'editor' => [
         'field_adders' => [
-            GeneralFieldAdder::class,
-            TemplateFieldAdder::class,
-            CustomFieldAdder::class
-        ],
-        /*   'custom_form_editor_validations' => [
-                FormEditorGeneralFieldValidation::class
-            ],
-         */
-        'field_creator_action' => [
-            'type' => EditCreateTypeFieldAction::class,
-            'general' => EditCreateGeneralFieldAction::class,
-            'template'=> EditCreateTemplateFieldAction::class,
+            CustomFieldTypeAdder::class,
+          //  TemplateFieldAdder::class,
+          //  CustomFieldAdderOldOld::class
         ],
     ],
 

@@ -5,7 +5,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\AdderCom
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralFieldForm;
 
-abstract class SimpleAdder extends FormEditorFieldAdder
+abstract class SimpleAdderOld extends FormEditorFieldAdderOld
 {
 
     protected string $view = 'filament-package_ffhs_custom_forms::filament.components.field-adder.simple_adder';

@@ -27,10 +27,21 @@ class DragDropActionContainer extends Actions\ActionContainer
         $html = str_replace('<button', $toReplace, $html);
 
         $html = str_replace('</button', '</div', $html);
-        $html = str_replace('wire:target', 'ffhs_drag:action_target', $html);
+        //$html = str_replace('wire:target', 'ffhs_drag:action_target', $html);
         $html = str_replace('wire:click', 'ffhs_drag:action', $html);
         $html = str_replace('wire:click', 'cursor-grab', $html);
         $html = str_replace('style="', 'x-init="" draggable="true" style="cursor: grab !important; ', $html);
+        $html = str_replace('type="button" ', '', $html);
+        $html = str_replace('wire:loading.attr="disabled" ', '', $html);
+       // $html = str_replace('wire:loading.delay.default=""', '', $html);
+        $html = str_replace('x-data="{}"', '', $html);
+       // $html = str_replace('animate-spin ', '', $html);
+
+
+
+        /*
+         *
+         */
 
 
         // $html = str_replace('wire:loading.delay.default="" ', '', $html);

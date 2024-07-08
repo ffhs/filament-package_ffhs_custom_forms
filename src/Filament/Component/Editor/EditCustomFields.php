@@ -35,6 +35,7 @@ class EditCustomFields extends DragDropComponent
             if(empty($itemState['options'])) return null;
             return $itemState['options']['columns'] ?? null;
         });
+
         $this->flattenViewHidden(function ($itemState){
             $type = CustomFieldUtils::getFieldTypeFromRawDate($itemState);
             return is_null($type) || is_null($type->fieldEditorExtraComponent($itemState));
@@ -49,12 +50,12 @@ class EditCustomFields extends DragDropComponent
         $this->itemLabel(function ($itemState){
             $type = CustomFieldUtils::getFieldTypeFromRawDate($itemState);
             if(is_null($type)) return null;
-            return $type->getTranslatedName();
+            return $type->getEditorFieldTitle($itemState);
         });
         $this->itemIcons(function ($itemState){
             $type = CustomFieldUtils::getFieldTypeFromRawDate($itemState);
             if(is_null($type)) return null;
-            return $type->icon();
+            return $type->getEditorFieldIcon($itemState);
         });
         $this->flattenViewLabel("Felder"); //ToDo Translate
 
@@ -71,7 +72,6 @@ class EditCustomFields extends DragDropComponent
             Group::make()
                 ->schema(fn($record, $state)=> [
                     TextInput::make('name.'. $record->getLocale())
-                        //->label("Name") //ToDo Translate or delete
                         ->label("")
                         ->visible(function () use ($state) {
                             $type = CustomFieldUtils::getFieldTypeFromRawDate($state);

@@ -112,6 +112,14 @@ abstract class CustomFieldType implements Type
         return "<div>". new HtmlBadge('Gen', Color::rgb('rgb(43, 164, 204)'))."</div>" .
             '<p style="margin-left: 40px; margin-top: -20px">'. $field->name.'</p>'; //ToDo Badges function reimplement
     }
+    public function getEditorFieldIcon(array $fieldData):string
+    {
+        $field = new CustomField();
+        $field->fill($fieldData);
+
+        if(!$field->isGeneralField()) return $this->icon();
+        else return $field->generalField->icon;
+    }
 
     public function getEditorActions(string $key, array $fieldState): array{
         return [
@@ -138,4 +146,6 @@ abstract class CustomFieldType implements Type
     public function mutateOnTemplateDissolve(array $data, CustomField $original): array {
         return $data; //ToDo Reimplement
     }
+
+
 }

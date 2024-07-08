@@ -2,6 +2,7 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Helping\Caching;
 
+use Barryvdh\Debugbar\Facades\Debugbar;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
@@ -69,6 +70,7 @@ trait HasCacheModel
         $output = static::singleListCached()?->where($attribute,$value)->first();
         if(!is_null($output)) return $output;
         if(is_null($value)) return $output;
+
         if(!$searching) return $output;
         $output = static::query()->where($attribute, $value)->with(static::getCacheWith())->first();
         if(is_null($output)) return null;
@@ -93,6 +95,7 @@ trait HasCacheModel
         $relationData = $this->getCachedRelations()[$key];
         $localKey = $relationData[0];
         $relatedKey = $relationData[1];
+
 
         /**@var Relation $relation */
         $relation = $this->$key();
