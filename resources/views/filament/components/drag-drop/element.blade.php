@@ -8,19 +8,26 @@
     /**@var Closure $getState*/
     /**@var Closure $getDragDropGroup*/
     /**@var Closure $getItemLabel*/
+    /**@var Closure $getItemGridStart*/
 
     $icon = $getItemIcon($key);
-    if(!is_null($icon)) $icon = Blade::render('<x-'.$icon . " style='width: 20px;' />");
+    if(!empty($icon)) $icon = Blade::render('<x-'.$icon . " style='width: 20px;' />");
 
     $name = $getItemLabel($key);
 
-    $label = new HtmlString(
+
+    if(empty($name) && empty($getItemIcon($key))) $label = null;
+    else $label = new HtmlString(
                 "<span draggable='true' class='flex' style=' cursor: grab;'>" .
                 (is_null($icon)? "" : $icon ."<span style='padding-left: 10px;'>" ).
                 $name .
                 (is_null($icon)? "" : "</span>" ).
                 "</span>"
             );
+
+    $gridColumn = $getItemGridStart($key);
+    $gridColumn = $gridColumn . ($gridColumn ?" /": "");
+
 @endphp
 
 
@@ -32,7 +39,7 @@
     style="
         touch-action: pan-y;
 
-        grid-column:  {{$getItemGridStart($key)?? ""}} / span {{$getItemGridSize($key)}} !important;
+        grid-column: {{$gridColumn}} span {{$getItemGridSize($key)}} !important;
      "
     x-init="setupDomElement($el)"
 >

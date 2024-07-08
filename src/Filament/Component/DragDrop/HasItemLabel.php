@@ -10,9 +10,9 @@ use Filament\Support\Enums\Alignment;
 
 trait HasItemLabel
 {
-    protected string|Closure $itemLabel;
+    protected string|Closure|null $itemLabel = "";
 
-    public function getItemLabel($itemKey): string|Closure
+    public function getItemLabel($itemKey): string|Closure|null
     {
         return $this->evaluate($this->itemLabel, $this->getItemInjection($itemKey));
     }

@@ -13,6 +13,7 @@ trait HasItemGrid
 
     protected int|Closure $gridSize = 1;
     protected int|Closure $itemGridSize = 1;
+    protected int|Closure $flattenGrid = 1;
     protected int|Closure|null $itemGridStart = null;
 
 
@@ -33,6 +34,11 @@ trait HasItemGrid
         $this->itemGridSize = $gridSize;
         return $this;
     }
+    public function flattenGrid(Closure|int $flattenGrid):static
+    {
+        $this->flattenGrid = $flattenGrid;
+        return $this;
+    }
 
     public function itemGridStart(Closure|int $gridSize):static
     {
@@ -51,6 +57,10 @@ trait HasItemGrid
         return $this->evaluate($this->itemGridStart, $this->getItemInjection($key));
     }
 
+    public function getFlattenGrid($key): int|null
+    {
+        return $this->evaluate($this->flattenGrid, $this->getItemInjection($key));
+    }
 
 
 
