@@ -3,7 +3,7 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor;
 
 use Barryvdh\Debugbar\Facades\Debugbar;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\DragAndDrop\DragDropComponent;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\DragDrop\DragDropComponent;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor\CustomFieldList\EditorCustomFieldList;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Filament\Forms\Components\Actions\Action;

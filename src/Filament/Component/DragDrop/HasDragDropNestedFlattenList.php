@@ -1,6 +1,6 @@
 <?php
 
-namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\DragAndDrop;
+namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\DragDrop;
 
 use Closure;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\FlattedNested\HasNestingInformation;
