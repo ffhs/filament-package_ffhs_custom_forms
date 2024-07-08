@@ -41,9 +41,11 @@ class EditCustomForm extends EditRecord
                     'subTest1'=> [
                         'sub1'=>[
                             'wtf1'=> 'sub1',
+                            'subTest1'=> [],
                         ],
                         'sub2'=>[
                             'wtf1'=> 'sub2',
+                            'subTest1'=> [],
                         ],
                     ]
                 ],
@@ -54,17 +56,21 @@ class EditCustomForm extends EditRecord
                     'subTest1'=> [],
                 ]
             ],
+
+
             'test2' => [
                 "element-test3" => [
                     "wtf3" => "test3",
                     "wtf4" => "test3",
                     'form_position' => 1,
                     'layout_end_position' => 2,
+                    'subTest1'=> [],
                 ],
                 "element-test4" => [
                     "wtf5" => "test3",
                     "wtf6" => "test3",
-                    'form_position' => 2
+                    'form_position' => 2,
+                    'subTest1'=> [],
                 ]
             ]
         ]);

@@ -27,8 +27,6 @@
                     stateKey: '{{$stateKey}}',
                     wire: $wire,
                     isLive: @js($isLive()),
-                    state: $wire.{{ $applyStateBindingModifiers("\$entangle('$statePath')" )}},
-                    stateBefore: $wire.{{ $applyStateBindingModifiers("\$entangle('$beforeState')" )}},
                     dragDropPosAttribute: '{{$getNestedFlattenListType()::getPositionAttribute()}}',
                     dragDropEndPosAttribute: '{{$getNestedFlattenListType()::getEndContainerPositionAttribute()}}',
                     orderAttribute: @js($getOrderAttribute()),

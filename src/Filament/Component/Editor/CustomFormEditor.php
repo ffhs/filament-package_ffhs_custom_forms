@@ -26,13 +26,13 @@ class CustomFormEditor extends Component {
         $this->label("");
         $this->columnSpanFull();
         $this->columns(3);
+        $this->afterStateUpdated(fn($state) => Debugbar::info($state));
 
 
         $this->schema([
 
              DragDropComponent::make("test1")
                  ->live()
-                 ->afterStateUpdated(fn($state) => Debugbar::info($state, "=====^^^test1^^^==="))
 
                  ->flatten()
                  ->columnSpanFull()
@@ -53,10 +53,10 @@ class CustomFormEditor extends Component {
 
 
                     DragDropComponent::make("subTest1")
-                        ->dragDropGroup("testGroup2")
+                        ->dragDropGroup("testGroup1")
+                        //->dragDropGroup("testGroup2")
                         ->live()
                         ->orderAttribute('pos')
-                        ->afterStateUpdated(fn($state) => Debugbar::info($state, "=====^^^test1SUB^^^==="))
                         ->schema([
                             TextInput::make("wtf1"),
                         ])
@@ -74,7 +74,6 @@ class CustomFormEditor extends Component {
                 ->flattenViewHidden(false)
                 ->itemIcons('bi-input-cursor-text')
                 ->live()
-                ->afterStateUpdated(fn($state) => Debugbar::info($state, "=====^^^test2^^^==="))
                 ->schema([
                    // TextInput::make("wtf1"),
                     //TextInput::make("wtf2"),

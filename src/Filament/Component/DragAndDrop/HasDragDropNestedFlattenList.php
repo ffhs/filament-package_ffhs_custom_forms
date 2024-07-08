@@ -5,6 +5,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\DragAndDrop;
 use Closure;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\FlattedNested\HasNestingInformation;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\FlattedNested\NestedFlattenList;
+use Ffhs\FilamentPackageFfhsCustomForms\Helping\FlattedNested\NestedListElement;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Actions;
@@ -27,7 +28,7 @@ trait HasDragDropNestedFlattenList //ToDo if not flatten order and stuff
     public function getNestedFlattenListType(): string
     {
         $type  = $this->evaluate($this->nestedFlattenListType);
-        if(is_null($type)) return HasNestingInformation::class;
+        if(is_null($type)) return NestedListElement::class;
         return $type;
     }
 

@@ -24,6 +24,21 @@ function handleNewField(target, draggingEl, state, $wire, staticPath) {
 }
 }*/
 
+function countFlattenChildren(container, data, selector) {
+    let count =0
+    container.querySelectorAll(selector).forEach(element => {
+
+        let parentElement = getParent(element)
+        let parentData = Alpine.mergeProxies(parentElement._x_dataStack)
+        if(parentData.statePath !== data.statePath) return
+
+        count++
+    })
+
+    return count;
+}
+
+
 function updatePositionsFlatten(state, container, group, data) {
     let currentPos = 0;
     let selector = '[ffhs_drag\\:element][ffhs_drag\\:group="'+ group +'"]';
@@ -40,7 +55,7 @@ function updatePositionsFlatten(state, container, group, data) {
 
         currentPos++
 
-        let contains = element.querySelectorAll(selector).length
+        let contains = countFlattenChildren(element, data, selector);
         let key = element.getAttribute('ffhs_drag:element')
 
         if (state[key] === undefined) state[key] = {}
@@ -63,6 +78,7 @@ function updatePositionsOrder(state, container, group, data) {
         let parentElement = getParent(element)
         if(parentContainer !== parentElement) return
 
+
         let key = element.getAttribute('ffhs_drag:element')
         if (state[key] === undefined) state[key] = {}
         state[key][orderAttribute] = currentPos
@@ -71,7 +87,6 @@ function updatePositionsOrder(state, container, group, data) {
 }
 
 function updatePositions(state, container, group, data) {
-    console.log(state);
     if(data.flatten) updatePositionsFlatten(state, container, group, data)
     else if(data.orderAttribute !== null) updatePositionsOrder(state, container, group, data)
 }
@@ -96,6 +111,7 @@ function moveElementToOnOtherElement(target, toSet) {
 }
 
 function moveField(target, dragElement) {
+
     let targetParent = getParent(target)
     let sourceParent= getParent(dragElement)
 
@@ -108,8 +124,14 @@ function moveField(target, dragElement) {
     let sourceData = Alpine.mergeProxies(sourceParent._x_dataStack)
 
 
-    let targetState = targetData.state
-    let sourceState = sourceData.state
+    let targetState = targetData.wire.get(targetData.statePath, '') //targetData.state
+    let sourceState = sourceData.wire.get(sourceData.statePath, '') //sourceData.state
+
+    //Fixing JavaScript bullish
+    //if the object is empty it get back an proxy array back that fix this shit.
+    if(Array.isArray(targetState)) targetState = {}
+    if(Array.isArray(sourceState)) sourceState = {}
+
 
     moveElementToOnOtherElement(target, dragElement);
 
@@ -121,17 +143,18 @@ function moveField(target, dragElement) {
         delete sourceState[dragKey];
 
         updatePositions(sourceState, sourceParent, group, sourceData)
+        sourceData.wire.set(sourceData.statePath, sourceState)
+        console.log(sourceState)
     }
 
-
     updatePositions(targetState, targetParent, group, targetData)
+
+    targetData.wire.set(targetData.statePath, targetState)
 
     if(!sameContainer) targetData.wire.$commit()
     else updateLiveState(targetData);
 
 }
-
-
 
 function handleDrop(target) {
 
@@ -146,15 +169,6 @@ function handleDrop(target) {
 
     // commitState($wire)
 }
-
-
-/*
-function commitState($wire) {
-    let canonical = JSON.stringify($wire.__instance.canonical);
-    let ephemeral = JSON.stringify($wire.__instance.ephemeral);
-
-    if (canonical  !== ephemeral )  $wire.$commit();
-}*/
 
 
 function getParent(target) {

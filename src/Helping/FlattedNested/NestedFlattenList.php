@@ -173,7 +173,7 @@ class NestedFlattenList
 
         $first = $this->data->first();
 
-        if(is_null($first)) return NestingObject::class;
+        if(is_null($first)) return NestedListElement::class;
 
         if(!($first instanceof NestingObject))
             throw new Exception("the objects must been instance of NestingObject");
