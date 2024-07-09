@@ -20,12 +20,12 @@ abstract class FormEditorFieldAdder extends Group {
     public function getChildComponents(): array
     {
         return array_merge([
-            Placeholder::make($this->getTitle())
+            Placeholder::make($this->getLabel())
         ], parent::getChildComponents());
     }
 
 
-    protected function addNewField($component, array $arguments, array $fieldData): void {
+    public static function addNewField($component, array $arguments, array $fieldData): void {
         $pos = $arguments['position'];
 
         $type = CustomFieldUtils::getFieldTypeFromRawDate($fieldData);
@@ -48,5 +48,4 @@ abstract class FormEditorFieldAdder extends Group {
         $component->getSetCallback()($path, $state, true);
     }
 
-    protected abstract function getTitle():string;
 }

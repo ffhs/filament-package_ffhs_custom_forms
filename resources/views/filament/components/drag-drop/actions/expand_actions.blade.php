@@ -6,9 +6,9 @@
 
 
 @endphp
-<x-dynamic-component :component="$getFieldWrapperView()">
+<x-dynamic-component :component="$getFieldWrapperView()" style="margin-top: -35px">
 
-    <legend class="-ms-2 px-2 text-sm font-medium leading-6 text-gray-950 dark:text-white">
+    <legend class="-ms-2 px-2 text-sm font-medium leading-6 text-gray-950 dark:text-white" style="padding-top: 20px; padding-bottom: -30px">
         {{$getLabel()}}
     </legend>
 
@@ -53,7 +53,7 @@
                     draggable="true"
                     ffhs_drag:drag
                     ffhs_drag:group="{{$getDragDropGroup()}}"
-                    ffhs_drag:action="mountFormComponentAction('{{$getActionsPath()}}.{{$id}}Action','{{$id}}')"
+                    ffhs_drag:action="mountFormComponentAction('{{$getActionsPath()}}.{{$getName()}}-{{$id}}Action','{{$getName()}}-{{$id}}')"
                     x-init="setupDraggable($el)"
                 @endif
 
@@ -83,6 +83,5 @@
 
         @endforeach
     </div>
-
 
 </x-dynamic-component>

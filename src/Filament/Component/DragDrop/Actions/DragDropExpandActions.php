@@ -24,6 +24,7 @@ class DragDropExpandActions extends Component implements CanDisableOptions
     protected Closure $action;
     protected Closure|array $color;
     protected string $view = 'filament-package_ffhs_custom_forms::filament.components.drag-drop.actions.expand_actions';
+    protected string|null $name = null;
 
     public static function make():static
     {
@@ -36,6 +37,7 @@ class DragDropExpandActions extends Component implements CanDisableOptions
         parent::setUp();
         $this->color(Color::Amber);
         $this->childComponents(fn()=> [$this->getRawActions()]);
+
     }
 
 
@@ -49,10 +51,13 @@ class DragDropExpandActions extends Component implements CanDisableOptions
     public function getRawActions(): Actions
     {
         $actions  = [];
+
         foreach ($this->getOptions() as $option => $label) {
-            $actions[] = $this->evaluate($this->action, ['option' => $option])
-                ->name($option)
+            $action = $this->evaluate($this->action, ['option' => $option])
                 ->extraAttributes(['option' => $option]);
+            /* @var Action $action*/
+            if(is_null($this->name)) $this->name = $action->getName() ;
+            $actions[]= $action->name($this->name . "-" . $option);
         }
 
         return Actions::make($actions);
@@ -72,6 +77,11 @@ class DragDropExpandActions extends Component implements CanDisableOptions
     public function getColor():array
     {
         return $this->evaluate($this->color);
+    }
+
+    public function getName(): string
+    {
+        return $this->name;
     }
 
 

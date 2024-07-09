@@ -2,11 +2,8 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\DefaultEditorComponents\FieldAdder;
 
-use Barryvdh\Debugbar\Facades\Debugbar;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\DragDrop\Actions\DragDropExpandActions;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\AdderComponents\FormEditorFieldAdder;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\AdderComponents\FormEditorFieldAdderOld;
-use Ffhs\FilamentPackageFfhsCustomForms\Helping\Caching\CachedModel;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralFieldForm;
@@ -18,21 +15,17 @@ final class GeneralFieldAdder extends FormEditorFieldAdder
 {
 
 
-    protected function getTitle(): string
-    {
-       return __("filament-package_ffhs_custom_forms::custom_forms.form.compiler.general_fields");
-    }
-
     protected function setUp(): void
     {
+        $this->label(__("filament-package_ffhs_custom_forms::custom_forms.form.compiler.general_fields"));
         $this->schema([
             DragDropExpandActions::make()
                 ->dragDropGroup("custom_fields")
                 ->options($this->getGeneralFieldSelectOptions(...))
-               ->disableOptionWhen($this->isGeneralDisabled(...))
+                ->disableOptionWhen($this->isGeneralDisabled(...))
                 ->color(Color::Blue)
                 ->action(fn($option)=>
-                     Action::make()->action(fn($component,$arguments) => $this->createField($arguments, $component, $option))
+                     Action::make("addGeneral")->action(fn($component,$arguments) => $this->createField($arguments, $component, $option))
                 )
         ]);
     }
@@ -47,7 +40,7 @@ final class GeneralFieldAdder extends FormEditorFieldAdder
             "is_active" => true,
         ];
 
-        $this->addNewField($component, $arguments, $field);
+        $this::addNewField($component, $arguments, $field);
     }
 
     public function getGeneralFieldSelectOptions() {

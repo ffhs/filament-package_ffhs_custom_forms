@@ -61,15 +61,10 @@ private static function getCustomFieldAddActionLabel(CustomFieldType $type):Html
                             "is_active" => true,
                         ];
 
-                        $this->addNewField($component, $arguments, $field);
+                        $this::addNewField($component, $arguments, $field);
                     }),
             ])->dragDropGroup('custom_fields');
         }
         return [Group::make($actions)->columns()];
-    }
-
-    protected function getTitle(): string
-    {
-       return __("filament-package_ffhs_custom_forms::custom_forms.form.compiler.custom_fields");
     }
 }

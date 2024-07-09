@@ -1,39 +1,46 @@
 <?php
 
-namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\EditCreateFieldManager;
+namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\DefaultEditorComponents\FieldAdder;
 
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\AdderComponents\FormEditorFieldAdder;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
+use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Get;
 
-final class  EditCreateTemplateFieldAction extends EditCreateFieldAction
+class  AddTemplateFieldAction extends Action
 {
+
+    protected $option;
+
     protected function setUp(): void {
         parent::setUp();
         $this->closeModalByClickingAway(false)
             ->label(fn() => __("filament-package_ffhs_custom_forms::custom_forms.functions.add"))
-            ->requiresConfirmation(fn($arguments , $state) => $this->hasExistingFields($state("custom_fields"), $arguments["value"]))
+            ->requiresConfirmation(fn($arguments , $state) => $this->hasExistingFields($state("custom_fields"), $this->getOption()))
             ->modalHeading(function ($state, $arguments){
-                if(!$this->hasExistingFields($state, $arguments["value"])) return "";
+                if(!$this->hasExistingFields($state, $this->getOption())) return "";
                 return __("filament-package_ffhs_custom_forms::custom_forms.form.compiler.template_has_existing_fields");
             })
             ->modalDescription(function ($arguments, $state){
-                if(!$this->hasExistingFields($state, $arguments["value"])) return "";
+                if(!$this->hasExistingFields($state, $this->getOption())) return "";
                 return __("filament-package_ffhs_custom_forms::custom_forms.form.compiler.template_has_existing_fields_description");
             });
+        $this->action($this->createField(...));
     }
 
 
     public function createField(array $arguments, $set, $component, $get){
-        $templateId = $arguments["value"];
+        $templateId = $this->getOption();
 
         $field = [
-            "template_id" =>  $arguments["value"],
+            "template_id" =>  $templateId,
             "is_active" => true,
         ];
-        $this->addNewField($component, $arguments, $field);
+        FormEditorFieldAdder::addNewField($component, $arguments, $field);
 
 
-        $customFields = $get($component->getStatePath(false));
+
+        $customFields = $get($component->getStatePath(true) . '.custom_fields', true);
 
         $identifiers = $this->getOverlappedIdentifier($customFields,$templateId);
         if(sizeof($identifiers) == 0) return;
@@ -60,6 +67,10 @@ final class  EditCreateTemplateFieldAction extends EditCreateFieldAction
     }
 
     private function deletingExistingFields(Get $get, $set, array $overlappedIdentifier, string $prefix= ""): void {
+
+
+        //TODO MAKE FOR NEW SYSTEM
+
         $toSet = [];
         foreach ($get($prefix. "custom_fields") as $key => $customField) {
             if(!empty($customField["custom_fields"])) {
@@ -75,5 +86,21 @@ final class  EditCreateTemplateFieldAction extends EditCreateFieldAction
         }
         $set($prefix. "custom_fields", $toSet);
     }
+
+
+    public function getOption()
+    {
+        return $this->evaluate($this->option);
+    }
+
+
+    public function option($option): static
+    {
+        $this->option = $option;
+        return $this;
+    }
+
+
+
 
 }
