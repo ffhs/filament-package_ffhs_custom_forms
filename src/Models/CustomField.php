@@ -2,10 +2,11 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Models;
 
+use Barryvdh\Debugbar\Facades\Debugbar;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\FlattedNested\NestingObject;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\Identifiers\HasIdentifierParameter;
+use Ffhs\FilamentPackageFfhsCustomForms\Helping\Identifiers\Identifier;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -31,7 +32,7 @@ use Illuminate\Support\Collection;
  * @property CustomForm|null $template
  * @property GeneralField|null $generalField
 */
-class CustomField extends ACustomField implements NestingObject
+class CustomField extends ACustomField implements NestingObject, Identifier
 {
     use HasFactory;
     use HasIdentifierParameter;
@@ -69,7 +70,9 @@ class CustomField extends ACustomField implements NestingObject
     ];
 
     public function __get($key) {
-        if($key === "general_field_id") return Model::__get($key);
+        Debugbar::info($key);
+
+        if($key === "general_field_id") return parent::__get($key);
 
         if(!$this->isGeneralField()) {
             if('overwritten_options' === $key) return [];

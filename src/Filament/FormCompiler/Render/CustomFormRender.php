@@ -17,7 +17,7 @@ class CustomFormRender
 {
 
     public static function generateFormSchema(CustomForm $form, string $viewMode):array{
-        $customFields = $form->cachedFields();
+        $customFields = $form->getOwnedFields();
 
         $render= self::getFormRender($viewMode,$form);
         $renderOutput = self::render(0,$customFields,$render,$viewMode);
@@ -30,7 +30,7 @@ class CustomFormRender
 
     public static function generateInfoListSchema(CustomFormAnswer $formAnswer, string $viewMode):array {
         $form = CustomForm::cached($formAnswer->custom_form_id);
-        $customFields = $form->cachedFields();
+        $customFields = $form->getOwnedFields();
         $fieldAnswers = $formAnswer->cachedAnswers();
 
         $render= self::getInfolistRender($viewMode,$form,$formAnswer, $fieldAnswers);
@@ -65,7 +65,7 @@ class CustomFormRender
 
             //Render
             $component = $customField->getType()->getFormComponent($customField, $form, $viewMode, $parameter);
-            if($component instanceof Field) $component->required($customField->required);
+         //   if($component instanceof Field) $component->required($customField->required); //ToDo
            // $component->live(true);
 
             return $component;

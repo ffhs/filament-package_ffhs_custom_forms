@@ -17,7 +17,9 @@ class FieldMapper
 
     public static function getIdentifyKey(CustomField|CustomFieldAnswer  $record) :String{
         if($record instanceof  CustomFieldAnswer) $record = $record->customField;
-        return  $record->identifier;
+        //if(!$record->identifier) dd($record, $record->identifier);
+       // dd($record->__get('identifier'), $record->identifier); //ToDo WTF
+        return  $record->__get('identifier');
     }
 
     public static function getLabelName(CustomField|CustomFieldAnswer  $record) :String{
