@@ -87,6 +87,7 @@ function moveElementToOnOtherElement(target, toSet) {
 
 function moveField(target, dragElement) {
 
+
     let targetParent = getParent(target)
     let sourceParent= getParent(dragElement)
 
@@ -104,8 +105,8 @@ function moveField(target, dragElement) {
 
     //Fixing JavaScript bullish
     //if the object is empty it get back an proxy array back that fix this shit.
-    if(Array.isArray(targetState)) targetState = {}
-    if(Array.isArray(sourceState)) sourceState = {}
+    if(!targetState || Array.isArray(targetState)) targetState = {}
+    if(!sourceState || Array.isArray(sourceState)) sourceState = {}
 
 
     moveElementToOnOtherElement(target, dragElement);
