@@ -2,6 +2,7 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor;
 
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\RuleEditor\RuleEditor;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Fieldset;
 
@@ -24,6 +25,8 @@ class CustomFormEditor extends Component {
         $this->columns(6);
 
         $this->schema([
+            RuleEditor::make()
+                ->columnSpanFull(),
             Fieldset::make()
                 ->columnStart(1)
                 ->columnSpan(1)

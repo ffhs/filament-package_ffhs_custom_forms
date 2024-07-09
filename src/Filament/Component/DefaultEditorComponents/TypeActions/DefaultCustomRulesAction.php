@@ -4,6 +4,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\DefaultEditorCo
 
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\TypeActions\OptionLikeAction;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\Components\EditFieldRuleModal;
+use Filament\Support\Enums\MaxWidth;
 
 class DefaultCustomRulesAction extends OptionLikeAction
 {
@@ -12,6 +13,7 @@ class DefaultCustomRulesAction extends OptionLikeAction
         parent::setUp();
 
         $this->icon('carbon-rule');
+        $this->modalWidth(MaxWidth::ScreenTwoExtraLarge);
         $this->form([
             EditFieldRuleModal::make()
         ]);

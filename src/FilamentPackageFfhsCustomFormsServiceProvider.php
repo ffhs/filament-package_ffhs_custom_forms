@@ -33,6 +33,7 @@ class FilamentPackageFfhsCustomFormsServiceProvider extends PackageServiceProvid
                 'create_option_general_field_table',
                 'create_option_custom_field_table',
                 'create_field_rules_table',
+                'create_form_rules_table',
             ])
             ->hasConfigFile('ffhs_custom_forms')
             ->hasTranslations()

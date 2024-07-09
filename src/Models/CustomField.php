@@ -23,7 +23,7 @@ use Illuminate\Support\Collection;
  * @property array $overwritten_options
  *
  * @property Collection $customOptions
- * @property Collection $fieldRules
+ * property Collection $fieldRules
  * @property Collection $answers
  *
  * @property string|null $identifier
@@ -65,7 +65,7 @@ class CustomField extends ACustomField implements NestingObject, Identifier
 
 
     protected array $cachedManyRelations = [
-        'fieldRules',
+        //'fieldRules',
         'customOptions',
     ];
 
@@ -131,9 +131,9 @@ class CustomField extends ACustomField implements NestingObject, Identifier
         return !is_null($this->general_field_id);
     }
 
-    public function fieldRules():HasMany {
+    /*public function fieldRules():HasMany {
         return $this->hasMany(FieldRule::class)->orderBy('execution_order');
-    }
+    }*/
 
     public function isInheritFromGeneralField():bool{
         return !is_null($this->general_field_id);

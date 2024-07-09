@@ -17,7 +17,7 @@ trait HasItemLabel
         return $this->evaluate($this->itemLabel, $this->getItemInjection($itemKey));
     }
 
-    public function itemLabel(array|Closure $itemLabel): static
+    public function itemLabel(null|string|Closure $itemLabel): static
     {
         $this->itemLabel = $itemLabel;
         return $this;

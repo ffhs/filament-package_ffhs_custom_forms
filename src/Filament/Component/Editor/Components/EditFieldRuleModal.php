@@ -6,6 +6,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldUtils;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRulesOld\FieldRuleAnchorAbstractType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRulesOld\FieldRuleAbstractType;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\RuleEditor\RuleEditor;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
@@ -16,20 +17,22 @@ use Filament\Support\Enums\MaxWidth;
 
 class EditFieldRuleModal extends Group
 {
-
     protected function setUp(): void {
 
         parent::setUp();
 
         $this
-            ->schema(function($state){
+            /*->schema(function($state){
                 $type = CustomFieldUtils::getFieldTypeFromRawDate($state);
 
                 return [
                     $this->getRuleRepeater($type),
                     $this->getRuleAddAction($type),
                 ];
-            });
+            });*/
+        ->schema([
+                    RuleEditor::make()
+                ]);
     }
 
 

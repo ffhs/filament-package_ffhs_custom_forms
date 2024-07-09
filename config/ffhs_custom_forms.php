@@ -29,13 +29,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\NestedLayout
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\NestedLayoutType\Types\WizardCustomNestType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\NestedLayoutType\Types\WizardStepCustomEggType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\TemplatesType\TemplateFieldType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRulesOld\Anchors\IsInfolistViewRuleAnchor;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRulesOld\Anchors\ValueEqualsRuleAnchor;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRulesOld\Rules\ChangeOptionRuleType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRulesOld\Rules\DisabledRuleType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRulesOld\Rules\HiddenRuleType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRulesOld\Rules\RequiredRuleType;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\DefaultEditorComponents\FieldAdder\CustomFieldAdderOldOld;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Trigger\IsInfolistTrigger;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\DefaultEditorComponents\FieldAdder\CustomFieldTypeAdder;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\DefaultEditorComponents\FieldAdder\GeneralFieldAdder;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\DefaultEditorComponents\FieldAdder\TemplateFieldAdder;
@@ -46,17 +40,20 @@ return [
     'save_stopper_time'=> 1,
     'default_column_count' => 4,
 
-    "field_rule_anchor_types"=>[
-        ValueEqualsRuleAnchor::class,
-        IsInfolistViewRuleAnchor::class,
+    "rule"=>[
+        "trigger" =>[
+        //    ValueEqualsRuleAnchor::class,
+            IsInfolistTrigger::class,
+        ],
+        "events"=>[
+            //   RequiredRuleType::class,
+            //   HiddenRuleType::class,
+            //  DisabledRuleType::class,
+            //  ChangeOptionRuleType::class,
+        ],
     ],
 
-    "field_rule_types"=>[
-        RequiredRuleType::class,
-        HiddenRuleType::class,
-        DisabledRuleType::class,
-        ChangeOptionRuleType::class,
-    ],
+
 
     "forms"=>[
 

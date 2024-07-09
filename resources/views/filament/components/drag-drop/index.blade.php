@@ -41,7 +41,10 @@
 
         <x-filament::fieldset
             class="grid grid-cols-[--cols-default] lg:grid-cols-[--cols-lg] fi-fo-component-ctn gap-6"
-            style="--cols-default: repeat(2, minmax(0, 1fr)); --cols-lg: repeat({{$getGridSize()}}, minmax(0, 1fr));"
+            style="
+                --cols-default: repeat(2, minmax(0, 1fr)); --cols-lg: repeat({{$getGridSize()}}, minmax(0, 1fr));
+                  background: rgba(200, 200, 200, {{$getDeepColor() * 0.1}})
+            "
 
             ffhs_drag:container
             ffhs_drag:group="{{$getDragDropGroup()}}"

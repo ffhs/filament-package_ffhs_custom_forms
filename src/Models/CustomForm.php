@@ -7,6 +7,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\Domain\HasFormIdentifier;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\Caching\CachedModel;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\Caching\HasCacheModel;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\FlattedNested\NestedFlattenList;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\Rule\Rule;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -46,6 +47,7 @@ class CustomForm extends Model implements CachedModel
         'customFields',
         'ownedFields',
         'generalFields',
+        'rules',
     ];
 
     public array $translatable = [
@@ -62,6 +64,12 @@ class CustomForm extends Model implements CachedModel
    /* public function ownedFields(): HasMany {
         return $this->hasMany(CustomField::class)->orderBy("form_position");
     }*/
+
+
+    public function rules(): BelongsToMany
+    {
+        return $this->belongsToMany(Rule::class, (new FormRule())->getTable());
+    }
 
 
     public function  getCustomFieldsAsNestedList() : NestedFlattenList{
@@ -145,11 +153,11 @@ class CustomForm extends Model implements CachedModel
                 CustomField::addToCachedList($customFields);
 
                 //Cache FieldRules
-                $fieldRules = FieldRule::query()->whereIn("custom_field_id", $customFields->pluck("id"))->get();
+            /*    $fieldRules = FieldRule::query()->whereIn("custom_field_id", $customFields->pluck("id"))->get(); ToDo new form Rules
                 $customFields->each(function(CustomField $customField) use ($fieldRules) {
                     $rules =  $fieldRules->where("custom_field_id", $customField->id);
                     $customField->setValueInManyRelationCache('fieldRules',$rules);
-                });
+                });*/
 
                 //Cache Templates and Templates Fields
                 $templateIds = $customFields->whereNotNull('template_id')->pluck('template_id')->toArray();

@@ -1,0 +1,44 @@
+<?php
+
+
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\Rule\Rule;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\Rule\RuleEvent;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\Rule\RuleEventTarget;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\Rule\RuleTrigger;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\Rule\RuleTriggerDependence;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class () extends Migration {
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+
+        Schema::create('form_rules', function (Blueprint $table) {
+            $table->id();
+            $table->integer('order');
+            $table->foreignIdFor(CustomForm::class)->constrained();
+            $table->foreignIdFor(Rule::class)->constrained();
+
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migration
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::dropIfExists('custom_field_variation');
+    }
+};
+

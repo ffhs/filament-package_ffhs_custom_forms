@@ -1,9 +1,9 @@
 <?php
 
-namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRule\Trigger;
+namespace Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Trigger;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRule\FieldRuleTriggerType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRule\Translations\HasRuleTriggerPluginTranslate;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Translations\HasRuleTriggerPluginTranslate;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\FieldRule;
 use Filament\Forms\Components\Component;
 use Filament\Infolists\Components\Component as InfoComponent;

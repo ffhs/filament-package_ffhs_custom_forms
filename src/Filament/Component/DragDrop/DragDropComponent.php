@@ -21,6 +21,19 @@ class DragDropComponent extends Field {
 
 
     protected string $view = 'filament-package_ffhs_custom_forms::filament.components.drag-drop.index';
+    protected int $deepColor = 0;
+
+
+    public function deepColor(int $deepColor):static
+    {
+        $this->deepColor = $deepColor;
+        return $this;
+    }
+
+    public function getDeepColor():int
+    {
+        return $this->evaluate($this->deepColor) ?? 0;
+    }
 
 
 
