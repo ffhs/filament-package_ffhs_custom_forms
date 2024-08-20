@@ -41,7 +41,7 @@ class FormBuilderUtil
             $field->save();
 
             $field->customOptions()->createMany($customOptions);
-            $field->fieldRules()->createMany($rule);
+           # $field->fieldRules()->createMany($rule); TODO FIX
         }
 
         return $customForm;

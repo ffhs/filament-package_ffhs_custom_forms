@@ -27,6 +27,7 @@ use Spatie\Translatable\HasTranslations;
  * @property bool $is_template
  * @property Collection $customFieldInLayout
  * @property Collection customFieldsWithTemplateFields
+ * @property Collection rules
  */
 class CustomForm extends Model implements CachedModel
 {

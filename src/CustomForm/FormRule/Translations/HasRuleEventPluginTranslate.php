@@ -1,6 +1,6 @@
 <?php
 
-namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRule\Translations;
+namespace Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Translations;
 
 trait HasRuleEventPluginTranslate
 {

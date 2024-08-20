@@ -16,12 +16,6 @@ class IsInfolistTrigger extends FieldRuleTriggerType
         return "infolist_view";
     }
 
-    public function getCreateAnchorData(): array {
-        return [];
-    }
-
-
-
     public function triggerOnForm(array $arguments, Component $component, FieldRule $rule): bool
     {
         return false;
@@ -32,11 +26,8 @@ class IsInfolistTrigger extends FieldRuleTriggerType
         return true;
     }
 
-
-
-    public function ruleEditSchema(): array
+    public function getFormSchema(): array
     {
         return [];
     }
-
 }

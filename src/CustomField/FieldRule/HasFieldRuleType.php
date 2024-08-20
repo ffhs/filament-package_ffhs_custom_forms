@@ -8,10 +8,6 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
 
 trait HasFieldRuleType{
 
-
-
-    public abstract function ruleEditSchema(): array;
-
     protected function getFormModel(array $arguments): CustomForm
     {
         $record = $arguments['form'];

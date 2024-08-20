@@ -2,6 +2,7 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor;
 
+use Barryvdh\Debugbar\Facades\Debugbar;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\RuleEditor\RuleEditor;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Fieldset;
@@ -26,6 +27,10 @@ class CustomFormEditor extends Component {
 
         $this->schema([
             RuleEditor::make()
+                ->targets(function ($get,$record){
+                    Debugbar::info($get("custom_fields"));
+                    return collect($get("custom_fields"))->pluck("name.". $record->getLocale(), "identifier"); //ToDo Improve
+                })
                 ->columnSpanFull(),
             Fieldset::make()
                 ->columnStart(1)

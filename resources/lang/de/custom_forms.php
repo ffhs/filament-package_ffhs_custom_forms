@@ -70,7 +70,7 @@ return [
         'rules' => [
             'event' => [
                 "is_disabled_rule" => "Feld deaktivieren",
-                "is_hidden_rule" => "Feld verstecken",
+                "hidden_event" => "Feld verstecken",
                 "is_required_rule" => "Feld benötigen",
                 'change_options_rule' => 'Feld Optionen ändern'
             ],

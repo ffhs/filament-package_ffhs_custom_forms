@@ -39,7 +39,6 @@ class FieldRule extends Model implements CachedModel, Rule
     ];
 
     protected $fillable = [
-        'custom_field_id',
         'execution_order',
         'event_data',
         'trigger_data',

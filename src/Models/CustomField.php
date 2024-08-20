@@ -70,7 +70,6 @@ class CustomField extends ACustomField implements NestingObject, Identifier
     ];
 
     public function __get($key) {
-        Debugbar::info($key);
 
         if($key === "general_field_id") return parent::__get($key);
 

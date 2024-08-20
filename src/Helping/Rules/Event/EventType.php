@@ -10,4 +10,9 @@ interface EventType extends Type
     public function handle(bool $triggered, array $arguments, mixed $target, Rule $rule): mixed;
 
     public function getDisplayName(): string;
+
+    public function getFormSchema(): array;
+
+
+
 }
