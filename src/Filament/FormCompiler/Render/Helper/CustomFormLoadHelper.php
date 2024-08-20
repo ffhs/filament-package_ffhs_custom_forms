@@ -5,7 +5,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Render\Helpe
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\FieldRule;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\Rule\Rule;
 
 class CustomFormLoadHelper {
 
@@ -23,8 +23,8 @@ class CustomFormLoadHelper {
                 ->prepareLoadFieldData($fieldAnswer->answer);
 
             $fieldRules  = $customField->fieldRules;
-            foreach ($fieldRules as $rule){
-                /**@var FieldRule $rule */
+            foreach ($fieldRules as $rule){ //ToDo repair
+                /**@var Rule $rule */
                 $fieldData = $rule->getRuleType()->mutateLoadAnswerData($fieldData,$rule, $fieldAnswer);
             }
 

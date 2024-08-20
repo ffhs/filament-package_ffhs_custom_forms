@@ -4,6 +4,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Models\Rule;
 
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\Caching\CachedModel;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\Caching\HasCacheModel;
+use Ffhs\FilamentPackageFfhsCustomForms\Helping\Rules\Trigger\TriggerType;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -40,6 +41,11 @@ class RuleTrigger extends Model implements CachedModel
     public function rule(): BelongsTo
     {
         return $this->belongsTo(Rule::class);
+    }
+
+    public function getType(): TriggerType
+    {
+        return collect(config("ffhs_custom_forms.rule.trigger"))->firstWhere(fn ($type) =>$type::identifier() == $this->type)::make();
     }
 
 }

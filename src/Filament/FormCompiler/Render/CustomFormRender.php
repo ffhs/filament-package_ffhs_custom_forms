@@ -8,8 +8,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\FieldRule;
-use Filament\Forms\Components\Field;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\Rule\Rule;
 use Filament\Forms\Components\Group;
 use Illuminate\Support\Collection;
 
@@ -81,7 +80,7 @@ class CustomFormRender
         $customForm = $customFields->first()->custom_form;
 
         //Run Rules after rendered
-        $renderOutput[2]->each(function(FieldRule $rule) use ($customForm, &$components) {
+        $renderOutput[2]->each(function(Rule $rule) use ($customForm, &$components) {
             $components = $rule->handle(["action" => "after_all_rendered", "customForm" => $customForm], $components);
         });
         return $renderOutput;
@@ -136,12 +135,12 @@ class CustomFormRender
             $rules = $customField->customForm->rules;
 
             //Rule before render
-            $rules->each(function(FieldRule $rule) use (&$customField) {
+            $rules->each(function(Rule $rule) use (&$customField) {
                 $customField = $rule->handle(["action" => "before_render",  "customField" => $customField], $customField);
             });
 
             //Parameter mutation
-            $rules->each(function(FieldRule $rule) use ($customField, &$parameters) {
+            $rules->each(function(Rule $rule) use ($customField, &$parameters) {
                 $parameters = $rule->handle(["action" => "mutate_parameters", "customField" => $customField], $parameters);
             });
 
@@ -149,7 +148,7 @@ class CustomFormRender
             $renderedComponent = $render($customField, $parameters);
 
             //Rule after Render
-            $rules->each(function(FieldRule $rule) use ($customField, &$renderedComponent) {
+            $rules->each(function(Rule $rule) use ($customField, &$renderedComponent) {
                 $renderedComponent = $rule->handle(["action" => "after_render", "customField" => $customField], $renderedComponent);
             });
             $customFormSchema[] = $renderedComponent;

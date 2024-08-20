@@ -1,6 +1,6 @@
 <?php
 
-namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRulesOld\Anchors;
+namespace Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\old\Anchors;
 
 use Closure;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomOption\CustomOptionType;

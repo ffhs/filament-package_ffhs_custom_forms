@@ -5,7 +5,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Render\Helpe
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\FieldRule;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\Rule\Rule;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Form;
 
@@ -65,7 +65,7 @@ class CustomFormSaveHelper {
 
             $fieldRules = $customField->fieldRules;
             foreach ($fieldRules as $rule) {
-                /**@var FieldRule $rule */
+                /**@var Rule $rule */
                 $fieldAnswererData = $rule->getRuleType()->mutateSaveAnswerData($fieldAnswererData, $rule,
                     $customFieldAnswer);
             }
@@ -73,7 +73,7 @@ class CustomFormSaveHelper {
             $customFieldAnswer->answer = $fieldAnswererData;
 
             foreach ($fieldRules as $rule) {
-                /**@var FieldRule $rule */
+                /**@var Rule $rule */
                 $rule->getRuleType()->afterAnswerSave($rule, $customFieldAnswer);
             }
 

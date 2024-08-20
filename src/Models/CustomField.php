@@ -78,6 +78,7 @@ class CustomField extends ACustomField implements NestingObject, Identifier
             return parent::__get($key);
         }
 
+
         //PERFORMANCE!!!!
         $genFieldF = function(): GeneralField {
             if(!$this->exists) return parent::__get("generalField");

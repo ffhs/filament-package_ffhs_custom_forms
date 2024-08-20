@@ -1,16 +1,17 @@
 <?php
 
-namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRule;
+namespace Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Events;
 
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\Rules\Event\EventType;
-use Ffhs\FilamentPackageFfhsCustomForms\Helping\Rules\Rule;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\Types\IsType;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\Rule\Rule;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\Rule\RuleEvent;
 use Filament\Forms\Components\Component;
 use Illuminate\Support\Collection;
 
 
-abstract class FieldRuleEventType implements EventType
+abstract class FormRuleEventType implements EventType
 {
      use IsType;
 
@@ -20,7 +21,7 @@ abstract class FieldRuleEventType implements EventType
         return "rules.events";
      }
 
-    public function handle(bool $triggered, array $arguments, mixed $target, Rule $rule): mixed
+    public function handle(bool $triggered, array $arguments, mixed $target, RuleEvent $rule): mixed
     {
         switch ($arguments["action"]) {
             case "before_render": return $this->handleBeforeRender($triggered, $arguments, $target, $rule);
@@ -42,27 +43,27 @@ abstract class FieldRuleEventType implements EventType
         return $arguments["customField"];
     }
 
-    public function handleBeforeRender(bool $triggered, array $arguments, CustomField $target, Rule $rule): CustomField
+    public function handleBeforeRender(bool $triggered, array $arguments, CustomField $target, RuleEvent $rule): CustomField
     {
         return $target;
     }
-    public function handleParameterMutation(bool $triggered, array $arguments, array $parameters, Rule $rule): array
+    public function handleParameterMutation(bool $triggered, array $arguments, array $parameters, RuleEvent $rule): array
     {
         return $parameters;
     }
 
 
-    public function handleAfterRenderForm(bool $triggered, array $arguments, Component $component, Rule $rule): Component
+    public function handleAfterRenderForm(bool $triggered, array $arguments, Component $component, RuleEvent $rule): Component
     {
         return $component;
     }
 
-    public function handleAfterRenderInfolist(bool $triggered, array $arguments, \Filament\Infolists\Components\Component $component, Rule $rule): \Filament\Infolists\Components\Component
+    public function handleAfterRenderInfolist(bool $triggered, array $arguments, \Filament\Infolists\Components\Component $component, RuleEvent $rule): \Filament\Infolists\Components\Component
     {
         return $component;
     }
 
-    private function handleAfterAllRendered(bool $triggered, array $arguments, Collection $target, Rule $rule):Collection
+    private function handleAfterAllRendered(bool $triggered, array $arguments, Collection $target, RuleEvent $rule):Collection
     {
         return $target;
     }

@@ -2,14 +2,17 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Events;
 
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRule\FieldRuleEventType;
+use Barryvdh\Debugbar\Facades\Debugbar;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\HasFormTargets;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Translations\HasRuleEventPluginTranslate;
-use Ffhs\FilamentPackageFfhsCustomForms\Helping\Rules\Rule;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\Rule\Rule;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\Rule\RuleEvent;
 use Filament\Forms\Components\Component;
 
-class HideEvent extends FieldRuleEventType
+class HideEvent extends FormRuleEventType
 {
     use HasRuleEventPluginTranslate;
+    use HasFormTargets;
 
     public static function identifier(): string {
         return "hidden_event";
@@ -17,21 +20,32 @@ class HideEvent extends FieldRuleEventType
 
 
 
-    public function handleAfterRenderForm(bool $triggered, array $arguments, Component $component, Rule $rule): Component
+    public function handleAfterRenderForm(bool $triggered, array $arguments, Component $component, RuleEvent $rule): Component
     {
-        if($triggered) return $component->hidden(true);
+        if(empty($rule->data)) return $component;
+        if(empty($rule->data["targets"])) return $component;
+
+        $customFieldId = $this->getCustomField($arguments)->identifier;
+        if($triggered && in_array($customFieldId, $rule->data["targets"])) return $component->hidden();
         else return $component;
     }
 
-    public function handleAfterRenderInfolist(bool $triggered, array $arguments, \Filament\Infolists\Components\Component $component, Rule $rule): \Filament\Infolists\Components\Component
+    public function handleAfterRenderInfolist(bool $triggered, array $arguments, \Filament\Infolists\Components\Component $component, RuleEvent $rule): \Filament\Infolists\Components\Component
     {
-        if($triggered) return $component->hidden(true);
+        if(empty($rule->data)) return $component;
+        if(empty($rule->data["targets"])) return $component;
+
+        $customFieldId = $this->getCustomField($arguments)->toArray()["identifier"];
+
+        if($triggered && in_array($customFieldId, $rule->data["targets"])) return $component->hidden();
         else return $component;
     }
 
 
     public function getFormSchema(): array
     {
-        return [];
+        return [
+            $this->getTargetsSelect()
+        ];
     }
 }

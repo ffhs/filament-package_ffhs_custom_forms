@@ -1,6 +1,6 @@
 <?php
 
-namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRulesOld\Anchors;
+namespace Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\old\Anchors;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRulesOld\FieldRuleAnchorAbstractType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRulesOld\HasAnchorPluginTranslate;
