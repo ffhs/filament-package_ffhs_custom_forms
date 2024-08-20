@@ -3,7 +3,6 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\Helping\Rules\Trigger;
 
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\Types\Type;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\Rule\Rule;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\Rule\RuleTrigger;
 
 interface TriggerType extends Type

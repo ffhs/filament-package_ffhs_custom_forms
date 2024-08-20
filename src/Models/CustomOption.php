@@ -11,7 +11,7 @@ use Spatie\Translatable\HasTranslations;
 
 /**
  * @property int $id
- * @property string $name
+ * @property array $name
  * @property string $identifier
  * @property string|null $icon
  *
@@ -19,10 +19,10 @@ use Spatie\Translatable\HasTranslations;
  */
 class CustomOption extends Model implements CachedModel
 {
-    use HasCacheModel;
     use HasFormIdentifier;
-    use HasFactory;
     use HasTranslations;
+    use HasCacheModel;
+    use HasFactory;
 
     public $translatable = ['name'];
 
@@ -31,6 +31,7 @@ class CustomOption extends Model implements CachedModel
         'identifier',
         'icon',
     ];
+
 
     protected static function booted() {
         parent::booted();

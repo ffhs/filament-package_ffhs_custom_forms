@@ -4,6 +4,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Custom
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\TypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomOption;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Filament\Forms\Components\Component;
@@ -14,12 +15,6 @@ use Filament\Forms\Components\TextInput;
 
 class CustomOptionTypeOption extends TypeOption
 {
-
-    private bool $withIdentifikatorField;
-    public function __construct(bool$withIdentifikatorField = false) {
-        $this->withIdentifikatorField = $withIdentifikatorField;
-    }
-
     public function getDefaultValue(): array {
         return [];
     }
@@ -39,20 +34,17 @@ class CustomOptionTypeOption extends TypeOption
             ]);
     }
 
-    public function mutateOnCreate(mixed $value, CustomField $field): mixed {
-        $field->save();
-        return $this->mutateOnSave($value,$field);
-    }
 
-    public function mutateOnSave(mixed $value, CustomField $field): null {
+    public function mutateOnFieldSave(mixed $data, string $key, CustomField $field): null  {
+        $field->save();
         if($field->isGeneralField()){
-            $field->customOptions()->sync($value);
+            $field->customOptions()->sync($data);
             return null;
         }
         $ids = [];
         $toCreate = [];
-        if(is_null($value)) $value = [];
-        foreach ($value as $optionData){
+        if(is_null($data)) $data = [];
+        foreach ($data as $optionData){
             if(!array_key_exists("id",$optionData)){
                 if(empty($optionData["identifier"])) $optionData = array_merge($optionData,["identifier"=> uniqid()]);
                 $toCreate[] = $optionData;
@@ -67,7 +59,7 @@ class CustomOptionTypeOption extends TypeOption
     }
 
 
-    public function mutateOnLoad(mixed $value, CustomField $field): mixed {
+    public function mutateOnFieldLoad(mixed $data, string $key, CustomField $field): mixed {
         //if(!is_null($value) &&!isEmpty($value))return $value;
         if($field->isGeneralField()) return $field->customOptions->pluck("id")->toArray();
         $field->customOptions->each(function (CustomOption $option) use (&$value){
@@ -88,10 +80,10 @@ class CustomOptionTypeOption extends TypeOption
     }
 
     private function getCustomOptionsRepeater($name): Repeater {
-        $repeater =Repeater::make($name)
+        $repeater = Repeater::make($name)
             ->collapseAllAction(fn($action) => $action->hidden())
             ->expandAllAction(fn($action) => $action->hidden())
-            ->itemLabel(fn($state)=> $state["name_de"]) //ToDo Translate
+            ->itemLabel(fn($state,$record)=> $state["name"][$record->getLocale()]) //ToDo Translate
             ->label("Feldoptionen") //ToDo Translate
             ->columnSpanFull()
             ->collapsible()
@@ -102,17 +94,14 @@ class CustomOptionTypeOption extends TypeOption
                 foreach (array_keys($state) as $optionKey)
                     if(empty($state[$optionKey]["identifier"])) $state[$optionKey]["identifier"] = uniqid();
                 $set($name,$state);
-            })
-            ->schema([
-                TextInput::make("name_de")->label("Name De")->required(),
-                TextInput::make("name_en")->label("Name En")->required(),
+            })->schema(fn($record)=>[
+                TextInput::make("name." . $record->getLocale())
+                    ->label("Name")
+                    ->required(),
                 TextInput::make("identifier")
                     ->label("Identifikator")
-                    ->visible($this->withIdentifikatorField)
-                    ->columnSpanFull()
                     ->required(),
             ]);
-        if($this->withIdentifikatorField) $repeater->relationship("customOptions");
         return $repeater;
     }
 

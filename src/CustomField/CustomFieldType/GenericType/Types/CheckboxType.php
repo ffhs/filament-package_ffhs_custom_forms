@@ -32,9 +32,9 @@ class CheckboxType extends CustomFieldType
     {
         return [
             DefaultLayoutTypeOptionGroup::make()
-            ->setTypeOptions([
-                'new_line_option' => NewLineOption::make(),
-            ]),
+                ->setTypeOptions([
+                    'new_line_option' => NewLineOption::make(),
+                ]),
             ValidationTypeOptionGroup::make(),
         ];
     }

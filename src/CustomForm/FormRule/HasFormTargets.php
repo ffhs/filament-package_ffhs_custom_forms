@@ -14,10 +14,16 @@ trait HasFormTargets
             ->label("Target")
             ->options(function ($get, CustomForm $record) {
                 $fields = $get("../../../../../custom_fields");
-                return collect($fields)->pluck("name.". $record->getLocale(),"identifier");
+                $data = collect($fields)->pluck("name.". $record->getLocale(),"identifier")->toArray();
+
+                foreach ($data as $key => $value)
+                    if(empty($value)) $data[$key] = "?";
+
+
+                return $data;
+
 
                 //ToDo Templates etc
-
             })
             ->live();
     }

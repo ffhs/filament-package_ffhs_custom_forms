@@ -24,8 +24,7 @@ class FieldMapper
 
     public static function getLabelName(CustomField|CustomFieldAnswer  $record) :String{
         if($record instanceof  CustomFieldAnswer) $record = $record->customField;
-        #return  $record->getInheritState()["name_" . App::currentLocale()];
-        return  $record->name;
+        return $record->name;
     }
 
     public static function getOptionParameter(CustomField|CustomFieldAnswer $record, string $option, bool $canBeNull = false):mixed{
@@ -53,14 +52,14 @@ class FieldMapper
 
     public static function getAvailableCustomOptions(CustomField $record) : Collection{
         $options = $record->customOptions;
-        return $options->pluck("name_de","identifier");//ToDo Translate
+        return $options->pluck("name","identifier");
     }
 
     public static function getAllCustomOptions(CustomField|CustomFieldAnswer $record) : Collection{
         if($record instanceof CustomFieldAnswer) $record = $record->customField;
         if($record->isInheritFromGeneralField()) $options = $record->generalField->customOptions;
         else $options = $record->customOptions;
-        return $options->pluck("name_de","identifier");//ToDo Translate
+        return $options->pluck("name". $record->getLocale(),"identifier");
     }
 
     public static function getTypeConfigAttribute(CustomField|CustomFieldAnswer  $record, string $attribute) :mixed{

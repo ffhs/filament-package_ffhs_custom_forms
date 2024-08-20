@@ -22,7 +22,6 @@ class SelectTypeView implements FieldTypeView
             ->columnSpan(FieldMapper::getOptionParameter($record,"column_span"))
             ->helperText(FieldMapper::getToolTips($record))
             ->label(FieldMapper::getLabelName($record))
-
             ->options(FieldMapper::getAvailableCustomOptions($record));
 
         if(FieldMapper::getOptionParameter($record,"several")){
