@@ -21,6 +21,7 @@ class RadioTypeView implements FieldTypeView
             ->columnStart(FieldMapper::getOptionParameter($record,"new_line_option"))
             ->inlineLabel(FieldMapper::getOptionParameter($record,"in_line_label"))
             ->columnSpan(FieldMapper::getOptionParameter($record,"column_span"))
+            ->columns(FieldMapper::getOptionParameter($record,"columns"))
             ->inline(FieldMapper::getOptionParameter($record,"inline"))
             ->helperText(FieldMapper::getToolTips($record))
             ->label(FieldMapper::getLabelName($record))

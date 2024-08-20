@@ -25,6 +25,8 @@ class CheckboxListTypeView implements FieldTypeView
             ->options(FieldMapper::getAvailableCustomOptions($record))
             ->helperText(FieldMapper::getToolTips($record))
             ->label(FieldMapper::getLabelName($record))
+            ->maxItems(FieldMapper::getOptionParameter($record,"max_items"))
+            ->minItems(FieldMapper::getOptionParameter($record,"min_items"))
 ;
     }
 
