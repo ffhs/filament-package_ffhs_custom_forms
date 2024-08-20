@@ -50,7 +50,7 @@ class DefaultCustomFieldDeleteAction extends Action
     }
 
 
-    function getSubFields(array $structure): array {
+    function getSubFields(array $structure): array { //ToDo
         $fields = [];
         foreach ($structure as $item => $value) {
             $fields[] = $item;

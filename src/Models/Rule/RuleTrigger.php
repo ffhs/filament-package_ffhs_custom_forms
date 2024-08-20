@@ -12,6 +12,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int order
  * @property string type
  * @property array data
+ * @property boolean is_inverted
+ *
+ *
  */
 class RuleTrigger extends Model implements CachedModel
 {

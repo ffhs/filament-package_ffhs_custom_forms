@@ -7,6 +7,9 @@ use Ffhs\FilamentPackageFfhsCustomForms\Helping\Caching\HasCacheModel;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @property array $data
+ */
 class RuleEvent extends Model implements CachedModel
 {
     use HasCacheModel;

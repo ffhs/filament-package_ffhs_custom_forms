@@ -49,6 +49,7 @@ class CustomForm extends Model implements CachedModel
         'ownedFields',
         'generalFields',
         'rules',
+        'formRules',
     ];
 
     public array $translatable = [
@@ -70,6 +71,11 @@ class CustomForm extends Model implements CachedModel
     public function rules(): BelongsToMany
     {
         return $this->belongsToMany(Rule::class, (new FormRule())->getTable());
+    }
+
+    public function formRules(): HasMany
+    {
+        return $this->hasMany(FormRule::class);
     }
 
 

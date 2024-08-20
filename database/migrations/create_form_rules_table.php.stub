@@ -23,9 +23,8 @@ return new class () extends Migration {
 
         Schema::create('form_rules', function (Blueprint $table) {
             $table->id();
-            $table->integer('order');
-            $table->foreignIdFor(CustomForm::class)->constrained();
-            $table->foreignIdFor(Rule::class)->constrained();
+            $table->foreignIdFor(CustomForm::class)->constrained()->cascadeOnDelete();
+            $table->foreignIdFor(Rule::class)->constrained()->cascadeOnDelete();
 
             $table->timestamps();
         });

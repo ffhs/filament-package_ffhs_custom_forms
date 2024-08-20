@@ -16,13 +16,12 @@ class Rule extends Model implements CachedModel
 
     protected array $cachedManyRelations = [
         "ruleTriggers",
-        "ruleEvents"
+        "ruleEvents",
     ];
 
     protected $fillable = [
-        "is_or_mode"
+        "is_or_mode",
     ];
-
 
     public function ruleTriggers(): HasMany
     {
@@ -31,7 +30,7 @@ class Rule extends Model implements CachedModel
 
     public function ruleEvents(): HasMany
     {
-        return $this->hasMany(RuleTrigger::class);
+        return $this->hasMany(RuleEvent::class);
     }
 
 }

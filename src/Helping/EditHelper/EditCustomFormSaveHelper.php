@@ -5,12 +5,16 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Helping\EditHelper;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldUtils;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\Rule\Rule;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\Rule\RuleEvent;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\Rule\RuleTrigger;
 
 class EditCustomFormSaveHelper
 {
     public static function save(array $rawState, CustomForm $form): void {
+        $rawFields = $rawState["custom_fields"];
         $oldFields = $form->customFields;
-        $fieldData = collect($rawState);
+        $fieldData = collect($rawFields);
 
         $fieldsToSaveData = [];
         $fieldsToCreate = [];
@@ -19,7 +23,7 @@ class EditCustomFormSaveHelper
         $now = now();
 
         //Prepare Save and Create Data
-        foreach ($rawState as $field) {
+        foreach ($rawFields as $field) {
 
             if(!empty($field["id"]))
                 $customField = $oldFields->where("id", $field["id"] )->first();
@@ -100,9 +104,60 @@ class EditCustomFormSaveHelper
             }
         );
 
+
+        //Rules
+        $rawRules = $rawState["rules"];
+        //Delete rules where doesnt exist
+        $form->rules->whereNotIn("id", collect($rawRules)->pluck("id"))->each(fn(Rule $rule)=> $rule->delete());
+
+        $rules = collect();
+
+        foreach ($rawRules as $rawRule) {
+            if(!key_exists("id",$rawRule)) $rule = new Rule();
+            else $rule = $form->rules->where("id", $rawRule["id"])->first();
+
+            $rawTriggers = $rawRule["triggers"];
+            $rawEvents = $rawRule["events"];
+
+            $rule->ruleTriggers()->whereNotIn("id",collect($rawTriggers)->pluck("id"))->delete();
+            $rule->ruleEvents()->whereNotIn("id", collect($rawEvents)->pluck("id"))->delete();
+
+
+            if(key_exists("is_or_mode",$rawRule)) $rule->is_or_mode = $rawRule["is_or_mode"];
+            else $rule->is_or_mode = false;
+
+            $rule->save();
+
+            foreach ($rawTriggers as $rawTrigger) {
+                if(!key_exists("id",$rawTrigger)) $trigger = new RuleTrigger();
+                else $trigger = $rule->ruleTriggers->where("id", $rawRule["id"])->first();
+
+                $trigger->fill($rawTrigger);
+
+                $trigger->rule_id =  $rule->id;
+                $trigger->save();
+            }
+
+            foreach ($rawEvents as $rawEvent) {
+                if(!key_exists("id",$rawEvent)) $event = new RuleEvent();
+                else $event = $rule->ruleEvents()->where("id", $rawRule["id"])->first();
+
+                $event->fill($rawEvent);
+
+                $event->rule_id =  $rule->id;
+                $event->save();
+            }
+
+
+            $rules->add($rule);
+        }
+
+
+        $form->rules()->sync($rules->pluck("id"));
+
     }
 
-    private static function getPositionOfField(string $targetKey, array $structure, int &$index = 0): ?array {
+   /* private static function getPositionOfField(string $targetKey, array $structure, int &$index = 0): ?array {
         foreach ($structure as $key => $fields) {
             $index+= 1;
             if($key == $targetKey) return [$index,  static::countFields($fields)];
@@ -118,8 +173,7 @@ class EditCustomFormSaveHelper
         $count = 0;
         foreach ($toCount as $key => $fields) $count += 1 + self::countFields($fields);
         return $count;
-    }
-
+    }*/
     private static function cleanUpCustomFieldData($fields): array
     {
         $columns = ['created_at', 'updated_at', 'id'];

@@ -4,6 +4,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Helping\EditHelper;
 
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\Rule\Rule;
 use Illuminate\Support\Collection;
 
 class EditCustomFormLoadHelper
@@ -17,6 +18,7 @@ class EditCustomFormLoadHelper
             "custom_form_identifier" => $form->custom_form_identifier,
             'is_template' => $form->is_template,
             'id' => $form->id,
+            'rules' => static::loadRules($form)
         ];
     }
 
@@ -40,7 +42,18 @@ class EditCustomFormLoadHelper
         return $data;
     }
 
-
+    private static function loadRules(CustomForm $form)
+    {
+        $rules = [];
+        foreach ($form->rules as $rule) {
+            /**@var Rule $rule*/
+            $rawRule = $rule->toArray();
+            $rawRule['events'] = $rule->ruleEvents->toArray();
+            $rawRule['triggers'] = $rule->ruleTriggers->toArray();
+            $rules[] = $rawRule;
+        }
+        return $rules;
+    }
 
 
 }

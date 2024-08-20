@@ -4,7 +4,9 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\RuleEditor;
 
 use Barryvdh\Debugbar\Facades\Debugbar;
 use Closure;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\DefaultEditorComponents\TypeActions\DefaultCustomFieldDeleteAction;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\DragDrop\DragDropComponent;
+use Ffhs\FilamentPackageFfhsCustomForms\Helping\EditHelper\EditCustomFormHelper;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\Rules\Event\EventType;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\Rules\Trigger\TriggerType;
 use Filament\Forms\Components\Actions\Action;
@@ -12,13 +14,13 @@ use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Support\Colors\Color;
+use Filament\Support\Facades\FilamentColor;
 use Ramsey\Collection\Collection;
 
 class RuleEditor extends Group
 {
 
     protected array|Closure|null $triggers;
-    protected array|Closure|Collection $targets;
     protected Closure|array|null $events;
 
 
@@ -34,53 +36,39 @@ class RuleEditor extends Group
                 ->action(function ($set,$get) {
                     $rules = $get('rules');
                     $rules[uniqid()] = [
-                        'order' => 1,
                         'is_oder_mode' => false,
                     ];
                     $set('rules', $rules);
                 })->toFormComponent(),
            DragDropComponent::make('rules')
                ->itemLabel("Regel")
-               ->orderAttribute('order')
                ->dragDropGroup('rules')
                ->columns(1)
                ->gridSize(3)
                ->itemActions(fn()=> [
+                   $this->getRemoveAction(),
                    $this->getTriggerAddAction(),
                    $this->getEventAddAction(),
                ])
                ->schema([
 
-                   ToggleButtons::make('is_oder_mode')
+                   ToggleButtons::make('is_or_mode')
                        ->inline()
                        ->label("")
+                       ->required()
+                       ->markAsRequired(false)
                        ->grouped()
                        ->boolean("Oder", "Und")
-                       ->default(false)
                        ->colors(Color::Gray)
                        ->icons([]),
 
                    $this->getTriggerDropComponent(),
                    $this->getEventDropComponent(),
-
-                   Select::make("targets")
-                        ->multiple()
-                        ->live()
-                        ->options($this->getTargets(...))
                 ])
         ]);
 
     }
 
-
-    public function getTargets(){
-        return $this->evaluate($this->targets);
-    }
-    public function targets(array|Closure|Collection $targets): RuleEditor
-    {
-         $this->targets = $targets;
-        return $this;
-    }
 
 
     protected function getTriggerDropComponent(): DragDropComponent
@@ -91,11 +79,14 @@ class RuleEditor extends Group
             ->orderAttribute('order')
             ->dragDropGroup('triggers')
             ->itemActions([
+                $this->getRemoveAction(),
                 $this->getTriggerInvertAction()
             ])
             ->itemLabel(fn($itemState) => empty($itemState["type"])? "": $this->getTrigger($itemState['type'])->getDisplayName())
             ->schema([
                 Select::make('type')
+                    ->label("")
+                    ->required()
                     ->selectablePlaceholder(true)
                     ->nullable(false)
                     ->options($this->getTriggerOptions(...))
@@ -209,12 +200,18 @@ class RuleEditor extends Group
             ->deepColor(1)
             ->orderAttribute('order')
             ->itemLabel(fn($itemState) => empty($itemState["type"])? "": $this->getEvent($itemState['type'])->getDisplayName())
+            ->itemActions([
+                $this->getRemoveAction(),
+            ])
             ->schema([
                 Select::make('type')
+                    ->label("")
+                    ->required()
                     ->selectablePlaceholder(true)
                     ->nullable(false)
                     ->options($this->getEventOptions(...))
                     ->live(),
+
                 Group::make()
                     ->statePath('data')
                     ->schema(function($get) {
@@ -271,7 +268,28 @@ class RuleEditor extends Group
 
     public function getEvent($type): EventType
     {
+        Debugbar::info($type);
         return collect($this->getEvents())->filter(fn(EventType $event) => $event::identifier() === $type)->first();
+    }
+
+    private function getRemoveAction(): Action
+    {
+        return Action::make("remove")
+            ->icon("heroicon-c-trash")
+            ->iconButton()
+            ->color(Color::Red)
+            ->action(function($arguments, $component, $get, $set){
+                $key = $arguments["item"];
+
+                //Delete Structure
+                $path =  explode('.', $component->getStatePath());
+                $path = '../' . $path[count($path)-1];
+                $state = $get($path);
+
+                unset($state[$key]);
+
+                $set($path, $state);
+        });
     }
 
 

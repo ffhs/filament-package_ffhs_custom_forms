@@ -27,10 +27,10 @@ class CustomFormEditor extends Component {
 
         $this->schema([
             RuleEditor::make()
-                ->targets(function ($get,$record){
-                    Debugbar::info($get("custom_fields"));
-                    return collect($get("custom_fields"))->pluck("name.". $record->getLocale(), "identifier"); //ToDo Improve
-                })
+                /*->targets(function ($get,$record){
+                     Debugbar::info($get("custom_fields"));
+                     return collect($get("custom_fields"))->pluck("name.". $record->getLocale(), "identifier"); //ToDo Improve
+                 })*/
                 ->columnSpanFull(),
             Fieldset::make()
                 ->columnStart(1)
@@ -45,7 +45,6 @@ class CustomFormEditor extends Component {
             EditCustomFields::make("custom_fields")
                 ->columnStart(2)
                 ->columnSpan(5),
-
         ]);
     }
 }

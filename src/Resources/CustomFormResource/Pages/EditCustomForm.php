@@ -92,7 +92,7 @@ class EditCustomForm extends EditRecord
 
         $this->authorizeAccess();
 
-        EditCustomFormSaveHelper::save($this->data["custom_fields"], $this->getRecord());
+        EditCustomFormSaveHelper::save($this->data, $this->getRecord());
 
         parent::save($shouldRedirect, $shouldSendSavedNotification);
 
