@@ -2,10 +2,10 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Events;
 
+use Closure;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\Rules\Event\EventType;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\Types\IsType;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\Rule;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\RuleEvent;
 use Filament\Forms\Components\Component;
 use Illuminate\Support\Collection;
@@ -21,7 +21,7 @@ abstract class FormRuleEventType implements EventType
         return "rules.events";
      }
 
-    public function handle(bool $triggered, array $arguments, mixed $target, RuleEvent $rule): mixed
+    public function handle(Closure $triggered, array $arguments, mixed $target, RuleEvent $rule): mixed
     {
         switch ($arguments["action"]) {
             case "before_render": return $this->handleBeforeRender($triggered, $arguments, $target, $rule);
@@ -45,37 +45,36 @@ abstract class FormRuleEventType implements EventType
         return $arguments["customField"];
     }
 
-    public function handleBeforeRender(bool $triggered, array $arguments, CustomField $target, RuleEvent $rule): CustomField
+    public function handleBeforeRender(Closure $triggered, array $arguments, CustomField $target, RuleEvent $rule): CustomField
     {
         return $target;
     }
-    public function handleParameterMutation(bool $triggered, array $arguments, array $parameters, RuleEvent $rule): array
+    public function handleParameterMutation(Closure $triggered, array $arguments, array $parameters, RuleEvent $rule): array
     {
         return $parameters;
     }
 
 
-    public function handleAfterRenderForm(bool $triggered, array $arguments, Component $component, RuleEvent $rule): Component
+    public function handleAfterRenderForm(Closure $triggered, array $arguments, Component $component, RuleEvent $rule): Component
     {
         return $component;
     }
 
-    public function handleAfterRenderInfolist(bool $triggered, array $arguments, \Filament\Infolists\Components\Component $component, RuleEvent $rule): \Filament\Infolists\Components\Component
+    public function handleAfterRenderInfolist(Closure $triggered, array $arguments, \Filament\Infolists\Components\Component $component, RuleEvent $rule): \Filament\Infolists\Components\Component
     {
         return $component;
     }
 
-    private function handleAfterAllRendered(bool $triggered, array $arguments, Collection $target, RuleEvent $rule):Collection
+    private function handleAfterAllRendered(Closure $triggered, array $arguments, Collection $target, RuleEvent $rule):Collection
     {
         return $target;
     }
 
-    private function handleAnswerLoadMutation(bool $triggered, array $arguments, array $target, RuleEvent $rule): array
-    {
+    private function handleAnswerLoadMutation(Closure $triggered, array $arguments, mixed $target, RuleEvent $rule): mixed    {
         return $target;
     }
 
-    private function handleAnswerSaveMutation(bool $triggered, array $arguments, mixed $target, RuleEvent $rule): mixed
+    private function handleAnswerSaveMutation(Closure $triggered, array $arguments, mixed $target, RuleEvent $rule): mixed
     {
         return $target;
     }

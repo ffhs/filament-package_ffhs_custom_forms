@@ -119,6 +119,7 @@ class EditCustomFormSaveHelper
             $rawTriggers = $rawRule["triggers"];
             $rawEvents = $rawRule["events"];
 
+
             $rule->ruleTriggers()->whereNotIn("id",collect($rawTriggers)->pluck("id"))->delete();
             $rule->ruleEvents()->whereNotIn("id", collect($rawEvents)->pluck("id"))->delete();
 
@@ -127,10 +128,11 @@ class EditCustomFormSaveHelper
             else $rule->is_or_mode = false;
 
             $rule->save();
+            $triggers = $rule->ruleTriggers;
 
             foreach ($rawTriggers as $rawTrigger) {
                 if(!key_exists("id",$rawTrigger)) $trigger = new RuleTrigger();
-                else $trigger = $rule->ruleTriggers->where("id", $rawRule["id"])->first();
+                else $trigger = $triggers->where("id", $rawTrigger["id"])->first();
 
                 $trigger->fill($rawTrigger);
 
@@ -140,7 +142,7 @@ class EditCustomFormSaveHelper
 
             foreach ($rawEvents as $rawEvent) {
                 if(!key_exists("id",$rawEvent)) $event = new RuleEvent();
-                else $event = $rule->ruleEvents()->where("id", $rawRule["id"])->first();
+                else $event = $rule->ruleEvents()->where("id", $rawEvent["id"])->first();
 
                 $event->fill($rawEvent);
 

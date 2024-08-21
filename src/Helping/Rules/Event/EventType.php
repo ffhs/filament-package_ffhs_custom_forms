@@ -2,12 +2,13 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Helping\Rules\Event;
 
+use Closure;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\Types\Type;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\RuleEvent;
 
 interface EventType extends Type
 {
-    public function handle(bool $triggered, array $arguments, mixed $target, RuleEvent $rule): mixed;
+    public function handle(Closure $triggered, array $arguments, mixed $target, RuleEvent $rule): mixed;
 
     public function getDisplayName(): string;
 

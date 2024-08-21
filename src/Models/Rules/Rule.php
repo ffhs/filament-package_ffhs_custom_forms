@@ -39,16 +39,38 @@ class Rule extends Model implements CachedModel
 
     public function handle(array $arguments, mixed $target): mixed
     {
-        $triggered = is_null($this->ruleTriggers->sortBy("order")->firstWhere(function(RuleTrigger $trigger) use ($arguments, $target) {
-            $triggered = $trigger->getType()->isTrigger($arguments, $target, $trigger);
-            if($triggered || $trigger->is_inverted) return false;
-        }));
+        $triggers = $this->getTriggersCallback($target, $arguments);
+        $events = $this->ruleEvents->sortBy("order");
 
-
-        $this->ruleEvents->sortBy("order")->firstWhere(function(RuleEvent $eve) use ($triggered, $arguments, &$target) {
-            $target = $eve->getType()->handle($triggered,$arguments, $target, $eve);
-        });
+        foreach ($events as $event) {
+            /**@var RuleEvent $event*/
+            $targetResult = $event->getType()->handle($triggers,$arguments, $target, $event);
+            if(!is_null($targetResult)) $target = $targetResult;
+        }
 
         return $target;
+    }
+
+
+    public function getTriggersCallback(mixed $target, array $arguments): \Closure
+    {
+        return function ($extraArguments = []) use ($target, $arguments) {
+            $argumentsFinal = array_merge($arguments, $extraArguments);
+
+            $triggers = $this->ruleTriggers->sortBy("order");
+
+            foreach ($triggers as $trigger) {
+                /**@var RuleTrigger $trigger */
+                $triggered = $trigger->getType()->isTrigger($argumentsFinal, $target, $trigger);
+                $triggered = $triggered != $trigger->is_inverted;
+
+                if ($this->is_or_mode && $triggered) return true;//OR
+                else if (!$this->is_or_mode && !$triggered) return false; //AND
+
+                //if($this->is_or_mode == $triggered) return $triggered
+            }
+
+            return !$this->is_or_mode;
+        };
     }
 }
