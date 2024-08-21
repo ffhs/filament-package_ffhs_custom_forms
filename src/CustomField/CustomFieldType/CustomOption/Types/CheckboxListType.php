@@ -12,6 +12,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\ColumnsOp
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\ColumnSpanOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\FastTypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\NewLineOption;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\RequiredOption;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\TextInput;
 
@@ -59,6 +60,7 @@ class CheckboxListType extends CustomOptionType
                             ->step(1)
                             ->numeric(),
                     ),
+                    'required' => RequiredOption::make(),
                 ]),
           CustomOptionGroup::make()
 

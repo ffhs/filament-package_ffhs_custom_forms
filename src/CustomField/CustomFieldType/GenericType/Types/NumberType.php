@@ -31,9 +31,9 @@ class NumberType extends CustomFieldType
         return [
             DefaultLayoutTypeOptionGroup::make(),
             ValidationTypeOptionGroup::make(typeOptions: [
-                'required' => RequiredOption::make(),
                 'min_value'=>new MinValueOption(),
                 'max_value'=>new MaxValueOption(),
+                'required' => RequiredOption::make(),
             ] )
         ];
     }

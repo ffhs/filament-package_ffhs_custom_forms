@@ -9,6 +9,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\HasCustomTyp
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\DefaultLayoutTypeOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\ValidationTypeOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\FastTypeOption;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\RequiredOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\TypeOptionGroup;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -44,6 +45,7 @@ class SelectType extends CustomOptionType
                 DefaultLayoutTypeOptionGroup::make(),
                 ValidationTypeOptionGroup::make()
                     ->setTypeOptions([
+                        'required' => RequiredOption::make(),
                         "several" => new FastTypeOption(false,
                             Toggle::make("several")
                                 ->label(__("filament-package_ffhs_custom_forms::custom_forms.fields.type_options.several"))

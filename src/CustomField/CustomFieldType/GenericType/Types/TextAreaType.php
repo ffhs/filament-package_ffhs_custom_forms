@@ -10,6 +10,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\Validation
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\FastTypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\MaxLengthOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\MinLengthOption;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\RequiredOption;
 use Filament\Forms\Components\Toggle;
 
 class TextAreaType extends CustomFieldType
@@ -43,9 +44,9 @@ class TextAreaType extends CustomFieldType
         return [
             DefaultLayoutTypeOptionGroup::make()->addTypeOptions("auto_size", $autoSize),
             ValidationTypeOptionGroup::make(typeOptions: [
-
                 'max_length' => new MaxLengthOption(),
                 'min_length' => new MinLengthOption(),
+                'required' => RequiredOption::make(),
             ] )
         ];
     }

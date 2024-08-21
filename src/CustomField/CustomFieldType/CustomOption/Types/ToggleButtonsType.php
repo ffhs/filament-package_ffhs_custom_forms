@@ -13,6 +13,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\ColumnSpa
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\FastTypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\InlineOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\NewLineOption;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\RequiredOption;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Toggle;
 
@@ -57,6 +58,7 @@ class ToggleButtonsType extends CustomOptionType
                 ]),
             CustomOptionGroup::make()
                 ->setTypeOptions([
+                    'required' => RequiredOption::make(),
                     'customOptions' => parent::extraTypeOptions()["customOptions"]
                         ->modifyComponent(fn(Component $component) => $component->hidden(fn($get) => $get("boolean"))),
                 ])

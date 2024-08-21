@@ -22,6 +22,7 @@ class CheckboxListTypeView implements FieldTypeView
             ->inlineLabel(FieldMapper::getOptionParameter($record,"in_line_label"))
             ->columnSpan(FieldMapper::getOptionParameter($record,"column_span"))
             ->columns(FieldMapper::getOptionParameter($record,"columns"))
+            ->required(FieldMapper::getOptionParameter($record,"required"))
             ->options(FieldMapper::getAvailableCustomOptions($record))
             ->helperText(FieldMapper::getToolTips($record))
             ->label(FieldMapper::getLabelName($record))

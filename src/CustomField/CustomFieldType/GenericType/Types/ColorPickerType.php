@@ -8,6 +8,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\HasCustomTyp
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\DefaultLayoutTypeOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\ValidationTypeOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\FastTypeOption;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\RequiredOption;
 use Filament\Forms\Components\Select;
 
 class ColorPickerType extends CustomOptionType
@@ -39,7 +40,8 @@ class ColorPickerType extends CustomOptionType
                                 "rgba" => "RGBA",
                             ])
                     ),
-                ])
+                ]),
+            'required' => RequiredOption::make(),
         ];
     }
 

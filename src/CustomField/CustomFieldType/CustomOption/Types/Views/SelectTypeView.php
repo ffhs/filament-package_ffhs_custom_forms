@@ -20,6 +20,7 @@ class SelectTypeView implements FieldTypeView
             ->columnStart(FieldMapper::getOptionParameter($record,"new_line_option"))
             ->inlineLabel(FieldMapper::getOptionParameter($record,"in_line_label"))
             ->columnSpan(FieldMapper::getOptionParameter($record,"column_span"))
+            ->required(FieldMapper::getOptionParameter($record,"required"))
             ->helperText(FieldMapper::getToolTips($record))
             ->label(FieldMapper::getLabelName($record))
             ->options(FieldMapper::getAvailableCustomOptions($record));
