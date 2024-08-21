@@ -30,31 +30,26 @@ trait HasEditFieldCallbacks
 
     public final function getMutateCustomFieldDataOnSave(CustomField $field, array $data): array {
         $this->mutateOptions($data, $field, 'mutateOnFieldSave');
-        //ToDo For Rules
         return $this->mutateCustomFieldDataOnSave($field, $data);
     }
 
     public final function getMutateCustomFieldDataOnLoad(CustomField $field, array $data): array {
         $this->mutateOptions($data, $field, 'mutateOnFieldLoad');
-        //ToDo For Rules
         return $this->mutateCustomFieldDataOnLoad($field, $data);
     }
 
     public function doBeforeSaveField(CustomField $field, array &$data): void {
         $this->doForOptions($data, $field, 'beforeSaveField');
-        //ToDo For Rules
         $this->beforeSaveField($field, $data);
     }
 
     public function doAfterSaveField(CustomField $field, array $data): void {
         $this->doForOptions($data, $field, 'afterSaveField');
-        //ToDo For Rules
         $this->afterSaveField($field, $data);
     }
 
     public function doAfterCreateField(CustomField $field, array $data): void {
         $this->doForOptions($data, $field, 'afterCreateField');
-        //ToDo For Rules
         $this->afterCreateField($field, $data);
     }
 

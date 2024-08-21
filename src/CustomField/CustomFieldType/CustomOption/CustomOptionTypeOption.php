@@ -2,6 +2,7 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomOption;
 
+use Barryvdh\Debugbar\Facades\Debugbar;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\TypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
@@ -12,6 +13,7 @@ use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Illuminate\Support\Facades\Cache;
 
 class CustomOptionTypeOption extends TypeOption
 {
@@ -36,11 +38,18 @@ class CustomOptionTypeOption extends TypeOption
 
 
     public function mutateOnFieldSave(mixed $data, string $key, CustomField $field): null  {
-        $field->save();
+        Cache::set("custom_field-custom_options-" . $field->identifier, $data);
+        return null;
+    }
+
+    public function afterSaveField(mixed &$data, string $key, CustomField $field): void
+    {
         if($field->isGeneralField()){
             $field->customOptions()->sync($data);
-            return null;
+            return;
         }
+
+        $data = Cache::get("custom_field-custom_options-" .$field->identifier);
         $ids = [];
         $toCreate = [];
         if(is_null($data)) $data = [];
@@ -53,9 +62,9 @@ class CustomOptionTypeOption extends TypeOption
             $ids[] = $optionData["id"];
             $field->customOptions->where("id",$optionData["id"])->first()?->update($optionData);
         }
+
         $field->customOptions()->whereNotIn("custom_options.id", $ids)->delete();
         $field->customOptions()->createMany($toCreate);
-        return null;
     }
 
 

@@ -27,22 +27,13 @@ class EditCustomFormLoadHelper
     public static function loadFields(Collection $fields):array {
         $data = [];
         foreach ($fields as $field) {
-            /**@var CustomField $field*/
-            $fieldData = $field->attributesToArray();
-            $fieldData['options'] = $field->options;
-
-            unset($fieldData["updated_at"]);
-            unset($fieldData["created_at"]);
-
-            $fieldData = $field->getType()->getMutateCustomFieldDataOnLoad($field, $fieldData);
-
             $key = EditCustomFormHelper::getEditKey($field);
-            $data[$key] = $fieldData;
+            $data[$key] = self::loadField($field);
         }
         return $data;
     }
 
-    private static function loadRules(CustomForm $form)
+    private static function loadRules(CustomForm $form): array
     {
         $rules = [];
         foreach ($form->rules as $rule) {
@@ -53,6 +44,19 @@ class EditCustomFormLoadHelper
             $rules[] = $rawRule;
         }
         return $rules;
+    }
+
+
+    public static function loadField(CustomField $field): array
+    {
+        /**@var CustomField $field */
+        $fieldData = $field->attributesToArray();
+        $fieldData['options'] = $field->options;
+
+        unset($fieldData["updated_at"]);
+        unset($fieldData["created_at"]);
+
+       return $field->getType()->getMutateCustomFieldDataOnLoad($field, $fieldData);
     }
 
 

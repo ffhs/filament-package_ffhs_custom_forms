@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Spatie\Translatable\HasTranslations;
 
 /**
@@ -189,14 +190,18 @@ class CustomForm extends Model implements CachedModel
                 });
 
 
+                $info = DB::table("option_custom_field")
+                    ->whereIn("custom_field_id", $customFields->pluck("id"))->get();
                 //Cache FieldOptions
                 $fieldOptions = CustomOption::query()
-                    ->join("option_custom_field", 'custom_option_id', '=', 'custom_options.id')
-                    ->whereIn("custom_field_id", $customFields->pluck("id"))
+                    ->whereIn("id",$info->pluck("custom_option_id"))
                     ->get();
 
-                $customFields->each(function(CustomField $customField) use ($fieldOptions) {
-                    $options =  $fieldOptions->where("custom_field_id", $customField->id);
+
+                $customFields->each(function(CustomField $customField) use ($info, $fieldOptions) {
+                    $options =  $fieldOptions
+                        ->whereIn("id", $info->where("custom_field_id", $customField->id)
+                        ->pluck("custom_option_id"));
                     $customField->setValueInManyRelationCache('customOptions',$options);
                 });
 

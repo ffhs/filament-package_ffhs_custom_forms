@@ -2,8 +2,11 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule;
 
+use Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\EditHelper\EditCustomFormLoadHelper;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Get;
 
 trait HasFormTargets
 {
@@ -23,24 +26,53 @@ trait HasFormTargets
             ->live();
     }
 
-    /**
-     * @return \Closure
-     */
+
     public function getTargetOptions(): \Closure
     {
-        return function ($get, CustomForm $record) {
-            $fields = $get("../../../../../custom_fields");
-            $data = collect($fields)->pluck("name." . $record->getLocale(), "identifier")->toArray();
-
-            foreach ($data as $key => $value)
-                if (empty($value)) $data[$key] = "?";
-
-
-            return $data;
-
-
-            //ToDo Templates etc
+        return function ($get) {
+           return collect($this->getAllFieldsData($get))
+                ->map(fn($fieldData) => (new CustomField())->fill($fieldData))
+                ->pluck("name", "identifier");
         };
+    }
+
+
+
+    public function getTargetFieldData(Get $get):array|null {
+        $identifier = $get("target");
+        if(is_null($identifier)) return null;
+
+        $fields = $this->getAllFieldsData($get);
+
+        //Search the target field
+        $finalField = null;
+
+        foreach ($fields as $field){
+            $customField = new CustomField();
+            $customField->fill($field);
+            if($customField->identifier != $identifier) continue;
+            $finalField = $field;
+            break;
+        }
+        return $finalField;
+    }
+
+
+    public function getAllFieldsData(Get $get): array
+    {
+        $fields = $get("../../../../../custom_fields");
+
+        //Get the templated FormComponents
+        $fieldsFromTemplate = collect($fields)
+            ->whereNotNull("template_id")
+            ->map(fn($templateData) => CustomForm::cached($templateData["template_id"]))
+            ->map(fn($template) => $template->customFields
+                ->map(fn(CustomField $customField) => EditCustomFormLoadHelper::loadField($customField))
+            )
+            ->flatten(1)
+            ->toArray();
+
+        return array_merge($fieldsFromTemplate, $fields);
     }
 
 }

@@ -36,7 +36,6 @@ use Illuminate\Support\Collection;
 class CustomField extends ACustomField implements NestingObject , Identifier
 {
     use HasFactory;
-    use HasIdentifierParameter;
 
     protected $table = "custom_fields";
 
@@ -171,4 +170,8 @@ class CustomField extends ACustomField implements NestingObject , Identifier
         return 'layout_end_position';
     }
 
+    public function identifier(): string
+    {
+        return $this->__get("identifier");
+    }
 }

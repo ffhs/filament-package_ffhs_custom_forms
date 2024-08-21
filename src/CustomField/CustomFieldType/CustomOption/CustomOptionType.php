@@ -38,16 +38,4 @@ abstract class  CustomOptionType extends CustomFieldType
         return parent::mutateOnTemplateDissolve($data,$original);
     }
 
-
-    /*
-    public static function prepareCloneOptionsOLD(array $variationData, string $target, $set, Get $get) :array{
-        if(!empty($get("general_field_id"))) return $variationData["options"];
-
-        $customOptions = $variationData["customOptions"] ;
-        foreach($customOptions as $key => $option) unset($customOptions[$key]["id"]);
-
-        $set($target.".customOptions",$customOptions);
-        return $variationData["options"];
-    }*/
-
 }
