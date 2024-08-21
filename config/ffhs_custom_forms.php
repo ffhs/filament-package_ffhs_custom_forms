@@ -29,6 +29,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\NestedLayout
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\NestedLayoutType\Types\WizardCustomNestType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\NestedLayoutType\Types\WizardStepCustomEggType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\TemplatesType\TemplateFieldType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Events\ChangeOptionsEvent;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Events\DisabledEvent;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Events\HideEvent;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Events\RequiredEvent;
@@ -55,10 +56,7 @@ return [
             VisibleEvent::class,
             DisabledEvent::class,
             RequiredEvent::class,
-            //   RequiredRuleType::class,
-            //   HiddenRuleType::class,
-            //  DisabledRuleType::class,
-            //  ChangeOptionRuleType::class,
+            ChangeOptionsEvent::class,
         ],
     ],
 
