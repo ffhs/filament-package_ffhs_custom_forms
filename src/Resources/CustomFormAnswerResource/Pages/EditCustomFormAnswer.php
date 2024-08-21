@@ -2,9 +2,9 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormAnswerResource\Pages;
 
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\FormRender\CustomFormComponent;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Render\Helper\CustomFormLoadHelper;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Render\Helper\CustomFormSaveHelper;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\CustomFormComponent;
+use Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\RenderHelp\CustomFormLoadHelper;
+use Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\RenderHelp\CustomFormSaveHelper;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormAnswerResource;
 use Filament\Actions;

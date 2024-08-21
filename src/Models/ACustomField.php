@@ -2,6 +2,7 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Models;
 
+use Barryvdh\Debugbar\Facades\Debugbar;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\TemplatesType\TemplateFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\Caching\CachedModel;

@@ -1,6 +1,6 @@
 <?php
 
-namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Render\Helper;
+namespace Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\RenderHelp;
 
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
@@ -11,9 +11,9 @@ class CustomFormLoadHelper {
 
     public static function load(CustomFormAnswer $answerer):array {
         $data = [];
-        //$form = CustomForm::cached($answerer->custom_form_id);
-        //$customFields = $form->cachedFields();
+       //ToDo check to Cache stuff for performance $customFields = $answerer->customForm->customFields;
 
+        $formRules = $answerer->customForm->rules;
         foreach($answerer->cachedAnswers() as $fieldAnswer){
             /**@var CustomFieldAnswer $fieldAnswer*/
             /**@var CustomField $customField*/
@@ -22,11 +22,7 @@ class CustomFormLoadHelper {
                 ->getType()
                 ->prepareLoadFieldData($fieldAnswer->answer);
 
-            $fieldRules  = $customField->fieldRules;
-            foreach ($fieldRules as $rule){ //ToDo repair
-                /**@var Rule $rule */
-                $fieldData = $rule->getRuleType()->mutateLoadAnswerData($fieldData,$rule, $fieldAnswer);
-            }
+            $fieldData = self::runRulesForFieldData($answerer, $fieldData,$formRules);
 
             $data[$customField->identifier] = $fieldData;
         }
@@ -39,6 +35,7 @@ class CustomFormLoadHelper {
         //$customFields = $form->cachedFields();
 
         $customFields = $answerer->customForm->customFieldsWithTemplateFields;
+        $formRules  = $answerer->customForm->rules;
 
         foreach($answerer->cachedAnswers() as $fieldAnswer){
             /**@var CustomFieldAnswer $fieldAnswer*/
@@ -62,14 +59,19 @@ class CustomFormLoadHelper {
                 ->getType()
                 ->prepareLoadFieldData($fieldAnswer->answer);
 
-            $fieldRules  = $customField->fieldRules;
-            foreach ($fieldRules as $rule){
-                /**@var FieldRule $rule */
-                $fieldData = $rule->getRuleType()->mutateLoadAnswerData($fieldData,$rule, $fieldAnswer);
-            }
 
+            $fieldData = self::runRulesForFieldData($answerer, $fieldData, $formRules);
             $data[$customField->identifier] = $fieldData;
         }
         return $data;
+    }
+
+    public static function runRulesForFieldData(CustomFormAnswer $answerer, mixed $fieldData, $formRules): mixed
+    {
+        foreach ($formRules as $rule) { //ToDo repair
+            /**@var Rule $rule */
+            $fieldData = $rule->handle(["action" => "load_answerer", "custom_field_answerer" => $answerer], $fieldData);
+        }
+        return $fieldData;
     }
 }

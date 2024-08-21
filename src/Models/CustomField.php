@@ -6,6 +6,7 @@ use Barryvdh\Debugbar\Facades\Debugbar;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\FlattedNested\NestingObject;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\Identifiers\HasIdentifierParameter;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\Identifiers\Identifier;
+use http\Exception\RuntimeException;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -32,7 +33,7 @@ use Illuminate\Support\Collection;
  * @property CustomForm|null $template
  * @property GeneralField|null $generalField
 */
-class CustomField extends ACustomField implements NestingObject, Identifier
+class CustomField extends ACustomField implements NestingObject , Identifier
 {
     use HasFactory;
     use HasIdentifierParameter;
@@ -69,9 +70,11 @@ class CustomField extends ACustomField implements NestingObject, Identifier
         'customOptions',
     ];
 
-    public function __get($key) {
+   public function __get($key) {
 
-        if($key === "general_field_id") return parent::__get($key);
+        if($key === "general_field_id") {
+            return parent::__get($key);
+        }
 
         if(!$this->isGeneralField()) {
             if('overwritten_options' === $key) return [];
@@ -91,7 +94,6 @@ class CustomField extends ACustomField implements NestingObject, Identifier
             return GeneralField::cached($this->general_field_id,"id",false);
         };
 
-        //ToDo Merge Options (or overwrite)
         return match ($key) {
             'name' => $genFieldF()->name,
             'type' => $genFieldF()->type,

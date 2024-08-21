@@ -1,6 +1,6 @@
 <?php
 
-namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Render\Helper;
+namespace Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\RenderHelp;
 
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
@@ -12,12 +12,11 @@ use Filament\Forms\Form;
 class CustomFormSaveHelper {
 
     public static function save(CustomFormAnswer $formAnswerer, Form $form, string|null $path = null) :void{
-
         // $path is then path to the customFormData in the formData
         $customForm = $formAnswerer->customForm;
         // Mapping and combining custom fields
         $customFieldsIdentify = self::mapFields(
-            $customForm->customFieldsWithTemplateFields,
+            $customForm->customFields,
             fn(CustomField $customField) => $customField->identifier
         );
 
@@ -63,19 +62,13 @@ class CustomFormSaveHelper {
                 continue;
             }
 
-            $fieldRules = $customField->fieldRules;
-            foreach ($fieldRules as $rule) {
+            $formRules = $customField->customForm->rules;
+            foreach ($formRules as $rule) {
                 /**@var Rule $rule */
-                $fieldAnswererData = $rule->getRuleType()->mutateSaveAnswerData($fieldAnswererData, $rule,
-                    $customFieldAnswer);
+                $fieldAnswererData = $rule->handle(['action' => "save_answerer", 'custom_field_answer' => $customFieldAnswer], $fieldAnswererData);
             }
 
             $customFieldAnswer->answer = $fieldAnswererData;
-
-            foreach ($fieldRules as $rule) {
-                /**@var Rule $rule */
-                $rule->getRuleType()->afterAnswerSave($rule, $customFieldAnswer);
-            }
 
             if (!$customFieldAnswer->exists || $customFieldAnswer->isDirty()) $customFieldAnswer->save();
 
@@ -85,9 +78,9 @@ class CustomFormSaveHelper {
 
 
     public static function mapFields($fields, $keyCallback, $filterCallback = null) : array {
-        if ($filterCallback) {
+        if ($filterCallback)
             $fields = $fields->filter($filterCallback);
-        }
+
         $keys = $fields->map($keyCallback)->toArray();
         $fieldsArray = [];
         $fields->each(function($model) use (&$fieldsArray) {

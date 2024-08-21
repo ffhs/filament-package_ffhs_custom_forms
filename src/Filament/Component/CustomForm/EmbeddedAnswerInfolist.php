@@ -1,11 +1,11 @@
 <?php
 
-namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\InfolistRender;
+namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm;
 
 
 use Closure;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Render\CustomFormRender;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Render\SplitCustomFormRender;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\Render\CustomFormRender;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\Render\SplitCustomFormRender;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\RenderHelp\UseFieldSplit;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\RenderHelp\UseLayoutSplit;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\RenderHelp\UsePosSplit;

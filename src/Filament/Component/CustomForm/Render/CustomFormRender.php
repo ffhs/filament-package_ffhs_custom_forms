@@ -1,6 +1,6 @@
 <?php
 
-namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Render;
+namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\Render;
 
 use Closure;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\LayoutType\CustomLayoutType;
@@ -43,7 +43,7 @@ class CustomFormRender
     }
 
 
-    public static function getInfolistRender(string $viewMode,CustomForm $form, CustomFormAnswer $formAnswer, Collection $fieldAnswers): Closure {
+    public static function getInfolistRender(string $viewMode, CustomForm $form, CustomFormAnswer $formAnswer, Collection $fieldAnswers): Closure {
         return function (CustomField $customField,  array $parameter) use ($formAnswer, $form, $viewMode, $fieldAnswers) {
 
             /** @var CustomFormAnswer $answer*/
@@ -136,12 +136,14 @@ class CustomFormRender
 
             //Rule before render
             $rules->each(function(Rule $rule) use (&$customField) {
-                $customField = $rule->handle(["action" => "before_render",  "customField" => $customField], $customField);
+                $customField = $rule->handle(
+                    static::getRuleParameters("before_render", $customField)
+                    , $customField);
             });
 
             //Parameter mutation
             $rules->each(function(Rule $rule) use ($customField, &$parameters) {
-                $parameters = $rule->handle(["action" => "mutate_parameters", "customField" => $customField], $parameters);
+                $parameters = $rule->handle(static::getRuleParameters("mutate_parameters", $customField), $parameters);
             });
 
             //Render
@@ -149,7 +151,7 @@ class CustomFormRender
 
             //Rule after Render
             $rules->each(function(Rule $rule) use ($customField, &$renderedComponent) {
-                $renderedComponent = $rule->handle(["action" => "after_render", "customField" => $customField], $renderedComponent);
+                $renderedComponent = $rule->handle(static::getRuleParameters("after_render", $customField), $renderedComponent);
             });
             $customFormSchema[] = $renderedComponent;
 
@@ -157,6 +159,12 @@ class CustomFormRender
             $allComponents->add($renderedComponent);
         }
         return [$customFormSchema,$index, $allRules, $allComponents];
+    }
+
+
+    static function getRuleParameters(string $action, CustomField $customField): array
+    {
+        return array_merge(["action" => $action, "customField" => $customField]);
     }
 }
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\HtmlComponents;
+namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\html;
 
 use Illuminate\Support\HtmlString;
 

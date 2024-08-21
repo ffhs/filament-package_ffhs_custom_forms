@@ -9,7 +9,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\FormEditor\TypeActions\default\DefaultCustomActivationAction;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\FormEditor\TypeActions\default\DefaultCustomFieldDeleteAction;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\FormEditor\TypeActions\default\DefaultCustomFieldEditTypeOptionsAction;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\HtmlComponents\HtmlBadge;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\html\HtmlBadge;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\Types\IsType;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\Types\Type;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;

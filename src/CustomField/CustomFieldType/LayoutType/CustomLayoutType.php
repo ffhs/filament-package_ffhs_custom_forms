@@ -6,8 +6,8 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Layout
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\LayoutType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\CustomFieldType;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\html\HtmlBadge;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor\CustomFieldList\EditorCustomFieldList;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\HtmlComponents\HtmlBadge;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 
 abstract class CustomLayoutType extends CustomFieldType

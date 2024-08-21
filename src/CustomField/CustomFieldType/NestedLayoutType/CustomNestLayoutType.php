@@ -4,9 +4,8 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Nested
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\LayoutType\CustomLayoutType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\NestedLayoutType\CustomEggLayoutType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\OLDRepeaterFieldAction\Actions\NewEggActionComponent;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\HtmlComponents\HtmlBadge;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\html\HtmlBadge;
 use Filament\Support\Colors\Color;
 
 abstract class CustomNestLayoutType extends CustomLayoutType

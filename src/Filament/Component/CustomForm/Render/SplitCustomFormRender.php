@@ -1,6 +1,6 @@
 <?php
 
-namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Render;
+namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\Render;
 
 use Closure;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\LayoutType\CustomLayoutType;

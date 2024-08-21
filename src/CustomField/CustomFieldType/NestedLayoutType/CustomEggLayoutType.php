@@ -6,7 +6,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\LayoutType\CustomLayoutType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\OLDRepeaterFieldAction\Actions\PullInLayoutAction;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\OLDRepeaterFieldAction\Actions\PullOutLayoutAction;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\HtmlComponents\HtmlBadge;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\html\HtmlBadge;
 use Filament\Support\Colors\Color;
 
 abstract class CustomEggLayoutType extends CustomLayoutType

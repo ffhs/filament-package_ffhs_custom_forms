@@ -31,6 +31,8 @@ abstract class FormRuleEventType implements EventType
                 return $this->handleAfterRenderForm($triggered, $arguments, $target, $rule);
             else
                 return $this->handleAfterRenderInfolist($triggered, $arguments, $target, $rule);
+            case "load_answerer": return $this->handleAnswerLoadMutation($triggered, $arguments, $target, $rule);
+            case "save_answerer": return $this->handleAnswerSaveMutation($triggered, $arguments, $target, $rule);
 
             case "after_all_rendered": return $this->handleAfterAllRendered($triggered, $arguments, $target, $rule);
             default: return null;
@@ -64,6 +66,16 @@ abstract class FormRuleEventType implements EventType
     }
 
     private function handleAfterAllRendered(bool $triggered, array $arguments, Collection $target, RuleEvent $rule):Collection
+    {
+        return $target;
+    }
+
+    private function handleAnswerLoadMutation(bool $triggered, array $arguments, array $target, RuleEvent $rule): array
+    {
+        return $target;
+    }
+
+    private function handleAnswerSaveMutation(bool $triggered, array $arguments, mixed $target, RuleEvent $rule): mixed
     {
         return $target;
     }
