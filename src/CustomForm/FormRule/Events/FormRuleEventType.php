@@ -5,8 +5,8 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Events;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\Rules\Event\EventType;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\Types\IsType;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\Rule\Rule;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\Rule\RuleEvent;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\Rule;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\RuleEvent;
 use Filament\Forms\Components\Component;
 use Illuminate\Support\Collection;
 

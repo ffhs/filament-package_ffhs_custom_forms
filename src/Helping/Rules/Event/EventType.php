@@ -3,7 +3,7 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\Helping\Rules\Event;
 
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\Types\Type;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\Rule\RuleEvent;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\RuleEvent;
 
 interface EventType extends Type
 {

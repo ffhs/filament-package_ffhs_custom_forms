@@ -4,9 +4,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\RuleEditor;
 
 use Barryvdh\Debugbar\Facades\Debugbar;
 use Closure;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\DefaultEditorComponents\TypeActions\DefaultCustomFieldDeleteAction;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\DragDrop\DragDropComponent;
-use Ffhs\FilamentPackageFfhsCustomForms\Helping\EditHelper\EditCustomFormHelper;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\Rules\Event\EventType;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\Rules\Trigger\TriggerType;
 use Filament\Forms\Components\Actions\Action;
@@ -14,8 +12,6 @@ use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Support\Colors\Color;
-use Filament\Support\Facades\FilamentColor;
-use Ramsey\Collection\Collection;
 
 class RuleEditor extends Group
 {

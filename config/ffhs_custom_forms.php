@@ -31,9 +31,9 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\NestedLayout
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\TemplatesType\TemplateFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Events\HideEvent;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Trigger\IsInfolistTrigger;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\DefaultEditorComponents\FieldAdder\CustomFieldTypeAdder;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\DefaultEditorComponents\FieldAdder\GeneralFieldAdder;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\DefaultEditorComponents\FieldAdder\TemplateFieldAdder;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\FormEditor\AdderComponents\default\CustomFieldTypeAdder;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\FormEditor\AdderComponents\default\GeneralFieldAdder;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\FormEditor\AdderComponents\default\TemplateFieldAdder;
 
 return [
 

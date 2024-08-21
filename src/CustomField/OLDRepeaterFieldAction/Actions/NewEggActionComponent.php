@@ -4,8 +4,8 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\OLDRepeaterFieldAction
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\NestedLayoutType\CustomNestLayoutType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\OLDRepeaterFieldAction\RepeaterFieldAction;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\Components\EditTypeOptionModal;
-use Ffhs\FilamentPackageFfhsCustomForms\Helping\EditHelper\EditCustomFormHelper;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\FormEditor\Components\EditTypeOptionModal;
+use Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\EditHelper\EditCustomFormHelper;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Filament\Forms\Components\Actions\Action;

@@ -50,24 +50,6 @@ return new class () extends Migration {
             $table->timestamps();
         });
 
-
-        Schema::create('rule_trigger_dependences', function (Blueprint $table) {
-            $table->id();
-            $table->integer('order');
-            $table->morphs('dependence');
-            $table->foreignIdFor(RuleTrigger::class)->constrained()->cascadeOnDelete();
-
-            $table->timestamps();
-        });
-
-        Schema::create('rule_event_targets', function (Blueprint $table) {
-            $table->id();
-            $table->integer('order');
-            $table->morphs('target');
-            $table->foreignIdFor(RuleEvent::class)->constrained()->cascadeOnDelete();
-
-            $table->timestamps();
-        });
     }
 
     /**

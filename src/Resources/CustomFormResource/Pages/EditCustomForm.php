@@ -2,9 +2,9 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormResource\Pages;
 
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\Editor\CustomFormEditor;
-use Ffhs\FilamentPackageFfhsCustomForms\Helping\EditHelper\EditCustomFormLoadHelper;
-use Ffhs\FilamentPackageFfhsCustomForms\Helping\EditHelper\EditCustomFormSaveHelper;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\FormEditor\CustomFormEditor;
+use Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\EditHelper\EditCustomFormLoadHelper;
+use Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\EditHelper\EditCustomFormSaveHelper;
 use Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormResource;
 use Filament\Actions;
 use Filament\Forms\Components\Section;

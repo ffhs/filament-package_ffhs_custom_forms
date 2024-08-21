@@ -5,8 +5,8 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Events;
 use Barryvdh\Debugbar\Facades\Debugbar;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\HasFormTargets;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Translations\HasRuleEventPluginTranslate;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\Rule\Rule;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\Rule\RuleEvent;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\Rule;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\RuleEvent;
 use Filament\Forms\Components\Component;
 
 class HideEvent extends FormRuleEventType

@@ -2,7 +2,7 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormAnswerResource\Pages;
 
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\InfolistRender\EmbeddedAnswerInfolist;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\InfolistRender\EmbeddedAnswerInfolist;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormAnswerResource;
 use Filament\Infolists\Components\Section;
