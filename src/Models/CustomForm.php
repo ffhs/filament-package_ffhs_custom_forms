@@ -8,6 +8,8 @@ use Ffhs\FilamentPackageFfhsCustomForms\Helping\Caching\HasCacheModel;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\HasFormIdentifier;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\FlattedNested\NestedFlattenList;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\Rule;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\RuleEvent;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\RuleTrigger;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -159,12 +161,23 @@ class CustomForm extends Model implements CachedModel
                 $customFields = $this->customFields()->get();
                 CustomField::addToCachedList($customFields);
 
-                //Cache FieldRules
-            /*    $fieldRules = FieldRule::query()->whereIn("custom_field_id", $customFields->pluck("id"))->get(); ToDo new form Rules
-                $customFields->each(function(CustomField $customField) use ($fieldRules) {
-                    $rules =  $fieldRules->where("custom_field_id", $customField->id);
-                    $customField->setValueInManyRelationCache('fieldRules',$rules);
-                });*/
+                //Cache FormRules
+                $formRules = $this->rules;
+                Rule::addToCachedList($formRules);
+
+                $triggers = RuleTrigger::query()->whereIn("rule_id", $formRules->pluck("id"))->get();
+                $events = RuleEvent::query()->whereIn("rule_id", $formRules->pluck("id"))->get();
+
+                RuleEvent::addToCachedList($events);
+                RuleTrigger::addToCachedList($triggers);
+
+                $formRules->each(function(Rule $rule) use ($events, $triggers) {
+                    $ruleEvents =  $events->where("rule_id", $rule->id);
+                    $ruleTriggers =  $triggers->where("rule_id", $rule->id);
+                    $rule->setValueInManyRelationCache('ruleEvents',$ruleEvents);
+                    $rule->setValueInManyRelationCache('ruleTriggers',$ruleTriggers);
+                });
+
 
                 //Cache Templates and Templates Fields
                 $templateIds = $customFields->whereNotNull('template_id')->pluck('template_id')->toArray();
