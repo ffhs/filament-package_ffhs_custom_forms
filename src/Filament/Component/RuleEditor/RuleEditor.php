@@ -83,7 +83,7 @@ class RuleEditor extends Group
                 Select::make('type')
                     ->label("")
                     ->required()
-                    ->selectablePlaceholder(true)
+                    ->selectablePlaceholder()
                     ->nullable(false)
                     ->options($this->getTriggerOptions(...))
                     ->live(),

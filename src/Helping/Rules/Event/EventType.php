@@ -8,7 +8,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\RuleEvent;
 
 interface EventType extends Type
 {
-    public function handle(Closure $triggered, array $arguments, mixed $target, RuleEvent $rule): mixed;
+    public function handle(Closure $triggers, array $arguments, mixed $target, RuleEvent $rule): mixed;
 
     public function getDisplayName(): string;
 

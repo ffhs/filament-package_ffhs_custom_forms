@@ -4,11 +4,13 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\Rend
 
 use Closure;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\LayoutType\CustomLayoutType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Trigger\FormRuleTriggerType;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\Rule;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\RuleTrigger;
 use Filament\Forms\Components\Group;
 use Illuminate\Support\Collection;
 
@@ -61,13 +63,8 @@ class CustomFormRender
 
     public static function getFormRender(string $viewMode,CustomForm $form): Closure {
         return function(CustomField $customField, array $parameter) use ($viewMode, $form) {
-
             //Render
-            $component = $customField->getType()->getFormComponent($customField, $form, $viewMode, $parameter);
-         //   if($component instanceof Field) $component->required($customField->required); //ToDo
-           // $component->live(true);
-
-            return $component;
+            return $customField->getType()->getFormComponent($customField, $form, $viewMode, $parameter);
         };
     }
 
@@ -134,6 +131,8 @@ class CustomFormRender
 
             $rules = $customField->customForm->rules;
 
+
+
             //Rule before render
             $rules->each(function(Rule $rule) use (&$customField) {
                 $customField = $rule->handle(
@@ -148,6 +147,15 @@ class CustomFormRender
 
             //Render
             $renderedComponent = $render($customField, $parameters);
+
+            //TriggerPreparation (maintain for live attribute)
+            $triggers = $rules->map(fn(Rule $rule) => $rule->ruleTriggers)->flatten(1);
+            foreach($triggers as $trigger){
+                /**@var RuleTrigger $trigger*/
+                $type = $trigger->getType();
+                if($type instanceof  FormRuleTriggerType)
+                    $renderedComponent = $type->prepareComponent($renderedComponent, $trigger);
+            }
 
             //Rule after Render
             $rules->each(function(Rule $rule) use ($customField, &$renderedComponent) {

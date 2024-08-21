@@ -17,7 +17,7 @@ return [
             'forms' => 'Formulare'
         ],
         'custom_form_answer' => "Ausgefüllte Formulare",
-        "templates" => "Templates"
+        "templates" => "Templates",
     ],
 
     "fields" => [
@@ -69,9 +69,11 @@ return [
 
         'rules' => [
             'event' => [
-                "is_disabled_rule" => "Feld deaktivieren",
                 "hidden_event" => "Feld verstecken",
-                "is_required_rule" => "Feld benötigen",
+                "visible_event" => "Feld anzeigen",
+                "disabled_event" => "Feld deaktivieren",
+                "required_event" => "Feld benötigen",
+
                 'change_options_rule' => 'Feld Optionen ändern'
             ],
             'trigger' => [

@@ -29,7 +29,10 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\NestedLayout
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\NestedLayoutType\Types\WizardCustomNestType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\NestedLayoutType\Types\WizardStepCustomEggType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\TemplatesType\TemplateFieldType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Events\DisabledEvent;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Events\HideEvent;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Events\RequiredEvent;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Events\VisibleEvent;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Trigger\IsInfolistTrigger;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Trigger\ValueEqualsRuleTrigger;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\FormEditor\AdderComponents\default\CustomFieldTypeAdder;
@@ -48,7 +51,10 @@ return [
             ValueEqualsRuleTrigger::class,
         ],
         "event"=>[
-            HideEvent::class
+            HideEvent::class,
+            VisibleEvent::class,
+            DisabledEvent::class,
+            RequiredEvent::class,
             //   RequiredRuleType::class,
             //   HiddenRuleType::class,
             //  DisabledRuleType::class,

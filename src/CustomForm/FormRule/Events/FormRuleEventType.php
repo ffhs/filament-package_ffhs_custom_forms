@@ -21,20 +21,20 @@ abstract class FormRuleEventType implements EventType
         return "rules.events";
      }
 
-    public function handle(Closure $triggered, array $arguments, mixed $target, RuleEvent $rule): mixed
+    public function handle(Closure $triggers, array $arguments, mixed $target, RuleEvent $rule): mixed
     {
         switch ($arguments["action"]) {
-            case "before_render": return $this->handleBeforeRender($triggered, $arguments, $target, $rule);
-            case "mutate_parameters": return $this->handleParameterMutation($triggered, $arguments, $target, $rule);
+            case "before_render": return $this->handleBeforeRender($triggers, $arguments, $target, $rule);
+            case "mutate_parameters": return $this->handleParameterMutation($triggers, $arguments, $target, $rule);
 
             case "after_render": if($target instanceof Component)
-                return $this->handleAfterRenderForm($triggered, $arguments, $target, $rule);
+                return $this->handleAfterRenderForm($triggers, $arguments, $target, $rule);
             else
-                return $this->handleAfterRenderInfolist($triggered, $arguments, $target, $rule);
-            case "load_answerer": return $this->handleAnswerLoadMutation($triggered, $arguments, $target, $rule);
-            case "save_answerer": return $this->handleAnswerSaveMutation($triggered, $arguments, $target, $rule);
+                return $this->handleAfterRenderInfolist($triggers, $arguments, $target, $rule);
+            case "load_answerer": return $this->handleAnswerLoadMutation($triggers, $arguments, $target, $rule);
+            case "save_answerer": return $this->handleAnswerSaveMutation($triggers, $arguments, $target, $rule);
 
-            case "after_all_rendered": return $this->handleAfterAllRendered($triggered, $arguments, $target, $rule);
+            case "after_all_rendered": return $this->handleAfterAllRendered($triggers, $arguments, $target, $rule);
             default: return null;
         }
     }
@@ -45,36 +45,36 @@ abstract class FormRuleEventType implements EventType
         return $arguments["customField"];
     }
 
-    public function handleBeforeRender(Closure $triggered, array $arguments, CustomField $target, RuleEvent $rule): CustomField
+    public function handleBeforeRender(Closure $triggers, array $arguments, CustomField $target, RuleEvent $rule): CustomField
     {
         return $target;
     }
-    public function handleParameterMutation(Closure $triggered, array $arguments, array $parameters, RuleEvent $rule): array
+    public function handleParameterMutation(Closure $triggers, array $arguments, array $parameters, RuleEvent $rule): array
     {
         return $parameters;
     }
 
 
-    public function handleAfterRenderForm(Closure $triggered, array $arguments, Component $component, RuleEvent $rule): Component
+    public function handleAfterRenderForm(Closure $triggers, array $arguments, Component $component, RuleEvent $rule): Component
     {
         return $component;
     }
 
-    public function handleAfterRenderInfolist(Closure $triggered, array $arguments, \Filament\Infolists\Components\Component $component, RuleEvent $rule): \Filament\Infolists\Components\Component
+    public function handleAfterRenderInfolist(Closure $triggers, array $arguments, \Filament\Infolists\Components\Component $component, RuleEvent $rule): \Filament\Infolists\Components\Component
     {
         return $component;
     }
 
-    private function handleAfterAllRendered(Closure $triggered, array $arguments, Collection $target, RuleEvent $rule):Collection
+    private function handleAfterAllRendered(Closure $triggers, array $arguments, Collection $target, RuleEvent $rule):Collection
     {
         return $target;
     }
 
-    private function handleAnswerLoadMutation(Closure $triggered, array $arguments, mixed $target, RuleEvent $rule): mixed    {
+    private function handleAnswerLoadMutation(Closure $triggers, array $arguments, mixed $target, RuleEvent $rule): mixed    {
         return $target;
     }
 
-    private function handleAnswerSaveMutation(Closure $triggered, array $arguments, mixed $target, RuleEvent $rule): mixed
+    private function handleAnswerSaveMutation(Closure $triggers, array $arguments, mixed $target, RuleEvent $rule): mixed
     {
         return $target;
     }
