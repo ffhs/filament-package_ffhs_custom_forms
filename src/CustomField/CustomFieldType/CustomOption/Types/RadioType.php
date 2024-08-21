@@ -5,19 +5,16 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Custom
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomOption\CustomOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomOption\CustomOptionType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomOption\Types\Views\RadioTypeView;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\HasCustomTypePackageTranslation;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\DefaultLayoutTypeOptionGroup;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\BooleanOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\ColumnsOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\ColumnSpanOption;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\InlineOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\NewLineOption;
-use Ffhs\FilamentPackageFfhsCustomForms\Domain\HasBasicSettings;
-use Ffhs\FilamentPackageFfhsCustomForms\Domain\HasCustomFormPackageTranslation;
 use Filament\Forms\Components\Component;
 
 class RadioType extends CustomOptionType
 {
-    use HasCustomFormPackageTranslation;
+    use HasCustomTypePackageTranslation;
 
     public static function identifier(): string { return "radio"; }
 

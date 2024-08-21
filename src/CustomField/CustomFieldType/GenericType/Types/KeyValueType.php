@@ -4,15 +4,14 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Generi
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomOption\CustomOptionType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Types\Views\KeyValueTypeView;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\HasCustomTypePackageTranslation;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\DefaultLayoutTypeOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\FastTypeOption;
-use Ffhs\FilamentPackageFfhsCustomForms\Domain\HasBasicSettings;
-use Ffhs\FilamentPackageFfhsCustomForms\Domain\HasCustomFormPackageTranslation;
 use Filament\Forms\Components\Toggle;
 
 class KeyValueType extends CustomOptionType
 {
-    use HasCustomFormPackageTranslation;
-    use HasBasicSettings;
+    use HasCustomTypePackageTranslation;
     public static function identifier(): string { return "key_value"; }
 
     public function viewModes(): array {
@@ -27,6 +26,7 @@ class KeyValueType extends CustomOptionType
 
     protected function extraOptionsAfterBasic(): array {
         return [
+            DefaultLayoutTypeOptionGroup::make(),
           'reorderable' => new FastTypeOption(false,
               Toggle::make('reorderable')
                 ->label(__("filament-package_ffhs_custom_forms::custom_forms.fields.type_options.reorderable"))

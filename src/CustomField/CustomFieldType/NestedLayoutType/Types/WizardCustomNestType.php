@@ -2,7 +2,7 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\NestedLayoutType\Types;
 
-use Ffhs\FilamentPackageFfhsCustomForms\Domain\HasCustomFormPackageTranslation;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\HasCustomTypePackageTranslation;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\NestedLayoutType\CustomEggLayoutType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\NestedLayoutType\CustomNestLayoutType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldType\NestedLayoutType\Types\Views\WizardNestTypeView;
@@ -14,7 +14,7 @@ use Filament\Forms\Components\Toggle;
 
 class WizardCustomNestType extends CustomNestLayoutType
 {
-    use HasCustomFormPackageTranslation;
+    use HasCustomTypePackageTranslation;
 
     public static function identifier(): string {
         return "wizard";

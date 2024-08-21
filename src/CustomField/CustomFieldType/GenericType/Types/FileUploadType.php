@@ -2,11 +2,11 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Types;
 
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Types\Views\FileUploadView;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\CustomFieldType;
-use Ffhs\FilamentPackageFfhsCustomForms\Domain\HasBasicSettings;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Types\Views\FileUploadView;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\HasCustomTypePackageTranslation;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\DefaultLayoutTypeOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\FastTypeOption;
-use Ffhs\FilamentPackageFfhsCustomForms\Domain\HasCustomFormPackageTranslation;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\FileUpload;
@@ -16,8 +16,7 @@ use Illuminate\Support\Collection;
 
 class FileUploadType extends CustomFieldType
 {
-    use HasCustomFormPackageTranslation;
-    use HasBasicSettings;
+    use HasCustomTypePackageTranslation;
 
     public static function identifier(): string { return "file_upload"; }
 
@@ -29,6 +28,7 @@ class FileUploadType extends CustomFieldType
 
     protected function extraOptionsAfterBasic(): array { //ToDo Make for new type
         return [
+            DefaultLayoutTypeOptionGroup::make(),
             'image' => FastTypeOption::makeFast(false,
                 Toggle::make('image')
                     ->afterStateUpdated(function($state, $set){

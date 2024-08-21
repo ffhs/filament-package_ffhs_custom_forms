@@ -22,6 +22,7 @@ class ToggleButtonsView implements FieldTypeView
             ->columnStart(FieldMapper::getOptionParameter($record,"new_line_option"))
             ->inlineLabel(FieldMapper::getOptionParameter($record,"in_line_label"))
            // ->multiple(FormMapper::getOptionParameter($record,"multiple"))
+           ->inline(FieldMapper::getOptionParameter($record,"inline"))
             ->columns(FieldMapper::getOptionParameter($record,"columns"))
             ->helperText(FieldMapper::getToolTips($record))
             ->label(FieldMapper::getLabelName($record))
