@@ -22,24 +22,25 @@ class EditCustomFields extends DragDropComponent
         $this->nestedFlattenListType(CustomField::class);
 
         $this->itemGridSize(function ($itemState){
-            if(empty($itemState['options'])) return null;
-            return $itemState['options']['column_span'] ?? null;
+               if(empty($itemState['options'])) return null;
+               return $itemState['options']['column_span'] ?? null;
         });
+
+
         $this->itemGridStart(function ($itemState){
-            if(empty($itemState['options'])) return null;
-            return $itemState['options']['column_start'] ?? null;
-        });
+           if(empty($itemState['options'])) return null;
+           return $itemState['options']['new_line_option'] ? 1: null;
+       });
 
+      $this->flattenGrid(function ($itemState){
+           if(empty($itemState['options'])) return null;
+           return $itemState['options']['columns'] ?? null;
+       });
 
-        $this->flattenGrid(function ($itemState){
-            if(empty($itemState['options'])) return null;
-            return $itemState['options']['columns'] ?? null;
-        });
-
-        $this->flattenViewHidden(function ($itemState){
-            $type = CustomFieldUtils::getFieldTypeFromRawDate($itemState);
-            return is_null($type) || is_null($type->fieldEditorExtraComponent($itemState));
-        });
+       $this->flattenViewHidden(function ($itemState){
+           $type = CustomFieldUtils::getFieldTypeFromRawDate($itemState);
+           return is_null($type) || is_null($type->fieldEditorExtraComponent($itemState));
+       });
 
         $this->flattenView(function ($itemState){
             $type = CustomFieldUtils::getFieldTypeFromRawDate($itemState);

@@ -1,5 +1,5 @@
 @php
-    use Illuminate\Support\HtmlString;
+    use Illuminate\Support\Facades\Blade;use Illuminate\Support\HtmlString;
     use function Filament\Support\prepare_inherited_attributes;
     use Illuminate\View\ComponentAttributeBag;
 
@@ -50,7 +50,7 @@
         :attributes="prepare_inherited_attributes(new ComponentAttributeBag())"
     >
 
-        <div  style="width: 50%; margin-left: 50%; margin-top: -20px; margin-bottom: 10px">
+        <div style="width: 50%; margin-left: 50%; margin-top: -20px; margin-bottom: 10px">
             {{$getItemActionContainer($key)}}
         </div>
 

@@ -5,7 +5,6 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\App;
 
 class FieldMapper
 {

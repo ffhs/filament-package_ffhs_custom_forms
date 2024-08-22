@@ -2,7 +2,6 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Types\Views;
 
-use Barryvdh\Debugbar\Facades\Debugbar;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\FieldTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldMapper;

@@ -1,5 +1,5 @@
 @php
-    use function Filament\Support\prepare_inherited_attributes;
+    use Barryvdh\Debugbar\Facades\Debugbar;use function Filament\Support\prepare_inherited_attributes;
     use Illuminate\View\ComponentAttributeBag;
 
     $structureField = $structure;
@@ -24,8 +24,6 @@
 >
 
     @foreach($structureField as $key => $structure)
-        <!-- ToDo FlattenList) -->
-        <!-- include('filament-package_ffhs_custom_forms::custom_form_edit.custom-field') -->
         @include('filament-package_ffhs_custom_forms::filament.components.drag-drop.element')
 
     @endforeach
