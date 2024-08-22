@@ -43,7 +43,7 @@ class ColorPickerTypeView implements FieldTypeView
                                                 array           $parameter = []): ColorEntry {
         return ColorEntry::make(FieldMapper::getIdentifyKey($record))
             ->columnStart(FieldMapper::getOptionParameter($record,"new_line_option"))
-            ->label(FieldMapper::getLabelName($record). ":")
+            ->label(FieldMapper::getLabelName($record))
             ->state(FieldMapper::getAnswer($record))
             ->columnSpanFull()
             ->inlineLabel();

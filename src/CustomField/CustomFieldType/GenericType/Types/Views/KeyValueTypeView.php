@@ -39,7 +39,7 @@ class KeyValueTypeView implements FieldTypeView
 
         return KeyValueEntry::make(FieldMapper::getIdentifyKey($record))
                 ->columnStart(FieldMapper::getOptionParameter($record,"new_line_option"))
-                ->label(FieldMapper::getLabelName($record). ":")
+                ->label(FieldMapper::getLabelName($record))
                 ->columnSpanFull()
                 ->inlineLabel()
                 ->state($answerer);

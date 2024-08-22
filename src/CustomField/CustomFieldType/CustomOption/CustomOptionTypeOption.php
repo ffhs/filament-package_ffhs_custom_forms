@@ -2,10 +2,8 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomOption;
 
-use Barryvdh\Debugbar\Facades\Debugbar;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\TypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomOption;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Filament\Forms\Components\Component;
@@ -38,7 +36,7 @@ class CustomOptionTypeOption extends TypeOption
 
 
     public function mutateOnFieldSave(mixed $data, string $key, CustomField $field): null  {
-        Cache::set("custom_field-custom_options-" . $field->identifier, $data);
+        Cache::set($this->getCachedOptionEditSaveKey($field), $data, 10);
         return null;
     }
 
@@ -49,7 +47,7 @@ class CustomOptionTypeOption extends TypeOption
             return;
         }
 
-        $data = Cache::get("custom_field-custom_options-" .$field->identifier);
+        $data = Cache::get($this->getCachedOptionEditSaveKey($field));
         $ids = [];
         $toCreate = [];
         if(is_null($data)) $data = [];
@@ -112,6 +110,15 @@ class CustomOptionTypeOption extends TypeOption
                     ->required(),
             ]);
         return $repeater;
+    }
+
+    /**
+     * @param CustomField $field
+     * @return string
+     */
+    public function getCachedOptionEditSaveKey(CustomField $field): string
+    {
+        return "custom_field-custom_options-" . $field->identifier . "-user_" . auth()->id();
     }
 
 }

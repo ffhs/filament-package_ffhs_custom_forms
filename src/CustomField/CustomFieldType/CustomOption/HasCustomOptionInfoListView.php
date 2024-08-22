@@ -17,7 +17,7 @@ trait HasCustomOptionInfoListView
         $textEntry = TextEntry::make(FieldMapper::getIdentifyKey($record));
         $answer = FieldMapper::getAnswer($record);
 
-        if(empty($answer)) $state =  "";
+        if(empty($answer)) $answer =  "";
         else if(is_array($answer))
             $stateList = FieldMapper::getAllCustomOptions($record)->filter(fn($value, $id) => in_array($id,$answer));
         else {
@@ -28,7 +28,7 @@ trait HasCustomOptionInfoListView
 
         $textEntry
             ->columnStart(FieldMapper::getOptionParameter($record,"new_line_option"))
-            ->label(FieldMapper::getLabelName($record). ":")
+            ->label(FieldMapper::getLabelName($record))
             ->columnSpanFull()
             ->inlineLabel()
             ->state(FieldMapper::getAnswer($record))

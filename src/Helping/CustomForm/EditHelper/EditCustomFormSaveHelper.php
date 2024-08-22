@@ -28,9 +28,10 @@ class EditCustomFormSaveHelper
             if(!empty($field["id"]))
                 $customField = $oldFields->where("id", $field["id"] )->first();
             else
-                $customField = new CustomField();
+                $customField = (new CustomField())->fill($field);
 
             $field['custom_form_id'] = $form->id;
+
 
             $field = CustomFieldUtils::getFieldTypeFromRawDate($field)
                 ->getMutateCustomFieldDataOnSave($customField, $field);

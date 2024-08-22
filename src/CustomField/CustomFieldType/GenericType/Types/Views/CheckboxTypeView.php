@@ -28,7 +28,7 @@ class CheckboxTypeView implements FieldTypeView
         return IconEntry::make(FieldMapper::getIdentifyKey($record))
             ->columnStart(FieldMapper::getOptionParameter($record,"new_line_option"))
             ->state(is_null(FieldMapper::getAnswer($record))? false : FieldMapper::getAnswer($record))
-            ->label(FieldMapper::getLabelName($record). ":")
+            ->label(FieldMapper::getLabelName($record))
             ->columnSpanFull()
             ->inlineLabel()
             ->boolean();

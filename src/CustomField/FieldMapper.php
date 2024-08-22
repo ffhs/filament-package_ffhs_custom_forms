@@ -22,7 +22,9 @@ class FieldMapper
 
     public static function getLabelName(CustomField|CustomFieldAnswer  $record) :String{
         if($record instanceof  CustomFieldAnswer) $record = $record->customField;
-        return $record->name;
+        $label = $record->name;
+        if($label != "") $label .= ":";
+        return $label;
     }
 
     public static function getOptionParameter(CustomField|CustomFieldAnswer $record, string $option, bool $canBeNull = false):mixed{
@@ -57,7 +59,7 @@ class FieldMapper
         if($record instanceof CustomFieldAnswer) $record = $record->customField;
         if($record->isInheritFromGeneralField()) $options = $record->generalField->customOptions;
         else $options = $record->customOptions;
-        return $options->pluck("name". $record->getLocale(),"identifier");
+        return $options->pluck("name", "identifier");
     }
 
     public static function getTypeConfigAttribute(CustomField|CustomFieldAnswer  $record, string $attribute) :mixed{

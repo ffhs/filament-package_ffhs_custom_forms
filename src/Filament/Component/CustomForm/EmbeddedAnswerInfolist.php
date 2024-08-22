@@ -6,6 +6,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm;
 use Closure;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\Render\CustomFormRender;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\Render\SplitCustomFormRender;
+use Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\RenderHelp\CustomFormLoadHelper;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\RenderHelp\UseFieldSplit;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\RenderHelp\UseLayoutSplit;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\RenderHelp\UsePosSplit;
@@ -120,7 +121,8 @@ class EmbeddedAnswerInfolist extends Component
             Group::make( SplitCustomFormRender::renderInfoListLayoutType(
                 $component->getLayoutTypeSplit(),
                 $component->getModel(),
-                $component->getViewMode())),
+                $component->getViewMode())
+            ),
         ];
     }
 

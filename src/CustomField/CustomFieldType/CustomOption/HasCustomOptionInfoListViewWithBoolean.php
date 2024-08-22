@@ -24,7 +24,7 @@ trait HasCustomOptionInfoListViewWithBoolean
         $answer = is_null($answer)? false: $answer;
 
         return IconEntry::make(FieldMapper::getIdentifyKey($record))
-            ->label(FieldMapper::getLabelName($record). ":")
+            ->label(FieldMapper::getLabelName($record))
             ->state(FieldMapper::getAnswer($answer))
             ->columnSpanFull()
             ->inlineLabel()

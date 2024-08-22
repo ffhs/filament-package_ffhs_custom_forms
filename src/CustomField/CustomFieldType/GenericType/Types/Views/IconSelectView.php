@@ -30,7 +30,7 @@ class IconSelectView implements FieldTypeView
                                                 array           $parameter = []): \Filament\Infolists\Components\Component {
         return IconEntry::make(FieldMapper::getIdentifyKey($record))
             ->columnStart(FieldMapper::getOptionParameter($record,"new_line_option"))
-            ->label(FieldMapper::getLabelName($record). ":")
+            ->label(FieldMapper::getLabelName($record))
             ->state(FieldMapper::getAnswer($record))
             ->icon(FieldMapper::getAnswer($record))
             ->columnSpanFull()
