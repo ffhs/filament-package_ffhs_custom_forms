@@ -15,8 +15,16 @@ class TemplateTypeView implements FieldTypeView
 
     public static function getFormComponent(TemplateFieldType|CustomFieldType $type, CustomField $record, array $parameter = []): Component {
 
-        return Group::make(CustomFormRender::generateFormSchema($record->template, "default"))
-            ->columnSpanFull();
+        $template = $record->template;
+        $customFields = $record->template->getOwnedFields();
+        $viewMode = $parameter['viewMode'];
+
+        $render= CustomFormRender::getFormRender($viewMode,$template);
+        $renderOutput = CustomFormRender::render(0,$customFields,$render, $viewMode, $record->customForm);
+
+
+
+        return Group::make($renderOutput[0] ?? [])->columns(config("ffhs_custom_forms.default_column_count"));
     }
 
 
@@ -24,12 +32,12 @@ class TemplateTypeView implements FieldTypeView
         $viewMode = $parameter["viewMode"];
         $formAnswer = $record->customFormAnswer;
         $form = $record->customField->template;
-        $customFields = $form->cachedFields();
+        $customFields = $form->customFields;
 
         $fieldAnswers = $formAnswer->cachedAnswers()->whereIn("custom_field_id", $customFields->select("id")->flatten());
 
         $render= CustomFormRender::getInfolistRender($viewMode,$form,$formAnswer, $fieldAnswers);
-        $customViewSchema = CustomFormRender::render(0,$customFields,$render,$viewMode)[0];
+        $customViewSchema = CustomFormRender::render(0,$customFields,$render,$viewMode, $record->customForm)[0];
         return \Filament\Infolists\Components\Group::make($customViewSchema)
             ->columnSpanFull();
         //->columns(config("ffhs_custom_forms.default_column_count"));

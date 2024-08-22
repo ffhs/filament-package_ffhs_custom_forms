@@ -6,6 +6,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Filament\Forms\Components\Field;
 use Filament\Forms\Components\Group;
+use Filament\Forms\Components\Section;
 
 class EditTypeOptionModal extends Group
 {
@@ -17,7 +18,7 @@ class EditTypeOptionModal extends Group
 
 
         $this
-            ->schema(function($state, CustomForm $record){
+            ->schema(function($state){
                 $field = new CustomField();
                 $field->fill($state);
 
@@ -26,9 +27,10 @@ class EditTypeOptionModal extends Group
                 $components = $field->getType()->getExtraTypeOptionComponents();
 
                 foreach ($components as $item) {
-                    if ($item instanceof Field) $item->disabled(in_array($item->getStatePath(false),$disabledOption));
+                    if ($item instanceof Field)
+                        $item->disabled(in_array($item->getStatePath(false),$disabledOption));
 
-                    elseif ($item instanceof \Filament\Forms\Components\Section) {
+                    elseif ($item instanceof Section) {
                         foreach ($item->getChildComponents() as $field) {
                             $field->disabled(in_array($field->getStatePath(false),$disabledOption));
                         }

@@ -49,7 +49,7 @@ class ValueEqualsRuleTrigger extends FormRuleTriggerType
 
         $targetFieldIdentifyer = $rule->data["target"];
         $state = $arguments["state"];
-        $targetValue = $state[$targetFieldIdentifyer];
+        $targetValue = $state[$targetFieldIdentifyer] ?? null;
         $type = $rule->data["type"];
 
         return match ($type) {

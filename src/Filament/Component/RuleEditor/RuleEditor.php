@@ -9,17 +9,10 @@ use Ffhs\FilamentPackageFfhsCustomForms\Helping\Rules\Event\EventType;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\Rules\Trigger\TriggerType;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Group;
-use Filament\Forms\Components\Repeater;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\ToggleButtons;
-use Filament\Forms\Form;
 use Filament\Notifications\Notification;
-use Filament\Pages\Page;
-use Filament\Resources\Pages\EditRecord;
 use Filament\Support\Colors\Color;
-use Illuminate\Support\Arr;
-use Livewire\Component;
 
 class RuleEditor extends Group
 {
@@ -52,8 +45,8 @@ class RuleEditor extends Group
                ->itemIcons("carbon-rule")
                ->itemLabel(function ($item, $state) {
 
-                   $triggers = sizeof($state[$item]["triggers"]);
-                   $event = sizeof($state[$item]["events"]);
+                   $triggers = sizeof($state[$item]["triggers"] ?? []);
+                   $event = sizeof($state[$item]["events"] ?? []);
 
                    return "Regel (".$triggers . "T : ".$event."E)"; //ToDo Translate
                })
@@ -101,15 +94,14 @@ class RuleEditor extends Group
             ->itemLabel(fn($itemState) => empty($itemState["type"])? "": $this->getTrigger($itemState['type'])->getDisplayName())
             ->schema([
                 Select::make('type')
-                    ->label("")
-                    ->required()
+                    ->afterStateUpdated(fn ($set)=> $set("data",[]))
+                    ->options($this->getTriggerOptions(...))
                     ->selectablePlaceholder()
                     ->nullable(false)
-                    ->options($this->getTriggerOptions(...))
-                    ->afterStateUpdated(function ($set){
-                        $set("data",[]);
-                    })
+                    ->label("")
+                    ->required()
                     ->live(),
+
                 Group::make()
                     ->statePath('data')
                     ->schema(function($get) {
@@ -130,7 +122,8 @@ class RuleEditor extends Group
             ->map(fn(TriggerType $trigger) => [
                     'identifier' => $trigger::identifier(),
                     'label' => $trigger->getDisplayName(),
-                ])->pluck('label', 'identifier')
+                ])
+            ->pluck('label', 'identifier')
             ->toArray();
     }
 
@@ -189,11 +182,15 @@ class RuleEditor extends Group
     {
         return Action::make("invert")
             ->action($this->invertTrigger(...))
-            ->icon(
-                fn($get, $arguments)=> $get($arguments["item"].".is_inverted")?"carbon-warning-alt-inverted-filled":"tabler-triangle-inverted")
-            ->label("")
             ->tooltip("Invertieren") //ToDo Translate
-            ->link();
+            ->label("")
+            ->link()
+            ->icon(function($get, $arguments){
+                if($get($arguments["item"].".is_inverted"))
+                    return"carbon-warning-alt-inverted-filled";
+                else
+                    return "tabler-triangle-inverted";
+            });
     }
 
     protected function invertTrigger ($set, $get, $arguments): void {
@@ -276,9 +273,8 @@ class RuleEditor extends Group
         if($types[0] instanceof EventType) return $types;
 
         $finalTypes = [];
-        foreach ($types as $typeClass){
+        foreach ($types as $typeClass)
             $finalTypes[] = $typeClass::make();
-        }
 
         return  $finalTypes;
     }

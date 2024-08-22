@@ -24,7 +24,6 @@ class CustomFormEditor extends Component {
         parent::setUp();
         $this->label("");
         $this->columnSpanFull();
-        $this->columns(6);
 
         $this->schema([
             Tabs::make()
@@ -32,15 +31,16 @@ class CustomFormEditor extends Component {
                 ->tabs([
                     Tab::make("Formular") //ToDo Translate
                         ->icon("carbon-data-format")
+                        ->columns(6)
                         ->schema([
                             Fieldset::make()
                                 ->columnStart(1)
                                 ->columnSpan(1)
                                 ->columns(1)
                                 ->schema(fn() =>
-                                collect($this->getRecord()->getFormConfiguration()::editorFieldAdder())
-                                    ->map(fn(string $class) => $class::make())
-                                    ->toArray()
+                                    collect($this->getRecord()->getFormConfiguration()::editorFieldAdder())
+                                        ->map(fn(string $class) => $class::make())
+                                        ->toArray()
                                 ),
 
                             EditCustomFields::make("custom_fields")

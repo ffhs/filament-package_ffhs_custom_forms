@@ -42,7 +42,7 @@ class SplitCustomFormRender
         //ToDo Check if it works fine ^^ $customFieldsOld = $layoutField->allCustomFieldsInLayout()->get();
 
 
-        return CustomFormRender::render($layoutField->form_position,$customFields,$render,$viewMode)[0];
+        return CustomFormRender::render($layoutField->form_position,$customFields,$render,$viewMode, $customForm)[0];
     }
 
 
@@ -66,14 +66,9 @@ class SplitCustomFormRender
             ->customFields()
             ->where("form_position",">=",$formBeginPos)
             ->where("layout_end_position", "<=", $formEndPos)
-            /*->with([
-                "customOptions",
-                "generalField.customOptions",
-                "generalField"
-            ])*/
             ->get();
 
-        return CustomFormRender::render($formBeginPos-1,$customFields,$render,$viewMode)[0];
+        return CustomFormRender::render($formBeginPos-1,$customFields,$render,$viewMode, $customForm)[0];
     }
 
 

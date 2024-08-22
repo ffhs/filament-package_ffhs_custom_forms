@@ -17,7 +17,7 @@ class  AddTemplateFieldAction extends Action
         $this->closeModalByClickingAway(false)
             ->label(fn() => __("filament-package_ffhs_custom_forms::custom_forms.functions.add"))
             ->requiresConfirmation(fn($arguments , $state) => $this->hasExistingFields($state("custom_fields"), $this->getOption()))
-            ->modalHeading(function ($state, $arguments){
+            ->modalHeading(function ($state){
                 if(!$this->hasExistingFields($state, $this->getOption())) return "";
                 return __("filament-package_ffhs_custom_forms::custom_forms.form.compiler.template_has_existing_fields");
             })
@@ -29,22 +29,23 @@ class  AddTemplateFieldAction extends Action
     }
 
 
-    public function createField(array $arguments, $set, $component, $get){
+    public function createField(array $arguments, $set, $component, $get): void
+    {
         $templateId = $this->getOption();
 
         $field = [
             "template_id" =>  $templateId,
             "is_active" => true,
+            "identifier" => uniqid(),
         ];
         FormEditorFieldAdder::addNewField($component, $arguments, $field);
-
-
 
         $customFields = $get($component->getStatePath(true) . '.custom_fields', true);
 
         $identifiers = $this->getOverlappedIdentifier($customFields,$templateId);
         if(sizeof($identifiers) == 0) return;
         $this->deletingExistingFields($get, $set, $identifiers);
+
     }
 
 

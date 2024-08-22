@@ -2,6 +2,7 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Types\Views;
 
+use Barryvdh\Debugbar\Facades\Debugbar;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\FieldTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldMapper;
@@ -22,11 +23,17 @@ class TextTypeView implements FieldTypeView
             ->columnSpan(FieldMapper::getOptionParameter($record,"column_span"))
             ->maxLength(FieldMapper::getOptionParameter($record,"max_length"))
             ->minLength(FieldMapper::getOptionParameter($record,"min_length"))
+            ->required(FieldMapper::getOptionParameter($record,"required"))
             ->helperText(FieldMapper::getToolTips($record))
             ->label(FieldMapper::getLabelName($record));
 
         $suggestions = FieldMapper::getOptionParameter($record,"suggestions");
-        if(!empty($suggestions)) $input->datalist(array_map(fn($data) => $data[Lang::locale()], $suggestions));
+        Debugbar::info($suggestions);
+        if(!empty($suggestions) && !empty($suggestions[Lang::locale()])) {
+            $suggestionsList = array_map(fn($data) => $data["value"] ?? "", $suggestions[Lang::locale()]);
+            $input->datalist($suggestionsList);
+        }
+
 
 
         $mask = FieldMapper::getOptionParameter($record,"alpine_mask");

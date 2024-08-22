@@ -21,10 +21,10 @@ class CustomFormRender
         $customFields = $form->getOwnedFields();
 
         $render= self::getFormRender($viewMode,$form);
-        $renderOutput = self::render(0,$customFields,$render,$viewMode);
+        $renderOutput = self::render(0,$customFields,$render,$viewMode, $form);
 
         return  [
-            Group::make($renderOutput[0])->columns(config("ffhs_custom_forms.default_column_count")),
+            Group::make($renderOutput[0] ?? [])->columns(config("ffhs_custom_forms.default_column_count")),
         ];
     }
 
@@ -35,7 +35,7 @@ class CustomFormRender
         $fieldAnswers = $formAnswer->cachedAnswers();
 
         $render= self::getInfolistRender($viewMode,$form,$formAnswer, $fieldAnswers);
-        $customViewSchema = self::render(0,$customFields,$render, $viewMode)[0];
+        $customViewSchema = self::render(0,$customFields,$render, $viewMode, $formAnswer->customForm)[0];
 
         //ToDo Manage Components
 
@@ -69,10 +69,10 @@ class CustomFormRender
     }
 
 
-    public static function render(int $indexOffset, Collection $customFields, Closure &$render, string $viewMode): array {
+    public static function render(int $indexOffset, Collection $customFields, Closure &$render, string $viewMode, CustomForm $form): array {
         if($customFields->isEmpty()) return [];
 
-        $renderOutput = self::renderRaw($indexOffset, $customFields, $render,$viewMode);
+        $renderOutput = self::renderRaw($indexOffset, $customFields, $render,$viewMode, $form);
         $components = $renderOutput[3];
         $customForm = $customFields->first()->custom_form;
 
@@ -83,7 +83,7 @@ class CustomFormRender
         return $renderOutput;
     }
 
-    public static function renderRaw(int $indexOffset, Collection $customFields, Closure &$render, string $viewMode): array {
+    public static function renderRaw(int $indexOffset, Collection $customFields, Closure &$render, string $viewMode, CustomForm $form): array {
         $customFormSchema = [];
 
         $preparedFields = [];
@@ -114,7 +114,7 @@ class CustomFormRender
                 $fieldRenderData = collect($fieldRenderData);
 
                 //Render Schema Input
-                $renderedOutput = self::renderRaw($index, $fieldRenderData, $render,$viewMode);
+                $renderedOutput = self::renderRaw($index, $fieldRenderData, $render,$viewMode,$form);
                 //Get Layout Schema
                 $parameters = array_merge([
                     "customFieldData" => $fieldRenderData,
@@ -129,8 +129,7 @@ class CustomFormRender
 
             if(!$customField->is_active) continue;
 
-            $rules = $customField->customForm->rules;
-
+            $rules = $form->rules;
 
 
             //Rule before render

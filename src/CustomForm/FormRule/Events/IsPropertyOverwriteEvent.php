@@ -7,6 +7,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\HasFormTargets;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Translations\HasRuleEventPluginTranslate;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\RuleEvent;
 use Filament\Forms\Components\Component;
+use Filament\Forms\Get;
 use ReflectionClass;
 use Filament\Infolists\Components\Component as InfolistComponent;
 
@@ -54,13 +55,17 @@ abstract class  IsPropertyOverwriteEvent extends FormRuleEventType
         $property->setAccessible(true);
         $oldProperty = $property->getValue($component);
 
-        $hiddenFunction = function (Component|InfolistComponent $component) use ($oldProperty, $triggers) {
-            $triggered = $triggers(["state" => $component->getGetCallback()(".")]);
+        $hiddenFunction = function (Component|InfolistComponent $component, $get) use ($oldProperty, $triggers) {
+          //  dd($component->getLivewire()->getForm('form')->getState());
+            $triggered = $triggers(["state" => $get(".")]);
             if ($triggered == $this->dominatingSide()) $triggered = $component->evaluate($oldProperty);
             // if($hidden && !is_null($set)) $set($customField->identifier, null);
             return $triggered;
         };
-        $property->setValue($component, $hiddenFunction);
-        return $component;
+
+        if($component instanceof InfolistComponent)
+            return $component->hidden($hiddenFunction, );
+        else
+            return $component->hidden($hiddenFunction);
     }
 }

@@ -13,7 +13,7 @@ class EditCustomFormSaveHelper
 {
     public static function save(array $rawState, CustomForm $form): void {
         $rawFields = $rawState["custom_fields"];
-        $oldFields = $form->customFields;
+        $oldFields = $form->getOwnedFields();
         $fieldData = collect($rawFields);
 
         $fieldsToSaveData = [];
@@ -74,7 +74,7 @@ class EditCustomFormSaveHelper
         CustomField::upsert($fieldsToSaveData, ['id']);
 
         //Run after Save
-        $savedFields = $form->customFields()->get();
+        $savedFields = $form->customFields()->where("custom_form_id", $form->id)->get();
         $savedFields
             ->whereIn('id', $fieldData->pluck("id"))
             ->each(fn(CustomField $field) =>

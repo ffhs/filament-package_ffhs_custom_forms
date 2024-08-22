@@ -35,9 +35,20 @@ trait HasFormTargets
     public function getTargetOptions(): \Closure
     {
         return function ($get) {
-           return collect($this->getAllFieldsData($get))
-                ->map(fn($fieldData) => (new CustomField())->fill($fieldData))
-                ->pluck("name", "identifier");
+
+            $options = [];
+
+            $fields = collect($this->getAllFieldsData($get))
+                ->map(fn($fieldData) => (new CustomField())->fill($fieldData));
+
+            foreach ($fields as $field){
+                /**@var \Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField $field*/
+                if($field->template_id == null) $options[$field->identifier] = $field->name;
+                else $options[$field->identifier] = $field->template->short_title;
+
+            }
+
+           return $options;
         };
     }
 
