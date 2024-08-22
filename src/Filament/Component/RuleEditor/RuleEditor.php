@@ -14,6 +14,7 @@ use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Support\Colors\Color;
@@ -36,15 +37,26 @@ class RuleEditor extends Group
 
         $this->schema([
             Action::make('AddRule')
+                ->icon("carbon-rule")
+                ->label("Regel Hinzufügen")  //ToDo translate
                 ->action(function ($set,$get) {
                     $rules = $get('rules');
                     $rules[uniqid()] = [
                         'is_oder_mode' => false,
                     ];
                     $set('rules', $rules);
-                })->toFormComponent(),
+                })
+                ->toFormComponent(),
            DragDropComponent::make('rules')
-               ->itemLabel("Regel")
+               ->label("")
+               ->itemIcons("carbon-rule")
+               ->itemLabel(function ($item, $state) {
+
+                   $triggers = sizeof($state[$item]["triggers"]);
+                   $event = sizeof($state[$item]["events"]);
+
+                   return "Regel (".$triggers . "T : ".$event."E)"; //ToDo Translate
+               })
                ->dragDropGroup('rules')
                ->columns(1)
                ->gridSize(3)
@@ -124,7 +136,10 @@ class RuleEditor extends Group
     protected function getTriggerAddAction(): Action
     {
         return Action::make('addTrigger')
-            ->action($this->addTrigger(...));
+            ->icon("tabler-circuit-switch-open")
+            ->label("Auslöser") //ToDo Translate
+            ->action($this->addTrigger(...))
+            ->link();
     }
 
     protected function addTrigger ($set, $get, $arguments): void {
@@ -133,6 +148,13 @@ class RuleEditor extends Group
             if(is_null($triggers)) $triggers = [];
             $triggers[uniqid()] = ['order' => 1, 'is_inverted' => false];
             $set($path, $triggers);
+
+
+
+        Notification::make()
+            ->title('Auslöser hinzugefügt') //toDo Translate
+            ->icon("tabler-circuit-switch-open")
+            ->send();
         }
 
 
@@ -184,15 +206,24 @@ class RuleEditor extends Group
     protected function getEventAddAction(): Action
     {
         return Action::make('addEvent')
-            ->action($this->addEvent(...));
+            ->icon("heroicon-o-play-circle")
+            ->label("Aktion") //ToDo Translate
+            ->action($this->addEvent(...))
+            ->link();
     }
 
-    protected function addEvent ($set, $get, $arguments): void {
+    protected function addEvent ($set, $get, $arguments): void
+    {
         $path = $arguments['item'] . '.events';
         $events = $get($path);
-        if(is_null($events)) $events = [];
+        if (is_null($events)) $events = [];
         $events[uniqid()] = ['order' => 1];
         $set($path, $events);
+
+        Notification::make()
+            ->title('Aktion hinzugefügt') //toDo Translate
+            ->icon("heroicon-o-play-circle")
+            ->send();
     }
 
 
