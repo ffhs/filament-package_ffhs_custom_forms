@@ -9,9 +9,16 @@ use Ffhs\FilamentPackageFfhsCustomForms\Helping\Rules\Event\EventType;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\Rules\Trigger\TriggerType;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Group;
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\ToggleButtons;
+use Filament\Forms\Form;
+use Filament\Pages\Page;
+use Filament\Resources\Pages\EditRecord;
 use Filament\Support\Colors\Color;
+use Illuminate\Support\Arr;
+use Livewire\Component;
 
 class RuleEditor extends Group
 {
@@ -74,7 +81,7 @@ class RuleEditor extends Group
             ->deepColor(1)
             ->orderAttribute('order')
             ->dragDropGroup('triggers')
-            ->itemActions([
+            ->itemActions(fn()=>[
                 $this->getRemoveAction(),
                 $this->getTriggerInvertAction()
             ])
@@ -86,6 +93,9 @@ class RuleEditor extends Group
                     ->selectablePlaceholder()
                     ->nullable(false)
                     ->options($this->getTriggerOptions(...))
+                    ->afterStateUpdated(function ($set){
+                        $set("data",[]);
+                    })
                     ->live(),
                 Group::make()
                     ->statePath('data')
@@ -98,10 +108,8 @@ class RuleEditor extends Group
                         /**@var TriggerType $trigger*/
                         return $trigger->getFormSchema();
                     })
-                ->live()
             ]);
     }
-
 
     protected function getTriggerOptions(): array
     {
@@ -196,16 +204,19 @@ class RuleEditor extends Group
             ->deepColor(1)
             ->orderAttribute('order')
             ->itemLabel(fn($itemState) => empty($itemState["type"])? "": $this->getEvent($itemState['type'])->getDisplayName())
-            ->itemActions([
+            ->itemActions(fn()=> [
                 $this->getRemoveAction(),
             ])
             ->schema([
                 Select::make('type')
                     ->label("")
                     ->required()
-                    ->selectablePlaceholder(true)
+                    ->selectablePlaceholder()
                     ->nullable(false)
                     ->options($this->getEventOptions(...))
+                    ->afterStateUpdated(function ($set){
+                        $set("data",[]);
+                    })
                     ->live(),
 
                 Group::make()
@@ -270,7 +281,7 @@ class RuleEditor extends Group
 
     private function getRemoveAction(): Action
     {
-        return Action::make("remove")
+        return Action::make("remove_")
             ->icon("heroicon-c-trash")
             ->iconButton()
             ->color(Color::Red)

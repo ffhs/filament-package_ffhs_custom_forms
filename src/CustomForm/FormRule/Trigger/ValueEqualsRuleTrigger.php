@@ -84,7 +84,7 @@ class ValueEqualsRuleTrigger extends FormRuleTriggerType
                ->disableOptionWhen(function($value, $get) { //make Better
                     if($value != "option") return false;
                     $target = $get("target");
-                    $formState = $get("../../../../../custom_fields");
+                    $formState = $get("../../../../../custom_fields")??[];
                     $customField = [];
                     foreach ($formState as $field) {
                         $customField = new CustomField();
@@ -96,6 +96,16 @@ class ValueEqualsRuleTrigger extends FormRuleTriggerType
 
                     if(empty($customField)) return true;
                     return !($customField->getType() instanceof CustomOptionType);
+                })
+                ->afterStateUpdated(function ($get, $set){
+                     switch ($get("type")) {
+                        case"text":
+                            $set("values",[]);
+                            break;
+                        case"option":
+                            $set("selected_options",[]);
+                            break;
+                    }
                 })
                 ->nullable(false)
                 ->hiddenLabel()

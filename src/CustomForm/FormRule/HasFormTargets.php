@@ -16,6 +16,11 @@ trait HasFormTargets
             ->multiple()
             ->label("Target")
             ->options($this->getTargetOptions())
+            ->hidden(function ($set, $get){
+                //Fields with an array doesn't generate properly
+                if($get('targets') == null)
+                $set("targets",[]);
+            })
             ->live();
     }
 
@@ -60,7 +65,7 @@ trait HasFormTargets
 
     public function getAllFieldsData(Get $get): array
     {
-        $fields = $get("../../../../../custom_fields");
+        $fields = $get("../../../../../custom_fields")??[] ;
 
         //Get the templated FormComponents
         $fieldsFromTemplate = collect($fields)

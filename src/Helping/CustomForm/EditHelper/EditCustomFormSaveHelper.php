@@ -116,8 +116,8 @@ class EditCustomFormSaveHelper
             if(!key_exists("id",$rawRule)) $rule = new Rule();
             else $rule = $form->rules->where("id", $rawRule["id"])->first();
 
-            $rawTriggers = $rawRule["triggers"];
-            $rawEvents = $rawRule["events"];
+            $rawTriggers = $rawRule["triggers"]?? [];
+            $rawEvents = $rawRule["events"] ?? [];
 
 
             $rule->ruleTriggers()->whereNotIn("id",collect($rawTriggers)->pluck("id"))->delete();

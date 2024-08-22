@@ -40,6 +40,11 @@ use Filament\Infolists\Components\Component as InfolistComponent;
              Select::make("customOptions")
                  ->label("Anzuzeigende Optionen")
                  ->multiple()
+                 ->hidden(function ($set, $get){
+                     //Fields with an array doesn't generate properly
+                     if($get('customOptions') == null)
+                         $set("customOptions",[]);
+                 })
                  ->options(function ($get, CustomForm $record){
                      $field = $this->getTargetFieldData($get);
 
