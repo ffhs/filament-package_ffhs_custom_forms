@@ -5,6 +5,8 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\Form
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\RuleEditor\RuleEditor;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Fieldset;
+use Filament\Forms\Components\Tabs;
+use Filament\Forms\Components\Tabs\Tab;
 
 class CustomFormEditor extends Component {
 
@@ -25,25 +27,35 @@ class CustomFormEditor extends Component {
         $this->columns(6);
 
         $this->schema([
-            RuleEditor::make()
-                /*->targets(function ($get,$record){
-                     Debugbar::info($get("custom_fields"));
-                     return collect($get("custom_fields"))->pluck("name.". $record->getLocale(), "identifier"); //ToDo Improve
-                 })*/
-                ->columnSpanFull(),
-            Fieldset::make()
-                ->columnStart(1)
-                ->columnSpan(1)
-                ->columns(1)
-                ->schema(fn() =>
-                   collect($this->getRecord()->getFormConfiguration()::editorFieldAdder())
-                       ->map(fn(string $class) => $class::make())
-                       ->toArray()
-                ),
+            Tabs::make()
+                ->columnSpanFull()
+                ->tabs([
+                    Tab::make("Formular") //ToDo Translate
+                        ->icon("carbon-data-format")
+                        ->schema([
+                            Fieldset::make()
+                                ->columnStart(1)
+                                ->columnSpan(1)
+                                ->columns(1)
+                                ->schema(fn() =>
+                                collect($this->getRecord()->getFormConfiguration()::editorFieldAdder())
+                                    ->map(fn(string $class) => $class::make())
+                                    ->toArray()
+                                ),
 
-            EditCustomFields::make("custom_fields")
-                ->columnStart(2)
-                ->columnSpan(5),
+                            EditCustomFields::make("custom_fields")
+                                ->columnStart(2)
+                                ->columnSpan(5),
+                        ]),
+
+                    Tab::make("Regeln") //ToDo Translate
+                        ->icon("carbon-rule-draft")
+                        ->schema([
+                            RuleEditor::make()
+                                ->columnSpanFull()
+                        ])
+                ]),
+
         ]);
     }
 }
