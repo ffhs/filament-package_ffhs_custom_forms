@@ -26,7 +26,7 @@ class FieldMapper
     }
 
     public static function getOptionParameter(CustomField|CustomFieldAnswer $record, string $option, bool $canBeNull = false):mixed{
-        if($record instanceof CustomFieldAnswer) $record=$record->customField;
+        if($record instanceof CustomFieldAnswer) $record=  $record->customField;
         if(is_null($record->options)) $record->options = [];
         if(array_key_exists($option, $record->options) ){
             $return = $record->options[$option];

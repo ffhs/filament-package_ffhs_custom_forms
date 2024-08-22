@@ -3,15 +3,21 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomForm;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\CustomFieldType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRulesOld\FieldRuleAnchorAbstractType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRulesOld\FieldRuleAbstractType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Trigger\FormRuleTriggerType;
+use Ffhs\FilamentPackageFfhsCustomForms\Helping\Rules\Event\EventType;
+use Ffhs\FilamentPackageFfhsCustomForms\Helping\Rules\Trigger\TriggerType;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\Rule;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\RuleEvent;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\RuleTrigger;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
 
 class FormBuilderUtil
 {
-    public static function build(?CustomForm $customForm, array $layout):CustomForm {
+    public static function buildSchema(?CustomForm $customForm, array $layout):CustomForm {
         if(is_null($customForm)) $customForm = CustomForm::create();
         $customField = [];
 
@@ -49,6 +55,7 @@ class FormBuilderUtil
 
 
 
+
    /* public static function fixingRawFields(array $fields):array {
         $filable = (new CustomField())->getFillable();
         $data = [];
@@ -72,7 +79,6 @@ class FormBuilderUtil
                 'form_position' => $formPosition,
                 'custom_form_id' => $form->id,
                 'is_active' => $field['is_active'] ?? true,
-                #'required' => $field['required'] ?? false,
             ];
 
             $defaultOptions = [];
@@ -116,10 +122,6 @@ class FormBuilderUtil
 
             //CustomOptions
             self::prepareCustomOptions($field, $fieldData);
-
-
-            //Rules
-            self::prepareRule($field, $fieldData);
 
             //Layout Fields
             self::setupLayoutFields($form, $field,$fieldData, $toCreateFields);
@@ -166,30 +168,106 @@ class FormBuilderUtil
     }
 
 
-    private static function prepareRule(array $field, array &$fieldData): void {
-        if (!array_key_exists("rules", $field)) return;
-        $counter = 0;
-        $fieldData['rules'] = [];
-        foreach ($field['rules'] as $rule) {
-            $counter++;
+    public static function buildRules(?CustomForm $customForm, array $rules):CustomForm {
 
-            $anchorType = $rule["anchor_identifier"];
-            $ruleType = $rule["rule_identifier"];
+        $finalRules = [];
+        $fields = $customForm->customFields;
 
-            $anchorData = $rule["anchor_data"] ?? [];
-            $anchorData = array_merge(FieldRuleAnchorAbstractType::getTypeFromIdentifier($anchorType)->getCreateAnchorData(),$anchorData);
+        foreach ($rules as $rule){
+            if(!key_exists("is_or_mode", $rule)) $rule["is_or_mode"] = false;
 
-            $rule_data = $rule["rule_data"] ?? [];
-            $rule_data = array_merge(FieldRuleAbstractType::getTypeFromIdentifier($ruleType)->getCreateRuleData(), $rule_data);
+            $triggers =  self::prepareTriggers($rule['triggers'], $fields);
+            $events = self::prepareRuleEvents($rule['events'], $fields);
 
-            $fieldData['rules'][] = [
-                'anchor_identifier' => $anchorType,
-                'rule_identifier' => $ruleType,
-                'anchor_data' => $anchorData,
-                'rule_data' => $rule_data,
-                'execution_order' => $counter,
-            ];
+            unset($rule['triggers']);
+            unset($rule['events']);
+
+            $rule = new Rule($rule);
+            $rule->save();
+
+            //ToDo Save Many at once
+            collect($triggers)->merge($events)
+                ->map(fn(Model $model) => $model->fill(["rule_id" => $rule->id])->save());
+
+            $finalRules[] = $rule;
         }
+
+        $ruleIds = collect($finalRules)->pluck("id");
+        $customForm->ownedRules()->sync($ruleIds);
+        return $customForm;
+    }
+
+
+
+
+
+    public static function prepareRuleEvents(array$rawEvents, Collection $fields): array
+    {
+        $order = 1;
+        foreach ($rawEvents ?? [] as $event) {
+            $type = $event['type'];
+            if ($type instanceof EventType) $event['type'] = $type::identifier();
+            if (!array_key_exists("data", $event)) $event['data'] = [];
+            $event["order"] = $order;
+            $event = self::prepareTarget($event, $fields);
+
+            $events[] = new RuleEvent($event);
+            $order++;
+        }
+        return $events;
+    }
+
+    public static function prepareTriggers(array $rawTriggers, Collection $fields): array
+    {
+        $triggers = [];
+        $order = 1;
+
+        foreach ($rawTriggers??[] as $trigger){
+            $trigger["order"] = $order;
+            $order++;
+
+            $type = $trigger['type'];
+            if ($type instanceof TriggerType) $trigger['type'] = $type::identifier();
+            if (array_key_exists("is_inverted", $trigger)) $trigger['type'] = $type::identifier();
+
+            $trigger = self::prepareTarget($trigger, $fields);
+            $triggers[] = new RuleTrigger($trigger);
+        }
+        return $triggers;
+    }
+
+
+    public static function prepareTarget(mixed $hasData, Collection $fields): mixed
+    {
+        if (!array_key_exists("data", $hasData)) $hasData['data'] = [];
+        else {
+            $data = $hasData['data'];
+            if (array_key_exists('target', $data)) {
+                $target = $data['target'];
+                $found = $fields->firstWhere(fn(CustomField $field) => $field->identifier == $target);
+                if (is_null($found)) {
+                    $found = $fields->firstWhere(fn(CustomField $field) => $field->name == $target);
+                    if (!is_null($found)) $data['target'] = $found->identifier;
+                }
+            }
+
+            if (array_key_exists('targets', $data)) {
+                $targets = [];
+                foreach ($data['targets'] ?? [] as $target) {
+                    $found = $fields->firstWhere(fn(CustomField $field) => $field->identifier == $target);
+                    if (!is_null($found)) $targets[] = $target;
+                    else{
+                        $found = $fields->firstWhere(fn(CustomField $field) => $field->name == $target);
+                        if (!is_null($found)) $targets[] = $found->identifier;
+                        else $targets[] = $target;
+                    }
+                }
+                $data['targets'] = $targets;
+            }
+
+            $hasData['data'] = $data;
+        }
+        return $hasData;
     }
 
 

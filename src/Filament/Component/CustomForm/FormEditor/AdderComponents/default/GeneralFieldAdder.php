@@ -13,8 +13,6 @@ use Illuminate\Support\Facades\Cache;
 
 final class GeneralFieldAdder extends FormEditorFieldAdder
 {
-
-
     protected function setUp(): void
     {
         $this->label(__("filament-package_ffhs_custom_forms::custom_forms.form.compiler.general_fields"));
@@ -46,12 +44,15 @@ final class GeneralFieldAdder extends FormEditorFieldAdder
     public function getGeneralFieldSelectOptions() {
         $formIdentifier = data_get($this->getState(), "custom_form_identifier");
         return Cache::remember($formIdentifier . '_general_fields_allowed_in_form', GeneralField::getCacheDuration(), function () use ($formIdentifier) {
-            $generalFieldForms = GeneralFieldForm::getFromFormIdentifier($formIdentifier);
 
-            GeneralField::cachedMultiple('id', true, ...$generalFieldForms->pluck("general_field_id")->toArray());
+            //ToDo do minimize Models and remove GeneralFieldForm with join
+            $generalFieldForms = GeneralFieldForm::query()->where("custom_form_identifier", $formIdentifier);
+            $generalFields = GeneralField::query()->whereIn("id", $generalFieldForms->clone()->select("id"))->get();
+
+            GeneralField::addToCachedList($generalFields);
 
             //Mark Required GeneralFields
-            $generalFields = $generalFieldForms->map(function (GeneralFieldForm $generalFieldForm) {
+            $generalFields = $generalFieldForms->get()->map(function (GeneralFieldForm $generalFieldForm) {
                 $generalField = $generalFieldForm->generalField;
 
                 if ($generalFieldForm->is_required) {

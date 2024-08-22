@@ -42,9 +42,9 @@ trait HasFormTargets
                 ->map(fn($fieldData) => (new CustomField())->fill($fieldData));
 
             foreach ($fields as $field){
-                /**@var \Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField $field*/
-                if($field->template_id == null) $options[$field->identifier] = $field->name;
-                else $options[$field->identifier] = $field->template->short_title;
+                /**@var CustomField $field*/
+                if($field->template_id == null) $options[$field->identifier] = $field->name ??"?";
+                else $options[$field->identifier] = $field->template->short_title ?? "?";
 
             }
 

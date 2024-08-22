@@ -21,7 +21,7 @@ class CustomFieldAnswer extends Model implements CachedModel
 {
     use HasCacheModel;
 
-    private array $data = [];
+    //private array $data = [];
 
     protected $fillable = [
         'custom_form_answer_id',
@@ -44,19 +44,8 @@ class CustomFieldAnswer extends Model implements CachedModel
     ];
 
 
-
-    public function __get($key) {
-        if($key != "customForm") return parent::__get($key);;
-        if(!array_key_exists("customForm",$this->data)) $this->data["customForm"] = $this->customForm()->first();
-        return $this->data["customForm"];
-    }
-
     public function customForm(): Builder {
         return CustomForm::query()->whereIn("id", $this->belongsTo(CustomField::class)->select("custom_form_id"));
-    }
-
-    public function cachedCustomForm(): CustomForm {
-        return $this->customFormAnswer->customForm ;
     }
 
     public function customField (): BelongsTo {

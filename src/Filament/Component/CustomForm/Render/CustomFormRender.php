@@ -2,6 +2,7 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\Render;
 
+use Barryvdh\Debugbar\Facades\Debugbar;
 use Closure;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\LayoutType\CustomLayoutType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Trigger\FormRuleTriggerType;
@@ -131,12 +132,10 @@ class CustomFormRender
 
             $rules = $form->rules;
 
-
             //Rule before render
             $rules->each(function(Rule $rule) use (&$customField) {
                 $customField = $rule->handle(
-                    static::getRuleParameters("before_render", $customField)
-                    , $customField);
+                    static::getRuleParameters("before_render", $customField), $customField);
             });
 
             //Parameter mutation
@@ -157,7 +156,7 @@ class CustomFormRender
             }
 
             //Rule after Render
-            $rules->each(function(Rule $rule) use ($customField, &$renderedComponent) {
+            $rules->each(function(Rule $rule) use ($form, $customField, &$renderedComponent) {
                 $renderedComponent = $rule->handle(static::getRuleParameters("after_render", $customField), $renderedComponent);
             });
             $customFormSchema[] = $renderedComponent;

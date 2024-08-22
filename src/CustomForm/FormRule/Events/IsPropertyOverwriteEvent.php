@@ -5,9 +5,11 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Events;
 use Closure;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\HasFormTargets;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Translations\HasRuleEventPluginTranslate;
+use Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\RenderHelp\CustomFormLoadHelper;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\RuleEvent;
 use Filament\Forms\Components\Component;
-use Filament\Forms\Get;
+use Illuminate\Support\Facades\Cache;
 use ReflectionClass;
 use Filament\Infolists\Components\Component as InfolistComponent;
 
@@ -55,17 +57,21 @@ abstract class  IsPropertyOverwriteEvent extends FormRuleEventType
         $property->setAccessible(true);
         $oldProperty = $property->getValue($component);
 
-        $hiddenFunction = function (Component|InfolistComponent $component, $get) use ($oldProperty, $triggers) {
-          //  dd($component->getLivewire()->getForm('form')->getState());
-            $triggered = $triggers(["state" => $get(".")]);
-            if ($triggered == $this->dominatingSide()) $triggered = $component->evaluate($oldProperty);
-            // if($hidden && !is_null($set)) $set($customField->identifier, null);
-            return $triggered;
-        };
+        if($component instanceof Component) $hiddenFunction = function (Component $component) use ($oldProperty, $triggers) {
+                $triggered = $triggers(["state" => $component->getGetCallback()(".")]);
+                if ($triggered == $this->dominatingSide()) $triggered = $component->evaluate($oldProperty);
+                // if($hidden && !is_null($set)) $set($customField->identifier, null);
+                return $triggered;
+            };
+        else $hiddenFunction = function (InfolistComponent $component, CustomFormAnswer $record) use ($oldProperty, $triggers) {
+                $state = Cache::remember($record->id . "custom_form_answare_state_load_infolist", 2, fn() => CustomFormLoadHelper::load($record));
+                $triggered = $triggers(["state" => $state]);
+                if ($triggered == $this->dominatingSide()) $triggered = $component->evaluate($oldProperty);
+                // if($hidden && !is_null($set)) $set($customField->identifier, null);
+                return $triggered;
+            };
 
-        if($component instanceof InfolistComponent)
-            return $component->hidden($hiddenFunction, );
-        else
-            return $component->hidden($hiddenFunction);
+        $property->setValue($component, $hiddenFunction);
+        return $component;
     }
 }

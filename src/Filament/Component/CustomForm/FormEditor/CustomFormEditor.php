@@ -22,8 +22,8 @@ class CustomFormEditor extends Component {
 
     protected function setUp(): void {
         parent::setUp();
-        $this->label("");
-        $this->columnSpanFull();
+        $this->columnSpanFull()
+            ->label("");
 
         $this->schema([
             Tabs::make()
@@ -42,10 +42,10 @@ class CustomFormEditor extends Component {
                                         ->map(fn(string $class) => $class::make())
                                         ->toArray()
                                 ),
-
                             EditCustomFields::make("custom_fields")
                                 ->columnStart(2)
                                 ->columnSpan(5),
+
                         ]),
 
                     Tab::make("Regeln") //ToDo Translate

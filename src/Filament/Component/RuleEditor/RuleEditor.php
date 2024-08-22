@@ -303,7 +303,6 @@ class RuleEditor extends Group
 
     public function getEvent($type): EventType
     {
-        Debugbar::info($type);
         return collect($this->getEvents())->filter(fn(EventType $event) => $event::identifier() === $type)->first();
     }
 

@@ -28,7 +28,6 @@ class TextTypeView implements FieldTypeView
             ->label(FieldMapper::getLabelName($record));
 
         $suggestions = FieldMapper::getOptionParameter($record,"suggestions");
-        Debugbar::info($suggestions);
         if(!empty($suggestions) && !empty($suggestions[Lang::locale()])) {
             $suggestionsList = array_map(fn($data) => $data["value"] ?? "", $suggestions[Lang::locale()]);
             $input->datalist($suggestionsList);
