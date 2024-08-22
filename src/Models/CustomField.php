@@ -96,8 +96,8 @@ class CustomField extends ACustomField implements NestingObject , Identifier
         return match ($key) {
             'name' => $genFieldF()->name,
             'type' => $genFieldF()->type,
-            'options' => array_merge(parent::__get($key), $genFieldF()->overwrite_options),
-            'overwritten_options' => array_keys($genFieldF()->overwrite_options),
+            'options' => array_merge(parent::__get($key)??[], $genFieldF()->overwrite_options??[]),
+            'overwritten_options' => array_keys($genFieldF()->overwrite_options??[]),
             'identifier' => $genFieldF()->identifier,
             'generalField' => $genFieldF(),
             default => parent::__get($key),

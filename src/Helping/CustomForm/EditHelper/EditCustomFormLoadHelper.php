@@ -36,7 +36,7 @@ class EditCustomFormLoadHelper
     private static function loadRules(CustomForm $form): array
     {
         $rules = [];
-        foreach ($form->rules as $rule) {
+        foreach ($form->ownedRules as $rule) {
             /**@var Rule $rule*/
             $rawRule = $rule->toArray();
             $rawRule['events'] = $rule->ruleEvents->toArray();

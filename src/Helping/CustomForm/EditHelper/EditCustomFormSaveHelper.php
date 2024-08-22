@@ -108,13 +108,13 @@ class EditCustomFormSaveHelper
         //Rules
         $rawRules = $rawState["rules"];
         //Delete rules where doesnt exist
-        $form->rules->whereNotIn("id", collect($rawRules)->pluck("id"))->each(fn(Rule $rule)=> $rule->delete());
+        $form->ownedRules->whereNotIn("id", collect($rawRules)->pluck("id"))->each(fn(Rule $rule)=> $rule->delete());
 
         $rules = collect();
 
         foreach ($rawRules as $rawRule) {
             if(!key_exists("id",$rawRule)) $rule = new Rule();
-            else $rule = $form->rules->where("id", $rawRule["id"])->first();
+            else $rule = $form->ownedRules->where("id", $rawRule["id"])->first();
 
             $rawTriggers = $rawRule["triggers"]?? [];
             $rawEvents = $rawRule["events"] ?? [];
@@ -155,7 +155,7 @@ class EditCustomFormSaveHelper
         }
 
 
-        $form->rules()->sync($rules->pluck("id"));
+        $form->ownedRules()->sync($rules->pluck("id"));
 
     }
 

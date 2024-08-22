@@ -31,6 +31,7 @@ use Spatie\Translatable\HasTranslations;
  * @property Collection $customFieldInLayout
  * @property Collection customFieldsWithTemplateFields
  * @property Collection rules
+ * @property Collection ownedRules
  */
 class CustomForm extends Model implements CachedModel
 {
@@ -53,33 +54,40 @@ class CustomForm extends Model implements CachedModel
         'generalFields',
         'rules',
         'formRules',
+        'rules',
+        'ownedRules'
     ];
 
     public array $translatable = [
         'does_not_exist' // <= It needs something
     ];
 
-   /* public function __get($key) {
-        if($key == 'customFieldsWithTemplateFields') return  $this->cachedFieldsWithTemplates();
-        if($key == 'customFields') return  $this->cachedFields();
-
-        return parent::__get($key);
-    }*/
-
-   /* public function ownedFields(): HasMany {
-        return $this->hasMany(CustomField::class)->orderBy("form_position");
-    }*/
-
+    public function ownedRules(): BelongsToMany
+    {
+        return $this->belongsToMany(Rule::class, (new FormRule())->getTable());
+    }
 
     public function rules(): BelongsToMany
     {
-        return $this->belongsToMany(Rule::class, (new FormRule())->getTable());
+        $templateIds = CustomField::query()
+            ->whereIn("id",  $this->customFields()->select("id"))
+            ->whereNotNull("template_id")
+            ->select("template_id");
+
+        $ruleIds = FormRule::query()
+            ->whereIn("custom_form_id", $templateIds)
+            ->orWhere("custom_form_id", $this->id)
+            ->select("rule_id");
+
+        return $this->ownedRules()->orWhereIn("rules.id",$ruleIds);
     }
 
     public function formRules(): HasMany
     {
         return $this->hasMany(FormRule::class);
     }
+
+
 
 
     public function  getCustomFieldsAsNestedList() : NestedFlattenList{
