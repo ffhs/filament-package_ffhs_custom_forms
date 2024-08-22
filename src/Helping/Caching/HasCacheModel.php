@@ -3,6 +3,7 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\Helping\Caching;
 
 use Barryvdh\Debugbar\Facades\Debugbar;
+use Closure;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
@@ -17,22 +18,46 @@ trait HasCacheModel
      *
      * "relation name"
      * protected static array $cacheWith = [];
+     *  protected static bool $defaultCaching = false; <= to Default disabling Caching
      *
      * IMPORTANT: $cachedManyRelations for all but not 1:1
      * if a method exist named cachedRelationName($cacheKey)) than it use this
      * protected array $cachedManyRelations = [];
+     *
+     *
+     *
      * **/
 
+
+    private bool|Closure $useCache;
+    private bool|null|Closure $useRecursiveCache = null;
+
+    public function __construct()
+    {
+        $this->setToDefaultCaching();
+    }
+
+
+    protected function setToDefaultCaching(): static{
+        $this->useCache = $this->getDefaultCaching();
+        return $this;
+    }
 
     public static function getCacheDuration(): mixed {
         return config('ffhs_custom_forms.cache_duration');
     }
 
     public function __get($key) {
+        if(!$this->isCaching()){
+            $result = parent::__get($key);
+            if(!($result instanceof CachedModel)) return $result;
+            else if(is_null($this->isRecursiveCaching())) return $result;
+            else return $result->caching(false,$this->isRecursiveCaching());
+        }
+
         if(!empty($this->getCachedRelations()[$key]))  return $this->get1To1CachedRelation($key);
         if(in_array($key, $this->getCachedManyRelations())) return $this->getNToNCachedRelation($key);
         return parent::__get($key);
-
     }
 
 
@@ -77,6 +102,7 @@ trait HasCacheModel
         static::addToCachedList($output);
         return $output;
     }
+
 
     public static function cachedMultiple(string $attribute , bool $searching , mixed... $values): Collection{
         $output = Cache::get(static::getFromSingedListName())?->whereIn($attribute, $values);
@@ -144,5 +170,26 @@ trait HasCacheModel
     {
         return $this->cachedManyRelations ?? [];
     }
+
+
+    public function caching(bool|Closure $useCache = true, bool|null|Closure $useRecursiveCache = null):static{
+         $this->useCache = $useCache;
+         $this->useRecursiveCache = $useRecursiveCache;
+         return $this;
+    }
+
+    public function isCaching():bool{
+        if($this->useCache instanceof Closure) return ($this->useCache)($this);
+        return $this->useCache;
+    }
+    public function isRecursiveCaching():bool|null{
+        if($this->useRecursiveCache instanceof Closure) return ($this->useRecursiveCache)($this);
+        return $this->useRecursiveCache;
+    }
+    public function getDefaultCaching():bool{
+        if(!property_exists(static::class, 'defaultCaching')) return true;
+        return static::$defaultCaching ?? true;
+    }
+
 
 }

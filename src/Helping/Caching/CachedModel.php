@@ -3,6 +3,7 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Helping\Caching;
 
+use Closure;
 use Illuminate\Support\Collection;
 
 
@@ -27,5 +28,10 @@ interface CachedModel
 
     public function setValueInManyRelationCache(string $relationName, mixed $value);
 
+    public function caching(bool|Closure $disable = true, bool|null|Closure $recursive = false):static;
+
+    public function isCaching():bool;
+    public function isRecursiveCaching():bool|null;
+    public function getDefaultCaching():bool|Closure;
 
 }
