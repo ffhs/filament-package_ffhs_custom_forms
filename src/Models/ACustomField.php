@@ -36,6 +36,7 @@ abstract class ACustomField extends Model implements CachedModel
     }
 
     public function getType():?CustomFieldType{
+        //ToDo add error witch say that the type doesn't exist if its empty
         if($this instanceof CustomField && $this->isTemplate()) return new TemplateFieldType();
         $typeClass = $this->getTypeClass();
         if(is_null($typeClass)) return null;

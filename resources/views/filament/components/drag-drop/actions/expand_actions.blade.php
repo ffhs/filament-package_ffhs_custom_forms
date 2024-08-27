@@ -4,7 +4,13 @@
     $styleClass = "field-adder-". uniqid();
     $styleOptionClass = "field-adder-option-". uniqid();
 
-
+    $rgbToHex = function ($rgbString) {
+        list($r, $g, $b) = explode(',', $rgbString);
+        $r = trim($r);
+        $g = trim($g);
+        $b = trim($b);
+        return sprintf('#%02x%02x%02x', $r, $g, $b);
+    };
 @endphp
 <x-dynamic-component :component="$getFieldWrapperView()" style="margin-top: -35px">
 
@@ -16,7 +22,6 @@
     <style>
         .{{$styleClass}}{
             width: 100%;
-            background-color: #ffffff;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             border: 2px solid rgb({{$getColor()[500]}});
             border-radius: 10px;
@@ -39,13 +44,10 @@
             background-color: rgb({{$getColor()[100]}});
         }
 
-        .disabled-{{$styleOptionClass}} {
-            background-color: rgb({{$getColor()[50]}});
-        }
     </style>
 
     <div style="--cols-default: repeat(1, minmax(0, 1fr)); margin-top: -4px"
-         class="fi-btn {{$styleClass}} grid grid-cols-[--cols-default] fi-fo-component-ctn gap-4">
+         class="fi-btn {{$styleClass}} grid grid-cols-[--cols-default] fi-fo-component-ctn gap-4 bg-white dark:bg-gray-800">
 
         @foreach($getOptions() as $id => $label)
             <span
@@ -73,8 +75,13 @@
 
                      fi-size-md fi-btn-size-md gap-1.5 px-3 py-2
                      text-xs
-
-                     @if($isOptionDisabled($id, $label))disabled-@endif{{$styleOptionClass}}
+                     @if($isOptionDisabled($id, $label))
+                         bg-[{{$rgbToHex($getColor()[50])}}]
+                         dark:bg-[{{$rgbToHex($getColor()[950])}}]
+                     @else
+                         hover:bg-[{{$rgbToHex($getColor()[100])}}]
+                         dark:hover:bg-[{{$rgbToHex($getColor()[900])}}]
+                     @endif
                      "
             >
                       {{new HtmlString($label)}}

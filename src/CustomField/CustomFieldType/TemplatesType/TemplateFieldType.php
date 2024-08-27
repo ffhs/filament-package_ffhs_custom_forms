@@ -33,27 +33,32 @@ final class TemplateFieldType extends CustomFieldType
         return "carbon-copy-file";
     }
 
-
-  /*  public function repeaterFunctions(): array {
-        $original = parent::repeaterFunctions();
-        unset($original[EditAction::class]);
-        return array_merge($original,[
-            TemplateDissolveAction::class => function (CustomForm $record,Get $get, array $state, array $arguments) {
-                $item = $state[$arguments["item"]];
-                return array_key_exists("template_id",$item) &&!is_null($item["template_id"]);
-            },
-        ]);
+    public function isFullSizeField(): bool
+    {
+        return true;
     }
 
 
-    public function nameFormEditor(array $state):string {
-        $template = CustomForm::cached($state["template_id"]);
-        return $template->short_title;
-    }
+    /*  public function repeaterFunctions(): array {
+          $original = parent::repeaterFunctions();
+          unset($original[EditAction::class]);
+          return array_merge($original,[
+              TemplateDissolveAction::class => function (CustomForm $record,Get $get, array $state, array $arguments) {
+                  $item = $state[$arguments["item"]];
+                  return array_key_exists("template_id",$item) &&!is_null($item["template_id"]);
+              },
+          ]);
+      }
 
-    public function nameBeforeIconFormEditor(array $state):string {
-        return new HtmlBadge("Template", Color::rgb("rgb(34, 135, 0)"));
-    }*/
+
+      public function nameFormEditor(array $state):string {
+          $template = CustomForm::cached($state["template_id"]);
+          return $template->short_title;
+      }
+
+      public function nameBeforeIconFormEditor(array $state):string {
+          return new HtmlBadge("Template", Color::rgb("rgb(34, 135, 0)"));
+      }*/
     public function mutateCustomFieldDataOnSave(CustomField $field, array $data): array {
         unset($data['options']);
         return  $data;

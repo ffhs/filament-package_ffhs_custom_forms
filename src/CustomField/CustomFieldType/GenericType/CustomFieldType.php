@@ -146,5 +146,15 @@ abstract class CustomFieldType implements Type
         return $data; //ToDo Reimplement
     }
 
+    public function isFullSizeField(): bool
+    {
+        return false;
+    }
+
+    public function getStaticColumns() :int|null
+    {
+        return null;
+    }
+
 
 }

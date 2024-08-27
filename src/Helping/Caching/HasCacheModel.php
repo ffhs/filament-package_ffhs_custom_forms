@@ -4,6 +4,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Helping\Caching;
 
 use Barryvdh\Debugbar\Facades\Debugbar;
 use Closure;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
@@ -29,8 +30,9 @@ trait HasCacheModel
     private bool|Closure $useCache;
     private bool|null|Closure $useRecursiveCache = null;
 
-    public function __construct()
+    public function __construct(array $attributes = [])
     {
+        parent::__construct($attributes);
         $this->setToDefaultCaching();
     }
 
@@ -175,6 +177,7 @@ trait HasCacheModel
     }
 
     public function isCaching():bool{
+        if(!isset($this->useCache))  $this->setToDefaultCaching();
         if($this->useCache instanceof Closure) return ($this->useCache)($this);
         return $this->useCache;
     }

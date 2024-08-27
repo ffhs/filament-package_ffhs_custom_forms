@@ -44,7 +44,7 @@ private static function getCustomFieldAddActionLabel(CustomFieldType $type):Html
         $actions = [];
         foreach ($this->getTypes() as $type) {
             /**@var CustomFieldType $type */
-            // $modalWidth  = CustomFieldEditModal::getEditCustomFormActionModalWith(["type" => $type::getFieldIdentifier()]);
+            // $modalWidth  = CustomFieldEditModal::getEditCustomFormActionModalWith(["type" => $type::identifier()]);
 
             $actions[] = DragDropActions::make([
                 Action::make("add_" . $type::identifier() . "_action")

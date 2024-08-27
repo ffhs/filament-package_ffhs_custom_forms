@@ -4,6 +4,8 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\Form
 
 
 use Closure;
+use Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\EditHelper\EditCustomFormLoadHelper;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Concerns\EntanglesStateWithSingularRelationship;
 use Filament\Forms\Components\Contracts\CanEntangleWithSingularRelationships;
@@ -29,14 +31,20 @@ class EmbeddedCustomFormEditor extends Component implements CanEntangleWithSingu
     {
         $relationship = $this->evaluate($relationship);
         $this->relationship($relationship);
+        $this->mutateRelationshipDataBeforeFillUsing(function (array $data) {
+            $form = CustomForm::cached($data["id"]);
+            return EditCustomFormLoadHelper::load($form);
+        });
+
     }
 
     protected function setUp(): void {
         parent::setUp();
         $this->label("");
-        $this->columns(1); $this->schema(function(EmbeddedCustomFormEditor $component):array {
-            return [CustomFormEditor::make()->label($component->getLabel())];
-        });
+        $this->columns(1);
+        $this->schema(fn(EmbeddedCustomFormEditor $component) =>
+            [CustomFormEditor::make()->label($component->getLabel())]
+        );
     }
 
 }

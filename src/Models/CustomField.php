@@ -2,11 +2,8 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Models;
 
-use Barryvdh\Debugbar\Facades\Debugbar;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\FlattedNested\NestingObject;
-use Ffhs\FilamentPackageFfhsCustomForms\Helping\Identifiers\HasIdentifierParameter;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\Identifiers\Identifier;
-use http\Exception\RuntimeException;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -65,7 +62,6 @@ class CustomField extends ACustomField implements NestingObject , Identifier
 
 
     protected array $cachedManyRelations = [
-        //'fieldRules',
         'customOptions',
     ];
 
@@ -82,24 +78,25 @@ class CustomField extends ACustomField implements NestingObject , Identifier
 
 
         //PERFORMANCE!!!!
-        $genFieldF = function(): GeneralField {
+        $genFieldFunction = function(): GeneralField {
             if(!$this->exists) return parent::__get("generalField");
-            $genField = GeneralField::cached($this->general_field_id,"id",false);
+            $genField = GeneralField::singleListCached()?->where($this->general_field_id,"id")->first();
             if(!is_null($genField)) return $genField;
 
             $generalFieldIds = $this->customForm->customFields->whereNotNull('general_field_id')->pluck("general_field_id");
             $generalFields = GeneralField::query()->whereIn("id",$generalFieldIds)->get();
             GeneralField::addToCachedList($generalFields);
-            return GeneralField::cached($this->general_field_id,"id",false);
+            return GeneralField::cached($this->general_field_id);
         };
 
+
         return match ($key) {
-            'name' => $genFieldF()->name,
-            'type' => $genFieldF()->type,
-            'options' => array_merge(parent::__get($key)??[], $genFieldF()->overwrite_options??[]),
-            'overwritten_options' => array_keys($genFieldF()->overwrite_options??[]),
-            'identifier' => $genFieldF()->identifier,
-            'generalField' => $genFieldF(),
+            'name' => $genFieldFunction()->name,
+            'type' => $genFieldFunction()->type,
+            'options' => array_merge(parent::__get($key)??[], $genFieldFunction()->overwrite_options??[]),
+            'overwritten_options' => array_keys($genFieldFunction()->overwrite_options??[]),
+            'identifier' => $genFieldFunction()->identifier,
+            'generalField' => $genFieldFunction(),
             default => parent::__get($key),
         };
 
@@ -107,9 +104,10 @@ class CustomField extends ACustomField implements NestingObject , Identifier
 
     protected static function booted(): void {
         parent::booted();
+
         self::creating(function (CustomField $field){#
             //Set identifier key to on other
-            if(is_null($field->identifier) && !$field->isGeneralField() ) $field->identifier = uniqid();
+            if(empty($field->identifier()) && !$field->isGeneralField()) $field->identifier = uniqid();
             return $field;
         });
     }
@@ -129,12 +127,8 @@ class CustomField extends ACustomField implements NestingObject , Identifier
 
     //GeneralField
     public function isGeneralField():bool{
-        return !is_null($this->general_field_id);
+        return !empty($this->general_field_id);
     }
-
-    /*public function fieldRules():HasMany {
-        return $this->hasMany(FieldRule::class)->orderBy('execution_order');
-    }*/
 
     public function isInheritFromGeneralField():bool{
         return !is_null($this->general_field_id);
@@ -152,6 +146,7 @@ class CustomField extends ACustomField implements NestingObject , Identifier
 
     //Template
     public function isTemplate(): bool {
+        if(!isset($this->template_id)) return false;
         return !empty($this->template_id);
     }
     public function template(): BelongsTo {

@@ -15,8 +15,7 @@ return new class () extends Migration {
     {
         Schema::create('custom_options', function (Blueprint $table) {
             $table->id();
-            $table->string('name_de');
-            $table->string('name_en');
+            $table->json('name');
             $table->string('identifier');
             $table->string('icon')->nullable();
 
@@ -27,7 +26,6 @@ return new class () extends Migration {
 
     /**
      * Reverse the migration
-     *
      * @return void
      */
     public function down()

@@ -14,12 +14,6 @@
 
 
     <!--- ToDo to CSS File--->
-    <style>
-        .ffhs-drag-over {
-            border: 6px #1a202c;
-            background-color: #f7f7ff !important;
-        }
-    </style>
 
     <div
         x-init="setupDomElement($el);"

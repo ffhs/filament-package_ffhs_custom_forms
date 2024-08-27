@@ -234,7 +234,10 @@ function findDragElement() {
 
 function clearBackground() {
     //ToDo fix flackern
-    document.querySelectorAll('*').forEach(element => element.classList.remove('ffhs-drag-over'))
+    document.querySelectorAll('*').forEach(element => {
+        element.classList.remove('dark:!bg-sky-950')
+        element.classList.remove('!bg-blue-100')
+    })
 }
 
 function hasSameGroup(elment1, elment2) {
@@ -262,7 +265,8 @@ function setupDragOverEffect(element){
         e.preventDefault()
 
         setTimeout(() => {
-            target.classList.add('ffhs-drag-over')
+            target.classList.add('!bg-blue-100')
+            target.classList.add('dark:!bg-sky-950')
         },0)
     })
 

@@ -31,6 +31,8 @@ trait HasTypeOptions
     public final function getDefaultTypeOptionValues(): array {
         return $this->getDefaultTypeOptionValuesFormArray($this->getFlattenExtraTypeOptions());
     }
+
+
     public final function getDefaultGeneralOptionValues(): array {
         return $this->getDefaultTypeOptionValuesFormArray($this->getFlattenGeneralTypeOptions());
     }

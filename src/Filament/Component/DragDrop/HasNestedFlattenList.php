@@ -50,7 +50,7 @@ trait HasNestedFlattenList //ToDo if not flatten order and stuff
     public function getStructure(): array {
 
         if($this->isFlatten()) {
-            $list = NestedFlattenList::make($this->getState(), CustomField::class);
+            $list = NestedFlattenList::make($this->getState(), $this->getNestedFlattenListType());
             return $list->getStructure(true);
         }
 

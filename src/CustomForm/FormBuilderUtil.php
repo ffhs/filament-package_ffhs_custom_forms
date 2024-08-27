@@ -23,52 +23,29 @@ class FormBuilderUtil
 
         static::generateFields($customForm, $layout, $customField);
 
-        #$fixedFields = self::fixingRawFields($customField);
 
-        foreach ($customField as $data){ //ToDo Optimize
-            $rule = $data['rules'] ?? [];
+        //ToDo WTF WHY THAT CRASH WITHOUT ANY MESSAGE WHY?????
+        foreach ($customField as $data){
             $customOptions = $data['customOptions'] ?? [];
 
             $names = $data['name'] ?? [];
-            #$toolTips = $data['tool_tip'] ?? [];
-
 
             unset($data['name']);
-            #unset($data['tool_tip']);
-            unset($data['rules']);
             unset($data['customOptions']);
+
 
             $field = new CustomField();
             $field->fill($data);
 
             foreach ($names as $local => $name) $field->setTranslation("name", $local, $name);
-            #foreach ($toolTips as $local => $toolTip) $field->setTranslation("tool_tip", $local, $toolTip);
+              $field->save();
 
-            $field->save();
-
-            $field->customOptions()->createMany($customOptions);
-           # $field->fieldRules()->createMany($rule); TODO FIX
+              $field->customOptions()->createMany($customOptions);
         }
 
         return $customForm;
     }
 
-
-
-
-   /* public static function fixingRawFields(array $fields):array {
-        $filable = (new CustomField())->getFillable();
-        $data = [];
-        foreach ($fields as $field){
-            $fieldData = [];
-            foreach ($filable as $key ){
-                if(array_key_exists($key, $field))  $fieldData[$key] = $field[$key];
-                else $fieldData[$key] = null;
-            }
-            $data[] = $fieldData;
-        }
-        return $data;
-    }*/
 
     public static function generateFields(CustomForm $form, array $fields, array &$toCreateFields): void {
         foreach ($fields as $field){
@@ -83,7 +60,7 @@ class FormBuilderUtil
 
             $defaultOptions = [];
             if(array_key_exists('general_field', $field)){
-                $genField = GeneralField::cached($field['general_field'],'identify_key');
+                $genField = GeneralField::cached($field['general_field'],'identifier');
                 $fieldData['general_field_id'] = $genField->id;
                 $defaultOptions = $genField->getType()->getDefaultTypeOptionValues();
             }
@@ -95,13 +72,13 @@ class FormBuilderUtil
             else if(array_key_exists('template', $field)){
                 $template = CustomForm::cached($field['template'],'short_title');
                 $fieldData['template_id'] = $template->id;
+                $fieldData['identifier'] = uniqid();
             }
             else if(array_key_exists('template_id', $field)){
                 $fieldData['template_id'] = $field['template_id'];
             }
-            else {
-
-                //Names and ToolTips
+            else{
+                //Names
                 $fieldData['name'] = [];
                 # $fieldData['tool_tip'] = [];
                 foreach ($field as $key => $value){
@@ -159,11 +136,20 @@ class FormBuilderUtil
         if (!array_key_exists("customOptions", $field)) return;
         $fieldData['customOptions'] = [];
         foreach ($field['customOptions'] as $customOption) {
+
+            $names = [];
+            foreach ($customOption as $key => $value){
+                if(str_contains($key, "name_")){
+                    $names[str_replace("name_", "", $key)] = $value ;
+                }
+            }
+
             $fieldData['customOptions'][] = [
-                'name_de' => $customOption["name_de"],
-                'name_en' => $customOption["name_en"],
+                'name' => $names,
                 'identifier' => $customOption["identifier"] ?? uniqid(),
             ];
+
+
         }
     }
 
