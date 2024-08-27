@@ -2,6 +2,7 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Models;
 
+use Barryvdh\Debugbar\Facades\Debugbar;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormConfiguration\DynamicFormConfiguration;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\Caching\CachedModel;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\Caching\HasCacheModel;
@@ -18,6 +19,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use League\Uri\UriTemplate\Template;
 use Spatie\Translatable\HasTranslations;
 
 /**
@@ -41,6 +43,11 @@ class CustomForm extends Model implements CachedModel
     use HasFactory;
 
     //ToDo cache customFormOptions
+    public static function boot(): void
+    {
+        parent::boot();
+    }
+
 
     protected $fillable = [
         'custom_form_identifier',
@@ -203,9 +210,10 @@ class CustomForm extends Model implements CachedModel
 
     protected  function cacheTemplatesAndTemplatesFields(\Illuminate\Database\Eloquent\Collection|array $customFields): void
     {
-    //Cache Templates and Templates Fields
+        //Cache Templates and Templates Fields
         $templateIds = $customFields->whereNotNull('template_id')->pluck('template_id')->toArray();
-        $templates = CustomForm::cachedMultiple("id", true, $templateIds); //To cache the Templates
+        $templates = CustomForm::query()->whereIn("id", $templateIds)->get(); //To cache the Templates
+        CustomForm::addToCachedList($templates);
 
         $templates->each(function (CustomForm $customForm) use ($customFields) {
             $fields = $customFields->where("custom_form_id", $customForm->id);

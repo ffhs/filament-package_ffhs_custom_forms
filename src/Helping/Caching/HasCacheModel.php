@@ -24,10 +24,7 @@ trait HasCacheModel
      * if a method exist named cachedRelationName($cacheKey)) than it use this
      * protected array $cachedManyRelations = [];
      *
-     *
-     *
      * **/
-
 
     private bool|Closure $useCache;
     private bool|null|Closure $useRecursiveCache = null;
@@ -36,7 +33,6 @@ trait HasCacheModel
     {
         $this->setToDefaultCaching();
     }
-
 
     protected function setToDefaultCaching(): static{
         $this->useCache = $this->getDefaultCaching();
@@ -70,11 +66,11 @@ trait HasCacheModel
     }
 
     public static function singleListCached(): ?Collection{
-        return Cache::get(static::getFromSingedListName());
+        return Cache::get(static::getSingedListCacheName());
     }
 
 
-    protected static function getFromSingedListName(): string {
+    protected static function getSingedListCacheName(): string {
         return (new static())->getTable(). "_cached_list";
     }
 
@@ -85,36 +81,36 @@ trait HasCacheModel
             $cachedList->merge($toAdd->whereNotIn("id",$cachedList->pluck("id")));
         else if(!in_array($toAdd->id, $cachedList->pluck("id")->toArray())) $cachedList = $cachedList->add($toAdd);
 
-        Cache::set(static::getFromSingedListName(), $cachedList, self::getCacheDuration());
+        Cache::set(static::getSingedListCacheName(), $cachedList, self::getCacheDuration());
 
         return $toAdd;
     }
 
 
-    public static function cached(mixed $value, string $attribute = "id", bool $searching = true): ?static{
-        $output = static::singleListCached()?->where($attribute,$value)->first();
+    public static function cached(mixed $value, string $attribute = "id", array $with = []): ?static{
+        $output = static::singleListCached()?->where($attribute, $value)->first();
         if(!is_null($output)) return $output;
         if(is_null($value)) return $output;
 
-        if(!$searching) return $output;
-        $output = static::query()->where($attribute, $value)->with(static::getCacheWith())->first();
+        //if(!$searching) return $output;
+        $output = static::query()->where($attribute, $value)->with(array_merge(static::getCacheWith(), $with))->first();
         if(is_null($output)) return null;
         static::addToCachedList($output);
         return $output;
     }
 
 
-    public static function cachedMultiple(string $attribute , bool $searching , mixed... $values): Collection{
+   /* public static function cachedMultiple(string $attribute , bool $searching , mixed... $values): Collection{
         $output = Cache::get(static::getFromSingedListName())?->whereIn($attribute, $values);
         if(is_null($output)) $output = collect();
-        /**@var Collection $output*/
+        /**@var Collection $output*//*
         if(!$searching) return $output;
         $notFound = collect($values)->filter(fn($value) => $output->whereIn($attribute, $value)->count() == 0)->flatten();
         if($notFound->count() == 0) return $output;
         $notFounds = static::query()->whereIn($attribute, $notFound)->with(static::getCacheWith())->get();
         static::addToCachedList($notFounds);
         return $output->merge($notFounds);
-    }
+    }*/
 
 
     private function get1To1CachedRelation(string $key) {
