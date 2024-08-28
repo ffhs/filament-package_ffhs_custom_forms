@@ -48,6 +48,10 @@ class CustomFieldAnswer extends Model implements CachedModel
         return CustomForm::query()->whereIn("id", $this->belongsTo(CustomField::class)->select("custom_form_id"));
     }
 
+    public function cachedCustomForm(): CustomForm {
+        return $this->customField->customForm;
+    }
+
     public function customField (): BelongsTo {
         return $this->belongsTo(CustomField::class);
     }

@@ -116,13 +116,14 @@ class EmbeddedCustomForm extends Component implements CanEntangleWithSingularRel
 
     private function getLayoutTypeSplitFormSchema(EmbeddedCustomForm $component): array {
         return [
-            Group::make()->schema(fn(CustomFormAnswer|null $record) => is_null($record) ? [] :
-                SplitCustomFormRender::renderFormLayoutType(
-                    $component->getLayoutTypeSplit(),
-                    CustomForm::cached($record->custom_form_id),
-                    $component->getViewMode()
-                )
-            ),
+            Group::make()
+                ->schema(fn(CustomFormAnswer|null $record) => is_null($record) ? [] :
+                    SplitCustomFormRender::renderFormLayoutType(
+                        $component->getLayoutTypeSplit(),
+                        $record->customForm,
+                        $component->getViewMode()
+                    )
+            )   ,
         ];
     }
 

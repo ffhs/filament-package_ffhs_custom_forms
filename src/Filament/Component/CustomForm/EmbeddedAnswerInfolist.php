@@ -13,8 +13,11 @@ use Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\RenderHelp\UsePosSpli
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\RenderHelp\UseViewMode;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
+use Filament\Infolists\ComponentContainer;
 use Filament\Infolists\Components\Component;
+use Filament\Infolists\Components\Concerns\EntanglesStateWithSingularRelationship;
 use Filament\Infolists\Components\Group;
+use Illuminate\Database\Eloquent\Model;
 
 class EmbeddedAnswerInfolist extends Component
 {
@@ -23,26 +26,30 @@ class EmbeddedAnswerInfolist extends Component
     use UsePosSplit;
     use UseViewMode;
 
-
     protected string $view = 'filament-infolists::components.group';
-    protected CustomFormAnswer|Closure $model;
+    protected CustomFormAnswer|Closure $answer;
 
-
-    public static function make(CustomFormAnswer|Closure $model, string|Closure $viewMode = "default"): static
+    public static function make(string|Closure $viewMode = "default"): static
     {
         $static = app(static::class, [
-            'model' => $model,
             'viewMode'=>$viewMode
         ]);
         $static->configure();
+        $static->answer(fn($record) => $record);
 
         return $static;
     }
 
-    final public function __construct(CustomFormAnswer|Closure $model,string|Closure $viewMode = "default")
+    public function getChildComponentContainer($key = null): ComponentContainer
     {
-        $this->model= $model;
-        $this->viewMode=$viewMode;
+        if (filled($key)) {
+            return $this->getChildComponentContainers()[$key];
+        }
+
+        return ComponentContainer::make($this->getLivewire())
+            ->parentComponent($this)
+            ->record($this->getAnswer())
+            ->components($this->getChildComponents());
     }
 
     protected function setUp(): void {
@@ -54,16 +61,13 @@ class EmbeddedAnswerInfolist extends Component
 
     public function autoViewMode(bool|Closure $autoViewMode = true):static {
         if(!$this->evaluate($autoViewMode)) return $this;
-        $this->viewMode = function (EmbeddedAnswerInfolist $component){
-            $customForm = CustomForm::cached($component->getModel()->custom_form_id);
+        $this->viewMode = function (EmbeddedAnswerInfolist $component) {
+            $customForm = $component->getAnswer()->customForm;
             return $customForm->getFormConfiguration()::displayViewMode();
         };
         return $this;
     }
 
-    public function getModel(): CustomFormAnswer {
-        return $this->evaluate($this->model);
-    }
 
     private function setupSchema(): void {
         $this->columns(1);
@@ -90,7 +94,7 @@ class EmbeddedAnswerInfolist extends Component
                 return SplitCustomFormRender::renderInfolistPose(
                     $beginPos,
                     $endPos,
-                    $component->getModel(),
+                    $component->getAnswer(),
                     $component->getViewMode()
                 );
             }),
@@ -100,7 +104,7 @@ class EmbeddedAnswerInfolist extends Component
 
     private function getDefaultInfolistSchema(EmbeddedAnswerInfolist $component): array {
         return [
-            Group::make(fn($record) => CustomFormRender::generateInfoListSchema($component->getModel(),
+            Group::make(fn($record) => CustomFormRender::generateInfoListSchema($component->getAnswer(),
                 $component->getViewMode())),
         ];
     }
@@ -110,7 +114,7 @@ class EmbeddedAnswerInfolist extends Component
         return [
             Group::make(fn($record) => SplitCustomFormRender::renderInfolistFromField(
                 $component->getFieldSplit(),
-                $component->getModel(),
+                $component->getAnswer(),
                 $component->getViewMode())),
         ];
     }
@@ -120,11 +124,33 @@ class EmbeddedAnswerInfolist extends Component
         return [
             Group::make( SplitCustomFormRender::renderInfoListLayoutType(
                 $component->getLayoutTypeSplit(),
-                $component->getModel(),
+                $component->getAnswer(),
                 $component->getViewMode())
             ),
         ];
     }
+
+    public function viewMode(string|Closure $viewMode = "default"): static {
+        $this->viewMode = $viewMode;
+        return $this;
+    }
+
+    public function getViewMode(): string {
+        return $this->evaluate($this->viewMode);
+    }
+
+    public function answer(CustomFormAnswer|Closure $answer): static
+    {
+        $this->answer = $answer;
+        return $this;
+    }
+
+    public function getAnswer(): CustomFormAnswer
+    {
+        return $this->evaluate($this->answer);
+    }
+
+
 
 
 }

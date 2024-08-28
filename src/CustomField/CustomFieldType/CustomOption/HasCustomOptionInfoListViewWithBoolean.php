@@ -25,7 +25,7 @@ trait HasCustomOptionInfoListViewWithBoolean
 
         return IconEntry::make(FieldMapper::getIdentifyKey($record))
             ->label(FieldMapper::getLabelName($record))
-            ->state(FieldMapper::getAnswer($answer))
+            ->state($answer)
             ->columnSpanFull()
             ->inlineLabel()
             ->boolean();

@@ -339,9 +339,9 @@ Die eine TypeView Klasse muss so aufgebaut sein und `FieldTypeView` implementier
 ```php
 public static function getFormComponent(CustomFieldType $type, CustomField $record,  
     array $parameter = []): \Filament\Forms\Components\Component {  
-    return Select::make(FormMapper::getIdentifyKey($record))  
-        ->label(FormMapper::getLabelName($record))  
-        ->helperText(FormMapper::getToolTips($record))  
+    return Select::make(FieldMapper::getIdentifyKey($record))  
+        ->label(FieldMapper::getLabelName($record))  
+        ->helperText(FieldMapper::getToolTips($record))  
         ->options([  
            1 => "Bern",  
            2 => "Zürich",  
@@ -351,8 +351,8 @@ public static function getFormComponent(CustomFieldType $type, CustomField $reco
   
 public static function getInfolistComponent(CustomFieldType $type, CustomFieldAnswer $record,  
     array $parameter = []): Component {  
-    return TextEntry::make(FormMapper::getIdentifyKey($record))  
-        ->state(FormMapper::getAnswer($record))  
+    return TextEntry::make(FieldMapper::getIdentifyKey($record))  
+        ->state(FieldMapper::getAnswer($record))  
         ->formatState(fn($state) => ([  
             1 => "Bern",  
             2 => "Zürich",  
@@ -462,8 +462,8 @@ class LocationSelectorType extends CustomFieldType
 ```
 </br>
 
-## 04.02 FormMapper
-Der `FormMapper` vereinfacht das Rauslesen der Daten aus dem `CustomField`
+## 04.02 FieldMapper
+Der `FieldMapper` vereinfacht das Rauslesen der Daten aus dem `CustomField`
 - `getToolTips(CustomField|CustomFieldAnswer $record)`
 - `getLabelName(CustomField|CustomFieldAnswer  $record)`
 - `getIdentifyKey(CustomField|CustomFieldAnswer  $record)`
@@ -654,17 +654,17 @@ class LocationSelectorType extends CustomFieldType
 class LocationSelectorTypeView implements FieldTypeView  
 {  
     public static function getFormComponent(CustomFieldType $type, CustomField $record,  array $parameter = []): \Filament\Forms\Components\Component { 
-	return Select::make(FormMapper::getIdentifyKey($record))   
-	        ->label(FormMapper::getLabelName($record))  
-	        ->helperText(FormMapper::getToolTips($record))  
+	return Select::make(FieldMapper::getIdentifyKey($record))   
+	        ->label(FieldMapper::getLabelName($record))  
+	        ->helperText(FieldMapper::getToolTips($record))  
 	        ->options([  
-	           1 => FormMapper::getOptionParameter(record,"my_option_name"),   //<===============
+	           1 => FieldMapper::getOptionParameter(record,"my_option_name"),   //<===============
 	        ]);  
     }  
     ...
 }
 ```
-- Die `TypeOption` können am einfachsten mit Hilfe des  `FormMapper` bennuzt werden
+- Die `TypeOption` können am einfachsten mit Hilfe des  `FieldMapper` bennuzt werden
     - `getOptionParameter(CustomField|CustomFieldAnswer $record, string $option)`
 - Die roh Daten können über `$record->options` erreicht werden </br>
 
@@ -754,12 +754,12 @@ class SectionTypeView implements FieldTypeView
 {  
   
     public static function getFormComponent(CustomFieldType $type, CustomField $record, array $parameter = []): \Filament\Forms\Components\Component {  
-        return Section::make(FormMapper::getLabelName($record))  
+        return Section::make(FieldMapper::getLabelName($record))  
             ->schema($parameter["rendered"]);  
     }  
   
     public static function getInfolistComponent(CustomFieldType $type, CustomFieldAnswer $record, array $parameter = []): \Filament\Infolists\Components\Component {  
-        return \Filament\Infolists\Components\Section::make(FormMapper::getLabelName($record))
+        return \Filament\Infolists\Components\Section::make(FieldMapper::getLabelName($record))
         ->schema($parameter["rendered"]);  
     }  
   
@@ -817,12 +817,12 @@ class TabEggType extends CustomEggLayoutType
 class TabEggTypeView implements FieldTypeView  
 {  
     public static function getFormComponent(CustomFieldType $type, CustomField $record, array $parameter = []): \Filament\Forms\Components\Component { 
-        return Tabs\Tab::make(FormMapper::getLabelName($record))   
+        return Tabs\Tab::make(FieldMapper::getLabelName($record))   
             ->schema($parameter["rendered"]);  
     }  
   
     public static function getInfolistComponent(CustomFieldType $type, CustomFieldAnswer $record, array $parameter = []): \Filament\Infolists\Components\Component {  
-        return Tabs\Tab::make(FormMapper::getLabelName($record))  
+        return Tabs\Tab::make(FieldMapper::getLabelName($record))  
             ->schema($parameter["rendered"])  
             ->columnSpanFull()
             ->columnStart(1)  ;  
@@ -868,15 +868,15 @@ class TabsNestTypeView implements FieldTypeView
   
     public static function getFormComponent(CustomFieldType $type, CustomField $record, array $parameter = []): \Filament\Forms\Components\Component {  
         
-        return Tabs::make($FormMapper::getLabelName($record))  
-            ->columnSpan(FormMapper::getOptionParameter($record,"column_span"))  
-            ->inlineLabel(FormMapper::getOptionParameter($record,"in_line_label"))  
-            ->columnStart(FormMapper::getOptionParameter($record,"new_line_option"))  
+        return Tabs::make($FieldMapper::getLabelName($record))  
+            ->columnSpan(FieldMapper::getOptionParameter($record,"column_span"))  
+            ->inlineLabel(FieldMapper::getOptionParameter($record,"in_line_label"))  
+            ->columnStart(FieldMapper::getOptionParameter($record,"new_line_option"))  
             ->tabs($parameter["rendered"]);  //<===================
     }  
   
     public static function getInfolistComponent(CustomFieldType $type, CustomFieldAnswer $record, array $parameter = []): \Filament\Infolists\Components\Component {  
-	    return \Filament\Infolists\Components\Tabs::make($FormMapper::getLabelName($record))  
+	    return \Filament\Infolists\Components\Tabs::make($FieldMapper::getLabelName($record))  
 			->columnStart(1)  
 			->tabs($parameter["rendered"])  
 		      ->columnSpanFull(); //<===================
@@ -933,11 +933,11 @@ class LocationSelectorTypeView implements FieldTypeView
   
    public static function getFormComponent(CustomFieldType $type, CustomField $record,  array $parameter = []): Component {  
   
-       $select = Select::make($FormMapper::getIdentifyKey($record))  
-        ->helperText($FormMapper::getToolTips($record))  
-        ->label($FormMapper::getLabelName($record))  
+       $select = Select::make($FieldMapper::getIdentifyKey($record))  
+        ->helperText($FieldMapper::getToolTips($record))  
+        ->label($FieldMapper::getLabelName($record))  
         ->required($record->required)  
-        ->options(FormMapper::getAvailableCustomOptions($record));  
+        ->options(FieldMapper::getAvailableCustomOptions($record));  
 
        return $select;  
    }

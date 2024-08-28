@@ -31,7 +31,6 @@ use Spatie\Translatable\HasTranslations;
  * @property Collection $generalFields
  * @property bool $is_template
  * @property Collection $customFieldInLayout
- * @property Collection customFieldsWithTemplateFields
  * @property Collection rules
  * @property Collection ownedRules
  */

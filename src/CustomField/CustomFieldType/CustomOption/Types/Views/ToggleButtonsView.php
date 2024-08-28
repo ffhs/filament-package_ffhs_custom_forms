@@ -21,7 +21,7 @@ class ToggleButtonsView implements FieldTypeView
         $toggles = ToggleButtons::make(FieldMapper::getIdentifyKey($record))
             ->columnStart(FieldMapper::getOptionParameter($record,"new_line_option"))
             ->inlineLabel(FieldMapper::getOptionParameter($record,"in_line_label"))
-           // ->multiple(FormMapper::getOptionParameter($record,"multiple"))
+           // ->multiple(FieldMapper::getOptionParameter($record,"multiple"))
             ->required(FieldMapper::getOptionParameter($record,"required"))
             ->inline(FieldMapper::getOptionParameter($record,"inline"))
             ->columns(FieldMapper::getOptionParameter($record,"columns"))

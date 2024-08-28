@@ -34,7 +34,7 @@ class CustomFormLoadHelper {
         //$form = CustomForm::cached($answerer->custom_form_id);
         //$customFields = $form->cachedFields();
 
-        $customFields = $answerer->customForm->customFieldsWithTemplateFields;
+        $customFields = $answerer->customForm->customFields;
         $formRules  = $answerer->customForm->rules;
 
         foreach($answerer->cachedAnswers() as $fieldAnswer){

@@ -29,14 +29,14 @@ class FileUploadView implements FieldTypeView
         return self::prepareFileUploadComponent($fileUpload,$record);
     }
 
-    public static function prepareFileUploadComponent(FileUpload $component,$record): FileUpload {
+    public static function prepareFileUploadComponent(FileUpload $component, $record): FileUpload {
         $component->label(FieldMapper::getLabelName($record))
             ->helperText(FieldMapper::getToolTips($record))
             ->columnSpan(FieldMapper::getOptionParameter($record, "column_span"))
             ->inlineLabel(FieldMapper::getOptionParameter($record, "in_line_label"))
             ->columnStart(FieldMapper::getOptionParameter($record, "new_line_option"))
             ->multiple(FieldMapper::getOptionParameter($record,"multiple"));
-        //->downloadable(FormMapper::getOptionParameter($record,"downloadable"));
+        //->downloadable(FieldMapper::getOptionParameter($record,"downloadable"));
 
 
         if(FieldMapper::getOptionParameter($record,"image")){

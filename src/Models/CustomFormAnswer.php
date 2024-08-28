@@ -30,7 +30,7 @@ class CustomFormAnswer extends Model implements CachedModel
         "customFieldAnswers",
     ];
 
-    public function customForm (): BelongsTo {
+    public function customForm(): BelongsTo {
         return $this->belongsTo(CustomForm::class);
     }
 

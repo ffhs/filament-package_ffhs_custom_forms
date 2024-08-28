@@ -14,8 +14,7 @@ use Filament\Infolists\Components\Group;
 class SectionTypeView implements FieldTypeView
 {
 
-    public static function getFormComponent(CustomFieldType $type, CustomField $record,
-                                            array           $parameter = []): \Filament\Forms\Components\Component {
+    public static function getFormComponent(CustomFieldType $type, CustomField $record, array  $parameter = []): \Filament\Forms\Components\Component {
 
         $label = FieldMapper::getOptionParameter($record,"show_title")? FieldMapper::getLabelName($record):"";
 
@@ -27,8 +26,7 @@ class SectionTypeView implements FieldTypeView
             ->schema($parameter["rendered"]);
     }
 
-    public static function getInfolistComponent(CustomFieldType $type, CustomFieldAnswer $record,
-                                                array           $parameter = []): \Filament\Infolists\Components\Component {
+    public static function getInfolistComponent(CustomFieldType $type, CustomFieldAnswer $record,  array  $parameter = []): \Filament\Infolists\Components\Component {
 
         if(!FieldMapper::getOptionParameter($record,"show_in_view"))
             return Group::make($parameter["rendered"])->columnStart(1)->columnSpanFull();

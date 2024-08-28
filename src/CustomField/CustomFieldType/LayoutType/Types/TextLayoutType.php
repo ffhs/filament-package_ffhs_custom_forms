@@ -49,7 +49,7 @@ class TextLayoutType extends CustomFieldType
                     FastTypeOption::makeFast("",
                         RichEditor::make("text." . App::getLocale())
                             ->columnSpanFull()
-                            ->toolbarButtons($buttons) //ToDo Add Location Selection, add to FormMapper the language Getter
+                            ->toolbarButtons($buttons) //ToDo Add Location Selection, add to FieldMapper the language Getter
                             ->label("Text")
                     )
                 ),

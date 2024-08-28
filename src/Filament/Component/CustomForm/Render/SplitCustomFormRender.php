@@ -27,16 +27,18 @@ class SplitCustomFormRender
 
 
     protected static function renderLayoutType(CustomLayoutType $layoutType,  CustomForm $customForm, Closure $render, string $viewMode = "default"){
-        $customFields = $customForm->cachedFields();
+        $customFields = $customForm->customFields;
 
         /**@var null|CustomField $layoutField */
         $layoutField = $customFields
-            ->filter(fn(CustomField $field) => $field->identifier == $layoutType::identifier())
+            ->filter(fn(CustomField $field) => $field->type == $layoutType::identifier())
             ->first();
+
 
         if (is_null($layoutField)) return [];
 
-        $customFields = $layoutField->customForm->cachedFields()
+
+        $customFields = $layoutField->customForm->getOwnedFields()
             ->where("form_position", ">", $layoutField->form_position)
             ->where("form_position", "<=", $layoutField->layout_end_position);
         //ToDo Check if it works fine ^^ $customFieldsOld = $layoutField->allCustomFieldsInLayout()->get();

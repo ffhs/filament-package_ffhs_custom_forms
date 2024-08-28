@@ -103,7 +103,7 @@ final class TemplateFieldType extends CustomFieldType
 
         // Mapping and combining custom fields
         $customFieldsIdentify = CustomFormSaveHelper::mapFields(
-            $template->cachedFields(),
+            $template->customFields,
             fn(CustomField $customField) => $customField->identifier
         );
 
