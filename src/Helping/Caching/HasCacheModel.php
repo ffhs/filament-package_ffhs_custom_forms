@@ -68,7 +68,7 @@ trait HasCacheModel
     }
 
     public static function singleListCached(): ?Collection{
-        return Cache::get(static::getSingedListCacheName());
+        return Cache::get(static::getSingedListCacheName()) ?? collect();
     }
 
 
