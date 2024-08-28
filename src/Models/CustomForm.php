@@ -177,6 +177,8 @@ class CustomForm extends Model implements CachedModel
                 $this->cacheTemplatesAndTemplatesFields($customFields);
                 $this->cacheFieldOptions($customFields);
 
+                Debugbar::info($customFields->count());
+
                 return $customFields;
             });
     }
