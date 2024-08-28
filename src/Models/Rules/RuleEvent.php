@@ -16,7 +16,7 @@ class RuleEvent extends Model implements CachedModel
 {
     use HasCacheModel;
 
-    protected array $cachedRelations =[
+    protected array $cachedBelongsTo =[
         'rule' => ['rule_id' => 'id']
     ];
 

@@ -49,7 +49,7 @@ final class GeneralFieldAdder extends FormEditorFieldAdder
             $generalFieldForms = GeneralFieldForm::query()->where("custom_form_identifier", $formIdentifier);
             $generalFields = GeneralField::query()->whereIn("id", $generalFieldForms->clone()->select("id"))->get();
 
-            GeneralField::addToCachedList($generalFields);
+            GeneralField::addToModelCache($generalFields);
 
             //Mark Required GeneralFields
             $generalFields = $generalFieldForms->get()->map(function (GeneralFieldForm $generalFieldForm) {

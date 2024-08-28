@@ -54,14 +54,14 @@ class CustomField extends ACustomField implements NestingObject , Identifier
     ];
 
 
-    protected array $cachedRelations = [
+    protected array $cachedBelongsTo = [
         "customForm" => ["custom_form_id", "id"],
         "generalField" => ["general_field_id", "id"],
         "template" => ["template_id", "id"],
     ];
 
 
-    protected array $cachedManyRelations = [
+    protected array $cachedRelation = [
         'customOptions',
     ];
 
@@ -80,12 +80,12 @@ class CustomField extends ACustomField implements NestingObject , Identifier
         //PERFORMANCE!!!!
         $genFieldFunction = function(): GeneralField {
             if(!$this->exists) return parent::__get("generalField");
-            $genField = GeneralField::singleListCached()?->where("id",$this->general_field_id,)->first();
+            $genField = GeneralField::getModelCache()?->where("id",$this->general_field_id,)->first();
             if(!is_null($genField)) return $genField;
 
             $generalFieldIds = $this->customForm->customFields->whereNotNull('general_field_id')->pluck("general_field_id");
             $generalFields = GeneralField::query()->whereIn("id",$generalFieldIds)->get();
-            GeneralField::addToCachedList($generalFields);
+            GeneralField::addToModelCache($generalFields);
             return GeneralField::cached($this->general_field_id);
         };
 
