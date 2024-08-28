@@ -4,13 +4,33 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\Form
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldUtils;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\DragDrop\DragDropComponent;
-use Ffhs\FilamentPackageFfhsCustomForms\Helping\FlattedNested\NestedFlattenList;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\TextInput;
 
 class EditCustomFields extends DragDropComponent
 {
+
+    /**
+     * @param $form_position
+     * @param $state
+     * @return int|null
+     */
+    function getMaxGridSizeFromField($form_position, $state): ?int
+    {
+        $maxSize = 4;
+        $position = $form_position;
+        $nerastParent = 0;
+        foreach ($state as $item) {
+            if ($item["form_position"] >= $position) continue;
+            if (($item["layout_end_position"] ?? 0) < $position) continue;
+
+            if ($position - $nerastParent < $position - $item["form_position"]) continue;
+            $nerastParent = $item["form_position"];
+            $maxSize = $this->getGridColumns($item);
+        }
+        return $maxSize;
+    }
 
     private function getGridColumns($itemState): ?int
     {
@@ -30,22 +50,12 @@ class EditCustomFields extends DragDropComponent
         $this->gridSize(4); //ToDo Make Config
         $this->nestedFlattenListType(CustomField::class);
 
-        $this->itemGridSize(function ($itemState, $state, EditCustomFields $component){
+        $this->itemGridSize(function ($itemState, $state){
                $size = $itemState['options']['column_span'] ?? null;
-               if(!empty($size)) return $size;
+               $maxSize = $this->getMaxGridSizeFromField($itemState["form_position"], $state);
+               if(!empty($size)) return $size > $maxSize? $maxSize :$size;
                $type = CustomFieldUtils::getFieldTypeFromRawDate($itemState);
-               if(!$type->isFullSizeField())return null;
-               $maxSize = 10;
-               $position = $itemState["form_position"];
-               $nerastParent = 0;
-               foreach ($state as $item){
-                   if($item["form_position"] >= $position) continue;
-                   if($item["layout_end_position"]?? 0 < $position) continue;
-                   if($position-$nerastParent < $position-$item["form_position"]) continue;
-                   $nerastParent = $item["form_position"];
-                   $maxSize = $this->getGridColumns($item);
-               }
-
+               if(!$type->isFullSizeField()) return null;
                return $maxSize;
         });
 

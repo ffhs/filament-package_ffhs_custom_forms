@@ -5,6 +5,8 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\Form
 
 use Closure;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\EditHelper\EditCustomFormLoadHelper;
+use Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\EditHelper\EditCustomFormSaveHelper;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Concerns\EntanglesStateWithSingularRelationship;
@@ -31,10 +33,6 @@ class EmbeddedCustomFormEditor extends Component implements CanEntangleWithSingu
     {
         $relationship = $this->evaluate($relationship);
         $this->relationship($relationship);
-        $this->mutateRelationshipDataBeforeFillUsing(function (array $data) {
-            $form = CustomForm::cached($data["id"]);
-            return EditCustomFormLoadHelper::load($form);
-        });
 
     }
 
@@ -45,6 +43,14 @@ class EmbeddedCustomFormEditor extends Component implements CanEntangleWithSingu
         $this->schema(fn(EmbeddedCustomFormEditor $component) =>
             [CustomFormEditor::make()->label($component->getLabel())]
         );
+        $this->mutateRelationshipDataBeforeFillUsing(function (array $data) {
+            $form = CustomForm::query()->where("id", $data["id"])->first();
+            return EditCustomFormLoadHelper::load($form);
+        });
+        $this->saveRelationshipsUsing(function ($state, EmbeddedCustomFormEditor $component) {
+            $form = $component->getRelationship()->first();
+            EditCustomFormSaveHelper::save($state, $form);
+        });
     }
 
 }

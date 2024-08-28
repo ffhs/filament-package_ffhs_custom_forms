@@ -68,6 +68,7 @@ class CustomForm extends Model implements CachedModel
         'does_not_exist' // <= It needs something
     ];
 
+
     public function ownedRules(): BelongsToMany
     {
         return $this->belongsToMany(Rule::class, (new FormRule())->getTable());
@@ -170,7 +171,7 @@ class CustomForm extends Model implements CachedModel
 
 
     public function cachedCustomFields(): Collection {
-        $cacheKey = $this->getRelationCacheName("fieldsWithTemplates");
+        $cacheKey = $this->getRelationCacheName("customFields");
         return Cache::remember($cacheKey,
             static::getCacheDuration(),
             function(){
@@ -179,7 +180,6 @@ class CustomForm extends Model implements CachedModel
                 $this->cacheFormRules();
 
                 $this->cacheTemplatesAndTemplatesFields($customFields);
-
 
                 return $customFields;
             });

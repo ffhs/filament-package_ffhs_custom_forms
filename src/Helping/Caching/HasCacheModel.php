@@ -72,6 +72,11 @@ trait HasCacheModel
     }
 
 
+    public static function singleListCacheClear()
+    {
+        return Cache::set(static::getSingedListCacheName(), Collection::make());
+    }
+
     protected static function getSingedListCacheName(): string {
         return (new static())->getTable(). "_cached_list";
     }
@@ -102,6 +107,8 @@ trait HasCacheModel
     }
 
 
+
+
    /* public static function cachedMultiple(string $attribute , bool $searching , mixed... $values): Collection{
         $output = Cache::get(static::getFromSingedListName())?->whereIn($attribute, $values);
         if(is_null($output)) $output = collect();
@@ -124,6 +131,9 @@ trait HasCacheModel
         /**@var Relation $relation */
         $relation = $this->$key();
         return $relation->getRelated()::cached($this->$localKey, $relatedKey);
+    }
+    public function cacheMultiRelationClear(string $key){
+        Cache::forget($this->getRelationCacheName($key));
     }
 
     private function getNToNCachedRelation(string $key): mixed {

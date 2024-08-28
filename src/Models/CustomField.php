@@ -65,7 +65,7 @@ class CustomField extends ACustomField implements NestingObject , Identifier
         'customOptions',
     ];
 
-   public function __get($key) {
+    public function __get($key) {
 
         if($key === "general_field_id") {
             return parent::__get($key);
