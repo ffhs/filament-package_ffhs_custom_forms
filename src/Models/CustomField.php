@@ -80,7 +80,7 @@ class CustomField extends ACustomField implements NestingObject , Identifier
         //PERFORMANCE!!!!
         $genFieldFunction = function(): GeneralField {
             if(!$this->exists) return parent::__get("generalField");
-            $genField = GeneralField::singleListCached()?->where($this->general_field_id,"id")->first();
+            $genField = GeneralField::singleListCached()?->where("id",$this->general_field_id,)->first();
             if(!is_null($genField)) return $genField;
 
             $generalFieldIds = $this->customForm->customFields->whereNotNull('general_field_id')->pluck("general_field_id");

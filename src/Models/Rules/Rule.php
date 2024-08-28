@@ -66,8 +66,6 @@ class Rule extends Model implements CachedModel
 
                 if ($this->is_or_mode && $triggered) return true;//OR
                 else if (!$this->is_or_mode && !$triggered) return false; //AND
-
-                //if($this->is_or_mode == $triggered) return $triggered
             }
 
             return !$this->is_or_mode;

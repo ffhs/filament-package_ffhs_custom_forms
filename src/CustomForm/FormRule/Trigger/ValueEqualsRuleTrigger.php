@@ -6,7 +6,6 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomOption
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\HasFormTargets;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\RuleTrigger;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Checkbox;
@@ -56,7 +55,7 @@ class ValueEqualsRuleTrigger extends FormRuleTriggerType
             "number" => $this->checkNumber($targetValue, $rule->data),
             "text" => $this->checkText($targetValue, $rule->data),
             "boolean" => $this->checkBoolean($targetValue, $rule->data),
-            "null" => empty($targetValue),
+            "null" => $this->checkNull($targetValue),
             "option" => $this->checkOption($targetValue, $rule->data),
             default => false,
         };
@@ -282,7 +281,13 @@ class ValueEqualsRuleTrigger extends FormRuleTriggerType
         return in_array($targetValue,$options);
     }
 
-
+    private function checkNull(mixed $targetValue): bool
+    {
+        if(is_null($targetValue)) return true;
+        if(is_bool($targetValue)) return false;
+        if($targetValue == "0") return false;
+        return empty($targetValue);
+    }
 
 
     /*
@@ -391,4 +396,5 @@ class ValueEqualsRuleTrigger extends FormRuleTriggerType
         return $targetFieldName." in [".implode(", ", $selectedOptionsName)."]";
         }
              */
+
 }

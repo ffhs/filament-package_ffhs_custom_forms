@@ -4,9 +4,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Trigger;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\HasFormTargets;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Translations\HasRuleTriggerPluginTranslate;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\Rule;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\RuleTrigger;
-use Filament\Forms\Components\Component;
 use Filament\Infolists\Components\Component as InfoComponent;
 
 class IsInfolistTrigger extends FormRuleTriggerType

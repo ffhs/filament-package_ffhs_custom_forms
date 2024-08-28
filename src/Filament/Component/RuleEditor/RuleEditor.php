@@ -195,7 +195,7 @@ class RuleEditor extends Group
 
     protected function invertTrigger ($set, $get, $arguments): void {
         $trigger = $get($arguments['item']);
-        $trigger["is_inverted"] = !$trigger["is_inverted"];
+        $trigger["is_inverted"] = !($trigger["is_inverted"] ?? false);
         $set($arguments['item'], $trigger);
     }
 
