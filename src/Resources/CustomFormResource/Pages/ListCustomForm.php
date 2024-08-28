@@ -7,8 +7,9 @@ use Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormResource;
 use Filament\Pages\Actions\CreateAction;
 use Filament\Resources\Components\Tab;
 use Filament\Resources\Pages\ListRecords;
+use Illuminate\Database\Eloquent\Builder;
 
-class ListCustomFormField extends ListRecords
+class ListCustomForm extends ListRecords
 {
     protected static string $resource = CustomFormResource::class;
 
@@ -17,6 +18,11 @@ class ListCustomFormField extends ListRecords
         return [
             CreateAction::make(),
         ];
+    }
+
+    protected function getTableQuery(): ?Builder
+    {
+        return parent::getTableQuery()->with("ownedFields");
     }
 
 

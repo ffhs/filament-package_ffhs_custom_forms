@@ -2,11 +2,11 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Resources\TemplateResource\Pages;
 
+use Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormResource\Pages\ListCustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Resources\TemplateResource;
 use Filament\Actions;
-use Filament\Resources\Pages\ListRecords;
 
-class ListTemplate extends ListRecords
+class ListTemplate extends ListCustomForm
 {
     protected static string $resource = TemplateResource::class;
 

@@ -5,7 +5,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Resources;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormResource\Pages\CreateCustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormResource\Pages\EditCustomForm;
-use Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormResource\Pages\ListCustomFormField;
+use Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormResource\Pages\ListCustomForm;
 use Filament\Forms\Form;
 use Filament\Resources\Concerns\Translatable;
 use Filament\Resources\Resource;
@@ -68,7 +68,7 @@ class CustomFormResource extends Resource
                     ->state(fn(CustomForm $record) =>($record->dynamicFormConfiguration())::displayName()),
                 Tables\Columns\TextColumn::make("custom_fields_amount")
                     ->label(__(self::langPrefix . "custom_fields_amount"))
-                    ->state(fn(CustomForm $record) => $record->customFields->count()),
+                    ->state(fn(CustomForm $record) => $record->ownedFields->count()),
             ]);
     }
 
@@ -84,7 +84,7 @@ class CustomFormResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => ListCustomFormField::route('/'),
+            'index' => ListCustomForm::route('/'),
             'create' => CreateCustomForm::route('/create'),
             'edit' => EditCustomForm::route('/{record}/edit'),
         ];

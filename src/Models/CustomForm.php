@@ -33,6 +33,7 @@ use Spatie\Translatable\HasTranslations;
  * @property Collection $customFieldInLayout
  * @property Collection rules
  * @property Collection ownedRules
+ * @property Collection $ownedFields
  */
 class CustomForm extends Model implements CachedModel
 {
@@ -56,12 +57,11 @@ class CustomForm extends Model implements CachedModel
 
     protected array $cachedManyRelations = [
         'customFields',
-        'ownedFields',
         'generalFields',
         'rules',
         'formRules',
         'rules',
-        'ownedRules'
+        'ownedRules',
     ];
 
     public array $translatable = [
@@ -72,6 +72,11 @@ class CustomForm extends Model implements CachedModel
     public function ownedRules(): BelongsToMany
     {
         return $this->belongsToMany(Rule::class, (new FormRule())->getTable());
+    }
+
+    public function ownedFields(): HasMany
+    {
+        return $this->hasMany(CustomField::class);
     }
 
     public function rules(): BelongsToMany
