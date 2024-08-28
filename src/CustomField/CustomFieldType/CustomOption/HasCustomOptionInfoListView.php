@@ -32,7 +32,7 @@ trait HasCustomOptionInfoListView
             ->columnSpanFull()
             ->inlineLabel()
             ->state(FieldMapper::getAnswer($record))
-            ->formatStateUsing(fn($state) => $stateList->toArray()[$state])
+            ->formatStateUsing(fn($state) => $stateList->toArray()[$state] ?? "")
             ->badge();
 
 
