@@ -43,7 +43,7 @@ trait HasFormTargets
 
             foreach ($fields as $field){
                 /**@var CustomField $field*/
-                if($field->template_id == null) $options[$field->identifier] = $field->name ??"?";
+                if($field->template_id == null) $options[$field->identifier] = $field->name ?? "?";
                 else $options[$field->identifier] = $field->template->short_title ?? "?";
 
             }

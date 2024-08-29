@@ -64,7 +64,7 @@ class ValueEqualsRuleTrigger extends FormRuleTriggerType
 
     public function getDisplayName(): string
     {
-        return "Selber Wert";
+        return "Bestimmter Wert"; //ToDo Tra
     }
 
     public function getFormSchema(): array
@@ -76,7 +76,7 @@ class ValueEqualsRuleTrigger extends FormRuleTriggerType
                 ->options(fn() => [
                     "number" => "Nummer",
                     "text" => "Text",
-                    "boolean" => "boolean",
+                    "boolean" => "Boolean",
                     "null" => "Leer",
                     "option" => "Optionen"
                 ])

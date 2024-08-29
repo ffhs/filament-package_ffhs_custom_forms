@@ -15,6 +15,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\RuleEvent;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Concerns\HasOptions;
 use Filament\Forms\Components\Select;
+use Illuminate\Support\Collection;
 use ReflectionClass;
 use Filament\Infolists\Components\Component as InfolistComponent;
 
@@ -35,15 +36,16 @@ use Filament\Infolists\Components\Component as InfolistComponent;
                    collect($this->getAllFieldsData($get))
                         ->map(fn($field) => (new CustomField())->fill($field))
                         ->filter(fn(CustomField $field)=> $field->getType() instanceof CustomOptionType)
+                        ->map(fn(CustomField $field) => ["name" => $field->name, "identifier" => $field->identifier])
                         ->pluck("name", "identifier")
                  ),
-             Select::make("customOptions")
+             Select::make("selected_options")
                  ->label("Anzuzeigende Optionen")
                  ->multiple()
                  ->hidden(function ($set, $get){
                      //Fields with an array doesn't generate properly
-                     if($get('customOptions') == null)
-                         $set("customOptions",[]);
+                     if($get('selected_options') == null)
+                         $set("selected_options",[]);
                  })
                  ->options(function ($get, CustomForm $record){
                      $field = $this->getTargetFieldData($get);
@@ -55,13 +57,15 @@ use Filament\Infolists\Components\Component as InfolistComponent;
 
                      if($customField->isGeneralField()){
                          $genOptions = $customField->generalField->customOptions;
+                         $selectedOptions = $this->getTargetFieldData($get)["options"]["customOptions"] ?? [];
+                         $genOptions = $genOptions->whereIn("id", $selectedOptions);
                          return $genOptions->pluck("name","identifier");
                      }
 
 
                      if(!array_key_exists("options",$field)) $field["options"] = [];
-                     if(!array_key_exists("customOptions",$field["options"])) $field["options"]["customOptions"] = [];
-                     $options = $field["options"]["customOptions"];
+                     if(!array_key_exists("selected_options",$field["options"])) $field["options"]["selected_options"] = [];
+                     $options = $field["options"]["selected_options"];
                      return  collect($options)->pluck("name.". $record->getLocale(),"identifier");
                  })
          ];
@@ -69,26 +73,36 @@ use Filament\Infolists\Components\Component as InfolistComponent;
 
      public function handleAfterRenderForm(Closure $triggers, array $arguments, Component $component, RuleEvent $rule): Component
      {
-         if(!in_array(HasOptions::class,class_uses_recursive($component::class))) return $component;
+
+         $customField = $this->getCustomField($arguments);
+         if($customField->identifier !== ($rule->data["target"] ?? "")) return $component;
+         if(!in_array(HasOptions::class, class_uses_recursive($component::class))) return $component;
+
          $reflection = new ReflectionClass($component);
          $property = $reflection->getProperty("options");
          $property->setAccessible(true);
          $optionsOld = $property->getValue($component);
-         $customField = $this->getCustomField($arguments);
+
 
          return $component->options(function ($get,$set) use ($triggers, $optionsOld, $customField, $component, $rule) {
-             $triggerd = $triggers(["state" => $get(".")]);
+             $triggered = $triggers(["state" => $get(".")]);
 
-
-             if(!$triggerd) $options = $component->evaluate($optionsOld);
-             else{
-                 $customOptions =  $customField->customOptions->whereIn("identifier",$rule->data["customOptions"]);
-                 $customField->setCacheValue("customOptions",$customOptions );
-                 $options =  FieldMapper::getAvailableCustomOptions($customField);
+             $options = $component->evaluate($optionsOld);
+             if(!$triggered) return $options;
+             if($options instanceof Collection) $options = $options->toArray();
+             foreach ($options as $key => $option) {
+                 if(in_array($key, $rule->data["selected_options"])) continue;
+                 unset($options[$key]);
              }
 
+             //Check to replace the current value
              $currentValue = $get(FieldMapper::getIdentifyKey($customField));
-             if(!array_key_exists($currentValue,$options->toArray())) $set(FieldMapper::getIdentifyKey($customField), null);
+             if(is_array($currentValue)){
+                 $diff = array_intersect($currentValue, array_keys($options));
+                 if(sizeof($diff) != sizeof($currentValue)) $set($customField->identifier, $diff);
+             }
+             else if(!array_key_exists($currentValue, $options)) $set($customField->identifier, null);
+
              return $options;
          });
 
