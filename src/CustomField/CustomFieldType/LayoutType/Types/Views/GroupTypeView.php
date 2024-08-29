@@ -13,8 +13,7 @@ use Filament\Infolists\Components\Fieldset;
 class GroupTypeView implements FieldTypeView
 {
 
-    public static function getFormComponent(CustomFieldType $type, CustomField $record,
-                                            array           $parameter = []): \Filament\Forms\Components\Component {
+    public static function getFormComponent(CustomFieldType $type, CustomField $record, array $parameter = []): \Filament\Forms\Components\Component {
 
         return Group::make()
             ->columnSpan(FieldMapper::getOptionParameter($record,"column_span"))

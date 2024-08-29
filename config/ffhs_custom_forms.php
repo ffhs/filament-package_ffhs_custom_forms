@@ -24,10 +24,10 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\LayoutType\T
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\LayoutType\Types\SpaceType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\LayoutType\Types\TextLayoutType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\LayoutType\Types\TitleType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\NestedLayoutType\Types\CustomTabCustomEggType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\NestedLayoutType\Types\TabsCustomNestType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\NestedLayoutType\Types\WizardCustomNestType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\NestedLayoutType\Types\WizardStepCustomEggType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\NestedLayoutTypeOLD\Types\CustomTabCustomEggType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\NestedLayoutTypeOLD\Types\TabsCustomNestType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\NestedLayoutTypeOLD\Types\WizardCustomNestType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\NestedLayoutTypeOLD\Types\WizardStepCustomEggType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\TemplatesType\TemplateFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Events\ChangeOptionsEvent;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Events\DisabledEvent;
@@ -115,10 +115,10 @@ return [
         ImageLayoutType::class,
         SpaceType::class,
 
-        TabsCustomNestType::class,
-        CustomTabCustomEggType::class,
-        WizardCustomNestType::class,
-        WizardStepCustomEggType::class,
+        //TabsCustomNestType::class,
+        //CustomTabCustomEggType::class,
+        // WizardCustomNestType::class,
+        //WizardStepCustomEggType::class,
     ],
 
     "selectable_field_types" => [
@@ -152,8 +152,8 @@ return [
         ImageLayoutType::class,
         SpaceType::class,
 
-        TabsCustomNestType::class,
-        WizardCustomNestType::class,
+        // TabsCustomNestType::class,
+        // WizardCustomNestType::class,
     ],
 
     "selectable_general_field_types"=>[

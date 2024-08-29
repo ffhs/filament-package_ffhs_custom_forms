@@ -18,7 +18,7 @@ class EditCustomFields extends DragDropComponent
      */
     function getMaxGridSizeFromField($form_position, $state): ?int
     {
-        $maxSize = 4;
+        $maxSize = config("ffhs_custom_forms.default_column_count");
         $position = $form_position;
         $nerastParent = 0;
         foreach ($state as $item) {
@@ -47,7 +47,7 @@ class EditCustomFields extends DragDropComponent
         $this->flatten();
         $this->dragDropGroup("custom_fields");
 
-        $this->gridSize(4); //ToDo Make Config
+        $this->gridSize(config("ffhs_custom_forms.default_column_count"));
         $this->nestedFlattenListType(CustomField::class);
 
         $this->itemGridSize(function ($itemState, $state){

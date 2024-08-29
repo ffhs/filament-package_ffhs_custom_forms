@@ -23,8 +23,8 @@ class TemplateTypeView implements FieldTypeView
         $renderOutput = CustomFormRender::render(0,$customFields,$render, $viewMode, $record->customForm);
 
 
-
-        return Group::make($renderOutput[0] ?? [])->columns(config("ffhs_custom_forms.default_column_count"));
+        return Group::make($renderOutput[0] ?? [])
+            ->columns(config("ffhs_custom_forms.default_column_count"));
     }
 
 

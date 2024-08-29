@@ -9,9 +9,11 @@ use Illuminate\Support\Collection;
 class FieldMapper
 {
 
+    /**
+     * @deprecated
+     */
     public static function getToolTips(CustomField|CustomFieldAnswer $record) :?string{
-        if($record instanceof  CustomFieldAnswer) $record = $record->customField;
-        return  $record->tool_tip;
+        return null;
     }
 
     public static function getIdentifyKey(CustomField|CustomFieldAnswer  $record) :String{
