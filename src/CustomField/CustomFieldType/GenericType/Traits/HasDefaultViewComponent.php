@@ -18,10 +18,12 @@ trait HasDefaultViewComponent
     }
 
     protected static function modifyFormComponent(Component $component, CustomField $record): Component {
+        $helpText = FieldMapper::getOptionParameter($record, "helper_text") ?? null;
+
         return $component
             ->columnStart(FieldMapper::getOptionParameter($record,"new_line_option"))
             ->columnSpan(FieldMapper::getOptionParameter($record,"column_span"))
-            ->helperText(new HtmlString(FieldMapper::getOptionParameter($record, "helper_text")))
+            ->helperText($helpText?new HtmlString($helpText):null)
             ->inlineLabel(FieldMapper::getOptionParameter($record,"in_line_label") ?? false)
             ->required(FieldMapper::getOptionParameter($record,"required" ?? false))
             ->label(FieldMapper::getLabelName($record));
