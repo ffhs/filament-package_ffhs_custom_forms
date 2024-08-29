@@ -11,13 +11,13 @@ abstract class  CustomOptionType extends CustomFieldType
 
     public function extraTypeOptions(): array {
         return [
-            "customOptions" => new CustomOptionTypeOption(false),
+            "customOptions" => new CustomOptionTypeOption(),
         ];
     }
 
     public function generalTypeOptions(): array {
         return [
-            "customOptions" => new CustomOptionTypeOption(true),
+            "customOptions" => new CustomOptionTypeOption(),
         ];
     }
 

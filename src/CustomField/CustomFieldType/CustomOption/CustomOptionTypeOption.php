@@ -82,12 +82,13 @@ class CustomOptionTypeOption extends TypeOption
             ->multiple()
             ->options(function($get){
                 $generalField = GeneralField::cached($get("../general_field_id"));
-                return $generalField->customOptions->pluck("name_de","id"); //toDo Translate;
+                return $generalField->customOptions->pluck("name","id"); //toDo Translate;
             });
     }
 
     private function getCustomOptionsRepeater($name): Repeater {
-        $repeater = Repeater::make($name)
+
+        return Repeater::make($name)
             ->collapseAllAction(fn($action) => $action->hidden())
             ->expandAllAction(fn($action) => $action->hidden())
             ->itemLabel(fn($state,$record)=> $state["name"][$record->getLocale()]) //ToDo Translate
@@ -109,7 +110,6 @@ class CustomOptionTypeOption extends TypeOption
                     ->label("Identifikator")
                     ->required(),
             ]);
-        return $repeater;
     }
 
     /**
