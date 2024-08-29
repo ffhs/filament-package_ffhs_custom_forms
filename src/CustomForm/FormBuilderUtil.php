@@ -24,7 +24,6 @@ class FormBuilderUtil
         static::generateFields($customForm, $layout, $customField);
 
 
-        //ToDo WTF WHY THAT CRASH WITHOUT ANY MESSAGE WHY?????
         foreach ($customField as $data){
             $customOptions = $data['customOptions'] ?? [];
 
@@ -38,9 +37,11 @@ class FormBuilderUtil
             $field->fill($data);
 
             foreach ($names as $local => $name) $field->setTranslation("name", $local, $name);
-              $field->save();
 
-              $field->customOptions()->createMany($customOptions);
+            $field->save();
+
+            if($field->isGeneralField() && !empty($customOptions)) $field->customOptions()->sync($customOptions);
+            else if(!empty($customOptions)) $field->customOptions()->createMany($customOptions);
         }
 
         return $customForm;
@@ -134,7 +135,26 @@ class FormBuilderUtil
     //ToDo Name Converter
     private static function prepareCustomOptions(array $field, array &$fieldData): void {
         if (!array_key_exists("customOptions", $field)) return;
+
+        //General Field
+        if(array_key_exists("general_field_id", $fieldData)){
+            $generalField = GeneralField::cached($fieldData['general_field_id']);
+            $allOptions = $generalField->customOptions;
+
+            $fieldData['customOptions'] = [];
+
+            foreach ($field['customOptions'] as $customOption){
+                $optionId = $allOptions->where('id', $customOption)->first()?->id;
+                if(is_null($optionId)) $optionId = $allOptions->where('identifier', $customOption)->first()?->id;
+                if(is_null($optionId)) $optionId = $allOptions->where('name', $customOption)->first()?->id;
+
+                if(!is_null($optionId))  $fieldData['customOptions'][] = $optionId;
+            }
+            return;
+        }
+
         $fieldData['customOptions'] = [];
+
         foreach ($field['customOptions'] as $customOption) {
 
             $names = [];
