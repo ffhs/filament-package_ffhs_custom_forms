@@ -4,6 +4,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Generi
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\FieldTypeView;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Traits\HasDefaultViewComponent;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldMapper;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
@@ -14,32 +15,21 @@ use Filament\Infolists\Components\TextEntry;
 class TagsTypeView implements FieldTypeView
 {
 
-    public static function getFormComponent(CustomFieldType $type, CustomField $record,
-                                            array           $parameter = []): Component {
+    use HasDefaultViewComponent;
 
-        return TagsInput::make(FieldMapper::getIdentifyKey($record))
-            ->columnStart(FieldMapper::getOptionParameter($record,"new_line_option"))
-            ->inlineLabel(FieldMapper::getOptionParameter($record,"in_line_label"))
-            ->columns(FieldMapper::getOptionParameter($record,"columns"))
-            ->helperText(FieldMapper::getToolTips($record))
-            ->label(FieldMapper::getLabelName($record))
-
-            ->columnSpan(FieldMapper::getOptionParameter($record,"column_span"));
+    public static function getFormComponent(CustomFieldType $type, CustomField $record, array $parameter = []): Component {
+        return static::makeComponent(TagsInput::class, $record)
+            ->columns(FieldMapper::getOptionParameter($record,"columns"));
     }
 
 
-    public static function getInfolistComponent(CustomFieldType $type, CustomFieldAnswer $record,
-                                                array           $parameter = []): \Filament\Infolists\Components\Component {
+    public static function getInfolistComponent(CustomFieldType $type, CustomFieldAnswer $record, array  $parameter = []): \Filament\Infolists\Components\Component {
 
         $answerer =FieldMapper::getAnswer($record);
         $answerer = empty($answerer)?"":$answerer;
 
-        return TextEntry::make(FieldMapper::getIdentifyKey($record))
-                ->columnStart(FieldMapper::getOptionParameter($record,"new_line_option"))
-                ->label(FieldMapper::getLabelName($record))
-                ->columnSpanFull()
-                ->inlineLabel()
-                ->state($answerer)
-                ->badge();
+        return static::makeComponent(TagsInput::class, $record)
+            ->state($answerer)
+            ->badge();
     }
 }

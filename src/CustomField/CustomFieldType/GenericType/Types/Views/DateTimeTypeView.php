@@ -4,6 +4,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Generi
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\FieldTypeView;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Traits\HasDefaultViewComponent;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldMapper;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
@@ -12,28 +13,16 @@ use Filament\Infolists\Components\TextEntry;
 
 class DateTimeTypeView implements FieldTypeView
 {
+    use HasDefaultViewComponent;
 
-    public static function getFormComponent(CustomFieldType $type, CustomField $record,
-                                            array           $parameter = []): DateTimePicker {
-        return DateTimePicker::make(FieldMapper::getIdentifyKey($record))
-            ->columnStart(FieldMapper::getOptionParameter($record,"new_line_option"))
-            ->inlineLabel(FieldMapper::getOptionParameter($record,"in_line_label"))
-            ->columnSpan(FieldMapper::getOptionParameter($record,"column_span"))
-            ->label(FieldMapper::getLabelName($record))
-            ->helperText(FieldMapper::getToolTips($record))
-            ->format(self::getFormat($record))
-;
+    public static function getFormComponent(CustomFieldType $type, CustomField $record, array $parameter = []): DateTimePicker {
+        return static::makeComponent(DateTimePicker::class, $record)
+            ->format(self::getFormat($record));
     }
 
-    public static function getInfolistComponent(CustomFieldType $type, CustomFieldAnswer $record,
-                                                array           $parameter = []): TextEntry {
-        return TextEntry::make(FieldMapper::getIdentifyKey($record))
-            ->columnStart(FieldMapper::getOptionParameter($record,"new_line_option"))
-            ->dateTime(self::getFormat($record->customField))
-            ->label(FieldMapper::getLabelName($record))
-            ->state(FieldMapper::getAnswer($record))
-            ->columnSpanFull()
-            ->inlineLabel();
+    public static function getInfolistComponent(CustomFieldType $type, CustomFieldAnswer $record, array $parameter = []): TextEntry {
+        return static::makeComponent(TextEntry::class, $record)
+            ->dateTime(self::getFormat($record->customField));
     }
 
     private static function getFormat(CustomField $customField):String{

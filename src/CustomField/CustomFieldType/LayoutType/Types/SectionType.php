@@ -36,18 +36,19 @@ class SectionType extends CustomLayoutType
     public function extraTypeOptions(): array {
         return[
             LayoutTypeDefaultLayoutTypeOptionGroup::make()
-            ->mergeTypeOptions([
-                'show_in_view'=> ShowInViewOption::make()
-                    ->modifyComponent(fn(Component $component) => $component->columnStart(1)),
-                'show_as_fieldset' => ShowAsFieldsetOption::make()
-                    ->modifyComponent(fn(Component $component) => $component->columnStart(2)),
-                "show_title" =>  ShowTitleOption::make(),
-                'aside' => new FastTypeOption(false,
-                    Toggle::make("aside")
-                        ->label("Titel seitlich Anzeigen") //ToDo Translate,
-                        ->disabled(fn($get) => !$get("show_title"))
-                ),
-            ]),
+                ->removeTypeOption("helper_text")
+                ->mergeTypeOptions([
+                    'show_in_view'=> ShowInViewOption::make()
+                        ->modifyComponent(fn(Component $component) => $component->columnStart(1)),
+                    'show_as_fieldset' => ShowAsFieldsetOption::make()
+                        ->modifyComponent(fn(Component $component) => $component->columnStart(2)),
+                    "show_title" =>  ShowTitleOption::make(),
+                    'aside' => new FastTypeOption(false,
+                        Toggle::make("aside")
+                            ->label("Titel seitlich Anzeigen") //ToDo Translate,
+                            ->disabled(fn($get) => !$get("show_title"))
+                    ),
+                ]),
         ];
     }
 

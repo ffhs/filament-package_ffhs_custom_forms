@@ -31,6 +31,7 @@ class TitleType extends CustomFieldType
     public function extraTypeOptions(): array {
         return [
             DefaultLayoutTypeOptionGroup::make()
+                ->removeTypeOption("helper_text")
                 ->addTypeOptions('title_size',
                     FastTypeOption::makeFast(1,
                         TextInput::make('title_size')

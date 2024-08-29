@@ -30,6 +30,7 @@ class GroupType extends CustomLayoutType
     public function extraTypeOptions(): array {
         return[
             LayoutTypeDefaultLayoutTypeOptionGroup::make()
+                ->removeTypeOption("helper_text")
                 ->mergeTypeOptions([
                     'show_in_view'=> new ShowInViewOption(),
                 ]),

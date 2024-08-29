@@ -41,17 +41,19 @@ class SpaceType extends CustomFieldType
 
     public function extraTypeOptions(): array { //ToDo
         return[
-            DefaultLayoutTypeOptionGroup::make()->mergeTypeOptions([
-                'amount'=> new FastTypeOption(1,
-                    TextInput::make("amount")
-                        ->label("Grösse")
-                        ->columnStart(1)
-                        ->minValue(1)
-                        ->required()
-                        ->numeric()
-                ),
-                'show_in_view'=> new ShowInViewOption(),
-            ]),
+            DefaultLayoutTypeOptionGroup::make()
+                ->removeTypeOption("helper_text")
+                ->mergeTypeOptions([
+                    'amount'=> new FastTypeOption(1,
+                        TextInput::make("amount")
+                            ->label("Grösse")
+                            ->columnStart(1)
+                            ->minValue(1)
+                            ->required()
+                            ->numeric()
+                    ),
+                    'show_in_view'=> new ShowInViewOption(),
+                ]),
         ];
     }
 

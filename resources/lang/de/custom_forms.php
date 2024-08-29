@@ -98,6 +98,7 @@ return [
             "show_in_view" => "Sichtbar beim Betrachten",
             "show_title" => "Titel Anzeigen",
             'required' => 'Benötigt',
+            "help_text" => "Hilfetext",
 
             // custom field type (FastTypeOption)
             "color_type" => "Farbformat",

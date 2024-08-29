@@ -72,4 +72,10 @@ class TypeOptionGroup {
             ->schema($data);
     }
 
+    
+    public function removeTypeOption(string $key): static
+    {
+        unset($this->typeOptions[$key]);
+        return  $this;
+    }
 }
