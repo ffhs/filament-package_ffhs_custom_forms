@@ -5,6 +5,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Custom
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomOption\HasCustomOptionInfoListView;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\FieldTypeView;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Traits\HasDefaultViewComponent;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldMapper;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Filament\Forms\Components\Component;
@@ -13,16 +14,10 @@ use Filament\Forms\Components\Select;
 class SelectTypeView implements FieldTypeView
 {
     use HasCustomOptionInfoListView;
+    use HasDefaultViewComponent;
 
-    public static function getFormComponent(CustomFieldType $type, CustomField $record,
-                                            array           $parameter = []): Component {
-        $select = Select::make(FieldMapper::getIdentifyKey($record))
-            ->columnStart(FieldMapper::getOptionParameter($record,"new_line_option"))
-            ->inlineLabel(FieldMapper::getOptionParameter($record,"in_line_label"))
-            ->columnSpan(FieldMapper::getOptionParameter($record,"column_span"))
-            ->required(FieldMapper::getOptionParameter($record,"required"))
-            ->helperText(FieldMapper::getToolTips($record))
-            ->label(FieldMapper::getLabelName($record))
+    public static function getFormComponent(CustomFieldType $type, CustomField $record, array $parameter = []): Component {
+        $select = static::makeComponent(Select::class, $record)
             ->options(FieldMapper::getAvailableCustomOptions($record));
 
         if(FieldMapper::getOptionParameter($record,"several")){

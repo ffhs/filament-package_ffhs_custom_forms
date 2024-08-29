@@ -14,18 +14,20 @@ class HelptextTypeOption extends TypeOption
         return null;
     }
 
+
+
     public function getComponent(string $name): Component {
         return  RichEditor::make($name)
-            ->label($this->translate("show_title"))
+            ->label($this->translate("help_text"))
+            ->grow(false)
             ->columnSpanFull()
-            ->columns(1)
+            ->live()
             ->toolbarButtons([
                 'bold',
                 'italic',
                 'link',
                 'strike',
                 'underline',
-            ])
-            ->live();
+            ]);
     }
 }

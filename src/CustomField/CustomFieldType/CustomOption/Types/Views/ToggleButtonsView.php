@@ -5,29 +5,22 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Custom
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomOption\HasCustomOptionInfoListViewWithBoolean;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\FieldTypeView;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Traits\HasDefaultViewComponent;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldMapper;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Filament\Forms\Components\Component;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\ToggleButtons;
 
 class ToggleButtonsView implements FieldTypeView
 {
 
     use HasCustomOptionInfoListViewWithBoolean;
+    use HasDefaultViewComponent;
 
-    public static function getFormComponent(CustomFieldType $type, CustomField $record,
-                                            array           $parameter = []): Component {
-
-        $toggles = ToggleButtons::make(FieldMapper::getIdentifyKey($record))
-            ->columnStart(FieldMapper::getOptionParameter($record,"new_line_option"))
-            ->inlineLabel(FieldMapper::getOptionParameter($record,"in_line_label"))
-           // ->multiple(FieldMapper::getOptionParameter($record,"multiple"))
-            ->required(FieldMapper::getOptionParameter($record,"required"))
-            ->inline(FieldMapper::getOptionParameter($record,"inline"))
-            ->columns(FieldMapper::getOptionParameter($record,"columns"))
-            ->helperText(FieldMapper::getToolTips($record))
-            ->label(FieldMapper::getLabelName($record))
-;
+    public static function getFormComponent(CustomFieldType $type, CustomField $record, array $parameter = []): Component {
+        $toggles = static::makeComponent(ToggleButtons::class, $record)
+            ->columns(FieldMapper::getOptionParameter($record,"columns"));
 
         if(FieldMapper::getOptionParameter($record,"grouped")) $toggles->grouped();
         else if(FieldMapper::getOptionParameter($record,"inline")) $toggles->inline();

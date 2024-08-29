@@ -9,26 +9,18 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldMapper;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Component;
+use Filament\Forms\Components\Radio;
 
 class CheckboxListTypeView implements FieldTypeView
 {
     use HasCustomOptionInfoListView;
 
-    public static function getFormComponent(CustomFieldType $type, CustomField $record,
-                                            array           $parameter = []): Component {
-
-        return CheckboxList::make(FieldMapper::getIdentifyKey($record))
-           ->columnStart(FieldMapper::getOptionParameter($record,"new_line_option"))
-            ->inlineLabel(FieldMapper::getOptionParameter($record,"in_line_label"))
-            ->columnSpan(FieldMapper::getOptionParameter($record,"column_span"))
+    public static function getFormComponent(CustomFieldType $type, CustomField $record, array   $parameter = []): Component {
+        return static::makeComponent(CheckboxList::class, $record)
             ->columns(FieldMapper::getOptionParameter($record,"columns"))
-            ->required(FieldMapper::getOptionParameter($record,"required"))
             ->options(FieldMapper::getAvailableCustomOptions($record))
-            ->helperText(FieldMapper::getToolTips($record))
-            ->label(FieldMapper::getLabelName($record))
             ->maxItems(FieldMapper::getOptionParameter($record,"max_items"))
-            ->minItems(FieldMapper::getOptionParameter($record,"min_items"))
-;
+            ->minItems(FieldMapper::getOptionParameter($record,"min_items"));
     }
 
 

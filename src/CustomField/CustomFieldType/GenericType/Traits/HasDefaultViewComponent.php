@@ -6,6 +6,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldMapper;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Filament\Forms\Components\Component;
+use Illuminate\Support\HtmlString;
 
 trait HasDefaultViewComponent
 {
@@ -20,7 +21,7 @@ trait HasDefaultViewComponent
         return $component
             ->columnStart(FieldMapper::getOptionParameter($record,"new_line_option"))
             ->columnSpan(FieldMapper::getOptionParameter($record,"column_span"))
-            ->helperText(FieldMapper::getOptionParameter($record, "helper_text"))
+            ->helperText(new HtmlString(FieldMapper::getOptionParameter($record, "helper_text")))
             ->inlineLabel(FieldMapper::getOptionParameter($record,"in_line_label") ?? false)
             ->required(FieldMapper::getOptionParameter($record,"required" ?? false))
             ->label(FieldMapper::getLabelName($record));
