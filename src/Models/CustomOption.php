@@ -2,28 +2,36 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Models;
 
+use Ffhs\FilamentPackageFfhsCustomForms\Helping\Caching\CachedModel;
+use Ffhs\FilamentPackageFfhsCustomForms\Helping\Caching\HasCacheModel;
+use Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\HasFormIdentifier;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Spatie\Translatable\HasTranslations;
 
 /**
  * @property int $id
- * @property string $name_de
- * @property string $name_en
+ * @property array $name
  * @property string $identifier
  * @property string|null $icon
  *
  * @property CustomOption $customOption
  */
-class CustomOption extends CachedModel
+class CustomOption extends Model implements CachedModel
 {
     use HasFormIdentifier;
+    use HasTranslations;
+    use HasCacheModel;
     use HasFactory;
 
+    public $translatable = ['name'];
+
     protected $fillable = [
-        'name_de',
-        'name_en',
+        'name',
         'identifier',
         'icon',
     ];
+
 
     protected static function booted() {
         parent::booted();

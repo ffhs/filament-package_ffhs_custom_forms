@@ -17,14 +17,14 @@ return [
             'forms' => 'Formulare'
         ],
         'custom_form_answer' => "Ausgefüllte Formulare",
-        "templates" => "Templates"
+        "templates" => "Templates",
     ],
 
     "fields" => [
         'type' => 'Feldtyp',
         'name' => 'Name',
         'tool_tip' => 'Kurzbeschreibung',
-        'identify_key' => 'Identifikations Schlüssel',
+        'identifier' => 'Identifikations Schlüssel',
         'is_general_field_active' => 'Aktiv',
         'label' => "Name",
         'form_connections' => 'Verknüpfte Formulare',
@@ -33,7 +33,7 @@ return [
 
         'helper_text' => [
             'type' => 'Der Feldtyp des Felds. ACHTUNG: Dieser kann nach dem Erstellen nicht mehr geändert werden',
-            'identify_key' => 'Dieser Schlüssel wird benötigt um die Daten zu exportieren',
+            'identifier' => 'Dieser Schlüssel wird benötigt um die Daten zu exportieren',
             'is_general_field_active' => 'Falls dies deaktiviert wird, werden alle generellen Felder deaktiviert, welches auf diesem Feld basieren.',
         ],
 
@@ -68,15 +68,18 @@ return [
         ],
 
         'rules' => [
-            "is_disabled_rule" => "Feld deaktivieren",
-            "is_hidden_rule" => "Feld verstecken",
-            "is_required_rule" => "Feld benötigen",
-            'change_options_rule' => 'Feld Optionen ändern'
-        ],
+            'event' => [
+                "hidden_event" => "Feld verstecken",
+                "visible_event" => "Feld anzeigen",
+                "disabled_event" => "Feld deaktivieren",
+                "required_event" => "Feld benötigen",
 
-        'anchors' => [
-            'value_equals_anchor' => 'Bestimmter Wert',
-            'infolist_view' => 'Wenn Infolist ist'
+                'change_options_rule' => 'Feld Optionen ändern'
+            ],
+            'trigger' => [
+                'value_equals_anchor' => 'Bestimmter Wert',
+                'infolist_view' => 'Wenn Infolist ist'
+            ]
         ],
 
         'type_options' => [
@@ -94,6 +97,7 @@ return [
             "show_as_fieldset" => "Als Fieldset beim Betrachten anzeigen",
             "show_in_view" => "Sichtbar beim Betrachten",
             "show_title" => "Titel Anzeigen",
+            'required' => 'Benötigt',
 
             // custom field type (FastTypeOption)
             "color_type" => "Farbformat",
@@ -120,6 +124,8 @@ return [
             "multiple_toggle_selectable" => "Mehre Schalter auswählbar",
             "alpine_mask" => "Maske",
             "alpine_mask_help_text" => "Schnellhilfe: 'a' für Buchstaben, '9' für Zahlen '*' für alle Zeichen. (Alpine Maske)",
+
+
         ],
     ],
 

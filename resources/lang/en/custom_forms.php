@@ -21,7 +21,7 @@ return [
         'type' => 'Field Type',
         'name' => 'Name',
         'tool_tip'=> 'Short Description',
-        'identify_key'=> 'Identification Key',
+        'identifier'=> 'Identification Key',
         'is_general_field_active' => 'Active',
         'label'=> "Name",
         'form_connections'=> 'Linked Forms',
@@ -30,7 +30,7 @@ return [
 
         'helper_text' => [
             'type'=> 'The field type of the field. ATTENTION: This cannot be changed after creation',
-            'identify_key'=> 'This key is required to export the data',
+            'identifier'=> 'This key is required to export the data',
             'is_general_field_active'=> 'If this is deactivated, all general fields based on this field will be deactivated.',
         ],
 

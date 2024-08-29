@@ -7,6 +7,8 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralFieldForm;
+use Filament\Support\Assets\Js;
+use Filament\Support\Facades\FilamentAsset;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Artisan;
 use Spatie\LaravelPackageTools\Commands\InstallCommand;
@@ -31,12 +33,21 @@ class FilamentPackageFfhsCustomFormsServiceProvider extends PackageServiceProvid
                 'create_option_general_field_table',
                 'create_option_custom_field_table',
                 'create_field_rules_table',
+                'create_form_rules_table',
             ])
             ->hasConfigFile('ffhs_custom_forms')
             ->hasTranslations()
             ->hasInstallCommand(fn(InstallCommand $command) =>
                 $command
+                    ->startWith(function (InstallCommand $command){
+                        $command->info("Publish translation from Filament\Spatie-Translatable");
+                       // Artisan::call('vendor:publish', ["tag" => "filament-spatie-laravel-translatable-plugin-translations"]); ToDo repair
+
+                        $command->info("Publish config from icon picker plugin");
+                        // Artisan::call('vendor:publish', ["tag" => "filament-icon-picker-config"]); ToDo repair
+                    })
                     ->publishConfigFile()
+                    ->publishAssets()
                     ->copyAndRegisterServiceProviderInApp()
                     ->publishMigrations()
                     ->askToRunMigrations()
@@ -45,16 +56,16 @@ class FilamentPackageFfhsCustomFormsServiceProvider extends PackageServiceProvid
                         // Clear the application cache
                         $command->info("Clear cache");
                         Artisan::call('cache:clear');
+
                         $command->info("Clear icon cache");
                         Artisan::call('icons:cache');
+
                         $command->info("Create storage symlink");
                         Artisan::call('storage:link');
-
-                        // publish config from icon picker
-                        $command->info("Publish config from icon picker plugin");
-                        Artisan::call('vendor:publish', ["tag" => "filament-icon-picker-config"]);
                     })
-            );
+            )
+            ->hasViews('filament-package_ffhs_custom_forms');
+
 
     }
 
@@ -74,6 +85,15 @@ class FilamentPackageFfhsCustomFormsServiceProvider extends PackageServiceProvid
                 return 'Ffhs\\FilamentPackageFfhsCustomForms\\Models\Factories\\' . class_basename($modelName) . 'Factory';
             else return 'Database\Factories\\' . class_basename($modelName) . 'Factory';
         });
+
+        FilamentAsset::register([
+           Js::make('drag_drop_script', __DIR__ . '/../resources/js/drag_drop_script.js')->loadedOnRequest(),
+        ], 'ffhs/filament-package_ffhs_custom_forms');
+
+        $this->publishes([
+            __DIR__.'/../resources/js/drag_drop_script.js' => public_path('js/ffhs/'.$this->package->name.'/drag_drop_script.js'),
+        ], 'filament-package_ffhs_custom_forms-assets');
+
     }
 
 }

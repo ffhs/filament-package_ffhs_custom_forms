@@ -2,20 +2,34 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormResource\Pages;
 
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor\CustomFormEditor;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\FormEditor\CustomFormEditor;
+use Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\EditHelper\EditCustomFormLoadHelper;
+use Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\EditHelper\EditCustomFormSaveHelper;
 use Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormResource;
 use Filament\Actions;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Form;
 use Filament\Resources\Pages\EditRecord;
+use Filament\Resources\Pages\EditRecord\Concerns\Translatable;
+use Filament\Support\Enums\MaxWidth;
 use Illuminate\Contracts\Support\Htmlable;
 
 class EditCustomForm extends EditRecord
 {
+    use Translatable;
     protected static string $resource = CustomFormResource::class;
+
+
+    public function getMaxContentWidth(): MaxWidth|string|null {
+        return MaxWidth::Full;
+    }
 
     public function form(Form $form): Form {
         return $form->schema([Section::make()->schema([CustomFormEditor::make()])]);
+    }
+
+    protected function fillForm(): void {
+       $this->form->fill(EditCustomFormLoadHelper::load($this->getRecord()));
     }
 
     public function getTitle(): string|Htmlable {
@@ -24,12 +38,21 @@ class EditCustomForm extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
+            Actions\LocaleSwitcher::make(),
             Actions\DeleteAction::make(),
         ];
     }
 
 
+    public function save(bool $shouldRedirect = true, bool $shouldSendSavedNotification = true): void {
 
+        $this->authorizeAccess();
+
+        EditCustomFormSaveHelper::save($this->data, $this->getRecord());
+
+        parent::save($shouldRedirect, $shouldSendSavedNotification);
+
+    }
 
 
 }

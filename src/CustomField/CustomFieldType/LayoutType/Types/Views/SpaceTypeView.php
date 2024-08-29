@@ -1,0 +1,52 @@
+<?php
+
+namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\LayoutType\Types\Views;
+
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\CustomFieldType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\FieldTypeView;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldMapper;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
+use Filament\Forms\Components\Group;
+use Filament\Forms\Components\Placeholder;
+use Filament\Infolists\Components\TextEntry;
+
+class SpaceTypeView implements FieldTypeView
+{
+
+    public static function getFormComponent(CustomFieldType $type, CustomField $record,
+                                            array           $parameter = []): Group {
+
+        $spaces = [];
+
+        for ($count = 0; $count < FieldMapper::getOptionParameter($record,"amount"); $count+=1){
+            $spaces[] = Placeholder::make(FieldMapper::getIdentifyKey($record) . "-". $count)
+                ->content("")
+                ->label("")
+                ->columnSpanFull();
+        }
+
+        return Group::make($spaces)
+            ->columns(1)
+            ->columnSpanFull();
+    }
+
+    public static function getInfolistComponent(CustomFieldType $type, CustomFieldAnswer $record,
+                                                array           $parameter = []): \Filament\Infolists\Components\Group {
+
+        if(!FieldMapper::getOptionParameter($record,"show_in_view"))
+            return \Filament\Infolists\Components\Group::make()->hidden();
+
+        $spaces = [];
+
+        for ($count = 0; $count < FieldMapper::getOptionParameter($record,"amount"); $count+=1){
+            $spaces[] = TextEntry::make(FieldMapper::getIdentifyKey($record) . "-". $count)
+                ->state(" ")
+                ->label("");
+        }
+        return \Filament\Infolists\Components\Group::make($spaces)
+            ->columns(1)
+            ->columnSpanFull();
+    }
+
+}

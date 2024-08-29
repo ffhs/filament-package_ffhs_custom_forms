@@ -1,0 +1,39 @@
+<?php
+
+namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\LayoutType\Types;
+
+
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\HasCustomTypePackageTranslation;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\LayoutType\CustomLayoutType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\LayoutType\Types\Views\GroupTypeView;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\LayoutTypeDefaultLayoutTypeOptionGroup;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\ShowInViewOption;
+
+class GroupType extends CustomLayoutType
+{
+    use HasCustomTypePackageTranslation;
+
+    public static function identifier(): string {
+        return "group";
+    }
+
+    public function viewModes(): array {
+        return [
+            "default" => GroupTypeView::class
+        ];
+    }
+
+    public function icon(): string {
+        return  "carbon-cics-system-group";
+    }
+
+    public function extraTypeOptions(): array {
+        return[
+            LayoutTypeDefaultLayoutTypeOptionGroup::make()
+                ->mergeTypeOptions([
+                    'show_in_view'=> new ShowInViewOption(),
+                ]),
+        ];
+    }
+
+}

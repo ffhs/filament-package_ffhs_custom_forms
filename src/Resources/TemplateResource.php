@@ -4,16 +4,19 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Resources;
 
 
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
-use Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormsResource\Pages\CreateTemplate;
-use Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormsResource\Pages\EditTemplate;
-use Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormsResource\Pages\ListTemplate;
+use Ffhs\FilamentPackageFfhsCustomForms\Resources\TemplateResource\Pages\CreateTemplate;
+use Ffhs\FilamentPackageFfhsCustomForms\Resources\TemplateResource\Pages\EditTemplate;
+use Ffhs\FilamentPackageFfhsCustomForms\Resources\TemplateResource\Pages\ListTemplate;
 use Filament\Forms\Form;
+use Filament\Resources\Concerns\Translatable;
 use Filament\Resources\Resource;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
 class TemplateResource extends Resource
 {
+    use Translatable;
+
     protected static ?string $model = CustomForm::class;
 
 
@@ -39,7 +42,7 @@ class TemplateResource extends Resource
 
 
     public static function getEloquentQuery(): Builder {
-        return parent::getEloquentQuery()->with(["customFields","customFields.customFieldInLayout"])->where("is_template", true);
+        return parent::getEloquentQuery()->where("is_template", true);
     }
 
     public static function form(Form $form): Form

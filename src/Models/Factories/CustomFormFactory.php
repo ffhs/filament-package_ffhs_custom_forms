@@ -2,7 +2,7 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Models\Factories;
 
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\CustomLayoutType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\LayoutType\CustomLayoutType;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -34,11 +34,9 @@ class CustomFormFactory extends Factory
                 CustomField::factory(sizeof($types))
                     ->state(new Sequence(
                         fn (Sequence $sequence) => [
-                            'type' => (array_values($types)[$sequence->index])::getFieldIdentifier(),
-                            'name_de' => (array_values($types)[$sequence->index])::getFieldIdentifier(),
-                            'name_en' => (array_values($types)[$sequence->index])::getFieldIdentifier(),
+                            'type' => (array_values($types)[$sequence->index])::identifier(),
+                            'name' => fake()->name,
                             'is_active' => true,
-                            'required' => false,
                             'layout_end_position' => is_a (array_values($types)[$sequence->index], CustomLayoutType::class, true) ? $sequence->index+1: null,
                             'form_position' => $sequence->index+1,
                         ],

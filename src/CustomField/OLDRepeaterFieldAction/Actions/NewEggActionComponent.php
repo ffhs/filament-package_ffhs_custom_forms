@@ -1,0 +1,61 @@
+<?php
+
+namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\OLDRepeaterFieldAction\Actions;
+
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\NestedLayoutType\CustomNestLayoutType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\OLDRepeaterFieldAction\RepeaterFieldAction;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\FormEditor\Components\EditTypeOptionModal;
+use Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\EditHelper\EditCustomFormHelper;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
+use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Get;
+
+class NewEggActionComponent extends RepeaterFieldAction
+{
+
+    protected function getFillForm(array $state, array $arguments):array {
+        $nestType = CustomFieldUtils::getFieldTypeFromRawDate($state[$arguments["item"]]);
+        /**@var CustomNestLayoutType $nestType*/
+        $eggType = $nestType->getEggType();
+
+        return [
+            "identifier" => uniqid(),
+            "type" => $eggType::identifier(),
+            "options" => $eggType->getDefaultTypeOptionValues(),
+            "is_active" => true,
+        ];
+    }
+    public function getAction(CustomForm $record, array $typeClosers): Action {
+
+        return Action::make('add_egg')
+            ->visible($this->isVisibleClosure($record,$typeClosers))
+            ->action(function($get, $set, $data, $arguments) {
+                $path = "custom_fields.".$arguments["item"].".custom_fields";
+                $fields = $get("custom_fields.".$arguments["item"].".custom_fields");
+                $fields[uniqid()] = $data;
+                $set($path,$fields);
+            })
+            ->mutateFormDataUsing(fn(Action $action)=> EditCustomFormHelper::getRawStateForm($action,1))
+            ->fillForm(fn($state, $arguments)=> $this->getFillForm($state,$arguments))
+            ->icon('carbon-add-alt')
+            ->label(function($arguments, $state){
+                /**@var CustomNestLayoutType $type  */
+                $type = CustomFieldUtils::getFieldTypeFromRawDate($state[$arguments["item"]]);
+                return $type->getEggType()->getTranslatedName() . " hinzufügen"; //ToDo Translate
+            })
+            ->closeModalByClickingAway(false)
+            ->modalWidth(function(array $state, array $arguments){
+                return EditTypeOptionModal::getEditCustomFormActionModalWith($this->getFillForm($state,$arguments));
+            })
+            ->form(function(Get $get, $state, array $arguments) use ($record) : array {
+                return [EditTypeOptionModal::make($record,$this->getFillForm($state,$arguments))];
+            })
+            ->modalHeading(function (array $state, array $arguments) {
+                $data = $state[$arguments["item"]];
+                $suffix = " Felddaten bearbeiten ";
+                if (empty($data["general_field_id"])) return $data["name_de"] . $suffix; //ToDo Translate
+                else return "G. ".GeneralField::cached($data["general_field_id"])->name_de. $suffix; //ToDo Translate
+            });
+    }
+}

@@ -131,7 +131,7 @@ return [
 
 ### 02.00.01 Eigenschaften
 - Ein Formularfeld hat folgende wichtige Eigenschaften
-    - `identify_key` => Dieser Key wird verwendet um die Antworten einem Feld zuzuordnen beim Export. Oder bei manchen Funktionalitäten, wie Beispielsweissen den Feld-Regeln (Sehe **08 Regeln**)
+    - `identifier` => Dieser Key wird verwendet um die Antworten einem Feld zuzuordnen beim Export. Oder bei manchen Funktionalitäten, wie Beispielsweissen den Feld-Regeln (Sehe **08 Regeln**)
     - `form_position` => Diese hinterlegt wo das Feld im Formular liegt**
     - `type` => Hier wird der Feldtyp abgespeichert. Mehr bei **04 Feldtypen**
     - `custom_form_id` => Dies ist ein Foreignkey zu dem Formular
@@ -157,7 +157,7 @@ return [
 
 ### 02.01.01 Eigenschaften
 -  Wichtige Eigenschaften:
-   -  `identify_key => Dieser Key wird verwendet um die Felder später zu expotieren
+   -  `identifier => Dieser Key wird verwendet um die Felder später zu expotieren
    - `icon` => Das Icon wird verwendet, für das generellen Felder besser wieder zu erkennen im Formulareditor
    -  `type` => Hier wird der Feldtyp abgespeichert. Mehr bei **04 Feldtypen**
 - Andere Eigenschaften
@@ -246,9 +246,9 @@ Falls ein Template bearbeitet wird, werden die Validationen disabled. </br>
 2. Entfernen Sie aus `editor_field_adder` den `TemplateAdder`
 ```php
 /* 'editor_field_adder' => [  
-    GeneralFieldAdder::class,  
+    GeneralFieldAdderOld::class,  
     TemplateAdder::class,  
-    CustomFieldAdder::class,  
+    CustomFieldAdderOldOld::class,  
 ],*/
 
 'editor_field_adder' => [  
@@ -320,7 +320,7 @@ Um eine neue Feldtyp Klasse zu erstellen, muss die neue Klasse von `CustomFieldT
 class LocationSelectorType extends CustomFieldType  
 {  
 
-    public static function getFieldIdentifier(): string {  
+    public static function identifier(): string {  
         return "loc_selector";
     }  
 
@@ -329,7 +329,7 @@ class LocationSelectorType extends CustomFieldType
      }
 }
 ```
-- `getFieldIdentifier()`
+- `identifier()`
     - Mit Identifier wird die Formularart den `CustomField` und `GeneralField`. Es ist empfohlen diesen im nachhinein **nicht** zu ändern !!!!
 - `icon()`
     - Das Icon welches angezeigt wird, wenn das Formular zusammengestellt wird.  </br>
@@ -339,9 +339,9 @@ Die eine TypeView Klasse muss so aufgebaut sein und `FieldTypeView` implementier
 ```php
 public static function getFormComponent(CustomFieldType $type, CustomField $record,  
     array $parameter = []): \Filament\Forms\Components\Component {  
-    return Select::make(FormMapper::getIdentifyKey($record))  
-        ->label(FormMapper::getLabelName($record))  
-        ->helperText(FormMapper::getToolTips($record))  
+    return Select::make(FieldMapper::getIdentifyKey($record))  
+        ->label(FieldMapper::getLabelName($record))  
+        ->helperText(FieldMapper::getToolTips($record))  
         ->options([  
            1 => "Bern",  
            2 => "Zürich",  
@@ -351,8 +351,8 @@ public static function getFormComponent(CustomFieldType $type, CustomField $reco
   
 public static function getInfolistComponent(CustomFieldType $type, CustomFieldAnswer $record,  
     array $parameter = []): Component {  
-    return TextEntry::make(FormMapper::getIdentifyKey($record))  
-        ->state(FormMapper::getAnswer($record))  
+    return TextEntry::make(FieldMapper::getIdentifyKey($record))  
+        ->state(FieldMapper::getAnswer($record))  
         ->formatState(fn($state) => ([  
             1 => "Bern",  
             2 => "Zürich",  
@@ -462,8 +462,8 @@ class LocationSelectorType extends CustomFieldType
 ```
 </br>
 
-## 04.02 FormMapper
-Der `FormMapper` vereinfacht das Rauslesen der Daten aus dem `CustomField`
+## 04.02 FieldMapper
+Der `FieldMapper` vereinfacht das Rauslesen der Daten aus dem `CustomField`
 - `getToolTips(CustomField|CustomFieldAnswer $record)`
 - `getLabelName(CustomField|CustomFieldAnswer  $record)`
 - `getIdentifyKey(CustomField|CustomFieldAnswer  $record)`
@@ -654,17 +654,17 @@ class LocationSelectorType extends CustomFieldType
 class LocationSelectorTypeView implements FieldTypeView  
 {  
     public static function getFormComponent(CustomFieldType $type, CustomField $record,  array $parameter = []): \Filament\Forms\Components\Component { 
-	return Select::make(FormMapper::getIdentifyKey($record))   
-	        ->label(FormMapper::getLabelName($record))  
-	        ->helperText(FormMapper::getToolTips($record))  
+	return Select::make(FieldMapper::getIdentifyKey($record))   
+	        ->label(FieldMapper::getLabelName($record))  
+	        ->helperText(FieldMapper::getToolTips($record))  
 	        ->options([  
-	           1 => FormMapper::getOptionParameter(record,"my_option_name"),   //<===============
+	           1 => FieldMapper::getOptionParameter(record,"my_option_name"),   //<===============
 	        ]);  
     }  
     ...
 }
 ```
-- Die `TypeOption` können am einfachsten mit Hilfe des  `FormMapper` bennuzt werden
+- Die `TypeOption` können am einfachsten mit Hilfe des  `FieldMapper` bennuzt werden
     - `getOptionParameter(CustomField|CustomFieldAnswer $record, string $option)`
 - Die roh Daten können über `$record->options` erreicht werden </br>
 
@@ -726,7 +726,7 @@ class LocationSelectorType extends CustomFieldType
 class SectionType extends CustomLayoutType  
 {    
   
-    public static function getFieldIdentifier(): string {  
+    public static function identifier(): string {  
         return "section";  
     }  
   
@@ -754,12 +754,12 @@ class SectionTypeView implements FieldTypeView
 {  
   
     public static function getFormComponent(CustomFieldType $type, CustomField $record, array $parameter = []): \Filament\Forms\Components\Component {  
-        return Section::make(FormMapper::getLabelName($record))  
+        return Section::make(FieldMapper::getLabelName($record))  
             ->schema($parameter["rendered"]);  
     }  
   
     public static function getInfolistComponent(CustomFieldType $type, CustomFieldAnswer $record, array $parameter = []): \Filament\Infolists\Components\Component {  
-        return \Filament\Infolists\Components\Section::make(FormMapper::getLabelName($record))
+        return \Filament\Infolists\Components\Section::make(FieldMapper::getLabelName($record))
         ->schema($parameter["rendered"]);  
     }  
   
@@ -793,7 +793,7 @@ class SectionTypeView implements FieldTypeView
 ```php
 class TabEggType extends CustomEggLayoutType  
 {  
-    public static function getFieldIdentifier(): string {  
+    public static function identifier(): string {  
         return "tab";  
     }  
   
@@ -817,12 +817,12 @@ class TabEggType extends CustomEggLayoutType
 class TabEggTypeView implements FieldTypeView  
 {  
     public static function getFormComponent(CustomFieldType $type, CustomField $record, array $parameter = []): \Filament\Forms\Components\Component { 
-        return Tabs\Tab::make(FormMapper::getLabelName($record))   
+        return Tabs\Tab::make(FieldMapper::getLabelName($record))   
             ->schema($parameter["rendered"]);  
     }  
   
     public static function getInfolistComponent(CustomFieldType $type, CustomFieldAnswer $record, array $parameter = []): \Filament\Infolists\Components\Component {  
-        return Tabs\Tab::make(FormMapper::getLabelName($record))  
+        return Tabs\Tab::make(FieldMapper::getLabelName($record))  
             ->schema($parameter["rendered"])  
             ->columnSpanFull()
             ->columnStart(1)  ;  
@@ -837,7 +837,7 @@ class TabEggTypeView implements FieldTypeView
 ```php
 class TabsCustomNestType extends CustomNestLayoutType  
 {  
-    public static function getFieldIdentifier(): string {  
+    public static function identifier(): string {  
         return "tabs";  
     }  
   
@@ -868,15 +868,15 @@ class TabsNestTypeView implements FieldTypeView
   
     public static function getFormComponent(CustomFieldType $type, CustomField $record, array $parameter = []): \Filament\Forms\Components\Component {  
         
-        return Tabs::make($FormMapper::getLabelName($record))  
-            ->columnSpan(FormMapper::getOptionParameter($record,"column_span"))  
-            ->inlineLabel(FormMapper::getOptionParameter($record,"in_line_label"))  
-            ->columnStart(FormMapper::getOptionParameter($record,"new_line_option"))  
+        return Tabs::make($FieldMapper::getLabelName($record))  
+            ->columnSpan(FieldMapper::getOptionParameter($record,"column_span"))  
+            ->inlineLabel(FieldMapper::getOptionParameter($record,"in_line_label"))  
+            ->columnStart(FieldMapper::getOptionParameter($record,"new_line_option"))  
             ->tabs($parameter["rendered"]);  //<===================
     }  
   
     public static function getInfolistComponent(CustomFieldType $type, CustomFieldAnswer $record, array $parameter = []): \Filament\Infolists\Components\Component {  
-	    return \Filament\Infolists\Components\Tabs::make($FormMapper::getLabelName($record))  
+	    return \Filament\Infolists\Components\Tabs::make($FieldMapper::getLabelName($record))  
 			->columnStart(1)  
 			->tabs($parameter["rendered"])  
 		      ->columnSpanFull(); //<===================
@@ -933,11 +933,11 @@ class LocationSelectorTypeView implements FieldTypeView
   
    public static function getFormComponent(CustomFieldType $type, CustomField $record,  array $parameter = []): Component {  
   
-       $select = Select::make($FormMapper::getIdentifyKey($record))  
-        ->helperText($FormMapper::getToolTips($record))  
-        ->label($FormMapper::getLabelName($record))  
+       $select = Select::make($FieldMapper::getIdentifyKey($record))  
+        ->helperText($FieldMapper::getToolTips($record))  
+        ->label($FieldMapper::getLabelName($record))  
         ->required($record->required)  
-        ->options(FormMapper::getAvailableCustomOptions($record));  
+        ->options(FieldMapper::getAvailableCustomOptions($record));  
 
        return $select;  
    }
@@ -1384,7 +1384,7 @@ class LocationSelectorTypeView implements FieldTypeView
 {  
     public static function getFormComponent(CustomFieldType $type, CustomField $record,  
         array $parameter = []): \Filament\Forms\Components\Component {  
-        return Select::make($record->identify_key)  
+        return Select::make($record->identifier)  
             ->label($type::class::getLabelName($record->customField))  
             ->helperText($type::class::getToolTips($record))  
             ->options([  
@@ -1396,7 +1396,7 @@ class LocationSelectorTypeView implements FieldTypeView
   
     public static function getViewComponent(CustomFieldType $type, CustomFieldAnswer $record,  
         array $parameter = []): \Filament\Infolists\Components\Component {  
-        return TextEntry::make($record->customField->identify_key)  
+        return TextEntry::make($record->customField->identifier)  
             ->state($record->answare)  
             ->formatState(fn($state) => ([  
                 1 => "Bern",  
@@ -1718,10 +1718,10 @@ class CustomFieldAdder extends FormEditorFieldAdder
 		    Action::make("add_my_field_action")  
 		        ->action(function ($set, Get $get, array $data) {  
 			        $data = [  
-					    "type" => LocationSelectorType::getFieldIdentifier(),  
+					    "type" => LocationSelectorType::identifier(),  
 					    "options" => (new LocationSelectorType()->getDefaultTypeOptionValues(),  
 					    "is_active" => true,  
-					    "identify_key" => uniqid(),  
+					    "identifier" => uniqid(),  
 					];
 					
 			          $this->addCustomFieldInRepeater($data, $get, $set);  
@@ -1734,7 +1734,7 @@ class CustomFieldAdder extends FormEditorFieldAdder
 - `function getTitle(): string` Diese Methode soll den Titel des Adders zurückgeben
 - `function getSchema(): array` Diese Methode soll das Schema des Adders zurückgeben
 - `addCustomFieldInRepeater(array $data, Get $get, $set): void` Diese Methode ist vordefiniert und mit dieser können Sie ein neues Feld einfach hinzufügen.
-    - `$data` Felddaten für das zu hinzufügende Feld, dort sollte mindesten der `type` und den `identify_key` gesetzt werden. (Wie oben gezeigt)  </br>
+    - `$data` Felddaten für das zu hinzufügende Feld, dort sollte mindesten der `type` und den `identifier` gesetzt werden. (Wie oben gezeigt)  </br>
 
 #### 11.05.02.01 Registrieren
 1. Gehe in die Config `ffhs_custom_forms.php`

@@ -2,8 +2,7 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormAnswerResource\Pages;
 
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\InfolistRender\EmbeddedAnswerInfolist;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\EmbeddedAnswerInfolist;
 use Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormAnswerResource;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Infolist;
@@ -20,7 +19,7 @@ class ViewCustomFormAnswer extends ViewRecord
             ->schema([
                 Section::make()
                     ->schema([
-                        EmbeddedAnswerInfolist::make(fn(CustomFormAnswer $record)=>$record)
+                        EmbeddedAnswerInfolist::make()
                             ->autoViewMode()
                             ->columnSpanFull()
                     ])

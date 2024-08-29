@@ -1,44 +1,44 @@
 <?php
 
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\CheckboxListType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\CheckboxType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\ColorPickerType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\DateTimeType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\DateType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\EmailType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\FileUploadType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\IconSelectType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\KeyValueType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\NumberType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\RadioType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\SelectType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\TagsType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\TextAreaType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\TextType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Types\ToggleButtonsType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\Types\DownloadType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\Types\FieldsetType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\Types\GroupType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\Types\ImageLayoutType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\Types\SectionType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\Types\SpaceType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\Types\TextLayoutType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomLayoutType\Types\TitleType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\Anchors\IsInfolistViewRuleAnchor;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\Anchors\ValueEqualsRuleAnchor;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\Type\ChangeOptionRuleType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\Type\DisabledRuleType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\Type\HiddenRuleType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldRules\Type\RequiredRuleType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\NestedLayoutType\Types\CustomTabCustomEggType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\NestedLayoutType\Types\TabsCustomNestType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\NestedLayoutType\Types\WizardCustomNestType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\NestedLayoutType\Types\WizardStepCustomEggType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\Templates\TemplateFieldType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormEditorValidation\FormEditorGeneralFieldValidation;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor\FieldAdder\CustomFieldAdder;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor\FieldAdder\GeneralFieldAdder;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\FormCompiler\Editor\FieldAdder\TemplateAdder;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomOption\Types\CheckboxListType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomOption\Types\RadioType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomOption\Types\SelectType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomOption\Types\ToggleButtonsType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Types\CheckboxType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Types\ColorPickerType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Types\DateTimeType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Types\DateType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Types\EmailType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Types\FileUploadType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Types\IconSelectType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Types\KeyValueType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Types\NumberType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Types\TagsType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Types\TextAreaType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Types\TextType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\LayoutType\Types\DownloadType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\LayoutType\Types\FieldsetType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\LayoutType\Types\GroupType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\LayoutType\Types\ImageLayoutType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\LayoutType\Types\SectionType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\LayoutType\Types\SpaceType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\LayoutType\Types\TextLayoutType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\LayoutType\Types\TitleType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\NestedLayoutType\Types\CustomTabCustomEggType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\NestedLayoutType\Types\TabsCustomNestType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\NestedLayoutType\Types\WizardCustomNestType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\NestedLayoutType\Types\WizardStepCustomEggType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\TemplatesType\TemplateFieldType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Events\ChangeOptionsEvent;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Events\DisabledEvent;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Events\HideEvent;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Events\RequiredEvent;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Events\VisibleEvent;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Trigger\IsInfolistTrigger;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Trigger\ValueEqualsRuleTrigger;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\FormEditor\AdderComponents\default\CustomFieldTypeAdder;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\FormEditor\AdderComponents\default\GeneralFieldAdder;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\FormEditor\AdderComponents\default\TemplateFieldAdder;
 
 return [
 
@@ -46,17 +46,21 @@ return [
     'save_stopper_time'=> 1,
     'default_column_count' => 4,
 
-    "field_rule_anchor_types"=>[
-        ValueEqualsRuleAnchor::class,
-        IsInfolistViewRuleAnchor::class,
+    "rule"=>[
+        "trigger" =>[
+            IsInfolistTrigger::class,
+            ValueEqualsRuleTrigger::class,
+        ],
+        "event"=>[
+            HideEvent::class,
+            VisibleEvent::class,
+            DisabledEvent::class,
+            RequiredEvent::class,
+            ChangeOptionsEvent::class,
+        ],
     ],
 
-    "field_rule_types"=>[
-        RequiredRuleType::class,
-        HiddenRuleType::class,
-        DisabledRuleType::class,
-        ChangeOptionRuleType::class,
-    ],
+
 
     "forms"=>[
 
@@ -66,15 +70,17 @@ return [
 
     ],
 
-    'custom_form_editor_validations' => [
-        FormEditorGeneralFieldValidation::class
+
+    'editor' => [
+        'field_adders' => [
+            CustomFieldTypeAdder::class,
+            TemplateFieldAdder::class,
+            GeneralFieldAdder::class
+        ],
     ],
 
-    'editor_field_adder' => [
-        GeneralFieldAdder::class,
-        TemplateAdder::class,
-        CustomFieldAdder::class
-    ],
+
+
 
     "custom_field_types" => [
         TemplateFieldType::class,
@@ -114,6 +120,7 @@ return [
         WizardCustomNestType::class,
         WizardStepCustomEggType::class,
     ],
+
     "selectable_field_types" => [
         CheckboxType::class,
         TextType::class,
@@ -147,7 +154,6 @@ return [
 
         TabsCustomNestType::class,
         WizardCustomNestType::class,
-
     ],
 
     "selectable_general_field_types"=>[

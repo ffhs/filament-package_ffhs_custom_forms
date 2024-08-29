@@ -20,12 +20,12 @@ return new class () extends Migration {
 
             $table->string('icon');
 
-            $table->string('identify_key')->nullable()->unique();
-            $table->json("extra_options")->nullable();
-            $table->string('tool_tip_de')->nullable();
-            $table->string('tool_tip_en')->nullable();
-            $table->string('name_de')->nullable();
-            $table->string('name_en')->nullable();
+            $table->string('identifier')->nullable()->unique();
+
+            $table->json("overwrite_options")->nullable();
+
+            $table->json("options")->nullable();
+            $table->json('name')->nullable();
             $table->string("type")->nullable();
 
             $table->timestamps();

@@ -2,7 +2,10 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Models;
 
+use Ffhs\FilamentPackageFfhsCustomForms\Helping\Caching\CachedModel;
+use Ffhs\FilamentPackageFfhsCustomForms\Helping\Caching\HasCacheModel;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
@@ -14,9 +17,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property CustomField $customField
  * @property array $answer
  */
-class CustomFieldAnswer extends CachedModel
+class CustomFieldAnswer extends Model implements CachedModel
 {
-    private array $data = [];
+    use HasCacheModel;
+
+    //private array $data = [];
 
     protected $fillable = [
         'custom_form_answer_id',
@@ -39,19 +44,12 @@ class CustomFieldAnswer extends CachedModel
     ];
 
 
-
-    public function __get($key) {
-        if($key != "customForm") return parent::__get($key);;
-        if(!array_key_exists("customForm",$this->data)) $this->data["customForm"] = $this->customForm()->first();
-        return $this->data["customForm"];
-    }
-
     public function customForm(): Builder {
         return CustomForm::query()->whereIn("id", $this->belongsTo(CustomField::class)->select("custom_form_id"));
     }
 
     public function cachedCustomForm(): CustomForm {
-        return $this->customFormAnswer->customForm ;
+        return $this->customField->customForm;
     }
 
     public function customField (): BelongsTo {
