@@ -9,7 +9,6 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldMapper;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Component;
-use Filament\Forms\Components\Radio;
 
 class CheckboxListTypeView implements FieldTypeView
 {
