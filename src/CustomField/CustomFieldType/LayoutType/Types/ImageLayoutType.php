@@ -48,19 +48,20 @@ class ImageLayoutType extends CustomFieldType
                         ->live()
                 ),
             ],"carbon-data-1"),
-            DefaultLayoutTypeOptionGroup::make()->mergeTypeOptions([
-                'column_span' => new ColumnSpanOption(),
+            DefaultLayoutTypeOptionGroup::make()
+                ->mergeTypeOptions([
+                    'column_span' => new ColumnSpanOption(),
 
 
-                'width' =>new FastTypeOption(null,
-                    TextInput::make('width')
-                        ->label("Breite") //ToDo Translate
-                        ->minValue(1)
-                        ->numeric()
-                ),
-                'show_title' => (new ShowTitleOption())->modifyDefault(fn($default) => false),
-                'show_in_view'=> (new ShowInViewOption())->modifyDefault(fn($default) => false),
-            ]),
+                    'width' =>new FastTypeOption(null,
+                        TextInput::make('width')
+                            ->label("Breite") //ToDo Translate
+                            ->minValue(1)
+                            ->numeric()
+                    ),
+                    'show_title' => (new ShowTitleOption())->modifyDefault(fn($default) => false),
+                    'show_in_view'=> (new ShowInViewOption())->modifyDefault(fn($default) => false),
+                ]),
 
         ];
     }

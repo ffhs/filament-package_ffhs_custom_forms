@@ -34,19 +34,20 @@ class DownloadType extends CustomFieldType
 
     public function extraTypeOptions(): array {
         return [
-            DefaultLayoutTypeOptionGroup::make()->mergeTypeOptions([
-                'show_in_view'=> new ShowInViewOption(),
-                'show_title'=> new ShowTitleOption(),
-                'show_as_link'=> new FastTypeOption(true,
-                    Toggle::make("show_as_link")
-                        ->label("Link") //ToDo Translate
-                ),
-                'title_as_filename'=> new FastTypeOption(false,
-                    Toggle::make("title_as_filename")
-                        ->disabled(fn($get) => sizeof($get('files')?? []) > 1)
-                        ->label("Titel als Filename") //ToDo Translate
-                )
-            ]),
+            DefaultLayoutTypeOptionGroup::make()
+                ->mergeTypeOptions([
+                    'show_in_view'=> new ShowInViewOption(),
+                    'show_title'=> new ShowTitleOption(),
+                    'show_as_link'=> new FastTypeOption(true,
+                        Toggle::make("show_as_link")
+                            ->label("Link") //ToDo Translate
+                    ),
+                    'title_as_filename'=> new FastTypeOption(false,
+                        Toggle::make("title_as_filename")
+                            ->disabled(fn($get) => sizeof($get('files')?? []) > 1)
+                            ->label("Titel als Filename") //ToDo Translate
+                    )
+                ]),
 
             ValidationTypeOptionGroup::make(typeOptions: [
                 'file_names' => new FastTypeOption([], Hidden::make('file_names')),

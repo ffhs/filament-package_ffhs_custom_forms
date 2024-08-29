@@ -45,6 +45,7 @@ class TextLayoutType extends CustomFieldType
         return [
             DefaultLayoutTypeOptionGroup::make()
                 ->addTypeOptions('show_in_view', ShowInViewOption::make())
+                ->removeTypeOption("helper_text")
                 ->addTypeOptions('text',
                     FastTypeOption::makeFast("",
                         RichEditor::make("text." . App::getLocale())

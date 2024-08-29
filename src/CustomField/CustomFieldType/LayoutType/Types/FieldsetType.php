@@ -31,6 +31,7 @@ class FieldsetType extends CustomLayoutType
     public function extraTypeOptions(): array {
             return[
                 LayoutTypeDefaultLayoutTypeOptionGroup::make()
+                    ->removeTypeOption("helper_text")
                     ->mergeTypeOptions([
                         "show_title" =>  new ShowTitleOption(),
                         'show_in_view'=> new ShowInViewOption(),
