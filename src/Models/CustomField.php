@@ -61,7 +61,7 @@ class CustomField extends ACustomField implements NestingObject , Identifier
     ];
 
 
-    protected array $cachedRelation = [
+    protected array $cachedRelations = [
         'customOptions',
     ];
 

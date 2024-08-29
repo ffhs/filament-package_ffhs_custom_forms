@@ -18,7 +18,7 @@ class Rule extends Model implements CachedModel
 {
     use HasCacheModel;
 
-    protected array $cachedRelation = [
+    protected array $cachedRelations = [
         "ruleTriggers",
         "ruleEvents",
     ];

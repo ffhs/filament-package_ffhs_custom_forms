@@ -149,13 +149,13 @@ trait HasCacheModel
 
 
     public function getCachedResults():array{
-        return $this->cachedRelations ?? [];
+        return $this->cachedResults ?? [];
     }
     public function getCachedBelongsTo():array{
         return $this->cachedBelongsTo ?? [];
     }
     public function getCachedRelations():array{
-        return $this->cachedRelation?? [];
+        return $this->cachedRelations ?? [];
     }
 
     public static function getCacheWith():array{
@@ -198,12 +198,12 @@ trait HasCacheModel
     public function getResultCached($name): mixed{
         $cacheKey = $this->getCacheKeyForAttribute($name);
         if(Cache::has($cacheKey)) return Cache::get($cacheKey);
-        $result = $this->$name;
+        $result = $this->$name();
         Cache::set($cacheKey, $result, static::getCacheDuration());
         return $result;
     }
 
-    public function getRelationCached($name): Collection|RelationCachedInformations{
+    public function getRelationCached($name): mixed{
         $cacheKey = $this->getCacheKeyForAttribute($name);
         if(Cache::has($cacheKey)) return Cache::get($cacheKey);
 

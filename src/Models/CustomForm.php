@@ -56,7 +56,7 @@ class CustomForm extends Model implements CachedModel
         'is_template',
     ];
 
-    protected array $cachedRelation = [
+    protected array $cachedRelations = [
         'customFields',
         'generalFields',
         'rules',
@@ -166,9 +166,9 @@ class CustomForm extends Model implements CachedModel
         return $this->customFields->where("custom_form_id", $this->id);
     }
 
-    public function cachedCustomField(int $customFieldId): CustomField|null {
+  /*  public function cachedCustomField(int $customFieldId): CustomField|null {
         return $this->customFields->firstWhere("id",$customFieldId);
-    }
+    }*/
 
 
     public function cachedCustomFields(): RelationCachedInformations|Collection {
@@ -182,6 +182,8 @@ class CustomForm extends Model implements CachedModel
 
                 $this->cacheTemplatesAndTemplatesFields($customFields);
                 $this->cacheFieldOptions($customFields);
+
+                Debugbar::info($customFields->count());
 
                 CustomField::addToModelCache($customFields);
                 return new RelationCachedInformations(CustomField::class, $customFields->pluck("id")->toArray());

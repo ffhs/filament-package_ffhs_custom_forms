@@ -26,7 +26,7 @@ class CustomFormAnswer extends Model implements CachedModel
     protected  array $cachedBelongsTo = [
         "customForm" => ["custom_form_id", "id"],
     ];
-    protected  array $cachedRelation = [
+    protected  array $cachedRelations = [
         "customFieldAnswers",
     ];
 
