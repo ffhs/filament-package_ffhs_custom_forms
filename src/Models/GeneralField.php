@@ -37,7 +37,7 @@ class GeneralField extends ACustomField
         'overwrite_options' => 'array'
     ];
 
-    protected array $cachedManyRelations = [
+    protected array $cachedRelations = [
         'customFields',
         'generalFieldForms',
         'customOptions',

@@ -83,7 +83,7 @@ use Filament\Infolists\Components\Component as InfolistComponent;
              if(!$triggerd) $options = $component->evaluate($optionsOld);
              else{
                  $customOptions =  $customField->customOptions->whereIn("identifier",$rule->data["customOptions"]);
-                 $customField->setValueInManyRelationCache("customOptions",$customOptions );
+                 $customField->setCacheValue("customOptions",$customOptions );
                  $options =  FieldMapper::getAvailableCustomOptions($customField);
              }
 

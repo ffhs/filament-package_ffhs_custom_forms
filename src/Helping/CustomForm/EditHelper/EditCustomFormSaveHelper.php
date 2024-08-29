@@ -158,7 +158,8 @@ class EditCustomFormSaveHelper
 
         $form->ownedRules()->sync($rules->pluck("id"));
 
-        $form->cacheMultiRelationClear("customFields");
+        $form->cachedClear("customFields");
+        CustomField::clearModelCache();
     }
 
     private static function cleanUpCustomFieldData($fields): array

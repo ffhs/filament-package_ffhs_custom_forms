@@ -33,7 +33,7 @@ class GeneralFieldForm extends Model implements CachedModel
     ];
 
 
-    protected array $cachedRelations = [
+    protected array $cachedBelongsTo = [
         "generalField" => ["general_field_id", "id"],
     ];
 
