@@ -4,7 +4,6 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Models\Rules;
 
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\Caching\CachedModel;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\Caching\HasCacheModel;
-use Ffhs\FilamentPackageFfhsCustomForms\Helping\Rules\Event\EventType;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection;
@@ -40,7 +39,10 @@ class Rule extends Model implements CachedModel
     public function handle(array $arguments, mixed $target): mixed
     {
         $triggers = $this->getTriggersCallback($target, $arguments);
-        $events = $this->ruleEvents->sortBy("order");
+
+        $events = $this->ruleEvents;
+        if($events == null) $events = $this->ruleEvents()->get();
+        $events = $events->sortBy("order");
 
         foreach ($events as $event) {
             /**@var RuleEvent $event*/
@@ -57,7 +59,9 @@ class Rule extends Model implements CachedModel
         return function ($extraArguments = []) use ($target, $arguments) {
             $argumentsFinal = array_merge($arguments, $extraArguments);
 
-            $triggers = $this->ruleTriggers->sortBy("order");
+            $triggers = $this->ruleTriggers;
+            if($triggers == null) $triggers = $this->ruleTriggers()->get();
+            $triggers = $triggers->sortBy("order");
 
             foreach ($triggers as $trigger) {
                 /**@var RuleTrigger $trigger */

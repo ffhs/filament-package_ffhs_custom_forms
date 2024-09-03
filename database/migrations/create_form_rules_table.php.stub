@@ -31,7 +31,7 @@ return new class () extends Migration {
      */
     public function down()
     {
-        Schema::dropIfExists('custom_field_variation');
+        Schema::dropIfExists('form_rules');
     }
 };
 

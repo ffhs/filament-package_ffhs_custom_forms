@@ -32,7 +32,7 @@ return new class () extends Migration {
      */
     public function down()
     {
-        Schema::dropIfExists('custom_fields');
+        Schema::dropIfExists('custom_forms');
     }
 };
 
