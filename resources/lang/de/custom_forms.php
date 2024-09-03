@@ -125,6 +125,8 @@ return [
             "multiple_toggle_selectable" => "Mehre Schalter auswählbar",
             "alpine_mask" => "Maske",
             "alpine_mask_help_text" => "Schnellhilfe: 'a' für Buchstaben, '9' für Zahlen '*' für alle Zeichen. (Alpine Maske)",
+            'grid_layout' => 'Dateien in einem Grid anzeigen lassen',
+            'open_in_new_tab' => "Files können in einem veuen Tab geöffnet werden"
 
 
         ],

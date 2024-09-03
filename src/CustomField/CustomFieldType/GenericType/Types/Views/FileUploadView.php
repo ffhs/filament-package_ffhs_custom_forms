@@ -36,11 +36,12 @@ class FileUploadView implements FieldTypeView
 
     public static function prepareFileUploadComponent(FileUpload $component, $record): FileUpload {
         $component = static::modifyFormComponent($component, $record);
-        /** @var FileUploadType $component */
+        /** @var FileUpload $component */
         $component
             ->multiple(fn($state) => FieldMapper::getOptionParameter($record,"multiple"))
-            ->downloadable(FieldMapper::getOptionParameter($record,"downloadable"))
-            ->acceptedFileTypes(FieldMapper::getOptionParameter($record, 'allowed_type'));
+            ->downloadable(FieldMapper::getOptionParameter($record,"downloadable")) ///ToDo URL storage/uploaded_files/01J6VFAEN4K94E7V02S90DKPKW.png
+            ->acceptedFileTypes(FieldMapper::getOptionParameter($record, 'allowed_type'))
+            ->appendFiles();
 
 
         if(FieldMapper::getOptionParameter($record,"image")){
@@ -60,7 +61,8 @@ class FileUploadView implements FieldTypeView
         if(FieldMapper::getOptionParameter($record,"preserve_filenames"))
             $component = $component->storeFileNamesIn(FieldMapper::getIdentifyKey($record). '.file_names');
 
-
+        if(FieldMapper::getOptionParameter($record,"grid_layout"))
+            $component = $component->panelLayout('grid');
         return $component;
     }
 
@@ -112,7 +114,9 @@ class FileUploadView implements FieldTypeView
                             ->label("Download")
                             ->icon('tabler-download')
                             ->link()
-                            ->action(fn() => response()->download($diskRoot."/".$path, $names[$path]))
+                            ->action(fn() => response()->download($diskRoot."/".$path, $names[$path])),
+
+
                     ])->alignment(Alignment::Center)->visible(FieldMapper::getOptionParameter($record,"downloadable"))
                 ])
                 ->columnSpan(1)
@@ -134,6 +138,16 @@ class FileUploadView implements FieldTypeView
 
         $downloadable = FieldMapper::getOptionParameter($record,"downloadable");
 
+        /*
+         * Action::make("view-".$path)
+                            ->label("Anzeigen")
+                            ->icon('bi-folder-symlink')
+                            ->link()
+                            ->action(fn() => response()->redirectTo($diskRoot."/".$path, $names[$path]))
+         */
+
+        $fileComponents = [];
+
         foreach ($files as $path) {
             $absolutePath = $diskRoot."/".$path;
              $action = Action::make($path."-".FieldMapper::getIdentifyKey($record)."-action")
@@ -147,11 +161,16 @@ class FileUploadView implements FieldTypeView
                     ->icon('tabler-download');
             }
             $actions[] = $action;
+
+            Group::make([
+                Actions::make([$action])
+            ]);
         }
 
         return Group::make([
             TextEntry::make(FieldMapper::getIdentifyKey($record)."-title")
                 ->label(new HtmlString('</span> <span class="text-sm font-medium leading-6 text-gray-950 dark:text-white" style="margin-bottom: -25px; margin-left: -12px;">'.FieldMapper::getLabelName($record).'</span> <span>')),
+
             Actions::make($actions)
         ])->columnSpanFull();
     }
