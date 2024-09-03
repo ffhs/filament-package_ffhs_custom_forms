@@ -232,9 +232,11 @@ class FormBuilderUtil
             $trigger["order"] = $order;
             $order++;
 
-            $type = $trigger['type'];
+           /*
+            *  $type = $trigger['type'];
             if ($type instanceof TriggerType) $trigger['type'] = $type::identifier();
             if (array_key_exists("is_inverted", $trigger)) $trigger['type'] = $type::identifier();
+            */
 
             $trigger = self::prepareTarget($trigger, $fields);
             $triggers[] = new RuleTrigger($trigger);
