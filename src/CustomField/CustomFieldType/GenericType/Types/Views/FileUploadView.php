@@ -5,7 +5,6 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Generi
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\FieldTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Traits\HasDefaultViewComponent;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Types\FileUploadType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldMapper;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
@@ -102,6 +101,9 @@ class FileUploadView implements FieldTypeView
     private static function getInfolistImageComponent(mixed $files, mixed $diskRoot, CustomFieldAnswer $record, mixed $names): Group {
         $groups = [];
         foreach ($files as $path){
+            if(!is_array($names)) $names = [$path => $names];
+            $urlPrefix = FieldMapper::getTypeConfigAttribute($record, "images.url_prefix");
+
             $groups[] = Fieldset::make($names[$path])
                 ->schema([
                     ImageEntry::make($path)
@@ -115,8 +117,11 @@ class FileUploadView implements FieldTypeView
                             ->icon('tabler-download')
                             ->link()
                             ->action(fn() => response()->download($diskRoot."/".$path, $names[$path])),
-
-
+                        Action::make($path . "-" . FieldMapper::getIdentifyKey($record) . "-action-view")
+                            ->action(fn() => response()->redirectTo($urlPrefix . "/" . $path, $names[$path]))
+                            ->icon('bi-folder-symlink')
+                            ->label("Redirect")
+                            ->link()
                     ])->alignment(Alignment::Center)->visible(FieldMapper::getOptionParameter($record,"downloadable"))
                 ])
                 ->columnSpan(1)
@@ -134,44 +139,57 @@ class FileUploadView implements FieldTypeView
 
 
     private static function getInfoListFiles(mixed $files, mixed $diskRoot, CustomFieldAnswer $record, mixed $names): Group {
-        $actions = [];
 
         $downloadable = FieldMapper::getOptionParameter($record,"downloadable");
-
-        /*
-         * Action::make("view-".$path)
-                            ->label("Anzeigen")
-                            ->icon('bi-folder-symlink')
-                            ->link()
-                            ->action(fn() => response()->redirectTo($diskRoot."/".$path, $names[$path]))
-         */
+        $openInNewTab = FieldMapper::getOptionParameter($record,"open_in_new_tab");
 
         $fileComponents = [];
 
         foreach ($files as $path) {
+            if(!is_array($names)) $names = [$path => $names];
+
             $absolutePath = $diskRoot."/".$path;
-             $action = Action::make($path."-".FieldMapper::getIdentifyKey($record)."-action")
-                ->label($names[$path])
-                ->disabled(!$downloadable)
-                ->badge();
+            $actions = [];
 
-            if($downloadable){
-                $action = $action
+
+            if($downloadable) $actions[]=
+                Action::make($path."-".FieldMapper::getIdentifyKey($record)."-action-download")
                     ->action(fn() => response()->download($absolutePath, $names[$path]))
-                    ->icon('tabler-download');
-            }
-            $actions[] = $action;
+                    ->icon('tabler-download')
+                    ->label("Download")
+                    ->link()
+                    ->iconButton();
 
-            Group::make([
-                Actions::make([$action])
-            ]);
+            if($openInNewTab) {
+                $urlPrefix = FieldMapper::getTypeConfigAttribute($record, "files.url_prefix");
+                $actions[] =
+                    Action::make($path . "-" . FieldMapper::getIdentifyKey($record) . "-action-view")
+                        ->action(fn() => response()->redirectTo($urlPrefix . "/" . $path, $names[$path]))
+                        ->icon('bi-folder-symlink')
+                        ->label("Redirect")
+                        ->link()
+                        ->iconButton();
+            }
+
+            $fileComponents[] = Group::make([
+                TextEntry::make("file_name" . $path)
+                    ->label("")
+                    ->state($names[$path])
+                    ->columnSpan(2),
+                Actions::make($actions)
+            ])
+                ->extraAttributes(['class' => 'fi-badge flex items-center justify-center gap-x-1 rounded-md text-xs font-medium ring-1 ring-inset px-2 min-w-[theme(spacing.6)] py-1 fi-color-custom bg-custom-50 text-custom-600 ring-custom-600/10
+                dark:bg-custom-400/10 dark:text-custom-400 dark:ring-custom-400/30 fi-color-primary fi-ac-action fi-ac-badge-action', "style" => "--c-50:var(--primary-50);--c-400:var(--primary-400);--c-600:var(--primary-600);"])->columns(3)
+                ->columnStart(1);
         }
+
+        //fi-badge flex items-center justify-center gap-x-1 rounded-md text-xs font-medium ring-1 ring-inset px-2 min-w-[theme(spacing.6)] py-1 fi-color-custom bg-custom-50 text-custom-600 ring-custom-600/10 dark:bg-custom-400/10 dark:text-custom-400 dark:ring-custom-400/30 fi-color-primary fi-ac-action fi-ac-badge-action
 
         return Group::make([
             TextEntry::make(FieldMapper::getIdentifyKey($record)."-title")
                 ->label(new HtmlString('</span> <span class="text-sm font-medium leading-6 text-gray-950 dark:text-white" style="margin-bottom: -25px; margin-left: -12px;">'.FieldMapper::getLabelName($record).'</span> <span>')),
-
-            Actions::make($actions)
+          Grid::make()->schema($fileComponents)->columns()
         ])->columnSpanFull();
     }
+
 }

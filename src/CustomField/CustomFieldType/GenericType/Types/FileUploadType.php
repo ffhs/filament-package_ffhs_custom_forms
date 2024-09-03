@@ -67,7 +67,7 @@ class FileUploadType extends CustomFieldType
                         ->hidden(fn($get) => !$get('image'))
                         ->live()
                 ),
-                'downloadable' => FastTypeOption::makeFast(false,
+                'downloadable' => FastTypeOption::makeFast(true,
                     Toggle::make('downloadable')
                         ->label(__("filament-package_ffhs_custom_forms::custom_forms.fields.type_options.downloadable"))
                 ),
