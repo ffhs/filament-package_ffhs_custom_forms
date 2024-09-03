@@ -22,6 +22,18 @@ return new class () extends Migration {
 
             $table->timestamps();
         });
+        
+        Schema::create('general_field_form', function (Blueprint $table) {
+           $table->id();
+        
+           $table->foreignId("general_field_id")->constrained();
+           $table->string("custom_form_identifier");
+        
+           $table->boolean("is_required")->default(false);
+           $table->boolean("export")->default(false);
+        
+           $table->timestamps();
+        });
     }
 
     /**
@@ -32,6 +44,7 @@ return new class () extends Migration {
     public function down()
     {
         Schema::dropIfExists('form_rules');
+        Schema::dropIfExists('general_field_form');
     }
 };
 
