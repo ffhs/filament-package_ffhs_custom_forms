@@ -2,6 +2,7 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType;
 
+use Barryvdh\Debugbar\Facades\Debugbar;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Traits\HasConfigAttribute;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Traits\HasEditFieldCallbacks;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Traits\HasTypeOptions;
@@ -72,25 +73,6 @@ abstract class CustomFieldType implements Type
     public function getTranslatedName(): string {
         return __("custom_forms.types." . $this::identifier());
     }
-
-
-
-
-    // null means that it isn't overwritten
-    public function overwrittenRules(): ?array { //ToDo implement
-        return null;
-    }
-
-    // null means that it isn't overwritten
-    public function overwrittenAnchorRules(): ?array { //ToDo implement
-        return null;
-    }
-    public function hasRules(): ?array { //ToDo implement
-        return null;
-    }
-
-
-
 
 
     public function canBeDeactivate(): bool {
