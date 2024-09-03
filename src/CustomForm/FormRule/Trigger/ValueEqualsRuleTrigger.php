@@ -215,6 +215,7 @@ class ValueEqualsRuleTrigger extends FormRuleTriggerType
 
     protected function checkBoolean(mixed $targetValue, array $data): bool
     {
+        if(is_null($targetValue)) return false;
         if(!empty($data["boolean"])) $boolean = $data["boolean"];
         else $boolean = false;
         return $targetValue == $boolean;
