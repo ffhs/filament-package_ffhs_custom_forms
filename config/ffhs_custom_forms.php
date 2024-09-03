@@ -115,7 +115,7 @@ return [
         ImageLayoutType::class,
         SpaceType::class,
 
-        //TabsCustomNestType::class,
+        //TabsCustomNestType::class, ToDo Fix
         //CustomTabCustomEggType::class,
         // WizardCustomNestType::class,
         //WizardStepCustomEggType::class,
@@ -190,10 +190,12 @@ return [
         ],
         'file_upload' => [
             'files' => [
+                "url_prefix" => null, // Null means default path
                 "save_path" => "/custom-form-plugin/custom-fields/uploaded",
                 "disk" => "local",
             ],
            'images' => [
+               "url_prefix" => null, // Null means default path
                "save_path" => "/custom-form-plugin/uploaded-images",
                "disk" => "public",
            ]

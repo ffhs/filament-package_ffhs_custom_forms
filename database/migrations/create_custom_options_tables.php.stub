@@ -3,6 +3,7 @@
 
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomOption;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -15,9 +16,28 @@ return new class () extends Migration {
      */
     public function up()
     {
+        Schema::create('custom_options', function (Blueprint $table) {
+            $table->id();
+            $table->json('name');
+            $table->string('identifier');
+            $table->string('icon')->nullable();
+
+            $table->timestamps();
+
+        });
+
+
         Schema::create('option_custom_field', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(CustomField::class)->constrained()->cascadeOnDelete();
+            $table->foreignIdFor(CustomOption::class)->constrained()->cascadeOnDelete();
+
+            $table->timestamps();
+        });
+
+        Schema::create('option_general_field', function (Blueprint $table) {
+            $table->id();
+            $table->foreignIdFor(GeneralField::class)->constrained()->cascadeOnDelete();
             $table->foreignIdFor(CustomOption::class)->constrained()->cascadeOnDelete();
 
             $table->timestamps();
@@ -26,12 +46,13 @@ return new class () extends Migration {
 
     /**
      * Reverse the migration
-     *
      * @return void
      */
     public function down()
     {
+        Schema::dropIfExists('custom_options');
         Schema::dropIfExists('option_custom_field');
+        Schema::dropIfExists('option_general_field');
     }
 };
 

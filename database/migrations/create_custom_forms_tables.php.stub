@@ -6,31 +6,35 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class () extends Migration {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
+
     public function up()
     {
+        Schema::create('custom_forms', function (Blueprint $table) {
+            $table->id();
+
+            $table->string("custom_form_identifier");
+            $table->string("short_title")->nullable();
+            $table->boolean("is_template")->default(false);
+
+            $table->timestamps();
+            $table->softDeletes();
+
+        });
+
         Schema::create('custom_form_answers', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(CustomForm::class)->constrained()->cascadeOnDelete();
             $table->string("short_title")->nullable();
 
             $table->timestamps();
-
         });
     }
 
-    /**
-     * Reverse the migration
-     *
-     * @return void
-     */
+
     public function down()
     {
-        Schema::dropIfExists('custom_field_variation');
+        Schema::dropIfExists('custom_forms');
+        Schema::dropIfExists('custom_form_answers');
     }
 };
 

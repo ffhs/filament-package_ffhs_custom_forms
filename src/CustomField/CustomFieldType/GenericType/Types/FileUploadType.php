@@ -6,13 +6,16 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Types\Views\FileUploadView;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\HasCustomTypePackageTranslation;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\DefaultLayoutTypeOptionGroup;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\ValidationTypeOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\FastTypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Illuminate\Support\Collection;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class FileUploadType extends CustomFieldType
 {
@@ -26,42 +29,84 @@ class FileUploadType extends CustomFieldType
         ];
     }
 
-    protected function extraOptionsAfterBasic(): array { //ToDo Make for new type
+    public function extraTypeOptions(): array
+    {
         return [
-            DefaultLayoutTypeOptionGroup::make(),
-            'image' => FastTypeOption::makeFast(false,
-                Toggle::make('image')
-                    ->afterStateUpdated(function($state, $set){
-                        if($state) return;
-                        $set('show_images', false);
-                        $set('show_images_in_view', false);
-                    })
-                    ->label(__("filament-package_ffhs_custom_forms::custom_forms.fields.type_options.only_images"))
-                    ->live()
-            ),
-            'show_images' => FastTypeOption::makeFast(false,
-                Toggle::make('show_images')
-                    ->columnStart(1)
-                    ->label(__("filament-package_ffhs_custom_forms::custom_forms.fields.type_options.show_images"))
-                    ->disabled(fn($get) => !$get('image'))
-            ),
-            'show_images_in_view' => FastTypeOption::makeFast(false,
-                Toggle::make('show_images_in_view')
-                    ->label(__("filament-package_ffhs_custom_forms::custom_forms.fields.type_options.show_images_in_view"))
-                    ->disabled(fn($get) => !$get('image'))
-            ),
-            'downloadable' => FastTypeOption::makeFast(false,
-                Toggle::make('downloadable')
-                    ->label(__("filament-package_ffhs_custom_forms::custom_forms.fields.type_options.downloadable"))
-            ),
-            'multiple' => FastTypeOption::makeFast(false,
-                Toggle::make('multiple')
-                    ->label(__("filament-package_ffhs_custom_forms::custom_forms.fields.type_options.multiple_uploads_allowed"))
-            ),
-            'preserve_filenames' => FastTypeOption::makeFast(true,
-                Toggle::make('preserve_filenames')
-                    ->label(__("filament-package_ffhs_custom_forms::custom_forms.fields.type_options.preserve_filenames"))
-            ),
+            DefaultLayoutTypeOptionGroup::make()
+                ->addTypeOptions("grid_layout",
+                     FastTypeOption::makeFast(false,
+                        Toggle::make("grid_layout")
+                            ->hidden(fn($get) => !$get('image'))
+                            ->label(__("filament-package_ffhs_custom_forms::custom_forms.fields.type_options.grid_layout"))
+                    )
+                ),
+            ValidationTypeOptionGroup::make()
+            ->setTypeOptions([
+                'image' => FastTypeOption::makeFast(false,
+                    Toggle::make('image')
+                        ->afterStateUpdated(function($state, $set){
+                            if($state) return;
+                            $set('show_images', false);
+                            $set('show_images_in_view', false);
+                            $set('grid_layout', false);
+                        })
+                        ->label(__("filament-package_ffhs_custom_forms::custom_forms.fields.type_options.only_images"))
+                        ->live()
+                ),
+                'show_images' => FastTypeOption::makeFast(false,
+                    Toggle::make('show_images')
+                        ->label(__("filament-package_ffhs_custom_forms::custom_forms.fields.type_options.show_images"))
+                        ->disabled(fn($get) => !$get('image'))
+                        ->hidden(fn($get) => !$get('image'))
+                        ->live()
+                ),
+                'show_images_in_view' => FastTypeOption::makeFast(false,
+                    Toggle::make('show_images_in_view')
+                        ->label(__("filament-package_ffhs_custom_forms::custom_forms.fields.type_options.show_images_in_view"))
+                        ->disabled(fn($get) => !$get('image'))
+                        ->hidden(fn($get) => !$get('image'))
+                        ->live()
+                ),
+                'downloadable' => FastTypeOption::makeFast(true,
+                    Toggle::make('downloadable')
+                        ->label(__("filament-package_ffhs_custom_forms::custom_forms.fields.type_options.downloadable"))
+                ),
+                'multiple' => FastTypeOption::makeFast(false,
+                    Toggle::make('multiple')
+                        ->afterStateUpdated(function($state, $set){
+                            if($state) return;
+                            $set('reorderable', false);
+                        })
+                        ->live()
+                        ->label(__("filament-package_ffhs_custom_forms::custom_forms.fields.type_options.multiple_uploads_allowed"))
+                ),
+                'reorderable' => FastTypeOption::makeFast(false,
+                    Toggle::make('reorderable')
+                        ->hidden(fn($get) => !$get('multiple'))
+                        ->label(__("filament-package_ffhs_custom_forms::custom_forms.fields.type_options.reorderable"))
+                ),
+                'preserve_filenames' => FastTypeOption::makeFast(true,
+                    Toggle::make('preserve_filenames')
+                        ->label(__("filament-package_ffhs_custom_forms::custom_forms.fields.type_options.preserve_filenames"))
+                ),
+
+                'open_in_new_tab' => FastTypeOption::makeFast(true,
+                    Toggle::make('open_in_new_tab')
+                        ->label(__("filament-package_ffhs_custom_forms::custom_forms.fields.type_options.open_in_new_tab"))
+                        ->hidden(fn($get) => $get('image'))
+                ),
+
+                'allowed_type' => new FastTypeOption([
+                    'application/pdf',
+                    'image/jpeg',
+                    'image/png'
+                ],
+                    TagsInput::make("allowed_type")
+                        ->columnSpanFull()
+                        ->label("Erlaubte Typen") //ToDo translate
+                ),
+            ]),
+
         ];
     }
 
@@ -75,8 +120,8 @@ class FileUploadType extends CustomFieldType
             !is_null($component->getKey()) && str_contains($component->getKey(), $customField->identifier . ".files")
         );
         /**@var FileUpload $filesComponent*/
-        //$filesComponent = FileUploadView::prepareFileUploadComponent($filesComponent,$customField); ToDo Fix
-        // $filesComponent->saveUploadedFiles();
+        $filesComponent = FileUploadView::prepareFileUploadComponent($filesComponent,$customField);
+        $filesComponent->saveUploadedFiles();
     }
 
 }

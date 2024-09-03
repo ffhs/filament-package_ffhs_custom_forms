@@ -23,17 +23,11 @@ class FilamentPackageFfhsCustomFormsServiceProvider extends PackageServiceProvid
         $package
             ->name('filament-package_ffhs_custom_forms')
             ->hasMigrations([
-                'create_custom_forms_table',
-                'create_general_fields_table',
-                'create_custom_fields_table',
-                'create_general_field_form_table',
-                'create_custom_form_answers_table',
-                'create_custom_field_answers_table',
-                'create_custom_options_table',
-                'create_option_general_field_table',
-                'create_option_custom_field_table',
-                'create_field_rules_table',
-                'create_form_rules_table',
+                'create_custom_forms_tables',
+                'create_custom_fields_tables',
+                'create_custom_options_tables',
+                'create_rules_tables',
+                'create_form_relations_tables',
             ])
             ->hasConfigFile('ffhs_custom_forms')
             ->hasTranslations()

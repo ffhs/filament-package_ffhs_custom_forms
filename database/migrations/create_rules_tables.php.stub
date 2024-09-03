@@ -54,7 +54,9 @@ return new class () extends Migration {
      */
     public function down()
     {
-        Schema::dropIfExists('custom_field_variation');
+        Schema::dropIfExists('rules');
+        Schema::dropIfExists('rule_triggers');
+        Schema::dropIfExists('rule_events');
     }
 };
 
