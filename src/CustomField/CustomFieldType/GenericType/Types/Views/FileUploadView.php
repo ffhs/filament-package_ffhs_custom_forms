@@ -4,6 +4,8 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Generi
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\FieldTypeView;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Traits\HasDefaultViewComponent;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Types\FileUploadType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldMapper;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
@@ -21,30 +23,32 @@ use Illuminate\Support\HtmlString;
 
 class FileUploadView implements FieldTypeView
 {
-    public static function getFormComponent(CustomFieldType $type, CustomField $record,
-                                            array           $parameter = []): Component {
 
+    use HasDefaultViewComponent;
+
+    public static function getFormComponent(CustomFieldType $type, CustomField $record, array $parameter = []): Component {
 
         $fileUpload = FileUpload::make(FieldMapper::getIdentifyKey($record) . ".files");
         return self::prepareFileUploadComponent($fileUpload,$record);
     }
 
+
+
     public static function prepareFileUploadComponent(FileUpload $component, $record): FileUpload {
-        $component->label(FieldMapper::getLabelName($record))
-            ->helperText(FieldMapper::getToolTips($record))
-            ->columnSpan(FieldMapper::getOptionParameter($record, "column_span"))
-            ->inlineLabel(FieldMapper::getOptionParameter($record, "in_line_label"))
-            ->columnStart(FieldMapper::getOptionParameter($record, "new_line_option"))
-            ->multiple(FieldMapper::getOptionParameter($record,"multiple"));
-        //->downloadable(FieldMapper::getOptionParameter($record,"downloadable"));
+        $component = static::modifyFormComponent($component, $record);
+        /** @var FileUploadType $component */
+        $component
+            ->multiple(fn($state) => FieldMapper::getOptionParameter($record,"multiple"))
+            ->downloadable(FieldMapper::getOptionParameter($record,"downloadable"))
+            ->acceptedFileTypes(FieldMapper::getOptionParameter($record, 'allowed_type'));
 
 
         if(FieldMapper::getOptionParameter($record,"image")){
             $component = $component
                 ->previewable(FieldMapper::getOptionParameter($record,"show_images"))
                 ->downloadable(FieldMapper::getOptionParameter($record,"downloadable"))
-                ->directory(FieldMapper::getTypeConfigAttribute($record, "images.save_path"))
                 ->disk(FieldMapper::getTypeConfigAttribute($record, "images.disk"))
+                ->directory(FieldMapper::getTypeConfigAttribute($record, "images.save_path"))
                 ->image();
         }else{
             $component = $component
@@ -56,12 +60,14 @@ class FileUploadView implements FieldTypeView
         if(FieldMapper::getOptionParameter($record,"preserve_filenames"))
             $component = $component->storeFileNamesIn(FieldMapper::getIdentifyKey($record). '.file_names');
 
+
         return $component;
     }
 
 
-    public static function getInfolistComponent(CustomFieldType $type, CustomFieldAnswer $record,
-                                                array           $parameter = []): \Filament\Infolists\Components\Component {
+
+
+    public static function getInfolistComponent(CustomFieldType $type, CustomFieldAnswer $record, array $parameter = []): \Filament\Infolists\Components\Component {
 
         $answer = FieldMapper::getAnswer($record);
 
