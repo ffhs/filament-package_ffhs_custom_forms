@@ -2,6 +2,7 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\RenderHelp;
 
+use Barryvdh\Debugbar\Facades\Debugbar;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
@@ -10,6 +11,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\Rule;
 class CustomFormLoadHelper {
 
     public static function load(CustomFormAnswer $answerer):array {
+        Debugbar::startMeasure("Load Custom Field Answer Data" . $answerer->id);
         $data = [];
        //ToDo check to Cache stuff for performance $customFields = $answerer->customForm->customFields;
 
@@ -26,10 +28,12 @@ class CustomFormLoadHelper {
 
             $data[$customField->identifier] = $fieldData;
         }
+        Debugbar::stopMeasure("Load Custom Field Answer Data" . $answerer->id);
         return $data;
     }
 
     public static function loadSplit(CustomFormAnswer $answerer, int $begin, int $end):array {
+        Debugbar::startMeasure("Load Custom Form Answer Data" . $answerer->id);
         $data = [];
 
         $customFields = $answerer->customForm->customFields;
@@ -61,6 +65,7 @@ class CustomFormLoadHelper {
             $fieldData = self::runRulesForFieldData($answerer, $fieldData, $formRules);
             $data[$customField->identifier] = $fieldData;
         }
+        Debugbar::stopMeasure("Load Custom Form Answer Data" . $answerer->id);
         return $data;
 
 //        $customFields = $answerer->customForm->customFields;

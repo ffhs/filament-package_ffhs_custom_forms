@@ -2,6 +2,7 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomForm;
 
+use Barryvdh\Debugbar\Facades\Debugbar;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Trigger\FormRuleTriggerType;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\Rules\Event\EventType;
@@ -40,6 +41,7 @@ class FormBuilderUtil
 
             $field->save();
 
+            if($field->name == "Art") dump($customOptions);
             if($field->isGeneralField() && !empty($customOptions)) $field->customOptions()->sync($customOptions);
             else if(!empty($customOptions)) $field->customOptions()->createMany($customOptions);
         }

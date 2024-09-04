@@ -73,7 +73,6 @@ use Filament\Infolists\Components\Component as InfolistComponent;
 
      public function handleAfterRenderForm(Closure $triggers, array $arguments, Component $component, RuleEvent $rule): Component
      {
-
          $customField = $this->getCustomField($arguments);
          if($customField->identifier !== ($rule->data["target"] ?? "")) return $component;
          if(!in_array(HasOptions::class, class_uses_recursive($component::class))) return $component;

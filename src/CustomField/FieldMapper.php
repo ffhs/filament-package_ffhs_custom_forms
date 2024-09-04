@@ -4,6 +4,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField;
 
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomOption;
 use Illuminate\Support\Collection;
 
 class FieldMapper
@@ -44,7 +45,8 @@ class FieldMapper
     }
 
     public static function getAvailableCustomOptions(CustomField $record) : Collection{
-        return $record->customOptions->pluck("name","identifier");
+        return $record->customOptions
+            ->pluck("name","identifier");
     }
 
     public static function getAllCustomOptions(CustomField|CustomFieldAnswer $record) : Collection{

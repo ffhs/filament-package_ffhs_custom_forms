@@ -15,17 +15,17 @@ use Illuminate\Support\HtmlString;
 class TitleTypeView implements FieldTypeView
 {
 
-    public static function getFormComponent(CustomFieldType $type, CustomField $record,
-                                            array           $parameter = []): Placeholder {
+    public static function getFormComponent(CustomFieldType $type, CustomField $record,array  $parameter = []): Placeholder {
 
         $title = self::getTitle($record);
+        $helpText = FieldMapper::getOptionParameter($record, "helper_text");
 
         return  Placeholder::make(FieldMapper::getIdentifyKey($record))
             ->content(new HtmlString($title))
             ->columnStart(FieldMapper::getOptionParameter($record,"new_line_option"))
             ->columnSpan(FieldMapper::getOptionParameter($record,"column_span"))
             ->inlineLabel(FieldMapper::getOptionParameter($record,"in_line_label"))
-            ->helperText(FieldMapper::getOptionParameter($record, "helper_text"))
+            ->helperText($helpText?new HtmlString($helpText):null)
             ->label("");
     }
 

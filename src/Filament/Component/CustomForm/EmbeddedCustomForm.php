@@ -2,10 +2,7 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm;
 
-
-use Barryvdh\Debugbar\Facades\Debugbar;
 use Closure;
-use DateTime;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\Render\CustomFormRender;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\Render\SplitCustomFormRender;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\RenderHelp\CustomFormLoadHelper;
@@ -166,12 +163,10 @@ class EmbeddedCustomForm extends Component implements CanEntangleWithSingularRel
     private function setUpFormLoading(): void {
 
         $this->mutateRelationshipDataBeforeFillUsing(function (array $data, Model $record, EmbeddedCustomForm $component) {
-            $curTime = microtime(true);
 
             /**@var CustomFormAnswer $answer */
             $relationshipName = $component->getRelationshipName();
             $answer = $record->$relationshipName;
-
 
 
             if ($this->isUseLayoutTypeSplit()) $output = $this->loadLayoutTypeSplitAnswerData($answer);
@@ -179,7 +174,6 @@ class EmbeddedCustomForm extends Component implements CanEntangleWithSingularRel
             else if ($this->isUsePoseSplit()) $output = $this->loadPosTypeSplitAnswerData($answer);
             else $output = CustomFormLoadHelper::load($answer);
 
-            //dd(round(microtime(true) - $curTime,3)*1000);
 
             return $output;
         });

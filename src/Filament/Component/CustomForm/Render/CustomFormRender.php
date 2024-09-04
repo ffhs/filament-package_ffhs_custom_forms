@@ -71,6 +71,7 @@ class CustomFormRender
 
 
     public static function render(int $indexOffset, Collection $customFields, Closure &$render, string $viewMode, CustomForm $form): array {
+
         //Debugbar::info($customFields->first()->customForm->short_title);
         if($customFields->isEmpty()) return [];
 
@@ -82,10 +83,16 @@ class CustomFormRender
         $renderOutput[2]->each(function(Rule $rule) use ($customForm, &$components) {
             $components = $rule->handle(["action" => "after_all_rendered", "customForm" => $customForm], $components);
         });
+
+        Debugbar::stopMeasure("Render Custom Form" . $form->id);
         return $renderOutput;
     }
 
+
+
     public static function renderRaw(int $indexOffset, Collection $customFields, Closure &$render, string $viewMode, CustomForm $form): array {
+        Debugbar::startMeasure("Render Custom Form " . $form->id. " " . $indexOffset);
+
         $customFormSchema = [];
 
         $preparedFields = [];
@@ -95,6 +102,7 @@ class CustomFormRender
 
         $allRules = collect();
         $allComponents = collect();
+        $rules = $form->rules;
 
         for($index = $indexOffset+1; $index<= $customFields->count()+$indexOffset; $index++){
 
@@ -131,7 +139,6 @@ class CustomFormRender
 
             if(!$customField->is_active) continue;
 
-            $rules = $form->rules;
 
             //Rule before render
             $rules->each(function(Rule $rule) use (&$customField) {
@@ -161,13 +168,20 @@ class CustomFormRender
             $rules->each(function(Rule $rule) use ($form, $customField, &$renderedComponent) {
                 $renderedComponent = $rule->handle(static::getRuleParameters("after_render", $customField), $renderedComponent);
             });
+
             $customFormSchema[] = $renderedComponent;
 
             $allRules = $allRules->merge($rules);
             $allComponents->add($renderedComponent);
         }
+
+
+        Debugbar::stopMeasure("Render Custom Form " . $form->id. " " . $indexOffset);
         return [$customFormSchema,$index, $allRules, $allComponents];
     }
+
+
+
 
 
     static function getRuleParameters(string $action, CustomField $customField): array
