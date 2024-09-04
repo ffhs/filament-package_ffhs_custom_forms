@@ -19,7 +19,7 @@ class CheckboxTypeView implements FieldTypeView
         return Checkbox::make(FieldMapper::getIdentifyKey($record))
             ->columnStart(FieldMapper::getOptionParameter($record,"new_line_option"))
             ->inlineLabel(FieldMapper::getOptionParameter($record,"in_line_label"))
-            ->helperText(FieldMapper::getToolTips($record))
+            ->inlineLabel(FieldMapper::getOptionParameter($record,"helper_text"))
             ->label(FieldMapper::getLabelName($record))
 ;
     }

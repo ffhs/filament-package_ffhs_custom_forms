@@ -40,7 +40,6 @@ trait UseLayoutSplit
         if (is_null($layoutField)) return [];
         if ($layoutField->form_position == $layoutField->layout_end_position) return [];
 
-        return CustomFormLoadHelper::loadSplit($answer, $layoutField->form_position + 1,
-            $layoutField->layout_end_position);
+        return CustomFormLoadHelper::loadSplit($answer, $layoutField->form_position + 1, $layoutField->layout_end_position);
     }
 }

@@ -8,14 +8,6 @@ use Illuminate\Support\Collection;
 
 class FieldMapper
 {
-
-    /**
-     * @deprecated
-     */
-    public static function getToolTips(CustomField|CustomFieldAnswer $record) :?string{
-        return null;
-    }
-
     public static function getIdentifyKey(CustomField|CustomFieldAnswer  $record) :String{
         if($record instanceof  CustomFieldAnswer) $record = $record->customField;
         return  $record->identifier;
@@ -37,7 +29,7 @@ class FieldMapper
             else if($canBeNull) return null;
         }
 
-        //ToDo make that Rule can change options Data
+
         $generalOptions = $record->getType()->getDefaultGeneralOptionValues();
         if(array_key_exists($option, $generalOptions)) return $generalOptions[$option];
         $fieldOptions = $record->getType()->getDefaultTypeOptionValues();
@@ -52,8 +44,7 @@ class FieldMapper
     }
 
     public static function getAvailableCustomOptions(CustomField $record) : Collection{
-        $options = $record->customOptions;
-        return $options->pluck("name","identifier");
+        return $record->customOptions->pluck("name","identifier");
     }
 
     public static function getAllCustomOptions(CustomField|CustomFieldAnswer $record) : Collection{

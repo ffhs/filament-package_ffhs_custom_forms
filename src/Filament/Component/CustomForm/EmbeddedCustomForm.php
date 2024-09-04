@@ -3,7 +3,9 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm;
 
 
+use Barryvdh\Debugbar\Facades\Debugbar;
 use Closure;
+use DateTime;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\Render\CustomFormRender;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\Render\SplitCustomFormRender;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\RenderHelp\CustomFormLoadHelper;
@@ -17,7 +19,6 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Concerns\EntanglesStateWithSingularRelationship;
 use Filament\Forms\Components\Contracts\CanEntangleWithSingularRelationships;
-use Filament\Forms\Components\Group;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
 
@@ -97,6 +98,7 @@ class EmbeddedCustomForm extends Component implements CanEntangleWithSingularRel
         $record = $this->getCachedExistingRecord()?? $this->getRecord();
         if(is_null($record)) return [];
 
+
         if(!is_array($this->childComponents) || empty($this->childComponents)){
             if ($this->isUseLayoutTypeSplit()) $schema = $this->getLayoutTypeSplitFormSchema($this);
             //Field Splitting
@@ -162,16 +164,24 @@ class EmbeddedCustomForm extends Component implements CanEntangleWithSingularRel
 
 
     private function setUpFormLoading(): void {
-        $this->mutateRelationshipDataBeforeFillUsing(function (array $data, Model $record,
-            EmbeddedCustomForm $component) {
+
+        $this->mutateRelationshipDataBeforeFillUsing(function (array $data, Model $record, EmbeddedCustomForm $component) {
+            $curTime = microtime(true);
+
             /**@var CustomFormAnswer $answer */
             $relationshipName = $component->getRelationshipName();
             $answer = $record->$relationshipName;
 
-            if ($this->isUseLayoutTypeSplit()) return $this->loadLayoutTypeSplitAnswerData($answer);
-            else if ($this->isUseFieldSplit()) return $this->loadFieldTypeSplitAnswerData($answer);
-            else if ($this->isUsePoseSplit()) return $this->loadPosTypeSplitAnswerData($answer);
-            return CustomFormLoadHelper::load($answer);
+
+
+            if ($this->isUseLayoutTypeSplit()) $output = $this->loadLayoutTypeSplitAnswerData($answer);
+            else if ($this->isUseFieldSplit()) $output = $this->loadFieldTypeSplitAnswerData($answer);
+            else if ($this->isUsePoseSplit()) $output = $this->loadPosTypeSplitAnswerData($answer);
+            else $output = CustomFormLoadHelper::load($answer);
+
+            //dd(round(microtime(true) - $curTime,3)*1000);
+
+            return $output;
         });
     }
 

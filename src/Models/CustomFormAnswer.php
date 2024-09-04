@@ -4,6 +4,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Models;
 
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\Caching\CachedModel;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\Caching\HasCacheModel;
+use Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\RenderHelp\CustomFormLoadHelper;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -51,5 +52,12 @@ class CustomFormAnswer extends Model implements CachedModel
                 return $answers;
             }
         );
+    }
+
+
+
+    public function cachedLoadedAnswares()
+    {
+        return Cache::remember($this->getCacheKeyForAttribute("cachedLoadedAnswares"), 1 , fn() => CustomFormLoadHelper::load($this));
     }
 }
