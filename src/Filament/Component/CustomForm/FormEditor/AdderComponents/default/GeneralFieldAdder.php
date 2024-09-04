@@ -74,7 +74,7 @@ final class GeneralFieldAdder extends FormEditorFieldAdder
 
     public function isGeneralDisabled($value):bool {
 
-        $notAllowed =   Cache::remember($this->getState()['id'] . '_general_fields_not_allowed_in_form', GeneralField::getCacheDuration()/4.0, function (){
+        $notAllowed =   Cache::remember($this->getState()['id'] . '_general_fields_not_allowed_in_form', 1, function (){
             $fields = $this->getState()['custom_fields'];
 
             //ToDo  Improve

@@ -71,6 +71,7 @@ class CustomFormRender
 
 
     public static function render(int $indexOffset, Collection $customFields, Closure &$render, string $viewMode, CustomForm $form): array {
+        //Debugbar::info($customFields->first()->customForm->short_title);
         if($customFields->isEmpty()) return [];
 
         $renderOutput = self::renderRaw($indexOffset, $customFields, $render,$viewMode, $form);
@@ -149,6 +150,7 @@ class CustomFormRender
             //TriggerPreparation (maintain for live attribute)
             $triggers = $rules->map(fn(Rule $rule) => $rule->ruleTriggers)->flatten(1);
             foreach($triggers as $trigger){
+                if(!$trigger) continue;
                 /**@var RuleTrigger $trigger*/
                 $type = $trigger->getType();
                 if($type instanceof  FormRuleTriggerType)

@@ -31,8 +31,6 @@ class CustomFormLoadHelper {
 
     public static function loadSplit(CustomFormAnswer $answerer, int $begin, int $end):array {
         $data = [];
-        //$form = CustomForm::cached($answerer->custom_form_id);
-        //$customFields = $form->cachedFields();
 
         $customFields = $answerer->customForm->customFields;
         $formRules  = $answerer->customForm->rules;
@@ -64,6 +62,20 @@ class CustomFormLoadHelper {
             $data[$customField->identifier] = $fieldData;
         }
         return $data;
+
+//        $customFields = $answerer->customForm->customFields;
+//
+//        $fields = $customFields->where("form_position", ">=", $begin)->where("form_position", "<=", $end);
+//        $fields->merge($customFields->whereIn("custom_form_id", $fields->whereNotNull('template_id')->pluck("id")));
+//
+//        $identifiers = $fields->map(fn (CustomField $field) => $field->identifier)->toArray();
+//
+//        $allAnswerers =  $answerer->cachedLoadedAnswares();
+//
+//        return  array_filter($allAnswerers, function($key) use ($identifiers) {
+//            return in_array($key, $identifiers);
+//        }, ARRAY_FILTER_USE_KEY);
+
     }
 
     public static function runRulesForFieldData(CustomFormAnswer $answerer, mixed $fieldData, $formRules): mixed

@@ -19,7 +19,7 @@ class WizardStepEggTypeView implements FieldTypeView
         return Wizard\Step::make(FieldMapper::getLabelName($record))
             ->columns(FieldMapper::getOptionParameter($record,"columns"))
             ->icon(FieldMapper::getOptionParameter($record,"icon"))
-            ->description(FieldMapper::getToolTips($record))
+            ->description(FieldMapper::getOptionParameter($record, "helper_text"))
             ->schema($parameter["rendered"]);
     }
 

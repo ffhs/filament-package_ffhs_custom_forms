@@ -25,7 +25,7 @@ class TitleTypeView implements FieldTypeView
             ->columnStart(FieldMapper::getOptionParameter($record,"new_line_option"))
             ->columnSpan(FieldMapper::getOptionParameter($record,"column_span"))
             ->inlineLabel(FieldMapper::getOptionParameter($record,"in_line_label"))
-            ->helperText(FieldMapper::getToolTips($record))
+            ->helperText(FieldMapper::getOptionParameter($record, "helper_text"))
             ->label("");
     }
 
