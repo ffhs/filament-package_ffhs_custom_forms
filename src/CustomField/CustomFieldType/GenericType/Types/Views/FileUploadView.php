@@ -40,7 +40,6 @@ class FileUploadView implements FieldTypeView
         /** @var FileUpload $component */
         $component
             ->multiple(fn($state) => FieldMapper::getOptionParameter($record,"multiple"))
-            ->downloadable(FieldMapper::getOptionParameter($record,"downloadable")) ///ToDo URL storage/uploaded_files/01J6VFAEN4K94E7V02S90DKPKW.png
             ->acceptedFileTypes(FieldMapper::getOptionParameter($record, 'allowed_type'))
             ->appendFiles();
 
