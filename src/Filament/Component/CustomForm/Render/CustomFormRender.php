@@ -71,7 +71,7 @@ class CustomFormRender
 
 
     public static function render(int $indexOffset, Collection $customFields, Closure &$render, string $viewMode, CustomForm $form): array {
-        Debugbar::info($customFields->first()->customForm->short_title);
+        //Debugbar::info($customFields->first()->customForm->short_title);
         if($customFields->isEmpty()) return [];
 
         $renderOutput = self::renderRaw($indexOffset, $customFields, $render,$viewMode, $form);

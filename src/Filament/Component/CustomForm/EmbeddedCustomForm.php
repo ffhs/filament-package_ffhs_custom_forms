@@ -57,14 +57,9 @@ class EmbeddedCustomForm extends Component implements CanEntangleWithSingularRel
     protected function setUp(): void {
         parent::setUp();
 
-        //$this->saveRelationshipsBeforeChildrenUsing(fn() => null);
-        //$this->loadStateFromRelationshipsUsing(fn()=>null);
-        //$this->saveRelationshipsUsing(fn()=>null);
-
-
         $this->label("");
 
-        $this->setupFormSchema();
+        $this->columns(1);
 
         $this->setUpFormLoading();
 
@@ -73,8 +68,6 @@ class EmbeddedCustomForm extends Component implements CanEntangleWithSingularRel
         $this->setUpAutoSaving();
 
     }
-
-
 
     public function autoViewMode(bool|Closure $autoViewMode = true):static {
         if(!$this->evaluate($autoViewMode)) return $this;
@@ -99,68 +92,59 @@ class EmbeddedCustomForm extends Component implements CanEntangleWithSingularRel
         return $this;
     }
 
-    private function setupFormSchema(): void {
+    public function getChildComponents(): array
+    {
+        $record = $this->getCachedExistingRecord()?? $this->getRecord();
+        if(is_null($record)) return [];
 
-        $this->columns(1);
-        $this->schema(function(EmbeddedCustomForm $component){
-            if ($this->isUseLayoutTypeSplit()) return $this->getLayoutTypeSplitFormSchema($component);
+        if(!is_array($this->childComponents) || empty($this->childComponents)){
+            if ($this->isUseLayoutTypeSplit()) $schema = $this->getLayoutTypeSplitFormSchema($this);
             //Field Splitting
-            else if ($this->isUseFieldSplit()) return $this->getFieldSplitFormSchema($component);
+            else if ($this->isUseFieldSplit()) $schema = $this->getFieldSplitFormSchema($this);
             //Position Splitting
-            else if ($this->isUsePoseSplit()) return $this->getPosSplitFormSchema($component);
+            else if ($this->isUsePoseSplit()) $schema = $this->getPosSplitFormSchema($this);
             //Default
-            else return $this->getDefaultFormSchema($component);
-        });
+            else $schema = $this->getDefaultFormSchema($this);
+
+            $this->childComponents = $schema;
+        }
+
+        return $this->childComponents;
     }
 
-
     private function getLayoutTypeSplitFormSchema(EmbeddedCustomForm $component): array {
-        return [
-            Group::make()
-                ->schema(fn(CustomFormAnswer|null $record) => is_null($record) ? [] :
-                    SplitCustomFormRender::renderFormLayoutType(
-                        $component->getLayoutTypeSplit(),
-                        $record->customForm,
-                        $component->getViewMode()
-                    )
-            )   ,
-        ];
+        $record = $this->getCachedExistingRecord()?? $this->getRecord();
+        return SplitCustomFormRender::renderFormLayoutType(
+                $component->getLayoutTypeSplit(),
+                $record->customForm,
+                $component->getViewMode()
+            );
     }
 
     private function getFieldSplitFormSchema(EmbeddedCustomForm $component): array {
-        return [
-            Group::make()->schema(fn(CustomFormAnswer|null $record) => is_null($record) ? [] :
-                SplitCustomFormRender::renderFormFromField(
-                    $component->getFieldSplit(),
-                    $component->getViewMode()
-                )
-            ),
-        ];
+        return SplitCustomFormRender::renderFormFromField(
+                $component->getFieldSplit(),
+                $component->getViewMode()
+            );
     }
 
     private function getPosSplitFormSchema(EmbeddedCustomForm $component): array {
-        return [
-            Group::make()->schema(function (CustomFormAnswer|null $record) use ($component) {
-                if (is_null($record)) return [];
+        $record = $this->getCachedExistingRecord()?? $this->getRecord();
 
-                [$beginPos, $endPos] = $this->getPoseSpilt();
-
-                return SplitCustomFormRender::renderFormPose(
-                    $beginPos,
-                    $endPos,
-                    CustomForm::cached($record->custom_form_id),
-                    $component->getViewMode()
-                );
-            }),
-        ];
+        [$beginPos, $endPos] = $this->getPoseSpilt();
+        return
+            SplitCustomFormRender::renderFormPose(
+                $beginPos,
+                $endPos,
+                CustomForm::cached($record->custom_form_id),
+                $component->getViewMode()
+            );
     }
 
 
     private function getDefaultFormSchema(EmbeddedCustomForm $component): array {
-        return [
-            Group::make(fn(CustomFormAnswer $record) => CustomFormRender::generateFormSchema(CustomForm::cached($record->custom_form_id),
-                $component->getViewMode())),
-        ];
+        $record = $this->getCachedExistingRecord()?? $this->getRecord();
+        return CustomFormRender::generateFormSchema(CustomForm::cached($record->custom_form_id), $component->getViewMode());
     }
 
     /**

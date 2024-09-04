@@ -19,6 +19,8 @@ use Illuminate\Support\Facades\Cache;
 class CustomFormAnswer extends Model implements CachedModel
 {
     use HasCacheModel;
+
+
     protected $fillable = [
             'custom_form_id',
             'short_title',

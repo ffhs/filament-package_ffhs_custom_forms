@@ -61,7 +61,6 @@ class CustomForm extends Model implements CachedModel
         'generalFields',
         'rules',
         'formRules',
-        'rules',
         'ownedRules',
     ];
 
@@ -101,8 +100,6 @@ class CustomForm extends Model implements CachedModel
     }
 
 
-
-
     public function  getCustomFieldsAsNestedList() : NestedFlattenList{
         return NestedFlattenList::make($this->getOwnedFields(),CustomField::class);
     }
@@ -122,8 +119,11 @@ class CustomForm extends Model implements CachedModel
 
 
     public function customFormAnswers(): HasMany {
+
         return $this->hasMany(CustomFormAnswer::class);
     }
+
+
 
     public function generalFields(): BelongsToMany {
         return $this->belongsToMany(GeneralField::class, "custom_fields","custom_form_id","general_field_id");
@@ -183,7 +183,6 @@ class CustomForm extends Model implements CachedModel
                 $this->cacheTemplatesAndTemplatesFields($customFields);
                 $this->cacheFieldOptions($customFields);
 
-                Debugbar::info($customFields->count());
 
                 CustomField::addToModelCache($customFields);
                 return new RelationCachedInformations(CustomField::class, $customFields->pluck("id")->toArray());
@@ -198,23 +197,27 @@ class CustomForm extends Model implements CachedModel
         $info = DB::table("option_custom_field")
             ->whereIn("custom_field_id", $customFields->pluck("id"))->get();
 
-        if (empty($info)) {
-            $fieldOptions = CustomOption::query()
-                ->whereIn("id", $info->pluck("custom_option_id"))
-                ->get();
 
-
-            $customFields->each(function (CustomField $customField) use ($info, $fieldOptions) {
-                $options = $fieldOptions
-                    ->whereIn("id", $info->where("custom_field_id", $customField->id)
-                        ->pluck("custom_option_id"));
-
-                CustomOption::addToModelCache($options);
-                $options = new RelationCachedInformations(CustomOption::class, $options->pluck("id")->toArray());
-
+        if (empty($info)){
+            $customFields->each(function (CustomField $customField) {
+                $options = new RelationCachedInformations(CustomOption::class, []);
                 $customField->setCacheValue('customOptions', $options);
             });
         }
+        $fieldOptions = CustomOption::query()
+                ->whereIn("id", $info->pluck("custom_option_id"))
+                ->get();
+
+        CustomOption::addToModelCache($fieldOptions);
+
+        $customFields->each(function (CustomField $customField) use ($info, $fieldOptions) {
+            $options = $fieldOptions
+                    ->whereIn("id", $info->where("custom_field_id", $customField->id)
+                        ->pluck("custom_option_id"));
+
+            $options = new RelationCachedInformations(CustomOption::class, $options->pluck("id")->toArray());
+            $customField->setCacheValue('customOptions', $options);
+        });
     }
 
 

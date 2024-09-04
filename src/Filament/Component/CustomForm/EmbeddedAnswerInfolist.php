@@ -40,23 +40,34 @@ class EmbeddedAnswerInfolist extends Component
         return $static;
     }
 
-    public function getChildComponentContainer($key = null): ComponentContainer
+    public function getChildComponents(): array
     {
-        if (filled($key)) {
-            return $this->getChildComponentContainers()[$key];
+        if(!is_array($this->childComponents) || empty($this->childComponents)){
+            if ($this->isUseLayoutTypeSplit()) $schema = $this->getSplitLayoutInfolistSchema();
+            //Field Splitting
+            else if ($this->isUseFieldSplit()) $schema = $this->getSplitFieldInfolistSchema();
+            //Position Splitting
+            else if ($this->isUsePoseSplit()) $schema = $this->getSplitPosInfolistSchema();
+            //Default
+            else $schema = $this->getDefaultInfolistSchema();
+
+            $this->childComponents = $schema;
         }
 
-        return ComponentContainer::make($this->getLivewire())
-            ->parentComponent($this)
-            ->record($this->getAnswer())
-            ->components($this->getChildComponents());
+        return $this->childComponents;
+    }
+
+
+    public function getChildComponentContainer($key = null): ComponentContainer
+    {
+        return parent::getChildComponentContainer($key)
+            ->record($this->getAnswer());
     }
 
     protected function setUp(): void {
         parent::setUp();
         $this->columns(1);
         $this->label("");
-        $this->setupSchema();
     }
 
     public function autoViewMode(bool|Closure $autoViewMode = true):static {
@@ -69,65 +80,39 @@ class EmbeddedAnswerInfolist extends Component
     }
 
 
-    private function setupSchema(): void {
-        $this->columns(1);
-        $this->schema(function(EmbeddedAnswerInfolist $component){
-            if ($this->isUseLayoutTypeSplit()) return $this->getSplitLayoutInfolistSchema($component);
-            //Field Splitting
-            else if ($this->isUseFieldSplit()) return $this->getSplitFieldInfolistSchema($component);
-            //Position Splitting
-            else if ($this->isUsePoseSplit()) return $this->getSplitPosInfolistSchema($component);
-            //Default
-            else return $this->getDefaultInfolistSchema($component);
-        });
 
-    }
+    private function getSplitPosInfolistSchema(): array {
+        [$beginPos, $endPos] = $this->getPoseSpilt();
 
-
-    private function getSplitPosInfolistSchema(EmbeddedAnswerInfolist $component): array {
-        return [
-            Group::make()->schema(function (CustomFormAnswer|null $record) use ($component) {
-                if (is_null($record)) return [];
-
-                [$beginPos, $endPos] = $this->getPoseSpilt();
-
-                return SplitCustomFormRender::renderInfolistPose(
-                    $beginPos,
-                    $endPos,
-                    $component->getAnswer(),
-                    $component->getViewMode()
-                );
-            }),
-        ];
+        return SplitCustomFormRender::renderInfolistPose(
+            $beginPos,
+            $endPos,
+            $this->getAnswer(),
+            $this->getViewMode()
+        );
     }
 
 
     private function getDefaultInfolistSchema(EmbeddedAnswerInfolist $component): array {
-        return [
-            Group::make(fn($record) => CustomFormRender::generateInfoListSchema($component->getAnswer(),
-                $component->getViewMode())),
-        ];
+        return CustomFormRender::generateInfoListSchema($component->getAnswer(), $component->getViewMode());
     }
 
 
-    private function getSplitFieldInfolistSchema(EmbeddedAnswerInfolist $component): array {
-        return [
-            Group::make(fn($record) => SplitCustomFormRender::renderInfolistFromField(
-                $component->getFieldSplit(),
-                $component->getAnswer(),
-                $component->getViewMode())),
-        ];
+    private function getSplitFieldInfolistSchema(): array {
+        return SplitCustomFormRender::renderInfolistFromField(
+            $this->getFieldSplit(),
+            $this->getAnswer(),
+            $this->getViewMode()
+        );
     }
 
 
-    private function getSplitLayoutInfolistSchema(EmbeddedAnswerInfolist $component): array {
-        return [
-            Group::make( SplitCustomFormRender::renderInfoListLayoutType(
-                $component->getLayoutTypeSplit(),
-                $component->getAnswer(),
-                $component->getViewMode())
-            ),
-        ];
+    private function getSplitLayoutInfolistSchema(): array {
+        return SplitCustomFormRender::renderInfoListLayoutType(
+            $this->getLayoutTypeSplit(),
+            $this->getAnswer(),
+            $this->getViewMode()
+        );
     }
 
     public function viewMode(string|Closure $viewMode = "default"): static {
