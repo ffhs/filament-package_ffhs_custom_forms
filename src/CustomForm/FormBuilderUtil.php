@@ -41,7 +41,6 @@ class FormBuilderUtil
 
             $field->save();
 
-            if($field->name == "Art") dump($customOptions);
             if($field->isGeneralField() && !empty($customOptions)) $field->customOptions()->sync($customOptions);
             else if(!empty($customOptions)) $field->customOptions()->createMany($customOptions);
         }
