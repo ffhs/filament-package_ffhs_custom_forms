@@ -9,15 +9,12 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\HasFormTargets;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Translations\HasRuleEventPluginTranslate;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomOption;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\RuleEvent;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Concerns\HasOptions;
 use Filament\Forms\Components\Select;
 use Illuminate\Support\Collection;
 use ReflectionClass;
-use Filament\Infolists\Components\Component as InfolistComponent;
 
  class ChangeOptionsEvent extends FormRuleEventType
 {
@@ -71,10 +68,10 @@ use Filament\Infolists\Components\Component as InfolistComponent;
          ];
      }
 
-     public function handleAfterRenderForm(Closure $triggers, array $arguments, Component $component, RuleEvent $rule): Component
+     public function handleAfterRenderForm(Closure $triggers, array $arguments, Component &$component, RuleEvent $rule): Component
      {
+         if($arguments["identifier"] !== ($rule->data["target"] ?? "")) return $component;
          $customField = $this->getCustomField($arguments);
-         if($customField->identifier !== ($rule->data["target"] ?? "")) return $component;
          if(!in_array(HasOptions::class, class_uses_recursive($component::class))) return $component;
 
          $reflection = new ReflectionClass($component);

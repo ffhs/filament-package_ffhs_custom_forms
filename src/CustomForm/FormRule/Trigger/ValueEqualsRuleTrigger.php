@@ -38,7 +38,7 @@ class ValueEqualsRuleTrigger extends FormRuleTriggerType
     }
 
 
-    public function isTrigger(array $arguments, mixed $target, RuleTrigger $rule): bool
+    public function isTrigger(array $arguments, mixed &$target, RuleTrigger $rule): bool
     {
         if(!key_exists("state",$arguments)) return false;
 
