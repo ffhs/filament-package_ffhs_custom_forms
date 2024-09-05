@@ -108,8 +108,6 @@ class CustomFormRender
 
 
     private static function renderRaw(int $indexOffset, Collection $customFields, Closure &$render, string $viewMode, CustomForm $form): array {
-
-
         $customFormSchema = [];
         $preparedFields = [];
         $customFields->each(function(CustomField $field) use (&$preparedFields){
