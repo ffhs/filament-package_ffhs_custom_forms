@@ -77,10 +77,6 @@ trait HasCacheModel
 
     public function setCacheValue(string $key, mixed $value): void {
         if(!$this->isCaching()) return;
-       /*
-        *  if($value instanceof RelationCachedInformations) $this->relations[$key] = $value->getModels();
-        else $this->relations[$key] = $value;
-        */
         Cache::set($this->getCacheKeyForAttribute($key), $value, static::getCacheDuration());
     }
 

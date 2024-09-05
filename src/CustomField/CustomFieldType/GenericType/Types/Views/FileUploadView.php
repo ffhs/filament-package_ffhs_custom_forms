@@ -19,7 +19,6 @@ use Filament\Infolists\Components\ImageEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Support\Enums\Alignment;
 use Illuminate\Support\Facades\Request;
-use Illuminate\Support\Facades\URL;
 use Illuminate\Support\HtmlString;
 
 class FileUploadView implements FieldTypeView
@@ -158,7 +157,7 @@ class FileUploadView implements FieldTypeView
             $fileComponents[] = Group::make([
                 TextEntry::make("file_name" . $path)
                     ->label("")
-                    ->state($names[$path])
+                    ->state($names[$path] ?? $path)
                     ->columnSpan(2),
                 Actions::make($actions)
             ])
