@@ -177,12 +177,13 @@ class CustomForm extends Model implements CachedModel
             static::getCacheDuration(),
             function(){
                 $customFields = $this->customFields()->get();
-                CustomField::addToModelCache($customFields);
 
                 $this->cacheFormRules();
                 $this->cacheFieldOptions($customFields);
 
                 $this->cacheTemplatesAndTemplatesFields($customFields);
+
+                CustomField::addToModelCache($customFields);
 
                 return new RelationCachedInformations(CustomField::class, $customFields->pluck("id")->toArray());
             });
