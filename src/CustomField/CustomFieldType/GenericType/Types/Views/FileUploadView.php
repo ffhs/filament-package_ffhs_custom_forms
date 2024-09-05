@@ -99,7 +99,7 @@ class FileUploadView implements FieldTypeView
     }
 
 
-    private static function getInfolistImageComponent(mixed $files, mixed $diskRoot, CustomFieldAnswer $record, mixed $names): Group {
+    public static function getInfolistImageComponent(mixed $files, mixed $diskRoot, CustomFieldAnswer $record, mixed $names): Group {
         $groups = [];
         foreach ($files as $path){
             if(!is_array($names)) $names = [$path => $names];
@@ -131,7 +131,7 @@ class FileUploadView implements FieldTypeView
     }
 
 
-    private static function getInfoListFiles(mixed $files, mixed $diskRoot, CustomFieldAnswer $record, mixed $names): Group {
+    public static function getInfoListFiles(mixed $files, mixed $diskRoot, CustomFieldAnswer $record, mixed $names): Group {
 
         $downloadable = FieldMapper::getOptionParameter($record,"downloadable");
         $openInNewTab = FieldMapper::getOptionParameter($record,"open_in_new_tab");
