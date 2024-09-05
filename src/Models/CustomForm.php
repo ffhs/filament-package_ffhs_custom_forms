@@ -178,15 +178,13 @@ class CustomForm extends Model implements CachedModel
             function(){
                 $customFields = $this->customFields()->get();
                 CustomField::addToModelCache($customFields);
-                $this->cacheFormRules();
 
-                $this->cacheTemplatesAndTemplatesFields($customFields);
+                $this->cacheFormRules();
                 $this->cacheFieldOptions($customFields);
 
+                $this->cacheTemplatesAndTemplatesFields($customFields);
 
-                CustomField::addToModelCache($customFields);
                 return new RelationCachedInformations(CustomField::class, $customFields->pluck("id")->toArray());
-
             });
     }
 
@@ -234,8 +232,9 @@ class CustomForm extends Model implements CachedModel
         $templates->each(function (CustomForm $customForm) use ($customFields) {
             $fields = $customFields->where("custom_form_id", $customForm->id);
             CustomField::addToModelCache($fields);
-            $fields = new RelationCachedInformations(CustomField::class, $fields->pluck("id")->toArray());
-            $customForm->setCacheValue("customFields", $fields);
+            $fieldRelations = new RelationCachedInformations(CustomField::class, $fields->pluck("id")->toArray());
+            $customForm->setCacheValue("customFields", $fieldRelations);
+            $customForm->setCacheValue("ownedFields", $fieldRelations);
         });
     }
 
