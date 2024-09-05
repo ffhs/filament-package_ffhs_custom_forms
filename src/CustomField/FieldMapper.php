@@ -4,7 +4,6 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField;
 
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomOption;
 use Illuminate\Support\Collection;
 
 class FieldMapper

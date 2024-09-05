@@ -49,7 +49,7 @@ final class TemplateFieldAdder extends FormEditorFieldAdder
     public function isTemplateDisabled($value):bool {
         if($this->useTemplateUsedGeneralFields($value)) return true;
 
-        $usedTemplateIds =   Cache::remember($this->getState()['id'] . '_template_fields_not_allowed_in_form', GeneralField::getCacheDuration()/4.0, function (){
+        $usedTemplateIds =   Cache::remember($this->getState()['id'] . '_template_fields_not_allowed_in_form', 1, function (){
             $templates =array_filter($this->getState()['custom_fields'], fn($da) => !empty($da['template_id']));
             return array_map(fn($template) => $template["template_id"],$templates);
         });

@@ -37,9 +37,10 @@ class DownloadTypeView implements FieldTypeView
         else  $actions = [$actions];
 
         //Toll Tip
-        $actions[] =Placeholder::make(FieldMapper::getOptionParameter($record, "helper_text")."-help_text")
+        $helpText = FieldMapper::getOptionParameter($record, "helper_text");
+        $actions[] =Placeholder::make("helper_text"."-help_text")
             ->label("")
-            ->helperText(new HtmlString('</div> <div class="fi-fo-field-wrp-helper-text text-sm text-gray-500" style="margin-top: -30px; ">'. FieldMapper::getOptionParameter($record, "helper_text"). '</div><div>'));
+            ->helperText(new HtmlString('</div> <div class="fi-fo-field-wrp-helper-text text-sm text-gray-500" style="margin-top: -30px; ">'. empty($helpText)?"":$helpText. '</div><div>'));
 
         $group = Group::make($actions);
 

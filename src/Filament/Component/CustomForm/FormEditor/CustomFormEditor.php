@@ -37,10 +37,11 @@ class CustomFormEditor extends Component {
                                 ->columnStart(1)
                                 ->columnSpan(1)
                                 ->columns(1)
-                                ->schema(fn() =>
+                                ->schema(fn() => //ToDo Remove Closure
+                                $this->getRecord()?
                                     collect($this->getRecord()->getFormConfiguration()::editorFieldAdder())
-                                        ->map(fn(string $class) => $class::make())
-                                        ->toArray()
+                                            ->map(fn(string $class) => $class::make())
+                                            ->toArray(): []
                                 ),
                             EditCustomFields::make("custom_fields")
                                 ->columnStart(2)

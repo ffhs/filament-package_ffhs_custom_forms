@@ -2,7 +2,6 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Helping\Caching;
 
-use Barryvdh\Debugbar\Facades\Debugbar;
 use Closure;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Collection;
@@ -242,8 +241,6 @@ trait HasCacheModel
         $relation = $this->$name();
         return $relation->getRelated()::cached($this->$localKey, $relatedKey);
     }
-
-
 
     public function isPropertyCached($name): bool{
         if(array_key_exists($name, $this->getCachedBelongsTo())){
