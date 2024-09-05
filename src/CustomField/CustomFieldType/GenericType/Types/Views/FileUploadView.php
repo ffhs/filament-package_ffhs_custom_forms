@@ -19,7 +19,6 @@ use Filament\Infolists\Components\ImageEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Support\Enums\Alignment;
 use Illuminate\Support\Facades\Request;
-use Illuminate\Support\Facades\URL;
 use Illuminate\Support\HtmlString;
 
 class FileUploadView implements FieldTypeView
@@ -100,7 +99,7 @@ class FileUploadView implements FieldTypeView
     }
 
 
-    private static function getInfolistImageComponent(mixed $files, mixed $diskRoot, CustomFieldAnswer $record, mixed $names): Group {
+    public static function getInfolistImageComponent(mixed $files, mixed $diskRoot, CustomFieldAnswer $record, mixed $names): Group {
         $groups = [];
         foreach ($files as $path){
             if(!is_array($names)) $names = [$path => $names];
@@ -132,7 +131,7 @@ class FileUploadView implements FieldTypeView
     }
 
 
-    private static function getInfoListFiles(mixed $files, mixed $diskRoot, CustomFieldAnswer $record, mixed $names): Group {
+    public static function getInfoListFiles(mixed $files, mixed $diskRoot, CustomFieldAnswer $record, mixed $names): Group {
 
         $downloadable = FieldMapper::getOptionParameter($record,"downloadable");
         $openInNewTab = FieldMapper::getOptionParameter($record,"open_in_new_tab");
@@ -158,7 +157,7 @@ class FileUploadView implements FieldTypeView
             $fileComponents[] = Group::make([
                 TextEntry::make("file_name" . $path)
                     ->label("")
-                    ->state($names[$path])
+                    ->state($names[$path] ?? $path)
                     ->columnSpan(2),
                 Actions::make($actions)
             ])

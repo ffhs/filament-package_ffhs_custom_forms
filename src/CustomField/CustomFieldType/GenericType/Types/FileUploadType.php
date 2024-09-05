@@ -120,7 +120,7 @@ class FileUploadType extends CustomFieldType
             !is_null($component->getKey()) && str_contains($component->getKey(), $customField->identifier . ".files")
         );
         /**@var FileUpload $filesComponent*/
-        $filesComponent = FileUploadView::prepareFileUploadComponent($filesComponent,$customField);
+        $filesComponent = $this->viewModes()["default"]::prepareFileUploadComponent($filesComponent,$customField);
         $filesComponent->saveUploadedFiles();
     }
 
