@@ -2,6 +2,7 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Helping\Caching;
 
+use Barryvdh\Debugbar\Facades\Debugbar;
 use Closure;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Collection;
@@ -56,11 +57,18 @@ trait HasCacheModel
             else return $result->caching(false,$this->isRecursiveCaching());
         }
 
-        if(!empty($this->getCachedBelongsTo()[$key]))  return $this->getBelongsToCached($key);
+        if(!empty($this->getCachedBelongsTo()[$key]))  {
+            if($this->relationLoaded($key)) return parent::__get($key);
+            $relation = $this->getBelongsToCached($key);
+            $this->relations[$key] = $relation;
+            return $relation;
+        }
         if(in_array($key, $this->getCachedRelations())){
+            if($this->relationLoaded($key)) return parent::__get($key);
             $result = $this->getRelationCached($key);
-            if($result instanceof RelationCachedInformations) return $result->getModels();
-            else return $result;
+            if($result instanceof RelationCachedInformations) $result = $result->getModels();
+            $this->relations[$key] = $result;
+            return $result;
         }
         if(in_array($key, $this->getCachedResults())) return $this->getResultCached($key);
 
@@ -119,20 +127,6 @@ trait HasCacheModel
         return $output;
     }
 
-
-
-
-   /* public static function cachedMultiple(string $attribute , bool $searching , mixed... $values): Collection{
-        $output = Cache::get(static::getFromSingedListName())?->whereIn($attribute, $values);
-        if(is_null($output)) $output = collect();
-        /**@var Collection $output*//*
-        if(!$searching) return $output;
-        $notFound = collect($values)->filter(fn($value) => $output->whereIn($attribute, $value)->count() == 0)->flatten();
-        if($notFound->count() == 0) return $output;
-        $notFounds = static::query()->whereIn($attribute, $notFound)->with(static::getCacheWith())->get();
-        static::addToCachedList($notFounds);
-        return $output->merge($notFounds);
-    }*/
 
 
     public function cachedClear(string $key){
@@ -236,8 +230,6 @@ trait HasCacheModel
         $relation = $this->$name();
         return $relation->getRelated()::cached($this->$localKey, $relatedKey);
     }
-
-
 
     public function isPropertyCached($name): bool{
         if(array_key_exists($name, $this->getCachedBelongsTo())){

@@ -9,6 +9,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\RenderHelp\CustomForm
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\RuleEvent;
 use Filament\Forms\Components\Component;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use ReflectionClass;
 use Filament\Infolists\Components\Component as InfolistComponent;
@@ -22,17 +23,13 @@ abstract class  IsPropertyOverwriteEvent extends FormRuleEventType
     protected abstract function property(): string;
     protected abstract function dominatingSide(): bool;
 
-    public function handleAfterRenderForm(Closure $triggers, array $arguments, Component $component, RuleEvent $rule): Component
+    public function handleAfterRenderForm(Closure $triggers, array $arguments, Component &$component, RuleEvent $rule): Component
     {
-        if(empty($rule->data)) return $component;
-        if(empty($rule->data["targets"])) return $component;
-
-        $customFieldId = $this->getCustomField($arguments)->identifier;
-        if(in_array($customFieldId, $rule->data["targets"])) return $this->prepareComponent($component, $triggers);
-        else return $component;
+        if(!in_array($arguments["identifier"], $rule->data["targets"])) return $component;
+        return $this->prepareComponent($component, $triggers);
     }
 
-    public function handleAfterRenderInfolist(Closure $triggers, array $arguments,InfolistComponent  $component, RuleEvent $rule): InfolistComponent
+    public function handleAfterRenderInfolist(Closure $triggers, array $arguments, InfolistComponent  &$component, RuleEvent $rule): InfolistComponent
     {
         if(empty($rule->data)) return $component;
         if(empty($rule->data["targets"])) return $component;

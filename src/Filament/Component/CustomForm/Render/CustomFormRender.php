@@ -5,6 +5,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\Rend
 use Barryvdh\Debugbar\Facades\Debugbar;
 use Closure;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\LayoutType\CustomLayoutType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\TemplatesType\TemplateFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Trigger\FormRuleTriggerType;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
@@ -69,32 +70,51 @@ class CustomFormRender
         };
     }
 
-
-    public static function render(int $indexOffset, Collection $customFields, Closure &$render, string $viewMode, CustomForm $form): array {
-        //Debugbar::info($customFields->first()->customForm->short_title);
+    public static function render(int $indexOffset, Collection $customFields, Closure &$render, string $viewMode, CustomForm $customForm): array {
         if($customFields->isEmpty()) return [];
 
-        $renderOutput = self::renderRaw($indexOffset, $customFields, $render,$viewMode, $form);
-        $components = $renderOutput[3];
-        $customForm = $customFields->first()->custom_form;
+        $rules = $customForm->rules;
 
-        //Run Rules after rendered
-        $renderOutput[2]->each(function(Rule $rule) use ($customForm, &$components) {
-            $components = $rule->handle(["action" => "after_all_rendered", "customForm" => $customForm], $components);
+        //Rule before render
+        $rules->each(function(Rule $rule) use (&$customFields) {
+            $customFields = $rule->handle(["action" => "before_render"], $customFields);
         });
+
+        //Render
+        $renderOutput = self::renderRaw($indexOffset, $customFields, $render,$viewMode, $customForm);
+        /**@var Collection $renderedComponent*/
+        $renderedComponents = $renderOutput[2];
+
+        //TriggerPreparation (maintain for live attribute)
+        $rules
+            ->map(fn(Rule $rule) => $rule->ruleTriggers)
+            ->flatten(1)
+            ->filter(fn(RuleTrigger $ruleTrigger) => !is_null($ruleTrigger))
+            ->filter(fn(RuleTrigger $ruleTrigger) => $ruleTrigger->getType() instanceof FormRuleTriggerType)
+            ->each(function (RuleTrigger $trigger) use (&$renderedComponents) {
+                $renderedComponents = $trigger->getType()->prepareComponents($renderedComponents, $trigger);
+            });
+
+        $customFields = $customForm->customFields;
+
+        //Rule after Render
+        $rules->each(function(Rule $rule) use ($customForm, $customFields, &$renderedComponents) {
+            $renderedComponents = $rule->handle(["action" => "after_render", "custom_fields" => $customFields], $renderedComponents);
+        });
+
         return $renderOutput;
     }
 
-    public static function renderRaw(int $indexOffset, Collection $customFields, Closure &$render, string $viewMode, CustomForm $form): array {
-        $customFormSchema = [];
 
+
+    private static function renderRaw(int $indexOffset, Collection $customFields, Closure &$render, string $viewMode, CustomForm $form): array {
+        $customFormSchema = [];
         $preparedFields = [];
         $customFields->each(function(CustomField $field) use (&$preparedFields){
             $preparedFields[$field->form_position] = $field;
         });
 
-        $allRules = collect();
-        $allComponents = collect();
+        $allComponents = [];
 
         for($index = $indexOffset+1; $index<= $customFields->count()+$indexOffset; $index++){
 
@@ -105,74 +125,57 @@ class CustomFormRender
             ];
 
             if(($customField->getType() instanceof CustomLayoutType)){
-
                 $endLocation = $customField->layout_end_position;
 
                 //Setup Render Data
                 $fieldRenderData = [];
-                for($formPositionSubForm = $customField->form_position+1; $formPositionSubForm <= $endLocation; $formPositionSubForm++){
-                    $fieldRenderData[] =  $preparedFields[$formPositionSubForm];
+                for ($formPositionSubForm = $customField->form_position + 1; $formPositionSubForm <= $endLocation; $formPositionSubForm++) {
+                    $fieldRenderData[] = $preparedFields[$formPositionSubForm];
                 }
                 $fieldRenderData = collect($fieldRenderData);
 
                 //Render Schema Input
-                $renderedOutput = self::renderRaw($index, $fieldRenderData, $render,$viewMode,$form);
+                $renderedOutput = self::renderRaw($index, $fieldRenderData, $render, $viewMode, $form);
                 //Get Layout Schema
                 $parameters = array_merge([
                     "customFieldData" => $fieldRenderData,
-                    "rendered"=> $renderedOutput[0],
+                    "rendered" => $renderedOutput[0],
                 ]);
 
                 //Set Index
-                $index= $renderedOutput[1]-1;
-                $allRules = $allRules->merge($renderedOutput[2]);
-                $allComponents = $allComponents->merge($renderedOutput[3]);
+                $index = $renderedOutput[1] - 1;
+                $allComponents = array_merge($allComponents, $renderedOutput[2]);
+            }
+
+            if(($customField->getType() instanceof TemplateFieldType)){
+                //Setup Render Data
+                $fields = $customField->template->customFields;
+
+                //Render Schema Input
+                $renderedOutput = self::renderRaw(0, $fields, $render, $viewMode, $form);
+                //Get Layout Schema
+                $parameters = array_merge([
+                    "rendered" => $renderedOutput[0],
+                ]);
+
+                $allComponents = array_merge($allComponents, $renderedOutput[2]);
             }
 
             if(!$customField->is_active) continue;
 
-            $rules = $form->rules;
-
-            //Rule before render
-            $rules->each(function(Rule $rule) use (&$customField) {
-                $customField = $rule->handle(
-                    static::getRuleParameters("before_render", $customField), $customField);
-            });
-
-            //Parameter mutation
-            $rules->each(function(Rule $rule) use ($customField, &$parameters) {
-                $parameters = $rule->handle(static::getRuleParameters("mutate_parameters", $customField), $parameters);
-            });
-
             //Render
             $renderedComponent = $render($customField, $parameters);
+            $allComponents[$customField->identifier] = $renderedComponent;
 
-            //TriggerPreparation (maintain for live attribute)
-            $triggers = $rules->map(fn(Rule $rule) => $rule->ruleTriggers)->flatten(1);
-            foreach($triggers as $trigger){
-                if(!$trigger) continue;
-                /**@var RuleTrigger $trigger*/
-                $type = $trigger->getType();
-                if($type instanceof  FormRuleTriggerType)
-                    $renderedComponent = $type->prepareComponent($renderedComponent, $trigger);
-            }
-
-            //Rule after Render
-            $rules->each(function(Rule $rule) use ($form, $customField, &$renderedComponent) {
-                $renderedComponent = $rule->handle(static::getRuleParameters("after_render", $customField), $renderedComponent);
-            });
             $customFormSchema[] = $renderedComponent;
-
-            $allRules = $allRules->merge($rules);
-            $allComponents->add($renderedComponent);
         }
-        return [$customFormSchema,$index, $allRules, $allComponents];
+
+
+        return [$customFormSchema, $index, $allComponents];
     }
 
 
-    static function getRuleParameters(string $action, CustomField $customField): array
-    {
-        return array_merge(["action" => $action, "customField" => $customField]);
-    }
+
+
 }
 

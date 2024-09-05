@@ -15,6 +15,8 @@ class TemplateTypeView implements FieldTypeView
 
     public static function getFormComponent(TemplateFieldType|CustomFieldType $type, CustomField $record, array $parameter = []): Component {
 
+        return Group::make($parameter["rendered"])->columns(config("ffhs_custom_forms.default_column_count"));
+
         $template = $record->template;
         $customFields = $record->template->getOwnedFields();
         $viewMode = $parameter['viewMode'];
@@ -28,6 +30,7 @@ class TemplateTypeView implements FieldTypeView
 
 
     public static function getInfolistComponent(TemplateFieldType|CustomFieldType $type, CustomFieldAnswer $record, array $parameter = []): \Filament\Infolists\Components\Component {
+        return \Filament\Infolists\Components\Group::make($parameter["rendered"])->columnSpanFull();
         $viewMode = $parameter["viewMode"];
         $formAnswer = $record->customFormAnswer;
         $form = $record->customField->template;

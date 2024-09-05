@@ -44,7 +44,8 @@ class FieldMapper
     }
 
     public static function getAvailableCustomOptions(CustomField $record) : Collection{
-        return $record->customOptions->pluck("name","identifier");
+        return $record->customOptions
+            ->pluck("name","identifier");
     }
 
     public static function getAllCustomOptions(CustomField|CustomFieldAnswer $record) : Collection{
