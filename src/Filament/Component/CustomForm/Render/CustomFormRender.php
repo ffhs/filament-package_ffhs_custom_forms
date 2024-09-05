@@ -151,7 +151,7 @@ class CustomFormRender
 
             if(($customField->getType() instanceof TemplateFieldType)){
                 //Setup Render Data
-                $fields = $customField->template->ownedFields;
+                $fields = $customField->template->customFields;
 
                 //Render Schema Input
                 $renderedOutput = self::renderRaw(0, $fields, $render, $viewMode, $form);
