@@ -58,7 +58,6 @@ class Rule extends Model implements CachedModel
     public function getTriggersCallback(mixed $target, array $arguments): \Closure
     {
         return function ($extraArguments = []) use ($target, $arguments) {
-            Debugbar::startMeasure("trigger");
             $argumentsFinal = array_merge($arguments, $extraArguments);
 
             $triggers = $this->ruleTriggers;
@@ -73,7 +72,6 @@ class Rule extends Model implements CachedModel
                 if ($this->is_or_mode && $triggered) return true;//OR
                 else if (!$this->is_or_mode && !$triggered) return false; //AND
             }
-            Debugbar::stopMeasure("trigger");
 
             return !$this->is_or_mode;
         };

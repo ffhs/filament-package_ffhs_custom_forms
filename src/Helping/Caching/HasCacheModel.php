@@ -2,6 +2,7 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Helping\Caching;
 
+use Barryvdh\Debugbar\Facades\Debugbar;
 use Closure;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Collection;
@@ -58,9 +59,14 @@ trait HasCacheModel
 
         if(!empty($this->getCachedBelongsTo()[$key]))  return $this->getBelongsToCached($key);
         if(in_array($key, $this->getCachedRelations())){
+            // Debugbar::startMeasure("caching");
             $result = $this->getRelationCached($key);
-            if($result instanceof RelationCachedInformations) return $result->getModels();
-            else return $result;
+            if($result instanceof RelationCachedInformations) {
+                //  Debugbar::stopMeasure("caching");
+                return $result->getModels();
+            }
+           // Debugbar::stopMeasure("caching");
+            return $result;
         }
         if(in_array($key, $this->getCachedResults())) return $this->getResultCached($key);
 

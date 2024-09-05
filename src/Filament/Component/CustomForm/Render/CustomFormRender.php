@@ -71,10 +71,8 @@ class CustomFormRender
     }
 
     public static function render(int $indexOffset, Collection $customFields, Closure &$render, string $viewMode, CustomForm $customForm): array {
-        Debugbar::startMeasure("Render Custom Form " . $customForm->id. " " . $indexOffset);
         if($customFields->isEmpty()) return [];
 
-        Debugbar::startMeasure("RULE 1");
         $rules = $customForm->rules;
 
         //Rule before render
@@ -82,14 +80,11 @@ class CustomFormRender
             $customFields = $rule->handle(["action" => "before_render"], $customFields);
         });
 
-        Debugbar::stopMeasure("RULE 1");
-
         //Render
         $renderOutput = self::renderRaw($indexOffset, $customFields, $render,$viewMode, $customForm);
         /**@var Collection $renderedComponent*/
         $renderedComponents = $renderOutput[2];
 
-        Debugbar::startMeasure("RULE 2");
         //TriggerPreparation (maintain for live attribute)
         $rules
             ->map(fn(Rule $rule) => $rule->ruleTriggers)
@@ -106,8 +101,6 @@ class CustomFormRender
         $rules->each(function(Rule $rule) use ($customForm, $customFields, &$renderedComponents) {
             $renderedComponents = $rule->handle(["action" => "after_render", "custom_fields" => $customFields], $renderedComponents);
         });
-        Debugbar::stopMeasure("RULE 2");
-        Debugbar::stopMeasure("Render Custom Form " . $customForm->id. " " . $indexOffset);
 
         return $renderOutput;
     }
@@ -175,6 +168,8 @@ class CustomFormRender
             //Render
             $renderedComponent = $render($customField, $parameters);
             $allComponents[$customField->identifier] = $renderedComponent;
+
+            $customFormSchema[] = $renderedComponent;
         }
 
 
