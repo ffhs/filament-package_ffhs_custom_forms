@@ -32,7 +32,7 @@ trait HasFormTargets
     }
 
 
-    public function getTargetOptions($get): array
+    public function getTargetOptions($get, $record): array
     {
         $options = [];
         $fields = collect($this->getAllFieldsData($get))
@@ -40,8 +40,12 @@ trait HasFormTargets
 
         foreach ($fields as $field){
             /**@var CustomField $field*/
-            if($field->template_id == null) $options[$field->customForm->short_title][$field->identifier] = $field->name ?? "?";
-            else $options[$field->customForm->short_title][$field->identifier] = $field->template->short_title ?? "?";
+            $title = $field?->customForm?->short_title;
+            if(empty($title)) $title = $record->short_title;
+            if(empty($title)) $title = "?";
+
+            if($field->template_id == null) $options[$title][$field->identifier] = $field->name ?? "?";
+            else $options[$title][$field->identifier] = $field->template->short_title ?? "?";
         }
 
         return $options;

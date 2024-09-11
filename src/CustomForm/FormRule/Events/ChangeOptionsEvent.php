@@ -30,14 +30,18 @@ use ReflectionClass;
      {
          return [
              $this->getTargetSelect()
-                ->options(function($get){
+                ->options(function($get, $record){
                     $output = [];
                     collect($this->getAllFieldsData($get))
                         ->map(fn($field) => (new CustomField())->fill($field))
                         ->filter(fn(CustomField $field)=> $field->getType() instanceof CustomOptionType)
-                        ->each(function(CustomField $field) use (&$output){
-                            $output[$field->customForm->short_title] = [$field->identifier => $field->name];
-                    });
+                        ->each(function(CustomField $field) use ($record, &$output){
+                            $title = $field->customForm?->short_title;
+                            if(empty($title)) $title = $record?->short_title ;
+                            if(empty($title)) $title = "?";
+
+                            $output[$title] = [$field->identifier => $field->name??" "];
+                        });
 
                     return $output;
                 }),

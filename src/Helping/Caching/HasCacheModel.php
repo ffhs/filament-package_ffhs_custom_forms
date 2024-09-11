@@ -85,8 +85,13 @@ trait HasCacheModel
         return Cache::remember(
             (new static())->getTable()."-all",
             self::getCacheDuration(),
-            fn() => static::addToModelCache(static::all())
-        );
+            function() {
+                $all = static::all();
+                static::addToModelCache($all);
+
+                return new RelationCachedInformations(static::class, $all->pluck('id')->toArray());
+            }
+        )->getModels();
     }
 
     public static function getModelCache(): Collection{
