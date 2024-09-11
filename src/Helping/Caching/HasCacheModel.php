@@ -131,6 +131,7 @@ trait HasCacheModel
 
     public function cachedClear(string $key){
         Cache::forget($this->getCacheKeyForAttribute($key));
+        unset($this->relations[$key]);
     }
 
 

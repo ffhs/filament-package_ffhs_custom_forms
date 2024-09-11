@@ -2,6 +2,7 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Events;
 
+use Barryvdh\Debugbar\Facades\Debugbar;
 use Closure;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomOption\CustomOptionType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldMapper;
@@ -49,20 +50,20 @@ use ReflectionClass;
 
                      if(empty($field)) return [];
 
-                     $customField = new CustomField();
-                     $customField->fill($field);
 
-                     if($customField->isGeneralField()){
+                     if(!empty($field["general_field_id"])){
+                         $customField = new CustomField();
+                         $customField->fill($field);
                          $genOptions = $customField->generalField->customOptions;
                          $selectedOptions = $this->getTargetFieldData($get)["options"]["customOptions"] ?? [];
                          $genOptions = $genOptions->whereIn("id", $selectedOptions);
                          return $genOptions->pluck("name","identifier");
                      }
 
-
                      if(!array_key_exists("options",$field)) $field["options"] = [];
-                     if(!array_key_exists("selected_options",$field["options"])) $field["options"]["selected_options"] = [];
-                     $options = $field["options"]["selected_options"];
+                     if(!array_key_exists("customOptions",$field["options"])) $field["options"]["customOptions"] = [];
+                     $options = $field["options"]["customOptions"];
+
                      return  collect($options)->pluck("name.". $record->getLocale(),"identifier");
                  })
          ];

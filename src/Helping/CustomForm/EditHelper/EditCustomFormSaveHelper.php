@@ -2,6 +2,7 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\EditHelper;
 
+use Barryvdh\Debugbar\Facades\Debugbar;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldUtils;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
@@ -151,20 +152,23 @@ class EditCustomFormSaveHelper
                 $event->save();
             }
 
-
+            $rule->cachedClear("ruleTriggers");
+            $rule->cachedClear("ruleEvents");
             $rules->add($rule);
         }
 
 
         $form->ownedRules()->sync($rules->pluck("id"));
 
-        $form->cachedClear("customFields");
-        CustomField::clearModelCache();
 
-        
+        $form->cachedClear("customFields");
         $form->cachedClear("rules");
         $form->cachedClear("ownedRules");
         $form->cachedClear("formRules");
+
+        RuleEvent::clearModelCache();
+        RuleTrigger::clearModelCache();
+        CustomField::clearModelCache();
         Rule::clearModelCache();
     }
 
