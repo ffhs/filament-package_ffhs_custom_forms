@@ -5,6 +5,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Custom
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomOption\HasCustomOptionInfoListView;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\FieldTypeView;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Traits\HasDefaultViewComponent;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldMapper;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Filament\Forms\Components\CheckboxList;
@@ -13,6 +14,7 @@ use Filament\Forms\Components\Component;
 class CheckboxListTypeView implements FieldTypeView
 {
     use HasCustomOptionInfoListView;
+    use HasDefaultViewComponent;
 
     public static function getFormComponent(CustomFieldType $type, CustomField $record, array   $parameter = []): Component {
         return static::makeComponent(CheckboxList::class, $record)
