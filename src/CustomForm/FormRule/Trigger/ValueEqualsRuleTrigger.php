@@ -71,7 +71,9 @@ class ValueEqualsRuleTrigger extends FormRuleTriggerType
     {
         return [
             $this->getTargetSelect()
-                ->label("Feld"), //ToDo Translate
+                ->live()
+                ->label("Feld")//ToDo Translate
+                ->afterStateUpdated(fn($set) => $set("type", null)),
             ToggleButtons::make("type")
                 ->options(fn() => [
                     "number" => "Nummer",
@@ -96,7 +98,9 @@ class ValueEqualsRuleTrigger extends FormRuleTriggerType
                     if(empty($customField)) return true;
                     return !($customField->getType() instanceof CustomOptionType);
                 })
-                ->afterStateUpdated(function ($get, $set){
+                ->afterStateUpdated(function ($get, $set, $old) {
+                     if($old == "option") $set("selected_options",[]);
+
                      switch ($get("type")) {
                         case"text":
                             $set("values",[]);
@@ -208,7 +212,7 @@ class ValueEqualsRuleTrigger extends FormRuleTriggerType
     {
         return Group::make([
             Toggle::make("boolean")
-                ->label("Wert") //ToDo Translate
+                ->label("Auslössen wenn der Wert Ja ist") //ToDo Translate
                 ->columnSpanFull()
         ]);
     }
