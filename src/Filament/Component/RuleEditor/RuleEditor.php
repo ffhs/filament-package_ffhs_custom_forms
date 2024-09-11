@@ -55,8 +55,8 @@ class RuleEditor extends Group
                ->gridSize(1)
                ->itemActions(fn()=> [
                    $this->getRemoveAction(),
-                   $this->getTriggerAddAction(),
                    $this->getEventAddAction(),
+                   $this->getTriggerAddAction(),
                ])
                ->schema([
 
@@ -83,7 +83,7 @@ class RuleEditor extends Group
     protected function getTriggerDropComponent(): DragDropComponent
     {
         return DragDropComponent::make("triggers")
-            ->label("Auslösser")
+            ->label("Auslöser")
             ->deepColor(1)
             ->orderAttribute('order')
             ->dragDropGroup('triggers')
@@ -205,7 +205,7 @@ class RuleEditor extends Group
     {
         return Action::make('addEvent')
             ->icon("heroicon-o-play-circle")
-            ->label("Aktion") //ToDo Translate
+            ->label("Ausführung") //ToDo Translate
             ->action($this->addEvent(...))
             ->link();
     }
