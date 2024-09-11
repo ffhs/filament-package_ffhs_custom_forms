@@ -15,7 +15,7 @@ trait HasFormTargets
         return Select::make('targets')
             ->multiple()
             ->label("Target")
-            ->options($this->getTargetOptions())
+            ->options($this->getTargetOptions(...))
             ->hidden(function ($set, $get){
                 //Fields with an array doesn't generate properly
                 if($get('targets') == null)
@@ -27,29 +27,24 @@ trait HasFormTargets
     public function getTargetSelect(): Select{
         return Select::make('target')
             ->label("Target")
-            ->options($this->getTargetOptions())
+            ->options($this->getTargetOptions(...))
             ->live();
     }
 
 
-    public function getTargetOptions(): \Closure
+    public function getTargetOptions($get): array
     {
-        return function ($get) {
+        $options = [];
+        $fields = collect($this->getAllFieldsData($get))
+            ->map(fn($fieldData) => (new CustomField())->fill($fieldData));
 
-            $options = [];
+        foreach ($fields as $field){
+            /**@var CustomField $field*/
+            if($field->template_id == null) $options[$field->customForm->short_title][$field->identifier] = $field->name ?? "?";
+            else $options[$field->customForm->short_title][$field->identifier] = $field->template->short_title ?? "?";
+        }
 
-            $fields = collect($this->getAllFieldsData($get))
-                ->map(fn($fieldData) => (new CustomField())->fill($fieldData));
-
-            foreach ($fields as $field){
-                /**@var CustomField $field*/
-                if($field->template_id == null) $options[$field->identifier] = $field->name ?? "?";
-                else $options[$field->identifier] = $field->template->short_title ?? "?";
-
-            }
-
-           return $options;
-        };
+        return $options;
     }
 
 

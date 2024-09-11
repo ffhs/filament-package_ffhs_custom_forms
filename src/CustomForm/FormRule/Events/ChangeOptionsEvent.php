@@ -30,13 +30,17 @@ use ReflectionClass;
      {
          return [
              $this->getTargetSelect()
-                ->options(fn($get)=>
-                   collect($this->getAllFieldsData($get))
+                ->options(function($get){
+                    $output = [];
+                    collect($this->getAllFieldsData($get))
                         ->map(fn($field) => (new CustomField())->fill($field))
                         ->filter(fn(CustomField $field)=> $field->getType() instanceof CustomOptionType)
-                        ->map(fn(CustomField $field) => ["name" => $field->name, "identifier" => $field->identifier])
-                        ->pluck("name", "identifier")
-                 ),
+                        ->each(function(CustomField $field) use (&$output){
+                            $output[$field->customForm->short_title] = [$field->identifier => $field->name];
+                    });
+
+                    return $output;
+                }),
              Select::make("selected_options")
                  ->label("Anzuzeigende Optionen")
                  ->multiple()

@@ -171,6 +171,7 @@ class CustomForm extends Model implements CachedModel
     }*/
 
 
+
     public function cachedCustomFields(): RelationCachedInformations|Collection {
         $cacheKey = $this->getCacheKeyForAttribute("customFields");
         return Cache::remember($cacheKey,
@@ -178,10 +179,10 @@ class CustomForm extends Model implements CachedModel
             function(){
                 $customFields = $this->customFields()->get();
 
-                $this->cacheFormRules();
                 $this->cacheFieldOptions($customFields);
-
+                $this->cacheGeneralFields($customFields);
                 $this->cacheTemplatesAndTemplatesFields($customFields);
+                $this->cacheFormRules($customFields);
 
                 CustomField::addToModelCache($customFields);
 
@@ -189,6 +190,13 @@ class CustomForm extends Model implements CachedModel
             });
     }
 
+    protected function cacheGeneralFields(Collection &$customFields): void
+    {
+        $generalFieldIds = $customFields->whereNotNull("general_field_id")->pluck("general_field_id");
+        $generalFields = GeneralField::query()->whereIn("id", $generalFieldIds)->get();
+        GeneralField::addToModelCache($generalFields);
+
+    }
 
     protected function cacheFieldOptions(\Illuminate\Database\Eloquent\Collection|array $customFields): void
     {
@@ -220,7 +228,7 @@ class CustomForm extends Model implements CachedModel
     }
 
 
-    protected  function cacheTemplatesAndTemplatesFields(\Illuminate\Database\Eloquent\Collection|array $customFields): void
+    protected  function cacheTemplatesAndTemplatesFields(Collection $customFields): void
     {
         //Cache Templates and Templates Fields
         $templateIds = $customFields->whereNotNull('template_id')->pluck('template_id')->toArray();
@@ -240,10 +248,19 @@ class CustomForm extends Model implements CachedModel
     }
 
 
-    function cacheFormRules(): void
+    protected function cacheFormRules(Collection $customFields): void
     {
+
+        $formRules = FormRule::query()
+            ->whereIn("custom_form_id", $customFields->whereNotNull("template_id")->pluck("template_id"))
+            ->orWhere("custom_form_id", $this->id);
+        $rules = Rule::query()->whereIn("id", $formRules->select("rule_id"))->get();
+
+
         //Cache FormRules
-        $rules = $this->rules;
+        $this->setCacheValue("rules", $rules);
+        $this->relations["rules"] = $rules;
+
         if($rules->count() == 0) return;
 
         Rule::addToModelCache($rules);
@@ -267,6 +284,8 @@ class CustomForm extends Model implements CachedModel
             $rule->setCacheValue('ruleTriggers', $ruleTriggers);
         });
     }
+
+
 
 
 }
