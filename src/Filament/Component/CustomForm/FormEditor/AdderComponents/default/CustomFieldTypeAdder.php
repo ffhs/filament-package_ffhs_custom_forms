@@ -44,7 +44,6 @@ private static function getCustomFieldAddActionLabel(CustomFieldType $type):Html
         $actions = [];
         foreach ($this->getTypes() as $type) {
             /**@var CustomFieldType $type */
-            // $modalWidth  = CustomFieldEditModal::getEditCustomFormActionModalWith(["type" => $type::identifier()]);
 
             $actions[] = DragDropActions::make([
                 Action::make("add_" . $type::identifier() . "_action")
@@ -64,6 +63,6 @@ private static function getCustomFieldAddActionLabel(CustomFieldType $type):Html
                     }),
             ])->dragDropGroup('custom_fields');
         }
-        return [Group::make($actions)->columns()];
+        return [Group::make($actions)->columns(["2xl"=>2, "md"=>1])];
     }
 }
