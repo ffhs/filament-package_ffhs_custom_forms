@@ -51,7 +51,7 @@ class RuleEditor extends Group
                    return "Regel (".$triggers . "T : ".$event."E)"; //ToDo Translate
                })
                ->dragDropGroup('rules')
-               ->columns(3)
+               ->columns(["2xl"=>3, "md"=>2])
                ->gridSize(1)
                ->itemActions(fn()=> [
                    $this->getRemoveAction(),
