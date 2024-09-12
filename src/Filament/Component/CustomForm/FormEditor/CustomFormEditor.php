@@ -27,6 +27,7 @@ class CustomFormEditor extends Component {
 
         $this->schema([
             Tabs::make()
+                ->extraAttributes(["class" => "overflow-y-auto scroll-smooth"])
                 ->columnSpanFull()
                 ->tabs([
                     Tab::make("Formular") //ToDo Translate
