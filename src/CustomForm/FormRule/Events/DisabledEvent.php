@@ -12,15 +12,23 @@ use Filament\Infolists\Components\Component as InfolistComponent;
 
 class DisabledEvent extends IsPropertyOverwriteEvent
 {
+    protected $property ="isDisabled";
     public static function identifier(): string {
         return "disabled_event";
     }
     protected function property(): string
     {
-        return "isDisabled";
+        return $this->property;
     }
     protected function dominatingSide(): bool
     {
         return false;
     }
+
+    public function handleAfterRenderInfolist(Closure $triggers, array $arguments, InfolistComponent  &$component, RuleEvent $rule): InfolistComponent
+    {
+        $this->property = "isHidden";
+        return parent::handleAfterRenderInfolist($triggers, $arguments, $component, $rule);
+    }
+
 }

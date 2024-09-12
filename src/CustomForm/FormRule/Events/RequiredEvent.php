@@ -23,4 +23,10 @@ class RequiredEvent extends IsPropertyOverwriteEvent
     {
         return false;
     }
+
+    public function handleAfterRenderInfolist(Closure $triggers, array $arguments, InfolistComponent  &$component, RuleEvent $rule): InfolistComponent
+    {
+        return $component;
+    }
+
 }
