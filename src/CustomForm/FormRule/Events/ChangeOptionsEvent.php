@@ -40,7 +40,7 @@ use ReflectionClass;
                             if(empty($title)) $title = $record?->short_title ;
                             if(empty($title)) $title = "?";
 
-                            $output[$title] = [$field->identifier => $field->name??" "];
+                            $output[$title][$field->identifier] = $field->name??" ";
                         });
 
                     return $output;
