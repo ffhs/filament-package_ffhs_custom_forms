@@ -35,12 +35,11 @@ interface CachedModel
 
     public function getResultCached($name): mixed;
     public function getRelationCached($name): mixed;
-    public function getBelongsToCached($name): mixed;
+
     public function isPropertyCached($name): bool;
 
 
 
-    public function getCachedBelongsTo(): array;
     public function getCachedRelations(): array;
     public function getCachedResults(): array;
 
