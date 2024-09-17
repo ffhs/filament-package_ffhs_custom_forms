@@ -11,6 +11,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Concerns\EntanglesStateWithSingularRelationship;
 use Filament\Forms\Components\Contracts\CanEntangleWithSingularRelationships;
+use Filament\Forms\Components\Repeater;
 use Illuminate\Database\Eloquent\Model;
 
 class EmbeddedCustomFormEditor extends Component implements CanEntangleWithSingularRelationships
@@ -54,13 +55,13 @@ class EmbeddedCustomFormEditor extends Component implements CanEntangleWithSingu
         });
     }
 
-    public function getCachedExistingRecord(): ?Model
+ /*   public function getCachedExistingRecord(): ?Model
     {
         //Replace it with cached
         $forginkey = $this->getRelationship()->getForeignKeyName();
         $value =  $this->getRelationship()->getChild()->$forginkey;
         $onwerKey = $this->getRelationship()->getOwnerKeyName();
         return CustomForm::cached($value,$onwerKey);
-    }
+    }*/
 
 }

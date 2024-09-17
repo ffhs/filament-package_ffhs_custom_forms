@@ -3,6 +3,7 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\Helping\Caching;
 
 use Closure;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -40,6 +41,21 @@ trait HasCacheModel
         parent::__construct($attributes);
         $this->setToDefaultCaching();
     }
+
+
+    protected static function booted()
+    {
+        parent::booted();
+        self::created(function($model){
+            self::addToModelCache($model);
+        });
+
+        self::updated(function($model){
+            self::addToModelCache($model);
+        });
+    }
+
+
 
     protected function setToDefaultCaching(): static{
         $this->useCache = $this->getDefaultCaching();
@@ -105,16 +121,18 @@ trait HasCacheModel
         return (new static())->getTable(). "_cached_list";
     }
 
-    public static function addToModelCache(Collection|CachedModel $toAdd): Collection|CachedModel {
+    public static function addToModelCache(Collection|CachedModel $toAdd): void{
         $cachedList = static::getModelCache();
         if(is_null($cachedList)) $cachedList = collect();
-        if($toAdd instanceof Collection) $cachedList =
-            $cachedList->merge($toAdd->whereNotIn("id",$cachedList->pluck("id")));
-        else if(!in_array($toAdd->id, $cachedList->pluck("id")->toArray())) $cachedList = $cachedList->add($toAdd);
+        if($toAdd instanceof Collection) $cachedList = $cachedList->merge($toAdd->whereNotIn("id",$cachedList->pluck("id")));
+        else{
+            if($cachedList->pluck("id")->contains($toAdd->id))
+                $cachedList = $cachedList->filter(fn(Model $model) =>$model->id !=  $toAdd->id);
+
+            $cachedList = $cachedList->add($toAdd);
+        }
 
         Cache::set(static::getModelCacheKey(), $cachedList, self::getCacheDuration());
-
-        return $toAdd;
     }
 
 

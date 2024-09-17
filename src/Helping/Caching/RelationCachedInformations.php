@@ -2,8 +2,8 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Helping\Caching;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Collection;
 
 class RelationCachedInformations
 {
@@ -43,6 +43,7 @@ class RelationCachedInformations
         $ids = $this->getIds();
         $cached = $emptyModel::getModelCache()->whereIn("id", $ids);
 
+        $cached = Collection::make($cached);
         if($cached->count() == sizeof($ids)) return $this->isCollection() ? $cached: $cached->first();
 
         //Get the missing models

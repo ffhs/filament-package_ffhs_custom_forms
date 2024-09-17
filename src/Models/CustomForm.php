@@ -119,7 +119,6 @@ class CustomForm extends Model implements CachedModel
 
 
     public function customFormAnswers(): HasMany {
-
         return $this->hasMany(CustomFormAnswer::class);
     }
 
@@ -179,9 +178,9 @@ class CustomForm extends Model implements CachedModel
             function(){
                 $customFields = $this->customFields()->get();
 
-                $this->cacheFieldOptions($customFields);
-                $this->cacheGeneralFields($customFields);
                 $this->cacheTemplatesAndTemplatesFields($customFields);
+                $this->cacheGeneralFields($customFields);
+                $this->cacheFieldOptions($customFields);
                 $this->cacheFormRules($customFields);
 
                 CustomField::addToModelCache($customFields);
@@ -192,9 +191,33 @@ class CustomForm extends Model implements CachedModel
 
     protected function cacheGeneralFields(Collection &$customFields): void
     {
-        $generalFieldIds = $customFields->whereNotNull("general_field_id")->pluck("general_field_id");
-        $generalFields = GeneralField::query()->whereIn("id", $generalFieldIds)->get();
+        $generalFieldForms = GeneralFieldForm::query()
+            ->where("custom_form_identifier", $this->custom_form_identifier)
+            ->get();
+
+        if(empty($generalFieldForms)) $generalFields = collect();
+        else $generalFields = GeneralField::query()
+                ->whereIn("id", $generalFieldForms->pluck("general_field_id"))
+                ->get();
+
+
         GeneralField::addToModelCache($generalFields);
+
+        $formIds = $customFields->whereNotNull("template_id")->pluck("template_id")->add($this->id);
+        $forms = CustomForm::getModelCache()->whereIn("id", $formIds);
+
+
+        $customFieldsWithGenField = $customFields->whereNotNull("general_field_id");
+
+        $forms ->each(function (CustomForm $form) use ($customFieldsWithGenField): void {
+                $genIds = $customFieldsWithGenField
+                    ->where("custom_form_id", $form->id)
+                    ->pluck("general_field_id")
+                    ->toArray();
+
+                $genFields = new RelationCachedInformations(GeneralField::class, $genIds);
+                $form->setCacheValue("generalFields", $genFields);
+            });
 
     }
 
