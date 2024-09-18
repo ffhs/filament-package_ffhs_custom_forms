@@ -41,7 +41,9 @@ class RelationCachedInformations
         /**@var Model|CachedModel $emptyModel **/
 
         $ids = $this->getIds();
+
         $cached = $emptyModel::getModelCache()->whereIn("id", $ids);
+        if(empty($ids)) return $this->isCollection() ? Collection::make(): null;
 
         $cached = Collection::make($cached);
         if($cached->count() == sizeof($ids)) return $this->isCollection() ? $cached: $cached->first();
