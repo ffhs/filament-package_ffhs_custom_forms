@@ -166,10 +166,10 @@ class EditCustomFormSaveHelper
         $form->cachedClear("ownedRules");
         $form->cachedClear("formRules");
 
-        RuleEvent::clearModelCache();
-        RuleTrigger::clearModelCache();
-        CustomField::clearModelCache();
-        Rule::clearModelCache();
+//        RuleEvent::clearModelCache();
+//        RuleTrigger::clearModelCache();
+//        CustomField::clearModelCache();
+//        Rule::clearModelCache();
     }
 
     private static function cleanUpCustomFieldData($fields): array
