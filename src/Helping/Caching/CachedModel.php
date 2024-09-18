@@ -17,12 +17,12 @@ interface CachedModel
 
     public static function getModelCache(): Collection;
     public static function clearModelCache(): void;
-    public static function addToModelCache(Collection|CachedModel $toAdd);
+    public static function addToModelCache(Collection|CachedModel $toAdd): void;
+    public static function removeFromModelCache(array|Collection|int $toRemove): void;
 
 
-    public function caching(bool|Closure $disable = true, bool|null|Closure $recursive = false):static;
+    public function caching(bool|Closure $disable = true):static;
     public function isCaching():bool;
-    public function isRecursiveCaching():bool|null;
     public function getDefaultCaching():bool|Closure;
 
 
