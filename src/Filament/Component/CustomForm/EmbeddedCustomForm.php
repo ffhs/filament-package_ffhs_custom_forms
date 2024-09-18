@@ -199,19 +199,19 @@ class EmbeddedCustomForm extends Component implements CanEntangleWithSingularRel
     }
 
     // f. Filament
-    public function getCachedExistingRecord(): ?Model
-    {
-        if ($this->cachedExistingRecord) return $this->cachedExistingRecord;
-
-        $parentRecord = $this->getRecord();
-        if( is_null($parentRecord)) return null;
-        $record = Cache::remember($parentRecord::class. "-". $parentRecord->id . "-customFormAnswerCachedModel-" . $this->relationship,
-            config('ffhs_custom_forms.cache_duration'),
-            fn() => $this->getRelationship()?->getResults()
-        );
-
-        if (! $record?->exists) return null;
-
-        return $this->cachedExistingRecord = $record;
-    }
+//    public function getCachedExistingRecord(): ?Model
+//    {
+//        if ($this->cachedExistingRecord) return $this->cachedExistingRecord;
+//
+//        $parentRecord = $this->getRecord();
+//        if( is_null($parentRecord)) return null;
+//        $record = Cache::remember($parentRecord::class. "-". $parentRecord->id . "-customFormAnswerCachedModel-" . $this->relationship,
+//            config('ffhs_custom_forms.cache_duration'),
+//            fn() => $this->getRelationship()?->getResults()
+//        );
+//
+//        if (! $record?->exists) return null;
+//
+//        return $this->cachedExistingRecord = $record;
+//    }
 }

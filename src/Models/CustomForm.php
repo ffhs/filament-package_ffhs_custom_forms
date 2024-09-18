@@ -3,6 +3,8 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\Models;
 
 use Barryvdh\Debugbar\Facades\Debugbar;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomOption\CustomOptionType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormConfiguration\DynamicFormConfiguration;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\Caching\CachedModel;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\Caching\HasCacheModel;
@@ -48,7 +50,6 @@ class CustomForm extends Model implements CachedModel
     {
         parent::boot();
     }
-
 
     protected $fillable = [
         'custom_form_identifier',
@@ -117,38 +118,13 @@ class CustomForm extends Model implements CachedModel
         return new (DynamicFormConfiguration::getFormConfigurationClass($this->custom_form_identifier))();
     }
 
-
     public function customFormAnswers(): HasMany {
-
         return $this->hasMany(CustomFormAnswer::class);
     }
-
-
 
     public function generalFields(): BelongsToMany {
         return $this->belongsToMany(GeneralField::class, "custom_fields","custom_form_id","general_field_id");
     }
-
-   /* public function customFieldInLayout(): HasMany {
-
-        $subQueryAlLayouts = CustomField::query()
-            ->select('form_position','layout_end_position')
-            ->where("custom_form_id", $this->id)
-            ->where("layout_end_position","!=", null);
-
-
-        $query = $this->hasMany(CustomField::class)
-            ->whereNotIn("id",
-                $this->hasMany(CustomField::class)
-                    ->select("id")
-                    ->rightJoinSub($subQueryAlLayouts, 'sub', function ($join) {
-                        $join->on('custom_fields.form_position', '>', 'sub.form_position')
-                        ->on('custom_fields.form_position', '<=', 'sub.layout_end_position');
-                    })
-            );
-
-        return $query;
-    }*/
 
     public static function getTemplateTypesToAdd (string|DynamicFormConfiguration $formType):Collection {
         if($formType instanceof DynamicFormConfiguration)  $formType = $formType::identifier();
@@ -166,25 +142,24 @@ class CustomForm extends Model implements CachedModel
         return $this->customFields->where("custom_form_id", $this->id);
     }
 
-  /*  public function cachedCustomField(int $customFieldId): CustomField|null {
-        return $this->customFields->firstWhere("id",$customFieldId);
-    }*/
-
-
-
     public function cachedCustomFields(): RelationCachedInformations|Collection {
+
         $cacheKey = $this->getCacheKeyForAttribute("customFields");
         return Cache::remember($cacheKey,
             static::getCacheDuration(),
             function(){
+
                 $customFields = $this->customFields()->get();
 
-                $this->cacheFieldOptions($customFields);
-                $this->cacheGeneralFields($customFields);
-                $this->cacheTemplatesAndTemplatesFields($customFields);
-                $this->cacheFormRules($customFields);
-
                 CustomField::addToModelCache($customFields);
+
+                $this->cacheTemplatesAndTemplatesFields($customFields);
+
+                $this->cacheGeneralFields($customFields);
+
+                $this->cacheFieldOptions($customFields);
+
+                $this->cacheFormRules($customFields);
 
                 return new RelationCachedInformations(CustomField::class, $customFields->pluck("id")->toArray());
             });
@@ -192,9 +167,33 @@ class CustomForm extends Model implements CachedModel
 
     protected function cacheGeneralFields(Collection &$customFields): void
     {
-        $generalFieldIds = $customFields->whereNotNull("general_field_id")->pluck("general_field_id");
-        $generalFields = GeneralField::query()->whereIn("id", $generalFieldIds)->get();
+        $generalFieldForms = GeneralFieldForm::query()
+            ->where("custom_form_identifier", $this->custom_form_identifier)
+            ->get();
+
+        if(empty($generalFieldForms)) $generalFields = collect();
+        else $generalFields = GeneralField::query()
+                ->whereIn("id", $generalFieldForms->pluck("general_field_id"))
+                ->get();
+
+
         GeneralField::addToModelCache($generalFields);
+
+        $formIds = $customFields->whereNotNull("template_id")->pluck("template_id")->add($this->id);
+        $forms = CustomForm::getModelCache()->whereIn("id", $formIds);
+
+
+        $customFieldsWithGenField = $customFields->whereNotNull("general_field_id");
+
+        $forms ->each(function (CustomForm $form) use ($customFieldsWithGenField): void {
+                $genIds = $customFieldsWithGenField
+                    ->where("custom_form_id", $form->id)
+                    ->pluck("general_field_id")
+                    ->toArray();
+
+                $genFields = new RelationCachedInformations(GeneralField::class, $genIds);
+                $form->setCacheValue("generalFields", $genFields);
+            });
 
     }
 
@@ -204,27 +203,32 @@ class CustomForm extends Model implements CachedModel
         $info = DB::table("option_custom_field")
             ->whereIn("custom_field_id", $customFields->pluck("id"))->get();
 
-
+        //Cache Options Relations
         if (empty($info)){
-            $customFields->each(function (CustomField $customField) {
+            foreach ($customFields as $customField) {
+                if(!($customField->getType() instanceof CustomOptionType)) continue;
                 $options = new RelationCachedInformations(CustomOption::class, []);
                 $customField->setCacheValue('customOptions', $options);
-            });
+            }
+            return;
         }
+
+        //Cache Options
         $fieldOptions = CustomOption::query()
                 ->whereIn("id", $info->pluck("custom_option_id"))
                 ->get();
-
         CustomOption::addToModelCache($fieldOptions);
 
-        $customFields->each(function (CustomField $customField) use ($info, $fieldOptions) {
-            $options = $fieldOptions
-                    ->whereIn("id", $info->where("custom_field_id", $customField->id)
-                        ->pluck("custom_option_id"));
+        $fieldGrouped = $info->groupBy("custom_field_id");
 
-            $options = new RelationCachedInformations(CustomOption::class, $options->pluck("id")->toArray());
+        //Cache Options Relations
+        foreach ($customFields as $customField) {
+            if(!($customField->getType() instanceof CustomOptionType)) continue;
+            if($fieldGrouped->has($customField->id)) $optionIds = $fieldGrouped[$customField->id]->pluck("custom_option_id")->toArray();
+            else $optionIds =  [];
+            $options = new RelationCachedInformations(CustomOption::class, $optionIds);
             $customField->setCacheValue('customOptions', $options);
-        });
+        }
     }
 
 
@@ -235,27 +239,28 @@ class CustomForm extends Model implements CachedModel
 
         if(sizeof($templateIds) == 0) return;
 
-        $templates = CustomForm::query()->whereIn("id", $templateIds)->get(); //To cache the Templates
+        $templates = CustomForm::query()->whereIn("id", $templateIds)->get()->add($this); //To cache the Templates
         CustomForm::addToModelCache($templates);
 
-        $templates->each(function (CustomForm $customForm) use ($customFields) {
-            $fields = $customFields->where("custom_form_id", $customForm->id);
-            CustomField::addToModelCache($fields);
-            $fieldRelations = new RelationCachedInformations(CustomField::class, $fields->pluck("id")->toArray());
-            $customForm->setCacheValue("customFields", $fieldRelations);
+
+        $fieldGroupByForm = $customFields->groupBy("custom_form_id");
+        foreach ($fieldGroupByForm as $formId => $fields){
+            $customForm = $templates->firstWhere("id", $formId);
+
+            $fieldIds = $fields->pluck("id")->toArray();
+            $fieldRelations = new RelationCachedInformations(CustomField::class, $fieldIds);
             $customForm->setCacheValue("ownedFields", $fieldRelations);
-        });
+            if($formId != $this->id) $customForm->setCacheValue("customFields", $fieldRelations);
+        }
+
     }
 
 
     protected function cacheFormRules(Collection $customFields): void
     {
-
-        $formRules = FormRule::query()
-            ->whereIn("custom_form_id", $customFields->whereNotNull("template_id")->pluck("template_id"))
-            ->orWhere("custom_form_id", $this->id);
+        $formIds = $customFields->whereNotNull("template_id")->pluck("template_id")->add($this->id);
+        $formRules = FormRule::query()->whereIn("custom_form_id", $formIds);
         $rules = Rule::query()->whereIn("id", $formRules->select("rule_id"))->get();
-
 
         //Cache FormRules
         $this->setCacheValue("rules", $rules);
@@ -271,18 +276,20 @@ class CustomForm extends Model implements CachedModel
         RuleEvent::addToModelCache($events);
         RuleTrigger::addToModelCache($triggers);
 
-        $rules->each(function (Rule $rule) use ($events, $triggers) {
-            $ruleEvents = $events->where("rule_id", $rule->id);
-            $ruleTriggers = $triggers->where("rule_id", $rule->id);
 
-            RuleEvent::addToModelCache($ruleEvents);
+        $groupedEvents =  $events->groupBy("rule_id");
+        $groupedTriggers =  $triggers->groupBy("rule_id");
+        foreach ($groupedEvents as $ruleId => $ruleEvents){
+            $rule = $rules->firstWhere("id", $ruleId);
             $ruleEvents = new RelationCachedInformations(RuleEvent::class, $ruleEvents->pluck("id")->toArray());
-            RuleTrigger::addToModelCache($ruleTriggers);
-            $ruleTriggers = new RelationCachedInformations(RuleTrigger::class, $ruleTriggers->pluck("id")->toArray());
-
             $rule->setCacheValue('ruleEvents', $ruleEvents);
+        }
+
+        foreach ($groupedTriggers as $ruleId => $ruleTriggers){
+            $rule = $rules->firstWhere("id", $ruleId);
+            $ruleTriggers = new RelationCachedInformations(RuleTrigger::class, $ruleTriggers->pluck("id")->toArray());
             $rule->setCacheValue('ruleTriggers', $ruleTriggers);
-        });
+        }
     }
 
 

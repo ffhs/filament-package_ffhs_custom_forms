@@ -17,12 +17,12 @@ interface CachedModel
 
     public static function getModelCache(): Collection;
     public static function clearModelCache(): void;
-    public static function addToModelCache(Collection|CachedModel $toAdd);
+    public static function addToModelCache(Collection|CachedModel $toAdd): void;
+    public static function removeFromModelCache(array|Collection|int $toRemove): void;
 
 
-    public function caching(bool|Closure $disable = true, bool|null|Closure $recursive = false):static;
+    public function caching(bool|Closure $disable = true):static;
     public function isCaching():bool;
-    public function isRecursiveCaching():bool|null;
     public function getDefaultCaching():bool|Closure;
 
 
@@ -35,12 +35,11 @@ interface CachedModel
 
     public function getResultCached($name): mixed;
     public function getRelationCached($name): mixed;
-    public function getBelongsToCached($name): mixed;
+
     public function isPropertyCached($name): bool;
 
 
 
-    public function getCachedBelongsTo(): array;
     public function getCachedRelations(): array;
     public function getCachedResults(): array;
 
