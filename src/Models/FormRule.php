@@ -19,9 +19,9 @@ class FormRule extends Model implements CachedModel
 {
     use HasCacheModel;
 
-    protected array $cachedBelongsTo = [
-        "rule" => ['rule_id', 'id'],
-        "customForm" => ['custom_form_id', 'id'],
+    protected array $cachedRelations = [
+        "rule",
+        "customForm",
     ];
 
     protected $fillable = [

@@ -21,9 +21,10 @@ class RuleTrigger extends Model implements CachedModel
 {
     use HasCacheModel;
 
-    protected array $cachedBelongsTo =[
-        'rule' => ['rule_id' => 'id']
+    protected array $cachedRelations =[
+        'rule',
     ];
+
 
     protected $fillable = [
         'rule_id',

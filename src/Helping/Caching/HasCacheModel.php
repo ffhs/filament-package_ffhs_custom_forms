@@ -15,11 +15,6 @@ trait HasCacheModel
 {
 
     /**
-     * "relation" => ["local_key, "key"]
-     *IMPORTANT: $cachedRelations for 1:1
-     *  protected array $cachedBelongsTo = [];
-     *
-     * "relation name"
      * protected static array $cacheWith = [];
      *  protected static bool $defaultCaching = false; <= to Default disabling Caching
      *
@@ -29,7 +24,6 @@ trait HasCacheModel
      *
      * protected array $defaultCaching
      *  protected array $cachedResults = [];
-     *
      * **/
 
     private bool|Closure $useCache;

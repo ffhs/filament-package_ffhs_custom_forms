@@ -54,15 +54,11 @@ class CustomField extends ACustomField implements NestingObject , Identifier
     ];
 
 
-    protected array $cachedBelongsTo = [
-        "customForm" => ["custom_form_id", "id"],
-        "generalField" => ["general_field_id", "id"],
-        "template" => ["template_id", "id"],
-    ];
-
-
     protected array $cachedRelations = [
         'customOptions',
+        "customForm",
+        "generalField",
+        "template",
     ];
 
     public function __get($key) {

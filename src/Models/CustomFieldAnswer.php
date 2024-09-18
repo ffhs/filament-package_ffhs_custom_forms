@@ -34,13 +34,11 @@ class CustomFieldAnswer extends Model implements CachedModel
         'answer'=>'array',
     ];
 
-    protected array $cachedBelongsTo = [
-        "customField" => ["custom_field_id", "id"],
-        "customFormAnswer" => ["custom_form_answer_id", "id"],
-    ];
 
     protected array $cachedRelations = [
-        'customForm'
+        'customForm',
+        "customField",
+        "customFormAnswer",
     ];
 
 
