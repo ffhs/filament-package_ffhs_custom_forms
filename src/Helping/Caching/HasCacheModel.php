@@ -2,6 +2,7 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Helping\Caching;
 
+use Barryvdh\Debugbar\Facades\Debugbar;
 use Closure;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -124,6 +125,7 @@ trait HasCacheModel
     public static function addToModelCache(Collection|CachedModel $toAdd): void{
         $cachedList = static::getModelCache();
         if(is_null($cachedList)) $cachedList = collect();
+        Debugbar::startMeasure("addCache");
         if($toAdd instanceof Collection) $cachedList = $cachedList->merge($toAdd->whereNotIn("id",$cachedList->pluck("id")));
         else{
             if($cachedList->pluck("id")->contains($toAdd->id))
@@ -131,6 +133,7 @@ trait HasCacheModel
 
             $cachedList = $cachedList->add($toAdd);
         }
+        Debugbar::stopMeasure("addCache");
 
         Cache::set(static::getModelCacheKey(), $cachedList, self::getCacheDuration());
     }
