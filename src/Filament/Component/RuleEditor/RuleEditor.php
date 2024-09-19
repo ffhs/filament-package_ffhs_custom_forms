@@ -86,7 +86,7 @@ class RuleEditor extends Group
             ->label("Auslöser")
             ->deepColor(1)
             ->orderAttribute('order')
-            ->dragDropGroup('triggers')
+            ->dragDropGroup(fn() => uniqid())
             ->itemActions(fn()=>[
                 $this->getRemoveAction(),
                 $this->getTriggerInvertAction()
@@ -229,7 +229,7 @@ class RuleEditor extends Group
     {
         return DragDropComponent::make("events")
             ->label("Ausführung")
-            ->dragDropGroup('events')
+            ->dragDropGroup(fn() => uniqid())
             ->deepColor(1)
             ->orderAttribute('order')
             ->itemLabel(fn($itemState) => empty($itemState["type"])? "": $this->getEvent($itemState['type'])->getDisplayName())
