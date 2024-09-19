@@ -93,8 +93,8 @@ class EmbeddedAnswerInfolist extends Component
     }
 
 
-    private function getDefaultInfolistSchema(EmbeddedAnswerInfolist $component): array {
-        return CustomFormRender::generateInfoListSchema($component->getAnswer(), $component->getViewMode());
+    private function getDefaultInfolistSchema(): array {
+        return CustomFormRender::generateInfoListSchema($this->getAnswer(), $this->getViewMode());
     }
 
 
