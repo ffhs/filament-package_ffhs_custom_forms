@@ -123,7 +123,7 @@ trait HasCacheModel
         if(is_null($value)) return null;
 
         $output = static::query()->where($attribute, $value)->with(array_merge(static::getCacheWith(), $with))->first();
-        static::addToModelCache($output);
+        if($output) static::addToModelCache($output);
         return $output;
     }
 
