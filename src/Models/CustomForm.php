@@ -22,7 +22,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
-use League\Uri\UriTemplate\Template;
 use Spatie\Translatable\HasTranslations;
 
 /**
