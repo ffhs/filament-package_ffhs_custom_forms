@@ -73,6 +73,7 @@ class CustomFormRender
     public static function render(int $indexOffset, Collection $customFields, Closure &$render, string $viewMode, CustomForm $customForm): array {
         if($customFields->isEmpty()) return [];
 
+
         $rules = $customForm->rules;
 
         //Rule before render
@@ -81,11 +82,15 @@ class CustomFormRender
         });
 
         //Render
+        //ToDo optimize its 19% of the time
+//        Debugbar::startMeasure("test1");
         $renderOutput = self::renderRaw($indexOffset, $customFields, $render,$viewMode, $customForm);
         /**@var Collection $renderedComponent*/
         $renderedComponents = $renderOutput[2];
+//        Debugbar::stopMeasure("test1");
 
-        //TriggerPreparation (maintain for live attribute)
+
+        //TriggerPreparation (maintain for live attribute) ca 30ms
         $rules
             ->map(fn(Rule $rule) => $rule->ruleTriggers)
             ->flatten(1)
@@ -95,12 +100,14 @@ class CustomFormRender
                 $renderedComponents = $trigger->getType()->prepareComponents($renderedComponents, $trigger);
             });
 
-        $customFields = $customForm->customFields;
+
+        $customFields = $customForm->customFields->mapWithKeys(fn(CustomField $field) => [$field->identifier => $field]);
 
         //Rule after Render
         $rules->each(function(Rule $rule) use ($customForm, $customFields, &$renderedComponents) {
-            $renderedComponents = $rule->handle(["action" => "after_render", "custom_fields" => $customFields], $renderedComponents);
+          $renderedComponents = $rule->handle(["action" => "after_render", "custom_fields" => $customFields], $renderedComponents);
         });
+
 
         return $renderOutput;
     }
