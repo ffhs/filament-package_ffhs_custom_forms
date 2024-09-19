@@ -222,9 +222,13 @@ class CustomForm extends Model implements CachedModel
 
         //Cache Options Relations
         foreach ($customFields as $customField) {
-            if(!($customField->getType() instanceof CustomOptionType)) continue;
-            if($fieldGrouped->has($customField->id)) $optionIds = $fieldGrouped[$customField->id]->pluck("custom_option_id")->toArray();
+            if(!is_subclass_of($customField->getTypeClass() , CustomOptionType::class)) continue;
+
+            if($fieldGrouped->has($customField->id))
+                $optionIds = $fieldGrouped[$customField->id]->pluck("custom_option_id")->toArray();
             else $optionIds =  [];
+
+            //$optionIds = $fieldGrouped[$customField->id]->pluck("custom_option_id")->toArray();
             $options = new RelationCachedInformations(CustomOption::class, $optionIds);
             $customField->setCacheValue('customOptions', $options);
         }
