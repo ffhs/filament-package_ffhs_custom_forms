@@ -33,7 +33,7 @@ class CustomFormRender
     public static function generateInfoListSchema(CustomFormAnswer $formAnswer, string $viewMode):array {
         $form = CustomForm::cached($formAnswer->custom_form_id);
         $customFields = $form->getOwnedFields();
-        $fieldAnswers = $formAnswer->cachedAnswers();
+        $fieldAnswers = $formAnswer->customFieldAnswers;
 
         $render= self::getInfolistRender($viewMode,$form,$formAnswer, $fieldAnswers);
         $customViewSchema = self::render(0,$customFields,$render, $viewMode, $formAnswer->customForm)[0];

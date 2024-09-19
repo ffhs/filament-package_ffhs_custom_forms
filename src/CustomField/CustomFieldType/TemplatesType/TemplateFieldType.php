@@ -96,7 +96,7 @@ final class TemplateFieldType extends CustomFieldType
 
         // Mapping and combining filtered field answers
         $fieldAnswersIdentify = CustomFormSaveHelper::mapFields(
-            $formAnswerer->cachedAnswers(),
+            $formAnswerer->customFieldAnswers,
             fn(CustomFieldAnswer $answer) => $answer->customField->identifier,
             fn(CustomFieldAnswer $answer) => $answer->customField->custom_form_id == $templateId
         );

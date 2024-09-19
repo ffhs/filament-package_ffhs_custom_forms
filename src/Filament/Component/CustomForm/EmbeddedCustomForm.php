@@ -74,7 +74,7 @@ class EmbeddedCustomForm extends Component implements CanEntangleWithSingularRel
             $relationshipName = $component->getRelationshipName();
             $answer = $record->$relationshipName;
             $form = $answer->customForm;
-            if($answer->cachedAnswers()->count() == 0) return $form->getFormConfiguration()::displayCreateMode();
+            if($answer->customFieldAnswers->count() == 0) return $form->getFormConfiguration()::displayCreateMode();
             else return $form->getFormConfiguration()::displayEditMode();
 
         };
