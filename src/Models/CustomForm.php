@@ -240,19 +240,21 @@ class CustomForm extends Model implements CachedModel
         if(sizeof($templateIds) == 0) return;
 
         $templates = CustomForm::query()->whereIn("id", $templateIds)->get()->add($this); //To cache the Templates
-        CustomForm::addToModelCache($templates);
 
+        $templates = $templates->keyBy("id");
 
         $fieldGroupByForm = $customFields->groupBy("custom_form_id");
         foreach ($fieldGroupByForm as $formId => $fields){
-            $customForm = $templates->firstWhere("id", $formId);
+            $customForm = $templates[$formId];
 
             $fieldIds = $fields->pluck("id")->toArray();
+
             $fieldRelations = new RelationCachedInformations(CustomField::class, $fieldIds);
             $customForm->setCacheValue("ownedFields", $fieldRelations);
             if($formId != $this->id) $customForm->setCacheValue("customFields", $fieldRelations);
         }
 
+        CustomForm::addToModelCache($templates);
     }
 
 

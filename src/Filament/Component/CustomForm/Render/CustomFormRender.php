@@ -2,7 +2,6 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\Render;
 
-use Barryvdh\Debugbar\Facades\Debugbar;
 use Closure;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\LayoutType\CustomLayoutType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\TemplatesType\TemplateFieldType;
@@ -82,12 +81,10 @@ class CustomFormRender
         });
 
         //Render
-        //ToDo optimize its 19% of the time
-//        Debugbar::startMeasure("test1");
+        //ToDo optimize its 17% of the time
         $renderOutput = self::renderRaw($indexOffset, $customFields, $render,$viewMode, $customForm);
         /**@var Collection $renderedComponent*/
         $renderedComponents = $renderOutput[2];
-//        Debugbar::stopMeasure("test1");
 
 
         //TriggerPreparation (maintain for live attribute) ca 30ms
@@ -116,20 +113,18 @@ class CustomFormRender
 
     private static function renderRaw(int $indexOffset, Collection $customFields, Closure &$render, string $viewMode, CustomForm $form): array {
         $customFormSchema = [];
-        $preparedFields = [];
-        $customFields->each(function(CustomField $field) use (&$preparedFields){
-            $preparedFields[$field->form_position] = $field;
-        });
+        $preparedFields = $customFields->keyBy("form_position");
+//        $customFields->each(function(CustomField $field) use (&$preparedFields){
+//            $preparedFields[$field->form_position] = $field;
+//        });
 
         $allComponents = [];
 
-        for($index = $indexOffset+1; $index<= $customFields->count()+$indexOffset; $index++){
+        for($formPossition = $indexOffset+1; $formPossition<= $customFields->count()+$indexOffset; $formPossition++){
 
             /** @var CustomField $customField*/
-            $customField =  $preparedFields[$index];
-            $parameters = [
-                "viewMode"=>$viewMode
-            ];
+            $customField =  $preparedFields[$formPossition];
+            $parameters = ["viewMode"=>$viewMode];
 
             if(($customField->getType() instanceof CustomLayoutType)){
                 $endLocation = $customField->layout_end_position;
@@ -142,16 +137,18 @@ class CustomFormRender
                 $fieldRenderData = collect($fieldRenderData);
 
                 //Render Schema Input
-                $renderedOutput = self::renderRaw($index, $fieldRenderData, $render, $viewMode, $form);
+                $renderedOutput = self::renderRaw($formPossition, $fieldRenderData, $render, $viewMode, $form);
+
                 //Get Layout Schema
                 $parameters = array_merge([
                     "customFieldData" => $fieldRenderData,
                     "rendered" => $renderedOutput[0],
-                ]);
+                ],$parameters);
 
                 //Set Index
-                $index = $renderedOutput[1] - 1;
+                $formPossition = $renderedOutput[1] - 1;
                 $allComponents = array_merge($allComponents, $renderedOutput[2]);
+
             }
 
             if(($customField->getType() instanceof TemplateFieldType)){
@@ -161,9 +158,7 @@ class CustomFormRender
                 //Render Schema Input
                 $renderedOutput = self::renderRaw(0, $fields, $render, $viewMode, $form);
                 //Get Layout Schema
-                $parameters = array_merge([
-                    "rendered" => $renderedOutput[0],
-                ]);
+                $parameters["rendered"] = $renderedOutput[0];
 
                 $allComponents = array_merge($allComponents, $renderedOutput[2]);
             }
@@ -178,7 +173,7 @@ class CustomFormRender
         }
 
 
-        return [$customFormSchema, $index, $allComponents];
+        return [$customFormSchema, $formPossition, $allComponents];
     }
 
 
