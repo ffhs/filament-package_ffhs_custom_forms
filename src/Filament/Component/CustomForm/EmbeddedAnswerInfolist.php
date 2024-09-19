@@ -81,7 +81,7 @@ class EmbeddedAnswerInfolist extends Component
 
 
 
-    private function getSplitPosInfolistSchema(): array {
+    protected function getSplitPosInfolistSchema(): array {
         [$beginPos, $endPos] = $this->getPoseSpilt();
 
         return SplitCustomFormRender::renderInfolistPose(
@@ -93,12 +93,12 @@ class EmbeddedAnswerInfolist extends Component
     }
 
 
-    private function getDefaultInfolistSchema(EmbeddedAnswerInfolist $component): array {
-        return CustomFormRender::generateInfoListSchema($component->getAnswer(), $component->getViewMode());
+    protected function getDefaultInfolistSchema(): array {
+        return CustomFormRender::generateInfoListSchema($this->getAnswer(), $this->getViewMode());
     }
 
 
-    private function getSplitFieldInfolistSchema(): array {
+    protected function getSplitFieldInfolistSchema(): array {
         return SplitCustomFormRender::renderInfolistFromField(
             $this->getFieldSplit(),
             $this->getAnswer(),
@@ -107,7 +107,7 @@ class EmbeddedAnswerInfolist extends Component
     }
 
 
-    private function getSplitLayoutInfolistSchema(): array {
+    protected function getSplitLayoutInfolistSchema(): array {
         return SplitCustomFormRender::renderInfoListLayoutType(
             $this->getLayoutTypeSplit(),
             $this->getAnswer(),
