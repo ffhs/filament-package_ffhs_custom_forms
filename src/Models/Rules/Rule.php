@@ -3,6 +3,7 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\Models\Rules;
 
 use Barryvdh\Debugbar\Facades\Debugbar;
+use Closure;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\Caching\CachedModel;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\Caching\HasCacheModel;
 use Illuminate\Database\Eloquent\Model;
@@ -55,8 +56,7 @@ class Rule extends Model implements CachedModel
     }
 
 
-    public function getTriggersCallback(mixed $target, array $arguments): \Closure
-    {
+    public function getTriggersCallback(mixed $target, array $arguments): Closure {
         return function ($extraArguments = []) use ($target, $arguments) {
             $argumentsFinal = array_merge($arguments, $extraArguments);
 

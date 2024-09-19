@@ -18,7 +18,7 @@ class SplitCustomFormRender
 
     public static function renderInfoListLayoutType(CustomLayoutType $layoutType,  CustomFormAnswer $formAnswer, string $viewMode = "default"):array {
         $customForm = CustomForm::cached($formAnswer->custom_form_id);
-        $fieldAnswers = $formAnswer->cachedAnswers();
+        $fieldAnswers = $formAnswer->customFieldAnswers;
 
         $render= CustomFormRender::getInfolistRender($viewMode,$customForm, $formAnswer,$fieldAnswers);
 

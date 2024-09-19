@@ -2,6 +2,7 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Events;
 
+use Barryvdh\Debugbar\Facades\Debugbar;
 use Closure;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\HasFormTargets;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Translations\HasRuleEventPluginTranslate;
@@ -33,8 +34,8 @@ abstract class  IsPropertyOverwriteEvent extends FormRuleEventType
     {
         if(empty($rule->data)) return $component;
         if(empty($rule->data["targets"])) return $component;
-
-        $customFieldId = $this->getCustomField($arguments)->toArray()["identifier"];
+        $getCustomField = $this->getCustomField($arguments);
+        $customFieldId = $getCustomField->toArray()["identifier"];
 
         if(in_array($customFieldId, $rule->data["targets"])) return $this->prepareComponent($component, $triggers);
         else return $component;

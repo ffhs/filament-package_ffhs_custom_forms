@@ -3,6 +3,7 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Events;
 
+use Barryvdh\Debugbar\Facades\Debugbar;
 use Closure;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\Rules\Event\EventType;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\Types\IsType;
@@ -54,9 +55,8 @@ abstract class FormRuleEventType implements EventType
 
     public function getCustomField($arguments): CustomField
     {
-        $fields = $arguments["custom_fields"]
-                ->firstWhere(fn(CustomField $field) => $field->identifier === $arguments["identifier"]);
-
+        $identifier = $arguments["identifier"];
+        $fields = $arguments["custom_fields"][$identifier];
         return  $fields;
     }
 

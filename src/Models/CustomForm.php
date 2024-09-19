@@ -22,7 +22,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
-use League\Uri\UriTemplate\Template;
 use Spatie\Translatable\HasTranslations;
 
 /**
@@ -223,9 +222,13 @@ class CustomForm extends Model implements CachedModel
 
         //Cache Options Relations
         foreach ($customFields as $customField) {
-            if(!($customField->getType() instanceof CustomOptionType)) continue;
-            if($fieldGrouped->has($customField->id)) $optionIds = $fieldGrouped[$customField->id]->pluck("custom_option_id")->toArray();
+            if(!is_subclass_of($customField->getTypeClass() , CustomOptionType::class)) continue;
+
+            if($fieldGrouped->has($customField->id))
+                $optionIds = $fieldGrouped[$customField->id]->pluck("custom_option_id")->toArray();
             else $optionIds =  [];
+
+            //$optionIds = $fieldGrouped[$customField->id]->pluck("custom_option_id")->toArray();
             $options = new RelationCachedInformations(CustomOption::class, $optionIds);
             $customField->setCacheValue('customOptions', $options);
         }
@@ -240,19 +243,21 @@ class CustomForm extends Model implements CachedModel
         if(sizeof($templateIds) == 0) return;
 
         $templates = CustomForm::query()->whereIn("id", $templateIds)->get()->add($this); //To cache the Templates
-        CustomForm::addToModelCache($templates);
 
+        $templates = $templates->keyBy("id");
 
         $fieldGroupByForm = $customFields->groupBy("custom_form_id");
         foreach ($fieldGroupByForm as $formId => $fields){
-            $customForm = $templates->firstWhere("id", $formId);
+            $customForm = $templates[$formId];
 
             $fieldIds = $fields->pluck("id")->toArray();
+
             $fieldRelations = new RelationCachedInformations(CustomField::class, $fieldIds);
             $customForm->setCacheValue("ownedFields", $fieldRelations);
             if($formId != $this->id) $customForm->setCacheValue("customFields", $fieldRelations);
         }
 
+        CustomForm::addToModelCache($templates);
     }
 
 

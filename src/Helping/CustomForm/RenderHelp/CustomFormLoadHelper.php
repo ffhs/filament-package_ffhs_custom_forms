@@ -15,7 +15,7 @@ class CustomFormLoadHelper {
        //ToDo check to Cache stuff for performance $customFields = $answerer->customForm->customFields;
 
         $formRules = $answerer->customForm->rules;
-        foreach($answerer->cachedAnswers() as $fieldAnswer){
+        foreach($answerer->customFieldAnswers as $fieldAnswer){
             /**@var CustomFieldAnswer $fieldAnswer*/
             /**@var CustomField $customField*/
             $customField = $fieldAnswer->customField;
@@ -31,12 +31,13 @@ class CustomFormLoadHelper {
     }
 
     public static function loadSplit(CustomFormAnswer $answerer, int $begin, int $end):array {
+        //ToDo Optimize
         $data = [];
 
         $customFields = $answerer->customForm->customFields;
         $formRules  = $answerer->customForm->rules;
 
-        foreach($answerer->cachedAnswers() as $fieldAnswer){
+        foreach($answerer->customFieldAnswers as $fieldAnswer){
             /**@var CustomFieldAnswer $fieldAnswer*/
             /**@var CustomField $customField*/
             $customField = $fieldAnswer->customField;
@@ -59,24 +60,10 @@ class CustomFormLoadHelper {
                 ->prepareLoadFieldData($fieldAnswer->answer);
 
 
-            $fieldData = self::runRulesForFieldData($answerer, $fieldData, $formRules);
+            $fieldData = self::runRulesForFieldData($answerer, $fieldData, $formRules); //10ms
             $data[$customField->identifier] = $fieldData;
         }
         return $data;
-
-//        $customFields = $answerer->customForm->customFields;
-//
-//        $fields = $customFields->where("form_position", ">=", $begin)->where("form_position", "<=", $end);
-//        $fields->merge($customFields->whereIn("custom_form_id", $fields->whereNotNull('template_id')->pluck("id")));
-//
-//        $identifiers = $fields->map(fn (CustomField $field) => $field->identifier)->toArray();
-//
-//        $allAnswerers =  $answerer->cachedLoadedAnswares();
-//
-//        return  array_filter($allAnswerers, function($key) use ($identifiers) {
-//            return in_array($key, $identifiers);
-//        }, ARRAY_FILTER_USE_KEY);
-
     }
 
     public static function runRulesForFieldData(CustomFormAnswer $answerer, mixed $fieldData, $formRules): mixed
