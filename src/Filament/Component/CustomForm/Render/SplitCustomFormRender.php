@@ -44,9 +44,9 @@ class SplitCustomFormRender
         //ToDo Check if it works fine ^^ $customFieldsOld = $layoutField->allCustomFieldsInLayout()->get();
 
 
-       $output = CustomFormRender::render($layoutField->form_position,$customFields,$render,$viewMode, $customForm);
-       if(empty($output)) return [];
-       return $output[0];
+        $output = CustomFormRender::render($layoutField->form_position,$customFields,$render,$viewMode, $customForm);
+        if(empty($output)) return [];
+        return $output[0];
     }
 
 

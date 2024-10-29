@@ -17,7 +17,6 @@ use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Concerns\EntanglesStateWithSingularRelationship;
 use Filament\Forms\Components\Contracts\CanEntangleWithSingularRelationships;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Cache;
 
 class EmbeddedCustomForm extends Component implements CanEntangleWithSingularRelationships
 {
@@ -32,6 +31,13 @@ class EmbeddedCustomForm extends Component implements CanEntangleWithSingularRel
     protected string $view = 'filament-forms::components.group';
     protected bool|Closure $isAutoSave;
 
+    final public function __construct(Closure|string $relationship, string|Closure $viewMode = "default")
+    {
+        $this->viewMode= $viewMode;
+        $this->isAutoSave=false;
+        $relationship = $this->evaluate($relationship);
+        $this->relationship($relationship);
+    }
 
     public static function make(Closure|string $relationship, string|Closure $viewMode= "default"): static
     {
@@ -42,29 +48,6 @@ class EmbeddedCustomForm extends Component implements CanEntangleWithSingularRel
         $static->configure();
 
         return $static;
-    }
-
-    final public function __construct(Closure|string $relationship, string|Closure $viewMode = "default")
-    {
-        $this->viewMode= $viewMode;
-        $this->isAutoSave=false;
-        $relationship = $this->evaluate($relationship);
-        $this->relationship($relationship);
-    }
-
-    protected function setUp(): void {
-        parent::setUp();
-
-        $this->label("");
-
-        $this->columns(1);
-
-        $this->setUpFormLoading();
-
-        $this->setupFormSaving();
-
-        $this->setUpAutoSaving();
-
     }
 
     public function autoViewMode(bool|Closure $autoViewMode = true):static {
@@ -79,10 +62,6 @@ class EmbeddedCustomForm extends Component implements CanEntangleWithSingularRel
 
         };
         return $this;
-    }
-
-    public function getIsAutoSave():bool {
-        return $this->evaluate($this->isAutoSave);
     }
 
     public function autoSave(bool|Closure $isAutoSave = true):static {
@@ -140,25 +119,25 @@ class EmbeddedCustomForm extends Component implements CanEntangleWithSingularRel
             );
     }
 
-
     private function getDefaultFormSchema(EmbeddedCustomForm $component): array {
         $record = $this->getCachedExistingRecord()?? $this->getRecord();
         return CustomFormRender::generateFormSchema(CustomForm::cached($record->custom_form_id), $component->getViewMode());
     }
 
-    /**
-     * @param  EmbeddedCustomForm  $component
-     * @param  Model  $record
-     * @return void
-     */
-    function saveForm(EmbeddedCustomForm $component, Model $record): void {
-        $relationshipName = $component->getRelationshipName();
-        $answer = $record->$relationshipName;
-        $formDataPath = $component->getStatePath(false);
+    protected function setUp(): void {
+        parent::setUp();
 
-        CustomFormSaveHelper::save($answer,  $component->getLivewire()->getForm('form'), path: $formDataPath);
+        $this->label("");
+
+        $this->columns(1);
+
+        $this->setUpFormLoading();
+
+        $this->setupFormSaving();
+
+        $this->setUpAutoSaving();
+
     }
-
 
     private function setUpFormLoading(): void {
 
@@ -189,6 +168,22 @@ class EmbeddedCustomForm extends Component implements CanEntangleWithSingularRel
         });
     }
 
+    public function getIsAutoSave():bool {
+        return $this->evaluate($this->isAutoSave);
+    }
+
+    /**
+     * @param  EmbeddedCustomForm  $component
+     * @param  Model  $record
+     * @return void
+     */
+    function saveForm(EmbeddedCustomForm $component, Model $record): void {
+        $relationshipName = $component->getRelationshipName();
+        $answer = $record->$relationshipName;
+        $formDataPath = $component->getStatePath(false);
+
+        CustomFormSaveHelper::save($answer,  $component->getLivewire()->getForm('form'), path: $formDataPath);
+    }
 
     private function setUpAutoSaving(): void {
         $this->afterStateUpdated(function (EmbeddedCustomForm $component, array $state, ?Model $record) {

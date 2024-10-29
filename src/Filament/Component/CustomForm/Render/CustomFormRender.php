@@ -81,7 +81,6 @@ class CustomFormRender
         });
 
         //Render
-        //ToDo optimize its 17% of the time
         $renderOutput = self::renderRaw($indexOffset, $customFields, $render,$viewMode, $customForm);
         /**@var Collection $renderedComponent*/
         $renderedComponents = $renderOutput[2];
@@ -175,9 +174,6 @@ class CustomFormRender
 
         return [$customFormSchema, $formPossition, $allComponents];
     }
-
-
-
 
 }
 

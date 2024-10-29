@@ -2,7 +2,6 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\RenderHelp;
 
-use Barryvdh\Debugbar\Facades\Debugbar;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
@@ -28,6 +27,15 @@ class CustomFormLoadHelper {
             $data[$customField->identifier] = $fieldData;
         }
         return $data;
+    }
+
+    public static function runRulesForFieldData(CustomFormAnswer $answerer, mixed $fieldData, $formRules): mixed
+    {
+        foreach ($formRules as $rule) { //ToDo repair
+            /**@var Rule $rule */
+            $fieldData = $rule->handle(["action" => "load_answerer", "custom_field_answerer" => $answerer], $fieldData);
+        }
+        return $fieldData;
     }
 
     public static function loadSplit(CustomFormAnswer $answerer, int $begin, int $end):array {
@@ -64,14 +72,5 @@ class CustomFormLoadHelper {
             $data[$customField->identifier] = $fieldData;
         }
         return $data;
-    }
-
-    public static function runRulesForFieldData(CustomFormAnswer $answerer, mixed $fieldData, $formRules): mixed
-    {
-        foreach ($formRules as $rule) { //ToDo repair
-            /**@var Rule $rule */
-            $fieldData = $rule->handle(["action" => "load_answerer", "custom_field_answerer" => $answerer], $fieldData);
-        }
-        return $fieldData;
     }
 }

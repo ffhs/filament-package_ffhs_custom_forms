@@ -92,9 +92,13 @@ trait HasCacheModel
     }
 
 
-    public static function clearModelCache(): void {
-        Cache::forget(static::getModelCacheKey());
+    public static function clearModelCache(?array $ids = null): void {
+        if(is_null($ids)) Cache::forget(static::getModelCacheKey());
+
+        $cache = static::getModelCache()->where("id", $ids);
+        Cache::set(static::getModelCacheKey(), $cache, static::getCacheDuration());
     }
+
 
     protected static function getModelCacheKey(): string {
         return (new static())->getTable(). "_cached_list";
@@ -167,8 +171,8 @@ trait HasCacheModel
 
 
     public function caching(bool|Closure $useCache = true):static{
-         $this->useCache = $useCache;
-         return $this;
+        $this->useCache = $useCache;
+        return $this;
     }
 
     public function isCaching():bool{
@@ -269,8 +273,8 @@ trait HasCacheModel
 
     protected function getOtherCachedRelation(string $name): mixed
     {
-          $cacheKey = $this->getCacheKeyForAttribute($name);
-         //if(Cache::has($cacheKey)) return Cache::get($cacheKey);
+        $cacheKey = $this->getCacheKeyForAttribute($name);
+        //if(Cache::has($cacheKey)) return Cache::get($cacheKey);
 
         return Cache::remember($cacheKey, static::getCacheDuration(), function () use ($name) {
             /**@var Relation $relation */
