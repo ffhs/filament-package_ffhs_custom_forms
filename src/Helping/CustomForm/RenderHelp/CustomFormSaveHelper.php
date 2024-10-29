@@ -33,6 +33,41 @@ class CustomFormSaveHelper {
         );
 
         self::saveWithoutPreparation($formData, $customFieldsIdentify, $fieldAnswersIdentify, $formAnswerer);
+        $formAnswerer->cachedClear("customFieldAnswers");
+    }
+
+    public static function mapFields($fields, $keyCallback, $filterCallback = null) : array {
+        if ($filterCallback)
+            $fields = $fields->filter($filterCallback);
+
+        $keys = $fields->map($keyCallback)->toArray();
+        $fieldsArray = [];
+        $fields->each(function($model) use (&$fieldsArray) {
+            $fieldsArray[] = $model;
+        });
+        return array_combine($keys, $fieldsArray);
+    }
+
+    public static function prepareFormComponents(array $customFieldsIdentify, Form $form): void {
+        $components = collect($form->getFlatComponents()); //ToDo That is sloww (Extream Sloww)
+
+        foreach ($customFieldsIdentify as $identifyKey => $customField){
+            /**@var CustomField $customField*/
+            $fieldComponent = $components->first(fn(Component $component) => !is_null($component->getKey()) && str_contains($component->getKey(),$identifyKey));
+            if(is_null($fieldComponent)) continue;
+            $customField->getType()->updateFormComponentOnSave($fieldComponent, $customField, $form, $components);
+        }
+    }
+
+    public static function getFormData(Form $form, ?string $path): array {
+        $data = $form->getRawState();
+
+        if (is_null($path)) return $data;
+
+        $pathFragments = explode('.', $path);
+        foreach ($pathFragments as $pathFragment) $data = $data[$pathFragment];
+
+        return $data;
     }
 
     public static function saveWithoutPreparation(array $formData, array $customFieldsIdentify, array $fieldAnswersIdentify,
@@ -74,41 +109,6 @@ class CustomFormSaveHelper {
 
             $type->afterAnswerFieldSave($customFieldAnswer, $fieldData, $formData);
         }
-    }
-
-
-    public static function mapFields($fields, $keyCallback, $filterCallback = null) : array {
-        if ($filterCallback)
-            $fields = $fields->filter($filterCallback);
-
-        $keys = $fields->map($keyCallback)->toArray();
-        $fieldsArray = [];
-        $fields->each(function($model) use (&$fieldsArray) {
-            $fieldsArray[] = $model;
-        });
-        return array_combine($keys, $fieldsArray);
-    }
-
-
-    public static function getFormData(Form $form, ?string $path): array {
-        $data = $form->getRawState();
-
-        if (is_null($path)) return $data;
-
-        $pathFragments = explode('.', $path);
-        foreach ($pathFragments as $pathFragment) $data = $data[$pathFragment];
-
-        return $data;
-    }
-
-    public static function prepareFormComponents(array $customFieldsIdentify, Form $form): void {
-        $components = collect($form->getFlatComponents()); //ToDo That is sloww (Extream Sloww)
-
-        foreach ($customFieldsIdentify as $identifyKey => $customField){
-            /**@var CustomField $customField*/
-            $fieldComponent = $components->first(fn(Component $component) => !is_null($component->getKey()) && str_contains($component->getKey(),$identifyKey));
-            if(is_null($fieldComponent)) continue;
-            $customField->getType()->updateFormComponentOnSave($fieldComponent, $customField, $form, $components);
-        }
+        $formAnswerer->cachedClear("customFieldAnswers");
     }
 }
