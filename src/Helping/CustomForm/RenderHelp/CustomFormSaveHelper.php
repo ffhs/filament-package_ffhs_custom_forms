@@ -33,6 +33,8 @@ class CustomFormSaveHelper {
         );
 
         self::saveWithoutPreparation($formData, $customFieldsIdentify, $fieldAnswersIdentify, $formAnswerer);
+
+        CustomFieldAnswer::clearModelCache(collect($fieldAnswersIdentify)->pluck("id")->toArray());
         $formAnswerer->cachedClear("customFieldAnswers");
     }
 
@@ -109,6 +111,5 @@ class CustomFormSaveHelper {
 
             $type->afterAnswerFieldSave($customFieldAnswer, $fieldData, $formData);
         }
-        $formAnswerer->cachedClear("customFieldAnswers");
     }
 }

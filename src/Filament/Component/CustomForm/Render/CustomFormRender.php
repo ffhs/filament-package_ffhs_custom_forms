@@ -2,7 +2,6 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\Render;
 
-use Barryvdh\Debugbar\Facades\Debugbar;
 use Closure;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\LayoutType\CustomLayoutType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\TemplatesType\TemplateFieldType;
@@ -28,39 +27,6 @@ class CustomFormRender
         return  [
             Group::make($renderOutput[0] ?? [])->columns(config("ffhs_custom_forms.default_column_count")),
         ];
-    }
-
-
-    public static function generateInfoListSchema(CustomFormAnswer $formAnswer, string $viewMode):array {
-        $form = CustomForm::cached($formAnswer->custom_form_id);
-        $customFields = $form->getOwnedFields();
-        $fieldAnswers = $formAnswer->cachedAnswers();
-
-        $render= self::getInfolistRender($viewMode,$form,$formAnswer, $fieldAnswers);
-        $customViewSchema = self::render(0,$customFields,$render, $viewMode, $formAnswer->customForm)[0];
-
-        //ToDo Manage Components
-
-        return  [
-            \Filament\Infolists\Components\Group::make($customViewSchema)->columns(config("ffhs_custom_forms.default_column_count")),
-        ];
-    }
-
-
-    public static function getInfolistRender(string $viewMode, CustomForm $form, CustomFormAnswer $formAnswer, Collection $fieldAnswers): Closure {
-        return function (CustomField $customField,  array $parameter) use ($formAnswer, $form, $viewMode, $fieldAnswers) {
-
-            /** @var CustomFormAnswer $answer*/
-            $answer = $fieldAnswers->firstWhere("custom_field_id", $customField->id);
-            if (is_null($answer)) {
-                $answer = new CustomFieldAnswer();
-                $answer->answer = null;
-                $answer->custom_field_id = $customField->id;
-                $answer->custom_form_answer_id = $formAnswer->id;
-            }
-
-            return $customField->getType()->getInfolistComponent($answer, $form, $viewMode, $parameter);
-        };
     }
 
     public static function getFormRender(string $viewMode,CustomForm $form): Closure {
@@ -104,8 +70,6 @@ class CustomFormRender
 
         return $renderOutput;
     }
-
-
 
     private static function renderRaw(int $indexOffset, Collection $customFields, Closure &$render, string $viewMode, CustomForm $form): array {
         $customFormSchema = [];
@@ -172,6 +136,37 @@ class CustomFormRender
 
 
         return [$customFormSchema, $index, $allComponents];
+    }
+
+    public static function generateInfoListSchema(CustomFormAnswer $formAnswer, string $viewMode):array {
+        $form = CustomForm::cached($formAnswer->custom_form_id);
+        $customFields = $form->getOwnedFields();
+        $fieldAnswers = $formAnswer->customFieldAnswers;
+
+        $render= self::getInfolistRender($viewMode,$form,$formAnswer, $fieldAnswers);
+        $customViewSchema = self::render(0,$customFields,$render, $viewMode, $formAnswer->customForm)[0];
+
+        //ToDo Manage Components
+
+        return  [
+            \Filament\Infolists\Components\Group::make($customViewSchema)->columns(config("ffhs_custom_forms.default_column_count")),
+        ];
+    }
+
+    public static function getInfolistRender(string $viewMode, CustomForm $form, CustomFormAnswer $formAnswer, Collection $fieldAnswers): Closure {
+        return function (CustomField $customField,  array $parameter) use ($formAnswer, $form, $viewMode, $fieldAnswers) {
+
+            /** @var CustomFormAnswer $answer*/
+            $answer = $fieldAnswers->firstWhere("custom_field_id", $customField->id);
+            if (is_null($answer)) {
+                $answer = new CustomFieldAnswer();
+                $answer->answer = null;
+                $answer->custom_field_id = $customField->id;
+                $answer->custom_form_answer_id = $formAnswer->id;
+            }
+
+            return $customField->getType()->getInfolistComponent($answer, $form, $viewMode, $parameter);
+        };
     }
 
 

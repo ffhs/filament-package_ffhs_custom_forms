@@ -96,7 +96,7 @@ final class TemplateFieldType extends CustomFieldType
 
         // Mapping and combining filtered field answers
         $fieldAnswersIdentify = CustomFormSaveHelper::mapFields(
-            $formAnswerer->cachedAnswers(),
+            $formAnswerer->customFieldAnswers,
             fn(CustomFieldAnswer $answer) => $answer->customField->identifier,
             fn(CustomFieldAnswer $answer) => $answer->customField->custom_form_id == $templateId
         );
@@ -120,20 +120,6 @@ final class TemplateFieldType extends CustomFieldType
         });
     }
 
-    public function afterEditFieldSave(CustomField $field, array $rawData): void {
-        $templateFields = $field->template->customFields;
-        $formFields = $field->customForm->customFields;
-
-        $field->customForm->customFormAnswers->each(function (CustomFormAnswer $formAnswer) use ($formFields, $field, $templateFields) {
-            $templateIdentifiers = $templateFields->pluck("identifier");
-            $formFieldIds = $formFields->whereIn("identifier",$templateIdentifiers)->pluck("id");
-            $formAnswer->customFieldAnswers
-                ->whereIn("custom_field_id",$formFieldIds)
-                ->each($this->getFieldTransferClosure($templateFields, $formFields));
-        });
-    }
-
-
     function getFieldTransferClosure(Collection $newFields, Collection $originalFields): Closure {
         return function (CustomFieldAnswer $fieldAnswer) use ($newFields, $originalFields):void {
             /**@var CustomField $oldField */
@@ -150,6 +136,19 @@ final class TemplateFieldType extends CustomFieldType
             $fieldAnswer->custom_field_id = $newField->id;
             $fieldAnswer->save();
         };
+    }
+
+    public function afterEditFieldSave(CustomField $field, array $rawData): void {
+        $templateFields = $field->template->customFields;
+        $formFields = $field->customForm->customFields;
+
+        $field->customForm->customFormAnswers->each(function (CustomFormAnswer $formAnswer) use ($formFields, $field, $templateFields) {
+            $templateIdentifiers = $templateFields->pluck("identifier");
+            $formFieldIds = $formFields->whereIn("identifier",$templateIdentifiers)->pluck("id");
+            $formAnswer->customFieldAnswers
+                ->whereIn("custom_field_id",$formFieldIds)
+                ->each($this->getFieldTransferClosure($templateFields, $formFields));
+        });
     }
 
 

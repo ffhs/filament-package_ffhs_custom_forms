@@ -16,16 +16,6 @@ class SplitCustomFormRender
         return self::renderLayoutType($layoutType,$customForm,$render,$viewMode);
     }
 
-    public static function renderInfoListLayoutType(CustomLayoutType $layoutType,  CustomFormAnswer $formAnswer, string $viewMode = "default"):array {
-        $customForm = CustomForm::cached($formAnswer->custom_form_id);
-        $fieldAnswers = $formAnswer->cachedAnswers();
-
-        $render= CustomFormRender::getInfolistRender($viewMode,$customForm, $formAnswer,$fieldAnswers);
-
-        return self::renderLayoutType($layoutType,$customForm,$render,$viewMode);
-    }
-
-
     protected static function renderLayoutType(CustomLayoutType $layoutType,  CustomForm $customForm, Closure $render, string $viewMode = "default"){
         $customFields = $customForm->customFields;
 
@@ -49,21 +39,19 @@ class SplitCustomFormRender
        return $output[0];
     }
 
-
-    public static function renderFormPose(int $formBeginPos, int $formEndPos, CustomForm $customForm, string $viewMode = "default") : array{
-        $render= CustomFormRender::getFormRender($viewMode,$customForm);
-        return self::renderPose($formBeginPos,$formEndPos,$customForm,$render,$viewMode);
-    }
-
-    public static function renderInfolistPose(int $formBeginPos, int $formEndPos, CustomFormAnswer $formAnswer, string $viewMode  = "default"):array {
+    public static function renderInfoListLayoutType(CustomLayoutType $layoutType,  CustomFormAnswer $formAnswer, string $viewMode = "default"):array {
         $customForm = CustomForm::cached($formAnswer->custom_form_id);
         $fieldAnswers = $formAnswer->customFieldAnswers;
 
         $render= CustomFormRender::getInfolistRender($viewMode,$customForm, $formAnswer,$fieldAnswers);
 
-        return self::renderPose($formBeginPos,$formEndPos,$customForm,$render,$viewMode);
+        return self::renderLayoutType($layoutType,$customForm,$render,$viewMode);
     }
 
+    public static function renderFormPose(int $formBeginPos, int $formEndPos, CustomForm $customForm, string $viewMode = "default") : array{
+        $render= CustomFormRender::getFormRender($viewMode,$customForm);
+        return self::renderPose($formBeginPos,$formEndPos,$customForm,$render,$viewMode);
+    }
 
     protected static function renderPose(int $formBeginPos, int $formEndPos, CustomForm $customForm, Closure $render, string $viewMode  = "default"){
         $customFields = $customForm
@@ -75,18 +63,18 @@ class SplitCustomFormRender
         return CustomFormRender::render($formBeginPos-1,$customFields,$render,$viewMode, $customForm)[0];
     }
 
+    public static function renderInfolistPose(int $formBeginPos, int $formEndPos, CustomFormAnswer $formAnswer, string $viewMode  = "default"):array {
+        $customForm = CustomForm::cached($formAnswer->custom_form_id);
+        $fieldAnswers = $formAnswer->customFieldAnswers;
+
+        $render= CustomFormRender::getInfolistRender($viewMode,$customForm, $formAnswer,$fieldAnswers);
+
+        return self::renderPose($formBeginPos,$formEndPos,$customForm,$render,$viewMode);
+    }
 
     public static function renderFormFromField(CustomField $field, string $viewMode = "default") : array{
         $render= CustomFormRender::getFormRender($viewMode,$field->customForm);
         return self::renderField($field,$render,$viewMode);
-    }
-
-    public static function renderInfolistFromField(CustomField $fiel,CustomFormAnswer $formAnswer,  string $viewMode  = "default"):array {
-        $fieldAnswers = $formAnswer->customFieldAnswers;
-
-        $render= CustomFormRender::getInfolistRender($viewMode,$formAnswer->customForm, $formAnswer,$fieldAnswers);
-
-        return self::renderField($fiel,$render,$viewMode);
     }
 
     protected static function renderField(CustomField $field, Closure $render, string $viewMode  = "default"){
@@ -99,6 +87,14 @@ class SplitCustomFormRender
         }
 
         return self::renderPose($beginPos,$endPos,$customForm,$render,$viewMode);
+    }
+
+    public static function renderInfolistFromField(CustomField $fiel,CustomFormAnswer $formAnswer,  string $viewMode  = "default"):array {
+        $fieldAnswers = $formAnswer->customFieldAnswers;
+
+        $render= CustomFormRender::getInfolistRender($viewMode,$formAnswer->customForm, $formAnswer,$fieldAnswers);
+
+        return self::renderField($fiel,$render,$viewMode);
     }
 
 

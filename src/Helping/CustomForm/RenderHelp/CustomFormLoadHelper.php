@@ -2,7 +2,6 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\RenderHelp;
 
-use Barryvdh\Debugbar\Facades\Debugbar;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
@@ -15,7 +14,7 @@ class CustomFormLoadHelper {
        //ToDo check to Cache stuff for performance $customFields = $answerer->customForm->customFields;
 
         $formRules = $answerer->customForm->rules;
-        foreach($answerer->cachedAnswers() as $fieldAnswer){
+        foreach($answerer->customFieldAnswers as $fieldAnswer){
             /**@var CustomFieldAnswer $fieldAnswer*/
             /**@var CustomField $customField*/
             $customField = $fieldAnswer->customField;
@@ -30,13 +29,22 @@ class CustomFormLoadHelper {
         return $data;
     }
 
+    public static function runRulesForFieldData(CustomFormAnswer $answerer, mixed $fieldData, $formRules): mixed
+    {
+        foreach ($formRules as $rule) { //ToDo repair
+            /**@var Rule $rule */
+            $fieldData = $rule->handle(["action" => "load_answerer", "custom_field_answerer" => $answerer], $fieldData);
+        }
+        return $fieldData;
+    }
+
     public static function loadSplit(CustomFormAnswer $answerer, int $begin, int $end):array {
         $data = [];
 
         $customFields = $answerer->customForm->customFields;
         $formRules  = $answerer->customForm->rules;
 
-        foreach($answerer->cachedAnswers() as $fieldAnswer){
+        foreach($answerer->customFieldAnswers as $fieldAnswer){
             /**@var CustomFieldAnswer $fieldAnswer*/
             /**@var CustomField $customField*/
             $customField = $fieldAnswer->customField;
@@ -77,14 +85,5 @@ class CustomFormLoadHelper {
 //            return in_array($key, $identifiers);
 //        }, ARRAY_FILTER_USE_KEY);
 
-    }
-
-    public static function runRulesForFieldData(CustomFormAnswer $answerer, mixed $fieldData, $formRules): mixed
-    {
-        foreach ($formRules as $rule) { //ToDo repair
-            /**@var Rule $rule */
-            $fieldData = $rule->handle(["action" => "load_answerer", "custom_field_answerer" => $answerer], $fieldData);
-        }
-        return $fieldData;
     }
 }
