@@ -172,9 +172,7 @@ class FileUploadType extends CustomFieldType
         $acceptedFileTypes = $filesComponent->getAcceptedFileTypes();
         $canSave = true;
         foreach (Arr::wrap($filesComponent->getState()) as $file) {
-            if (!$file instanceof TemporaryUploadedFile) {
-                continue;
-            }
+            if (!$file instanceof TemporaryUploadedFile) continue;
 
             $mimeType = $file->getMimeType();
 
@@ -185,9 +183,8 @@ class FileUploadType extends CustomFieldType
             }
         }
 
-        if ($canSave) {
-            $filesComponent->saveUploadedFiles();
-        }
+        if ($canSave)  $filesComponent->saveUploadedFiles();
+        else $component->state([]);
     }
 
     public function viewModes(): array
