@@ -7,10 +7,8 @@ use Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\EditHelper\EditCustom
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\EditHelper\EditCustomFormLoadHelper;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\FieldRule;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Component;
-use Filament\Forms\Get;
 use Filament\Support\Colors\Color;
 
 class DefaultTemplateDissolveAction extends Action
@@ -36,34 +34,43 @@ class DefaultTemplateDissolveAction extends Action
 
                 return "Möchten sie Wirklich das Template '" . $name . "'  auflösen?"; //ToDo Translate
             })
-            ->action(function(CustomForm $record, Get $get, $set, array $state, array $arguments, Component $component){
-                $key = $arguments["item"];
-                $templateID = $state[$key]["template_id"];
-                $customFields = $state;
-
-                $templatePos = $state[$key]["form_position"];
-
-                //Deleting
-                $customFields = EditCustomFormHelper::removeField($key, $customFields);
-
-                //Get Template Fields
-                $template = CustomForm::cached($templateID);
-                $templateFormData = EditCustomFormLoadHelper::load($template);
-                $templateFields = $templateFormData['custom_fields'];
-
-                foreach ($templateFields as $key => $field)
-                    $templateFields[$key] = $this->cloneTemplateField($field,$record);
-
-
-                //Place the new fields there were the template was
-                $customFields = EditCustomFormHelper::addMultipleFields($templateFields, $templatePos ,$customFields);
-
-
-                //Set the fields back in the repeater
-                $set($component->getStatePath(), $customFields, true);
-            });
+            ->action($this->dissolve(...));
 
     }
+
+    protected function dissolve(CustomForm $record, $set,$get, array $state, array $arguments, Component $component): void
+    {
+        $key = $arguments["item"];
+        $templateID = $state[$key]["template_id"];
+        $customFields = $state;
+
+        $templatePos = $state[$key]["form_position"];
+
+        //Deleting
+        $customFields = EditCustomFormHelper::removeField($key, $customFields);
+
+
+        //Get Template Fields
+        $template = CustomForm::cached($templateID);
+        $templateFormData = EditCustomFormLoadHelper::load($template);
+        $templateFields = $templateFormData['custom_fields'];
+        $clearedTemplateFields = [];
+      //  $clearedTemplateFields = $templateFields;
+        foreach ($templateFields as $key => $field)
+            $clearedTemplateFields[$key] = $this->cloneTemplateField($field,$record);
+
+
+        //Place the new fields there were the template was
+        $customFields = EditCustomFormHelper::addMultipleFields($clearedTemplateFields, $templatePos ,$customFields);
+
+        //Set the fields back in the repeater
+        $set($component->getStatePath(), $customFields, true);
+    }
+
+
+
+
+
 
     protected function cloneTemplateField($fieldData, CustomForm $targetForm):array {
 

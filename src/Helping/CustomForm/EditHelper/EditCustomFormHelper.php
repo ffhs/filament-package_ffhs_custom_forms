@@ -92,7 +92,17 @@ class EditCustomFormHelper
         return $nestedList->getData();
     }
 
+    public static function getEditKey(array|CustomField $toAdd)
+    {
+        if($toAdd instanceof CustomField)
+            return  empty($field->identifier)?uniqid(): $field->identifier;
 
+
+        if(array_key_exists("identifier", $toAdd) && !empty($toAdd["identifier"]))
+            return $toAdd["identifier"];
+
+        return uniqid();
+    }
 
     public static function removeField( string $toRemoveKey, array $fields): array {
 
@@ -106,7 +116,6 @@ class EditCustomFormHelper
     }
 
     public static function addMultipleFields(array $toAddFields, int $position, array $fields): array{
-
 
         $nestedList = NestedFlattenList::make($fields, CustomField::class);
         $nestedList->addManyOnPosition($position, $toAddFields, true);
@@ -139,18 +148,6 @@ class EditCustomFormHelper
         //Add Fields
         return array_merge($finalFields, $toAddFields);*/
 
-    }
-
-    public static function getEditKey(array|CustomField $toAdd)
-    {
-        if($toAdd instanceof CustomField)
-            return  empty($field->identifier)?uniqid(): $field->identifier;
-
-
-        if(array_key_exists("identifier", $toAdd) && !empty($toAdd["identifier"]))
-            return $toAdd["identifier"];
-
-        return uniqid();
     }
 
 
