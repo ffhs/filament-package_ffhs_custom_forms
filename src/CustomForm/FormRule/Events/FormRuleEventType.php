@@ -3,14 +3,13 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Events;
 
-use Barryvdh\Debugbar\Facades\Debugbar;
 use Closure;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\Rules\Event\EventType;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\Types\IsType;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\RuleEvent;
 use Filament\Forms\Components\Component;
-use Filament\Infolists\Components\TextEntry;
 use Illuminate\Support\Collection;
 
 
@@ -21,7 +20,7 @@ abstract class FormRuleEventType implements EventType
 
      public static function getConfigTypeList(): string
      {
-        return "rules.events";
+        return "rule.event";
      }
 
     public function handle(Closure $triggers, array $arguments, mixed &$target, RuleEvent $rule): mixed
@@ -52,40 +51,6 @@ abstract class FormRuleEventType implements EventType
 //        return $parameters;
 //    }
 
-
-    public function getCustomField($arguments): CustomField
-    {
-        $identifier = $arguments["identifier"];
-        $fields = $arguments["custom_fields"][$identifier];
-        return  $fields;
-    }
-
-    public function handleBeforeRender(Closure $triggers, array $arguments, CustomField &$target, RuleEvent $rule): CustomField
-    {
-        return $target;
-    }
-
-    public function handleAfterRenderForm(Closure $triggers, array $arguments, Component &$component, RuleEvent $rule): Component
-    {
-        return $component;
-    }
-
-    public function handleAfterRenderInfolist(Closure $triggers, array $arguments, \Filament\Infolists\Components\Component &$component, RuleEvent $rule): \Filament\Infolists\Components\Component
-    {
-        return $component;
-    }
-
-    private function handleAnswerLoadMutation(Closure $triggers, array $arguments, mixed &$target, RuleEvent $rule): mixed    {
-        return $target;
-    }
-
-    private function handleAnswerSaveMutation(Closure $triggers, array $arguments, mixed &$target, RuleEvent $rule): mixed
-    {
-        return $target;
-    }
-
-
-
     private function supHandlerRun(Closure $supFunction, Closure $triggers, array $arguments, array|Collection &$target, RuleEvent $rule): mixed
     {
         if($target instanceof Collection){
@@ -110,6 +75,41 @@ abstract class FormRuleEventType implements EventType
         }
 
         return $target;
+    }
+
+    private function handleAnswerLoadMutation(Closure $triggers, array $arguments, mixed &$target, RuleEvent $rule): mixed    {
+        return $target;
+    }
+
+    private function handleAnswerSaveMutation(Closure $triggers, array $arguments, mixed &$target, RuleEvent $rule): mixed
+    {
+        return $target;
+    }
+
+    public function getCustomField($arguments): CustomField
+    {
+        $identifier = $arguments["identifier"];
+        $fields = $arguments["custom_fields"][$identifier];
+        return  $fields;
+    }
+
+    public function handleBeforeRender(Closure $triggers, array $arguments, CustomField &$target, RuleEvent $rule): CustomField
+    {
+        return $target;
+    }
+
+    public function handleAfterRenderForm(Closure $triggers, array $arguments, Component &$component, RuleEvent $rule): Component
+    {
+        return $component;
+    }
+
+    public function handleAfterRenderInfolist(Closure $triggers, array $arguments, \Filament\Infolists\Components\Component &$component, RuleEvent $rule): \Filament\Infolists\Components\Component
+    {
+        return $component;
+    }
+
+    public function mutateDataOnClone(array $data, CustomForm $target):array{
+         return $data;
     }
 
 }

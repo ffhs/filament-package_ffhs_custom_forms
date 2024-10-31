@@ -33,20 +33,6 @@ class EditCustomFormLoadHelper
         return $data;
     }
 
-    private static function loadRules(CustomForm $form): array
-    {
-        $rules = [];
-        foreach ($form->ownedRules as $rule) {
-            /**@var Rule $rule*/
-            $rawRule = $rule->toArray();
-            $rawRule['events'] = $rule->ruleEvents->toArray();
-            $rawRule['triggers'] = $rule->ruleTriggers->toArray();
-            $rules[] = $rawRule;
-        }
-        return $rules;
-    }
-
-
     public static function loadField(CustomField $field): array
     {
         /**@var CustomField $field */
@@ -57,6 +43,19 @@ class EditCustomFormLoadHelper
         unset($fieldData["created_at"]);
 
        return $field->getType()->getMutateCustomFieldDataOnLoad($field, $fieldData);
+    }
+
+    public static function loadRules(CustomForm $form): array
+    {
+        $rules = [];
+        foreach ($form->ownedRules as $rule) {
+            /**@var Rule $rule*/
+            $rawRule = $rule->toArray();
+            $rawRule['events'] = $rule->ruleEvents->toArray();
+            $rawRule['triggers'] = $rule->ruleTriggers->toArray();
+            $rules[] = $rawRule;
+        }
+        return $rules;
     }
 
 

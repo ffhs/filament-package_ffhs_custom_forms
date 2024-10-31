@@ -2,13 +2,14 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\FormEditor\TypeActions\default;
 
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldUtils;
+use Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\EditHelper\EditCustomFormCloneHelper;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\EditHelper\EditCustomFormHelper;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\EditHelper\EditCustomFormLoadHelper;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Component;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
 use Filament\Support\Colors\Color;
 
 class DefaultTemplateDissolveAction extends Action
@@ -38,92 +39,48 @@ class DefaultTemplateDissolveAction extends Action
 
     }
 
-    protected function dissolve(CustomForm $record, $set,$get, array $state, array $arguments, Component $component): void
+    protected function dissolve(CustomForm $record, Get $get, Set $set, array $state, array $arguments, Component $component): void
     {
         $key = $arguments["item"];
         $templateID = $state[$key]["template_id"];
-        $customFields = $state;
+        $template = CustomForm::cached($templateID);
 
-        $templatePos = $state[$key]["form_position"];
+        $this->dissolveFields($set, $key, $state, $template, $component, $record);
+        $this->dissolveRules($set, $template, $record);
+    }
 
-        //Deleting
-        $customFields = EditCustomFormHelper::removeField($key, $customFields);
-
+    protected function dissolveFields(Set $set, string $templateFieldKey, array $state, CustomForm $template, Component $component, CustomForm $target): void
+    {
+        //Deleting template field
+        $customFields = EditCustomFormHelper::removeField($templateFieldKey, $state);
 
         //Get Template Fields
-        $template = CustomForm::cached($templateID);
         $templateFormData = EditCustomFormLoadHelper::load($template);
         $templateFields = $templateFormData['custom_fields'];
         $clearedTemplateFields = [];
-      //  $clearedTemplateFields = $templateFields;
+
+
+        //CustomFieldAnswerer CustomField id changing is handelt in TemplateFieldType.class on afterEditFieldDelete()
         foreach ($templateFields as $key => $field)
-            $clearedTemplateFields[$key] = $this->cloneTemplateField($field,$record);
+            $clearedTemplateFields[$key] = EditCustomFormCloneHelper::cloneField($field, $target, true);
 
 
         //Place the new fields there were the template was
+        $templatePos = $state[$templateFieldKey]["form_position"];
         $customFields = EditCustomFormHelper::addMultipleFields($clearedTemplateFields, $templatePos ,$customFields);
 
         //Set the fields back in the repeater
         $set($component->getStatePath(), $customFields, true);
     }
 
+    protected function dissolveRules(Set $set, CustomForm $template,  CustomForm $target): void
+    {
+        $rules = EditCustomFormLoadHelper::loadRules($template);
+        foreach ($rules as $key => $rule)
+            $rules[$key] = EditCustomFormCloneHelper::cloneRule($rule, $target);
 
-
-
-
-
-    protected function cloneTemplateField($fieldData, CustomForm $targetForm):array {
-
-        //Mutate Field Data's
-        $field = $rules = CustomField::cached($fieldData["id"]);
-        $type = CustomFieldUtils::getFieldTypeFromRawDate($fieldData);
-
-        //Load OptionData now, because it needs the field id
-      //  $fieldData = CustomFormEditorMutationHelper::mutateOptionData($fieldData, $template); //ToDO on Template Dissolve action
-      //  $fieldData = CustomFormEditorMutationHelper::mutateRuleDataOnLoad($fieldData, $template); ToDO on Template Dissolve action
-
-        // $fieldData = $type->mutateOnTemplateDissolve($fieldData, $field); //ToDo
-
-        $fieldData = static::unsetAttributesForClone($fieldData);
-        $fieldData["custom_form_id"] = $targetForm->id;
-
-        //Clone Ankers and Rules
-        $rules = $field->fieldRules;
-        $rulesCloned = [];
-        foreach ($fieldData["rules"] ?? [] as $ruleData){
-
-            /**@var FieldRule $fieldRule*/
-            $fieldRule = $rules->where("id", $ruleData["id"])->first();
-
-            $ruleData = $fieldRule->toArray();
-
-            $ruleData = static::unsetAttributesForClone($ruleData);
-
-            $ruleData = $fieldRule->getAnchorType()->mutateOnTemplateDissolve($ruleData,$fieldRule,$field);
-            $ruleData = $fieldRule->getRuleType()->mutateOnTemplateDissolve($ruleData,$fieldRule,$field);
-
-            unset($ruleData["custom_field_id"]);
-
-            //Set for Repeaters
-            $rulesCloned[uniqid()] = $ruleData;
-        }
-        $fieldData["rules"] = $rulesCloned;
-
-        return $fieldData;
+        $set("../rules", $rules);
     }
-
-    //CustomFieldAnswerer CustomField id changing is handelt in TemplateFieldType.class on afterEditFieldDelete()
-
-    private static function unsetAttributesForClone(array $data):array {
-        unset($data["id"]);
-        unset($data["created_at"]);
-        unset($data["deleted_at"]);
-        unset($data["updated_at"]);
-        return $data;
-    }
-
-
-
 
 
 }
