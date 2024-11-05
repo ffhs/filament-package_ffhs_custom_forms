@@ -20,20 +20,16 @@ interface CachedModel
     public static function addToModelCache(Collection|CachedModel $toAdd): void;
     public static function removeFromModelCache(array|Collection|int $toRemove): void;
 
-
-    public function caching(bool|Closure $disable = true):static;
-    public function isCaching():bool;
-    public function getDefaultCaching():bool|Closure;
-
-
-
-
     public static function allCached(): Collection;
 
     public static function cached(mixed $value, string $attribute = "id", array $with = []);
 
+    public function caching(bool|Closure $disable = true):static;
 
-    public function getResultCached($name): mixed;
+    public function isCaching():bool;
+
+    public function getDefaultCaching():bool|Closure;
+
     public function getRelationCached($name): mixed;
 
     public function isPropertyCached($name): bool;

@@ -2,7 +2,6 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Helping\Caching;
 
-use Barryvdh\Debugbar\Facades\Debugbar;
 use Closure;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -28,6 +27,44 @@ trait HasCacheModel
 
     private bool|Closure $useCache;
 
+    public static function allCached(): Collection{
+        return Cache::remember(
+            (new static())->getTable()."-all",
+            self::getCacheDuration(),
+            function() {
+                $all = static::all();
+                static::addToModelCache($all);
+
+                return new RelationCachedInformations(static::class, $all->pluck('id')->toArray());
+            }
+        )->getModels();
+    }
+
+    public static function getCacheDuration(): mixed {
+        return config('ffhs_custom_forms.cache_duration');
+    }
+
+    public static function addToModelCache(Collection|CachedModel $toAdd): void{
+        $cachedList = static::getModelCache();
+        if(!($toAdd instanceof Collection)) $toAdd = collect([$toAdd]);
+        $cachedList = $cachedList->merge($toAdd->keyBy("id"))->keyBy("id");
+        Cache::set(static::getModelCacheKey(), $cachedList, self::getCacheDuration());
+    }
+
+    public static function getModelCache(): Collection{
+        return Cache::get(static::getModelCacheKey()) ?? collect()->keyBy("id");
+    }
+
+    protected static function getModelCacheKey(): string {
+        return (new static())->getTable(). "_cached_list";
+    }
+
+    public static function clearModelCache(?array $ids = null): void {
+        if(is_null($ids)) Cache::forget(static::getModelCacheKey());
+
+        $cache = static::getModelCache()->where("id", $ids);
+        Cache::set(static::getModelCacheKey(), $cache, static::getCacheDuration());
+    }
 
     protected static function booted()
     {
@@ -46,23 +83,12 @@ trait HasCacheModel
         });
     }
 
-
-    protected function setToDefaultCaching(): static{
-        $this->useCache = $this->getDefaultCaching();
-        return $this;
-    }
-
-    public static function getCacheDuration(): mixed {
-        return config('ffhs_custom_forms.cache_duration');
-    }
-
-    public function __get($key) {
-        if(!$this->isCaching()) return parent::__get($key);
-
-        if(in_array($key, $this->getCachedRelations()))return $this->getRelationCached($key);
-        else if(in_array($key, $this->getCachedResults())) return $this->getResultCached($key);
-
-        return parent::__get($key);
+    public static function removeFromModelCache(array|Collection|int $toRemove): void{
+        $cachedList = static::getModelCache();
+        if(is_array($toRemove)) $toRemove = collect($toRemove);
+        else if(!($toRemove instanceof Collection)) $toRemove = collect([$toRemove]);
+        $cachedList = $cachedList->forget($toRemove);
+        Cache::set(static::getModelCacheKey(), $cachedList, self::getCacheDuration());
     }
 
     public function setCacheValue(string $key, mixed $value): void {
@@ -73,87 +99,30 @@ trait HasCacheModel
         $this->relations[$key] = $value;
     }
 
-
-    public static function allCached(): Collection{
-        return Cache::remember(
-            (new static())->getTable()."-all",
-            self::getCacheDuration(),
-            function() {
-                $all = static::all();
-                static::addToModelCache($all);
-
-                return new RelationCachedInformations(static::class, $all->pluck('id')->toArray());
-            }
-        )->getModels();
+    public function isCaching():bool{
+        if(!isset($this->useCache))  $this->setToDefaultCaching();
+        if($this->useCache instanceof Closure) return ($this->useCache)($this);
+        return $this->useCache;
     }
 
-    public static function getModelCache(): Collection{
-        return Cache::get(static::getModelCacheKey()) ?? collect()->keyBy("id");
+    protected function setToDefaultCaching(): static{
+        $this->useCache = $this->getDefaultCaching();
+        return $this;
     }
 
-
-    public static function clearModelCache(?array $ids = null): void {
-        if(is_null($ids)) Cache::forget(static::getModelCacheKey());
-
-        $cache = static::getModelCache()->where("id", $ids);
-        Cache::set(static::getModelCacheKey(), $cache, static::getCacheDuration());
+    public function getDefaultCaching():bool{
+        if(!property_exists(static::class, 'defaultCaching')) return true;
+        return static::$defaultCaching ?? true;
     }
 
-
-    protected static function getModelCacheKey(): string {
-        return (new static())->getTable(). "_cached_list";
-    }
-
-    public static function addToModelCache(Collection|CachedModel $toAdd): void{
-        $cachedList = static::getModelCache();
-        if(!($toAdd instanceof Collection)) $toAdd = collect([$toAdd]);
-        $cachedList = $cachedList->merge($toAdd->keyBy("id"))->keyBy("id");
-        Cache::set(static::getModelCacheKey(), $cachedList, self::getCacheDuration());
-    }
-
-    public static function removeFromModelCache(array|Collection|int $toRemove): void{
-        $cachedList = static::getModelCache();
-        if(is_array($toRemove)) $toRemove = collect($toRemove);
-        else if(!($toRemove instanceof Collection)) $toRemove = collect([$toRemove]);
-        $cachedList = $cachedList->forget($toRemove);
-        Cache::set(static::getModelCacheKey(), $cachedList, self::getCacheDuration());
-    }
-
-
-    public static function cached(mixed $value, string $attribute = "id", array $with = []): ?static{
-
-        $output = static::getModelCache()?->firstWhere($attribute, $value);
-        if(!is_null($output)) return $output;
-        if(is_null($value)) return null;
-
-        $output = static::query()->where($attribute, $value)->with(array_merge(static::getCacheWith(), $with))->first();
-        if($output) static::addToModelCache($output);
-        return $output;
+    public function getCacheKeyForAttribute(string $relationName): string {
+        return $this->getTable()."-".$relationName."-". $this->id;
     }
 
     public function relationCacheClear(): void{
         $this->relations = [];
         foreach($this->getCachedRelations() as $key)
             Cache::forget($this->getCacheKeyForAttribute($key));
-    }
-
-
-    public function cachedClear(string $key): void{
-        Cache::forget($this->getCacheKeyForAttribute($key));
-        unset($this->relations[$key]);
-    }
-
-
-
-    public function getCacheKeyForAttribute(string $relationName): string {
-        return $this->getTable()."-".$relationName."-". $this->id;
-    }
-
-
-
-
-    public function getCachedResults():array{
-        return get_object_vars($this)["cachedResults"] ?? [];
     }
 
     public function getCachedRelations():array
@@ -163,37 +132,61 @@ trait HasCacheModel
         return array_merge($belongsTo, $many);
     }
 
-
-    public static function getCacheWith():array{
-        if(!property_exists(static::class, 'cacheWith')) return [];
-        return static::$cacheWith ?? [];
+    public function cachedClear(string $key): void{
+        Cache::forget($this->getCacheKeyForAttribute($key));
+        unset($this->relations[$key]);
     }
-
 
     public function caching(bool|Closure $useCache = true):static{
         $this->useCache = $useCache;
         return $this;
     }
 
-    public function isCaching():bool{
-        if(!isset($this->useCache))  $this->setToDefaultCaching();
-        if($this->useCache instanceof Closure) return ($this->useCache)($this);
-        return $this->useCache;
+    public function getRelationValue($key)
+    {
+        if(parent::relationLoaded($key))
+            return parent::getRelationValue($key);
+        if(in_array($key, $this->getCachedRelations()))
+            return $this->getRelationCached($key);
+        return parent::getRelationValue($key);
     }
 
-    public function getDefaultCaching():bool{
-        if(!property_exists(static::class, 'defaultCaching')) return true;
-        return static::$defaultCaching ?? true;
+    public function relationLoaded($key):bool
+    {
+        if(parent::relationLoaded($key))return true;
+        if(in_array($key, $this->getCachedRelations()))return true;
+        return  $this->isPropertyCached($key);
     }
 
+    public function isPropertyCached($name): bool{
 
-    public function getResultCached($name): mixed{
-        $cacheKey = $this->getCacheKeyForAttribute($name);
-        if(Cache::has($cacheKey)) return Cache::get($cacheKey);
-        $result = $this->$name();
-        Cache::set($cacheKey, $result, static::getCacheDuration());
-        return $result;
+        if(!in_array($name, $this->getCachedResults()) && !in_array($name, $this->getCachedRelations())) return false;
+
+        $relation = $this->$name();
+        if(!$relation instanceof BelongsTo){
+            $cacheKey = $this->getCacheKeyForAttribute($name);
+            return Cache::has($cacheKey);
+        }
+
+        $related = $relation->getRelated();
+        $ownerKey = $relation->getOwnerKeyName();
+        $foreignKey = $relation->getForeignKeyName();
+
+        return $related::getModelCache()->where($ownerKey,$this->$foreignKey)->count() === 1;
     }
+
+    public function getCachedResults():array{
+        return get_object_vars($this)["cachedResults"] ?? [];
+    }
+
+//    public function __get($key) {
+//        if(!$this->isCaching()) return parent::__get($key); ToDO reimplement
+//
+//        if(in_array($key, $this->getCachedRelations())) return $this->getRelationCached($key);
+//       // else if(in_array($key, $this->getCachedResults())) return $this->getResultCached($key);
+//
+//        return parent::__get($key);
+//    }
 
     public function getRelationCached($name): mixed{
 
@@ -227,6 +220,22 @@ trait HasCacheModel
         return $related::cached($this->$foreignKey, $ownerKey);
     }
 
+    public static function cached(mixed $value, string $attribute = "id", array $with = []): ?static
+    {
+        $output = static::getModelCache()?->firstWhere($attribute, $value);
+        if(!is_null($output)) return $output;
+        if(is_null($value)) return null;
+
+        $output = static::query()->where($attribute, $value)->with(array_merge(static::getCacheWith(), $with))->first();
+        if($output) static::addToModelCache($output);
+        return $output;
+    }
+
+    public static function getCacheWith():array{
+        if(!property_exists(static::class, 'cacheWith')) return [];
+        return static::$cacheWith ?? [];
+    }
+
     protected function getCachedHasOne(HasOne $relation): ?Model
     {
         $related = $relation->getRelated();
@@ -234,42 +243,6 @@ trait HasCacheModel
         $localKey = $relation->getLocalKeyName();
         return $related::cached($this->$localKey, $foreignKeyName);
     }
-
-
-    public function isPropertyCached($name): bool{
-
-        if(!in_array($name, $this->getCachedResults()) && !in_array($name, $this->getCachedRelations())) return false;
-
-        $relation = $this->$name();
-        if(!$relation instanceof BelongsTo){
-            $cacheKey = $this->getCacheKeyForAttribute($name);
-            return Cache::has($cacheKey);
-        }
-
-        //ToDo Improve performance
-        $related = $relation->getRelated();
-        $ownerKey = $relation->getOwnerKeyName();
-        $foreignKey = $relation->getForeignKeyName();
-
-        return $related::getModelCache()->where($ownerKey,$this->$foreignKey)->count() === 1;
-    }
-
-
-
-    public function relationLoaded($key):bool
-    {
-        if(parent::relationLoaded($key)) return true;
-        if(in_array($key, $this->getCachedRelations())) return true;
-        return $this->isPropertyCached($key);
-    }
-
-    public function getRelationValue($key)
-    {
-        if(parent::relationLoaded($key)) return parent::getRelationValue($key);
-        if(in_array($key, $this->getCachedRelations())) return $this->__get($key);
-        return parent::getRelationValue($key);
-    }
-
 
     protected function getOtherCachedRelation(string $name): mixed
     {
@@ -295,6 +268,14 @@ trait HasCacheModel
             else return new RelationCachedInformations($related::class, $result->pluck("id")->toArray());
         });
     }
+
+//    public function getResultCached($name): mixed{
+//        $cacheKey = $this->getCacheKeyForAttribute($name);
+//        if(Cache::has($cacheKey)) return Cache::get($cacheKey);
+//        $result = $this->$name();
+//        Cache::set($cacheKey, $result, static::getCacheDuration());
+//        return $result;
+//    }
 
 
 }
