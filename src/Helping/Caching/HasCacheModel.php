@@ -144,6 +144,7 @@ trait HasCacheModel
 
     public function getRelationValue($key)
     {
+        // I now it look not quit clean but trust me clean it up makes to big performance problems
         if(parent::relationLoaded($key))
             return parent::getRelationValue($key);
         if(in_array($key, $this->getCachedRelations()))
@@ -151,49 +152,14 @@ trait HasCacheModel
         return parent::getRelationValue($key);
     }
 
-    public function relationLoaded($key):bool
-    {
-        if(parent::relationLoaded($key))return true;
-        if(in_array($key, $this->getCachedRelations()))return true;
-        return  $this->isPropertyCached($key);
-    }
-
-    public function isPropertyCached($name): bool{
-
-        if(!in_array($name, $this->getCachedResults()) && !in_array($name, $this->getCachedRelations())) return false;
-
-        $relation = $this->$name();
-        if(!$relation instanceof BelongsTo){
-            $cacheKey = $this->getCacheKeyForAttribute($name);
-            return Cache::has($cacheKey);
-        }
-
-        $related = $relation->getRelated();
-        $ownerKey = $relation->getOwnerKeyName();
-        $foreignKey = $relation->getForeignKeyName();
-
-        return $related::getModelCache()->where($ownerKey,$this->$foreignKey)->count() === 1;
-    }
-
-    public function getCachedResults():array{
-        return get_object_vars($this)["cachedResults"] ?? [];
-    }
-
-//    public function __get($key) {
-//        if(!$this->isCaching()) return parent::__get($key); ToDO reimplement
-//
-//        if(in_array($key, $this->getCachedRelations())) return $this->getRelationCached($key);
-//       // else if(in_array($key, $this->getCachedResults())) return $this->getResultCached($key);
-//
-//        return parent::__get($key);
+//    public function relationLoaded($key):bool
+//    {
+//        if(parent::relationLoaded($key))return true;
+//        if(in_array($key, $this->getCachedRelations()))return true;
+//        return  $this->isPropertyCached($key);
 //    }
 
     public function getRelationCached($name): mixed{
-
-        if(array_key_exists($name, $this->relations)){
-            return $this->relations[$name];
-        }
-
         $cacheMethodeName = "cached" . ucfirst($name);
         if(method_exists($this, $cacheMethodeName)) $result = $this->$cacheMethodeName();
         else {
@@ -202,9 +168,8 @@ trait HasCacheModel
             if ($relation instanceof BelongsTo) $result = $this->getCachedBelongsTo($relation);
             else if ($relation instanceof HasOne) $result = $this->getCachedHasOne($relation);
             //Many RelationShips
-            else $result  = $this->getOtherCachedRelation($name);
+            else $result = $this->getOtherCachedRelation($name);
         }
-
 
         if($result instanceof RelationCachedInformations) $result = $result->getModels();
         $this->relations[$name] = $result;
@@ -219,6 +184,15 @@ trait HasCacheModel
         $foreignKey = $relation->getForeignKeyName();
         return $related::cached($this->$foreignKey, $ownerKey);
     }
+
+//    public function __get($key) {
+//        if(!$this->isCaching()) return parent::__get($key); ToDO reimplement
+//
+//        if(in_array($key, $this->getCachedRelations())) return $this->getRelationCached($key);
+//       // else if(in_array($key, $this->getCachedResults())) return $this->getResultCached($key);
+//
+//        return parent::__get($key);
+//    }
 
     public static function cached(mixed $value, string $attribute = "id", array $with = []): ?static
     {
@@ -253,9 +227,7 @@ trait HasCacheModel
             /**@var Relation $relation */
             $relation = $this->$name();
             $related = $relation->getRelated();
-
-            if ($relation instanceof HasOne) $result = $relation->first();
-            else $result = $relation->get();
+            $result = parent::getRelationValue($name);
 
 
             if (is_null($result) || !($related instanceof CachedModel)) return $result;
@@ -267,6 +239,27 @@ trait HasCacheModel
                 return new RelationCachedInformations($related::class, [$result->id], false);
             else return new RelationCachedInformations($related::class, $result->pluck("id")->toArray());
         });
+    }
+
+    public function isPropertyCached($name): bool{ //Do need?
+
+        if(!in_array($name, $this->getCachedResults()) && !in_array($name, $this->getCachedRelations())) return false;
+
+        $relation = $this->$name();
+        if(!$relation instanceof BelongsTo){
+            $cacheKey = $this->getCacheKeyForAttribute($name);
+            return Cache::has($cacheKey);
+        }
+
+        $related = $relation->getRelated();
+        $ownerKey = $relation->getOwnerKeyName();
+        $foreignKey = $relation->getForeignKeyName();
+
+        return $related::getModelCache()->where($ownerKey,$this->$foreignKey)->count() === 1;
+    }
+
+    public function getCachedResults():array{
+        return get_object_vars($this)["cachedResults"] ?? [];
     }
 
 //    public function getResultCached($name): mixed{
