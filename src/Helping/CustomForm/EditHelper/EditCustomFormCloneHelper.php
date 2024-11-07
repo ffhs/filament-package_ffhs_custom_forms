@@ -55,11 +55,12 @@ class EditCustomFormCloneHelper
 
     public static function cloneRule(array $ruleData, CustomForm $targetForm):array
     {
+
         $ruleData = static::unsetAttributesForClone($ruleData);
         unset($ruleData["pivot"]);
 
         $ruleData["events"] = static::cloneRuleComponents($ruleData["events"], $targetForm, FormRuleEventType::class);
-        $ruleData["triggers"] = static::cloneRuleComponents($ruleData["events"], $targetForm, FormRuleTriggerType::class);
+        $ruleData["triggers"] = static::cloneRuleComponents($ruleData["triggers"], $targetForm, FormRuleTriggerType::class);
 
         return $ruleData;
     }
