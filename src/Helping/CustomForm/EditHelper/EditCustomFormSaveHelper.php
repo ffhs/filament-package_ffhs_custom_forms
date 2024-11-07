@@ -2,165 +2,77 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\EditHelper;
 
-use Barryvdh\Debugbar\Facades\Debugbar;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldUtils;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\Rule;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\RuleEvent;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\RuleTrigger;
+use Illuminate\Support\Collection;
 
 class EditCustomFormSaveHelper
 {
-    public static function save(array $rawState, CustomForm $form): void {
-        $rawFields = $rawState["custom_fields"];
-        $oldFields = $form->getOwnedFields();
-        $fieldData = collect($rawFields);
-
-        $fieldsToSaveData = [];
-        $fieldsToCreate = [];
-        $fieldsNotDirty = [];
-
-        $now = now();
-
-        //Prepare Save and Create Data
-        foreach ($rawFields as $field) {
-
-            if(!empty($field["id"]))
-                $customField = $oldFields->where("id", $field["id"] )->first();
-            else
-                $customField = (new CustomField())->fill($field);
-
-            $field['custom_form_id'] = $form->id;
 
 
-            $field = CustomFieldUtils::getFieldTypeFromRawDate($field)
-                ->getMutateCustomFieldDataOnSave($customField, $field);
-
-            $customField->fill($field);
-
-            $customField->getType()->doBeforeSaveField($customField, $field);
-
-
-            if(!$customField->exists ){
-                $rawField = $customField->getAttributes();
-                $rawField['created_at'] = $now;
-                $rawField['updated_at'] = $now;
-                $fieldsToCreate[] = $rawField;
-            }
-            else if($customField->isDirty()) {
-                $rawField = $customField->getAttributes();
-                $rawField['updated_at'] = $now;
-                $fieldsToSaveData[] = $rawField;
-            }
-            else  $fieldsNotDirty[] = $customField->id;
-        }
-
-        //Deleting
-        $fieldsToDelete =  $oldFields
-            ->whereNotIn('id', collect($fieldsToSaveData)->pluck("id"))
-            ->whereNotIn("id", $fieldsNotDirty);
-
-        $fieldsToDelete->each(fn(CustomField $field) => $field->getType()->doBeforeDeleteField($field));
-        CustomField::destroy($fieldsToDelete->pluck("id"));
-        $fieldsToDelete->each(fn(CustomField $field) => $field->getType()->doAfterDeleteField($field));
-
-
-        //cleanUp
-        $fieldsToCreate = self::cleanUpCustomFieldData($fieldsToCreate);
-
-        $fieldsToSaveData = self::cleanUpCustomFieldData($fieldsToSaveData);
-
-        //Create and Updating
-        CustomField::insert($fieldsToCreate);
-        CustomField::upsert($fieldsToSaveData, ['id']);
-
-        //Run after Save
-        $savedFields = $form->customFields()->where("custom_form_id", $form->id)->get();
-        $savedFields
-            ->whereIn('id', $fieldData->pluck("id"))
-            ->each(fn(CustomField $field) =>
-                $field->getType()->doAfterSaveField($field,
-                    $fieldData->where("id", $field->id)->first()
-                )
-            );
-
-
-        //Run after Create
-        $savedFields = $form->customFields()->get();
-        $savedFields
-            ->whereNotIn('id', $fieldData->pluck("id"))
-            ->each(function(CustomField $field) use ($fieldData) {
-
-                if($field->isGeneralField()){
-                    $savedFieldData = $fieldData->where("general_field_id", $field->general_field_id)->first();
-                }
-                else if($field->isTemplate()){
-                    $savedFieldData = $fieldData->where("template_id", $field->template_id)->first();
-                }
-                else{
-                    $savedFieldData = $fieldData->where("identifier", $field->identifier)->first();
-                }
-
-                return $field->getType()->doAfterCreateField($field, $savedFieldData??[]);
-            }
-        );
-
-
-        //Rules
-        $rawRules = $rawState["rules"];
+    public static function savingRules($rules1, CustomForm $form): void
+    {
+        $rawRules = $rules1;
         //Delete rules where doesnt exist
-        $form->ownedRules->whereNotIn("id", collect($rawRules)->pluck("id"))->each(fn(Rule $rule)=> $rule->delete());
+        $form->ownedRules->whereNotIn("id", collect($rawRules)->pluck("id"))->each(fn(Rule $rule) => $rule->delete());
 
         $rules = collect();
 
-        foreach ($rawRules as $rawRule) {
-            if(!key_exists("id",$rawRule)) $rule = new Rule();
-            else $rule = $form->ownedRules->where("id", $rawRule["id"])->first();
+        self::saveRuleComponents($rawRules, $form, $rules);
 
-            $rawTriggers = $rawRule["triggers"]?? [];
+
+        $form->ownedRules()->sync($rules->pluck("id"));
+    }
+
+    public static function saveRuleComponents(mixed $rawRules, CustomForm $form, Collection $rules): void
+    {
+        foreach ($rawRules as $rawRule) {
+            if (key_exists("id", $rawRule))
+                $rule = $form->ownedRules->where("id", $rawRule["id"])->first();
+            else $rule = new Rule();
+
+
+            $rawTriggers = $rawRule["triggers"] ?? [];
             $rawEvents = $rawRule["events"] ?? [];
 
 
-            $rule->ruleTriggers()->whereNotIn("id",collect($rawTriggers)->pluck("id"))->delete();
+            $rule->ruleTriggers()->whereNotIn("id", collect($rawTriggers)->pluck("id"))->delete();
             $rule->ruleEvents()->whereNotIn("id", collect($rawEvents)->pluck("id"))->delete();
 
 
-            if(key_exists("is_or_mode",$rawRule)) $rule->is_or_mode = $rawRule["is_or_mode"];
+            if (key_exists("is_or_mode", $rawRule))
+                $rule->is_or_mode = $rawRule["is_or_mode"];
             else $rule->is_or_mode = false;
+
 
             $rule->save();
             $triggers = $rule->ruleTriggers;
+            $events = $rule->ruleEvents;
 
-            foreach ($rawTriggers as $rawTrigger) {
-                if(!key_exists("id",$rawTrigger)) $trigger = new RuleTrigger();
-                else $trigger = $triggers->where("id", $rawTrigger["id"])->first();
+            self::updateRuleComponent($rawTriggers, $triggers, $rule, RuleTrigger::class);
+            self::updateRuleComponent($rawEvents, $events, $rule, RuleEvent::class);
 
-                $trigger->fill($rawTrigger);
-
-                $trigger->rule_id =  $rule->id;
-                $trigger->save();
-            }
-
-            foreach ($rawEvents as $rawEvent) {
-                if(!key_exists("id",$rawEvent)) $event = new RuleEvent();
-                else $event = $rule->ruleEvents()->where("id", $rawEvent["id"])->first();
-
-                $event->fill($rawEvent);
-
-                $event->rule_id =  $rule->id;
-                $event->save();
-            }
 
             $rule->cachedClear("ruleTriggers");
             $rule->cachedClear("ruleEvents");
             $rules->add($rule);
         }
+    }
+
+    public static function save(array $rawState, CustomForm $form): void {
+
+        //Fields
+        self::saveFields($rawState["custom_fields"], $form);
+
+        //Rules
+        self::savingRules($rawState["rules"], $form);
 
 
-        $form->ownedRules()->sync($rules->pluck("id"));
-
-
+        //Clear Cache
         $form->cachedClear("customFields");
         $form->cachedClear("rules");
         $form->cachedClear("ownedRules");
@@ -170,6 +82,81 @@ class EditCustomFormSaveHelper
 //        RuleTrigger::clearModelCache();
 //        CustomField::clearModelCache();
 //        Rule::clearModelCache();
+    }
+
+    public static function saveFields($custom_fields, CustomForm $form): void
+    {
+        $rawFields = $custom_fields;
+        $oldFields = $form->getOwnedFields();
+        $fieldData = collect($rawFields);
+
+        list($fieldsToSaveData, $fieldsToCreate, $fieldsNotDirty) = self::prepareFields($rawFields, $oldFields, $form);
+
+        //Deleting
+        self::deletingFields($oldFields, $fieldsToSaveData, $fieldsNotDirty);
+
+        //cleanUp
+        $fieldsToCreate = self::cleanUpCustomFieldData($fieldsToCreate);
+        $fieldsToSaveData = self::cleanUpCustomFieldData($fieldsToSaveData);
+
+        //Create and Updating
+        self::createAndUpdatingFields($fieldsToCreate, $fieldsToSaveData, $form, $fieldData);
+    }
+
+    public static function prepareFields(mixed $rawFields, Collection $oldFields, CustomForm $form): array
+    {
+        $fieldsToSaveData = [];
+        $fieldsToCreate = [];
+        $fieldsNotDirty = [];
+
+        $now = now();
+
+        //Prepare Save and Create Data
+        foreach ($rawFields as $field) {
+            if (!empty($field["id"])) {
+                $customField = $oldFields->where("id", $field["id"])->first();
+            } else {
+                $customField = (new CustomField())->fill($field);
+            }
+
+            $field['custom_form_id'] = $form->id;
+
+
+            $field = CustomFieldUtils::getFieldTypeFromRawDate($field)
+                ->getMutateCustomFieldDataOnSave($customField, $field);
+
+            $customField->fill($field);
+
+            $customField->getType()
+                ->doBeforeSaveField($customField, $field);
+
+
+            if (!$customField->exists) {
+                $rawField = $customField->getAttributes();
+                $rawField['created_at'] = $now;
+                $rawField['updated_at'] = $now;
+                $fieldsToCreate[] = $rawField;
+            } else {
+                if ($customField->isDirty()) {
+                    $rawField = $customField->getAttributes();
+                    $rawField['updated_at'] = $now;
+                    $fieldsToSaveData[] = $rawField;
+                } else {
+                    $fieldsNotDirty[] = $customField->id;
+                }
+            }
+        }
+        return array($fieldsToSaveData, $fieldsToCreate, $fieldsNotDirty);
+    }
+
+    public static function deletingFields(Collection $oldFields, array $fieldsToSaveData, array $fieldsNotDirty): void {
+        $fieldsToDelete = $oldFields
+            ->whereNotIn('id', collect($fieldsToSaveData)->pluck("id"))
+            ->whereNotIn("id", $fieldsNotDirty);
+
+        $fieldsToDelete->each(fn(CustomField $field) => $field->getType()->doBeforeDeleteField($field));
+        CustomField::destroy($fieldsToDelete->pluck("id"));
+        $fieldsToDelete->each(fn(CustomField $field) => $field->getType()->doAfterDeleteField($field));
     }
 
     private static function cleanUpCustomFieldData($fields): array
@@ -185,5 +172,63 @@ class EditCustomFormSaveHelper
         return $fields;
     }
 
+    public static function createAndUpdatingFields(
+        array $fieldsToCreate,
+        array $fieldsToSaveData,
+        CustomForm $form,
+        Collection $fieldData
+    ): void {
+
+
+        //Create and Updating
+        CustomField::insert($fieldsToCreate);
+        CustomField::upsert($fieldsToSaveData, ['id']);
+
+        //Run after Save
+        $savedFields = $form->ownedFields()->get();
+
+        $savedFields
+            ->whereIn('id', $fieldData->pluck("id"))
+            ->each(function(CustomField $field) use ($fieldData): void {
+                $data = $fieldData->where("id", $field->id)->first();
+                $field
+                    ->getType()
+                    ->doAfterSaveField($field, $data);
+            });
+
+
+        //Run after Create
+        $savedFields
+            ->whereNotIn('id', $fieldData->pluck("id"))
+            ->each(function (CustomField $field) use ($fieldData): void {
+//                if ($field->isGeneralField()) { ToDo Remove not used code
+//                    $savedFieldData = $fieldData->where("general_field_id", $field->general_field_id)->first();
+//                } else {
+//                    if ($field->isTemplate()) {
+//                        $savedFieldData = $fieldData->where("template_id", $field->template_id)->first();
+//                    } else {
+//                        $savedFieldData = $fieldData->where("identifier", $field->identifier)->first();
+//                    }
+//                }
+                $data = $fieldData->where("identifier", $field->identifier)->first()?? [];
+                $field->getType()->doAfterCreateField($field, $data);
+            }
+            );
+    }
+
+    public static function updateRuleComponent(mixed $rawComponents, Collection $components, Rule $rule, string $type): void
+    {
+        foreach ($rawComponents as $rawComponent) {
+            if (!key_exists("id", $rawComponent))
+                $ruleComponent = new $type();
+            else
+                $ruleComponent = $components->where("id", $rawComponent["id"])->first();
+
+            $ruleComponent->fill($rawComponent);
+
+            $ruleComponent->rule_id = $rule->id;
+            $ruleComponent->save();
+        }
+    }
 
 }

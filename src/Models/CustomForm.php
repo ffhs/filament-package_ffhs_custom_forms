@@ -112,7 +112,7 @@ class CustomForm extends Model implements CachedModel
 
     public function formRules(): HasMany
     {
-        return $this->hasMany(FormRule::class); //ToDO add template rules
+        return $this->hasMany(FormRule::class);
     }
 
     public function  getCustomFieldsAsNestedList() : NestedFlattenList{
