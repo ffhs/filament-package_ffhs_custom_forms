@@ -7,7 +7,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralFieldForm;
-use Filament\Support\Assets\Js;
+use Filament\Support\Assets\AlpineComponent;
 use Filament\Support\Facades\FilamentAsset;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Artisan;
@@ -81,12 +81,19 @@ class FilamentPackageFfhsCustomFormsServiceProvider extends PackageServiceProvid
         });
 
         FilamentAsset::register([
-           Js::make('drag_drop_script', __DIR__ . '/../resources/js/drag_drop_script.js')->loadedOnRequest(),
+//            Js::make('drag_drop_script', __DIR__ . '/../resources/js/drag_drop_script.js')
+//                ->loadedOnRequest(),
+
+            AlpineComponent::make('drag_drop_container', __DIR__ . '/../dist/drag_drop_container.js')
+                ->loadedOnRequest(),
+            AlpineComponent::make('drag_drop_element', __DIR__ . '/../dist/drag_drop_element.js')
+                ->loadedOnRequest(),
+
         ], 'ffhs/filament-package_ffhs_custom_forms');
 
-        $this->publishes([
-            __DIR__.'/../resources/js/drag_drop_script.js' => public_path('js/ffhs/'.$this->package->name.'/drag_drop_script.js'),
-        ], 'filament-package_ffhs_custom_forms-assets');
+//        $this->publishes([
+//            __DIR__.'/../resources/js/drag_drop_script.js' => public_path('js/ffhs/'.$this->package->name.'/drag_drop_script.js'),
+//        ], 'filament-package_ffhs_custom_forms-assets');
 
     }
 

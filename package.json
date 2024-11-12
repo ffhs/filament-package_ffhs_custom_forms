@@ -1,0 +1,17 @@
+{
+  "name": "filament-package_ffhs_custom_forms",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "... //ToDo",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "node ./bin/build.js",
+    "watch": "watch 'npm run build && cd ../../../ && php artisan filament:assets' ./resources"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "esbuild": "^0.24.0",
+      "watch": "^0.13.0"
+  }
+}

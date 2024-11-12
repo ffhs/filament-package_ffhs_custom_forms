@@ -1,7 +1,9 @@
 @php
-    use Illuminate\Support\Facades\Blade;use Illuminate\Support\HtmlString;
+    use Illuminate\Support\Facades\Blade;
+    use Illuminate\Support\HtmlString;
     use function Filament\Support\prepare_inherited_attributes;
     use Illuminate\View\ComponentAttributeBag;
+    use Filament\Support\Facades\FilamentAsset;
 
     /**@var string $key*/
     /**@var Closure $getItemIcon*/
@@ -41,7 +43,11 @@
 
         grid-column: {{$gridColumn}} span {{$getItemGridSize($key)}} !important;
      "
-    x-init="setupDomElement($el)"
+
+    ax-load
+    ax-load-src="{{FilamentAsset::getAlpineComponentSrc("drag_drop_element", "ffhs/filament-package_ffhs_custom_forms")}}"
+    x-ignore
+    x-data="dragDropElement($el)"
 >
 
     <x-filament::fieldset

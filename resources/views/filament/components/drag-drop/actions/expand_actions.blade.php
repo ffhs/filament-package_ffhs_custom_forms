@@ -56,7 +56,7 @@
                     ffhs_drag:drag
                     ffhs_drag:group="{{$getDragDropGroup()}}"
                     ffhs_drag:action="mountFormComponentAction('{{$getActionsPath()}}.{{$getName()}}-{{$id}}Action','{{$getName()}}-{{$id}}')"
-                    x-init="setupDraggable($el)"
+{{--                    x-init="setupDraggable($el)"--}}
                 @endif
 
 

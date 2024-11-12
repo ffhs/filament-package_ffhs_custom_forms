@@ -1,4 +1,5 @@
 
+
 function countFlattenChildren(container, data, selector) {
     let count =0
     container.querySelectorAll(selector).forEach(element => {
@@ -322,8 +323,10 @@ function setUpDropField(element){
     })
 }
 
-function setupDomElement(element){
+
+export function setupDomElement(element){
     setupDraggable(element)
     setupDragOverEffect(element)
     setUpDropField(element)
 }
+

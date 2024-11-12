@@ -7,26 +7,26 @@
 @endphp
 
 
-<script src="{{FilamentAsset::getScriptSrc('drag_drop_script', 'ffhs/filament-package_ffhs_custom_forms')}}"></script>
+{{--<script src="{{FilamentAsset::getScriptSrc('drag_drop_script', 'ffhs/filament-package_ffhs_custom_forms')}}"></script>--}}
 
 
 <x-dynamic-component :component="$getFieldWrapperView()" :field="$field">
 
 
-    <!--- ToDo to CSS File--->
-
     <div
-        x-init="setupDomElement($el);"
-        x-data="{
-                    statePath: '{{$statePath}}',
-                    stateKey: '{{$stateKey}}',
-                    wire: $wire,
-                    isLive: @js($isLive()),
-                    dragDropPosAttribute: '{{$getNestedFlattenListType()::getPositionAttribute()}}',
-                    dragDropEndPosAttribute: '{{$getNestedFlattenListType()::getEndContainerPositionAttribute()}}',
-                    orderAttribute: @js($getOrderAttribute()),
-                    flatten: @js($isFlatten()),
-                }"
+        ax-load
+        ax-load-src="{{FilamentAsset::getAlpineComponentSrc("drag_drop_container", "ffhs/filament-package_ffhs_custom_forms")}}"
+        x-ignore
+        x-data="dragDropContainer(
+            '{{$statePath}}',
+             '{{$stateKey}}',
+             $wire,
+             @js($isLive()),
+             '{{$getNestedFlattenListType()::getPositionAttribute()}}',
+             '{{$getNestedFlattenListType()::getEndContainerPositionAttribute()}}',
+             @js($getOrderAttribute()),
+             @js($isFlatten())
+        )"
 
         ffhs_drag:parent
         ffhs_drag:group="{{$getDragDropGroup()}}"
