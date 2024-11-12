@@ -12,12 +12,11 @@
 
 <x-dynamic-component :component="$getFieldWrapperView()" :field="$field">
 
-
     <div
         ax-load
-        ax-load-src="{{FilamentAsset::getAlpineComponentSrc("drag_drop_container", "ffhs/filament-package_ffhs_custom_forms")}}"
+        ax-load-src="{{FilamentAsset::getAlpineComponentSrc("drag_drop_parent", "ffhs/filament-package_ffhs_custom_forms")}}"
         x-ignore
-        x-data="dragDropContainer(
+        x-data="dragDropParent(
             '{{$statePath}}',
              '{{$stateKey}}',
              $wire,

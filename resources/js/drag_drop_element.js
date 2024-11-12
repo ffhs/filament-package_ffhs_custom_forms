@@ -1,9 +1,10 @@
-import {setupDomElement} from './drag_drop_script.js'
+import {setupDomElement, setupDraggable} from './drag_drop_script.js'
 
-export default function dragDropElement(){
+export default function dragDropElement(onlyDrag = false){
     return {
         init() {
-            setupDomElement(this.$el)
+            if(onlyDrag) setupDraggable(this.$el)
+            else setupDomElement(this.$el)
         }
     }
 }

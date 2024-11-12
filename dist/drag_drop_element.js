@@ -205,10 +205,11 @@ function setupDomElement(element) {
 }
 
 // resources/js/drag_drop_element.js
-function dragDropElement() {
+function dragDropElement(onlyDrag = false) {
   return {
     init() {
-      setupDomElement(this.$el);
+      if (onlyDrag) setupDraggable(this.$el);
+      else setupDomElement(this.$el);
     }
   };
 }

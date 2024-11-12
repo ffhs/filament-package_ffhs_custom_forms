@@ -1,8 +1,7 @@
-import * as dragDropScroll from './drag_drop_scroll.js'
-
 import {setupDomElement} from './drag_drop_script.js'
+import {setupScroll} from './drag_drop_scroll.js'
 
-export default function dragDropContainer(
+export default function dragDropParent(
     statePath,
     stateKey,
     $wire,
@@ -27,7 +26,7 @@ export default function dragDropContainer(
 
         init() {
             setupDomElement(this.$el)
-            dragDropScroll.setupScroll(this.$el)
+            setupScroll(this.$el)
         }
     }
 }

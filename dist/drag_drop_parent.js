@@ -1,25 +1,3 @@
-// resources/js/drag_drop_scroll.js
-function setupScroll(element) {
-  var scrollThreshold_Desktop = 5e3;
-  var scrollThreshold_Mobile = 200;
-  var scrollSpeed_Desktop = 3;
-  var scrollSpeed_Mobile = 6;
-  element.addEventListener("mousemove", function(event) {
-    if (event.clientY < scrollThreshold_Desktop) {
-      window.scrollBy(0, -scrollSpeed_Desktop);
-    } else if (event.clientY > window.innerHeight - scrollThreshold_Desktop) {
-      window.scrollBy(0, scrollSpeed_Desktop);
-    }
-  });
-  element.addEventListener("touchmove", function(event) {
-    if (event.touches[0].clientY < scrollThreshold_Mobile) {
-      window.scrollBy(0, -scrollSpeed_Mobile);
-    } else if (event.touches[0].clientY > window.innerHeight - scrollThreshold_Mobile) {
-      window.scrollBy(0, scrollSpeed_Mobile);
-    }
-  });
-}
-
 // resources/js/drag_drop_script.js
 function countFlattenChildren(container, data, selector) {
   let count = 0;
@@ -226,8 +204,12 @@ function setupDomElement(element) {
   setUpDropField(element);
 }
 
-// resources/js/drag_drop_container.js
-function dragDropContainer(statePath, stateKey, $wire, isLive, dragDropPosAttribute, dragDropEndPosAttribute, orderAttribute, flatten) {
+// resources/js/drag_drop_scroll.js
+function setupScroll(element) {
+}
+
+// resources/js/drag_drop_parent.js
+function dragDropParent(statePath, stateKey, $wire, isLive, dragDropPosAttribute, dragDropEndPosAttribute, orderAttribute, flatten) {
   return {
     statePath,
     stateKey,
@@ -244,5 +226,5 @@ function dragDropContainer(statePath, stateKey, $wire, isLive, dragDropPosAttrib
   };
 }
 export {
-  dragDropContainer as default
+  dragDropParent as default
 };

@@ -47,7 +47,7 @@
     ax-load
     ax-load-src="{{FilamentAsset::getAlpineComponentSrc("drag_drop_element", "ffhs/filament-package_ffhs_custom_forms")}}"
     x-ignore
-    x-data="dragDropElement($el)"
+    x-data="dragDropElement()"
 >
 
     <x-filament::fieldset

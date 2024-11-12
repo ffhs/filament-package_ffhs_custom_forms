@@ -84,7 +84,7 @@ class FilamentPackageFfhsCustomFormsServiceProvider extends PackageServiceProvid
 //            Js::make('drag_drop_script', __DIR__ . '/../resources/js/drag_drop_script.js')
 //                ->loadedOnRequest(),
 
-            AlpineComponent::make('drag_drop_container', __DIR__ . '/../dist/drag_drop_container.js')
+            AlpineComponent::make('drag_drop_parent', __DIR__ . '/../dist/drag_drop_parent.js')
                 ->loadedOnRequest(),
             AlpineComponent::make('drag_drop_element', __DIR__ . '/../dist/drag_drop_element.js')
                 ->loadedOnRequest(),

@@ -1,6 +1,6 @@
 
 
-function countFlattenChildren(container, data, selector) {
+export function countFlattenChildren(container, data, selector) {
     let count =0
     container.querySelectorAll(selector).forEach(element => {
 
@@ -15,7 +15,7 @@ function countFlattenChildren(container, data, selector) {
 }
 
 
-function updatePositionsFlatten(state, container, group, data) {
+export function updatePositionsFlatten(state, container, group, data) {
     let currentPos = 0;
     let selector = '[ffhs_drag\\:element][ffhs_drag\\:group="'+ group +'"]';
 
@@ -41,7 +41,7 @@ function updatePositionsFlatten(state, container, group, data) {
     })
 }
 
-function updatePositionsOrder(state, container, group, data) {
+export function updatePositionsOrder(state, container, group, data) {
     let currentPos = 1;
     let selector = '[ffhs_drag\\:element][ffhs_drag\\:group="'+ group +'"]';
 
@@ -62,13 +62,13 @@ function updatePositionsOrder(state, container, group, data) {
     })
 }
 
-function updatePositions(state, container, group, data) {
+export function updatePositions(state, container, group, data) {
     if(data.flatten) updatePositionsFlatten(state, container, group, data)
     else if(data.orderAttribute !== null) updatePositionsOrder(state, container, group, data)
 }
 
 
-function updateLiveState(alpineData) {
+export function updateLiveState(alpineData) {
     let isLive = alpineData.isLive
     if (!isLive) return false;
     let $wire = alpineData.wire
@@ -77,7 +77,7 @@ function updateLiveState(alpineData) {
 }
 
 
-function moveElementToOnOtherElement(target, toSet) {
+export function moveElementToOnOtherElement(target, toSet) {
     if (target.hasAttribute('ffhs_drag:element')) {
         target.before(toSet)
     }
@@ -86,7 +86,7 @@ function moveElementToOnOtherElement(target, toSet) {
     }
 }
 
-function moveField(target, dragElement) {
+export function moveField(target, dragElement) {
 
 
     let targetParent = getParent(target)
@@ -133,7 +133,7 @@ function moveField(target, dragElement) {
 }
 
 
-function handleRunAction(target, dragElement) {
+export function handleRunAction(target, dragElement) {
 
     let targetParent = getParent(target)
 
@@ -187,7 +187,7 @@ function handleRunAction(target, dragElement) {
 }
 
 
-function handleDrop(target) {
+export function handleDrop(target) {
 
     let dragElement = findDragElement()
 
@@ -201,7 +201,7 @@ function handleDrop(target) {
 }
 
 
-function getParent(target) {
+export function getParent(target) {
     let currentParent = target;
 
     while (currentParent && !(currentParent instanceof Document)) {
@@ -214,7 +214,7 @@ function getParent(target) {
 
 
 
-function findTarget(target, attributes = ['ffhs_drag:container', 'ffhs_drag:drag']){
+export function findTarget(target, attributes = ['ffhs_drag:container', 'ffhs_drag:drag']){
 
     let currentParent = target;
     while (currentParent && !(currentParent instanceof Document)) {
@@ -228,12 +228,12 @@ function findTarget(target, attributes = ['ffhs_drag:container', 'ffhs_drag:drag
     return null
 }
 
-function findDragElement() {
+export function findDragElement() {
     return document.querySelector('[ffhs_drag\\:dragging]');
 }
 
 
-function clearBackground() {
+export function clearBackground() {
     //ToDo fix flackern
     document.querySelectorAll('*').forEach(element => {
         element.classList.remove('dark:!bg-sky-950')
@@ -241,7 +241,7 @@ function clearBackground() {
     })
 }
 
-function hasSameGroup(elment1, elment2) {
+export function hasSameGroup(elment1, elment2) {
     let dragGroup = elment1.getAttribute('ffhs_drag:group');
     let targetGroup = elment2.getAttribute('ffhs_drag:group');
     return dragGroup === targetGroup;
@@ -249,7 +249,7 @@ function hasSameGroup(elment1, elment2) {
 
 
 
-function setupDragOverEffect(element){
+export function setupDragOverEffect(element){
 
     element.addEventListener('dragenter', e => {
         let dragElement = findDragElement()
@@ -289,7 +289,7 @@ function setupDragOverEffect(element){
 
 }
 
-function setupDraggable(fieldEl){
+export function setupDraggable(fieldEl){
 
     fieldEl.addEventListener('dragstart', e => {
         e.stopPropagation();
@@ -311,7 +311,7 @@ function setupDraggable(fieldEl){
 }
 
 
-function setUpDropField(element){
+export function setUpDropField(element){
 
     element.addEventListener('drop', e => {
         e.stopPropagation();

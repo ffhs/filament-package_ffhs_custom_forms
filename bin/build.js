@@ -1,7 +1,7 @@
 import * as esbuild from 'esbuild'
 
 esbuild.build({
-    entryPoints: ['./resources/js/drag_drop_container.js', './resources/js/drag_drop_element.js'],
+    entryPoints: ['./resources/js/drag_drop_parent.js', './resources/js/drag_drop_element.js'],
     outdir: './dist',
 
     bundle: true,

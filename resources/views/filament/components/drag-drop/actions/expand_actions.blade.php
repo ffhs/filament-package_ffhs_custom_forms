@@ -1,5 +1,6 @@
 @php
     use Illuminate\Support\HtmlString;
+    use Filament\Support\Facades\FilamentAsset;
 
     $styleClass = "field-adder-". uniqid();
     $styleOptionClass = "field-adder-option-". uniqid();
@@ -56,6 +57,12 @@
                     ffhs_drag:drag
                     ffhs_drag:group="{{$getDragDropGroup()}}"
                     ffhs_drag:action="mountFormComponentAction('{{$getActionsPath()}}.{{$getName()}}-{{$id}}Action','{{$getName()}}-{{$id}}')"
+
+                    ax-load
+                    ax-load-src="{{FilamentAsset::getAlpineComponentSrc("drag_drop_element", "ffhs/filament-package_ffhs_custom_forms")}}"
+                    x-ignore
+                    x-data="dragDropElement(true)"
+
 {{--                    x-init="setupDraggable($el)"--}}
                 @endif
 
