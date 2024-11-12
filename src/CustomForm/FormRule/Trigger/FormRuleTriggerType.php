@@ -2,19 +2,20 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Trigger;
 
-use Barryvdh\Debugbar\Facades\Debugbar;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\Rules\Trigger\TriggerType;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\Types\IsType;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\RuleTrigger;
 use Filament\Forms\Components\Component;
-use \Filament\Infolists\Components\Component as InfolistComponent;
+use Filament\Infolists\Components\Component as InfolistComponent;
+
 abstract class FormRuleTriggerType implements TriggerType
 {
     use IsType;
 
     public static function getConfigTypeList(): string
     {
-        return "rules.triggers";
+        return "rule.trigger";
     }
     public function prepareComponents(array &$components, RuleTrigger $trigger): array
     {
@@ -29,6 +30,8 @@ abstract class FormRuleTriggerType implements TriggerType
         return $component;
     }
 
-
+    public function mutateDataOnClone(array $data, CustomForm $target):array{
+        return $data;
+    }
 
 }

@@ -110,7 +110,10 @@ final class TemplateFieldType extends CustomFieldType
         CustomFormSaveHelper::saveWithoutPreparation($formData, $customFieldsIdentify, $fieldAnswersIdentify, $formAnswerer);
     }
 
-    public function afterEditFieldDelete(CustomField $field):void {
+
+    //ToDo Reimplement
+
+    public function afterDeleteField(CustomField $field):void {
         $templateFields = $field->template->customFields;
         $formFields = $field->customForm->customFields;
         $field->customForm->customFormAnswers->each(function (CustomFormAnswer $formAnswer) use ($formFields, $field, $templateFields) {
@@ -138,7 +141,7 @@ final class TemplateFieldType extends CustomFieldType
         };
     }
 
-    public function afterEditFieldSave(CustomField $field, array $rawData): void {
+    public function afterSaveField(CustomField $field, array $data): void {
         $templateFields = $field->template->customFields;
         $formFields = $field->customForm->customFields;
 
@@ -150,6 +153,7 @@ final class TemplateFieldType extends CustomFieldType
                 ->each($this->getFieldTransferClosure($templateFields, $formFields));
         });
     }
+
 
 
 

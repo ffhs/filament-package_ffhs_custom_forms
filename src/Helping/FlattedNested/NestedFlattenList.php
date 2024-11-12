@@ -12,12 +12,6 @@ class NestedFlattenList
 
     protected ?string $fixedType = null;
 
-
-    public static function make(array|Collection $items = [], ?string $type = null):static{
-        return new static($items, $type);
-    }
-
-
     public function __construct(array|Collection $items = [], ?string $type = null)
     {
         if($items instanceof Collection) $this->data = $items;
@@ -26,89 +20,13 @@ class NestedFlattenList
         if(!is_null($type)) $this->fixedType = $type;
     }
 
+    public static function make(array|Collection $items = [], ?string $type = null):static{
+        return new static($items, $type);
+    }
+
     public function getStructure(bool $useKey = false): array
     {
         return $this->loadStructure($this->data, $useKey);
-    }
-
-    public function addOnPosition(int $pos, NestingObject|array $data, ?string $key): void
-    {
-        $poseAttribute = $this->getPositionAttribute();
-        $endPosAttribute = $this->getEndContainerPositionAttribute();
-
-        $data[$poseAttribute] = $pos;
-
-        foreach ($this->data as $elementKey => $element){
-            if($element[$poseAttribute] >= $pos) $element[$poseAttribute]+=1;
-            if(!empty($element[$endPosAttribute]) && $element[$endPosAttribute] >= $pos)
-                $element[$endPosAttribute]+=1;
-            $this->data->put($elementKey, $element);
-        }
-
-        if(is_null($key)) $this->data->add($data);
-        else $this->data->put($key, $data);
-    }
-
-    public function addManyOnPosition(int $startPos, array $elementsToAdd, bool $withKeys = false): void
-    {
-        $poseAttribute = $this->getPositionAttribute();
-        $endPosAttribute = $this->getEndContainerPositionAttribute();
-
-        $amountToAdd = count($elementsToAdd);
-
-        //Rearrange
-        $startPos = $startPos + $amountToAdd;
-        foreach ($this->data as $itemKey => $item){
-            if($item[$poseAttribute] >= $startPos) $item[$poseAttribute]+=$amountToAdd;
-            if($item[$endPosAttribute] >= $startPos) $item[$endPosAttribute]+=$amountToAdd;
-            $this->data->put($itemKey, $item);
-        }
-
-
-        $count = 0;
-        foreach ($elementsToAdd as $key => $newElement){
-            $newElement[$poseAttribute] += $startPos + $count;
-            $count++;
-
-            if($withKeys) $this->data->put($key, $newElement);
-            else  $this->data->add($newElement);
-        }
-
-    }
-
-
-    public function removeFromPosition(int $pos): void
-    {
-        $poseAttribute = $this->getPositionAttribute();
-        $endPosAttribute = $this->getEndContainerPositionAttribute();
-
-        $toRemove = $this->data->where($poseAttribute, $pos)->first();
-
-
-        //Delete Sub Elements
-
-        $endPos = $toRemove[$endPosAttribute] ?? $pos;
-        $keysToDelete = [];
-
-        foreach ($this->data as $key => $element){
-            if( $pos <= $element[$poseAttribute] && $endPos >= $element[$poseAttribute])
-                $keysToDelete[] = $key;
-        }
-
-        foreach ($keysToDelete as $key){
-            $this->data->forget($key);
-        }
-
-        $amountDeletedFields = count($keysToDelete);
-
-        //Rearrange Fields
-        foreach ($this->data as $key => $item){
-            if($item[$poseAttribute] >= $pos) $item[$poseAttribute]-=$amountDeletedFields;
-            if(!empty($item[$endPosAttribute]) && $item[$endPosAttribute] >= $pos)
-                $item[$endPosAttribute] -= $amountDeletedFields;
-            $this->data->put($key, $item);
-        }
-
     }
 
     protected function loadStructure(Collection $objects, bool $useKey): array {
@@ -154,17 +72,11 @@ class NestedFlattenList
         return  $structure;
     }
 
-
     public function getPositionAttribute(): string
     {
         if(!$this->getType()) return "";
         return $this->getType()::getPositionAttribute();
 
-    }
-    public function getEndContainerPositionAttribute(): string
-    {
-        if(!$this->getType()) return "";
-        return $this->getType()::getEndContainerPositionAttribute();
     }
 
     public function getType(): string
@@ -181,6 +93,91 @@ class NestedFlattenList
         return $first::class;
     }
 
+    public function getEndContainerPositionAttribute(): string
+    {
+        if(!$this->getType()) return "";
+        return $this->getType()::getEndContainerPositionAttribute();
+    }
+
+    public function addOnPosition(int $pos, NestingObject|array $data, ?string $key): void
+    {
+        $poseAttribute = $this->getPositionAttribute();
+        $endPosAttribute = $this->getEndContainerPositionAttribute();
+
+        $data[$poseAttribute] = $pos;
+
+        foreach ($this->data as $elementKey => $element){
+            if($element[$poseAttribute] >= $pos) $element[$poseAttribute]+=1;
+            if(!empty($element[$endPosAttribute]) && $element[$endPosAttribute] >= $pos)
+                $element[$endPosAttribute]+=1;
+            $this->data->put($elementKey, $element);
+        }
+
+        if(is_null($key)) $this->data->add($data);
+        else $this->data->put($key, $data);
+    }
+
+    public function addManyOnPosition(int $startPos, array $elementsToAdd, bool $withKeys = false): void
+    {
+        $poseAttribute = $this->getPositionAttribute();
+        $endPosAttribute = $this->getEndContainerPositionAttribute();
+
+        $amountToAdd = count($elementsToAdd);
+
+        //Rearrange
+        foreach ($this->data as $itemKey => $item){
+            if($item[$poseAttribute] >= $startPos) $item[$poseAttribute] += $amountToAdd;
+            if($item[$endPosAttribute] >= $startPos) $item[$endPosAttribute] += $amountToAdd;
+            $this->data->put($itemKey, $item);
+        }
+
+        foreach ($elementsToAdd as $key => $newElement){
+            $newElement[$poseAttribute] += $startPos -1;
+            // If it has an end position
+            if(array_key_exists($endPosAttribute, $newElement) && !is_null($newElement[$endPosAttribute])){
+                $newElement[$endPosAttribute] += $startPos -1;
+            }
+
+            if($withKeys) $this->data->put($key, $newElement);
+            else  $this->data->add($newElement);
+        }
+
+        //dd( collect($this->data)->sortBy($poseAttribute)->toArray());
+    }
+
+    public function removeFromPosition(int $pos): void
+    {
+        $poseAttribute = $this->getPositionAttribute();
+        $endPosAttribute = $this->getEndContainerPositionAttribute();
+
+        $toRemove = $this->data->where($poseAttribute, $pos)->first();
+
+
+        //Delete Sub Elements
+
+        $endPos = $toRemove[$endPosAttribute] ?? $pos;
+        $keysToDelete = [];
+
+        foreach ($this->data as $key => $element){
+            if( $pos <= $element[$poseAttribute] && $endPos >= $element[$poseAttribute])
+                $keysToDelete[] = $key;
+        }
+
+        foreach ($keysToDelete as $key){
+            $this->data->forget($key);
+        }
+
+        $amountDeletedFields = count($keysToDelete);
+
+        //Rearrange Fields
+        foreach ($this->data as $key => $item){
+            if($item[$poseAttribute] >= $pos) $item[$poseAttribute]-=$amountDeletedFields;
+            if(!empty($item[$endPosAttribute]) && $item[$endPosAttribute] >= $pos)
+                $item[$endPosAttribute] -= $amountDeletedFields;
+            $this->data->put($key, $item);
+        }
+
+    }
 
     public function getData():array
     {

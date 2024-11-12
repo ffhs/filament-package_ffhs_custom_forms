@@ -4,9 +4,9 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Models;
 
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\Caching\CachedModel;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\Caching\HasCacheModel;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 
 /**
  * @property int $id
@@ -42,8 +42,9 @@ class CustomFieldAnswer extends Model implements CachedModel
     ];
 
 
-    public function customForm(): Builder {
-        return CustomForm::query()->whereIn("id", $this->belongsTo(CustomField::class)->select("custom_form_id"));
+    public function customForm(): HasOneThrough
+    {
+        return $this->hasOneThrough(CustomForm::class,CustomField::class);
     }
 
     public function cachedCustomForm(): CustomForm {

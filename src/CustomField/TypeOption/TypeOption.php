@@ -8,25 +8,12 @@ use Filament\Forms\Components\Component;
 
 abstract class TypeOption {
 
-    public static function make(): static {
-        return new static();
-    }
-
     protected ?Closure $modifyComponentCloser = null;
     protected ?Closure $modifyDefault = null;
 
-    public abstract function getDefaultValue(): mixed;
-    public abstract function getComponent(string $name): Component;
-
-   /* public function mutateOnCreate(mixed $value, CustomField $field): mixed { //ToDo for GeneralField
-        return $value;
+    public static function make(): static {
+        return new static();
     }
-    public function mutateOnSave(mixed $value, CustomField $field): mixed { //ToDo for GeneralField
-        return $value;
-    }
-    public function mutateOnLoad(mixed $value, CustomField $field): mixed { //ToDo for GeneralField
-        return $value;
-    }*/
 
     public function modifyComponent(Closure $closure): static {
         $this->modifyComponentCloser = $closure;
@@ -38,10 +25,22 @@ abstract class TypeOption {
         return $this;
     }
 
+   /* public function mutateOnCreate(mixed $value, CustomField $field): mixed { //ToDo for GeneralField
+        return $value;
+    }
+    public function mutateOnSave(mixed $value, CustomField $field): mixed { //ToDo for GeneralField
+        return $value;
+    }
+    public function mutateOnLoad(mixed $value, CustomField $field): mixed { //ToDo for GeneralField
+        return $value;
+    }*/
+
     public function getModifyComponent(string $name): Component {
         if (is_null($this->modifyComponentCloser)) return $this->getComponent($name);
         return ($this->modifyComponentCloser)($this->getComponent($name));
     }
+
+    public abstract function getComponent(string $name): Component;
 
     public function getModifyDefault(): mixed {
         $default = $this->getDefaultValue();
@@ -49,10 +48,13 @@ abstract class TypeOption {
         return ($this->modifyDefault)($default);
     }
 
+    public abstract function getDefaultValue(): mixed;
+
 
 
 
     //ToDo for GeneralField
+
     public function mutateOnFieldSave(mixed $data, string $key, CustomField $field): mixed {return  $data;}
     public function mutateOnFieldLoad(mixed $data, string $key, CustomField $field): mixed {return  $data;}
     public function beforeSaveField(mixed &$data, string $key, CustomField $field):void{}
@@ -60,5 +62,7 @@ abstract class TypeOption {
     public function afterCreateField(mixed &$data, string $key, CustomField $field): void {}
     public function afterDeleteField(int|string $key, CustomField $field) {}
     public function beforeDeleteField(int|string $key, CustomField $field) {}
+
+    public function mutateOnFieldClone(mixed &$data, int|string $key, CustomField $original): mixed {return  $data;}
 
 }

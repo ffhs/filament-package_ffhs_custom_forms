@@ -12,7 +12,6 @@ use Ffhs\FilamentPackageFfhsCustomForms\Helping\FlattedNested\NestedFlattenList;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\Rule;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\RuleEvent;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\RuleTrigger;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -97,10 +96,13 @@ class CustomForm extends Model implements CachedModel
         return $this->ownedRules()->orWhereIn("rules.id",$ruleIds);
     }
 
-    public function customFields(): Builder {
+    public function customFields(): HasMany
+    {
         $baseQuery = CustomField::query()->where("custom_form_id",$this->id);
         $templateQuery = $baseQuery->clone()->select("template_id")->whereNotNull("template_id");
-        return $baseQuery->orWhereIn("custom_form_id",$templateQuery)->orderBy("form_position");
+        return $this->hasMany(CustomField::class)
+            ->orWhereIn("custom_form_id",$templateQuery)
+            ->orderBy("form_position");
     }
 
     public function ownedRules(): BelongsToMany

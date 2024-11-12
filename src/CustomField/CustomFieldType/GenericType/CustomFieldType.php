@@ -2,7 +2,6 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType;
 
-use Barryvdh\Debugbar\Facades\Debugbar;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Traits\HasConfigAttribute;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Traits\HasEditFieldCallbacks;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Traits\HasTypeOptions;
@@ -56,33 +55,20 @@ abstract class CustomFieldType implements Type
 
     //public static abstract function identifier(): string;
     public abstract function viewModes(): array;
-    public abstract function icon(): string;
-
 
     public function prepareSaveFieldData(mixed $data): ?array { //ToDo Rename and in Template
         if (is_null($data)) return null;
         return ["saved" => $data];
     }
+
     public function prepareLoadFieldData(array $data): mixed { //ToDo Rename and in Template
         if (!array_key_exists("saved", $data) || is_null($data["saved"])) return null;
         return $data["saved"];
     }
 
-
-
-    public function getTranslatedName(): string {
-        return __("custom_forms.types." . $this::identifier());
-    }
-
-
-    public function canBeDeactivate(): bool {
-          return true;
-    }
-
     public function fieldEditorExtraComponent(array $fieldData): ?string {
         return null;
     }
-
 
     public function getEditorFieldTitle(array $fieldData):string {
         $field = new CustomField();
@@ -93,6 +79,11 @@ abstract class CustomFieldType implements Type
         return "<div>". new HtmlBadge('Gen', Color::rgb('rgb(43, 164, 204)'))."</div>" .
             '<p style="margin-left: 40px; margin-top: -20px">'. $field->name.'</p>'; //ToDo Badges function reimplement
     }
+
+    public function getTranslatedName(): string {
+        return __("custom_forms.types." . $this::identifier());
+    }
+
     public function getEditorFieldIcon(array $fieldData):string
     {
         $field = new CustomField();
@@ -101,6 +92,8 @@ abstract class CustomFieldType implements Type
         if(!$field->isGeneralField()) return $this->icon();
         else return $field->generalField->icon;
     }
+
+    public abstract function icon(): string;
 
     public function getEditorActions(string $key, array $fieldState): array{
         return [
@@ -111,6 +104,9 @@ abstract class CustomFieldType implements Type
         ];
     }
 
+    public function canBeDeactivate(): bool {
+          return true;
+    }
 
     public function afterAnswerFieldSave(CustomFieldAnswer $field, mixed $rawData, array $formData): void { //ToDo to Traits
     }
@@ -124,8 +120,8 @@ abstract class CustomFieldType implements Type
         return empty($fielData['general_field_id']);
     }
 
-    public function mutateOnTemplateDissolve(array $data, CustomField $original): array {
-        return $data; //ToDo Reimplement
+    public function mutateOnCloneField(array $data, CustomField $original): array {
+        return $data;
     }
 
     public function isFullSizeField(): bool

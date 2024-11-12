@@ -34,47 +34,6 @@ class CustomOptionTypeOption extends TypeOption
             ]);
     }
 
-
-    public function mutateOnFieldSave(mixed $data, string $key, CustomField $field): null  {
-        Cache::set($this->getCachedOptionEditSaveKey($field), $data, 10);
-        return null;
-    }
-
-    public function afterSaveField(mixed &$data, string $key, CustomField $field): void
-    {
-        if($field->isGeneralField()){
-            $field->customOptions()->sync($data);
-            return;
-        }
-
-        $data = Cache::get($this->getCachedOptionEditSaveKey($field));
-        $ids = [];
-        $toCreate = [];
-        if(is_null($data)) $data = [];
-        foreach ($data as $optionData){
-            if(!array_key_exists("id",$optionData)){
-                if(empty($optionData["identifier"])) $optionData = array_merge($optionData,["identifier"=> uniqid()]);
-                $toCreate[] = $optionData;
-                continue;
-            }
-            $ids[] = $optionData["id"];
-            $field->customOptions->where("id",$optionData["id"])->first()?->update($optionData);
-        }
-
-        $field->customOptions()->whereNotIn("custom_options.id", $ids)->delete();
-        $field->customOptions()->createMany($toCreate);
-    }
-
-
-    public function mutateOnFieldLoad(mixed $data, string $key, CustomField $field): mixed {
-        //if(!is_null($value) &&!isEmpty($value))return $value;
-        if($field->isGeneralField()) return $field->customOptions->pluck("id")->toArray();
-        $field->customOptions->each(function (CustomOption $option) use (&$value){
-            $value["record-". $option->id] = $option->toArray();
-        });
-        return $value;
-    }
-
     private function getCustomOptionsSelector ($name):Component {
         return  Select::make($name)
             ->label("Mögliche Auswahlmöglichkeiten")
@@ -112,6 +71,11 @@ class CustomOptionTypeOption extends TypeOption
             ]);
     }
 
+    public function mutateOnFieldSave(mixed $data, string $key, CustomField $field): null  {
+        Cache::set($this->getCachedOptionEditSaveKey($field), $data, 10);
+        return null;
+    }
+
     /**
      * @param CustomField $field
      * @return string
@@ -120,5 +84,57 @@ class CustomOptionTypeOption extends TypeOption
     {
         return "custom_field-custom_options-" . $field->identifier . "-user_" . auth()->id();
     }
+
+    public function afterSaveField(mixed &$data, string $key, CustomField $field): void
+    {
+        if($field->isGeneralField()){
+            $field->customOptions()->sync($data);
+            return;
+        }
+
+        $data = Cache::get($this->getCachedOptionEditSaveKey($field));
+        $ids = [];
+        $toCreate = [];
+        if(is_null($data)) $data = [];
+        foreach ($data as $optionData){
+            if(!array_key_exists("id",$optionData)){
+                if(empty($optionData["identifier"])) $optionData = array_merge($optionData,["identifier"=> uniqid()]);
+                $toCreate[] = $optionData;
+                continue;
+            }
+            $ids[] = $optionData["id"];
+            $field->customOptions->where("id",$optionData["id"])->first()?->update($optionData);
+        }
+
+        $field->customOptions()->whereNotIn("custom_options.id", $ids)->delete();
+        $field->customOptions()->createMany($toCreate);
+    }
+
+    public function mutateOnFieldLoad(mixed $data, string $key, CustomField $field): mixed {
+        //if(!is_null($value) &&!isEmpty($value))return $value;
+        if($field->isGeneralField()) return $field->customOptions->pluck("id")->toArray();
+        $field->customOptions->each(function (CustomOption $option) use (&$value){
+            $value["record-". $option->id] = $option->toArray();
+        });
+        return $value;
+    }
+
+    public function mutateOnFieldClone(mixed &$data, int|string $key, CustomField $original): mixed
+    {
+        if($original->isGeneralField()) return parent::mutateOnFieldClone($data,$key, $original);
+        $options = [];
+        foreach ($original->customOptions as $customOption){
+            /**@var CustomOption $customOption*/
+            $customOptionData = $customOption->toArray();
+            unset($customOptionData["id"]);
+            unset($customOptionData["created_at"]);
+            unset($customOptionData["deleted_at"]);
+            unset($customOptionData["updated_at"]);
+            unset($customOptionData["pivot"]);
+            $options[uniqid()] = $customOptionData;
+        }
+        return parent::mutateOnFieldClone($options,$key, $original);
+    }
+
 
 }
