@@ -135,7 +135,7 @@ class NestedFlattenList
             $newElement[$poseAttribute] += $startPos -1;
             // If it has an end position
             if(array_key_exists($endPosAttribute, $newElement) && !is_null($newElement[$endPosAttribute])){
-                $newElement[$endPosAttribute] += $startPos;
+                $newElement[$endPosAttribute] += $startPos -1;
             }
 
             if($withKeys) $this->data->put($key, $newElement);
