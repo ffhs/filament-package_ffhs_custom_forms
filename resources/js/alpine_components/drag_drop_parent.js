@@ -1,7 +1,7 @@
-import {setupDomElement} from './drag_drop_script.js'
-import {setupScroll} from './drag_drop_scroll.js'
+import {setupScroll} from "../drag_drop_scroll.js";
 
 export default function dragDropParent(
+    group,
     statePath,
     stateKey,
     $wire,
@@ -12,7 +12,7 @@ export default function dragDropParent(
     flatten
 ){
     return {
-
+        group: group,
         statePath: statePath,
         stateKey: stateKey,
         wire: $wire,
@@ -24,9 +24,16 @@ export default function dragDropParent(
         orderAttribute: orderAttribute,
         flatten: flatten,
 
+
+        parent: true,
+        element: null,
+        drag: false,
+        container: false,
+
         init() {
-            setupDomElement(this.$el)
-            setupScroll(this.$el)
+            //setUpDropField(this.$el)
+            setupScroll(this.$el) //ToDo
         }
+
     }
 }

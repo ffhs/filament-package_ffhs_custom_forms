@@ -1,5 +1,6 @@
 @php
     use Filament\Support\Facades\FilamentAsset;
+
     /**@var Closure $getStatePath*/
     $statePath = $getStatePath();
     $stateKey = $getStatePath(false);
@@ -17,6 +18,7 @@
         ax-load-src="{{FilamentAsset::getAlpineComponentSrc("drag_drop_parent", "ffhs/filament-package_ffhs_custom_forms")}}"
         x-ignore
         x-data="dragDropParent(
+            '{{$getDragDropGroup()}}',
             '{{$statePath}}',
              '{{$stateKey}}',
              $wire,
@@ -27,27 +29,25 @@
              @js($isFlatten())
         )"
 
-        ffhs_drag:parent
-        ffhs_drag:group="{{$getDragDropGroup()}}"
+{{--        wire:ignore.self--}}
+        x-load-css="[@js(FilamentAsset::getStyleHref('drag_drop_css', package: 'ffhs/filament-package_ffhs_custom_forms'))]"
     >
 
-
         <x-filament::fieldset
-            class="grid grid-cols-[--cols-default] lg:grid-cols-[--cols-lg] fi-fo-component-ctn gap-6"
+            class="grid grid-cols-[--cols-default] lg:grid-cols-[--cols-lg] fi-fo-component-ctn gap-6 drag-drop__hover-effect"
             style="
-                --cols-default: repeat(2, minmax(0, 1fr)); --cols-lg: repeat({{$getGridSize()}}, minmax(0, 1fr));
+                  --cols-default: repeat(2, minmax(0, 1fr));
+                  --cols-lg: repeat({{$getGridSize()}}, minmax(0, 1fr));
                   background: rgba(200, 200, 200, {{$getDeepColor() * 0.1}})
             "
 
-            ffhs_drag:container
-            ffhs_drag:group="{{$getDragDropGroup()}}"
+            ax-load
+            ax-load-src="{{FilamentAsset::getAlpineComponentSrc('drag_drop_container', 'ffhs/filament-package_ffhs_custom_forms')}}"
+            x-ignore
+            x-data="dragDropContainer('{{$getDragDropGroup()}}')"
         >
-
                 @foreach($getStructure() as $key => $structure)
-                    <!-- ToDo FlattenList) -->
-                    <!-- include('filament-package_ffhs_custom_forms::custom_form_edit.custom-field') -->
                     @include('filament-package_ffhs_custom_forms::filament.components.drag-drop.element')
-
                 @endforeach
 
         </x-filament::fieldset>

@@ -8,6 +8,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralFieldForm;
 use Filament\Support\Assets\AlpineComponent;
+use Filament\Support\Assets\Css;
 use Filament\Support\Facades\FilamentAsset;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Artisan;
@@ -88,6 +89,16 @@ class FilamentPackageFfhsCustomFormsServiceProvider extends PackageServiceProvid
                 ->loadedOnRequest(),
             AlpineComponent::make('drag_drop_element', __DIR__ . '/../dist/drag_drop_element.js')
                 ->loadedOnRequest(),
+            AlpineComponent::make('drag_drop_container', __DIR__ . '/../dist/drag_drop_container.js')
+                ->loadedOnRequest(),
+            AlpineComponent::make('drag_drop_action', __DIR__ . '/../dist/drag_drop_action.js')
+                ->loadedOnRequest(),
+
+
+            Css::make('drag_drop_css', __DIR__ . '/../dist/drag_drop.css')
+                ->loadedOnRequest(),
+
+
 
         ], 'ffhs/filament-package_ffhs_custom_forms');
 

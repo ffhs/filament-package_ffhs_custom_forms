@@ -34,10 +34,6 @@
 
 
 <div
-    ffhs_drag:group="{{$getDragDropGroup()}}"
-    ffhs_drag:element="{{$key}}"
-    ffhs_drag:drag
-
     style="
         touch-action: pan-y;
 
@@ -47,16 +43,16 @@
     ax-load
     ax-load-src="{{FilamentAsset::getAlpineComponentSrc("drag_drop_element", "ffhs/filament-package_ffhs_custom_forms")}}"
     x-ignore
-    x-data="dragDropElement()"
+    x-data="dragDropElement(@js($getDragDropGroup()), @js($key))"
 >
 
     <x-filament::fieldset
         :label="$label"
-
+        class="drag-drop__hover-effect"
         :attributes="prepare_inherited_attributes(new ComponentAttributeBag())"
     >
 
-        <div style="width: 50%; margin-left: 50%; margin-top: -20px; margin-bottom: 10px">
+        <div class="drag-drop-list__element__action-container">
             {{$getItemActionContainer($key)}}
         </div>
 
