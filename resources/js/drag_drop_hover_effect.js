@@ -1,4 +1,4 @@
-import {findDragElement, getElementKey, hasSameGroup} from "./drag_drop_values.js";
+import {findDragElement, getElementKey, hasSameGroup, isContainer} from "./drag_drop_values.js";
 
 function dragenterEvent(element, event) {
     let dragElement = findDragElement()
@@ -10,7 +10,7 @@ function dragenterEvent(element, event) {
     event.stopPropagation();
     event.preventDefault()
 
-    if(getElementKey(element) === getElementKey(dragElement)) return;
+    if(!isContainer(element) && getElementKey(element) === getElementKey(dragElement)) return;
 
     setTimeout(() => {
         element.setAttribute("ffhs_drag:hower_over", true)

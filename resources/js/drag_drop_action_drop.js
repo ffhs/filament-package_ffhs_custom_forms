@@ -18,16 +18,7 @@ function createTemporaryChild(group, key, target) {
     moveElementToOnOtherElement(target, temporaryChild);
 
     Alpine.initTree(temporaryChild);
-   // => Proxy(Object) {objects: undefined}
-    //Alpine.start();
-    // temporaryChild._x_dataStack = {
-    //     group: group,
-    //     element: key,
-    //     drag: true,
-    //     parent: false,
-    //     action: null,
-    //     container: false,
-    // }
+
 
     return temporaryChild;
 }
