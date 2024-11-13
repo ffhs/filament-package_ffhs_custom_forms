@@ -69,7 +69,7 @@ function dragenterEvent(element, event) {
   if (!hasSameGroup(dragElement, element)) return;
   event.stopPropagation();
   event.preventDefault();
-  if (getElementKey(element) === getElementKey(dragElement)) return;
+  if (!isContainer(element) && getElementKey(element) === getElementKey(dragElement)) return;
   setTimeout(() => {
     element.setAttribute("ffhs_drag:hower_over", true);
   }, 0);
@@ -200,16 +200,16 @@ function moveField(target, dragElement) {
   let targetParent = getParent(target);
   let sourceParent = getParent(dragElement);
   let sameContainer = sourceParent === targetParent;
-  let group = targetParent.getAttribute("ffhs_drag:group");
-  let targetData = Alpine.mergeProxies(targetParent._x_dataStack);
-  let sourceData = Alpine.mergeProxies(sourceParent._x_dataStack);
+  let group = getGroup(targetParent);
+  let targetData = getAlpineData(targetParent);
+  let sourceData = getAlpineData(sourceParent);
   let targetState = targetData.wire.get(targetData.statePath, "");
   let sourceState = sourceData.wire.get(sourceData.statePath, "");
   if (!targetState || Array.isArray(targetState)) targetState = {};
   if (!sourceState || Array.isArray(sourceState)) sourceState = {};
   moveElementToOnOtherElement(target, dragElement);
   if (!sameContainer) {
-    let dragKey = dragElement.getAttribute("ffhs_drag:element");
+    let dragKey = getElementKey(dragElement);
     targetState[dragKey] = sourceState[dragKey];
     delete sourceState[dragKey];
     updatePositions(sourceState, sourceParent, group, sourceData);

@@ -1,4 +1,13 @@
-import {findDragElement, getElementKey, getParent, hasSameGroup, isAction, isElement} from "./drag_drop_values.js";
+import {
+    findDragElement,
+    getAlpineData,
+    getElementKey,
+    getGroup,
+    getParent,
+    hasSameGroup,
+    isAction,
+    isElement
+} from "./drag_drop_values.js";
 import {clearBackground} from "./drag_drop_hover_effect.js";
 import {handleDropAction} from "./drag_drop_action_drop.js";
 import {moveElementToOnOtherElement, updatePositions} from "./drag_drop_move_elements.js";
@@ -23,11 +32,11 @@ export function moveField(target, dragElement) {
 
     let sameContainer = sourceParent=== targetParent;
 
-    let group = targetParent.getAttribute('ffhs_drag:group')
+    let group = getGroup(targetParent)
 
 
-    let targetData = Alpine.mergeProxies(targetParent._x_dataStack)
-    let sourceData = Alpine.mergeProxies(sourceParent._x_dataStack)
+    let targetData = getAlpineData(targetParent)
+    let sourceData = getAlpineData(sourceParent)
 
 
     let targetState = targetData.wire.get(targetData.statePath, '') //targetData.state
@@ -42,7 +51,7 @@ export function moveField(target, dragElement) {
     moveElementToOnOtherElement(target, dragElement);
 
     if(!sameContainer){
-        let dragKey = dragElement.getAttribute('ffhs_drag:element')
+        let dragKey = getElementKey(dragElement)
 
         //Move data to the other Field
         targetState[dragKey] = sourceState[dragKey];
