@@ -8,16 +8,16 @@
 @endphp
 
 
-{{--<script src="{{FilamentAsset::getScriptSrc('drag_drop_script', 'ffhs/filament-package_ffhs_custom_forms')}}"></script>--}}
+{{--<script src="{{FilamentAsset::getScriptSrc('drag_drop_script', 'ffhs/filament-package_ffhs_drag-drop')}}"></script>--}}
 
 
 <x-dynamic-component :component="$getFieldWrapperView()" :field="$field">
 
     <div
         ax-load
-        ax-load-src="{{FilamentAsset::getAlpineComponentSrc("drag_drop_parent", "ffhs/filament-package_ffhs_custom_forms")}}"
+        ax-load-src="{{FilamentAsset::getAlpineComponentSrc("parent", "ffhs/filament-package_ffhs_drag-drop")}}"
         x-ignore
-        {{$applyStateBindingModifiers('wire:model.defer')}}="{{$statePath}}"
+{{--        {{$applyStateBindingModifiers('wire:model.defer')}}="{{$statePath}}"--}}
 
         x-data="dragDropParent(
             '{{$getDragDropGroup()}}',
@@ -31,10 +31,10 @@
              @js($isFlatten())
         )"
 
-{{--        wire:ignore.self--}}
-        x-load-css="[@js(FilamentAsset::getStyleHref('drag_drop_css', package: 'ffhs/filament-package_ffhs_custom_forms'))]"
+        x-load-css="[@js(FilamentAsset::getStyleHref('stylesheet', package: 'ffhs/filament-package_ffhs_drag-drop'))]"
         wire:loading.class="opacity-50"
         wire:loading.attr="disabled"
+        wire:target="mountFormComponentAction, {{$statePath}}"
         ffhs_drag:component
     >
 
@@ -57,7 +57,7 @@
 {{--            "--}}
 
 {{--            ax-load--}}
-{{--            ax-load-src="{{FilamentAsset::getAlpineComponentSrc('drag_drop_container', 'ffhs/filament-package_ffhs_custom_forms')}}"--}}
+{{--            ax-load-src="{{FilamentAsset::getAlpineComponentSrc('drag_drop_container', 'ffhs/filament-package_ffhs_drag-drop')}}"--}}
 {{--            x-ignore--}}
 {{--            x-data="dragDropContainer('{{$getDragDropGroup()}}')"--}}
 {{--        >--}}

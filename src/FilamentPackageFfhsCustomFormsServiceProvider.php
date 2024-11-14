@@ -81,29 +81,24 @@ class FilamentPackageFfhsCustomFormsServiceProvider extends PackageServiceProvid
             else return 'Database\Factories\\' . class_basename($modelName) . 'Factory';
         });
 
+
+        //Drag and Drop
         FilamentAsset::register([
-//            Js::make('drag_drop_script', __DIR__ . '/../resources/js/drag_drop_dropping.js')
-//                ->loadedOnRequest(),
-
-            AlpineComponent::make('drag_drop_parent', __DIR__ . '/../dist/drag_drop_parent.js')
+            AlpineComponent::make('parent', __DIR__ . '/../dist/js/drag-drop/parent.js')
                 ->loadedOnRequest(),
-            AlpineComponent::make('drag_drop_element', __DIR__ . '/../dist/drag_drop_element.js')
+            AlpineComponent::make('element', __DIR__ . '/../dist/js/drag-drop/element.js')
                 ->loadedOnRequest(),
-            AlpineComponent::make('drag_drop_container', __DIR__ . '/../dist/drag_drop_container.js')
+            AlpineComponent::make('container', __DIR__ . '/../dist/js/drag-drop/container.js')
                 ->loadedOnRequest(),
-            AlpineComponent::make('drag_drop_action', __DIR__ . '/../dist/drag_drop_action.js')
+            AlpineComponent::make('action', __DIR__ . '/../dist/js/drag-drop/action.js')
                 ->loadedOnRequest(),
 
-
-            Css::make('drag_drop_css', __DIR__ . '/../dist/drag_drop.css')
+            Css::make('stylesheet', __DIR__ . '/../dist/css/drag_drop.css')
                 ->loadedOnRequest(),
-
-
-
-        ], 'ffhs/filament-package_ffhs_custom_forms');
+        ], 'ffhs/filament-package_ffhs_drag-drop');
 
 //        $this->publishes([
-//            __DIR__.'/../resources/js/drag_drop_dropping.js' => public_path('js/ffhs/'.$this->package->name.'/drag_drop_dropping.js'),
+//            __DIR__.'/../resources/js/dropping.js' => public_path('js/ffhs/'.$this->package->name.'/dropping.js'),
 //        ], 'filament-package_ffhs_custom_forms-assets');
 
     }

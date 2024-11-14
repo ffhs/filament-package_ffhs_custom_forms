@@ -1,13 +1,5 @@
-import {
-    findTarget,
-    getAction,
-    getAlpineData,
-    getElementKey,
-    getGroup,
-    getParent,
-    isElement
-} from "./drag_drop_values.js";
-import {moveElementToOnOtherElement, updatePositions} from "./drag_drop_move_elements.js";
+import {findTarget, getAction, getAlpineData, getElementKey, getGroup, getParent, isElement} from "./get_values.js";
+import {moveElementToOnOtherElement, updatePositions} from "./move_elements.js";
 
 
 function createTemporaryChild(group, key, target) {
@@ -76,6 +68,5 @@ export function handleDropAction(target, dragElement) {
     if(targetParent.getAttribute("disabled")) return;
 
     let metaData =  {targetPath:targetParentData.statePath,  position:position, flatten:isFlatten, targetIn:targetInId, target:targetId};
-
     $wire.mountFormComponentAction(toActionPath, toDoAction, metaData);
 }

@@ -1,4 +1,4 @@
-import {setupDraggable} from "../drag_drop_draging.js";
+import {setupDraggable} from "../draging.js";
 
 export default function dragDropAction(group, action){
     return {

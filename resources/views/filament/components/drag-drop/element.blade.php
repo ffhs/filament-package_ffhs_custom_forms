@@ -40,7 +40,7 @@
      "
 
     ax-load
-    ax-load-src="{{FilamentAsset::getAlpineComponentSrc("drag_drop_element", "ffhs/filament-package_ffhs_custom_forms")}}"
+    ax-load-src="{{FilamentAsset::getAlpineComponentSrc("element", "ffhs/filament-package_ffhs_drag-drop")}}"
     x-ignore
     x-data="dragDropElement(@js($getDragDropGroup()), @js($key))"
     ffhs_drag:component

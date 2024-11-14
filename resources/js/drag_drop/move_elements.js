@@ -1,4 +1,4 @@
-import {getAlpineData, getElementKey, getGroup, getParent, isContainer, isElement} from "./drag_drop_values.js";
+import {getAlpineData, getElementKey, getGroup, getParent, isContainer, isElement} from "./get_values.js";
 
 export function moveElementToOnOtherElement(target, toSet) {
     if (isElement(target)) target.before(toSet)
@@ -39,7 +39,6 @@ function countFlattenChildren(container, data) {
      let test =  keySplit[0] + keySplit[1];
 
      container.querySelectorAll('[ffhs_drag\\:component]').forEach(element => {
-        console.log("updating " + test)
         if(!flattenElementCheck(element, data)) return;
 
         let elementKey = getElementKey(element)
@@ -81,4 +80,45 @@ function updatePositionsOrder(state, container, group, data) {
 export function updatePositions(state, container, group, parentData) {
     if(parentData.flatten) updatePositionsFlatten(state, container, group, parentData)
     else if(parentData.orderAttribute !== null) updatePositionsOrder(state, container, group, parentData)
+}
+
+export function moveDraggable(target, dragElement) {
+
+    let targetParent = getParent(target)
+    let targetData = getAlpineData(targetParent)
+    let targetState = targetData.wire.get(targetData.statePath, '') //targetData.state
+    //Fixing JavaScript bullish
+    //if the object is empty it get back an proxy array back that fix this shit.
+    if(!targetState || Array.isArray(targetState)) targetState = {}
+
+    let group = getGroup(targetParent)
+
+    let sourceParent= getParent(dragElement)
+    let sameContainer = sourceParent=== targetParent;
+
+    if(targetParent.getAttribute("disabled")) return;
+    moveElementToOnOtherElement(target, dragElement);
+
+    if(!sameContainer){
+        let sourceData = getAlpineData(sourceParent)
+        let sourceState = sourceData.wire.get(sourceData.statePath, '') //sourceData.state
+        if (!sourceState || Array.isArray(sourceState)) sourceState = {}
+
+        let dragKey = getElementKey(dragElement)
+
+        //Move data to the other Field
+        targetState[dragKey] = sourceState[dragKey];
+        delete sourceState[dragKey];
+
+        updatePositions(sourceState, sourceParent, group, sourceData)
+        sourceData.wire.set(sourceData.statePath, sourceState, false)
+    }
+
+
+    updatePositions(targetState, targetParent, group, targetData)
+
+    if(targetParent.getAttribute("disabled")) return;
+
+    let isLive = (!sameContainer || targetData.isLive);
+    targetData.wire.set(targetData.statePath, targetState, isLive)
 }

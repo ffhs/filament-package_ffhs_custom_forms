@@ -1,6 +1,6 @@
-import {setUpDropField,} from '../drag_drop_dropping.js'
-import {setupDragOverEffect} from "../drag_drop_hover_effect.js";
-import {setupDraggable} from "../drag_drop_draging.js";
+import {setUpDropField,} from '../dropping.js'
+import {setupDragOverEffect} from "../hover_effect.js";
+import {setupDraggable} from "../draging.js";
 
 export default function dragDropElement(group, element){
     return {

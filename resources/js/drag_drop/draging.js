@@ -1,11 +1,12 @@
-import registerEvent from "./drag_drop_events.js";
-import {getParent} from "./drag_drop_values.js";
+import registerEvent from "./register_events.js";
+import {getParent} from "./get_values.js";
 
 export function setupDraggable(element){
     registerEvent("dragstart", element, event =>{
         event.stopPropagation();
 
-        if(getParent(element).getAttribute("disabled")) return;
+        let parent = getParent(element);
+        if(parent !== null && parent.getAttribute("disabled")) return;
         element.setAttribute('ffhs_drag:dragging',true)
     })
 

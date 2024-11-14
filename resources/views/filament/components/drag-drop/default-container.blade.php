@@ -21,7 +21,7 @@
     "
 
     ax-load
-    ax-load-src="{{FilamentAsset::getAlpineComponentSrc('drag_drop_container', 'ffhs/filament-package_ffhs_custom_forms')}}"
+    ax-load-src="{{FilamentAsset::getAlpineComponentSrc('container', 'ffhs/filament-package_ffhs_drag-drop')}}"
     x-ignore
     x-data="dragDropContainer('{{$getDragDropGroup()}}')"
     ffhs_drag:component
