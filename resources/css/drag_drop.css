@@ -1,21 +1,21 @@
 .drag-drop__hover-effect{
-    transition: background 0.5s;
+    transition: background 0.25s;
 }
 
 [ffhs_drag\:dragging] fieldset.drag-drop__hover-effect{
     @apply !bg-gray-200 dark:!bg-gray-700;
-    transition: background 0.5s;
+    transition: background 0.25s;
 }
 
 fieldset[ffhs_drag\:hower_over]{
     @apply !bg-blue-100 dark:!bg-sky-950;
-    transition: background 0.5s;
+    transition: background 0.25s;
 }
 
 div[ffhs_drag\:hower_over][x-data] fieldset.drag-drop__hover-effect,
 .drag-drop__hover-effect[ffhs_drag_hower_over] {
     @apply bg-blue-100 dark:bg-sky-950;
-    transition: background 0.5s;
+    transition: background 0.25s;
 }
 
 

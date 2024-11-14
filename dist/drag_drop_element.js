@@ -69,7 +69,9 @@ function dragenterEvent(element, event) {
   if (!hasSameGroup(dragElement, element)) return;
   event.stopPropagation();
   event.preventDefault();
-  if (!isContainer(element) && getElementKey(element) === getElementKey(dragElement)) return;
+  if (!isContainer(element) && getElementKey(element) === getElementKey(dragElement)) {
+    return;
+  }
   setTimeout(() => {
     element.setAttribute("ffhs_drag:hower_over", true);
   }, 0);
@@ -77,6 +79,7 @@ function dragenterEvent(element, event) {
 function dragleaveEvent(event) {
   let dragElement = findDragElement();
   if (dragElement == null) return;
+  event.preventDefault();
   event.stopPropagation();
   clearBackground();
 }

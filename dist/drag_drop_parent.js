@@ -1,7 +1,3 @@
-// resources/js/drag_drop_scroll.js
-function setupScroll(element) {
-}
-
 // resources/js/alpine_components/drag_drop_parent.js
 function dragDropParent(group, statePath, stateKey, $wire, isLive, dragDropPosAttribute, dragDropEndPosAttribute, orderAttribute, flatten) {
   return {
@@ -19,7 +15,6 @@ function dragDropParent(group, statePath, stateKey, $wire, isLive, dragDropPosAt
     drag: false,
     container: false,
     init() {
-      setupScroll(this.$el);
     }
   };
 }

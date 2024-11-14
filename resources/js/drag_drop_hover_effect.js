@@ -4,13 +4,15 @@ function dragenterEvent(element, event) {
     let dragElement = findDragElement()
     if (dragElement == null) return
 
-    if (!hasSameGroup(dragElement, element)) return;
+    if (!hasSameGroup(dragElement, element)) return
 
 
-    event.stopPropagation();
+    event.stopPropagation()
     event.preventDefault()
 
-    if(!isContainer(element) && getElementKey(element) === getElementKey(dragElement)) return;
+    if(!isContainer(element) && getElementKey(element) === getElementKey(dragElement)) {
+        return
+    }
 
     setTimeout(() => {
         element.setAttribute("ffhs_drag:hower_over", true)
@@ -21,8 +23,9 @@ function dragleaveEvent(event) {
     let dragElement = findDragElement()
     if (dragElement == null) return
 
-    event.stopPropagation();
-    clearBackground();
+    event.preventDefault()
+    event.stopPropagation()
+    clearBackground()
 }
 
 export function setupDragOverEffect(element){

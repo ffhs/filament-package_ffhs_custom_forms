@@ -1,5 +1,3 @@
-import {setupScroll} from "../drag_drop_scroll.js";
-
 export default function dragDropParent(
     group,
     statePath,
@@ -31,8 +29,7 @@ export default function dragDropParent(
         container: false,
 
         init() {
-            //setUpDropField(this.$el)
-            setupScroll(this.$el) //ToDo
+            //setupScroll(this.$el) //ToDo
         }
 
     }

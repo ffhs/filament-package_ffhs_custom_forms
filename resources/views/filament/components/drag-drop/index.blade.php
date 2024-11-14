@@ -31,26 +31,37 @@
 
 {{--        wire:ignore.self--}}
         x-load-css="[@js(FilamentAsset::getStyleHref('drag_drop_css', package: 'ffhs/filament-package_ffhs_custom_forms'))]"
+
     >
 
-        <x-filament::fieldset
-            class="grid grid-cols-[--cols-default] lg:grid-cols-[--cols-lg] fi-fo-component-ctn gap-6 drag-drop__hover-effect"
-            style="
-                  --cols-default: repeat(2, minmax(0, 1fr));
-                  --cols-lg: repeat({{$getGridSize()}}, minmax(0, 1fr));
-                  background: rgba(200, 200, 200, {{$getDeepColor() * 0.1}})
-            "
+        @php
+            $structure = $getStructure();
+            $key = null;
+            $getFlattenGrid = function ($key) use ($getGridSize) {
+                return $getGridSize();
+            }
+        @endphp
 
-            ax-load
-            ax-load-src="{{FilamentAsset::getAlpineComponentSrc('drag_drop_container', 'ffhs/filament-package_ffhs_custom_forms')}}"
-            x-ignore
-            x-data="dragDropContainer('{{$getDragDropGroup()}}')"
-        >
-                @foreach($getStructure() as $key => $structure)
-                    @include('filament-package_ffhs_custom_forms::filament.components.drag-drop.element')
-                @endforeach
+        @include('filament-package_ffhs_custom_forms::filament.components.drag-drop.default-container')
 
-        </x-filament::fieldset>
+{{--        <x-filament::fieldset--}}
+{{--            class="grid grid-cols-[--cols-default] lg:grid-cols-[--cols-lg] fi-fo-component-ctn gap-6 drag-drop__hover-effect"--}}
+{{--            style="--}}
+{{--                  --cols-default: repeat(2, minmax(0, 1fr));--}}
+{{--                  --cols-lg: repeat({{$getGridSize()}}, minmax(0, 1fr));--}}
+{{--                  background: rgba(200, 200, 200, {{$getDeepColor() * 0.1}})--}}
+{{--            "--}}
+
+{{--            ax-load--}}
+{{--            ax-load-src="{{FilamentAsset::getAlpineComponentSrc('drag_drop_container', 'ffhs/filament-package_ffhs_custom_forms')}}"--}}
+{{--            x-ignore--}}
+{{--            x-data="dragDropContainer('{{$getDragDropGroup()}}')"--}}
+{{--        >--}}
+{{--                @foreach($getStructure() as $key => $structure)--}}
+{{--                    @include('filament-package_ffhs_custom_forms::filament.components.drag-drop.element')--}}
+{{--                @endforeach--}}
+
+{{--        </x-filament::fieldset>--}}
 
     </div>
 
