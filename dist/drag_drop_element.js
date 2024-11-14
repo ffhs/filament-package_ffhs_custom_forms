@@ -156,6 +156,7 @@ function createTemporaryChild(group, key, target) {
   temporaryChild.setAttribute("x-data", `dragDropElement('${group}','${key}')`);
   moveElementToOnOtherElement(target, temporaryChild);
   Alpine.initTree(temporaryChild);
+  console.log(Alpine.$data(temporaryChild._x_dataStack), "----");
   return temporaryChild;
 }
 function generateElementKey() {
@@ -184,6 +185,7 @@ function handleDropAction(target, dragElement) {
   let targetInId = null;
   if (isFlatten) targetIn = findTarget(temporaryChild.parentNode, (element) => isElement(element));
   if (targetIn) targetInId = getElementKey(targetIn);
+  console.log(position);
   let action = getAction(dragElement);
   let toActionPath = action.split("'")[1];
   let toDoAction = action.split("'")[3];
