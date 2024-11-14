@@ -64,8 +64,8 @@
                     ax-load
                     ax-load-src="{{FilamentAsset::getAlpineComponentSrc("drag_drop_action", "ffhs/filament-package_ffhs_custom_forms")}}"
                     x-ignore
-                x-data="dragDropAction(@js($getDragDropGroup()), @js($mountAction))"
-
+                    x-data="dragDropAction(@js($getDragDropGroup()), @js($mountAction))"
+                    ffhs_drag:component
 {{--                    x-init="setupDraggable($el)"--}}
                 @endif
 

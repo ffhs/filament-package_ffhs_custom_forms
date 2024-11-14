@@ -24,7 +24,7 @@
     ax-load-src="{{FilamentAsset::getAlpineComponentSrc('drag_drop_container', 'ffhs/filament-package_ffhs_custom_forms')}}"
     x-ignore
     x-data="dragDropContainer('{{$getDragDropGroup()}}')"
-
+    ffhs_drag:component
 >
 
     @foreach($structureField as $key => $structure)

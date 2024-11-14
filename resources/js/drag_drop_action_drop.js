@@ -15,6 +15,8 @@ function createTemporaryChild(group, key, target) {
     let temporaryChild = document.createElement("span");
 
     temporaryChild.setAttribute('x-data', `dragDropElement('${group}','${key}')`)
+    temporaryChild.setAttribute("ffhs_drag:component", null)
+    temporaryChild.classList.add("hidden")
     moveElementToOnOtherElement(target, temporaryChild);
     Alpine.initTree(temporaryChild);
 
@@ -45,7 +47,6 @@ export function handleDropAction(target, dragElement) {
 
     let targetId = getElementKey(target);
 
-
     //Prepare stuff
     let temporaryKey = generateElementKey();
     let temporaryChild = createTemporaryChild(group, temporaryKey, target);
@@ -53,7 +54,6 @@ export function handleDropAction(target, dragElement) {
     // Clone State to find position without updating the real state
     let cloneState = JSON.parse(JSON.stringify(targetState))
     updatePositions(cloneState, targetParent, group ,targetParentData)
-
 
     //position
     let position = findPosition(isFlatten, cloneState, temporaryKey, targetParentData);
@@ -63,7 +63,6 @@ export function handleDropAction(target, dragElement) {
     let targetInId = null
     if(isFlatten) targetIn = findTarget(temporaryChild.parentNode, (element) => isElement(element))
     if(targetIn) targetInId = getElementKey(targetIn)
-    console.log(position)
 
 
     //run Action

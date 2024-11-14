@@ -6,8 +6,8 @@ export default function dragDropContainer(group){
         group: group,
         container: true,
         action: null,
-        parent: false,
         element: null,
+        parent: false,
         drag: false,
 
         init() {

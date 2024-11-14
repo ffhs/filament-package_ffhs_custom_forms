@@ -1,5 +1,6 @@
 export function getAlpineData(element){
-    return Alpine.mergeProxies(element._x_dataStack);
+    if(element._x_dataStack === undefined) return {}
+    return Alpine.mergeProxies(element._x_dataStack)
 }
 
 
@@ -13,12 +14,8 @@ export function getElementKey(element){
     return alpine.element ?? null
 }
 export function isElement(element){
-    try {
-        let data = getAlpineData(element)
-        return data.element !== null;
-    }catch (TypeError){
-        return false;
-    }
+    let data = getAlpineData(element)
+    return data.element !== null;
 }
 
 export function isParent(element){
@@ -51,7 +48,7 @@ export function getParent(target) {
     let currentParent = target;
 
     while (currentParent && !(currentParent instanceof Document)) {
-        if(currentParent.hasAttribute("x-data")){
+        if(currentParent.hasAttribute("ffhs_drag:component")){
             if(isParent(currentParent)) return currentParent;
         }
         currentParent = currentParent.parentNode;

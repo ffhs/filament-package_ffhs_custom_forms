@@ -102,7 +102,6 @@ export function setUpDropField(element){
     registerEvent("drop", element, event =>{
         event.stopPropagation();
         event.preventDefault();
-        console.log(getElementKey(element))
         handleDrop(element);
         clearBackground();
     })

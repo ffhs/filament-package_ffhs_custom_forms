@@ -24,7 +24,7 @@ function flattenElementCheck(element, data){
 
 function countFlattenChildren(container, data) {
     let count =0
-    container.querySelectorAll('[x-data]').forEach(element => {
+    container.querySelectorAll('[ffhs_drag\\:component]').forEach(element => {
         if(!flattenElementCheck(element, data)) return;
         count++
     })
@@ -40,10 +40,9 @@ function countFlattenChildren(container, data) {
     let dragDropEndPosAttribute = data.dragDropEndPosAttribute
 
 
-     container.querySelectorAll('[x-data]').forEach(element => {
-
+     container.querySelectorAll('[ffhs_drag\\:component]').forEach(element => {
         if(!flattenElementCheck(element, data)) return;
-        
+
         let elementKey = getElementKey(element)
         let contains = countFlattenChildren(element, data);
 
@@ -63,7 +62,7 @@ function updatePositionsOrder(state, container, group, data) {
 
     let parentContainer = getParent(container)
 
-    container.querySelectorAll('[x-data]').forEach(element => {
+    container.querySelectorAll('[ffhs_drag\\:component]').forEach(element => {
 
         let elementKey = getElementKey(element)
         if(!elementKey) return;

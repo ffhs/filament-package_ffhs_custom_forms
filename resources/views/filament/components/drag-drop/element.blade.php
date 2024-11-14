@@ -36,7 +36,6 @@
 <div
     style="
         touch-action: pan-y;
-
         grid-column: {{$gridColumn}} span {{$getItemGridSize($key)}} !important;
      "
 
@@ -44,6 +43,7 @@
     ax-load-src="{{FilamentAsset::getAlpineComponentSrc("drag_drop_element", "ffhs/filament-package_ffhs_custom_forms")}}"
     x-ignore
     x-data="dragDropElement(@js($getDragDropGroup()), @js($key))"
+    ffhs_drag:component
 >
 
     <x-filament::fieldset

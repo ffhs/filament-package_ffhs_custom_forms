@@ -1,5 +1,6 @@
 // resources/js/drag_drop_values.js
 function getAlpineData(element) {
+  if (element._x_dataStack === void 0) return {};
   return Alpine.mergeProxies(element._x_dataStack);
 }
 function getGroup(element) {
@@ -11,12 +12,8 @@ function getElementKey(element) {
   return alpine.element ?? null;
 }
 function isElement(element) {
-  try {
-    let data = getAlpineData(element);
-    return data.element !== null;
-  } catch (TypeError) {
-    return false;
-  }
+  let data = getAlpineData(element);
+  return data.element !== null;
 }
 function isParent(element) {
   return getAlpineData(element).parent ?? false;
@@ -39,7 +36,7 @@ function findDragElement() {
 function getParent(target) {
   let currentParent = target;
   while (currentParent && !(currentParent instanceof Document)) {
-    if (currentParent.hasAttribute("x-data")) {
+    if (currentParent.hasAttribute("ffhs_drag:component")) {
       if (isParent(currentParent)) return currentParent;
     }
     currentParent = currentParent.parentNode;
@@ -117,7 +114,7 @@ function flattenElementCheck(element, data) {
 }
 function countFlattenChildren(container, data) {
   let count = 0;
-  container.querySelectorAll("[x-data]").forEach((element) => {
+  container.querySelectorAll("[ffhs_drag\\:component]").forEach((element) => {
     if (!flattenElementCheck(element, data)) return;
     count++;
   });
@@ -127,7 +124,7 @@ function updatePositionsFlatten(state, container, group, data) {
   let currentPos = 1;
   let dragDropPosAttribute = data.dragDropPosAttribute;
   let dragDropEndPosAttribute = data.dragDropEndPosAttribute;
-  container.querySelectorAll("[x-data]").forEach((element) => {
+  container.querySelectorAll("[ffhs_drag\\:component]").forEach((element) => {
     if (!flattenElementCheck(element, data)) return;
     let elementKey = getElementKey(element);
     let contains = countFlattenChildren(element, data);
@@ -141,7 +138,7 @@ function updatePositionsOrder(state, container, group, data) {
   let currentPos = 1;
   let orderAttribute = data.orderAttribute;
   let parentContainer = getParent(container);
-  container.querySelectorAll("[x-data]").forEach((element) => {
+  container.querySelectorAll("[ffhs_drag\\:component]").forEach((element) => {
     let elementKey = getElementKey(element);
     if (!elementKey) return;
     if (getGroup(element) !== group) return;
@@ -161,6 +158,8 @@ function updatePositions(state, container, group, parentData) {
 function createTemporaryChild(group, key, target) {
   let temporaryChild = document.createElement("span");
   temporaryChild.setAttribute("x-data", `dragDropElement('${group}','${key}')`);
+  temporaryChild.setAttribute("ffhs_drag:component", null);
+  temporaryChild.classList.add("hidden");
   moveElementToOnOtherElement(target, temporaryChild);
   Alpine.initTree(temporaryChild);
   return temporaryChild;
@@ -191,7 +190,6 @@ function handleDropAction(target, dragElement) {
   let targetInId = null;
   if (isFlatten) targetIn = findTarget(temporaryChild.parentNode, (element) => isElement(element));
   if (targetIn) targetInId = getElementKey(targetIn);
-  console.log(position);
   let action = getAction(dragElement);
   let toActionPath = action.split("'")[1];
   let toDoAction = action.split("'")[3];
@@ -243,7 +241,6 @@ function setUpDropField(element) {
   registerEvent("drop", element, (event) => {
     event.stopPropagation();
     event.preventDefault();
-    console.log(getElementKey(element));
     handleDrop(element);
     clearBackground();
   });
@@ -255,8 +252,8 @@ function dragDropContainer(group) {
     group,
     container: true,
     action: null,
-    parent: false,
     element: null,
+    parent: false,
     drag: false,
     init() {
       setupDragOverEffect(this.$el);

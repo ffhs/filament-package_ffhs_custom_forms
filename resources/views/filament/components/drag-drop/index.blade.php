@@ -31,7 +31,7 @@
 
 {{--        wire:ignore.self--}}
         x-load-css="[@js(FilamentAsset::getStyleHref('drag_drop_css', package: 'ffhs/filament-package_ffhs_custom_forms'))]"
-
+        ffhs_drag:component
     >
 
         @php
@@ -39,7 +39,7 @@
             $key = null;
             $getFlattenGrid = function ($key) use ($getGridSize) {
                 return $getGridSize();
-            }
+            };
         @endphp
 
         @include('filament-package_ffhs_custom_forms::filament.components.drag-drop.default-container')

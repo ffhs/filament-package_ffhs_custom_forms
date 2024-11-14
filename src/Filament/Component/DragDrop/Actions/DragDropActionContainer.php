@@ -31,6 +31,7 @@ class DragDropActionContainer extends Actions\ActionContainer
         ax-load-src=\"".FilamentAsset::getAlpineComponentSrc("drag_drop_action", "ffhs/filament-package_ffhs_custom_forms")."\"
         x-ignore
         x-data=\"dragDropAction('". $this->getDragDropGroup() ."', '$action')\"
+        ffhs_drag:component
         ";
 
 
