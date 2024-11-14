@@ -61,15 +61,18 @@ function findTarget(target, search = (element) => isDragcomponent(element) || is
 
 // resources/js/drag_drop_events.js
 function registerEvent(eventName, element, event) {
-  const newHandler = (e) => event(e);
-  element.removeEventListener(eventName, newHandler);
-  element.addEventListener(eventName, newHandler);
+  if (!element[`__has_${eventName}`]) {
+    const handler = (e) => event(e);
+    element.addEventListener(eventName, handler);
+    element[`__has_${eventName}`] = true;
+  }
 }
 
 // resources/js/drag_drop_hover_effect.js
 function dragenterEvent(element, event) {
   let dragElement = findDragElement();
   if (dragElement == null) return;
+  if (getParent(element).getAttribute("disabled")) return;
   if (!hasSameGroup(dragElement, element)) return;
   event.stopPropagation();
   event.preventDefault();
@@ -99,11 +102,8 @@ function clearBackground() {
 
 // resources/js/drag_drop_move_elements.js
 function moveElementToOnOtherElement(target, toSet) {
-  if (isElement(target)) {
-    target.before(toSet);
-  } else if (isContainer(target)) {
-    target.insertBefore(toSet, target.firstChild);
-  }
+  if (isElement(target)) target.before(toSet);
+  else if (isContainer(target)) target.insertBefore(toSet, target.firstChild);
 }
 function flattenElementCheck(element, data) {
   let elementKey = getElementKey(element);
@@ -124,7 +124,10 @@ function updatePositionsFlatten(state, container, group, data) {
   let currentPos = 1;
   let dragDropPosAttribute = data.dragDropPosAttribute;
   let dragDropEndPosAttribute = data.dragDropEndPosAttribute;
+  let keySplit = crypto.randomUUID().split("-");
+  let test = keySplit[0] + keySplit[1];
   container.querySelectorAll("[ffhs_drag\\:component]").forEach((element) => {
+    console.log("updating " + test);
     if (!flattenElementCheck(element, data)) return;
     let elementKey = getElementKey(element);
     let contains = countFlattenChildren(element, data);
@@ -179,7 +182,8 @@ function handleDropAction(target, dragElement) {
   let isFlatten = targetParentData.flatten;
   let $wire = targetParentData.wire;
   let targetState = $wire.get(targetParentData.statePath, "");
-  if (Array.isArray(targetState)) return {};
+  if (Array.isArray(targetState)) targetState = {};
+  if (targetParent.getAttribute("disabled")) return;
   let targetId = getElementKey(target);
   let temporaryKey = generateElementKey();
   let temporaryChild = createTemporaryChild(group, temporaryKey, target);
@@ -193,47 +197,46 @@ function handleDropAction(target, dragElement) {
   let action = getAction(dragElement);
   let toActionPath = action.split("'")[1];
   let toDoAction = action.split("'")[3];
+  if (targetParent.getAttribute("disabled")) return;
   let metaData = { targetPath: targetParentData.statePath, position, flatten: isFlatten, targetIn: targetInId, target: targetId };
   $wire.mountFormComponentAction(toActionPath, toDoAction, metaData);
 }
 
 // resources/js/drag_drop_dropping.js
-function updateLiveState(alpineData) {
-  let isLive = alpineData.isLive;
-  if (!isLive) return false;
-  let $wire = alpineData.wire;
-  $wire.$commit();
-  return true;
+function updateLivewirePostion(sourceParent, dragElement, targetState, group) {
+  let sourceData = getAlpineData(sourceParent);
+  let sourceState = sourceData.wire.get(sourceData.statePath, "");
+  if (!sourceState || Array.isArray(sourceState)) sourceState = {};
+  let dragKey = getElementKey(dragElement);
+  targetState[dragKey] = sourceState[dragKey];
+  delete sourceState[dragKey];
+  updatePositions(sourceState, sourceParent, group, sourceData);
+  sourceData.wire.set(sourceData.statePath, sourceState);
 }
 function moveField(target, dragElement) {
   let targetParent = getParent(target);
+  let targetData = getAlpineData(targetParent);
+  let targetState = targetData.wire.get(targetData.statePath, "");
+  if (!targetState || Array.isArray(targetState)) targetState = {};
+  let group = getGroup(targetParent);
   let sourceParent = getParent(dragElement);
   let sameContainer = sourceParent === targetParent;
-  let group = getGroup(targetParent);
-  let targetData = getAlpineData(targetParent);
-  let sourceData = getAlpineData(sourceParent);
-  let targetState = targetData.wire.get(targetData.statePath, "");
-  let sourceState = sourceData.wire.get(sourceData.statePath, "");
-  if (!targetState || Array.isArray(targetState)) targetState = {};
-  if (!sourceState || Array.isArray(sourceState)) sourceState = {};
+  if (targetParent.getAttribute("disabled")) return;
   moveElementToOnOtherElement(target, dragElement);
   if (!sameContainer) {
-    let dragKey = getElementKey(dragElement);
-    targetState[dragKey] = sourceState[dragKey];
-    delete sourceState[dragKey];
-    updatePositions(sourceState, sourceParent, group, sourceData);
-    sourceData.wire.set(sourceData.statePath, sourceState);
+    updateLivewirePostion(sourceParent, dragElement, targetState, group);
   }
   updatePositions(targetState, targetParent, group, targetData);
-  targetData.wire.set(targetData.statePath, targetState);
-  if (!sameContainer) targetData.wire.$commit();
-  else updateLiveState(targetData);
+  if (targetParent.getAttribute("disabled")) return;
+  let isLive = !sameContainer || targetData.isLive;
+  targetData.wire.set(targetData.statePath, targetState, isLive);
 }
 function handleDrop(target) {
   let dragElement = findDragElement();
   if (dragElement == null) return;
   if (dragElement === target) return;
   if (!hasSameGroup(dragElement, target)) return;
+  if (getParent(dragElement).getAttribute("disabled")) return;
   if (isAction(dragElement)) handleDropAction(target, dragElement);
   else moveField(target, dragElement);
 }

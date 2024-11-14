@@ -42,8 +42,9 @@ export function handleDropAction(target, dragElement) {
     let isFlatten = targetParentData.flatten
     let $wire = targetParentData.wire
     let targetState = $wire.get(targetParentData.statePath, '')
-    if(Array.isArray(targetState)) return {}
+    if(Array.isArray(targetState)) targetState = {}
 
+    if(targetParent.getAttribute("disabled")) return;
 
     let targetId = getElementKey(target);
 
@@ -72,8 +73,9 @@ export function handleDropAction(target, dragElement) {
     let toDoAction = action.split("'")[3]
 
 
+    if(targetParent.getAttribute("disabled")) return;
+
     let metaData =  {targetPath:targetParentData.statePath,  position:position, flatten:isFlatten, targetIn:targetInId, target:targetId};
 
     $wire.mountFormComponentAction(toActionPath, toDoAction, metaData);
-
 }

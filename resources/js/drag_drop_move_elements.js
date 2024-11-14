@@ -1,12 +1,8 @@
 import {getAlpineData, getElementKey, getGroup, getParent, isContainer, isElement} from "./drag_drop_values.js";
 
 export function moveElementToOnOtherElement(target, toSet) {
-    if (isElement(target)) {
-        target.before(toSet)
-    }
-    else if (isContainer(target)) {
-        target.insertBefore(toSet, target.firstChild)
-    }
+    if (isElement(target)) target.before(toSet)
+    else if (isContainer(target)) target.insertBefore(toSet, target.firstChild)
 }
 
 
@@ -39,8 +35,11 @@ function countFlattenChildren(container, data) {
     let dragDropPosAttribute = data.dragDropPosAttribute
     let dragDropEndPosAttribute = data.dragDropEndPosAttribute
 
+     let keySplit = crypto.randomUUID().split('-');
+     let test =  keySplit[0] + keySplit[1];
 
      container.querySelectorAll('[ffhs_drag\\:component]').forEach(element => {
+        console.log("updating " + test)
         if(!flattenElementCheck(element, data)) return;
 
         let elementKey = getElementKey(element)

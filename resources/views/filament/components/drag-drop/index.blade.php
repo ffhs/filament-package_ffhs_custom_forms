@@ -17,6 +17,8 @@
         ax-load
         ax-load-src="{{FilamentAsset::getAlpineComponentSrc("drag_drop_parent", "ffhs/filament-package_ffhs_custom_forms")}}"
         x-ignore
+        {{$applyStateBindingModifiers('wire:model.defer')}}="{{$statePath}}"
+
         x-data="dragDropParent(
             '{{$getDragDropGroup()}}',
             '{{$statePath}}',
@@ -31,6 +33,8 @@
 
 {{--        wire:ignore.self--}}
         x-load-css="[@js(FilamentAsset::getStyleHref('drag_drop_css', package: 'ffhs/filament-package_ffhs_custom_forms'))]"
+        wire:loading.class="opacity-50"
+        wire:loading.attr="disabled"
         ffhs_drag:component
     >
 

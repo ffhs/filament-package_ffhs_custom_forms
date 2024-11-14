@@ -1,10 +1,11 @@
-import {findDragElement, getElementKey, hasSameGroup, isContainer} from "./drag_drop_values.js";
+import {findDragElement, getElementKey, getParent, hasSameGroup, isContainer} from "./drag_drop_values.js";
 import registerEvent from "./drag_drop_events.js";
 
 function dragenterEvent(element, event) {
     let dragElement = findDragElement()
     if (dragElement == null) return
 
+    if(getParent(element).getAttribute("disabled")) return;
     if (!hasSameGroup(dragElement, element)) return
 
 

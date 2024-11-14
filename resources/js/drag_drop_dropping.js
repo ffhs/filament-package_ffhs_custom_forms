@@ -13,61 +13,49 @@ import {moveElementToOnOtherElement, updatePositions} from "./drag_drop_move_ele
 import registerEvent from "./drag_drop_events.js";
 
 
-export function updateLiveState(alpineData) {
-    let isLive = alpineData.isLive
-    if (!isLive) return false;
-    let $wire = alpineData.wire
-    $wire.$commit()
-    return true;
+function updateLivewirePostion(sourceParent, dragElement, targetState, group) {
+    let sourceData = getAlpineData(sourceParent)
+    let sourceState = sourceData.wire.get(sourceData.statePath, '') //sourceData.state
+    if (!sourceState || Array.isArray(sourceState)) sourceState = {}
+
+    let dragKey = getElementKey(dragElement)
+
+    //Move data to the other Field
+    targetState[dragKey] = sourceState[dragKey];
+    delete sourceState[dragKey];
+
+    updatePositions(sourceState, sourceParent, group, sourceData)
+    sourceData.wire.set(sourceData.statePath, sourceState)
 }
-
-
-
 
 export function moveField(target, dragElement) {
 
-
     let targetParent = getParent(target)
-    let sourceParent= getParent(dragElement)
-
-    let sameContainer = sourceParent=== targetParent;
-
-    let group = getGroup(targetParent)
-
-
     let targetData = getAlpineData(targetParent)
-    let sourceData = getAlpineData(sourceParent)
-
-
     let targetState = targetData.wire.get(targetData.statePath, '') //targetData.state
-    let sourceState = sourceData.wire.get(sourceData.statePath, '') //sourceData.state
-
     //Fixing JavaScript bullish
     //if the object is empty it get back an proxy array back that fix this shit.
     if(!targetState || Array.isArray(targetState)) targetState = {}
-    if(!sourceState || Array.isArray(sourceState)) sourceState = {}
 
+    let group = getGroup(targetParent)
 
+    let sourceParent= getParent(dragElement)
+    let sameContainer = sourceParent=== targetParent;
+
+    if(targetParent.getAttribute("disabled")) return;
     moveElementToOnOtherElement(target, dragElement);
 
     if(!sameContainer){
-        let dragKey = getElementKey(dragElement)
-
-        //Move data to the other Field
-        targetState[dragKey] = sourceState[dragKey];
-        delete sourceState[dragKey];
-
-        updatePositions(sourceState, sourceParent, group, sourceData)
-        sourceData.wire.set(sourceData.statePath, sourceState)
+        updateLivewirePostion(sourceParent, dragElement, targetState, group);
     }
+
 
     updatePositions(targetState, targetParent, group, targetData)
 
-    targetData.wire.set(targetData.statePath, targetState)
+    if(targetParent.getAttribute("disabled")) return;
 
-    if(!sameContainer) targetData.wire.$commit()
-    else updateLiveState(targetData);
-
+    let isLive = (!sameContainer || targetData.isLive);
+    targetData.wire.set(targetData.statePath, targetState, isLive)
 }
 
 
@@ -78,9 +66,10 @@ export function handleDrop(target) {
     let dragElement = findDragElement()
 
     if(dragElement == null) return;
-    if(dragElement === target) return
+    if(dragElement === target) return;
 
     if(!hasSameGroup(dragElement,target)) return;
+    if(getParent(dragElement).getAttribute("disabled")) return;
 
     if(isAction(dragElement)) handleDropAction(target, dragElement);
 
