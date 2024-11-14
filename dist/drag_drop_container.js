@@ -62,6 +62,13 @@ function findTarget(target, search = (element) => isDragcomponent(element) || is
   return null;
 }
 
+// resources/js/drag_drop_events.js
+function registerEvent(eventName, element, event) {
+  const newHandler = (e) => event(e);
+  element.removeEventListener(eventName, newHandler);
+  element.addEventListener(eventName, newHandler);
+}
+
 // resources/js/drag_drop_hover_effect.js
 function dragenterEvent(element, event) {
   let dragElement = findDragElement();
@@ -84,8 +91,8 @@ function dragleaveEvent(event) {
   clearBackground();
 }
 function setupDragOverEffect(element) {
-  element.addEventListener("dragenter", (event) => dragenterEvent(element, event));
-  element.addEventListener("dragleave", (event) => dragleaveEvent(event));
+  registerEvent("dragenter", element, (event) => dragenterEvent(element, event));
+  registerEvent("dragleave", element, (event) => dragleaveEvent(event));
 }
 function clearBackground() {
   document.querySelectorAll("*").forEach((element) => {
@@ -156,7 +163,6 @@ function createTemporaryChild(group, key, target) {
   temporaryChild.setAttribute("x-data", `dragDropElement('${group}','${key}')`);
   moveElementToOnOtherElement(target, temporaryChild);
   Alpine.initTree(temporaryChild);
-  console.log(Alpine.$data(temporaryChild._x_dataStack), "----");
   return temporaryChild;
 }
 function generateElementKey() {
@@ -193,7 +199,7 @@ function handleDropAction(target, dragElement) {
   $wire.mountFormComponentAction(toActionPath, toDoAction, metaData);
 }
 
-// resources/js/drag_drop_script.js
+// resources/js/drag_drop_dropping.js
 function updateLiveState(alpineData) {
   let isLive = alpineData.isLive;
   if (!isLive) return false;
@@ -234,11 +240,10 @@ function handleDrop(target) {
   else moveField(target, dragElement);
 }
 function setUpDropField(element) {
-  if (isElement(element)) console.log(getElementKey(element));
-  element.addEventListener("drop", (e) => {
-    e.stopPropagation();
-    e.preventDefault();
-    console.log("drop");
+  registerEvent("drop", element, (event) => {
+    event.stopPropagation();
+    event.preventDefault();
+    console.log(getElementKey(element));
     handleDrop(element);
     clearBackground();
   });

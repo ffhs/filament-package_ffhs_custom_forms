@@ -1,4 +1,4 @@
-import {setUpDropField} from "../drag_drop_script.js";
+import {setUpDropField} from "../drag_drop_dropping.js";
 import {setupDragOverEffect} from "../drag_drop_hover_effect.js";
 
 export default function dragDropContainer(group){

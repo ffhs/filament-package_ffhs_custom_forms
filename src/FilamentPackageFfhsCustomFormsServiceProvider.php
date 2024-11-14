@@ -82,7 +82,7 @@ class FilamentPackageFfhsCustomFormsServiceProvider extends PackageServiceProvid
         });
 
         FilamentAsset::register([
-//            Js::make('drag_drop_script', __DIR__ . '/../resources/js/drag_drop_script.js')
+//            Js::make('drag_drop_script', __DIR__ . '/../resources/js/drag_drop_dropping.js')
 //                ->loadedOnRequest(),
 
             AlpineComponent::make('drag_drop_parent', __DIR__ . '/../dist/drag_drop_parent.js')
@@ -103,7 +103,7 @@ class FilamentPackageFfhsCustomFormsServiceProvider extends PackageServiceProvid
         ], 'ffhs/filament-package_ffhs_custom_forms');
 
 //        $this->publishes([
-//            __DIR__.'/../resources/js/drag_drop_script.js' => public_path('js/ffhs/'.$this->package->name.'/drag_drop_script.js'),
+//            __DIR__.'/../resources/js/drag_drop_dropping.js' => public_path('js/ffhs/'.$this->package->name.'/drag_drop_dropping.js'),
 //        ], 'filament-package_ffhs_custom_forms-assets');
 
     }

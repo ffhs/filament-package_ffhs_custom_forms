@@ -16,11 +16,7 @@ function createTemporaryChild(group, key, target) {
 
     temporaryChild.setAttribute('x-data', `dragDropElement('${group}','${key}')`)
     moveElementToOnOtherElement(target, temporaryChild);
-
-
     Alpine.initTree(temporaryChild);
-    console.log(Alpine.$data(temporaryChild._x_dataStack), "----")
-
 
     return temporaryChild;
 }

@@ -5,12 +5,12 @@ import {
     getGroup,
     getParent,
     hasSameGroup,
-    isAction,
-    isElement
+    isAction
 } from "./drag_drop_values.js";
 import {clearBackground} from "./drag_drop_hover_effect.js";
 import {handleDropAction} from "./drag_drop_action_drop.js";
 import {moveElementToOnOtherElement, updatePositions} from "./drag_drop_move_elements.js";
+import registerEvent from "./drag_drop_events.js";
 
 
 export function updateLiveState(alpineData) {
@@ -99,18 +99,12 @@ export function handleDrop(target) {
 
 
 export function setUpDropField(element){
-
-    //ToDo Somtimes the element is registert twice
-    if(isElement(element)) console.log(getElementKey(element))
-
-    element.addEventListener('drop', e => {
-        // it called multiple times
-        e.stopPropagation();
-        e.preventDefault()
-
-        console.log("drop")
-        handleDrop(element)
-        clearBackground()
+    registerEvent("drop", element, event =>{
+        event.stopPropagation();
+        event.preventDefault();
+        console.log(getElementKey(element))
+        handleDrop(element);
+        clearBackground();
     })
 }
 

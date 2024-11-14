@@ -1,13 +1,15 @@
-export function setupDraggable(elementField){
-    elementField.addEventListener('dragstart', e => {
-        e.stopPropagation();
-        elementField.setAttribute('ffhs_drag:dragging',true)
+import registerEvent from "./drag_drop_events.js";
+
+export function setupDraggable(element){
+    registerEvent("dragstart", element, event =>{
+        event.stopPropagation();
+        element.setAttribute('ffhs_drag:dragging',true)
     })
 
-    elementField.addEventListener('dragend', e => {
+    element.addEventListener('dragend', e => {
         e.stopPropagation();
-        elementField.removeAttribute('ffhs_drag:dragging')
+        element.removeAttribute('ffhs_drag:dragging')
     })
 
-    elementField.addEventListener('dragover', e => e.preventDefault())
+    element.addEventListener('dragover', e => e.preventDefault())
 }

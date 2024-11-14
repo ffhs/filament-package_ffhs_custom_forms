@@ -1,4 +1,5 @@
 import {findDragElement, getElementKey, hasSameGroup, isContainer} from "./drag_drop_values.js";
+import registerEvent from "./drag_drop_events.js";
 
 function dragenterEvent(element, event) {
     let dragElement = findDragElement()
@@ -29,8 +30,8 @@ function dragleaveEvent(event) {
 }
 
 export function setupDragOverEffect(element){
-    element.addEventListener('dragenter', event => dragenterEvent(element, event))
-    element.addEventListener('dragleave', event => dragleaveEvent(event))
+    registerEvent('dragenter',element, event => dragenterEvent(element, event))
+    registerEvent('dragleave',element, event => dragleaveEvent(event))
 }
 
 export function clearBackground() {
