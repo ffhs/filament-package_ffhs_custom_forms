@@ -61,23 +61,6 @@ export function moveField(target, dragElement) {
 
 
 
-export function handleDrop(target) {
-
-    let dragElement = findDragElement()
-
-    if(dragElement == null) return;
-    if(dragElement === target) return;
-
-    if(!hasSameGroup(dragElement,target)) return;
-    if(getParent(dragElement).getAttribute("disabled")) return;
-
-    if(isAction(dragElement)) handleDropAction(target, dragElement);
-
-    else moveField(target, dragElement);
-}
-
-
-
 
 
 
@@ -91,7 +74,19 @@ export function setUpDropField(element){
     registerEvent("drop", element, event =>{
         event.stopPropagation();
         event.preventDefault();
-        handleDrop(element);
+
+        let dragElement = findDragElement()
+
+        if(dragElement == null) return;
+        if(dragElement === element) return;
+
+        if(!hasSameGroup(dragElement,element)) return;
+        if(getParent(element).getAttribute("disabled")) return;
+
+        if(isAction(dragElement)) handleDropAction(element, dragElement);
+
+        else moveField(element, dragElement);
+
         clearBackground();
     })
 }
