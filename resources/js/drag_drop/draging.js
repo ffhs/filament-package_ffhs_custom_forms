@@ -14,6 +14,4 @@ export function setupDraggable(element){
         e.stopPropagation();
         element.removeAttribute('ffhs_drag:dragging')
     })
-
-    element.addEventListener('dragover', e => e.preventDefault())
 }

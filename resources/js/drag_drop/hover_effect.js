@@ -33,6 +33,7 @@ function dragleaveEvent(event) {
 export function setupDragOverEffect(element){
     registerEvent('dragenter',element, event => dragenterEvent(element, event))
     registerEvent('dragleave',element, event => dragleaveEvent(event))
+    registerEvent('dragover',element, event => event.preventDefault())
 }
 
 export function clearBackground() {
