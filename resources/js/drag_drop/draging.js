@@ -3,6 +3,7 @@ import {getParent} from "./get_values.js";
 
 export function setupDraggable(element){
     registerEvent("dragstart", element, event =>{
+        event.dataTransfer.setData('text/plain', null); // Required for Firefox
         event.stopPropagation();
 
         let parent = getParent(element);
