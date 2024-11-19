@@ -6,17 +6,23 @@
     $structureField = $structure;
     $keyOld = $key;
 
+    if(isset($getFlattenGrid))  $flattenGrid = $getFlattenGrid($key);
+    else $flattenGrid = $getGridSize();
+
+    if(isset($getFlattenViewLabel)) $label = $getFlattenViewLabel($key);
+    else $label = "";
+
 @endphp
 
 <x-filament::fieldset
     :attributes="prepare_inherited_attributes(new ComponentAttributeBag())"
-    :label="$getFlattenViewLabel($key)"
+    :label="$label"
 
     class="grid grid-cols-[--cols-default] lg:grid-cols-[--cols-lg] fi-fo-component-ctn gap-6 drag-drop__hover-effect "
 
     style="
         --cols-default: repeat(1, minmax(0, 1fr));
-        --cols-lg: repeat({{$getFlattenGrid($key)}}, minmax(0, 1fr));
+        --cols-lg: repeat({{$flattenGrid}}, minmax(0, 1fr));
         margin-top: 20px;
         background: rgba(200, 200, 200, 0.1)
     "

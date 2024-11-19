@@ -16,30 +16,21 @@ class EditCustomFields extends DragDropComponent
      * @param $state
      * @return int|null
      */
-    function getMaxGridSizeFromField($form_position, $state): ?int
-    {
-        $maxSize = config("ffhs_custom_forms.default_column_count");
-        $position = $form_position;
-        $nerastParent = 0;
-        foreach ($state as $item) {
-            if ($item["form_position"] >= $position) continue;
-            if (($item["layout_end_position"] ?? 0) < $position) continue;
-
-            if ($position - $nerastParent < $position - $item["form_position"]) continue;
-            $nerastParent = $item["form_position"];
-            $maxSize = $this->getGridColumns($item);
-        }
-        return $maxSize;
-    }
-
-    private function getGridColumns($itemState): ?int
-    {
-        $columns = $itemState['options']['columns'] ?? null;
-        if (!empty($columns)) return $columns;
-        $type = CustomFieldUtils::getFieldTypeFromRawDate($itemState);
-        return $type->getStaticColumns();
-    }
-
+//    function getMaxGridSizeFromField($form_position, $state): ?int
+//    {
+//        $maxSize = config("ffhs_custom_forms.default_column_count");
+//        $position = $form_position;
+//        $nerastParent = 0;
+//        foreach ($state as $item) {
+//            if ($item["form_position"] >= $position) continue;
+//            if (($item["layout_end_position"] ?? 0) < $position) continue;
+//
+//            if ($position - $nerastParent < $position - $item["form_position"]) continue;
+//            $nerastParent = $item["form_position"];
+//            $maxSize = $this->getGridColumns($item);
+//        }
+//        return $maxSize;
+//    }
     protected function setUp(): void {
 
         $this->label("");
@@ -50,12 +41,13 @@ class EditCustomFields extends DragDropComponent
         $this->gridSize(config("ffhs_custom_forms.default_column_count"));
         $this->nestedFlattenListType(CustomField::class);
 
-        $this->itemGridSize(function ($itemState, $state){
+        $this->itemGridSize(function ($itemState){
                $size = $itemState['options']['column_span'] ?? null;
-               $maxSize = $this->getMaxGridSizeFromField($itemState["form_position"], $state);
+               $maxSize = 12;
                if(!empty($size)) return $size > $maxSize? $maxSize :$size;
                $type = CustomFieldUtils::getFieldTypeFromRawDate($itemState);
-               if(!$type->isFullSizeField()) return null;
+               if(!$type->isFullSizeField()) return 1;
+              // dump($maxSize);
                return $maxSize;
         });
 
@@ -67,7 +59,11 @@ class EditCustomFields extends DragDropComponent
        });
 
       $this->flattenGrid(function ($itemState){
-          return $this->getGridColumns($itemState);
+          $columns = $itemState['options']['columns'] ?? null;
+          if (!empty($columns)) return $columns;
+          $type = CustomFieldUtils::getFieldTypeFromRawDate($itemState);
+          if(is_null($type)) return $this->getGridSize();
+          return $type->getStaticColumns();
       });
 
        $this->flattenViewHidden(function ($itemState){
@@ -114,6 +110,13 @@ class EditCustomFields extends DragDropComponent
                 ])
         ]);
 
+
+    }
+
+
+
+    private function getGridColumns($itemState): ?int
+    {
 
     }
 

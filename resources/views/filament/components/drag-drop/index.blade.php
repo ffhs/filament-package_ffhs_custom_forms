@@ -42,9 +42,6 @@
         @php
             $structure = $getStructure();
             $key = null;
-            $getFlattenGrid = function ($key) use ($getGridSize) {
-                return $getGridSize();
-            };
 
             $getFlattenViewLabel= function ($key)  {
                 return "";
