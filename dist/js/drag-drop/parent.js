@@ -1,1 +1,1 @@
-function p(t,e,r,o,n,a,i,l,u){return{group:t,statePath:e,stateKey:r,wire:o,isLive:n,dragDropPosAttribute:a,dragDropEndPosAttribute:i,orderAttribute:l,flatten:u,parent:!0,element:null,drag:!1,container:!1,init(){this.$el}}}export{p as default};
+function l(t,e,r,a,n,i,o,u,d){return{group:t,statePath:e,stateKey:r,wire:a,isLive:n,dragDropPosAttribute:i,dragDropEndPosAttribute:o,orderAttribute:u,flatten:d,parent:!0,element:null,drag:!1,container:!1,init(){}}}export{l as default};
