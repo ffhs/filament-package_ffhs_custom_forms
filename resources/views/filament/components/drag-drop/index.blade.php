@@ -1,5 +1,6 @@
 @php
     use Filament\Support\Facades\FilamentAsset;
+
     /**@var Closure $getStatePath*/
     $statePath = $getStatePath();
     $stateKey = $getStatePath(false);
@@ -7,51 +8,67 @@
 @endphp
 
 
-<script src="{{FilamentAsset::getScriptSrc('drag_drop_script', 'ffhs/filament-package_ffhs_custom_forms')}}"></script>
+{{--<script src="{{FilamentAsset::getScriptSrc('drag_drop_script', 'ffhs/filament-package_ffhs_drag-drop')}}"></script>--}}
 
 
 <x-dynamic-component :component="$getFieldWrapperView()" :field="$field">
 
-
-    <!--- ToDo to CSS File--->
-
     <div
-        x-init="setupDomElement($el);"
-        x-data="{
-                    statePath: '{{$statePath}}',
-                    stateKey: '{{$stateKey}}',
-                    wire: $wire,
-                    isLive: @js($isLive()),
-                    dragDropPosAttribute: '{{$getNestedFlattenListType()::getPositionAttribute()}}',
-                    dragDropEndPosAttribute: '{{$getNestedFlattenListType()::getEndContainerPositionAttribute()}}',
-                    orderAttribute: @js($getOrderAttribute()),
-                    flatten: @js($isFlatten()),
-                }"
+        ax-load
+        ax-load-src="{{FilamentAsset::getAlpineComponentSrc("parent", "ffhs/filament-package_ffhs_drag-drop")}}"
+        x-ignore
+        {{--        {{$applyStateBindingModifiers('wire:model.defer')}}="{{$statePath}}"--}}
 
-        ffhs_drag:parent
-        ffhs_drag:group="{{$getDragDropGroup()}}"
+        x-data="dragDropParent(
+            '{{$getDragDropGroup()}}',
+            '{{$statePath}}',
+             '{{$stateKey}}',
+             $wire,
+             @js($isLive()),
+             '{{$getNestedFlattenListType()::getPositionAttribute()}}',
+             '{{$getNestedFlattenListType()::getEndContainerPositionAttribute()}}',
+             @js($getOrderAttribute()),
+             @js($isFlatten())
+        )"
+
+        x-load-css="[@js(FilamentAsset::getStyleHref('stylesheet', package: 'ffhs/filament-package_ffhs_drag-drop'))]"
+        wire:loading.class="opacity-50"
+        wire:loading.attr="disabled"
+        wire:target="mountFormComponentAction, {{$statePath}}"
+        ffhs_drag:component
+        style="margin-top: -20px"
     >
 
+        @php
+            $structure = $getStructure();
+            $key = null;
 
-        <x-filament::fieldset
-            class="grid grid-cols-[--cols-default] lg:grid-cols-[--cols-lg] fi-fo-component-ctn gap-6"
-            style="
-                --cols-default: repeat(2, minmax(0, 1fr)); --cols-lg: repeat({{$getGridSize()}}, minmax(0, 1fr));
-                  background: rgba(200, 200, 200, {{$getDeepColor() * 0.1}})
-            "
+            $getFlattenViewLabel= function ($key)  {
+                return "";
+            };
+        @endphp
 
-            ffhs_drag:container
-            ffhs_drag:group="{{$getDragDropGroup()}}"
-        >
+        @include('filament-package_ffhs_custom_forms::filament.components.drag-drop.container')
 
-                @foreach($getStructure() as $key => $structure)
-                    <!-- ToDo FlattenList) -->
-                    <!-- include('filament-package_ffhs_custom_forms::custom_form_edit.custom-field') -->
-                    @include('filament-package_ffhs_custom_forms::filament.components.drag-drop.element')
 
-                @endforeach
+        {{--        <x-filament::fieldset--}}
+        {{--            class="grid grid-cols-[--cols-default] lg:grid-cols-[--cols-lg] fi-fo-component-ctn gap-6 drag-drop__hover-effect"--}}
+        {{--            style="--}}
+        {{--                  --cols-default: repeat(2, minmax(0, 1fr));--}}
+        {{--                  --cols-lg: repeat({{$getGridSize()}}, minmax(0, 1fr));--}}
+        {{--                  background: rgba(200, 200, 200, {{$getDeepColor() * 0.1}})--}}
+        {{--            "--}}
 
-        </x-filament::fieldset>
+        {{--            ax-load--}}
+        {{--            ax-load-src="{{FilamentAsset::getAlpineComponentSrc('container', 'ffhs/filament-package_ffhs_drag-drop')}}"--}}
+        {{--            x-ignore--}}
+        {{--            x-data="dragDropContainer('{{$getDragDropGroup()}}')"--}}
+        {{--        >--}}
+        {{--                @foreach($getStructure() as $key => $structure)--}}
+        {{--                    @include('filament-package_ffhs_custom_forms::filament.components.drag-drop.element')--}}
+        {{--                @endforeach--}}
+
+        {{--        </x-filament::fieldset>--}}
 
     </div>
 

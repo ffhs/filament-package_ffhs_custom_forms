@@ -1,5 +1,6 @@
 @php
     use Illuminate\Support\HtmlString;
+    use Filament\Support\Facades\FilamentAsset;
 
     $styleClass = "field-adder-". uniqid();
     $styleOptionClass = "field-adder-option-". uniqid();
@@ -41,7 +42,7 @@
 
 
         .{{$styleOptionClass}}:hover {
-            background-color: rgb({{$getColor()[100]}});
+            background-color: rgb({{$getColor()[100]}}, 0.3);
         }
 
     </style>
@@ -50,13 +51,22 @@
          class="fi-btn {{$styleClass}} grid grid-cols-[--cols-default] fi-fo-component-ctn gap-4 bg-white dark:bg-gray-800">
 
         @foreach($getOptions() as $id => $label)
+
+            @php
+                $actionPath = $getActionsPath().".".$getName()."-".$id."Action','".$getName()."-".$id;
+                $mountAction = "mountFormComponentAction('".$actionPath."')";
+            @endphp
+
             <span
                 @if(!$isOptionDisabled($id, $label))
                     draggable="true"
-                    ffhs_drag:drag
-                    ffhs_drag:group="{{$getDragDropGroup()}}"
-                    ffhs_drag:action="mountFormComponentAction('{{$getActionsPath()}}.{{$getName()}}-{{$id}}Action','{{$getName()}}-{{$id}}')"
-                    x-init="setupDraggable($el)"
+
+                    ax-load
+                    ax-load-src="{{FilamentAsset::getAlpineComponentSrc("action", "ffhs/filament-package_ffhs_drag-drop")}}"
+                    x-ignore
+                    x-data="dragDropAction(@js($getDragDropGroup()), @js($mountAction))"
+                    ffhs_drag:component
+{{--                    x-init="setupDraggable($el)"--}}
                 @endif
 
 
