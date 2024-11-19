@@ -30,6 +30,8 @@
     $gridColumn = $getItemGridStart($key);
     $gridColumn = $gridColumn . ($gridColumn ?" /": "");
 
+    \Barryvdh\Debugbar\Facades\Debugbar::info($getItemGridSize($key))
+
 @endphp
 
 

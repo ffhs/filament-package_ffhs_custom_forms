@@ -5,6 +5,7 @@
 
     $structureField = $structure;
     $keyOld = $key;
+
 @endphp
 
 <x-filament::fieldset
@@ -14,7 +15,7 @@
     class="grid grid-cols-[--cols-default] lg:grid-cols-[--cols-lg] fi-fo-component-ctn gap-6 drag-drop__hover-effect "
 
     style="
-        --cols-default: repeat(2, minmax(0, 1fr));
+        --cols-default: repeat(1, minmax(0, 1fr));
         --cols-lg: repeat({{$getFlattenGrid($key)}}, minmax(0, 1fr));
         margin-top: 20px;
         background: rgba(200, 200, 200, 0.1)
