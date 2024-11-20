@@ -1,0 +1,1 @@
+function l(t,e,r,a,n,i,o,u,d){return{group:t,statePath:e,stateKey:r,wire:a,isLive:n,dragDropPosAttribute:i,dragDropEndPosAttribute:o,orderAttribute:u,flatten:d,parent:!0,element:null,drag:!1,container:!1,init(){}}}export{l as default};

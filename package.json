@@ -1,0 +1,33 @@
+{
+  "name": "filament-package_ffhs_custom_forms",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "... //ToDo",
+  "scripts": {
+    "dev:styles": "npx tailwindcss -i ./resources/css/index.css -o ./dist/css/drag_drop.css --postcss --watch",
+    "dev:scripts": "node bin/build.js --dev",
+    "build:styles": "npx tailwindcss -i resources/css/drag_drop.css -o ./dist/css/drag_drop.css --postcss --minify && npm run purge",
+    "build:scripts": "node bin/build.js",
+    "purge": "",
+    "dev": "npm-run-all --parallel dev:*",
+    "build": "npm-run-all build:*",
+    "watch": "watch 'npm run build && cd ../../../ && php artisan filament:assets' ./resources"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@awcodes/filament-plugin-purge": "^1.1.1",
+    "@tailwindcss/forms": "^0.5.4",
+    "@tailwindcss/typography": "^0.5.9",
+    "autoprefixer": "^10.4.14",
+    "esbuild": "^0.24.0",
+    "glob": "^11.0.0",
+    "npm-run-all": "^4.1.5",
+    "postcss": "^8.4.26",
+    "postcss-import": "^15.1.0",
+    "prettier": "^2.7.1",
+    "prettier-plugin-tailwindcss": "^0.1.13",
+    "tailwindcss": "^3.3.3",
+    "watch": "^0.13.0"
+  }
+}

@@ -1,0 +1,28 @@
+.drag-drop__hover-effect{
+    transition: background 0.3s;
+}
+
+[ffhs_drag\:dragging] fieldset.drag-drop__hover-effect{
+    @apply !bg-gray-200 dark:!bg-gray-700;
+    transition: background 0.3s;
+}
+
+fieldset[ffhs_drag\:hower_over]{
+    @apply !bg-blue-100 dark:!bg-sky-950;
+    transition: background 0.3s;
+}
+
+div[ffhs_drag\:hower_over][x-data] fieldset.drag-drop__hover-effect,
+.drag-drop__hover-effect[ffhs_drag_hower_over] {
+    @apply bg-blue-100 dark:bg-sky-950;
+    transition: background 0.3s;
+}
+
+
+.drag-drop-list__element__action-container{
+    width: 50%; margin-left: 50%; margin-top: -20px; margin-bottom: 10px;
+}
+
+[ffhs_drag\:dragging]{
+    @apply select-none;
+}
