@@ -116,7 +116,7 @@ return [
             'reorderable' => 'Kann umgeordnet werden',
             'editable_keys' => 'Bearbeitbare Schlüssel',
             'editable_values' => 'Bearbeitbare Werte',
-            'several' => 'Mehre auswählbar',
+            'several' => 'Mehrere auswählbar',
             'min_select' => 'Mindestanzahl',
             'min_select_helper' => 'Greift nur bei (Benötigt)',
             'max_select' => 'Maximalanzahl',
@@ -132,7 +132,7 @@ return [
             'grid_layout' => 'Dateien in einem Grid anzeigen lassen',
             'open_in_new_tab' => 'Files können in einem veuen Tab geöffnet werden',
             'prioritized' => 'Priorisiert',
-            'prioritized_helper' => 'Kann der User eine reinfolge der Priorizierten',
+            'prioritized_helper' => 'Der User kann die Reihenfolge der Optionen wählen.',
             'dynamic_prioritized' => 'Dynamisch priorisiert',
             'dynamic_prioritized_helper' => 'Die einzelnen Auswahlfelder erscheinen schrittweise.'
 
