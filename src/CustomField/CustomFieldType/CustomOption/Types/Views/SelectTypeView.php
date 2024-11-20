@@ -65,7 +65,7 @@ class SelectTypeView implements FieldTypeView
 
         $selects = [];
         for ($selectId = 0; $selectId < $maxSelect; $selectId++) {
-            $isSelectRequired = $required && $minSelect < $selectId && $minSelect!= 0;
+            $isSelectRequired = $required && $minSelect!= 0 && $minSelect > $selectId ;
             $select = Select::make($preKey . $selectId)
                 ->required($isSelectRequired)
                 ->options($options)
