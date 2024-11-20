@@ -18,7 +18,7 @@ class SelectType extends CustomOptionType
 {
     use HasCustomTypePackageTranslation;
 
-    public static function identifier(): string { return "select"; }
+    public static function identifier(): string { return 'select'; }
 
     public function viewModes(): array {
         return  [
@@ -26,15 +26,15 @@ class SelectType extends CustomOptionType
         ];
     }
     public function icon(): String {
-        return  "carbon-select-window";
+        return  'carbon-select-window';
     }
 
     public function generalTypeOptions(): array
     {
         return [
-            TypeOptionGroup::make("Optionen",   [
-                "customOptions" => new CustomOptionTypeOption()
-            ],"heroicon-m-queue-list")
+            TypeOptionGroup::make('Optionen',   [
+                'customOptions' => new CustomOptionTypeOption()
+            ],'heroicon-m-queue-list')
         ];
     }
 
@@ -42,41 +42,58 @@ class SelectType extends CustomOptionType
     public function extraTypeOptions(): array {
         return
             [
-                DefaultLayoutTypeOptionGroup::make(),
+                DefaultLayoutTypeOptionGroup::make()
+                    ->addTypeOptions(
+                        'dynamic_prioritized', new FastTypeOption(false,
+                            Toggle::make('dynamic_prioritized')
+                                ->whenTruthy('prioritized')
+                                ->label("Dynamisch priorisiert") //ToDo Translate
+                                ->helperText('Die einzelnen Auswahlfelder erscheinen schrittweise.')
+                                ->live()//ToDo Translate
+                        )
+                    ),
                 ValidationTypeOptionGroup::make()
                     ->setTypeOptions([
                         'required' => RequiredOption::make(),
-                        "several" => new FastTypeOption(false,
-                            Toggle::make("several")
-                                ->label(__("filament-package_ffhs_custom_forms::custom_forms.fields.type_options.several"))
+                        'several' => new FastTypeOption(false,
+                            Toggle::make('several')
+                                ->label(__('filament-package_ffhs_custom_forms::custom_forms.fields.type_options.several'))
                                 ->columnSpanFull()
                                 ->live()
                         ),
-                        "min_select" => new FastTypeOption(1,
-                            TextInput::make("min_select")
-                                ->hidden(fn($get)=> !$get("several"))
-                                ->label(__("filament-package_ffhs_custom_forms::custom_forms.fields.type_options.min_select"))
+                        'prioritized' => new FastTypeOption(false,
+                            Toggle::make('prioritized')
+                                ->whenTruthy('several')
+                                ->label("Priorisiert") //ToDo Translate
+                                ->helperText('Kann der User eine reinfolge der Priorizierten') //ToDo Translate
+                        ),
+                        'min_select' => new FastTypeOption(1,
+                            TextInput::make('min_select')
+                                ->required(fn($get) => $get('prioritized'))
+                                ->whenTruthy('several')
+                                ->label(__('filament-package_ffhs_custom_forms::custom_forms.fields.type_options.min_select'))
                                 ->columnStart(1)
-                                ->helperText(__("filament-package_ffhs_custom_forms::custom_forms.fields.type_options.min_select_helper"))
+                                ->helperText(__('filament-package_ffhs_custom_forms::custom_forms.fields.type_options.min_select_helper'))
                                 ->minValue(0)
                                 ->step(1)
                                 ->required()
                                 ->numeric(),
                         ),
-                        "max_select" => new FastTypeOption(1,
-                            TextInput::make("max_select")
-                                ->hidden(fn($get)=> !$get("several"))
-                                ->label(__("filament-package_ffhs_custom_forms::custom_forms.fields.type_options.max_select"))
-                                ->helperText(__("filament-package_ffhs_custom_forms::custom_forms.fields.type_options.max_select_helper"))
+                        'max_select' => new FastTypeOption(1,
+                            TextInput::make('max_select')
+                                ->required(fn($get) => $get('prioritized'))
+                                ->whenTruthy('several')
+                                ->label(__('filament-package_ffhs_custom_forms::custom_forms.fields.type_options.max_select'))
+                                ->helperText(__('filament-package_ffhs_custom_forms::custom_forms.fields.type_options.max_select_helper'))
                                 ->minValue(0)
                                 ->step(1)
                                 ->required()
                                 ->numeric(),
                         ),
                     ]),
-                TypeOptionGroup::make("Optionen",   [
-                    "customOptions" => new CustomOptionTypeOption()
-                ],"heroicon-m-queue-list"),
+                TypeOptionGroup::make('Optionen',   [
+                    'customOptions' => new CustomOptionTypeOption()
+                ],'heroicon-m-queue-list'),
             ];
     }
 
