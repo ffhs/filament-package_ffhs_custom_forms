@@ -42,16 +42,7 @@ class SelectType extends CustomOptionType
     public function extraTypeOptions(): array {
         return
             [
-                DefaultLayoutTypeOptionGroup::make()
-                    ->addTypeOptions(
-                        'dynamic_prioritized', new FastTypeOption(false,
-                            Toggle::make('dynamic_prioritized')
-                                ->whenTruthy('prioritized')
-                                ->label("Dynamisch priorisiert") //ToDo Translate
-                                ->helperText('Die einzelnen Auswahlfelder erscheinen schrittweise.')
-                                ->live()//ToDo Translate
-                        )
-                    ),
+                DefaultLayoutTypeOptionGroup::make(),
                 ValidationTypeOptionGroup::make()
                     ->setTypeOptions([
                         'required' => RequiredOption::make(),
@@ -64,8 +55,15 @@ class SelectType extends CustomOptionType
                         'prioritized' => new FastTypeOption(false,
                             Toggle::make('prioritized')
                                 ->whenTruthy('several')
-                                ->label("Priorisiert") //ToDo Translate
-                                ->helperText('Kann der User eine reinfolge der Priorizierten') //ToDo Translate
+                                ->label(__('filament-package_ffhs_custom_forms::custom_forms.fields.type_options.prioritized'))
+                                ->helperText(__('filament-package_ffhs_custom_forms::custom_forms.fields.type_options.prioritized_helper'))
+                                ->live()
+                        ),
+                        'dynamic_prioritized'=> new FastTypeOption(false,
+                            Toggle::make('dynamic_prioritized')
+                                ->whenTruthy('prioritized')
+                                ->label(__('filament-package_ffhs_custom_forms::custom_forms.fields.type_options.dynamic_prioritized'))
+                                ->helperText(__('filament-package_ffhs_custom_forms::custom_forms.fields.type_options.dynamic_prioritized_helper'))
                         ),
                         'min_select' => new FastTypeOption(1,
                             TextInput::make('min_select')

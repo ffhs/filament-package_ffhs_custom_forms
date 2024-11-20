@@ -68,7 +68,7 @@ class SelectTypeView implements FieldTypeView
             $select = Select::make($preKey . $selectId)
                 ->required($isSelectRequired)
                 ->options($options)
-                ->label($selectId+1 . ". Auswahl") //ToDo Translate
+                ->label($selectId+1 . ". " . __('filament-package_ffhs_custom_forms::custom_forms.fields.type_view.select.select'))
                 ->disableOptionWhen(function ($get, $value) use ($maxSelect, $preKey, $selectId) : bool{
                     for ($i = 0; $i < $maxSelect; $i++) {
                         if($i == $selectId) continue;
@@ -147,13 +147,12 @@ class SelectTypeView implements FieldTypeView
             $selectId = str_replace("prioritized_","",$key);
 
             $name = $stateList->toArray()[$value] ?? "";
-            $cleanedAnswers[$selectId] = $selectId+1 . ". Auswahl: " . $name; //ToDo Translate
+            $translatedSelect = __('filament-package_ffhs_custom_forms::custom_forms.fields.type_view.select.select');
+            $cleanedAnswers[$selectId] = $selectId+1 . ". ". $translatedSelect .": " . $name; //ToDo Translate
         }
 
         ksort($cleanedAnswers, SORT_NUMERIC);
 
-
-        //$selectId. ". Auswahl: " .
 
         return $textEntry
             ->columnStart(FieldMapper::getOptionParameter($record,"new_line_option"))
