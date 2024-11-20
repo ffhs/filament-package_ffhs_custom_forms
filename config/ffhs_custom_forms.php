@@ -24,16 +24,13 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\LayoutType\T
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\LayoutType\Types\SpaceType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\LayoutType\Types\TextLayoutType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\LayoutType\Types\TitleType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\NestedLayoutTypeOLD\Types\CustomTabCustomEggType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\NestedLayoutTypeOLD\Types\TabsCustomNestType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\NestedLayoutTypeOLD\Types\WizardCustomNestType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\NestedLayoutTypeOLD\Types\WizardStepCustomEggType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\TemplatesType\TemplateFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Events\ChangeOptionsEvent;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Events\DisabledEvent;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Events\HideEvent;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Events\RequiredEvent;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Events\VisibleEvent;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Trigger\AlwaysRuleTrigger;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Trigger\IsInfolistTrigger;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Trigger\ValueEqualsRuleTrigger;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\FormEditor\AdderComponents\default\CustomFieldTypeAdder;
@@ -50,6 +47,7 @@ return [
         "trigger" =>[
             IsInfolistTrigger::class,
             ValueEqualsRuleTrigger::class,
+            AlwaysRuleTrigger::class,
         ],
         "event"=>[
             HideEvent::class,

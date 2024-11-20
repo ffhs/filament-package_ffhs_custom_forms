@@ -78,7 +78,8 @@ return [
             ],
             'trigger' => [
                 'value_equals_anchor' => 'Bestimmter Wert',
-                'infolist_view' => 'Wenn Infolist ist'
+                'infolist_view' => 'Wenn Infolist ist',
+                'always' => 'Immer Aktive',
             ]
         ],
 
