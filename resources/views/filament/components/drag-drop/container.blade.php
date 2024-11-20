@@ -23,6 +23,7 @@
     style="
         --cols-default: repeat(1, minmax(0, 1fr));
         --cols-lg: repeat({{$flattenGrid}}, minmax(0, 1fr));
+        --cols-parent: {{$flattenGrid}};
         margin-top: 20px;
         background: rgba(200, 200, 200, 0.1)
     "
