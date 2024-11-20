@@ -37,7 +37,7 @@
 <div
     style="
         touch-action: pan-y;
-        grid-column: {{$gridColumn}} span {{$getItemGridSize($key)}} !important;
+        grid-column: {{$gridColumn}} span min(var(--cols-parent), {{$getItemGridSize($key)}});
      "
 
     ax-load

@@ -31,7 +31,7 @@ class DragDropActionContainer extends Actions\ActionContainer
         ax-load-src=\"".FilamentAsset::getAlpineComponentSrc("action", "ffhs/filament-package_ffhs_drag-drop")."\"
         x-ignore
         x-data=\"dragDropAction('". $this->getDragDropGroup() ."', '$action')\"
-        ffhs_drag:component 
+        ffhs_drag:component
         ";
 
 
@@ -50,10 +50,11 @@ class DragDropActionContainer extends Actions\ActionContainer
         $html = str_replace('type="button" ', '', $html);
         $html = str_replace('wire:loading.attr="disabled" ', '', $html);
 
+        $html = str_replace('<span x-init="" draggable="true"', '<span class="hidden xl:block"', $html);
+
        // $html = str_replace('x-data="{}"', '', $html);
 //
 //
-
 
         /*
          *
