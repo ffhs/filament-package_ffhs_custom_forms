@@ -49,7 +49,8 @@ class SelectTypeView implements FieldTypeView
 
 
         $titleComponent = Placeholder::make($label)
-            ->inlineLabel(FieldMapper::getOptionParameter($record,'in_line_label') ?? false)
+            ->label($label)
+            ->hidden(empty($label))
             ->dehydrated();
 
         $helpTextComponent = Placeholder::make($label. "help_text")
