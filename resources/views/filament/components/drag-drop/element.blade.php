@@ -1,7 +1,9 @@
 @php
-    use Illuminate\Support\Facades\Blade;use Illuminate\Support\HtmlString;
+    use Illuminate\Support\Facades\Blade;
+    use Illuminate\Support\HtmlString;
     use function Filament\Support\prepare_inherited_attributes;
     use Illuminate\View\ComponentAttributeBag;
+    use Filament\Support\Facades\FilamentAsset;
 
     /**@var string $key*/
     /**@var Closure $getItemIcon*/
@@ -28,29 +30,30 @@
     $gridColumn = $getItemGridStart($key);
     $gridColumn = $gridColumn . ($gridColumn ?" /": "");
 
+
 @endphp
 
 
 <div
-    ffhs_drag:group="{{$getDragDropGroup()}}"
-    ffhs_drag:element="{{$key}}"
-    ffhs_drag:drag
-
     style="
         touch-action: pan-y;
-
-        grid-column: {{$gridColumn}} span {{$getItemGridSize($key)}} !important;
+        grid-column: {{$gridColumn}} span min(var(--cols-parent), {{$getItemGridSize($key)}});
      "
-    x-init="setupDomElement($el)"
+
+    ax-load
+    ax-load-src="{{FilamentAsset::getAlpineComponentSrc("element", "ffhs/filament-package_ffhs_drag-drop")}}"
+    x-ignore
+    x-data="dragDropElement(@js($getDragDropGroup()), @js($key))"
+    ffhs_drag:component
 >
 
     <x-filament::fieldset
         :label="$label"
-
+        class="drag-drop__hover-effect"
         :attributes="prepare_inherited_attributes(new ComponentAttributeBag())"
     >
 
-        <div style="width: 50%; margin-left: 50%; margin-top: -20px; margin-bottom: 10px">
+        <div class="drag-drop-list__element__action-container">
             {{$getItemActionContainer($key)}}
         </div>
 
