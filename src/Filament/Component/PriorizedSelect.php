@@ -46,7 +46,11 @@ class PriorizedSelect extends Field
 
             $select = Select::make($preKey . $selectId)
                 ->required(fn() => $isSelectRequired($selectId))
-                ->options(fn() => $this->getOptions())
+
+                ->options(function (){
+                    return $this->getOptions();
+                })
+
                 ->disableOptionWhen(function ($get, $value) use ($maxSelect, $preKey, $selectId) : bool{
                     for ($i = 0; $i < $maxSelect; $i++) {
                         if($i == $selectId) continue;

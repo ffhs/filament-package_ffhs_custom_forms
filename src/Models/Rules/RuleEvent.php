@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 /**
  * @property array $data
  * @property string $type
+ * @property Rule $rule
  */
 class RuleEvent extends Model implements CachedModel
 {

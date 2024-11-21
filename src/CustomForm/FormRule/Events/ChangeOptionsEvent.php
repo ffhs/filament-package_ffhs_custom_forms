@@ -2,7 +2,6 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Events;
 
-use Barryvdh\Debugbar\Facades\Debugbar;
 use Closure;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomOption\CustomOptionType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldMapper;
@@ -17,7 +16,7 @@ use Filament\Forms\Components\Select;
 use Illuminate\Support\Collection;
 use ReflectionClass;
 
- class ChangeOptionsEvent extends FormRuleEventType
+class ChangeOptionsEvent extends FormRuleEventType
 {
     use HasRuleEventPluginTranslate;
     use HasFormTargets;
@@ -83,15 +82,14 @@ use ReflectionClass;
          $customField = $this->getCustomField($arguments);
          if(!in_array(HasOptions::class, class_uses_recursive($component::class))) return $component;
 
+
          $reflection = new ReflectionClass($component);
          $property = $reflection->getProperty("options");
          $property->setAccessible(true);
          $optionsOld = $property->getValue($component);
 
-
-         return $component->options(function ($get,$set) use ($triggers, $optionsOld, $customField, $component, $rule) {
+         $component->options(function ($get,$set) use ($triggers, $optionsOld, $customField, $component, $rule) {
              $triggered = $triggers(["state" => $get(".")]);
-
              $options = $component->evaluate($optionsOld);
              if(!$triggered) return $options;
              if($options instanceof Collection) $options = $options->toArray();
@@ -103,14 +101,18 @@ use ReflectionClass;
              //Check to replace the current value
              $currentValue = $get(FieldMapper::getIdentifyKey($customField));
              if(is_array($currentValue)){
-                 $diff = array_intersect($currentValue, array_keys($options));
-                 if(sizeof($diff) != sizeof($currentValue)) $set($customField->identifier, $diff);
+                 if(!is_array(($currentValue[0] ?? []))){
+                     $diff = array_intersect($currentValue, array_keys($options));
+                     if(sizeof($diff) != sizeof($currentValue)) $set($customField->identifier, $diff);
+                 }
              }
-             else if(!array_key_exists($currentValue, $options)) $set($customField->identifier, null);
+             else if(!array_key_exists($currentValue, $options))
+                 $set($customField->identifier, null);
 
              return $options;
          });
 
+         return $component;
      }
 
 
