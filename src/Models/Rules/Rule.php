@@ -3,7 +3,6 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\Models\Rules;
 
 use Closure;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Trigger\AlwaysRuleTrigger;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\Caching\CachedModel;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\Caching\HasCacheModel;
 use Illuminate\Database\Eloquent\Model;
@@ -52,9 +51,6 @@ class Rule extends Model implements CachedModel
             $triggers = $this->ruleTriggers;
             if($triggers == null) $triggers = $this->ruleTriggers()->get();
             $triggers = $triggers->sortBy("order");
-
-            if($this->ruleTriggers->first()->getType() instanceof AlwaysRuleTrigger)
-                dump($this->is_or_mode , "DUMP");
 
             foreach ($triggers as $trigger) {
                 /**@var RuleTrigger $trigger */
