@@ -135,7 +135,8 @@ return [
     'form'=>[
         'custom_form' =>'Form',
         'short_title'=> 'Title',
-        'custom_fields_amount'=> 'Number of Added Fields',
+        'custom_fields_amount' => 'Amount Felder',
+        'owned_fields_amount' => 'Owned Felder',
         'custom_form_identifier'=> [
             'display_name' => 'Form Type Name',
             'raw_name' => 'Form Type Identifier'
