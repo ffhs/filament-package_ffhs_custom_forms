@@ -7,14 +7,12 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\FieldTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Traits\HasDefaultViewComponent;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldMapper;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\PriorizedSelect;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Filament\Forms\Components\Component;
-use Filament\Forms\Components\Group;
-use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
 use Filament\Infolists\Components\TextEntry;
-use Illuminate\Support\HtmlString;
 
 class SelectTypeView implements FieldTypeView
 {
@@ -34,76 +32,22 @@ class SelectTypeView implements FieldTypeView
             return self::getSingleSelect($record);
     }
 
-    public static function getPrioritizedSelect(CustomFieldType $type, CustomField $record, array $parameter): Group
+    public static function getPrioritizedSelect(CustomFieldType $type, CustomField $record, array $parameter): Component|\Filament\Infolists\Components\Component
     {
-        $helpText = FieldMapper::getOptionParameter($record, 'helper_text') ?? null;
-        $label = FieldMapper::getLabelName($record);
+        /**@var PriorizedSelect $select*/
+        $select = static::makeComponent(PriorizedSelect::class, $record);
 
-        $required = FieldMapper::getOptionParameter($record,'required') ?? false;
-        $options = FieldMapper::getAvailableCustomOptions($record);
+        $selectLabelTranlsation = __('filament-package_ffhs_custom_forms::custom_forms.fields.type_view.select.select');
 
-        $maxSelect = FieldMapper::getOptionParameter($record,'max_select');
-        $minSelect = FieldMapper::getOptionParameter($record,'min_select');
-        $dynamicPrioritized = FieldMapper::getOptionParameter($record,'dynamic_prioritized');
-        $preKey =  'prioritized_';
-
-
-        $titleComponent = Placeholder::make($label)
-            ->label($label)
-            ->hidden(empty($label))
-            ->dehydrated();
-
-        $helpTextComponent = Placeholder::make($label. "help_text")
-            ->helperText($helpText?new HtmlString($helpText):null)
-            ->label("")
-            ->dehydrated();
-
-        $group = Group::make()
-            ->columnStart(FieldMapper::getOptionParameter($record,'new_line_option'))
-            ->columnSpan(FieldMapper::getOptionParameter($record,'column_span'))
-            ->statePath(FieldMapper::getIdentifyKey($record));
-
-        $selects = [];
-        for ($selectId = 0; $selectId < $maxSelect; $selectId++) {
-            $isSelectRequired = $required && $minSelect!= 0 && $minSelect > $selectId ;
-            $select = Select::make($preKey . $selectId)
-                ->required($isSelectRequired)
-                ->options($options)
-                ->label($selectId+1 . ". " . __('filament-package_ffhs_custom_forms::custom_forms.fields.type_view.select.select'))
-                ->disableOptionWhen(function ($get, $value) use ($maxSelect, $preKey, $selectId) : bool{
-                    for ($i = 0; $i < $maxSelect; $i++) {
-                        if($i == $selectId) continue;
-                        if($get($preKey . $i) == $value) return true;
-                    }
-                    return false;
-                });
-
-                if($minSelect-1 <= $selectId && $dynamicPrioritized) {
-                    $select->afterStateUpdated(function ($set, $state) use ($minSelect, $preKey, $maxSelect, $selectId) {
-                        if($state != null) return;
-                        for ($i = $selectId; $i < $maxSelect; $i++) {
-                            if($minSelect <= $i) $set($preKey . $i, null);
-                        }
-                    });
-                }
-
-
-            if($dynamicPrioritized && $minSelect <= $selectId && $selectId > 0){
-                $select->whenTruthy($preKey . $selectId-1);
-            }
-
-            $selects[] = $select;
-        }
-
-        return $group->schema(array_merge(
-            [$titleComponent],
-            $selects,
-            [$helpTextComponent],
-        ));
-
-
-
-
+        return $select
+            ->minItems(FieldMapper::getOptionParameter($record,'min_select'))
+            ->maxItems(FieldMapper::getOptionParameter($record,'max_select'))
+            ->options(FieldMapper::getAvailableCustomOptions($record))
+            ->dynamic(FieldMapper::getOptionParameter($record,'dynamic_prioritized'))
+            ->mutateSelectUsing(function (Select $select, $selectId) use ($selectLabelTranlsation) {
+                return $select
+                    ->label($selectId+1 . ". " . $selectLabelTranlsation);
+            });
     }
 
 

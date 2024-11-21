@@ -2,7 +2,6 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Models\Rules;
 
-use Barryvdh\Debugbar\Facades\Debugbar;
 use Closure;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\Caching\CachedModel;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\Caching\HasCacheModel;
@@ -28,16 +27,6 @@ class Rule extends Model implements CachedModel
         "is_or_mode",
     ];
 
-    public function ruleTriggers(): HasMany
-    {
-        return $this->hasMany(RuleTrigger::class);
-    }
-
-    public function ruleEvents(): HasMany
-    {
-        return $this->hasMany(RuleEvent::class);
-    }
-
     public function handle(array $arguments, mixed $target): mixed
     {
         $triggers = $this->getTriggersCallback($target, $arguments);
@@ -55,7 +44,6 @@ class Rule extends Model implements CachedModel
         return $target;
     }
 
-
     public function getTriggersCallback(mixed $target, array $arguments): Closure {
         return function ($extraArguments = []) use ($target, $arguments) {
             $argumentsFinal = array_merge($arguments, $extraArguments);
@@ -67,13 +55,23 @@ class Rule extends Model implements CachedModel
             foreach ($triggers as $trigger) {
                 /**@var RuleTrigger $trigger */
                 $triggered = $trigger->getType()->isTrigger($argumentsFinal, $target, $trigger);
-                $triggered = $triggered != $trigger->is_inverted;
+                if($trigger->is_inverted) $triggered = !$triggered;
 
-                if ($this->is_or_mode && $triggered) return true;//OR
+                if ($this->is_or_mode && $triggered) return true; //OR
                 else if (!$this->is_or_mode && !$triggered) return false; //AND
             }
 
             return !$this->is_or_mode;
         };
+    }
+
+    public function ruleTriggers(): HasMany
+    {
+        return $this->hasMany(RuleTrigger::class);
+    }
+
+    public function ruleEvents(): HasMany
+    {
+        return $this->hasMany(RuleEvent::class);
     }
 }
