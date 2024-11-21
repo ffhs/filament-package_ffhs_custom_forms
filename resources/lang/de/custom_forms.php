@@ -90,7 +90,7 @@ return [
         'type_options' => [
             'boolean' => 'Ja/Nein Feld',
             'columns_count' => 'Anzahl Spalten',
-            'column_span' => 'Zeilenweite',
+            'column_span' => 'Anzahl Spalten',
             'icon' => 'Icon',
             'inline_label' => 'Titel in der Zeile',
             'inline' => 'In einer Zeile',
@@ -143,7 +143,8 @@ return [
     'form' => [
         'custom_form' => 'Formular',
         'short_title' => 'Title',
-        'custom_fields_amount' => 'Anzahl der hinzugefügten Felder',
+        'custom_fields_amount' => 'Anzahl Felder',
+        'owned_fields_amount' => 'Eigene Felder',
         'custom_form_identifier' => [
             'display_name' => 'Formulartype Name',
             'raw_name' => 'Formulartype Identifier'

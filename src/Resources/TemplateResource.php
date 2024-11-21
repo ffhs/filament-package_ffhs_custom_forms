@@ -42,7 +42,8 @@ class TemplateResource extends Resource
 
 
     public static function getEloquentQuery(): Builder {
-        return parent::getEloquentQuery()->where("is_template", true);
+        return parent::getEloquentQuery()
+            ->where("is_template", true);
     }
 
     public static function form(Form $form): Form
