@@ -61,7 +61,7 @@ export function handleDropAction(target, dragElement) {
     let targetIn = null
     let targetInId = null
     if(isFlatten) targetIn = findTarget(temporaryChild.parentNode, (element) => isElement(element))
-    if(targetIn) targetInId = getElementKey(targetIn.parentNode)
+    if(targetIn) targetInId = getElementKey(targetIn)
 
     //run Action
     let action = getAction(dragElement)

@@ -20,9 +20,51 @@ div[ffhs_drag\:hower_over][x-data] fieldset.drag-drop__hover-effect,
 
 
 .drag-drop-list__element__action-container{
-    width: 50%; margin-left: 50%; margin-top: -20px; margin-bottom: 10px;
+    width: 100%;
+    margin-left: 50%;
+    margin-top: -20px;
+    margin-bottom: 10px;
 }
 
 [ffhs_drag\:dragging]{
     @apply select-none;
 }
+
+
+.expand-drag-drop-action{
+    @apply select-none w-full ;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border: 2px solid rgb(var(--expand-drag-drop-action--color-500));
+    border-radius: 10px;
+    padding: 7px;
+    text-align: center;
+    margin-top: 20px;
+    overflow: hidden;
+    height: 50px;
+    font-size: 20px;
+    transition: background 0.3s, height 1s ease;
+}
+
+
+.expand-drag-drop-action:hover {
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+    height: 100%;
+    transition: background 0.3s, height 1s ease;
+}
+
+
+.expand-drag-drop-action-option {
+    @apply
+        rounded
+        hover:bg-[--expand-drag-drop-action--color-200]
+        dark:hover:bg-[--expand-drag-drop-action--color-900];
+}
+
+.expand-drag-drop-action-disabled {
+    @apply
+    rounded-2xl
+    bg-[--expand-drag-drop-action--color-50]
+    dark:bg-[--expand-drag-drop-action--color-950];
+}
+
+

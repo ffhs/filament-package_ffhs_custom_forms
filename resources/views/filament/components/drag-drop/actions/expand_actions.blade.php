@@ -2,8 +2,6 @@
     use Illuminate\Support\HtmlString;
     use Filament\Support\Facades\FilamentAsset;
 
-    $styleClass = "field-adder-". uniqid();
-    $styleOptionClass = "field-adder-option-". uniqid();
 
     $rgbToHex = function ($rgbString) {
         list($r, $g, $b) = explode(',', $rgbString);
@@ -13,42 +11,25 @@
         return sprintf('#%02x%02x%02x', $r, $g, $b);
     };
 @endphp
-<x-dynamic-component :component="$getFieldWrapperView()" style="margin-top: -35px">
+<x-dynamic-component :component="$getFieldWrapperView()"
+                     style="
+                        margin-top: -35px;
+                        --expand-drag-drop-action--color-500: {{$getColor()[500]}};
+
+
+                        --expand-drag-drop-action--color-200: {{$rgbToHex($getColor()[200])}};
+                        --expand-drag-drop-action--color-900: {{$rgbToHex($getColor()[900])}};
+                        --expand-drag-drop-action--color-950: {{$rgbToHex($getColor()[950])}};
+                        --expand-drag-drop-action--color-50: {{$rgbToHex($getColor()[50])}};
+                     ">
 
     <legend class="-ms-2 px-2 text-sm font-medium leading-6 text-gray-950 dark:text-white" style="padding-top: 20px; padding-bottom: -30px">
         {{$getLabel()}}
     </legend>
 
 
-    <style>
-        .{{$styleClass}}{
-            width: 100%;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            border: 2px solid rgb({{$getColor()[500]}});
-            border-radius: 10px;
-            padding: 7px;
-            text-align: center;
-            transition: height 0.3s ease;
-            margin-top: 20px;
-            overflow: hidden;
-            height: 50px;
-            font-size: 20px;
-        }
-
-        .{{$styleClass}}:hover {
-            box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.2);
-            height: 100%;
-        }
-
-
-        .{{$styleOptionClass}}:hover {
-            background-color: rgb({{$getColor()[100]}}, 0.3);
-        }
-
-    </style>
-
     <div style="--cols-default: repeat(1, minmax(0, 1fr)); margin-top: -4px"
-         class="fi-btn {{$styleClass}} grid grid-cols-[--cols-default] fi-fo-component-ctn gap-4 bg-white dark:bg-gray-800">
+         class="fi-btn expand-drag-drop-action grid grid-cols-[--cols-default] fi-fo-component-ctn gap-4 bg-white dark:bg-gray-800">
 
         @foreach($getOptions() as $id => $label)
 
@@ -70,32 +51,24 @@
                 @endif
 
 
-                style="
-                    --c-400:var(rgb({{$getColor()[400]}}));
-                    --c-500:var(rgb({{$getColor()[500]}}));
-                    --c-600:var(rgb({{$getColor()[600]}}));
-
-                     width: 100%;
-                    height: 30px;"
 
                 class="
+                    h-8
                     font-semibold
                     transition duration-75
+                    w-full
 
+                    fi-size-md fi-btn-size-md gap-1.5 px-3 py-2
+                    text-xs
 
-                     fi-size-md fi-btn-size-md gap-1.5 px-3 py-2
-                     text-xs
-                     @if($isOptionDisabled($id, $label))
-                         bg-[{{$rgbToHex($getColor()[50])}}]
-                         dark:bg-[{{$rgbToHex($getColor()[950])}}]
-                     @else
-                         hover:bg-[{{$rgbToHex($getColor()[100])}}]
-                         dark:hover:bg-[{{$rgbToHex($getColor()[900])}}]
-                     @endif
-                     "
+                    @if($isOptionDisabled($id, $label))
+                        expand-drag-drop-action-disabled
+                    @else
+                        expand-drag-drop-action-option
+                    @endif
+                    "
             >
-                      {{new HtmlString($label)}}
-
+                 {{$label}}
                 </span>
 
         @endforeach
