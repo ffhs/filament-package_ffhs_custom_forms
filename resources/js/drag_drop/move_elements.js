@@ -2,11 +2,9 @@ import {getAlpineData, getElementKey, getGroup, getParent, isContainer, isElemen
 
 export function moveElementToOnOtherElement(target, toSet) {
     if (isElement(target)) target.before(toSet)
-    else if (isContainer(target)) target.insertBefore(toSet, target.firstChild)
+    else if (isContainer(target)) target.prepend(toSet)
+
 }
-
-
-
 
 function flattenElementCheck(element, data){
     let elementKey = getElementKey(element)
@@ -35,19 +33,19 @@ function countFlattenChildren(container, data) {
     let dragDropPosAttribute = data.dragDropPosAttribute
     let dragDropEndPosAttribute = data.dragDropEndPosAttribute
 
-     let keySplit = crypto.randomUUID().split('-');
-     let test =  keySplit[0] + keySplit[1];
+     // let keySplit = crypto.randomUUID().split('-');
+     // let test =  keySplit[0] + keySplit[1];
 
-     container.querySelectorAll('[ffhs_drag\\:component]').forEach(element => {
+    container.querySelectorAll('[ffhs_drag\\:component]').forEach(element => {
         if(!flattenElementCheck(element, data)) return;
 
-        let elementKey = getElementKey(element)
+        let elementKey = getElementKey(element);
         let contains = countFlattenChildren(element, data);
 
-        if (state[elementKey] === undefined) state[elementKey] = {}
+        if (state[elementKey] === undefined) state[elementKey] = {};
 
-        state[elementKey][dragDropPosAttribute] = currentPos
-        state[elementKey][dragDropEndPosAttribute] = contains === 0 ? null : (currentPos + contains)
+        state[elementKey][dragDropPosAttribute] = currentPos;
+        state[elementKey][dragDropEndPosAttribute] = contains === 0 ? null : (currentPos + contains);
         currentPos++
     })
 
@@ -94,7 +92,7 @@ export function moveDraggable(target, dragElement) {
     let group = getGroup(targetParent)
 
     let sourceParent= getParent(dragElement)
-    let sameContainer = sourceParent=== targetParent;
+    let sameContainer = sourceParent === targetParent;
 
     if(targetParent.getAttribute("disabled")) return;
     moveElementToOnOtherElement(target, dragElement);
