@@ -1,12 +1,11 @@
 import {findTarget, getAction, getAlpineData, getElementKey, getGroup, getParent, isElement} from "./get_values.js";
 import {moveElementToOnOtherElement, updatePositions} from "./move_elements.js";
 
-
 function createTemporaryChild(group, key, target) {
 
-    let temporaryChild = document.createElement("span");
+    let temporaryChild = document.createElement("div");
 
-    temporaryChild.setAttribute('x-data', `dragDropElement('${group}','${key}')`)
+    temporaryChild.setAttribute('x-data', `typeof dragDropElement === 'undefined'? {}: dragDropElement('${group}','${key}')`)
     temporaryChild.setAttribute("ffhs_drag:component", null)
     temporaryChild.classList.add("hidden")
     moveElementToOnOtherElement(target, temporaryChild);
@@ -22,8 +21,14 @@ function generateElementKey() {
 
 
 function findPosition(isFlatten, state, key, targetData) {
-    if (isFlatten) return state[key][targetData.dragDropPosAttribute];
-    else return state[key][targetData.orderAttribute];
+    if (isFlatten){
+        if(undefined === state[key]) return 1
+        return state[key][targetData.dragDropPosAttribute] ?? 1
+    }
+    else{
+        if(undefined === state[key]) return 1
+        return state[key][targetData.orderAttribute] ?? 1
+    }
 }
 
 export function handleDropAction(target, dragElement) {
@@ -44,6 +49,7 @@ export function handleDropAction(target, dragElement) {
     let temporaryKey = generateElementKey();
     let temporaryChild = createTemporaryChild(group, temporaryKey, target);
 
+
     // Clone State to find position without updating the real state
     let cloneState = JSON.parse(JSON.stringify(targetState))
     updatePositions(cloneState, targetParent, group ,targetParentData)
@@ -57,7 +63,6 @@ export function handleDropAction(target, dragElement) {
     if(isFlatten) targetIn = findTarget(temporaryChild.parentNode, (element) => isElement(element))
     if(targetIn) targetInId = getElementKey(targetIn)
 
-
     //run Action
     let action = getAction(dragElement)
 
@@ -67,6 +72,13 @@ export function handleDropAction(target, dragElement) {
 
     if(targetParent.getAttribute("disabled")) return;
 
-    let metaData =  {targetPath:targetParentData.statePath,  position:position, flatten:isFlatten, targetIn:targetInId, target:targetId};
+    let metaData =  {
+        targetPath:targetParentData.statePath,
+        position:position,
+        flatten:isFlatten,
+        targetIn:targetInId,
+        target:targetId
+    };
+
     $wire.mountFormComponentAction(toActionPath, toDoAction, metaData);
 }
