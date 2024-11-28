@@ -80,9 +80,9 @@ class SelectTypeView implements FieldTypeView
 
 
         $textEntry = TextEntry::make(FieldMapper::getIdentifyKey($record));
-        $answer = FieldMapper::getAnswer($record);
+        $answer = FieldMapper::getAnswer($record) ?? [];
         $stateList = FieldMapper::getAllCustomOptions($record)
-            ->filter(fn($value, $id) => in_array($id,$answer));
+            ->filter(fn($value, $id) => in_array($id, $answer));
 
         $cleanedAnswers = [];
         if(!is_array($answer)) $answer = [];
