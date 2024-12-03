@@ -59,11 +59,6 @@ class CustomForm extends Model implements CachedModel
         'ownedRules',
     ];
 
-    public static function boot(): void
-    {
-        parent::boot();
-    }
-
     public static function getTemplateTypesToAdd (string|DynamicFormConfiguration $formType):Collection {
         if($formType instanceof DynamicFormConfiguration)  $formType = $formType::identifier();
 

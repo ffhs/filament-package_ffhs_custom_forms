@@ -15,7 +15,7 @@ export function getElementKey(element){
 }
 export function isElement(element){
     let data = getAlpineData(element)
-    return data.element !== null;
+    return data.element !== null && data.element !== undefined;
 }
 
 export function isParent(element){
@@ -66,12 +66,11 @@ export function hasSameGroup(elment1, elment2) {
 }
 
 export function findTarget(target, search = (element) => isDragcomponent(element) || isContainer(element)){
-
     let currentParent = target;
-    while (currentParent && !(currentParent instanceof Document)) {
+
+    while (currentParent && !(currentParent instanceof Window)) {
         if(search(currentParent)) return currentParent
         currentParent = currentParent.parentNode;
     }
-
     return null
 }
