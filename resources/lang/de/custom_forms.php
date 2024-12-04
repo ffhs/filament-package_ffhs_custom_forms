@@ -69,6 +69,7 @@ return [
             'image_layout' => 'L. Bild',
             'space' => 'Absatz',
             'file_upload' => 'Dokumente',
+            'repeater' => 'Repeater',
         ],
 
         'rules' => [
@@ -104,6 +105,8 @@ return [
             'show_title' => 'Titel Anzeigen',
             'required' => 'Benötigt',
             'help_text' => 'Hilfetext',
+            'min_amount' => 'Minimale Anzahl',
+            'max_amount' => 'Minimale Anzahl',
 
             // custom field type (FastTypeOption)
             'color_type' => 'Farbformat',
@@ -135,7 +138,10 @@ return [
             'prioritized' => 'Priorisiert',
             'prioritized_helper' => 'Der User kann die Reihenfolge der Optionen wählen.',
             'dynamic_prioritized' => 'Dynamisch priorisiert',
-            'dynamic_prioritized_helper' => 'Die einzelnen Auswahlfelder erscheinen schrittweise.'
+            'dynamic_prioritized_helper' => 'Die einzelnen Auswahlfelder erscheinen schrittweise.',
+            'default_amount' => 'Standart Anzahl',
+            'ordered' => 'Geordnet',
+
 
         ],
     ],

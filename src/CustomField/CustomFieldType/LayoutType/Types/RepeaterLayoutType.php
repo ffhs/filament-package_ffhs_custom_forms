@@ -1,0 +1,68 @@
+<?php
+
+namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\LayoutType\Types;
+
+
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\HasCustomTypePackageTranslation;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\LayoutType\CustomLayoutType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\LayoutType\Types\Views\RepeaterLayoutTypeView;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\LayoutTypeDefaultLayoutTypeOptionGroup;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\ValidationTypeOptionGroup;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\FastTypeOption;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\MaxAmountOption;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\MinAmountOption;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\ShowAsFieldsetOption;
+use Filament\Forms\Components\Component;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
+
+class RepeaterLayoutType extends CustomLayoutType
+{
+
+    use HasCustomTypePackageTranslation;
+
+    public static function identifier(): string {
+        return "repeater";
+    }
+
+    public function viewModes(): array {
+        return [
+            "default" => RepeaterLayoutTypeView::class
+        ];
+    }
+
+    public function icon(): string {
+        return  "heroicon-m-wallet";
+    }
+
+    public function extraTypeOptions(): array {
+        return[
+            LayoutTypeDefaultLayoutTypeOptionGroup::make()
+                //->removeTypeOption("helper_text")
+                ->mergeTypeOptions([
+                    'show_as_fieldset' => ShowAsFieldsetOption::make()
+                        ->modifyComponent(fn(Component $component) => $component->columnStart(2)),
+                    'default_amount' => FastTypeOption::makeFast(1,
+                        TextInput::make("default_amount")
+                            ->minValue(0)
+                            ->label(__('filament-package_ffhs_custom_forms::custom_forms.fields.type_options.default_amount'))
+                            ->lte("max_amount")
+                            ->integer()
+                            ->required(),
+                    ),
+                    'ordered' => new FastTypeOption(false,
+                        Toggle::make('ordered')
+                            ->default(false)
+                            ->label(__('filament-package_ffhs_custom_forms::custom_forms.fields.type_options.ordered'))
+                    ),
+                ]),
+            ValidationTypeOptionGroup::make()
+                ->removeTypeOption("required")
+                ->mergeTypeOptions([
+                    "min_amount" => MinAmountOption::make(),
+                    "max_amount" => MaxAmountOption::make(),
+                ])
+        ];
+    }
+
+}

@@ -20,6 +20,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\LayoutType\T
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\LayoutType\Types\FieldsetType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\LayoutType\Types\GroupType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\LayoutType\Types\ImageLayoutType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\LayoutType\Types\RepeaterLayoutType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\LayoutType\Types\SectionType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\LayoutType\Types\SpaceType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\LayoutType\Types\TextLayoutType;
@@ -105,6 +106,7 @@ return [
         ToggleButtonsType::class,
 
         SectionType::class,
+        RepeaterLayoutType::class,
         FieldsetType::class,
         GroupType::class,
         TitleType::class,
@@ -142,6 +144,7 @@ return [
         ToggleButtonsType::class,
 
         SectionType::class,
+        RepeaterLayoutType::class,
         FieldsetType::class,
         GroupType::class,
         TitleType::class,
