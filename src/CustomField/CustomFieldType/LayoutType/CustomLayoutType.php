@@ -9,5 +9,4 @@ abstract class CustomLayoutType extends CustomFieldType
         return "filament-package_ffhs_custom_forms::filament.components.drag-drop.container";
     }
 
-
 }

@@ -106,7 +106,7 @@ return [
             'required' => 'Benötigt',
             'help_text' => 'Hilfetext',
             'min_amount' => 'Minimale Anzahl',
-            'max_amount' => 'Minimale Anzahl',
+            'max_amount' => 'Maximale Anzahl',
 
             // custom field type (FastTypeOption)
             'color_type' => 'Farbformat',
