@@ -21,9 +21,9 @@ div[ffhs_drag\:hower_over][x-data] fieldset.drag-drop__hover-effect,
 
 .drag-drop-list__element__action-container{
     width: 100%;
-    margin-left: 50%;
     margin-top: -20px;
     margin-bottom: 10px;
+    position: relative;
 }
 
 [ffhs_drag\:dragging]{
