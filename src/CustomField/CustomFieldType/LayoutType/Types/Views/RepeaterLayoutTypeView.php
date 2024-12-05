@@ -28,11 +28,12 @@ class RepeaterLayoutTypeView implements FieldTypeView
         $defaultAmount = FieldMapper::getOptionParameter($record,'default_amount');
 
 
-         if($ordered) $schema = [
-                 ...$parameter["rendered"],
-                //Hidden::make("order")
-        ];
-         else $schema = $parameter["rendered"];
+//        if($ordered) $schema = [
+//            ...$parameter["rendere"](),
+//            //Hidden::make("order")
+//        ];
+//        else
+            $schema = $parameter["renderer"]();
 
 
         /**@var \Filament\Forms\Components\Repeater $repeater*/

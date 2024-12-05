@@ -29,39 +29,6 @@ class CustomFormRender
         ];
     }
 
-
-    public static function generateInfoListSchema(CustomFormAnswer $formAnswer, string $viewMode):array {
-        $form = CustomForm::cached($formAnswer->custom_form_id);
-        $customFields = $form->getOwnedFields();
-        $fieldAnswers = $formAnswer->customFieldAnswers;
-
-        $render= self::getInfolistRender($viewMode,$form,$formAnswer, $fieldAnswers);
-        $customViewSchema = self::render(0,$customFields,$render, $viewMode, $formAnswer->customForm)[0];
-
-        //ToDo Manage Components
-
-        return  [
-            \Filament\Infolists\Components\Group::make($customViewSchema)->columns(config("ffhs_custom_forms.default_column_count")),
-        ];
-    }
-
-
-    public static function getInfolistRender(string $viewMode, CustomForm $form, CustomFormAnswer $formAnswer, Collection $fieldAnswers): Closure {
-        return function (CustomField $customField,  array $parameter) use ($formAnswer, $form, $viewMode, $fieldAnswers) {
-
-            /** @var CustomFormAnswer $answer*/
-            $answer = $fieldAnswers->firstWhere("custom_field_id", $customField->id);
-            if (is_null($answer)) {
-                $answer = new CustomFieldAnswer();
-                $answer->answer = null;
-                $answer->custom_field_id = $customField->id;
-                $answer->custom_form_answer_id = $formAnswer->id;
-            }
-
-            return $customField->getType()->getInfolistComponent($answer, $form, $viewMode, $parameter);
-        };
-    }
-
     public static function getFormRender(string $viewMode,CustomForm $form): Closure {
         return function(CustomField $customField, array $parameter) use ($viewMode, $form) {
             //Render
@@ -83,7 +50,7 @@ class CustomFormRender
         //Render
         $renderOutput = self::renderRaw($indexOffset, $customFields, $render,$viewMode, $customForm);
         /**@var Collection $renderedComponent*/
-        $renderedComponents = $renderOutput[2];
+        $renderedComponents = $renderOutput[1];
 
 
         //TriggerPreparation (maintain for live attribute) ca 30ms
@@ -108,9 +75,7 @@ class CustomFormRender
         return $renderOutput;
     }
 
-
-
-    private static function renderRaw(int $indexOffset, Collection $customFields, Closure &$render, string $viewMode, CustomForm $form): array {
+    public static function renderRaw(int $indexOffset, Collection $customFields, Closure &$render, string $viewMode, CustomForm $form): array {
         $customFormSchema = [];
         $preparedFields = $customFields->keyBy("form_position");
 //        $customFields->each(function(CustomField $field) use (&$preparedFields){
@@ -119,10 +84,10 @@ class CustomFormRender
 
         $allComponents = [];
 
-        for($formPossition = $indexOffset+1; $formPossition<= $customFields->count()+$indexOffset; $formPossition++){
+        for($formPosition = $indexOffset+1; $formPosition<= $customFields->count()+$indexOffset; $formPosition++){
 
             /** @var CustomField $customField*/
-            $customField =  $preparedFields[$formPossition];
+            $customField =  $preparedFields[$formPosition];
             $parameters = ["viewMode"=>$viewMode];
 
             if(($customField->getType() instanceof CustomLayoutType)){
@@ -135,19 +100,28 @@ class CustomFormRender
                 }
                 $fieldRenderData = collect($fieldRenderData);
 
-                //Render Schema Input
-                $renderedOutput = self::renderRaw($formPossition, $fieldRenderData, $render, $viewMode, $form);
 
-                //Get Layout Schema
+                //This Function allows to register the rendered components to $allComponents for the rules
+                $registerRenderedComponents = function (array $components) use (&$allComponents){
+                    $allComponents = array_merge($allComponents, $components);
+                };
+
+                //Render Schema Input
+                $rendererFunction = function () use ($form, $viewMode, $render, $fieldRenderData, $formPosition, $registerRenderedComponents, &$allComponents){
+                    $renderOutput = self::renderRaw($formPosition, $fieldRenderData, $render, $viewMode, $form);
+                    $registerRenderedComponents($renderOutput[1]);
+                    return $renderOutput[0];
+                };
+
+                //renderer should not be use in any schema closure function
                 $parameters = array_merge([
                     "customFieldData" => $fieldRenderData,
-                    "rendered" => $renderedOutput[0],
+                    "renderer" => $rendererFunction,
+                    "registerComponents" => $registerRenderedComponents,
                 ],$parameters);
 
                 //Set Index
-                $formPossition = $renderedOutput[1] - 1;
-                $allComponents = array_merge($allComponents, $renderedOutput[2]);
-
+                $formPosition += $fieldRenderData->count(); //$renderedOutput[1] - 1; ToDo check if it works
             }
 
             if(($customField->getType() instanceof TemplateFieldType)){
@@ -159,7 +133,7 @@ class CustomFormRender
                 //Get Layout Schema
                 $parameters["rendered"] = $renderedOutput[0];
 
-                $allComponents = array_merge($allComponents, $renderedOutput[2]);
+                $allComponents = array_merge($allComponents, $renderedOutput[1]);
             }
 
             if(!$customField->is_active) continue;
@@ -172,7 +146,38 @@ class CustomFormRender
         }
 
 
-        return [$customFormSchema, $formPossition, $allComponents];
+        return [$customFormSchema, $allComponents];
+    }
+
+    public static function generateInfoListSchema(CustomFormAnswer $formAnswer, string $viewMode):array {
+        $form = CustomForm::cached($formAnswer->custom_form_id);
+        $customFields = $form->getOwnedFields();
+        $fieldAnswers = $formAnswer->customFieldAnswers;
+
+        $render= self::getInfolistRender($viewMode,$form,$formAnswer, $fieldAnswers);
+        $customViewSchema = self::render(0,$customFields,$render, $viewMode, $formAnswer->customForm)[0];
+
+        //ToDo Manage Components
+
+        return  [
+            \Filament\Infolists\Components\Group::make($customViewSchema)->columns(config("ffhs_custom_forms.default_column_count")),
+        ];
+    }
+
+    public static function getInfolistRender(string $viewMode, CustomForm $form, CustomFormAnswer $formAnswer, Collection $fieldAnswers): Closure {
+        return function (CustomField $customField,  array $parameter) use ($formAnswer, $form, $viewMode, $fieldAnswers) {
+
+            /** @var CustomFormAnswer $answer*/
+            $answer = $fieldAnswers->firstWhere("custom_field_id", $customField->id);
+            if (is_null($answer)) {
+                $answer = new CustomFieldAnswer();
+                $answer->answer = null;
+                $answer->custom_field_id = $customField->id;
+                $answer->custom_form_answer_id = $formAnswer->id;
+            }
+
+            return $customField->getType()->getInfolistComponent($answer, $form, $viewMode, $parameter);
+        };
     }
 
 }

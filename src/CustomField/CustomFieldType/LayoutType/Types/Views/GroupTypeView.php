@@ -19,7 +19,7 @@ class GroupTypeView implements FieldTypeView
             ->columnSpan(FieldMapper::getOptionParameter($record,"column_span"))
             ->columns(FieldMapper::getOptionParameter($record,"columns"))
             ->columnStart(FieldMapper::getOptionParameter($record,"new_line_option"))
-            ->schema($parameter["rendered"]);
+            ->schema($parameter["renderer"]());
     }
 
     public static function getInfolistComponent(CustomFieldType $type, CustomFieldAnswer $record,
@@ -27,7 +27,7 @@ class GroupTypeView implements FieldTypeView
 
         if(FieldMapper::getOptionParameter($record,"show_in_view"))
             return Fieldset::make(FieldMapper::getLabelName($record))
-                ->schema($parameter["rendered"])
+                ->schema($parameter["renderer"]())
                 ->columnStart(1)
                 ->columnSpanFull();
 
