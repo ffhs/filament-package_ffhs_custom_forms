@@ -72,6 +72,7 @@ return [
             'repeater' => 'Repeater',
             'default_amount' => 'Default Amount',
             'ordered' => 'Ordered',
+            'date_range' => 'Date Range'
         ],
 
         'rules'=>[

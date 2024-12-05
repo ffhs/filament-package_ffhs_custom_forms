@@ -1,0 +1,31 @@
+<?php
+
+namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Types\Views;
+
+use Coolsam\FilamentFlatpickr\Forms\Components\Flatpickr;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\CustomFieldType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\FieldTypeView;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Traits\HasDefaultViewComponent;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
+use Filament\Forms\Components\Component;
+use Filament\Infolists\Components\TextEntry;
+
+class DateRangeTypeView implements FieldTypeView
+{
+    use HasDefaultViewComponent;
+
+    public static function getFormComponent(CustomFieldType $type, CustomField $record, array $parameter = []): Component {
+
+        /**@var \Coolsam\FilamentFlatpickr\Forms\Components\Flatpickr $flatpickr*/
+        return static::makeComponent(Flatpickr::class, $record)
+            ->range();
+    }
+
+    public static function getInfolistComponent(CustomFieldType $type, CustomFieldAnswer $record, array $parameter = []): TextEntry {
+        return static::makeComponent(TextEntry::class, $record);
+    }
+
+
+
+}

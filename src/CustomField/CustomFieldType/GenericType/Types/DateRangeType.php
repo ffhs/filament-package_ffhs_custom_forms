@@ -2,28 +2,27 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Types;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\CustomFieldType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Types\Views\DateTypeView;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Types\Views\DateRangeTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\HasCustomTypePackageTranslation;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\DefaultLayoutTypeOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\ValidationTypeOptionGroup;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\DateFormatOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\RequiredOption;
 
-class DateType extends CustomFieldType
+class DateRangeType extends CustomFieldType
 {
     use HasCustomTypePackageTranslation;
 
 
-    public static function identifier(): string {return "date";}
+    public static function identifier(): string {return "date_range";}
 
     public function viewModes(): array {
         return  [
-            'default'  => DateTypeView::class
+            'default'  => DateRangeTypeView::class
         ];
     }
 
     public function icon(): string {
-        return  "bi-calendar3";
+        return  "bi-calendar-range";
     }
 
 
@@ -31,8 +30,7 @@ class DateType extends CustomFieldType
         return [
             DefaultLayoutTypeOptionGroup::make(),
             ValidationTypeOptionGroup::make(typeOptions: [
-                'required' => RequiredOption::make(),
-                'format' => DateFormatOption::make()
+                'required' => RequiredOption::make()
             ] )
         ];
     }

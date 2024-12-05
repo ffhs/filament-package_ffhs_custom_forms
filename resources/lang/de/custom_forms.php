@@ -70,6 +70,7 @@ return [
             'space' => 'Absatz',
             'file_upload' => 'Dokumente',
             'repeater' => 'Repeater',
+            'date_range' => 'D. Bereich'
         ],
 
         'rules' => [

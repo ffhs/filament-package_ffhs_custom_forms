@@ -29,7 +29,8 @@
         "codeat3/blade-carbon-icons": "^2.18.2",
         "ryangjchandler/blade-tabler-icons": "^2.2.0",
         "guava/filament-icon-picker": "^2.0",
-        "filament/spatie-laravel-translatable-plugin": "^3.2"
+        "filament/spatie-laravel-translatable-plugin": "^3.2",
+        "coolsam/flatpickr": "3.x-dev"
     },
     "extra": {
         "laravel": {

@@ -9,7 +9,7 @@ use Filament\Forms\Components\Component;
 abstract class TypeOption {
 
     protected ?Closure $modifyComponentCloser = null;
-    protected ?Closure $modifyDefault = null;
+    protected mixed $modifyDefault = null;
 
     public static function make(): static {
         return new static();
@@ -20,7 +20,7 @@ abstract class TypeOption {
         return $this;
     }
 
-    public function modifyDefault(Closure $closure): static {
+    public function modifyDefault(mixed $closure): static {
         $this->modifyDefault = $closure;
         return $this;
     }
@@ -45,7 +45,10 @@ abstract class TypeOption {
     public function getModifyDefault(): mixed {
         $default = $this->getDefaultValue();
         if (is_null($this->modifyDefault)) return $default;
-        return ($this->modifyDefault)($default);
+        $isClosure= $this->modifyDefault instanceof Closure;
+        return $isClosure
+            ? ($this->modifyDefault)($default)
+            : $this->modifyDefault;
     }
 
     public abstract function getDefaultValue(): mixed;

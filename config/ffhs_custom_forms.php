@@ -6,6 +6,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomOption
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomOption\Types\ToggleButtonsType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Types\CheckboxType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Types\ColorPickerType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Types\DateRangeType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Types\DateTimeType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Types\DateType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Types\EmailType;
@@ -91,6 +92,7 @@ return [
         CheckboxType::class,
         DateTimeType::class,
         DateType::class,
+        DateRangeType::class,
         FileUploadType::class,
 
         TagsType::class,
@@ -129,6 +131,7 @@ return [
         TextAreaType::class,
         DateTimeType::class,
         DateType::class,
+        DateRangeType::class,
         FileUploadType::class,
 
         TagsType::class,
@@ -165,6 +168,7 @@ return [
         TextAreaType::class,
         DateTimeType::class,
         DateType::class,
+        DateRangeType::class,
 
         TagsType::class,
         KeyValueType::class,

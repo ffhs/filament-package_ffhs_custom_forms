@@ -79,16 +79,22 @@ class RepeaterLayoutTypeView implements FieldTypeView
 
             unset($answer["order"]);
             $answaresFields = collect($answer)->map(function ($value, $key) use ($record, $fields) {
+
+                $customField = $fields->firstWhere("identifier", $key)?->id;
+                if(is_null($customField)) return null;
+
                 $field =  (new CustomFieldAnswer())
                     ->fill([
-                        "custom_field_id" => $fields->firstWhere("identifier", $key)->id,
+                        "custom_field_id" => $customField,
                         "custom_form_answer_id" => $record->custom_form_answer_id,
                     ]);
                 $field->answer = $field->customField->getType()->prepareSaveFieldData($value);
                 return $field;
-            })->keyBy(function (CustomFieldAnswer $answer) {return $answer->customField->identifier;});
+            })
+                ->whereNotNull()
+                ->keyBy(function (CustomFieldAnswer $answer) {return $answer->customField->identifier;});
 
-            dd($answaresFields);
+           // dd($answaresFields);
 
 
             $render = CustomFormRender::getInfolistRender(
