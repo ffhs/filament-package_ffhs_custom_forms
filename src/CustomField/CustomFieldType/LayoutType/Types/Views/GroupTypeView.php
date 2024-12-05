@@ -22,16 +22,17 @@ class GroupTypeView implements FieldTypeView
             ->schema($parameter["renderer"]());
     }
 
-    public static function getInfolistComponent(CustomFieldType $type, CustomFieldAnswer $record,
-                                                array           $parameter = []): \Filament\Infolists\Components\Component {
+    public static function getInfolistComponent(CustomFieldType $type, CustomFieldAnswer $record, array $parameter = []): \Filament\Infolists\Components\Component {
+
+        $schema = $parameter["renderer"]();
 
         if(FieldMapper::getOptionParameter($record,"show_in_view"))
             return Fieldset::make(FieldMapper::getLabelName($record))
-                ->schema($parameter["renderer"]())
+                ->schema($schema)
                 ->columnStart(1)
                 ->columnSpanFull();
 
-        return \Filament\Infolists\Components\Group::make($parameter["rendered"])
+        return \Filament\Infolists\Components\Group::make($schema)
             ->columnStart(1)
             ->columnSpanFull();
     }

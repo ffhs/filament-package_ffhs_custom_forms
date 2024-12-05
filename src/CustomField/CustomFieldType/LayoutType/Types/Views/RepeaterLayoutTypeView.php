@@ -27,13 +27,7 @@ class RepeaterLayoutTypeView implements FieldTypeView
         $maxAmount = FieldMapper::getOptionParameter($record,'max_amount');
         $defaultAmount = FieldMapper::getOptionParameter($record,'default_amount');
 
-
-//        if($ordered) $schema = [
-//            ...$parameter["rendere"](),
-//            //Hidden::make("order")
-//        ];
-//        else
-            $schema = $parameter["renderer"]();
+        $schema = $parameter["renderer"]();
 
 
         /**@var \Filament\Forms\Components\Repeater $repeater*/
@@ -106,11 +100,13 @@ class RepeaterLayoutTypeView implements FieldTypeView
             );
 
 
-            /** @var Collection $subSchema */
-            $subSchema = CustomFormRender::render($offset, $fields, $render, $viewMode, $customForm)[2];
+            $renderOutput = CustomFormRender::renderRaw($offset, $fields, $render, $viewMode, $customForm);
+            $subSchema = $renderOutput[0];
+            $allComponents = $renderOutput[1];
+            $parameter["registerComponents"]($allComponents);
 
             $schema[] = Fieldset::make("")
-                ->schema(array_values($subSchema))
+                ->schema($subSchema)
                 ->state(fn() => $answer)
                 ->statePath($id);
         }

@@ -3,8 +3,6 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\Render;
 
 use Closure;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\LayoutType\CustomLayoutType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\TemplatesType\TemplateFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Trigger\FormRuleTriggerType;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
@@ -83,15 +81,26 @@ class CustomFormRender
 //        });
 
         $allComponents = [];
+        //This Function allows to register the rendered components to $allComponents for the rules
+        $registerRenderedComponents = function (array $components) use (&$allComponents){
+            $allComponents = array_merge($allComponents, $components);
+        };
+
 
         for($formPosition = $indexOffset+1; $formPosition<= $customFields->count()+$indexOffset; $formPosition++){
 
             /** @var CustomField $customField*/
             $customField =  $preparedFields[$formPosition];
-            $parameters = ["viewMode"=>$viewMode];
+            $parameters = [
+                "viewMode" => $viewMode,
+                "registerComponents" => $registerRenderedComponents,
+                "render" => $render,
+            ];
 
-            if(($customField->getType() instanceof CustomLayoutType)){
-                $endLocation = $customField->layout_end_position;
+           // if(($customField->getType() instanceof CustomLayoutType)){
+            //if field is an layout field, add Render CComponents
+            $endLocation = $customField->layout_end_position;
+            if(!is_null($endLocation)){
 
                 //Setup Render Data
                 $fieldRenderData = [];
@@ -100,11 +109,6 @@ class CustomFormRender
                 }
                 $fieldRenderData = collect($fieldRenderData);
 
-
-                //This Function allows to register the rendered components to $allComponents for the rules
-                $registerRenderedComponents = function (array $components) use (&$allComponents){
-                    $allComponents = array_merge($allComponents, $components);
-                };
 
                 //Render Schema Input
                 $rendererFunction = function () use ($form, $viewMode, $render, $fieldRenderData, $formPosition, $registerRenderedComponents, &$allComponents){
@@ -117,24 +121,24 @@ class CustomFormRender
                 $parameters = array_merge([
                     "customFieldData" => $fieldRenderData,
                     "renderer" => $rendererFunction,
-                    "registerComponents" => $registerRenderedComponents,
+
                 ],$parameters);
 
                 //Set Index
                 $formPosition += $fieldRenderData->count(); //$renderedOutput[1] - 1; ToDo check if it works
             }
 
-            if(($customField->getType() instanceof TemplateFieldType)){
-                //Setup Render Data
-                $fields = $customField->template->customFields;
-
-                //Render Schema Input
-                $renderedOutput = self::renderRaw(0, $fields, $render, $viewMode, $form);
-                //Get Layout Schema
-                $parameters["rendered"] = $renderedOutput[0];
-
-                $allComponents = array_merge($allComponents, $renderedOutput[1]);
-            }
+//            if(($customField->getType() instanceof TemplateFieldType)){
+//                //Setup Render Data
+//                $fields = $customField->template->customFields;
+//
+//                //Render Schema Input
+//                $renderedOutput = self::renderRaw(0, $fields, $render, $viewMode, $form);
+//                //Get Layout Schema
+//                $parameters["rendered"] = $renderedOutput[0];
+//
+//                $allComponents = array_merge($allComponents, $renderedOutput[1]);
+//            }
 
             if(!$customField->is_active) continue;
 
