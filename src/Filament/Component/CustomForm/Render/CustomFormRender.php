@@ -2,6 +2,7 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\Render;
 
+use Barryvdh\Debugbar\Facades\Debugbar;
 use Closure;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Trigger\FormRuleTriggerType;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
@@ -35,9 +36,7 @@ class CustomFormRender
     }
 
     public static function render(int $indexOffset, Collection $customFields, Closure &$render, string $viewMode, CustomForm $customForm): array {
-        if($customFields->isEmpty()) return [];
-
-
+        if($customFields->isEmpty()) return [[], collect()];
         $rules = $customForm->rules;
 
         //Rule before render ca 70ms
@@ -49,6 +48,8 @@ class CustomFormRender
         $renderOutput = self::renderRaw($indexOffset, $customFields, $render,$viewMode, $customForm);
         /**@var Collection $renderedComponent*/
         $renderedComponents = $renderOutput[1];
+
+
 
 
         //TriggerPreparation (maintain for live attribute)  ca 10ms
@@ -74,6 +75,7 @@ class CustomFormRender
     }
 
     public static function renderRaw(int $indexOffset, Collection $customFields, Closure &$render, string $viewMode, CustomForm $form): array {
+        Debugbar::startMeasure("searchClients");
         $customFormSchema = [];
         $preparedFields = $customFields->keyBy("form_position");
         $allComponents = [];
@@ -92,7 +94,7 @@ class CustomFormRender
 
         for($formPosition = $indexOffset+1; $formPosition<= $customFields->count()+$indexOffset; $formPosition++){
 
-            if(!empty($allComponents[$formPosition])) continue;
+            if(empty($preparedFields[$formPosition])) continue;
 
             /** @var CustomField $customField*/
             $customField =  $preparedFields[$formPosition];
@@ -131,6 +133,7 @@ class CustomFormRender
             $customFormSchema[] = $renderedComponent;
         }
 
+        Debugbar::stopMeasure("searchClients");
         return [$customFormSchema, $allComponents];
     }
 
@@ -138,6 +141,7 @@ class CustomFormRender
         $form = CustomForm::cached($formAnswer->custom_form_id);
         $customFields = $form->getOwnedFields();
         $fieldAnswers = $formAnswer->customFieldAnswers;
+
 
         $render= self::getInfolistRender($viewMode,$form,$formAnswer, $fieldAnswers);
         $customViewSchema = self::render(0,$customFields,$render, $viewMode, $formAnswer->customForm)[0];
