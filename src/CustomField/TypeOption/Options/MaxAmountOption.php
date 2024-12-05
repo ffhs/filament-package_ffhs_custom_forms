@@ -22,7 +22,7 @@ class MaxAmountOption extends TypeOption
                 ->nullable()
                 ->live()
                 ->minValue(0)
-                ->gt("max_amount")
+                ->gt("min_amount")
                 ->integer();
     }
 }

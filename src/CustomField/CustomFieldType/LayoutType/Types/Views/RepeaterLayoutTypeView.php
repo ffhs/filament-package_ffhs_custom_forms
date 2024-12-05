@@ -9,7 +9,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldMapper;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\Render\CustomFormRender;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
-use Filament\Forms\Components\{Hidden, Repeater};
+use Filament\Forms\Components\{Repeater};
 use Filament\Infolists\Components\Fieldset;
 use Filament\Infolists\Components\Section;
 use Illuminate\Support\Collection;
@@ -30,7 +30,7 @@ class RepeaterLayoutTypeView implements FieldTypeView
 
          if($ordered) $schema = [
                  ...$parameter["rendered"],
-                Hidden::make("order")
+                //Hidden::make("order")
         ];
          else $schema = $parameter["rendered"];
 
@@ -63,7 +63,7 @@ class RepeaterLayoutTypeView implements FieldTypeView
             : Section::make(FieldMapper::getLabelName($record));
 
         $answares = FieldMapper::getAnswer($record);
-        if($ordered) $answares = collect($answares)->sortBy("order");
+        if($ordered) $answares = collect($answares)->sortBy("order"); //ToDo not work
 
 
         /** @var Collection $fields */
@@ -77,14 +77,19 @@ class RepeaterLayoutTypeView implements FieldTypeView
         $schema = [];
         foreach ($answares as $id => $answer) {
 
+            unset($answer["order"]);
             $answaresFields = collect($answer)->map(function ($value, $key) use ($record, $fields) {
-                return  (new CustomFieldAnswer())
+                $field =  (new CustomFieldAnswer())
                     ->fill([
-                        "custom_field_id" => $fields->firstWhere("identifier", $key),
+                        "custom_field_id" => $fields->firstWhere("identifier", $key)->id,
                         "custom_form_answer_id" => $record->custom_form_answer_id,
-                        "answer" => $value,
                     ]);
-            });
+                $field->answer = $field->customField->getType()->prepareSaveFieldData($value);
+                return $field;
+            })->keyBy(function (CustomFieldAnswer $answer) {return $answer->customField->identifier;});
+
+            dd($answaresFields);
+
 
             $render = CustomFormRender::getInfolistRender(
                 $parameter["viewMode"],
@@ -93,18 +98,15 @@ class RepeaterLayoutTypeView implements FieldTypeView
                 $answaresFields
             );
 
+
             /** @var Collection $subSchema */
             $subSchema = CustomFormRender::render($offset, $fields, $render, $viewMode, $customForm)[2];
-            foreach ($subSchema as $subSchemaKey => $subSchemaValue) {
-                $subSchemaValue->getStateUsing(fn() => $answer[$subSchemaKey]);
-            }
 
             $schema[] = Fieldset::make("")
                 ->schema(array_values($subSchema))
                 ->state(fn() => $answer)
                 ->statePath($id);
         }
-
 
         return $component
             ->schema($schema)
