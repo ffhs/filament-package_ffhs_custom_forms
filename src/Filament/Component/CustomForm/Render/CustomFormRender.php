@@ -40,18 +40,18 @@ class CustomFormRender
 
         $rules = $customForm->rules;
 
-        //Rule before render
+        //Rule before render ca 70ms
         $rules->each(function(Rule $rule) use (&$customFields) {
             $customFields = $rule->handle(["action" => "before_render"], $customFields);
         });
 
-        //Render
+        //Render ca 72ms
         $renderOutput = self::renderRaw($indexOffset, $customFields, $render,$viewMode, $customForm);
         /**@var Collection $renderedComponent*/
         $renderedComponents = $renderOutput[1];
 
 
-        //TriggerPreparation (maintain for live attribute) ca 30ms
+        //TriggerPreparation (maintain for live attribute)  ca 10ms
         $rules
             ->map(fn(Rule $rule) => $rule->ruleTriggers)
             ->flatten(1)
@@ -64,7 +64,7 @@ class CustomFormRender
 
         $customFields = $customForm->customFields->mapWithKeys(fn(CustomField $field) => [$field->identifier => $field]);
 
-        //Rule after Render
+        //Rule after Render ca 2ms - 10ms
         $rules->each(function(Rule $rule) use ($customForm, $customFields, &$renderedComponents) {
           $renderedComponents = $rule->handle(["action" => "after_render", "custom_fields" => $customFields], $renderedComponents);
         });
@@ -76,79 +76,60 @@ class CustomFormRender
     public static function renderRaw(int $indexOffset, Collection $customFields, Closure &$render, string $viewMode, CustomForm $form): array {
         $customFormSchema = [];
         $preparedFields = $customFields->keyBy("form_position");
-//        $customFields->each(function(CustomField $field) use (&$preparedFields){
-//            $preparedFields[$field->form_position] = $field;
-//        });
-
         $allComponents = [];
         //This Function allows to register the rendered components to $allComponents for the rules
         $registerRenderedComponents = function (array $components) use (&$allComponents){
             $allComponents = array_merge($allComponents, $components);
         };
 
+        //Define Parameters
+        $baseParameters = [
+            "viewMode" => $viewMode,
+            "registerComponents" => $registerRenderedComponents,
+            "render" => $render,
+        ];
+
 
         for($formPosition = $indexOffset+1; $formPosition<= $customFields->count()+$indexOffset; $formPosition++){
 
+            if(!empty($allComponents[$formPosition])) continue;
+
             /** @var CustomField $customField*/
             $customField =  $preparedFields[$formPosition];
-            $parameters = [
-                "viewMode" => $viewMode,
-                "registerComponents" => $registerRenderedComponents,
-                "render" => $render,
-            ];
 
-           // if(($customField->getType() instanceof CustomLayoutType)){
+            //When field isn't Active skip it
+            if(!$customField->is_active) continue;
+
+            $parameters = $baseParameters;
+
             //if field is an layout field, add Render CComponents
-            $endLocation = $customField->layout_end_position;
-            if(!is_null($endLocation)){
-
-                //Setup Render Data
+            if(!is_null( $customField->layout_end_position)){
+//
                 $fieldRenderData = [];
-                for ($formPositionSubForm = $customField->form_position + 1; $formPositionSubForm <= $endLocation; $formPositionSubForm++) {
+                for ($formPositionSubForm = $customField->form_position + 1; $formPositionSubForm <= $customField->layout_end_position; $formPositionSubForm++) {
                     $fieldRenderData[] = $preparedFields[$formPositionSubForm];
                 }
                 $fieldRenderData = collect($fieldRenderData);
+                $parameters["customFieldData"] = $fieldRenderData;
 
 
                 //Render Schema Input
-                $rendererFunction = function () use ($form, $viewMode, $render, $fieldRenderData, $formPosition, $registerRenderedComponents, &$allComponents){
+                $parameters["renderer"] = function () use ($fieldRenderData, &$parameters, $form, $viewMode, $render, $formPosition, $registerRenderedComponents, &$allComponents){
                     $renderOutput = self::renderRaw($formPosition, $fieldRenderData, $render, $viewMode, $form);
                     $registerRenderedComponents($renderOutput[1]);
                     return $renderOutput[0];
                 };
 
-                //renderer should not be use in any schema closure function
-                $parameters = array_merge([
-                    "customFieldData" => $fieldRenderData,
-                    "renderer" => $rendererFunction,
-
-                ],$parameters);
-
-                //Set Index
-                $formPosition += $fieldRenderData->count(); //$renderedOutput[1] - 1; ToDo check if it works
+                //Skip fields where in the sub renderer Index
+                $formPosition += $fieldRenderData->count();
             }
 
-//            if(($customField->getType() instanceof TemplateFieldType)){
-//                //Setup Render Data
-//                $fields = $customField->template->customFields;
-//
-//                //Render Schema Input
-//                $renderedOutput = self::renderRaw(0, $fields, $render, $viewMode, $form);
-//                //Get Layout Schema
-//                $parameters["rendered"] = $renderedOutput[0];
-//
-//                $allComponents = array_merge($allComponents, $renderedOutput[1]);
-//            }
-
-            if(!$customField->is_active) continue;
 
             //Render
             $renderedComponent = $render($customField, $parameters);
             $allComponents[$customField->identifier] = $renderedComponent;
-
             $customFormSchema[] = $renderedComponent;
         }
-
 
         return [$customFormSchema, $allComponents];
     }
