@@ -2,7 +2,6 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\Render;
 
-use Barryvdh\Debugbar\Facades\Debugbar;
 use Closure;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Trigger\FormRuleTriggerType;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
@@ -75,7 +74,6 @@ class CustomFormRender
     }
 
     public static function renderRaw(int $indexOffset, Collection $customFields, Closure &$render, string $viewMode, CustomForm $form): array {
-        Debugbar::startMeasure("searchClients");
         $customFormSchema = [];
         $preparedFields = $customFields->keyBy("form_position");
         $allComponents = [];
@@ -133,7 +131,6 @@ class CustomFormRender
             $customFormSchema[] = $renderedComponent;
         }
 
-        Debugbar::stopMeasure("searchClients");
         return [$customFormSchema, $allComponents];
     }
 
@@ -156,6 +153,7 @@ class CustomFormRender
     public static function getInfolistRender(string $viewMode, CustomForm $form, CustomFormAnswer $formAnswer, Collection $fieldAnswers): Closure {
         return function (CustomField $customField,  array $parameter) use ($formAnswer, $form, $viewMode, $fieldAnswers) {
 
+            //150us
             /** @var CustomFormAnswer $answer*/
             $answer = $fieldAnswers->firstWhere("custom_field_id", $customField->id);
             if (is_null($answer)) {

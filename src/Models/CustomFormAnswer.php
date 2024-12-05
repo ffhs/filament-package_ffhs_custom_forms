@@ -35,12 +35,16 @@ class CustomFormAnswer extends Model implements CachedModel
         return $this->belongsTo(CustomForm::class);
     }
 
-    public function cachedCustomFieldAnswers (): Collection {
+    public function cachedCustomFieldAnswers (): mixed {
         return Cache::remember($this->getCacheKeyForAttribute("customFieldAnswers"), self::getCacheDuration(),
             function(){
-                $answers = $this->customFieldAnswers()->get();
+                $answers = $this->customFieldAnswers()
+                    ->with("customField")
+                    ->get();
                 $this->customForm->customFields;
+
                 return $answers;
+               // return new RelationCachedInformations(CustomFieldAnswer::class, $answers->pluck("id")->toArray());
             }
         );
     }
