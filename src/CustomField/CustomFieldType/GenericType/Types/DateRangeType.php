@@ -31,7 +31,7 @@ class DateRangeType extends CustomFieldType
             DefaultLayoutTypeOptionGroup::make(),
             ValidationTypeOptionGroup::make(typeOptions: [
                 'required' => RequiredOption::make()
-            ] )
+            ])
         ];
     }
 

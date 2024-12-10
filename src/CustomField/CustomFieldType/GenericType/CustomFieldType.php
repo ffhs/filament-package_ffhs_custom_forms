@@ -4,6 +4,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Generi
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Traits\HasConfigAttribute;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Traits\HasEditFieldCallbacks;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Traits\HasGridModifiers;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Traits\HasTypeOptions;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Traits\HasTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\FormEditor\TypeActions\default\DefaultCustomActivationAction;
@@ -26,6 +27,7 @@ abstract class CustomFieldType implements Type
     use HasTypeOptions;
     use HasConfigAttribute;
     use HasEditFieldCallbacks;
+    use HasGridModifiers;
 
     /*
      * Static used functions
@@ -124,15 +126,7 @@ abstract class CustomFieldType implements Type
         return $data;
     }
 
-    public function isFullSizeField(): bool
-    {
-        return false;
-    }
 
-    public function getStaticColumns() :int|null
-    {
-        return null;
-    }
 
 
 }
