@@ -13,9 +13,14 @@ trait HasFieldSplitting
         return false;
     }
 
-    public function getSplitField(CustomField $field, array $fieldAnswerData): array
+    public function getSplitField(CustomField $field, array $customFieldAnswererRawData): array
     {
-        return $fieldAnswerData;
+        return $customFieldAnswererRawData;
+    }
+
+    public function getSplitFieldOwnedData(CustomField $field, array $customFieldAnswererRawData): array
+    {
+        return [];
     }
 
     public function mergeSplitField(CustomField $field, array $fieldAnswerData, array $splitFieldData): array

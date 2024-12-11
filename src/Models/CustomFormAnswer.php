@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Cache;
 
 /**
  * @property int $custom_form_id
+ * @property int $id
  * @property CustomForm $customForm
  * @property Collection $customFieldAnswers
  * @property string|null $short_title

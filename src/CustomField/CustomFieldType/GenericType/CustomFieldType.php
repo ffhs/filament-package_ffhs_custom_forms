@@ -128,7 +128,10 @@ abstract class CustomFieldType implements Type
         return $data;
     }
 
-
+    public function isEmptyAnswarer(mixed $customFieldAnswer, ?array $fieldAnswererData)
+    {
+        return empty($fieldAnswererData);
+    }
 
 
 }
