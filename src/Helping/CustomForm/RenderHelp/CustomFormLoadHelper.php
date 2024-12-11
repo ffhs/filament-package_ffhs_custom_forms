@@ -18,7 +18,7 @@ class CustomFormLoadHelper {
 
         $formRules  = $answerer->customForm->rules;
 
-        foreach($answerer->customFieldAnswers as $fieldAnswer){
+        foreach($answerer->customFieldAnswers as $fieldAnswer){ 
             /**@var CustomFieldAnswer $fieldAnswer*/
             /**@var CustomField $customField*/
             /**@var CustomFieldType $type*/
