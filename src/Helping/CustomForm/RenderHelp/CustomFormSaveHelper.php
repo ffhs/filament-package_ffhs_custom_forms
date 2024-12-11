@@ -109,11 +109,10 @@ class CustomFormSaveHelper {
         return $dateSplitted;
     }
 
+
     public static function saveWithoutPreparation(array $formData, array $customFieldsIdentify, CustomFormAnswer $formAnswer ): void {
 
         $handledCustomFieldPaths = [];
-        $toSave = [];
-
 
         $sxisitingFieldAnsware = self::mapFields(
             $formAnswer->customFieldAnswers()->get(),
@@ -154,7 +153,7 @@ class CustomFormSaveHelper {
             }
 
             $fieldAnswererData = $customField->getType()->prepareSaveFieldData($fieldRawData);
-            if ($type->isEmptyAnswarer($customFieldAnswer, $fieldAnswererData)) {
+            if ($type->isEmptyAnswerer($customFieldAnswer, $fieldAnswererData)) {
                 if ($customFieldAnswer->exists)$customFieldAnswer->delete();
                 $type->afterAnswerFieldSave($customFieldAnswer, $fieldRawData, $formData);
                 continue;

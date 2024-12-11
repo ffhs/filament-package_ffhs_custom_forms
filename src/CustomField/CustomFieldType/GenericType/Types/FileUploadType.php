@@ -9,6 +9,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\DefaultLay
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\ValidationTypeOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\FastTypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\TagsInput;
@@ -193,5 +194,11 @@ class FileUploadType extends CustomFieldType
             'default' => FileUploadView::class,
         ];
     }
+
+    public function isEmptyAnswerer(CustomFieldAnswer $customFieldAnswer, ?array $fieldAnswererData): bool
+    {
+        return parent::isEmptyAnswerer($customFieldAnswer, $fieldAnswererData) || empty($fieldAnswererData["files"]);
+    }
+
 
 }

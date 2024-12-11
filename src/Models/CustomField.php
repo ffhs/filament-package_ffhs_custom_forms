@@ -61,6 +61,40 @@ class CustomField extends ACustomField implements NestingObject , Identifier
         "template",
     ];
 
+    public static function getPositionAttribute(): string
+    {
+        return 'form_position';
+    }
+
+    public static function getEndContainerPositionAttribute(): string
+    {
+        return 'layout_end_position';
+    }
+
+
+    //Custom Form
+
+    protected static function booted(): void {
+        parent::booted();
+
+        self::creating(function (CustomField $field){#
+            //Set identifier key to on other
+            if(empty($field->identifier()) && !$field->isGeneralField()) $field->identifier = uniqid();
+            return $field;
+        });
+    }
+
+
+    //Options
+
+    public function identifier(): string
+    {
+        return $this->__get("identifier");
+    }
+
+
+    //GeneralField
+
     public function __get($key) {
 
         if($key === "general_field_id") {
@@ -98,33 +132,20 @@ class CustomField extends ACustomField implements NestingObject , Identifier
 
     }
 
-    protected static function booted(): void {
-        parent::booted();
-
-        self::creating(function (CustomField $field){#
-            //Set identifier key to on other
-            if(empty($field->identifier()) && !$field->isGeneralField()) $field->identifier = uniqid();
-            return $field;
-        });
+    public function isGeneralField():bool{
+        return !empty($this->general_field_id);
     }
 
-
-    //Custom Form
     public function customForm(): BelongsTo {
         return $this->belongsTo(CustomForm::class);
     }
 
-
-    //Options
     public function customOptions (): BelongsToMany {
         return $this->belongsToMany(CustomOption::class, "option_custom_field");
     }
 
 
-    //GeneralField
-    public function isGeneralField():bool{
-        return !empty($this->general_field_id);
-    }
+    //Template
 
     public function isInheritFromGeneralField():bool{
         return !is_null($this->general_field_id);
@@ -134,35 +155,18 @@ class CustomField extends ACustomField implements NestingObject , Identifier
     {
         return $this->belongsTo(GeneralField::class);
     }
+
     public function answers(): HasMany
     {
         return $this->hasMany(CustomFieldAnswer::class);
     }
 
-
-    //Template
     public function isTemplate(): bool {
         if(!isset($this->template_id)) return false;
         return !empty($this->template_id);
     }
+
     public function template(): BelongsTo {
         return $this->belongsTo(CustomForm::class, "template_id");
-    }
-
-
-
-    public static function getPositionAttribute(): string
-    {
-        return 'form_position';
-    }
-
-    public static function getEndContainerPositionAttribute(): string
-    {
-        return 'layout_end_position';
-    }
-
-    public function identifier(): string
-    {
-        return $this->__get("identifier");
     }
 }
