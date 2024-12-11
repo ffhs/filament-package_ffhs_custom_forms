@@ -9,7 +9,6 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\Rule;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Form;
-use Illuminate\Database\Eloquent\Builder;
 
 class CustomFormSaveHelper {
 
@@ -96,11 +95,11 @@ class CustomFormSaveHelper {
                 continue;
             }
 
-            $dateSplitted[$path] = $type->getSplitFieldOwnedData($customField, $customFieldAnswererRawData);
+           // $dateSplitted[$path] = $type->getSplitFieldOwnedData($customField, $customFieldAnswererRawData);
 
-            $splites = $type->getSplitField($customField, $customFieldAnswererRawData);
+//            $splites = $type->getSplitField($customField, $customFieldAnswererRawData);
 
-            foreach ($splites as $subPath => $dateSplit){
+            foreach ($customFieldAnswererRawData as $subPath => $dateSplit){
                 $newParentPath = empty($parentPath) ? $subPath : $parentPath . "." . $subPath;
                 $getSplittedData = static::splittingFormComponents($dateSplit, $customFieldsIdentify, $newParentPath);
                 $dateSplitted = array_merge($dateSplitted, $getSplittedData);
@@ -112,11 +111,12 @@ class CustomFormSaveHelper {
 
     public static function saveWithoutPreparation(array $formData, array $customFieldsIdentify, CustomFormAnswer $formAnswer ): void {
 
-        $handledCustomFieldPaths = [];
+        $handledCustomIds = [];
+        $handledPaths = [];
 
         $sxisitingFieldAnsware = self::mapFields(
             $formAnswer->customFieldAnswers()->get(),
-            fn(CustomFieldAnswer $answer) => $answer->customField->identifier . '.' . $answer
+            fn(CustomFieldAnswer $answer) => $answer->customField->identifier . (is_null($answer->path)? '': '.' . $answer->path)
         );
 
 
@@ -134,11 +134,8 @@ class CustomFormSaveHelper {
 
 
             // Which Fields are active and used
-            if(is_null($path)) $handledCustomFieldPaths[$customField->id] = [];
-            else $handledCustomFieldPaths[$customField->id] = [
-                ...($handledCustomFieldPaths[$customField->id] ?? []),
-                $path
-            ];
+            $handledCustomIds[] = $customField->id;
+            if(!is_null($path)) $handledPaths[] = $path;
 
 
             /**@var null|CustomFieldAnswer $customFieldAnswer */
@@ -173,58 +170,12 @@ class CustomFormSaveHelper {
         //Delete not used Answares
         CustomFieldAnswer::query()
             ->where("custom_form_answer_id", $formAnswer->id)
-            ->whereNot(function(Builder $query) use ($handledCustomFieldPaths) {
-
-                foreach ($handledCustomFieldPaths as $customFieldIds => $paths) {
-                    if(empty($paths)) {
-                        $query->orWhere("custom_field_id", $customFieldIds);
-                    }else {
-                        $query->orWhere(fn(Builder $query2) => $query2->where("custom_field_id", $customFieldIds)
-                            ->whereIn("custom_field_id", $paths));
-                    }
-                }
-
-            })->delete();
-
-//        foreach ($customFieldsIdentify as $key => $customField) {
-//            /**@var CustomField $customField */
-//
-//            if (!array_key_exists($key,$formData)) continue;//$fieldData = null
-//            else $fieldData = $formData[$key];
-//
-//            $type = $customField->getType();
-//
-//            /**@var null|CustomFieldAnswer $customFieldAnswer */
-//            if (!empty($fieldAnswersIdentify[$key]))
-//                $customFieldAnswer = $fieldAnswersIdentify[$key];
-//            else{
-//                $customFieldAnswer = new CustomFieldAnswer([
-//                    "custom_field_id" => $customField->id,
-//                    "custom_form_answer_id" => $formAnswerer->id,
-//                ]);
-//            }
-//
+            ->whereIn("custom_field_id", $handledCustomIds)
+            ->whereNotNull("path")
+            ->whereNotIn("path",  $handledPaths)
+            ->delete();
 
 
-//            $fieldAnswererData = $customField->getType()->prepareSaveFieldData($fieldData);
-//            if (empty($fieldAnswererData)) {
-//                if ($customFieldAnswer->exists)$customFieldAnswer->delete();
-//                $type->afterAnswerFieldSave($customFieldAnswer, $fieldData, $formData);
-//                continue;
-//            }
-//
-//            $formRules = $customField->customForm->rules;
-//            foreach ($formRules as $rule) {
-//                /**@var Rule $rule */
-//                $fieldAnswererData = $rule->handle(['action' => "save_answerer", 'custom_field_answer' => $customFieldAnswer], $fieldAnswererData);
-//            }
-//
-//            $customFieldAnswer->answer = $fieldAnswererData;
-//
-//            if (!$customFieldAnswer->exists || $customFieldAnswer->isDirty()) $customFieldAnswer->save();
-//
-//            $type->afterAnswerFieldSave($customFieldAnswer, $fieldData, $formData);
-//        }
     }
 
 

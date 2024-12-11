@@ -150,12 +150,20 @@ class CustomFormRender
         ];
     }
 
-    public static function getInfolistRender(string $viewMode, CustomForm $form, CustomFormAnswer $formAnswer, Collection $fieldAnswers): Closure {
-        return function (CustomField $customField,  array $parameter) use ($formAnswer, $form, $viewMode, $fieldAnswers) {
+    public static function getInfolistRender(string $viewMode, CustomForm $form, CustomFormAnswer $formAnswer, Collection $fieldAnswers, ?string $path = null): Closure {
+
+        $fieldAnswers = $fieldAnswers->filter(function ($item) use ($path) {
+            if(is_null($item['path'] ) || is_null($path)) return $path == $item['path'];
+            return str_contains($item['path'], $path);
+        });
+        $fieldAnswers = $fieldAnswers->keyBy("custom_field_id");
+
+
+        return function (CustomField $customField,  array $parameter) use ($path, $formAnswer, $form, $viewMode, $fieldAnswers) {
 
             //150us
             /** @var CustomFormAnswer $answer*/
-            $answer = $fieldAnswers->firstWhere("custom_field_id", $customField->id);
+            $answer = $fieldAnswers->get($customField->id);
             if (is_null($answer)) {
                 $answer = new CustomFieldAnswer();
                 $answer->answer = null;

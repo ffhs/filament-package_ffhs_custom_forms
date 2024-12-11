@@ -60,6 +60,7 @@ abstract class  IsPropertyOverwriteEvent extends FormRuleEventType
         if(empty($rule->data["targets"])) return $component;
 
         $getCustomField = $this->getCustomField($arguments);
+        if(is_null($getCustomField)) return $component;
         $customFieldId = $getCustomField->identifier;
 
         $inTargets = in_array($customFieldId, $rule->data["targets"]);

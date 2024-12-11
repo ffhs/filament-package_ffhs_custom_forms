@@ -89,10 +89,10 @@ abstract class FormRuleEventType implements EventType
         return $target;
     }
 
-    public function getCustomField($arguments): CustomField
+    public function getCustomField($arguments): ?CustomField
     {
         $identifier = $arguments["identifier"];
-        $fields = $arguments["custom_fields"][$identifier];
+        $fields = $arguments["custom_fields"][$identifier] ?? null;
         return  $fields;
     }
 
