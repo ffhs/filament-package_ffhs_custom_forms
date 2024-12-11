@@ -4,6 +4,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Generi
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Traits\HasConfigAttribute;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Traits\HasEditFieldCallbacks;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Traits\HasFieldSplitting;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Traits\HasGridModifiers;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Traits\HasTypeOptions;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Traits\HasTypeView;
@@ -28,6 +29,7 @@ abstract class CustomFieldType implements Type
     use HasConfigAttribute;
     use HasEditFieldCallbacks;
     use HasGridModifiers;
+    use HasFieldSplitting;
 
     /*
      * Static used functions

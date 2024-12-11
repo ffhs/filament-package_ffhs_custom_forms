@@ -1,11 +1,11 @@
 <?php
 
-namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\LayoutType\Types;
+namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\SplittedType\Types;
 
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\HasCustomTypePackageTranslation;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\LayoutType\CustomLayoutType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\LayoutType\Types\Views\RepeaterLayoutTypeView;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\SplittedType\CustomSplitType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\SplittedType\Types\Views\RepeaterLayoutTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\LayoutTypeDefaultLayoutTypeOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\ValidationTypeOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\FastTypeOption;
@@ -16,7 +16,7 @@ use Filament\Forms\Components\Component;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 
-class RepeaterLayoutType extends CustomLayoutType
+class RepeaterLayoutType extends CustomSplitType
 {
 
     use HasCustomTypePackageTranslation;
