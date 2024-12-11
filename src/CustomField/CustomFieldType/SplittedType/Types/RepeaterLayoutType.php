@@ -14,7 +14,6 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\MinAmount
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\ShowAsFieldsetOption;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
 
 class RepeaterLayoutType extends CustomSplitType
 {
@@ -50,11 +49,11 @@ class RepeaterLayoutType extends CustomSplitType
                             ->integer()
                             ->required(),
                     ),
-                    'ordered' => new FastTypeOption(false,
-                        Toggle::make('ordered')
-                            ->default(false)
-                            ->label(__('filament-package_ffhs_custom_forms::custom_forms.fields.type_options.ordered'))
-                    ),
+//                    'ordered' => new FastTypeOption(false,
+//                        Toggle::make('ordered')
+//                            ->default(false)
+//                            ->label(__('filament-package_ffhs_custom_forms::custom_forms.fields.type_options.ordered'))
+//                    ),
                 ]),
             ValidationTypeOptionGroup::make()
                 ->removeTypeOption("required")
