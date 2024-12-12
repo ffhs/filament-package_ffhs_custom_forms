@@ -109,7 +109,7 @@ class CustomFormSaveHelper {
     }
 
 
-    public static function saveWithoutPreparation(array $formData, array $customFieldsIdentify, CustomFormAnswer $formAnswer ): void {
+    public static function saveWithoutPreparation(array $formData, array $customFieldsIdentify, CustomFormAnswer $formAnswer): void {
 
         $handledCustomIds = [];
         $handledPaths = [];
@@ -118,7 +118,6 @@ class CustomFormSaveHelper {
             $formAnswer->customFieldAnswers()->get(),
             fn(CustomFieldAnswer $answer) => $answer->customField->identifier . (is_null($answer->path)? '': '.' . $answer->path)
         );
-
 
         foreach ($formData as $identifierPath => $fieldRawData){
             //Exclude Path and Identifier
@@ -156,6 +155,7 @@ class CustomFormSaveHelper {
                 continue;
             }
 
+
             $formRules = $customField->customForm->rules;
             foreach ($formRules as $rule) {
                 /**@var Rule $rule */
@@ -167,7 +167,9 @@ class CustomFormSaveHelper {
             $type->afterAnswerFieldSave($customFieldAnswer, $fieldRawData, $formData);
         }
 
+
         //Delete not used Answares
+
         CustomFieldAnswer::query()
             ->where("custom_form_answer_id", $formAnswer->id)
             ->whereIn("custom_field_id", $handledCustomIds)
@@ -175,9 +177,5 @@ class CustomFormSaveHelper {
             ->whereNotIn("path",  $handledPaths)
             ->delete();
 
-
     }
-
-
-
 }

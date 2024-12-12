@@ -16,18 +16,28 @@ class CustomFormLoadHelper {
         //ToDo check to Cache stuff for performance $customFields = $answerer->customForm->customFields;
         $loadedData = [];
 
-        $formRules  = $answerer->customForm->rules;
+        $customForm = $answerer->customForm;
+        $customFields = $customForm->customFields->keyBy("id");
+        $templateFields = $customForm->ownedFields;
+        $formRules  = $customForm->rules;
 
-        foreach($answerer->customFieldAnswers as $fieldAnswer){ 
+        foreach($answerer->customFieldAnswers as $fieldAnswer){
             /**@var CustomFieldAnswer $fieldAnswer*/
             /**@var CustomField $customField*/
             /**@var CustomFieldType $type*/
-            $customField = $fieldAnswer->customField;
+            $customField = $customFields->get($fieldAnswer->custom_field_id);
 
-            $beginCondition = is_null($begin) || $begin < $customField->form_position;
-            $endCondition = is_null($end) || $customField->form_position < $end;
+            $beginCondition = is_null($begin) || $begin <= $customField->form_position;
+            $endCondition = is_null($end) || $customField->form_position <= $end;
 
-            if(!($beginCondition && $endCondition)) continue;
+            if($answerer->custom_form_id == $customField->custom_form_id) {
+                if(!($beginCondition && $endCondition)) continue;
+            }
+            else{
+                $templateField =  $templateFields->firstWhere("template_id",$customField->custom_form_id);
+                if(!$templateField) continue;
+                if($begin > $templateField->form_position || $templateField->form_position > $end) continue;
+            }
 
             $fieldData = $customField
                 ->getType()
@@ -41,8 +51,7 @@ class CustomFormLoadHelper {
             $loadedData[$dataIdentifier] = $fieldData;
         }
 
-        $fields = $answerer->customForm
-            ->customFields
+        $fields = $customFields
             ->sortBy("form_position")
             ->keyBy(fn (CustomField $item) => $item->identifier);
 
