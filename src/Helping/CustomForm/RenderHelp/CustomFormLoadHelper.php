@@ -62,7 +62,6 @@ class CustomFormLoadHelper {
 
             $path = implode('.', array_slice($keyPath, 1));
             $pathResolved = static::findPath($fields, $fields->get($identifier), $path) ."." . $identifier;
-
             Arr::set($loadedData, $pathResolved,$data);
             unset($loadedData[$key]);
         }
@@ -93,15 +92,15 @@ class CustomFormLoadHelper {
             $nearestParent = $field;
         }
 
-
         $pathFragments = explode(".", $path);
         $path = end($pathFragments);
+        //Get Last Path element
         $lastPath = sizeof($pathFragments) >1?  implode(" ", array_slice($pathFragments, 0, -1)) : null;
 
         if(is_null($nearestParent)) return "";
-        else if(!is_null($lastPath)){
+        if(!is_null($lastPath)){
             $resultPathParent = static::findPath($fields, $nearestParent, $lastPath);
-            return $nearestParent->identifier . ".". $path . "." . $resultPathParent;
+            return  $resultPathParent . "." . $nearestParent->identifier . ".". $path ;
         }
 
         return $nearestParent->identifier . ".". $path;
