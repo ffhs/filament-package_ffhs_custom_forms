@@ -40,7 +40,7 @@ class FieldMapper
     public static function getAnswer(CustomFieldAnswer $answer) {
         $rawAnswerer = $answer->answer;
         if(is_null($rawAnswerer)) return null;
-        return $answer->customField->getType()->prepareLoadFieldData($rawAnswerer);
+        return $answer->customField->getType()->prepareLoadFieldData($answer, $rawAnswerer);
     }
 
     public static function getAvailableCustomOptions(CustomField $record) : Collection{

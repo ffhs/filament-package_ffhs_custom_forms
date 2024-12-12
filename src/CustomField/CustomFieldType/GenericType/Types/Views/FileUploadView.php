@@ -130,6 +130,28 @@ class FileUploadView implements FieldTypeView
         ])->columnSpanFull()->columns(1);
     }
 
+    public static function getDownloadInfolistAction(mixed $path, CustomFieldAnswer $record, string $absolutePath, $names): Action
+    {
+        return Action::make($path . "-" . FieldMapper::getIdentifyKey($record) . "-action-download")
+            ->action(fn() => response()->download($absolutePath, $names))
+            ->icon('tabler-download')
+            ->label("Download")
+            ->link()
+            ->iconButton();
+    }
+
+    public static function getRedirectInfolistAction(CustomFieldAnswer $record, mixed $path, $urlPrefix): Action
+    {
+        return Action::make($path . "-" . FieldMapper::getIdentifyKey($record) . "-action-view")
+            ->action(function($livewire) use ($path, $urlPrefix) {
+                $url =  Request::root()  . $urlPrefix . "/" . $path;
+                $livewire->js('window.open(\''. $url .'\', \'_blank\');');
+            })
+            ->icon('bi-folder-symlink')
+            ->label("Redirect")
+            ->link()
+            ->iconButton();
+    }
 
     public static function getInfoListFiles(mixed $files, mixed $diskRoot, CustomFieldAnswer $record, mixed $names): Group {
 
@@ -171,31 +193,6 @@ class FileUploadView implements FieldTypeView
                 ->label(new HtmlString('</span> <span class="text-sm font-medium leading-6 text-gray-950 dark:text-white" style="margin-bottom: -25px; margin-left: -12px;">'.FieldMapper::getLabelName($record).'</span> <span>')),
           Grid::make()->schema($fileComponents)->columns()
         ])->columnSpanFull();
-    }
-
-
-    public static function getDownloadInfolistAction(mixed $path, CustomFieldAnswer $record, string $absolutePath, $names): Action
-    {
-        return Action::make($path . "-" . FieldMapper::getIdentifyKey($record) . "-action-download")
-            ->action(fn() => response()->download($absolutePath, $names))
-            ->icon('tabler-download')
-            ->label("Download")
-            ->link()
-            ->iconButton();
-    }
-
-
-    public static function getRedirectInfolistAction(CustomFieldAnswer $record, mixed $path, $urlPrefix): Action
-    {
-        return Action::make($path . "-" . FieldMapper::getIdentifyKey($record) . "-action-view")
-            ->action(function($livewire) use ($path, $urlPrefix) {
-                $url =  Request::root()  . $urlPrefix . "/" . $path;
-                $livewire->js('window.open(\''. $url .'\', \'_blank\');');
-            })
-            ->icon('bi-folder-symlink')
-            ->label("Redirect")
-            ->link()
-            ->iconButton();
     }
 
 }

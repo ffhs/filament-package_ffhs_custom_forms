@@ -60,12 +60,12 @@ abstract class CustomFieldType implements Type
     //public static abstract function identifier(): string;
     public abstract function viewModes(): array;
 
-    public function prepareSaveFieldData(mixed $data): ?array { //ToDo Rename and in Template
+    public function prepareSaveFieldData(CustomFieldAnswer $answer, mixed $data): ?array { //ToDo Rename and in Template
         if (is_null($data)) return null;
         return ["saved" => $data];
     }
 
-    public function prepareLoadFieldData(array $data): mixed { //ToDo Rename and in Template
+    public function prepareLoadFieldData(CustomFieldAnswer $answer, array $data): mixed { //ToDo Rename and in Template
         if (!array_key_exists("saved", $data) || is_null($data["saved"])) return null;
         return $data["saved"];
     }

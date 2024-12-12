@@ -148,7 +148,7 @@ class CustomFormSaveHelper {
                 ]);
             }
 
-            $fieldAnswererData = $customField->getType()->prepareSaveFieldData($fieldRawData);
+            $fieldAnswererData = $customField->getType()->prepareSaveFieldData($customFieldAnswer, $fieldRawData);
             if ($type->isEmptyAnswerer($customFieldAnswer, $fieldAnswererData)) {
                 if ($customFieldAnswer->exists)$customFieldAnswer->delete();
                 $type->afterAnswerFieldSave($customFieldAnswer, $fieldRawData, $formData);

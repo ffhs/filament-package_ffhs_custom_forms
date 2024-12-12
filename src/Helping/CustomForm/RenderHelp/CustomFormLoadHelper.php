@@ -41,7 +41,7 @@ class CustomFormLoadHelper {
 
             $fieldData = $customField
                 ->getType()
-                ->prepareLoadFieldData($fieldAnswer->answer);
+                ->prepareLoadFieldData($fieldAnswer, $fieldAnswer->answer);
 
             $fieldData = static::runRulesForFieldData($answerer, $fieldData, $formRules); //10ms
 
