@@ -92,6 +92,8 @@ class RepeaterLayoutTypeView implements FieldTypeView
             $renderOutput = CustomFormRender::renderRaw($offset, $fields, $render, $viewMode, $customForm);
             $subSchema = $renderOutput[0];
             $allComponents = $renderOutput[1];
+
+
             $parameter["registerComponents"]($allComponents);
 
 

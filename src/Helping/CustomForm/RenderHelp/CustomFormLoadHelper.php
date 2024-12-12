@@ -62,7 +62,7 @@ class CustomFormLoadHelper {
 
             $path = implode('.', array_slice($keyPath, 1));
             $pathResolved = static::findPath($fields, $fields->get($identifier), $path) ."." . $identifier;
-            Arr::set($loadedData, $pathResolved,$data);
+            Arr::set($loadedData, $pathResolved, $data);
             unset($loadedData[$key]);
         }
 
