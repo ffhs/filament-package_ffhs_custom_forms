@@ -197,7 +197,7 @@ class FileUploadType extends CustomFieldType
 
     public function isEmptyAnswerer(CustomFieldAnswer $customFieldAnswer, ?array $fieldAnswererData): bool
     {
-        return parent::isEmptyAnswerer($customFieldAnswer, $fieldAnswererData) || empty($fieldAnswererData["files"]);
+        return parent::isEmptyAnswerer($customFieldAnswer, $fieldAnswererData) || empty($fieldAnswererData["saved"]["files"]);
     }
 
 
