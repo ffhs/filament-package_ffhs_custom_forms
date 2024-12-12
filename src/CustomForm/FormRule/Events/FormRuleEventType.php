@@ -30,15 +30,18 @@ abstract class FormRuleEventType implements EventType
         switch ($arguments["action"]) {
             case "before_render":
                 return $this->supHandlerRun($this->handleBeforeRender(...), $triggers, $arguments, $target, $rule);
+               ;
             //case "mutate_parameters": return $this->handleParameterMutation($triggers, $arguments, $target, $rule);
             case "after_render":
                 if(is_array($target) && (array_values($target)[0]??"") instanceof Component) {
-                    return $this->supHandlerRun($this->handleAfterRenderForm(...), $triggers, $arguments, $target, $rule);
+                    $answare = $this->supHandlerRun($this->handleAfterRenderForm(...), $triggers, $arguments, $target, $rule);
                 }
-                else
-                    return $this->supHandlerRun($this->handleAfterRenderInfolist(...), $triggers, $arguments, $target, $rule);
+                else{
+                    $answare = $this->supHandlerRun($this->handleAfterRenderInfolist(...), $triggers, $arguments, $target, $rule);
+                }
+                return $answare;
 
-            case "load_answerer": return $this->handleAnswerLoadMutation($triggers, $arguments, $target, $rule); //toDo improve performance
+            case "load_answerer": return $this->handleAnswerLoadMutation($triggers, $arguments, $target, $rule);
             case "save_answerer": return $this->handleAnswerSaveMutation($triggers, $arguments, $target, $rule);
 
 
@@ -86,10 +89,10 @@ abstract class FormRuleEventType implements EventType
         return $target;
     }
 
-    public function getCustomField($arguments): CustomField
+    public function getCustomField($arguments): ?CustomField
     {
         $identifier = $arguments["identifier"];
-        $fields = $arguments["custom_fields"][$identifier];
+        $fields = $arguments["custom_fields"][$identifier] ?? null;
         return  $fields;
     }
 

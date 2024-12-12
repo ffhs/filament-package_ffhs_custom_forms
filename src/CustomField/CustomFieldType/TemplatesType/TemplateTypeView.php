@@ -15,31 +15,47 @@ class TemplateTypeView implements FieldTypeView
 
     public static function getFormComponent(TemplateFieldType|CustomFieldType $type, CustomField $record, array $parameter = []): Component {
 
-        return Group::make($parameter["rendered"])->columns(config("ffhs_custom_forms.default_column_count"));
+        $schema = static::renderTemplate($record, $parameter);
 
-        $template = $record->template;
-        $customFields = $record->template->getOwnedFields();
-        $viewMode = $parameter['viewMode'];
-
-        $render= CustomFormRender::getFormRender($viewMode,$template);
-        $renderOutput = CustomFormRender::render(0,$customFields,$render, $viewMode, $record->customForm);
-
-        return Group::make($renderOutput[0] ?? [])
-            ->columns(config("ffhs_custom_forms.default_column_count"));
+        return Group::make($schema)
+            ->columns(config("ffhs_custom_forms.default_column_count"))
+            ->columnSpanFull();
     }
 
+    protected static function renderTemplate(CustomField|CustomFieldAnswer $customField, array $parameter)
+    {
+        if($customField instanceof CustomFieldAnswer) $customField = $customField->customField;
+
+        //Setup Render Data
+        $fields = $customField->template->customFields;
+        $viewMode = $parameter['viewMode'];
+        $form = $customField->customForm;
+        $render = $parameter["render"];
+
+        //Render Schema Input
+        $renderedOutput = CustomFormRender::renderRaw(
+            0,
+            $fields,
+            $render,
+            $viewMode,
+            $form
+        );
+
+        //Register Components for rule stuff
+        $allComponents = $renderedOutput[1];
+        $parameter["registerComponents"]($allComponents);
+
+        //return Schema
+        return $renderedOutput[0];
+    }
 
     public static function getInfolistComponent(TemplateFieldType|CustomFieldType $type, CustomFieldAnswer $record, array $parameter = []): \Filament\Infolists\Components\Component {
-        return \Filament\Infolists\Components\Group::make($parameter["rendered"])->columnSpanFull();
-        $viewMode = $parameter["viewMode"];
-        $formAnswer = $record->customFormAnswer;
-        $form = $record->customField->template;
-        $customFields = $form->customFields;
 
-        $fieldAnswers = $formAnswer->cachedAnswers()->whereIn("custom_field_id", $customFields->select("id")->flatten());
+        $schema = static::renderTemplate($record, $parameter);
 
-        $render= CustomFormRender::getInfolistRender($viewMode,$form,$formAnswer, $fieldAnswers);
-        $customViewSchema = CustomFormRender::render(0,$customFields,$render,$viewMode, $record->customForm)[0];
-        return \Filament\Infolists\Components\Group::make($customViewSchema) ->columnSpanFull();
+        return \Filament\Infolists\Components\Group::make($schema)
+            ->columnSpanFull();
     }
+
+
 }

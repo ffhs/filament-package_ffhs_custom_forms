@@ -79,7 +79,7 @@ final class TemplateFieldType extends CustomFieldType
         $template = CustomForm::cached($fieldData['template_id']);
 
         return "<div>". new HtmlBadge('Template', Color::rgb("rgb(34, 135, 0)"))."</div>" .
-            '<p style="margin-left: 70px; margin-top: -20px">'. $template->short_title.'</p>'; //ToDo Badges function reimplement
+            '<p style="margin-left: 70px; margin-top: -20px">'. $template->short_title.'</p>'; //ToDo Improve
     }
 
     public function hasEditorNameElement(array $fielData): bool {
@@ -107,7 +107,7 @@ final class TemplateFieldType extends CustomFieldType
             fn(CustomField $customField) => $customField->identifier
         );
 
-        CustomFormSaveHelper::saveWithoutPreparation($formData, $customFieldsIdentify, $fieldAnswersIdentify, $formAnswerer);
+        CustomFormSaveHelper::saveWithoutPreparation($formData, $customFieldsIdentify, $fieldAnswersIdentify, $formAnswerer); //Check with splited
     }
 
 

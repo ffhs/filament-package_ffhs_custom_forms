@@ -23,23 +23,25 @@ class SectionTypeView implements FieldTypeView
             ->columns(FieldMapper::getOptionParameter($record,"columns"))
             ->columnStart(FieldMapper::getOptionParameter($record,"new_line_option"))
             ->aside(FieldMapper::getOptionParameter($record,"aside"))
-            ->schema($parameter["rendered"]);
+            ->schema($parameter["renderer"]());
     }
 
     public static function getInfolistComponent(CustomFieldType $type, CustomFieldAnswer $record,  array  $parameter = []): \Filament\Infolists\Components\Component {
 
+        $schema = $parameter["renderer"]();
+
         if(!FieldMapper::getOptionParameter($record,"show_in_view"))
-            return Group::make($parameter["rendered"])->columnStart(1)->columnSpanFull();
+            return Group::make($schema)->columnStart(1)->columnSpanFull();
 
 
         if(FieldMapper::getOptionParameter($record,"show_as_fieldset"))
             return Fieldset::make(FieldMapper::getLabelName($record))
-                ->schema($parameter["rendered"])
+                ->schema($schema)
                 ->columnStart(1)
                 ->columnSpanFull();
 
         return \Filament\Infolists\Components\Section::make(FieldMapper::getLabelName($record))
-            ->schema($parameter["rendered"])
+            ->schema($schema)
             ->columnStart(1)
             ->columnSpanFull();
     }

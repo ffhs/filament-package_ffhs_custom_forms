@@ -4,6 +4,8 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Generi
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Traits\HasConfigAttribute;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Traits\HasEditFieldCallbacks;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Traits\HasFieldSplitting;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Traits\HasGridModifiers;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Traits\HasTypeOptions;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Traits\HasTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\FormEditor\TypeActions\default\DefaultCustomActivationAction;
@@ -26,6 +28,8 @@ abstract class CustomFieldType implements Type
     use HasTypeOptions;
     use HasConfigAttribute;
     use HasEditFieldCallbacks;
+    use HasGridModifiers;
+    use HasFieldSplitting;
 
     /*
      * Static used functions
@@ -56,12 +60,12 @@ abstract class CustomFieldType implements Type
     //public static abstract function identifier(): string;
     public abstract function viewModes(): array;
 
-    public function prepareSaveFieldData(mixed $data): ?array { //ToDo Rename and in Template
+    public function prepareSaveFieldData(CustomFieldAnswer $answer, mixed $data): ?array { //ToDo Rename and in Template
         if (is_null($data)) return null;
         return ["saved" => $data];
     }
 
-    public function prepareLoadFieldData(array $data): mixed { //ToDo Rename and in Template
+    public function prepareLoadFieldData(CustomFieldAnswer $answer, array $data): mixed { //ToDo Rename and in Template
         if (!array_key_exists("saved", $data) || is_null($data["saved"])) return null;
         return $data["saved"];
     }
@@ -124,14 +128,9 @@ abstract class CustomFieldType implements Type
         return $data;
     }
 
-    public function isFullSizeField(): bool
+    public function isEmptyAnswerer(CustomFieldAnswer $customFieldAnswer, ?array $fieldAnswererData): bool
     {
-        return false;
-    }
-
-    public function getStaticColumns() :int|null
-    {
-        return null;
+        return empty($fieldAnswererData) ||( empty($fieldAnswererData["saved"]??[]) && sizeof($fieldAnswererData) == 1) ;
     }
 
 

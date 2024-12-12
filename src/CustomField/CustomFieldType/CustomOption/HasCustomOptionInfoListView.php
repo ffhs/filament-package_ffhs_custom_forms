@@ -16,6 +16,7 @@ trait HasCustomOptionInfoListView
 
         $textEntry = TextEntry::make(FieldMapper::getIdentifyKey($record));
         $answer = FieldMapper::getAnswer($record);
+        $stateList = collect();
 
         if(empty($answer)) $answer =  "";
         else if(is_array($answer))

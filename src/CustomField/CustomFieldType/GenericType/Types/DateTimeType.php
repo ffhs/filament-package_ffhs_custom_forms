@@ -8,9 +8,8 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\HasCustomTypePackageTranslation;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\DefaultLayoutTypeOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\ValidationTypeOptionGroup;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\FastTypeOption;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\DateFormatOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\RequiredOption;
-use Filament\Forms\Components\TextInput;
 
 class DateTimeType extends CustomFieldType
 {
@@ -33,12 +32,9 @@ class DateTimeType extends CustomFieldType
             DefaultLayoutTypeOptionGroup::make(),
             ValidationTypeOptionGroup::make(typeOptions: [
                 'required' => RequiredOption::make(),
-                'format'=> new FastTypeOption("Y-m-d H:i:s",
-                    TextInput::make("format")
-                        ->label(__("filament-package_ffhs_custom_forms::custom_forms.fields.type_options.format"))
-                        ->placeholder("Y-m-d H:i:s"),
-                ),
-            ] )
+                'format' => DateFormatOption::make()
+                    ->modifyDefault("Y-m-d H:i:s")
+            ])
         ];
     }
 

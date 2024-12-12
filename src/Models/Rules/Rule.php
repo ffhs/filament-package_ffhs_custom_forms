@@ -34,13 +34,11 @@ class Rule extends Model implements CachedModel
         $events = $this->ruleEvents;
         if($events == null) $events = $this->ruleEvents()->get();
         $events = $events->sortBy("order");
-
         foreach ($events as $event) {
             /**@var RuleEvent $event*/
             $targetResult = $event->getType()->handle($triggers,$arguments, $target, $event);
             if(!is_null($targetResult)) $target = $targetResult;
         }
-
         return $target;
     }
 

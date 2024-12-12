@@ -9,6 +9,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\DefaultLay
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\ValidationTypeOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\FastTypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\TagsInput;
@@ -17,6 +18,7 @@ use Filament\Forms\Form;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
+use PHPUnit\Event\RuntimeException;
 
 class FileUploadType extends CustomFieldType
 {
@@ -159,32 +161,56 @@ class FileUploadType extends CustomFieldType
         Form $form,
         Collection $flattenFormComponents
     ): void {
-        $filesComponent = $flattenFormComponents->first(
-            fn(Component $component) => !is_null($component->getKey()) && str_contains(
-                    $component->getKey(),
-                    $customField->identifier . ".files"
-                )
-        );
-        /**@var FileUpload $filesComponent */
-        $filesComponent = $this->viewModes()["default"]::prepareFileUploadComponent($filesComponent, $customField);
 
-        // Check if the file mimetype matches one of the accepted file types
-        $acceptedFileTypes = $filesComponent->getAcceptedFileTypes();
-        $canSave = true;
-        foreach (Arr::wrap($filesComponent->getState()) as $file) {
-            if (!$file instanceof TemporaryUploadedFile) continue;
+        $componentKey =  $customField->identifier . ".files";
+        $filesComponents = $flattenFormComponents->filter(function (Component $component) use ($componentKey) {
+            if(is_null($component->getKey())) return false;
+            return str_contains($component->getKey(), $componentKey);
+        });
 
-            $mimeType = $file->getMimeType();
+        foreach ($filesComponents as $filesComponent) {
+            $this->checkFileComponentTempData($filesComponent, $component);
+        }
+    }
 
-            // Do not save if even one of the submitted files mimetype does not match the accepted file types
-            if (!in_array($mimeType, $acceptedFileTypes)) {
-                $canSave = false;
+    /**
+     * @param FileUpload $filesComponent
+     * @param Component $component
+     * @return void
+     */
+    public function checkFileComponentTempData(FileUpload $filesComponent, Component $component): void
+    {
+        try {
+            /**@var FileUpload $filesComponent */
+            // $filesComponent = $this->viewModes()["default"]::prepareFileUploadComponent($filesComponent, $customField);
+
+            // Check if the file mimetype matches one of the accepted file types
+
+            $acceptedFileTypes = $filesComponent->getAcceptedFileTypes();
+            $canSave = true;
+            foreach (Arr::wrap($filesComponent->getState()) as $file) {
+                if (!$file instanceof TemporaryUploadedFile) continue;
+
+                $mimeType = $file->getMimeType();
+
+                // Do not save if even one of the submitted files mimetype does not match the accepted file types
+                if (!in_array($mimeType, $acceptedFileTypes)) {
+                    $canSave = false;
+                    $file->delete();
+                }
+            }
+
+            if ($canSave) {
+                $filesComponent->saveUploadedFiles();
+            } else {
+                $component->state([]);
+            }
+
+        }catch (\Exception|RuntimeException $exception){
+            foreach (Arr::wrap($filesComponent->getState()) as $file) {
                 $file->delete();
             }
         }
-
-        if ($canSave)  $filesComponent->saveUploadedFiles();
-        else $component->state([]);
     }
 
     public function viewModes(): array
@@ -193,5 +219,30 @@ class FileUploadType extends CustomFieldType
             'default' => FileUploadView::class,
         ];
     }
+
+    public function isEmptyAnswerer(CustomFieldAnswer $customFieldAnswer, ?array $fieldAnswererData): bool
+    {
+        return parent::isEmptyAnswerer($customFieldAnswer, $fieldAnswererData) || empty($fieldAnswererData["saved"]["files"]);
+    }
+
+    public function prepareSaveFieldData(CustomFieldAnswer $answer, mixed $data): array
+    {
+        $data = $data ?? ["files" => []];
+        foreach ($data["files"] ?? [] as $key => $file) {
+            if(is_array($file)) unset($data["files"][$key]);
+        }
+        return parent::prepareSaveFieldData($answer, $data);
+    }
+
+    public function prepareLoadFieldData(CustomFieldAnswer $answer, array $data): mixed
+    {
+        $data = parent::prepareLoadFieldData($answer, $data);
+        $data = $data ?? ["files" => []];
+        foreach ($data["files"] ?? [] as $key => $file) {
+            if(is_array($file)) unset($data["files"][$key]);
+        }
+        return $data;
+    }
+
 
 }

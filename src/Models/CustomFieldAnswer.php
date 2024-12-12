@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Relations\HasOneThrough;
  * @property CustomForm $customForm
  * @property CustomField $customField
  * @property array $answer
+ * @property string|null $path
  */
 class CustomFieldAnswer extends Model implements CachedModel
 {
@@ -26,7 +27,8 @@ class CustomFieldAnswer extends Model implements CachedModel
     protected $fillable = [
         'custom_form_answer_id',
         'custom_field_id',
-        'answer'
+        'answer',
+        'path',
     ];
 
 

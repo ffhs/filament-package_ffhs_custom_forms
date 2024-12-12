@@ -17,7 +17,7 @@ use Filament\Infolists\Components\TextEntry;
 class SelectTypeView implements FieldTypeView
 {
     use HasCustomOptionInfoListView{
-        getInfolistComponent as getInfolistComponentNormalSelect;
+        HasCustomOptionInfoListView::getInfolistComponent as getInfolistComponentNormalSelect;
     }
     use HasDefaultViewComponent;
 

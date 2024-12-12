@@ -69,6 +69,10 @@ return [
             'image_layout' => 'Image layout',
             'space' => 'Space',
             'file_upload' => 'File upload',
+            'repeater' => 'Repeater',
+            'default_amount' => 'Default Amount',
+            'ordered' => 'Ordered',
+            'date_range' => 'Date Range'
         ],
 
         'rules'=>[
@@ -99,6 +103,8 @@ return [
             'show_as_fieldset' => 'Show as Fieldset in View',
             'show_in_view' => 'Visible in View',
             'show_title' => 'Show Title',
+            'min_amount' => 'Minimum Amount',
+            'max_amount' => 'Minimum Amount',
 
             // custom field type
             'color_type' => 'Color Format',

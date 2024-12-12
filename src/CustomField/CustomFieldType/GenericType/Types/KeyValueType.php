@@ -25,7 +25,7 @@ class KeyValueType extends CustomOptionType
         return  "heroicon-o-key";
     }
 
-    protected function extraOptionsAfterBasic(): array {
+    public function extraTypeOptions(): array {
         return [
             DefaultLayoutTypeOptionGroup::make(),
             ValidationTypeOptionGroup::make()
