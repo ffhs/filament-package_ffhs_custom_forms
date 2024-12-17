@@ -40,7 +40,6 @@ div[ffhs_drag\:hower_over][x-data] fieldset.drag-drop__hover-effect,
     text-align: center;
     margin-top: 20px;
     overflow: hidden;
-    height: 50px;
     font-size: 20px;
     transition: background 0.3s, height 1s ease;
 }
@@ -48,9 +47,12 @@ div[ffhs_drag\:hower_over][x-data] fieldset.drag-drop__hover-effect,
 
 .expand-drag-drop-action:hover {
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
-    height: 100%;
     transition: background 0.3s, height 1s ease;
 }
+
+
+
+
 
 
 .expand-drag-drop-action-option {

@@ -10,6 +10,7 @@
         $b = trim($b);
         return sprintf('#%02x%02x%02x', $r, $g, $b);
     };
+
 @endphp
 <x-dynamic-component :component="$getFieldWrapperView()"
                      style="
@@ -29,19 +30,37 @@
 
 
     <div style="--cols-default: repeat(1, minmax(0, 1fr)); margin-top: -4px"
-         class="fi-btn expand-drag-drop-action grid grid-cols-[--cols-default] fi-fo-component-ctn gap-4 bg-white dark:bg-gray-800">
+         class="fi-btn expand-drag-drop-action grid grid-cols-[--cols-default] fi-fo-component-ctn gap-4 bg-white dark:bg-gray-800"
+         x-data="{ open: false }"
+    >
 
-        @foreach($getOptions() as $id => $label)
+        <button class="
+                    h-8
+                    font-semibold
+                    transition duration-75
+                    w-full
+                    fi-size-md fi-btn-size-md gap-1.5 px-3 py-2
+                    text-sm
+        " type="button" @click="open = !open">
+{{--            ToDo Translate--}}
+            <span x-show="!open">Öffnen </span>
+            <span x-show="open">Schliessen </span>
+        </button>
+
+
+    @foreach($getOptions() as $id => $label)
 
             @php
                 $actionPath = $getActionsPath().".".$getName()."-".$id."Action','".$getName()."-".$id;
                 $mountAction = "mountFormComponentAction('".$actionPath."')";
             @endphp
 
+
             <span
+                x-show="open"
+
                 @if(!$isOptionDisabled($id, $label))
                     draggable="true"
-
                     ax-load
                     ax-load-src="{{FilamentAsset::getAlpineComponentSrc("action", "ffhs/filament-package_ffhs_drag-drop")}}"
                     x-ignore
@@ -57,7 +76,6 @@
                     font-semibold
                     transition duration-75
                     w-full
-
                     fi-size-md fi-btn-size-md gap-1.5 px-3 py-2
                     text-xs
 
