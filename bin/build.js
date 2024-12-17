@@ -14,5 +14,5 @@ esbuild.build({
     platform: 'neutral',
     treeShaking: true,
     target: ['es2020'],
-    minify: true
+    minify: false
 })

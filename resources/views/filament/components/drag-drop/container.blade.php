@@ -32,7 +32,7 @@
     ax-load-src="{{FilamentAsset::getAlpineComponentSrc('container', 'ffhs/filament-package_ffhs_drag-drop')}}"
     x-ignore
     x-data="dragDropContainer('{{$getDragDropGroup()}}')"
-    ffhs_drag:component
+{{--    ffhs_drag:component--}}
 >
 
     @foreach($structureField as $key => $structure)

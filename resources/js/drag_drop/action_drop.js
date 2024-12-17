@@ -39,15 +39,14 @@ export function handleDropAction(target, dragElement) {
     let isFlatten = targetParentData.flatten
     let $wire = targetParentData.wire
     let targetState = $wire.get(targetParentData.statePath, '')
-    if(Array.isArray(targetState)) targetState = {}
 
-    if(targetParent.getAttribute("disabled")) return;
+    if(Array.isArray(targetState)) targetState = {}
 
     let targetId = getElementKey(target);
 
     //Prepare stuff
     let temporaryKey = generateElementKey();
-    let temporaryChild = createTemporaryChild(group, temporaryKey, target);
+    createTemporaryChild(group, temporaryKey, target);
 
 
     // Clone State to find position without updating the real state
@@ -71,7 +70,6 @@ export function handleDropAction(target, dragElement) {
     let toDoAction = action.split("'")[3]
 
 
-    if(targetParent.getAttribute("disabled")) return;
 
     let metaData =  {
         targetPath:targetParentData.statePath,
@@ -84,8 +82,20 @@ export function handleDropAction(target, dragElement) {
         state: JSON.parse(JSON.stringify(targetState))
     };
 
-    console.log(toActionPath)
-    console.log(toDoAction)
-    console.log(metaData)
+    console.log("-")
+    console.log("-------------------------------------------")
+    Object.keys(cloneState).forEach(key => {
+        console.log(key, cloneState[key]["form_position"]);
+    });
+    console.log("-------------------------------------------")
+    Object.keys(targetState).forEach(key => {
+        console.log(key, targetState[key]["form_position"]);
+    });
+    console.log("-------------------------------------------")
+    console.log("-")
+
+    // console.log(JSON.parse(JSON.stringify(targetState)))
+    // console.log(cloneState)
+    if(targetParent.getAttribute("disabled")) return;
     $wire.mountFormComponentAction(toActionPath, toDoAction, metaData);
 }
