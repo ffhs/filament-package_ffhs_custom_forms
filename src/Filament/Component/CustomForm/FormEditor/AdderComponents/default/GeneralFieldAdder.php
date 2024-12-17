@@ -13,34 +13,6 @@ use Illuminate\Support\Facades\Cache;
 
 final class GeneralFieldAdder extends FormEditorFieldAdder
 {
-    protected function setUp(): void
-    {
-        $this->label(__("filament-package_ffhs_custom_forms::custom_forms.form.compiler.general_fields"));
-        $this->schema([
-            DragDropExpandActions::make()
-                ->dragDropGroup("custom_fields")
-                ->options($this->getGeneralFieldSelectOptions(...))
-                ->disableOptionWhen($this->isGeneralDisabled(...))
-                ->color(Color::Blue)
-                ->action(fn($option)=>
-                     Action::make("addGeneral")->action(fn($component,$arguments) => $this->createField($arguments, $component, $option))
-                )
-        ]);
-    }
-
-    public function createField(array $arguments, $component, $generalFieldId): void
-    {
-        $generalField = GeneralField::cached($generalFieldId);
-
-        $field = [
-            "general_field_id" => $generalFieldId,
-            "options" => $generalField->getType()->getDefaultTypeOptionValues(),
-            "is_active" => true,
-        ];
-
-        $this::addNewField($component, $arguments, $field);
-    }
-
     public function getGeneralFieldSelectOptions() {
         $formIdentifier = data_get($this->getState(), "custom_form_identifier");
         return Cache::remember($formIdentifier . '_general_fields_allowed_in_form', GeneralField::getCacheDuration(), function () use ($formIdentifier) {
@@ -71,7 +43,6 @@ final class GeneralFieldAdder extends FormEditorFieldAdder
 
     }
 
-
     public function isGeneralDisabled($value):bool {
 
         $notAllowed =   Cache::remember($this->getState()['id'] . '_general_fields_not_allowed_in_form', 1, function (){
@@ -88,6 +59,34 @@ final class GeneralFieldAdder extends FormEditorFieldAdder
 
         return $notAllowed->contains($value) ;
 
+    }
+
+    protected function setUp(): void
+    {
+        $this->label(__("filament-package_ffhs_custom_forms::custom_forms.form.compiler.general_fields"));
+        $this->schema([
+            DragDropExpandActions::make()
+                ->dragDropGroup("custom_fields")
+                ->options($this->getGeneralFieldSelectOptions(...))
+                ->disableOptionWhen($this->isGeneralDisabled(...))
+                ->color(Color::Blue)
+                ->action(fn($option, $livewire)=>
+                     Action::make("addGeneral")->action(fn($component,$arguments) => $this->createField($arguments, $component, $option, $livewire))
+                )
+        ]);
+    }
+
+    public function createField(array $arguments, $component, $generalFieldId, $livewire): void
+    {
+        $generalField = GeneralField::cached($generalFieldId);
+
+        $field = [
+            "general_field_id" => $generalFieldId,
+            "options" => $generalField->getType()->getDefaultTypeOptionValues(),
+            "is_active" => true,
+        ];
+
+        $this::addNewField($component, $arguments, $livewire, $field);
     }
 
 }

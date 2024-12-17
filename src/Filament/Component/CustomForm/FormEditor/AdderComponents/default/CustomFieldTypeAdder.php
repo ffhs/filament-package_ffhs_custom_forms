@@ -7,38 +7,12 @@ use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\FormEditor
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\DragDrop\Actions\DragDropActions;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Group;
+use Filament\Resources\Pages\EditRecord;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\HtmlString;
 
 final class CustomFieldTypeAdder extends FormEditorFieldAdder
 {
-    protected function setUp(): void {
-        parent::setUp();
-        $this->live();
-        $this->label(__("filament-package_ffhs_custom_forms::custom_forms.form.compiler.custom_fields"));
-
-
-        $this->schema($this->setUpActions(...));
-    }
-
-
-
-private static function getCustomFieldAddActionLabel(CustomFieldType $type):HtmlString {
-    $html =
-        '<div class="flex flex-col items-center justify-center">'.
-            new HtmlString(Blade::render("<x-".$type->icon() . ' class="w-6 h-6" />')).
-            '<span style="margin-top: 2px;  text-align: center;"> '. $type->getTranslatedName().'</span>
-        </div>';
-
-    return  new HtmlString($html);
-}
-
-
-    public function getTypes(): array {
-        return collect($this->getRecord()->getFormConfiguration()::formFieldTypes())
-            ->map(fn($class) => new $class())->toArray();
-    }
-
     public function setUpActions(): array
     {
         $actions = [];
@@ -51,18 +25,47 @@ private static function getCustomFieldAddActionLabel(CustomFieldType $type):Html
                     ->label(self::getCustomFieldAddActionLabel($type))
                     ->tooltip($type->getTranslatedName())
                     ->outlined()
-                    ->action(function ($arguments, $component) use ($type) {
+                    ->action(function ($arguments, $component, EditRecord $livewire) use ($type) {
                         $field = [
                             "identifier" => uniqid(),
                             "type" => $type::identifier(),
                             "options" => $type->getDefaultTypeOptionValues(),
                             "is_active" => true,
+                            "name" => "New Field"
                         ];
 
-                        $this::addNewField($component, $arguments, $field);
+                        $this::addNewField($component, $arguments, $livewire, $field);
+
                     }),
             ])->dragDropGroup('custom_fields');
         }
         return [Group::make($actions)->columns(["2xl"=>2, "md"=>1])];
     }
+
+    public function getTypes(): array {
+        return collect($this->getRecord()->getFormConfiguration()::formFieldTypes())
+            ->map(fn($class) => new $class())->toArray();
+    }
+
+private static function getCustomFieldAddActionLabel(CustomFieldType $type):HtmlString {
+    $html =
+        '<div class="flex flex-col items-center justify-center">'.
+            new HtmlString(Blade::render("<x-".$type->icon() . ' class="w-6 h-6" />')).
+            '<span style="margin-top: 2px;  text-align: center;"> '. $type->getTranslatedName().'</span>
+        </div>';
+
+    return  new HtmlString($html);
 }
+
+    protected function setUp(): void {
+        parent::setUp();
+        $this->live();
+        $this->label(__("filament-package_ffhs_custom_forms::custom_forms.form.compiler.custom_fields"));
+
+
+        $this->schema($this->setUpActions(...));
+    }
+
+}
+
+
