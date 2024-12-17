@@ -1,5 +1,4 @@
 @php
-    use Illuminate\Support\HtmlString;
     use Filament\Support\Facades\FilamentAsset;
 
 
@@ -24,24 +23,13 @@
                         --expand-drag-drop-action--color-50: {{$rgbToHex($getColor()[50])}};
                      ">
 
-    <legend class="-ms-2 px-2 text-sm font-medium leading-6 text-gray-950 dark:text-white" style="padding-top: 20px; padding-bottom: -30px">
-        {{$getLabel()}}
-    </legend>
-
-
-    <div style="--cols-default: repeat(1, minmax(0, 1fr)); margin-top: -4px"
-         class="fi-btn expand-drag-drop-action grid grid-cols-[--cols-default] fi-fo-component-ctn gap-4 bg-white dark:bg-gray-800"
+    <div
+        class="expand-action--group fi-btn fi-fo-component-ctn"
          x-data="{ open: false }"
     >
 
-        <button class="
-                    h-8
-                    font-semibold
-                    transition duration-75
-                    w-full
-                    fi-size-md fi-btn-size-md gap-1.5 px-3 py-2
-                    text-sm
-        " type="button" @click="open = !open">
+        <button class="expand-action--expand-action"
+                type="button" @click="open = !open">
 {{--            ToDo Translate--}}
             <span x-show="!open">Öffnen </span>
             <span x-show="open">Schliessen </span>
@@ -55,39 +43,24 @@
                 $mountAction = "mountFormComponentAction('".$actionPath."')";
             @endphp
 
-
             <span
                 x-show="open"
 
-                @if(!$isOptionDisabled($id, $label))
+                @if($isOptionDisabled($id, $label))
+                    disabled
+                @else
                     draggable="true"
                     ax-load
                     ax-load-src="{{FilamentAsset::getAlpineComponentSrc("action", "ffhs/filament-package_ffhs_drag-drop")}}"
                     x-ignore
                     x-data="dragDropAction(@js($getDragDropGroup()), @js($mountAction))"
                     ffhs_drag:component
-{{--                    x-init="setupDraggable($el)"--}}
                 @endif
 
-
-
-                class="
-                    h-8
-                    font-semibold
-                    transition duration-75
-                    w-full
-                    fi-size-md fi-btn-size-md gap-1.5 px-3 py-2
-                    text-xs
-
-                    @if($isOptionDisabled($id, $label))
-                        expand-drag-drop-action-disabled
-                    @else
-                        expand-drag-drop-action-option
-                    @endif
-                    "
+                class="expand-action--action"
             >
-                 {{$label}}
-                </span>
+                 <span>{{$label}}</span>
+            </span>
 
         @endforeach
     </div>

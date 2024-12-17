@@ -31,42 +31,58 @@ div[ffhs_drag\:hower_over][x-data] fieldset.drag-drop__hover-effect,
 }
 
 
-.expand-drag-drop-action{
-    @apply select-none w-full ;
+
+
+.expand-action--group{
+    @apply gap-2 bg-white dark:bg-gray-800;
+    @apply select-none w-full;
+    @apply text-center;
+    @apply border-2 border-solid rounded-lg;
+    @apply p-2 mt-5;
+    @apply text-sm;
+    @apply grid grid-cols-1;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    border: 2px solid rgb(var(--expand-drag-drop-action--color-500));
-    border-radius: 10px;
-    padding: 7px;
-    text-align: center;
-    margin-top: 20px;
-    overflow: hidden;
-    font-size: 20px;
-    transition: background 0.3s, height 1s ease;
+    border-color:  rgb(var(--expand-drag-drop-action--color-500));
+    transition: background 0.3s, height 2s ease;
 }
 
-
-.expand-drag-drop-action:hover {
+.expand-action--group:hover {
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
     transition: background 0.3s, height 1s ease;
 }
 
 
 
-
-
-
-.expand-drag-drop-action-option {
-    @apply
-        rounded
-        hover:bg-[--expand-drag-drop-action--color-200]
-        dark:hover:bg-[--expand-drag-drop-action--color-900];
+.expand-action--expand-action{
+    min-height: 2.5rem !important;
+    @apply font-semibold transition duration-75 w-full gap-1.5 px-3 py-2 text-sm;
 }
 
-.expand-drag-drop-action-disabled {
-    @apply
-    rounded-2xl
-    bg-[--expand-drag-drop-action--color-50]
-    dark:bg-[--expand-drag-drop-action--color-950];
+
+/*Hovered*/
+.expand-action--expand-action,
+.expand-action--action{
+    @apply hover:bg-[--expand-drag-drop-action--color-200];
+    @apply dark:hover:bg-[--expand-drag-drop-action--color-900];
+    @apply hover:rounded-lg;
 }
+
+
+.expand-action--action{
+    min-height: 2.5rem !important;
+    height: 100%;
+    @apply rounded-lg flex justify-center origin-center items-center;
+}
+
+.expand-action--action:not([disabled]){
+    @apply hover:bg-[--expand-drag-drop-action--color-200]
+           dark:hover:bg-[--expand-drag-drop-action--color-900];
+}
+
+.expand-action--action[disabled]{
+    @apply bg-[--expand-drag-drop-action--color-50]
+           dark:bg-[--expand-drag-drop-action--color-950];
+}
+
 
 
