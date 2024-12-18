@@ -1,7 +1,6 @@
 @php
     use Filament\Support\Facades\FilamentAsset;
 
-
     $rgbToHex = function ($rgbString) {
         list($r, $g, $b) = explode(',', $rgbString);
         $r = trim($r);

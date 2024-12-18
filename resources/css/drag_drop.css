@@ -33,6 +33,7 @@ div[ffhs_drag\:hower_over][x-data] fieldset.drag-drop__hover-effect,
 
 
 
+/*Expand Action*/
 .expand-action--group{
     @apply gap-2 bg-white dark:bg-gray-800;
     @apply select-none w-full;
@@ -59,7 +60,7 @@ div[ffhs_drag\:hower_over][x-data] fieldset.drag-drop__hover-effect,
 }
 
 
-/*Hovered*/
+
 .expand-action--expand-action,
 .expand-action--action{
     @apply hover:bg-[--expand-drag-drop-action--color-200];
