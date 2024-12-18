@@ -8,7 +8,6 @@ export function moveElementToOnOtherElement(target, toSet) {
 
 function flattenElementCheck(element, data){
     let elementKey = getElementKey(element)
-
     if(elementKey === null) return false;
 
     let parentElement = getParent(element)
@@ -33,22 +32,31 @@ function countFlattenChildren(container, data) {
     let dragDropPosAttribute = data.dragDropPosAttribute
     let dragDropEndPosAttribute = data.dragDropEndPosAttribute
 
-     // let keySplit = crypto.randomUUID().split('-');
-     // let test =  keySplit[0] + keySplit[1];
+    let usedKeys = [];
+
 
     container.querySelectorAll('[ffhs_drag\\:component]').forEach(element => {
+
         if(!flattenElementCheck(element, data)) return;
+
 
         let elementKey = getElementKey(element);
         let contains = countFlattenChildren(element, data);
 
         if (state[elementKey] === undefined) state[elementKey] = {};
 
+        usedKeys.push(elementKey);
+
         state[elementKey][dragDropPosAttribute] = currentPos;
         state[elementKey][dragDropEndPosAttribute] = contains === 0 ? null : (currentPos + contains);
+
         currentPos++
     })
 
+     // Remove unused Keys
+     let notUsedKeys = Object.keys(state).filter(x => !usedKeys.includes(x));
+     notUsedKeys.forEach(x => delete state[x])
+     console.log("not Found Keys:", notUsedKeys)
 }
 
 function updatePositionsOrder(state, container, group, data) {

@@ -59,18 +59,18 @@ return [
             'color_input' => 'Farbe',
             'key_value' => 'Wertepaar',
             'title' => 'Titel',
-            'layout_text' => 'L. Text',
+            'layout_text' => 'Text',
             'fieldset' => 'Fieldset',
             'tabs' => 'Tabs',
             'tab' => 'Tab',
             'wizard' => 'Schritt für Schritt',
             'wizard_step' => 'Schritt',
             'download_file' => 'Download',
-            'image_layout' => 'L. Bild',
+            'image_layout' => 'Bild',
             'space' => 'Absatz',
             'file_upload' => 'Dokumente',
             'repeater' => 'Repeater',
-            'date_range' => 'D. Bereich'
+            'date_range' => 'Bereich'
         ],
 
         'rules' => [

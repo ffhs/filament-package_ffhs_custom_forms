@@ -22,8 +22,6 @@ export function setUpDropField(element){
 
         if(isAction(dragElement)) handleDropAction(element, dragElement);
         else moveDraggable(element, dragElement);
-
-
     })
 }
 

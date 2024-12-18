@@ -1,1 +1,275 @@
-function u(t){return t._x_dataStack===void 0?{}:Alpine.mergeProxies(t._x_dataStack)}function g(t){return u(t).group??null}function p(t){let e=u(t);return e===null?null:e.element??null}function E(t){let e=u(t);return e.element!==null&&e.element!==void 0}function N(t){return u(t).parent??!1}function A(t){return u(t).container??!1}function B(t){return u(t).drag??!1}function w(t){return x(t)!==null}function x(t){return u(t).action??null}function P(){return document.querySelector("[ffhs_drag\\:dragging]")}function f(t){let e=t;for(;e&&!(e instanceof Document);){if(e.hasAttribute("ffhs_drag:component")&&N(e))return e;e=e.parentNode}return null}function D(t,e){let r=g(t);if(r===void 0)return!1;let n=g(e);return n===void 0?!1:r===n}function K(t,e=r=>B(r)||A(r)){let r=t;for(;r&&!(r instanceof Window);){if(e(r))return r;r=r.parentNode}return null}function m(t,e,r){if(!e[`__has_${t}`]){let n=i=>r(i);e.addEventListener(t,n),e[`__has_${t}`]=!0}}function J(t,e){let r=P();r!=null&&D(r,t)&&(f(t)?.getAttribute("disabled")||(e.stopPropagation(),e.preventDefault(),!(!A(t)&&p(t)===p(r))&&setTimeout(()=>{t.setAttribute("ffhs_drag:hower_over",!0)},0)))}function W(t){P()!=null&&(t.preventDefault(),t.stopPropagation(),v())}function O(t){m("dragenter",t,e=>J(t,e)),m("dragleave",t,e=>W(e)),m("dragover",t,e=>e.preventDefault())}function v(){document.querySelectorAll("*").forEach(t=>{t.removeAttribute("ffhs_drag:hower_over")})}function _(t,e){E(t)?t.before(e):A(t)&&t.prepend(e)}function G(t,e){if(p(t)===null)return!1;let n=f(t);return u(n).statePath===e.statePath}function j(t,e){let r=0;return t.querySelectorAll("[ffhs_drag\\:component]").forEach(n=>{G(n,e)&&r++}),r}function z(t,e,r,n){let i=1,d=n.dragDropPosAttribute,s=n.dragDropEndPosAttribute;e.querySelectorAll("[ffhs_drag\\:component]").forEach(o=>{if(!G(o,n))return;let a=p(o),l=j(o,n);t[a]===void 0&&(t[a]={}),t[a][d]=i,t[a][s]=l===0?null:i+l,i++})}function H(t,e,r,n){let i=1,d=n.orderAttribute,s=f(e);e.querySelectorAll("[ffhs_drag\\:component]").forEach(o=>{let a=p(o);if(!a||g(o)!==r)return;let l=f(o);s===l&&(t[a]===void 0&&(t[a]={}),t[a][d]=i,i++)})}function b(t,e,r,n){n.flatten?z(t,e,r,n):n.orderAttribute!==null&&H(t,e,r,n)}function T(t,e){let r=f(t),n=u(r),i=n.wire.get(n.statePath,"");(!i||Array.isArray(i))&&(i={});let d=g(r),s=f(e),o=s===r;if(r.getAttribute("disabled"))return;if(_(t,e),!o){let l=u(s),c=l.wire.get(l.statePath,"");(!c||Array.isArray(c))&&(c={});let h=p(e);i[h]=c[h],delete c[h],b(c,s,d,l),l.wire.set(l.statePath,c,!1)}if(b(i,r,d,n),r.getAttribute("disabled"))return;let a=!o||n.isLive;n.wire.set(n.statePath,i,a)}function M(t,e,r){let n=document.createElement("div");return n.setAttribute("x-data",`typeof dragDropElement === 'undefined'? {}: dragDropElement('${t}','${e}')`),n.setAttribute("ffhs_drag:component",null),n.classList.add("hidden"),_(r,n),Alpine.initTree(n),n}function Q(){let t=crypto.randomUUID().split("-");return t[0]+t[1]}function R(t,e,r,n){return t?e[r]===void 0?1:e[r][n.dragDropPosAttribute]??1:e[r]===void 0?1:e[r][n.orderAttribute]??1}function $(t,e){let r=f(t),n=g(r),i=u(r),d=i.flatten,s=i.wire,o=s.get(i.statePath,"");if(Array.isArray(o)&&(o={}),r.getAttribute("disabled"))return;let a=p(t),l=Q(),c=M(n,l,t),h=JSON.parse(JSON.stringify(o));b(h,r,n,i);let I=R(d,h,l,i),y=null,S=null;d&&(y=K(c.parentNode,k=>E(k))),y&&(S=p(y));let C=x(e),q=C.split("'")[1],L=C.split("'")[3];if(r.getAttribute("disabled"))return;let U={targetPath:i.statePath,position:I,flatten:d,targetIn:S,target:a};s.mountFormComponentAction(q,L,U)}function F(t){m("drop",t,e=>{e.stopPropagation(),e.preventDefault();let r=P();r!=null&&r!==t&&D(r,t)&&(f(t).getAttribute("disabled")||(v(),w(r)?$(t,r):T(t,r)))})}function V(t){return{group:t,container:!0,action:null,element:null,parent:!1,drag:!1,init(){O(this.$el),F(this.$el)}}}export{V as default};
+// resources/js/drag_drop/get_values.js
+function getAlpineData(element) {
+  if (element._x_dataStack === void 0) return {};
+  return Alpine.mergeProxies(element._x_dataStack);
+}
+function getGroup(element) {
+  return getAlpineData(element).group ?? null;
+}
+function getElementKey(element) {
+  let alpine = getAlpineData(element);
+  if (alpine === null) return null;
+  return alpine.element ?? null;
+}
+function isElement(element) {
+  let data = getAlpineData(element);
+  return data.element !== null && data.element !== void 0;
+}
+function isParent(element) {
+  return getAlpineData(element).parent ?? false;
+}
+function isContainer(element) {
+  return getAlpineData(element).container ?? false;
+}
+function isAction(element) {
+  return getAction(element) !== null;
+}
+function getAction(element) {
+  return getAlpineData(element).action ?? null;
+}
+function findDragElement() {
+  return document.querySelector("[ffhs_drag\\:dragging]");
+}
+function getParent(target) {
+  let currentParent = target;
+  while (currentParent && !(currentParent instanceof Document)) {
+    if (currentParent.hasAttribute("ffhs_drag:component")) {
+      if (isParent(currentParent)) return currentParent;
+    }
+    currentParent = currentParent.parentNode;
+  }
+  return null;
+}
+function hasSameGroup(elment1, elment2) {
+  let dragGroup = getGroup(elment1);
+  if (dragGroup === void 0) return false;
+  let targetGroup = getGroup(elment2);
+  if (targetGroup === void 0) return false;
+  return dragGroup === targetGroup;
+}
+
+// resources/js/drag_drop/register_events.js
+function registerEvent(eventName, element, event) {
+  if (!element[`__has_${eventName}`]) {
+    const handler = (e) => event(e);
+    element.addEventListener(eventName, handler);
+    element[`__has_${eventName}`] = true;
+  }
+}
+
+// resources/js/drag_drop/hover_effect.js
+function dragenterEvent(element, event) {
+  let dragElement = findDragElement();
+  if (dragElement == null) return;
+  if (!hasSameGroup(dragElement, element)) return;
+  if (getParent(element)?.getAttribute("disabled")) return;
+  event.stopPropagation();
+  event.preventDefault();
+  if (!isContainer(element) && getElementKey(element) === getElementKey(dragElement)) {
+    return;
+  }
+  setTimeout(() => {
+    element.setAttribute("ffhs_drag:hower_over", true);
+  }, 0);
+}
+function dragleaveEvent(event) {
+  let dragElement = findDragElement();
+  if (dragElement == null) return;
+  event.preventDefault();
+  event.stopPropagation();
+  clearBackground();
+}
+function setupDragOverEffect(element) {
+  registerEvent("dragenter", element, (event) => dragenterEvent(element, event));
+  registerEvent("dragleave", element, (event) => dragleaveEvent(event));
+  registerEvent("dragover", element, (event) => event.preventDefault());
+}
+function clearBackground() {
+  document.querySelectorAll("*").forEach((element) => {
+    element.removeAttribute("ffhs_drag:hower_over");
+  });
+}
+
+// resources/js/drag_drop/move_elements.js
+function moveElementToOnOtherElement(target, toSet) {
+  if (isElement(target)) target.before(toSet);
+  else if (isContainer(target)) target.prepend(toSet);
+}
+function flattenElementCheck(element, data) {
+  let elementKey = getElementKey(element);
+  if (elementKey === null) return false;
+  let parentElement = getParent(element);
+  let parentData = getAlpineData(parentElement);
+  return parentData.statePath === data.statePath;
+}
+function countFlattenChildren(container, data) {
+  let count = 0;
+  container.querySelectorAll("[ffhs_drag\\:component]").forEach((element) => {
+    if (!flattenElementCheck(element, data)) return;
+    count++;
+  });
+  return count;
+}
+function updatePositionsFlatten(state, container, group, data) {
+  let currentPos = 1;
+  let dragDropPosAttribute = data.dragDropPosAttribute;
+  let dragDropEndPosAttribute = data.dragDropEndPosAttribute;
+  let usedKeys = [];
+  container.querySelectorAll("[ffhs_drag\\:component]").forEach((element) => {
+    if (!flattenElementCheck(element, data)) return;
+    let elementKey = getElementKey(element);
+    let contains = countFlattenChildren(element, data);
+    if (state[elementKey] === void 0) state[elementKey] = {};
+    usedKeys.push(elementKey);
+    state[elementKey][dragDropPosAttribute] = currentPos;
+    state[elementKey][dragDropEndPosAttribute] = contains === 0 ? null : currentPos + contains;
+    currentPos++;
+  });
+  let notUsedKeys = Object.keys(state).filter((x) => !usedKeys.includes(x));
+  notUsedKeys.forEach((x) => delete state[x]);
+  console.log("not Found Keys:", notUsedKeys);
+}
+function updatePositionsOrder(state, container, group, data) {
+  let currentPos = 1;
+  let orderAttribute = data.orderAttribute;
+  let parentContainer = getParent(container);
+  container.querySelectorAll("[ffhs_drag\\:component]").forEach((element) => {
+    let elementKey = getElementKey(element);
+    if (!elementKey) return;
+    if (getGroup(element) !== group) return;
+    let parentElement = getParent(element);
+    if (parentContainer !== parentElement) return;
+    if (state[elementKey] === void 0) state[elementKey] = {};
+    state[elementKey][orderAttribute] = currentPos;
+    currentPos++;
+  });
+}
+function updatePositions(state, container, group, parentData) {
+  if (parentData.flatten) updatePositionsFlatten(state, container, group, parentData);
+  else if (parentData.orderAttribute !== null) updatePositionsOrder(state, container, group, parentData);
+}
+function moveDraggable(target, dragElement) {
+  let targetParent = getParent(target);
+  let targetData = getAlpineData(targetParent);
+  let targetState = targetData.wire.get(targetData.statePath, "");
+  if (!targetState || Array.isArray(targetState)) targetState = {};
+  let group = getGroup(targetParent);
+  let sourceParent = getParent(dragElement);
+  let sameContainer = sourceParent === targetParent;
+  if (targetParent.getAttribute("disabled")) return;
+  moveElementToOnOtherElement(target, dragElement);
+  if (!sameContainer) {
+    let sourceData = getAlpineData(sourceParent);
+    let sourceState = sourceData.wire.get(sourceData.statePath, "");
+    if (!sourceState || Array.isArray(sourceState)) sourceState = {};
+    let dragKey = getElementKey(dragElement);
+    targetState[dragKey] = sourceState[dragKey];
+    delete sourceState[dragKey];
+    updatePositions(sourceState, sourceParent, group, sourceData);
+    sourceData.wire.set(sourceData.statePath, sourceState, false);
+  }
+  updatePositions(targetState, targetParent, group, targetData);
+  if (targetParent.getAttribute("disabled")) return;
+  let isLive = !sameContainer || targetData.isLive;
+  targetData.wire.set(targetData.statePath, targetState, isLive);
+}
+
+// resources/js/drag_drop/action_drop.js
+function createTemporaryChild(group, key, target) {
+  let temporaryChild = document.createElement("div");
+  temporaryChild.setAttribute("x-data", `typeof dragDropElement === 'undefined'? {}: dragDropElement('${group}','${key}')`);
+  temporaryChild.setAttribute("ffhs_drag:component", null);
+  temporaryChild.classList.add("hidden");
+  moveElementToOnOtherElement(target, temporaryChild);
+  Alpine.initTree(temporaryChild);
+  return temporaryChild;
+}
+function generateElementKey() {
+  let keySplit = crypto.randomUUID().split("-");
+  return keySplit[0] + keySplit[1];
+}
+function findPosition(isFlatten, state, key, targetData) {
+  if (isFlatten) {
+    if (void 0 === state[key]) return 1;
+    return state[key][targetData.dragDropPosAttribute] ?? 1;
+  } else {
+    if (void 0 === state[key]) return 1;
+    return state[key][targetData.orderAttribute] ?? 1;
+  }
+}
+function handleDropAction(target, dragElement) {
+  let targetParent = getParent(target);
+  let group = getGroup(targetParent);
+  let targetParentData = getAlpineData(targetParent);
+  let isFlatten = targetParentData.flatten;
+  let $wire = targetParentData.wire;
+  let targetState = $wire.get(targetParentData.statePath, "");
+  if (Array.isArray(targetState)) targetState = {};
+  let targetId = getElementKey(target);
+  let temporaryKey = generateElementKey();
+  createTemporaryChild(group, temporaryKey, target);
+  let cloneState = JSON.parse(JSON.stringify(targetState));
+  updatePositions(cloneState, targetParent, group, targetParentData);
+  let position = findPosition(isFlatten, cloneState, temporaryKey, targetParentData);
+  let action = getAction(dragElement);
+  let toActionPath = action.split("'")[1];
+  let toDoAction = action.split("'")[3];
+  let metaData = {
+    targetPath: targetParentData.statePath,
+    position,
+    flatten: isFlatten,
+    // targetIn:targetInId,
+    target: targetId,
+    stateWithField: cloneState,
+    temporaryKey,
+    state: JSON.parse(JSON.stringify(targetState))
+  };
+  console.log("-");
+  console.log("-------------------------------------------");
+  Object.keys(cloneState).forEach((key) => {
+    console.log(key, cloneState[key]["form_position"]);
+  });
+  console.log("-------------------------------------------");
+  Object.keys(targetState).forEach((key) => {
+    console.log(key, targetState[key]["form_position"]);
+  });
+  console.log("-------------------------------------------");
+  console.log("-");
+  if (targetParent.getAttribute("disabled")) return;
+  $wire.mountFormComponentAction(toActionPath, toDoAction, metaData);
+}
+
+// resources/js/drag_drop/dropping.js
+function setUpDropField(element) {
+  registerEvent("drop", element, (event) => {
+    event.stopPropagation();
+    event.preventDefault();
+    let dragElement = findDragElement();
+    if (dragElement == null) return;
+    if (dragElement === element) return;
+    if (!hasSameGroup(dragElement, element)) return;
+    if (getParent(element).getAttribute("disabled")) return;
+    clearBackground();
+    if (isAction(dragElement)) handleDropAction(element, dragElement);
+    else moveDraggable(element, dragElement);
+  });
+}
+
+// resources/js/drag_drop/alpine_components/container.js
+function dragDropContainer(group) {
+  return {
+    group,
+    container: true,
+    action: null,
+    element: null,
+    parent: false,
+    drag: false,
+    init() {
+      setupDragOverEffect(this.$el);
+      setUpDropField(this.$el);
+    }
+  };
+}
+export {
+  dragDropContainer as default
+};
