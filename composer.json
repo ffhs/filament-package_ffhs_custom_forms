@@ -41,5 +41,13 @@
                 "FilamentPackageFfhsCustomForms": "Ffhs\\FilamentPackageFfhsCustomForms\\FilamentPackageFfhsCustomFormsFacade"
             }
         }
+    },
+    "require-dev": {
+        "pestphp/pest": "3.x-dev"
+    },
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
     }
 }
