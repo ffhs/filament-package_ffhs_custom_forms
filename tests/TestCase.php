@@ -1,10 +1,9 @@
 <?php
 
-namespace Tests;
+namespace Ffhs\FilamentPackageFfhsCustomForms\Tests;
+use Orchestra\Testbench\TestCase as Orchestra;
 
-use PHPUnit\Framework\TestCase as BaseTestCase;
-
-abstract class TestCase extends BaseTestCase
+abstract class TestCase extends Orchestra
 {
     //
 }

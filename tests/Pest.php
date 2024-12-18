@@ -1,5 +1,6 @@
 <?php
 
+
 /*
 |--------------------------------------------------------------------------
 | Test Case
@@ -11,6 +12,9 @@
 |
 */
 
+use Ffhs\FilamentPackageFfhsCustomForms\Tests\TestCase;
+
+uses(TestCase::class)->in('Feature', 'Unit');
 // pest()->extend(Tests\TestCase::class)->in('Feature');
 
 /*
