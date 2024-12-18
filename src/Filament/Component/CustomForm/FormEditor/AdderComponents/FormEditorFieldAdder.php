@@ -32,18 +32,6 @@ abstract class FormEditorFieldAdder extends Group {
 
         $path = $component->getStatePath(). '.custom_fields';
 
-        //$state = $component->getGetCallback()($path, true);
-
-        //$state = EditCustomFormHelper::addField($fieldData, $pos , $state);
-
-//        if(!empty($arguments['targetIn'])){
-//            $targetIn = $arguments['targetIn'];
-//            $targetInEndPos = $state[$targetIn][CustomField::getEndContainerPositionAttribute()];
-//            if($targetInEndPos < $pos){
-//                $state[$targetIn][CustomField::getEndContainerPositionAttribute()] = $pos;
-//            }
-//        }
-
         unset($state[$temporaryKey]);
         $state[uniqid()] = $fieldData;
 

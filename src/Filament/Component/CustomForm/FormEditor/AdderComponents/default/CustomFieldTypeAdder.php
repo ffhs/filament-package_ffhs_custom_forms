@@ -31,7 +31,7 @@ final class CustomFieldTypeAdder extends FormEditorFieldAdder
                             "type" => $type::identifier(),
                             "options" => $type->getDefaultTypeOptionValues(),
                             "is_active" => true,
-                            "name" => "New Field"
+                            "name" => ["de" => "New Field"]
                         ];
 
                         $this::addNewField($component, $arguments, $livewire, $field);
