@@ -12,9 +12,11 @@
 |
 */
 
+pest()
+    ->extend(Ffhs\FilamentPackageFfhsCustomForms\Tests\TestCase::class)
+    ->in('Feature');
 
 
-pest()->extend(Ffhs\FilamentPackageFfhsCustomForms\Tests\TestCase::class)->in('Feature', 'Unit');
 // pest()->extend(Tests\TestCase::class)->in('Feature');
 
 /*

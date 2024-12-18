@@ -1,8 +1,8 @@
 laravel: '@testbench'
 
-providers:
-  - App\Providers\WorkbenchServiceProvider
-  - Ffhs\FilamentPackageFfhsCustomForms\FilamentPackageFfhsCustomFormsServiceProvider
+#providers:
+#  - App\Providers\WorkbenchServiceProvider
+#  - Ffhs\FilamentPackageFfhsCustomForms\FilamentPackageFfhsCustomFormsServiceProvider
 
 migrations:
   - workbench/database/migrations
