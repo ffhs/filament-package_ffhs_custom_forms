@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ea2eb406aa40193e85243f572d5d37e9",
+    "content-hash": "1de6593c17663091b43bd14ffd920290",
     "packages": [
         {
             "name": "anourvalar/eloquent-serialize",
@@ -3090,12 +3090,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/csv.git",
-                "reference": "a035f418cc73177e7c7d7a25a8738d2188b9920e"
+                "reference": "bf9ad653f50d3fbf46087532b5c357a78465029d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/csv/zipball/a035f418cc73177e7c7d7a25a8738d2188b9920e",
-                "reference": "a035f418cc73177e7c7d7a25a8738d2188b9920e",
+                "url": "https://api.github.com/repos/thephpleague/csv/zipball/bf9ad653f50d3fbf46087532b5c357a78465029d",
+                "reference": "bf9ad653f50d3fbf46087532b5c357a78465029d",
                 "shasum": ""
             },
             "require": {
@@ -3170,7 +3170,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-12-18T08:51:31+00:00"
+            "time": "2024-12-18T10:20:17+00:00"
         },
         {
             "name": "league/flysystem",
@@ -4211,12 +4211,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/openspout/openspout.git",
-                "reference": "12b5eddcc230a97a9a67a722ad75c247e1a16750"
+                "reference": "37ed890660647f830bc570c7ad834972edec73a2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/openspout/openspout/zipball/12b5eddcc230a97a9a67a722ad75c247e1a16750",
-                "reference": "12b5eddcc230a97a9a67a722ad75c247e1a16750",
+                "url": "https://api.github.com/repos/openspout/openspout/zipball/37ed890660647f830bc570c7ad834972edec73a2",
+                "reference": "37ed890660647f830bc570c7ad834972edec73a2",
                 "shasum": ""
             },
             "require": {
@@ -4231,12 +4231,12 @@
             "require-dev": {
                 "ext-zlib": "*",
                 "friendsofphp/php-cs-fixer": "^3.65.0",
-                "infection/infection": "^0.29.8",
+                "infection/infection": "^0.29.10",
                 "phpbench/phpbench": "^1.3.1",
-                "phpstan/phpstan": "^2.0.3",
-                "phpstan/phpstan-phpunit": "^2.0.1",
+                "phpstan/phpstan": "^2.0.4",
+                "phpstan/phpstan-phpunit": "^2.0.2",
                 "phpstan/phpstan-strict-rules": "^2",
-                "phpunit/phpunit": "^11.5.0"
+                "phpunit/phpunit": "^11.5.1"
             },
             "suggest": {
                 "ext-iconv": "To handle non UTF-8 CSV files (if \"php-mbstring\" is not already installed or is too limited)",
@@ -4285,7 +4285,7 @@
             ],
             "support": {
                 "issues": "https://github.com/openspout/openspout/issues",
-                "source": "https://github.com/openspout/openspout/tree/v4.28.3"
+                "source": "https://github.com/openspout/openspout/tree/4.x"
             },
             "funding": [
                 {
@@ -4297,7 +4297,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-12-17T11:28:11+00:00"
+            "time": "2024-12-18T11:56:56+00:00"
         },
         {
             "name": "paragonie/constant_time_encoding",
@@ -6711,12 +6711,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/http-foundation.git",
-                "reference": "c2508e48b252f02b1364980ff79fb168a074e199"
+                "reference": "9e485dd3094b0bcf2d9cd9f9b822ef7ebc0e5dbc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/http-foundation/zipball/c2508e48b252f02b1364980ff79fb168a074e199",
-                "reference": "c2508e48b252f02b1364980ff79fb168a074e199",
+                "url": "https://api.github.com/repos/symfony/http-foundation/zipball/9e485dd3094b0bcf2d9cd9f9b822ef7ebc0e5dbc",
+                "reference": "9e485dd3094b0bcf2d9cd9f9b822ef7ebc0e5dbc",
                 "shasum": ""
             },
             "require": {
@@ -6781,7 +6781,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-12-12T06:45:37+00:00"
+            "time": "2024-12-14T10:46:23+00:00"
         },
         {
             "name": "symfony/http-kernel",
@@ -6789,12 +6789,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/http-kernel.git",
-                "reference": "406c453966dc1420d8b19ff45007bac8a51d401c"
+                "reference": "49bce5da5a3135fca24b33fda1f8276bdcd64f1b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/http-kernel/zipball/406c453966dc1420d8b19ff45007bac8a51d401c",
-                "reference": "406c453966dc1420d8b19ff45007bac8a51d401c",
+                "url": "https://api.github.com/repos/symfony/http-kernel/zipball/49bce5da5a3135fca24b33fda1f8276bdcd64f1b",
+                "reference": "49bce5da5a3135fca24b33fda1f8276bdcd64f1b",
                 "shasum": ""
             },
             "require": {
@@ -6803,7 +6803,7 @@
                 "symfony/deprecation-contracts": "^2.5|^3",
                 "symfony/error-handler": "^6.4|^7.0",
                 "symfony/event-dispatcher": "^6.4|^7.0",
-                "symfony/http-foundation": "^6.4|^7.0",
+                "symfony/http-foundation": "^7.3",
                 "symfony/polyfill-ctype": "^1.8"
             },
             "conflict": {
@@ -6895,7 +6895,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-12-12T06:45:37+00:00"
+            "time": "2024-12-14T10:46:23+00:00"
         },
         {
             "name": "symfony/mailer",
@@ -12415,7 +12415,6 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "coolsam/flatpickr": 20,
-        "orchestra/testbench": 20,
         "pestphp/pest": 20,
         "pestphp/pest-plugin-laravel": 20,
         "secondnetwork/blade-tabler-icons": 20
