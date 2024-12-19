@@ -1,9 +1,5 @@
 laravel: '@testbench'
 
-#providers:
-#  - App\Providers\WorkbenchServiceProvider
-#  - Ffhs\FilamentPackageFfhsCustomForms\FilamentPackageFfhsCustomFormsServiceProvider
-
 migrations:
   - workbench/database/migrations
 
@@ -13,12 +9,3 @@ seeders:
 workbench:
   start: '/'
   install: true
-  health: false
-  discovers:
-    web: true
-    api: false
-    commands: false
-    components: false
-    views: false
-
-  sync: []

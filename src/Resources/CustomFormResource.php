@@ -38,7 +38,7 @@ class CustomFormResource extends Resource
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()
-            ->where("is_template", false);
+            ->whereNotNull("template_identifier", false);
     }
 
     public static function getPages(): array

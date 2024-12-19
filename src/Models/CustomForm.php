@@ -33,6 +33,7 @@ use Spatie\Translatable\HasTranslations;
  * @property Collection rules
  * @property Collection ownedRules
  * @property Collection $ownedFields
+ * @property string|null $template_identifier
  */
 class CustomForm extends Model implements CachedModel
 {
@@ -41,16 +42,17 @@ class CustomForm extends Model implements CachedModel
     use HasFormIdentifier;
     use HasFactory;
 
-    //ToDo cache customFormOptions
+
     public array $translatable = [
         'does_not_exist' // <= It needs something
     ];
     protected $fillable = [
         'custom_form_identifier',
+        'template_identifier',
         'short_title',
-        'is_template',
     ];
 
+    //ToDo cache customFormOptions
     protected array $cachedRelations = [
         'customFields',
         'generalFields',
@@ -69,6 +71,12 @@ class CustomForm extends Model implements CachedModel
         $key ="form_templates_" . $formType;
         $duration = config('ffhs_custom_forms.cache_duration');
         return  Cache::remember($key,$duration, fn() => $query->get());
+    }
+
+    public function __get($key)
+    {
+        if($key === 'is_template') return !is_null($this->template_identifier);
+        else return parent::__get($key);
     }
 
     public function ownedFields(): HasMany
