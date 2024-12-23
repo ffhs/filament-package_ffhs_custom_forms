@@ -44,8 +44,9 @@ class CustomForm extends Model implements CachedModel
 
 
     public array $translatable = [
-        'does_not_exist' // <= It needs something
+        'does_not_exist' // <= It needs something     ToDo Realy?
     ];
+
     protected $fillable = [
         'custom_form_identifier',
         'template_identifier',
