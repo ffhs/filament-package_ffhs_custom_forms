@@ -1,10 +1,10 @@
 <?php
 
-namespace Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\FormExporter\SchemaExporter;
+namespace Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\FormConverter\SchemaExporter;
 
-use Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\FormExporter\SchemaExporter\Traids\ExportFieldInformation;
-use Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\FormExporter\SchemaExporter\Traids\ExportFormInformation;
-use Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\FormExporter\SchemaExporter\Traids\ExportRuleInformation;
+use Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\FormConverter\SchemaExporter\Traids\ExportFieldInformation;
+use Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\FormConverter\SchemaExporter\Traids\ExportFormInformation;
+use Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\FormConverter\SchemaExporter\Traids\ExportRuleInformation;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 
 class FormSchemaExporter
@@ -25,9 +25,4 @@ class FormSchemaExporter
             'rules' => $this->exportRuleInformation($form->ownedRules),
         ];
     }
-
-    public function import(array $rawForm): CustomForm{
-        return new CustomForm();
-    }
-
 }

@@ -34,7 +34,8 @@ class GeneralField extends ACustomField
 
     protected $casts = [
         'extra_options'=>'array',
-        'overwrite_options' => 'array'
+        'overwrite_options' => 'array',
+        'options' => 'array',
     ];
 
     protected array $cachedRelations = [

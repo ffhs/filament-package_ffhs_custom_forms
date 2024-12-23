@@ -26,15 +26,15 @@ abstract class TestCase extends Orchestra
         // Code before application created.
 
         $this->afterApplicationCreated(function () {
-            Artisan::call('vendor:publish --tag="filament-package_ffhs_custom_forms-migrations"');
+//            Artisan::call('vendor:publish --tag="filament-package_ffhs_custom_forms-migrations"');
             Artisan::call('filament:assets');
         });
 
-        $this->beforeApplicationDestroyed(function () {
-            $path = database_path('migrations');
-            system("rm -rf ". escapeshellarg($path));
-            mkdir($path);
-        });
+//        $this->beforeApplicationDestroyed(function () {
+//            $path = database_path('migrations');
+//            system("rm -rf ". escapeshellarg($path));
+//            mkdir($path);
+//        });
         parent::setUp();
     }
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\FormExporter\SchemaExporter\Traids;
+namespace Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\FormConverter\SchemaExporter\Traids;
 
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\FlattedNested\NestedFlattenList;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
@@ -46,8 +46,6 @@ trait ExportFieldInformation
             else {
                 $fieldData['general_field'] = $customFieldIdentifier;
             }
-
-
 
 
             if(!empty($subStructure)){
