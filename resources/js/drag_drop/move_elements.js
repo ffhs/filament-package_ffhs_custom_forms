@@ -56,7 +56,6 @@ function countFlattenChildren(container, data) {
      // Remove unused Keys
      let notUsedKeys = Object.keys(state).filter(x => !usedKeys.includes(x));
      notUsedKeys.forEach(x => delete state[x])
-     console.log("not Found Keys:", notUsedKeys)
 }
 
 function updatePositionsOrder(state, container, group, data) {

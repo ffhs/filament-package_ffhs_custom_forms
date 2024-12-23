@@ -82,17 +82,12 @@ export function handleDropAction(target, dragElement) {
         state: JSON.parse(JSON.stringify(targetState))
     };
 
-    console.log("-")
-    console.log("-------------------------------------------")
     Object.keys(cloneState).forEach(key => {
         console.log(key, cloneState[key]["form_position"]);
     });
-    console.log("-------------------------------------------")
     Object.keys(targetState).forEach(key => {
         console.log(key, targetState[key]["form_position"]);
     });
-    console.log("-------------------------------------------")
-    console.log("-")
 
     // console.log(JSON.parse(JSON.stringify(targetState)))
     // console.log(cloneState)

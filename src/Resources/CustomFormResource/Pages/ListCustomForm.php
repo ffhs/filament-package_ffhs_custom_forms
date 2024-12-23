@@ -4,6 +4,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormResource\Pages
 
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormResource;
+use Ffhs\FilamentPackageFfhsCustomForms\Resources\TemplateResource\Pages\ListTemplate;
 use Filament\Actions\CreateAction;
 use Filament\Resources\Components\Tab;
 use Filament\Resources\Pages\ListRecords;
@@ -26,19 +27,22 @@ class ListCustomForm extends ListRecords
                 ->badge($query->clone()->count()),
         ];
 
-        foreach (config("ffhs_custom_forms.forms") as $formClass){
+        foreach (config('ffhs_custom_forms.forms') as $formClass){
             $tabs[$formClass::identifier()] =
                 Tab::make($formClass::displayName())
-                    ->badge($this->prepareTabQuerry($formClass::identifier(),$query->clone())->count())
-                    ->modifyQueryUsing(fn($query) => $this->prepareTabQuerry($formClass::identifier(),$query));
+                    ->badge($query->where("custom_form_identifier",$formClass::identifier())->count())
+                    ->modifyQueryUsing(fn($query) => $this->prepareTabQuery($formClass::identifier(),$query));
 
         }
 
         return $tabs;
     }
 
-    private function prepareTabQuerry ($identifier, $query) {
-        return $query->where("custom_form_identifier", $identifier);
+    private function prepareTabQuery ($identifier, Builder $query): Builder
+    {
+//        dd($query->toRawSql());
+        $query =  $query->where("custom_form_identifier",$identifier);
+        return $query;
     }
 
     public function getDefaultActiveTab(): string | int | null
@@ -55,6 +59,11 @@ class ListCustomForm extends ListRecords
             ])
             ->columns([
                 TextColumn::make('id'),
+                TextColumn::make('template_identifier') //ToDo
+                ->visible($this instanceof ListTemplate)
+                    ->label('Template Id')
+                    ->searchable()
+                    ->sortable(),
                 TextColumn::make('short_title')
                     ->label(__(self::langPrefix . 'short_title'))
                     ->searchable()

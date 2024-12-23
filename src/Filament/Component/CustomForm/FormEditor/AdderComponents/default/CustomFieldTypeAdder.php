@@ -50,7 +50,8 @@ final class CustomFieldTypeAdder extends FormEditorFieldAdder
 private static function getCustomFieldAddActionLabel(CustomFieldType $type):HtmlString {
     $html =
         '<div class="flex flex-col items-center justify-center">'.
-            new HtmlString(Blade::render("<x-".$type->icon() . ' class="w-6 h-6" />')).
+         new HtmlString(Blade::render("<x-".$type->icon() . ' class="w-6 h-6" />')).
+        //new HtmlString(Blade::render("@svg('tabler-alert-circle', 'w-6 h-6')")).
             '<span style="margin-top: 2px;  text-align: center;"> '. $type->getTranslatedName().'</span>
         </div>';
 
