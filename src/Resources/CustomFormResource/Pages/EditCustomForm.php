@@ -2,10 +2,10 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormResource\Pages;
 
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\CustomFormSchemaExportAction;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\FormEditor\CustomFormEditor;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\EditHelper\EditCustomFormLoadHelper;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\EditHelper\EditCustomFormSaveHelper;
-use Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\FormExporter\SchemaExporter\FormSchemaExporter;
 use Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormResource;
 use Filament\Actions;
 use Filament\Forms\Components\Section;
@@ -52,7 +52,7 @@ class EditCustomForm extends EditRecord
         return [
             Actions\LocaleSwitcher::make(),
             Actions\DeleteAction::make(),
-            Actions\Action::make("export_field")->action(fn($record) => dd(FormSchemaExporter::make()->export($record)))
+            CustomFormSchemaExportAction::make()
         ];
     }
 
