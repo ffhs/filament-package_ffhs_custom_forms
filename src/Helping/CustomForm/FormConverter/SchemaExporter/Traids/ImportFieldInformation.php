@@ -24,7 +24,12 @@ trait ImportFieldInformation
         $generalFieldMap = array_merge($generalFieldImportedMap, $generalFieldMap);
 
         $fields = $this->importFields($rawFields, $customForm, $templateMap, $generalFieldMap);
-        CustomField::upsert($fields);
+
+
+        foreach ($fields as $field) { //ToDo uptimize
+            $field = new CustomField($field);
+            $field->save();
+        }
 
     }
 

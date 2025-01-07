@@ -1,6 +1,7 @@
 <?php
 
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\FormConverter\SchemaExporter\FormSchemaImporter;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Ffhs\FilamentPackageFfhsCustomForms\Tests\Feature\CustomForms\FormConverter\FormConverterCase;
@@ -47,3 +48,18 @@ test('Import form information\'s', function () {
         ->toMatchArray($this->expordetFlattenFieldInformations);
 });
 
+test('Import form information\'s to models', function () {
+    $importer = FormSchemaImporter::make();
+    $customForm = CustomForm::create(['custom_form_identifier' => TestDynamicFormConfiguration::identifier()]);
+
+    $importer->createImportFields(
+        $this->expordetFieldInformations,
+        customForm: $customForm,
+    );
+
+    $generatedFields = CustomField::query()->where('custom_form_id', $customForm->id)->get();
+
+
+    expect($generatedFields)
+        ->toHaveCount(count($this->expordetFlattenFieldInformations));
+});
