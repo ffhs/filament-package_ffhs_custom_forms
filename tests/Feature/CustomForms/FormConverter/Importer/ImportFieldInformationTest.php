@@ -7,6 +7,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Ffhs\FilamentPackageFfhsCustomForms\Tests\Feature\CustomForms\FormConverter\FormConverterCase;
 use Workbench\App\FFHs\TestDynamicFormConfiguration;
 
+
 uses(FormConverterCase::class);
 
 beforeEach(function () {
@@ -22,7 +23,7 @@ test('Import form information\'s', function () {
 
     //dd(CustomForm::all()->pluck('short_title'));
     $templateMap = CustomForm::query()
-        ->whereNot("template_identifier")
+        ->whereNot('template_identifier')
         ->pluck('id', 'template_identifier')
         ->toArray();
 
@@ -30,8 +31,8 @@ test('Import form information\'s', function () {
         ->pluck('id', 'identifier')
         ->toArray();
 
-    $rawFields = $importer->importFields(
-        $this->expordetFieldInformations,
+    $rawFields = $importer->importFieldDatas(
+        $this->exportedFieldInformation,
         customForm: $customForm,
         templateMap: $templateMap,
         generalFieldMap: $generalFieldMap
@@ -41,25 +42,31 @@ test('Import form information\'s', function () {
         unset($item['custom_form_id']);
         unset($item['template_id']);
         unset($item['general_field_id']);
+        if(key_exists('customOptions', $item))
+            $item['customOptions'] = collect($item['customOptions'])->toArray();
         return $item;
     }, $rawFields);
 
     expect($actualOptions)
-        ->toMatchArray($this->expordetFlattenFieldInformations);
+        ->toMatchArray($this->exportedFlattenFieldInformation);
 });
 
 test('Import form information\'s to models', function () {
     $importer = FormSchemaImporter::make();
     $customForm = CustomForm::create(['custom_form_identifier' => TestDynamicFormConfiguration::identifier()]);
 
-    $importer->createImportFields(
-        $this->expordetFieldInformations,
+    $importer->importFields(
+        $this->exportedFieldInformation,
         customForm: $customForm,
     );
 
     $generatedFields = CustomField::query()->where('custom_form_id', $customForm->id)->get();
-
+    $generatedOptions = $generatedFields->map(
+        fn(CustomField $field) => $field->customOptions()->get()
+    )->flatten(1);
 
     expect($generatedFields)
-        ->toHaveCount(count($this->expordetFlattenFieldInformations));
+        ->toHaveCount(count($this->exportedFlattenFieldInformation))
+        ->and($generatedOptions)
+        ->toHaveCount(2);
 });

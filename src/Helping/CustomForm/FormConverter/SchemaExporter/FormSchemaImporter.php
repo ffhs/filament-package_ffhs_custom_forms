@@ -4,6 +4,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\FormConverter\S
 
 use Error;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormConfiguration\DynamicFormConfiguration;
+use Ffhs\FilamentPackageFfhsCustomForms\Exceptions\FormImportException;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\FormConverter\SchemaExporter\Traids\ImportCustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\FormConverter\SchemaExporter\Traids\ImportFieldInformation;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\FormConverter\SchemaExporter\Traids\ImportRuleInformation;
@@ -34,7 +35,7 @@ class FormSchemaImporter
 
             $customForm = $this->importCustomForm($rawForm, $formInformation, $configuration);
 
-            $this->createImportFields($fieldInformations, $customForm, $templateMap, $generalFieldMap);
+            $this->importFields($fieldInformations, $customForm, $templateMap, $generalFieldMap);
 
             $this->importRule($ruleInformations, $customForm);
 
@@ -42,7 +43,7 @@ class FormSchemaImporter
             return $customForm;
         }catch (Error|\Exception $exception){
             DB::rollBack();
-            throw new FormImportExeption($exception->getMessage());
+            throw new FormImportException($exception->getMessage());
         }
     }
 

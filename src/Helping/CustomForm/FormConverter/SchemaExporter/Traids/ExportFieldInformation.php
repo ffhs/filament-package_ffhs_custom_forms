@@ -4,6 +4,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\FormConverter\S
 
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\FlattedNested\NestedFlattenList;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomOption;
 use Illuminate\Support\Collection;
 
 trait ExportFieldInformation
@@ -38,19 +39,31 @@ trait ExportFieldInformation
                 $fieldData['identifier'] = $customFieldIdentifier;
                 $fieldData['template'] = $field->template->template_identifier;
             }
-            else if(is_null($field->general_field_id)){
+            else if(!is_null($field->general_field_id)){
+                $fieldData['general_field'] = $customFieldIdentifier;
+            }
+            else {
                 $fieldData['identifier'] = $customFieldIdentifier;
                 $fieldData['type'] = $field->type;
                 $fieldData['name'] = $rawFieldData['name'] ?? null;
-            }
-            else {
-                $fieldData['general_field'] = $customFieldIdentifier;
-            }
 
+                //Options
+                if($field->customOptions->isNotEmpty()){
+
+                    $fieldData['customOptions'] =  $field->customOptions->map(function (CustomOption $option){
+                        $optionData = $option->toArray();
+                        $optionData['name'] = $option->translations['name'];
+                        return $optionData;
+                    })->toArray();
+
+                }
+
+            }
 
             if(!empty($subStructure)){
                 $fieldData['fields'] = $this->exportFields($subStructure, $customFields);
             }
+
 
             $exportedFields[] = $fieldData;
         }

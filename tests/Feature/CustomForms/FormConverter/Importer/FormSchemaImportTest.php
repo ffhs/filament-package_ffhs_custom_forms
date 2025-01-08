@@ -1,7 +1,7 @@
 <?php
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Types\TextType;
-use Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\FormConverter\SchemaExporter\FormImportExeption;
+use Ffhs\FilamentPackageFfhsCustomForms\Exceptions\FormImportException;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\FormConverter\SchemaExporter\FormSchemaImporter;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
@@ -18,9 +18,9 @@ beforeEach(function () {
 
 
     $this->formData = [
-        "form" => $this->exportedFormInformations,
-        "fields" => $this->expordetFieldInformations,
-        "rules" => $this->expordetRuleInformations,
+        "form" => $this->exportedFormInformation,
+        "fields" => $this->exportedFieldInformation,
+        "rules" => $this->exportedRuleInformation,
     ];
 });
 
@@ -106,7 +106,7 @@ test('Import Form with an error and rollback', function () {
     $countFormsBefore = CustomForm::query()->count();
     try {
         $importer->import([
-            "form" => $this->exportedFormInformations,
+            "form" => $this->exportedFormInformation,
             "fields" => [
                 'coffee' => 'programmer'
             ]
@@ -114,7 +114,7 @@ test('Import Form with an error and rollback', function () {
 
         // If no exception is thrown, fail the test
         expect(false)->toBe(true, 'no exception');
-    } catch (FormImportExeption) {}
+    } catch (FormImportException) {}
 
 
     expect(CustomForm::query()->count())->toBe($countFormsBefore);

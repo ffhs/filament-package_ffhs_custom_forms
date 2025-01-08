@@ -4,13 +4,14 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\FormConverter\S
 
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomOption;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 
 trait ImportFieldInformation
 {
 
 
-    public function createImportFields(array $rawFields,  CustomForm $customForm, array $templateMap = [], array $generalFieldMap = []): void
+    public function importFields(array $rawFields,  CustomForm $customForm, array $templateMap = [], array $generalFieldMap = []): void
     {
         $templateImportedMap = CustomForm::query()
             ->whereNot("template_identifier")
@@ -23,29 +24,34 @@ trait ImportFieldInformation
             ->toArray();
         $generalFieldMap = array_merge($generalFieldImportedMap, $generalFieldMap);
 
-        $fields = $this->importFields($rawFields, $customForm, $templateMap, $generalFieldMap);
+        $fields = $this->importFieldDatas($rawFields, $customForm, $templateMap, $generalFieldMap);
 
 
-        foreach ($fields as $field) { //ToDo uptimize
+        foreach ($fields as $field) { //ToDo optimize
+            $options = $field['customOptions'] ?? [];
+            unset($field['customOptions']);
             $field = new CustomField($field);
             $field->save();
+            if(!empty($options)){
+                $field->customOptions()->saveMany($options);
+            }
         }
 
     }
 
-    public function importFields(array $rawFields,  CustomForm $customForm, array $templateMap = [], array $generalFieldMap = [], int &$fieldCounter = 1): array
+    public function importFieldDatas(array $rawFields,  CustomForm $customForm, array $templateMap = [], array $generalFieldMap = [], int &$fieldCounter = 0): array
     {
         $fieldsToCreate = [];
         foreach ($rawFields as $rawField) {
+            $fieldCounter++;
             $field = [
                 'form_position' => $fieldCounter,
                 'custom_form_id' => $customForm->id,
             ];
-            $fieldCounter++;
 
             if(array_key_exists('fields', $rawField)){
                 $subFields = $rawField["fields"];
-                $subFieldData = $this->importFields($subFields, $customForm, $templateMap, $generalFieldMap, $fieldCounter);
+                $subFieldData = $this->importFieldDatas($subFields, $customForm, $templateMap, $generalFieldMap, $fieldCounter);
                 $fieldsToCreate = array_merge($fieldsToCreate, $subFieldData);
                 $field["layout_end_position"] = $fieldCounter;
                 unset($rawField["fields"]);
@@ -64,6 +70,14 @@ trait ImportFieldInformation
                 unset($rawField["general_field"]);
             }
 
+            if(array_key_exists('customOptions', $rawField)){
+                $customOptions = array_map(
+                    fn ($item) => new CustomOption($item),
+                    $rawField['customOptions']
+                );
+                $field["customOptions"] = $customOptions;
+            }
+
             $field = array_merge($rawField, $field);
 
 
@@ -71,7 +85,6 @@ trait ImportFieldInformation
 
         }
 
-        $fieldCounter++;
         return $fieldsToCreate;
     }
 

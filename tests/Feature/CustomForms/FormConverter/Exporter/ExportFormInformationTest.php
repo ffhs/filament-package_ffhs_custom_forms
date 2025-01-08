@@ -15,9 +15,9 @@ test('Export form information\'s', function () {
     $exporter = FormSchemaExporter::make();
 
     expect($exporter->exportFormInformation($this->testForm))
-        ->toEqual($this->exportedFormInformations)
+        ->toEqual($this->exportedFormInformation)
         ->and($exporter->exportFormInformation($this->testTemplate))
-        ->toEqual($this->exportedTemplateInformations);
+        ->toEqual($this->exportedTemplateInformation);
 });
 
 

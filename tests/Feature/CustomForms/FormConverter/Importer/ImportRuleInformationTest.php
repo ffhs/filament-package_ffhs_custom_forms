@@ -20,7 +20,7 @@ beforeEach(function () {
 test('Import triggers and events', function () {
 
     $importer = FormSchemaImporter::make();
-    foreach ($this->expordetRuleInformations as $ruleData){
+    foreach ($this->exportedRuleInformation as $ruleData){
         $rule = Rule::create(['is_or_mode' => false]);
         $importer->importRuleElements($rule, $ruleData);
 
@@ -41,11 +41,11 @@ test('Import form rule\'s', function () {
     $importer = FormSchemaImporter::make();
     /**@var CustomForm $customForm*/
     $customForm = CustomForm::create(['custom_form_identifier' => TestDynamicFormConfiguration::identifier()]);
-    $importer->importRule($this->expordetRuleInformations,$customForm);
+    $importer->importRule($this->exportedRuleInformation,$customForm);
 
     $createdRules = $customForm->ownedRules;
 
     expect($createdRules)
-        ->toHaveCount(count($this->expordetRuleInformations));
+        ->toHaveCount(count($this->exportedRuleInformation));
 });
 

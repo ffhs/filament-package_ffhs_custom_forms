@@ -2,6 +2,7 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Tests\Feature\CustomForms\FormConverter;
 
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomOption\Types\SelectType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Types\TextType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\LayoutType\Types\SectionType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Events\HideEvent;
@@ -9,14 +10,36 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Events\VisibleEvent;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Trigger\ValueEqualsRuleTrigger;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomOption;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\Rule;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\RuleEvent;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\RuleTrigger;
+use Illuminate\Support\Collection;
 
 
 trait FormConverterCase
 {
+
+    public CustomForm $testForm;
+    public CustomForm $testTemplate;
+    public GeneralField $testGeneral;
+    public Collection $testCustomOptions;
+    public Collection $testFields;
+    public Collection $testTriggers1;
+    public Collection $testTriggers2;
+    public Collection $testEvents1;
+    public Collection $testEvents2;
+    public Collection $testRules;
+
+
+    public array $exportedRuleInformation;
+    public array $exportedFormInformation;
+    public array $exportedTemplateInformation;
+    public array $exportedFieldInformation;
+    public array $exportedFlattenFieldInformation;
+
+
 
     /**
      * @return void
@@ -43,6 +66,18 @@ trait FormConverterCase
             'options' => ['required' => true],
         ]);
 
+        $this->testCustomOptions = collect([
+            new CustomOption([
+                'identifier' => 'option_1',
+                'name' => ['en' => 'Option 1', 'de' => 'Option 1'],
+            ]),
+
+            new CustomOption([
+                'identifier' => 'option_2',
+                'name' => ['en' => 'Option 2', 'de' => 'Option 2'],
+            ])
+        ]);
+
 
         $this->testFields = collect([
             new CustomField([
@@ -50,7 +85,7 @@ trait FormConverterCase
                 'name' => ['de' => 'Feld 1', 'end' => 'field 1'],
                 'type' => SectionType::identifier(),
                 'form_position' => 1,
-                'layout_end_position' => 2,
+                'layout_end_position' => 3,
             ]),
             new CustomField([
                 'identifier' => '02',
@@ -62,13 +97,21 @@ trait FormConverterCase
 
             (new CustomField([
                 'identifier' => '03',
-                'template_id' => 2,
+                'name' => ['de' => 'Feld 3', 'end' => 'field 3'],
+                'options' => ['required' => true],
+                'type' => SelectType::identifier(),
                 'form_position' => 3,
+            ]))->setRelation('customOptions', $this->testCustomOptions),
+
+            (new CustomField([
+                'identifier' => '04',
+                'template_id' => 2,
+                'form_position' => 4,
             ]))->setRelation('template', $this->testTemplate),
 
             (new CustomField([
                 'general_field_id' => 1,
-                'form_position' => 4,
+                'form_position' => 5,
             ]))->setRelation('generalField', $this->testGeneral),
 
         ]);
@@ -131,15 +174,15 @@ trait FormConverterCase
     {
 
 
-        $this->exportedFormInformations = [
+        $this->exportedFormInformation = [
             'short_title' => 'My custom form title',
         ];
-        $this->exportedTemplateInformations = [
+        $this->exportedTemplateInformation = [
             'short_title' => 'My custom template title',
             'template_identifier' => 'my_template',
         ];
 
-        $this->expordetFieldInformations = [
+        $this->exportedFieldInformation = [
             [
                 'identifier' => '01',
                 'name' => ['de' => 'Feld 1', 'end' => 'field 1'],
@@ -150,11 +193,28 @@ trait FormConverterCase
                         'name' => ['de' => 'Feld 2', 'end' => 'field 2'],
                         'options' => ['required' => true],
                         'type' => TextType::identifier(),
+                    ],
+
+                    [
+                        'identifier' => '03',
+                        'name' => ['de' => 'Feld 3', 'end' => 'field 3'],
+                        'options' => ['required' => true],
+                        'customOptions' => [
+                          [
+                              'identifier' => 'option_1',
+                              'name' => ['en' => 'Option 1', 'de' => 'Option 1'],
+                          ],
+                          [
+                                'identifier' => 'option_2',
+                                'name' => ['en' => 'Option 2', 'de' => 'Option 2'],
+                           ]
+                        ],
+                        'type' => SelectType::identifier(),
                     ]
                 ]
             ],
             [
-                'identifier' => '03',
+                'identifier' => '04',
                 'template' => 'my_template',
             ],
             [
@@ -163,7 +223,7 @@ trait FormConverterCase
         ];
 
 
-        $this->expordetRuleInformations = [
+        $this->exportedRuleInformation = [
             [
                 'is_or_mode' => true,
                 'triggers' => [
@@ -205,35 +265,52 @@ trait FormConverterCase
         ];
 
 
-        $this->expordetFlattenFieldInformations = [
+        $this->exportedFlattenFieldInformation = [
             [
-                "identifier" => "02",
-                "name" => [
-                    "de" => "Feld 2",
-                    "end" => "field 2"
+                'identifier' => '02',
+                'name' => [
+                    'de' => 'Feld 2',
+                    'end' => 'field 2'
                 ],
-                "options" => [
-                    "required" => true
+                'options' => [
+                    'required' => true
                 ],
-                "type" => "text",
-                "form_position" => 2,
+                'type' => 'text',
+                'form_position' => 2,
             ],
             [
-                "identifier" => "01",
-                "name" => [
-                    "de" => "Feld 1",
-                    "end" => "field 1"
+                'identifier' => '03',
+                'name' => ['de' => 'Feld 3', 'end' => 'field 3'],
+                'options' => ['required' => true],
+                'customOptions' => [
+                    [
+                        'identifier' => 'option_1',
+                        'name' => ['en' => 'Option 1', 'de' => 'Option 1'],
+                    ],
+                    [
+                        'identifier' => 'option_2',
+                        'name' => ['en' => 'Option 2', 'de' => 'Option 2'],
+                    ],
                 ],
-                "type" => "section",
-                "form_position" => 1,
-                "layout_end_position" => 4
+                'type' => SelectType::identifier(),
+                'form_position' => 3,
             ],
             [
-                "identifier" => "03",
-                "form_position" => 4,
+                'identifier' => '01',
+                'name' => [
+                    'de' => 'Feld 1',
+                    'end' => 'field 1'
+                ],
+                'type' => 'section',
+                'form_position' => 1,
+                'layout_end_position' => 3
             ],
             [
-                "form_position" => 5,
+                'identifier' => '04',
+                'form_position' => 4,
+            ],
+            [
+                'form_position' => 5,
             ]
         ];
 

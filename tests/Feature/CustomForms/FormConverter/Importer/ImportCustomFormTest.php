@@ -19,21 +19,21 @@ test('Import form information\'s', function () {
     $config = new TestDynamicFormConfiguration();
 
     /**@var CustomForm $form*/
-    $form = $importer->importCustomForm($this->exportedFormInformations, [], $config);
+    $form = $importer->importCustomForm($this->exportedFormInformation, [], $config);
     expect($form)->not->toBeNull()
         ->and($form->is_template)->toBeFalse()
-        ->and($form->short_title)->toBe($this->exportedFormInformations['short_title']);
+        ->and($form->short_title)->toBe($this->exportedFormInformation['short_title']);
 
     /**@var CustomForm $form*/
-    $form = $importer->importCustomForm($this->exportedFormInformations, ['short_title' => 'hallo'], $config);
+    $form = $importer->importCustomForm($this->exportedFormInformation, ['short_title' => 'hallo'], $config);
     expect($form)->not->toBeNull()
         ->and($form->is_template)->toBeFalse()
         ->and($form->short_title)->toBe('hallo');
 
     /**@var CustomForm $form*/
-    $form = $importer->importCustomForm($this->exportedTemplateInformations, [], $config);
+    $form = $importer->importCustomForm($this->exportedTemplateInformation, [], $config);
     expect($form)->not->toBeNull()
         ->and($form->is_template)->toBeTrue()
-        ->and($form->short_title)->toBe($this->exportedTemplateInformations['short_title']);
+        ->and($form->short_title)->toBe($this->exportedTemplateInformation['short_title']);
 });
 

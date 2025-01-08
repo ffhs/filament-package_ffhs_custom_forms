@@ -13,6 +13,8 @@ beforeEach(function () {
 test('Export field information\'s', function () {
 
     $exporter = FormSchemaExporter::make();
-    expect($exporter->exportFieldInformation($this->testFields))
-        ->toEqual($this->expordetFieldInformations);
+    $export = $exporter->exportFieldInformation($this->testFields);
+
+    expect($export)
+        ->toEqual($this->exportedFieldInformation);
 });

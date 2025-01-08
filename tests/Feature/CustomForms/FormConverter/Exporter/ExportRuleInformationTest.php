@@ -13,5 +13,5 @@ beforeEach(function () {
 test('Export rule information\'s', function () {
     $exporter = FormSchemaExporter::make();
     expect($exporter->exportRuleInformation($this->testRules))
-        ->toEqual($this->expordetRuleInformations);
+        ->toEqual($this->exportedRuleInformation);
 });
