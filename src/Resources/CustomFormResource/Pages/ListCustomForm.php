@@ -2,6 +2,7 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormResource\Pages;
 
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\Actions\CustomFormImportAction;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormResource;
 use Ffhs\FilamentPackageFfhsCustomForms\Resources\TemplateResource\Pages\ListTemplate;
@@ -87,7 +88,10 @@ class ListCustomForm extends ListRecords
 
     protected function getHeaderActions(): array
     {
-        return [CreateAction::make(),];
+        return [
+            CustomFormImportAction::make()->link(),
+            CreateAction::make(),
+        ];
     }
 
 }

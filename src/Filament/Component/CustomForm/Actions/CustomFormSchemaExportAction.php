@@ -1,8 +1,8 @@
 <?php
 
-namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm;
+namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\Actions;
 
-use Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\FormExporter\SchemaExporter\FormSchemaExporter;
+use Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\FormConverter\SchemaExporter\FormSchemaExporter;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
@@ -16,10 +16,12 @@ class CustomFormSchemaExportAction extends Action
         $exportData = $exporter->export($record);
         $exportJson  = json_encode($exportData, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT | JSON_THROW_ON_ERROR);
 
-        $fileName =   $record->short_title . " - Formular " . date('Y-m-d H:i') .".json";
+        $type = $record->is_template ? 'Template' : 'Formular';
+        $fileName =   $record->short_title . ' - ' .$type .' '. date('Y-m-d H:i') .'.json';
+
 
         Notification::make()
-            ->title('Formular wurde erfolgreich exportiert')//ToDo Translate
+            ->title($type .' wurde erfolgreich exportiert')//ToDo Translate
             ->success()
             ->send();
 
@@ -41,8 +43,6 @@ class CustomFormSchemaExportAction extends Action
     {
         parent::setUp();
         $this->action($this->callExportAction(...));
-        $this->label("Export Formular"); //ToDo Translate
+        $this->label('Export Formular'); //ToDo Translate
     }
-
-
 }

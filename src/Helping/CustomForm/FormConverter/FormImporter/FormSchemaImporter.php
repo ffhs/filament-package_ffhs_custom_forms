@@ -24,6 +24,8 @@ class FormSchemaImporter
 
     public function import(array $rawForm, DynamicFormConfiguration $configuration, array $formInformation = [], array $templateMap = [], array $generalFieldMap = []): CustomForm{
 
+        //ToDo Check if the identifiers of the fields exist
+
         DB::beginTransaction();
 
         try {

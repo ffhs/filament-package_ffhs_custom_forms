@@ -60,13 +60,13 @@ trait ImportFieldInformation
 
             if(array_key_exists('template', $rawField)){
                 $template = $rawField['template'];
-                $field['template_id'] = $templateMap[$template];
+                $field['template_id'] = $templateMap[$template] ?? $template;
                 unset($rawField["template"]);
             }
 
             if(array_key_exists('general_field', $rawField)){
                 $generalField = $rawField['general_field'];
-                $field['general_field_id'] = $generalFieldMap[$generalField];
+                $field['general_field_id'] = $generalFieldMap[$generalField] ?? $generalField; //ToDo to test
                 unset($rawField["general_field"]);
             }
 
