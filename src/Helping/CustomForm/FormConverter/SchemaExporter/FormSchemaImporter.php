@@ -2,15 +2,19 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\FormConverter\SchemaExporter;
 
+use Error;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormConfiguration\DynamicFormConfiguration;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\FormConverter\SchemaExporter\Traids\ImportCustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\FormConverter\SchemaExporter\Traids\ImportFieldInformation;
+use Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\FormConverter\SchemaExporter\Traids\ImportRuleInformation;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
+use Illuminate\Support\Facades\DB;
 
 class FormSchemaImporter
 {
     use ImportFieldInformation;
     use ImportCustomForm;
+    use ImportRuleInformation;
 
     public static function make(): static
     {
@@ -19,18 +23,27 @@ class FormSchemaImporter
 
     public function import(array $rawForm, DynamicFormConfiguration $configuration, array $formInformation = [], array $templateMap = [], array $generalFieldMap = []): CustomForm{
 
-        $fieldInformations = $rawForm['fields'] ?? [];
-        $ruleInformations = $rawForm['rules'] ?? [];
-        unset($rawForm['fields']);
-        unset($rawForm['rules']);
+        DB::beginTransaction();
+
+        try {
+            $fieldInformations = $rawForm['fields'] ?? [];
+            $ruleInformations = $rawForm['rules'] ?? [];
+            unset($rawForm['fields']);
+            unset($rawForm['rules']);
 
 
-        $customForm = $this->importCustomForm($rawForm, $formInformation, $configuration);
+            $customForm = $this->importCustomForm($rawForm, $formInformation, $configuration);
 
+            $this->createImportFields($fieldInformations, $customForm, $templateMap, $generalFieldMap);
 
-        $this->importFields($fieldInformations, $customForm, $templateMap, $generalFieldMap);
+            $this->importRule($ruleInformations, $customForm);
 
-        return $customForm;
+            DB::commit();
+            return $customForm;
+        }catch (Error|\Exception $exception){
+            DB::rollBack();
+            throw new FormImportExeption($exception->getMessage());
+        }
     }
 
 
