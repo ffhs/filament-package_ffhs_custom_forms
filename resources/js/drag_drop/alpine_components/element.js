@@ -11,13 +11,9 @@ export default function dragDropElement(group, element){
         action: null,
         container: false,
         init() {
-            console.log('Start up dragDropElement');
             setupDraggable(this.$el)
             setupDragOverEffect(this.$el)
             setUpDropField(this.$el)
-        },
-        destroy() {
-            console.log('Cleaning up dragDropElement');
         }
     }
 }

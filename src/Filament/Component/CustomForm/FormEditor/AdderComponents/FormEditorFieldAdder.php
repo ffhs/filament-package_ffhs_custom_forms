@@ -14,7 +14,7 @@ abstract class FormEditorFieldAdder extends Group {
     public static function addNewField($component, array $arguments, EditRecord $livewire, array $fieldData): void {
         //Check if arguments exist
         if(empty($arguments["position"])) return;
-        if(empty($arguments["stateWithField"])) return;
+        if(is_null($arguments["stateWithField"])) return;
         if(empty($arguments["temporaryKey"])) return;
 
         $position = $arguments['position'];

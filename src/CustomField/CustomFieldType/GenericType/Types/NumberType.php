@@ -24,7 +24,7 @@ class NumberType extends CustomFieldType
     }
 
     public function icon(): string {
-        return  "tabler-number";
+        return  "carbon-character-whole-number";
     }
 
     public function extraTypeOptions(): array {

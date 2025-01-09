@@ -127,7 +127,6 @@ function updatePositionsFlatten(state, container, group, data) {
   });
   let notUsedKeys = Object.keys(state).filter((x) => !usedKeys.includes(x));
   notUsedKeys.forEach((x) => delete state[x]);
-  console.log("not Found Keys:", notUsedKeys);
 }
 function updatePositionsOrder(state, container, group, data) {
   let currentPos = 1;
@@ -224,17 +223,12 @@ function handleDropAction(target, dragElement) {
     temporaryKey,
     state: JSON.parse(JSON.stringify(targetState))
   };
-  console.log("-");
-  console.log("-------------------------------------------");
   Object.keys(cloneState).forEach((key) => {
     console.log(key, cloneState[key]["form_position"]);
   });
-  console.log("-------------------------------------------");
   Object.keys(targetState).forEach((key) => {
     console.log(key, targetState[key]["form_position"]);
   });
-  console.log("-------------------------------------------");
-  console.log("-");
   if (targetParent.getAttribute("disabled")) return;
   $wire.mountFormComponentAction(toActionPath, toDoAction, metaData);
 }

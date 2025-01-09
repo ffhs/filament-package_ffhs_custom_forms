@@ -2,8 +2,8 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormResource\Pages;
 
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\CustomFormTypeSelector;
 use Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormResource;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Pages\CreateRecord;
@@ -16,15 +16,10 @@ class CreateCustomForm extends CreateRecord
         return $form
             ->schema([
                 TextInput::make("short_title")
-                    ->label("Namen"), //ToDo Translate
-                Select::make("custom_form_identifier")
-                    ->label("Formularart") //ToDo Translate
+                    ->label("Name") //ToDo Translate
+                    ->required(),
+                CustomFormTypeSelector::make()
                     ->required()
-                    ->options(function (){
-                        $keys = array_map(fn($config) => $config::identifier(),config("ffhs_custom_forms.forms"));
-                        $values = array_map(fn($config) => $config::displayName(),config("ffhs_custom_forms.forms"));
-                        return array_combine($keys,$values);
-                    }),
             ]);
     }
 

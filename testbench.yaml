@@ -1,0 +1,11 @@
+laravel: '@testbench'
+
+migrations:
+  - workbench/database/migrations
+
+seeders:
+  - Database\Seeders\DatabaseSeeder
+
+workbench:
+  start: '/'
+  install: true

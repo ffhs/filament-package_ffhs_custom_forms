@@ -21,7 +21,7 @@ class IconSelectType extends CustomFieldType
     }
 
     public function icon(): string {
-        return  "tabler-color-picker";
+        return  "carbon-color-palette";
     }
 
     public function extraTypeOptions(): array {
