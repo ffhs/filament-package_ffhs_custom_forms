@@ -45,7 +45,7 @@ class FormSchemaImporter
             return $customForm;
         }catch (Error|\Exception $exception){
             DB::rollBack();
-            throw new FormImportException($exception->getMessage());
+            throw new FormImportException($exception);
         }
     }
 

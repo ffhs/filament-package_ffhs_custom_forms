@@ -22,8 +22,11 @@ trait ImportRuleInformation
 
         $customForm->rules()->saveMany($rules);
 
-        foreach ($rawDataRule as $index => $ruleRaw) {
-            $this->importRuleElements($rules[$index], $ruleRaw);
+
+        $count = 0;
+        foreach ($rawDataRule as $ruleRaw) {
+            $this->importRuleElements($rules[$count], $ruleRaw);
+            $count++;
         }
     }
     // @codeCoverageIgnoreStart
