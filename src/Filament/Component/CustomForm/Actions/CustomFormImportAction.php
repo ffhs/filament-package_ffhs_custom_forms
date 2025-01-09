@@ -2,6 +2,7 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\Actions;
 
+use Closure;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormConfiguration\DynamicFormConfiguration;
 use Ffhs\FilamentPackageFfhsCustomForms\Exceptions\FormImportException;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\CustomFormTypeSelector;
@@ -18,6 +19,7 @@ use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Forms\Get;
 use Filament\Notifications\Notification;
 use Filament\Support\Enums\MaxWidth;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
@@ -25,55 +27,79 @@ use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 class CustomFormImportAction extends Action
 {
 
+    private Closure|CustomForm|null  $existingForm = null;
+
+    public function existingForm(Closure|CustomForm|null $existingForm): static
+    {
+        $this->existingForm = $existingForm;
+        return $this;
+    }
+
     public function callExportAction($data): void
     {
-        /**@var TemporaryUploadedFile $file*/
-        $file = $data['form_file'];
-        $customFormIdentifier = new (DynamicFormConfiguration::getFormConfigurationClass($data['custom_form_identifier']))();
-        $formData = $this->getUploadedInfos($data['form_file']);
-
-        $isTemplate = $data['is_template'] ?? false;
-        $templateIdentifier = $isTemplate? $data['template_identifier']:null;
-        $type = $isTemplate? 'Template' : 'Form'; //ToDo Translate
-
-        $shouldImportRules = $data['should_import_rules']?? true;
-
-        $importer = FormSchemaImporter::make();
-
-        $shortTitle =  $data['short_title'];
-        $formInformation = ['short_title' => $shortTitle];
-        $generalFieldMapRaw = $data['general_field_map'];
-        $templateMapRaw = $data['template_map'];
-
-
-        if($isTemplate){
-              $formInformation['template_identifier'] = $templateIdentifier;
-        }else{
-              unset($formData['form']['template_identifier']);
-        }
-
-
-        if(!$shouldImportRules) unset($formData['rules']);
-
-        $templateMap = [];
-        foreach ($templateMapRaw as $templateMapped) {
-            $templateMap[$templateMapped['template_identifier']] = $templateMapped['template_id'];
-        }
-
-        $generalFieldMap = [];
-        foreach ($generalFieldMapRaw as $generalFieldMapped) {
-            $generalFieldMap[$generalFieldMapped['general_field_identifier']] = $generalFieldMapped['general_field_id'];
-        }
-
 
         try {
-            $form = $importer->import(
-                rawForm: $formData,
-                configuration: $customFormIdentifier,
-                formInformation: $formInformation,
-                templateMap: $templateMap,
-                generalFieldMap: $generalFieldMap
-            );
+            $importer = FormSchemaImporter::make();
+
+            $file = $data['form_file'];
+            $formData = $this->getUploadedInfos($data['form_file']);
+            $type = "";
+            $form = null;
+
+            $shouldImportRules = $data['should_import_rules']?? true;
+
+            $generalFieldMapRaw = $data['general_field_map'];
+            $templateMapRaw = $data['template_map'];
+
+
+            if(!$shouldImportRules) unset($formData['rules']);
+
+            $templateMap = [];
+            foreach ($templateMapRaw as $templateMapped) {
+                $templateMap[$templateMapped['template_identifier']] = $templateMapped['template_id'];
+            }
+
+            $generalFieldMap = [];
+            foreach ($generalFieldMapRaw as $generalFieldMapped) {
+                $generalFieldMap[$generalFieldMapped['general_field_identifier']] = $generalFieldMapped['general_field_id'];
+            }
+
+
+            /**@var TemporaryUploadedFile $file*/
+            if($this->hasExistingForm()){
+                $form = $this->getExistingForm();
+                $type = $form->is_template? 'Template' : 'Form'; //ToDo Translate
+                $form = $importer->importWithExistingForm(
+                    rawForm: $formData,
+                    customForm: $form,
+                    templateMap: $templateMap,
+                    generalFieldMap: $generalFieldMap
+                );
+            }
+            else{
+                $customFormIdentifier = new (DynamicFormConfiguration::getFormConfigurationClass($data['custom_form_identifier']))();
+
+                $isTemplate = $data['is_template'] ?? false;
+                $templateIdentifier = $isTemplate? $data['template_identifier']:null;
+                $type = $isTemplate? 'Template' : 'Form'; //ToDo Translate
+                $shortTitle =  $data['short_title'];
+                $formInformation = ['short_title' => $shortTitle];
+
+                if($isTemplate){
+                    $formInformation['template_identifier'] = $templateIdentifier;
+                }else{
+                    unset($formData['form']['template_identifier']);
+                }
+
+                $form = $importer->import(
+                    rawForm: $formData,
+                    configuration: $customFormIdentifier,
+                    formInformation: $formInformation,
+                    templateMap: $templateMap,
+                    generalFieldMap: $generalFieldMap
+                );
+
+            }
 
             Notification::make()
                 ->title($type .'\'' . $form->short_title . '\' wurde erfolgreich importiert')
@@ -93,15 +119,25 @@ class CustomFormImportAction extends Action
         $file->delete();
     }
 
+    public static function make(?string $name = 'import_custom_form'): static
+    {
+        return parent::make($name);
+    }
+
     protected function getUploadedInfos(?TemporaryUploadedFile $file): array
     {
         if(is_null($file)) return [];
         return json_decode(json: $file->getContent(), associative: true);
     }
 
-    public static function make(?string $name = 'import_custom_form'): static
+    public function hasExistingForm(): bool
     {
-        return parent::make($name);
+        return !is_null($this->getExistingForm());
+    }
+
+    public function getExistingForm(): CustomForm|null
+    {
+        return $this->evaluate($this->existingForm);
     }
 
     public function getFormSchema(): array
@@ -109,6 +145,7 @@ class CustomFormImportAction extends Action
         return [
             CustomFormTypeSelector::make()
                 ->afterStateUpdated($this->afterFileUpload(...))
+                ->hidden($this->hasExistingForm())
                 ->required()
                 ->live(),
 
@@ -131,6 +168,7 @@ class CustomFormImportAction extends Action
                     Group::make([
                         TextInput::make('short_title')
                             ->label('Name') //ToDo Translate
+                            ->hidden($this->hasExistingForm())
                             ->required()
                             ->live(),
 
@@ -138,13 +176,16 @@ class CustomFormImportAction extends Action
                         TextInput::make('template_identifier')
                             ->label('Template Identifier')//ToDo Translate
                             ->visibleOn('is_template')
+                            ->hidden($this->hasExistingForm())
                             ->required(),
                     ]),
 
                     Group::make([
                         Toggle::make('is_template')
+                            ->hidden($this->hasExistingForm())
                             ->disabled(fn($get) => !empty($get('template_map')) || !empty($get('general_field_map')))
                             ->label('ist das Formular ein Template?') //ToDo Translate
+                            ->hidden($this->hasExistingForm())
                             ,
 
                         Toggle::make('should_import_rules')
@@ -286,16 +327,23 @@ class CustomFormImportAction extends Action
         $this->modalWidth(MaxWidth::ScreenTwoExtraLarge);
     }
 
-
     protected function getTemplateOptions($get): array
     {
         $options = CustomForm::allCached()
-            ->where('custom_form_identifier',$get('../../custom_form_identifier'))
+            ->where('custom_form_identifier', $this->getDynamicFormConfiguration($get, '../../custom_form_identifier'))
             ->whereNotNull('template_identifier')
             ->pluck('short_title', 'id')
             ->toArray();
 
          return array_map(fn($option) => $option ?? '',$options);
+    }
+
+    protected function getDynamicFormConfiguration(Get|null $get = null, string $getPath = 'custom_form_identifier'): string|null
+    {
+        $existingForm = $this->getExistingForm();
+        if(!is_null($existingForm)) return $existingForm->custom_form_identifier;
+        if(!is_null($get)) return $get($getPath);
+        return null;
     }
 
     protected function getGeneralFieldOptions($get): array
@@ -304,10 +352,11 @@ class CustomFormImportAction extends Action
             ->whereIn(
                 'id',
                 GeneralFieldForm::allCached()
-                    ->where('custom_form_identifier', $get('../../custom_form_identifier'))
+                    ->where('custom_form_identifier', $this->getDynamicFormConfiguration($get, '../../custom_form_identifier'))
                     ->pluck('general_field_id')
             )
             ->pluck('name', 'id')->toArray();
         return array_map(fn($option) => $option ?? '',$options);
     }
+
 }

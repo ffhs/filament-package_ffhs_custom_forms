@@ -29,8 +29,18 @@ class FormSchemaImporter
         DB::beginTransaction();
 
         try {
+            $fieldInformations = $rawForm['fields'] ?? [];
+            $ruleInformations = $rawForm['rules'] ?? [];
+            unset($rawForm['fields']);
+            unset($rawForm['rules']);
+
+
             $customForm = $this->importCustomForm($rawForm, $formInformation, $configuration);
-            $this->importWithExistingForm($rawForm, $customForm, $templateMap, $generalFieldMap);
+
+            $this->importFields($fieldInformations, $customForm, $templateMap, $generalFieldMap);
+
+            $this->importRule($ruleInformations, $customForm);
+
             DB::commit();
             return $customForm;
         }catch (Error|\Exception $exception){
@@ -41,6 +51,7 @@ class FormSchemaImporter
 
 
     public function importWithExistingForm(array $rawForm, CustomForm $customForm,  array $templateMap = [], array $generalFieldMap = []): CustomForm{
+
         //ToDo Check if the identifiers of the fields exist
 
         DB::beginTransaction();

@@ -122,5 +122,23 @@ test('Import Form with an error and rollback', function () {
 });
 
 
+test('Import Form on existing Form', function () {
+    $importer = FormSchemaImporter::make();
+    $form = CustomForm::create(
+        ['short_title' => 'test_2',
+            'custom_form_identifier' => TestDynamicFormConfiguration::identifier()
+        ]);
+    $formsCountBefore= CustomForm::query()->count();
+    $form = $importer->importWithExistingForm($this->formData, $form);
+    expect($form)->not->toBeNull()
+        ->and($form->ownedFields)->toHaveCount(count($this->exportedFlattenFieldInformation))
+        ->and(CustomForm::query()->count())->toBe($formsCountBefore);
+});
+
+
+test('Import Form on existing Form with existing Fields', function () {
+//ToDo
+});
+
 
 
