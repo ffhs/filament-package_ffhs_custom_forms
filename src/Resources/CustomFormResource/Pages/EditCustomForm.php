@@ -3,9 +3,11 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormResource\Pages;
 
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\Actions\CustomFormSchemaExportAction;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\Actions\CustomFormSchemaImportAction;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\FormEditor\CustomFormEditor;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\EditHelper\EditCustomFormLoadHelper;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\EditHelper\EditCustomFormSaveHelper;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormResource;
 use Filament\Actions;
 use Filament\Forms\Components\Section;
@@ -50,9 +52,19 @@ class EditCustomForm extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
+            CustomFormSchemaExportAction::make(),
+            CustomFormSchemaImportAction::make()
+                ->existingForm(fn(CustomForm $record) => $record)
+                ->disabled(fn(CustomForm $record) =>
+                    $record->ownedFields->count() != 0 ||
+                    $record->rules->count() != 0
+                )
+                ->action(function(CustomFormSchemaImportAction $action, $data){
+                    $action->callImportAction($data);
+                    $action->redirect('edit');
+                }),
             Actions\LocaleSwitcher::make(),
             Actions\DeleteAction::make(),
-            CustomFormSchemaExportAction::make()
         ];
     }
 

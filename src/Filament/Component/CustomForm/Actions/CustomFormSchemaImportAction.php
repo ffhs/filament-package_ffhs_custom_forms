@@ -24,7 +24,7 @@ use Filament\Notifications\Notification;
 use Filament\Support\Enums\MaxWidth;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
-class CustomFormImportAction extends Action
+class CustomFormSchemaImportAction extends Action
 {
 
     private Closure|CustomForm|null  $existingForm = null;
@@ -35,7 +35,7 @@ class CustomFormImportAction extends Action
         return $this;
     }
 
-    public function callExportAction($data): void
+    public function callImportAction($data): void
     {
 
         try {
@@ -162,7 +162,7 @@ class CustomFormImportAction extends Action
 
             Group::make()
                 ->columns()
-                ->hidden(fn($get) => empty($get('form_file')) || is_null($get('custom_form_identifier')))
+                ->hidden(fn($get) => empty($get('form_file')) || is_null($this->getDynamicFormConfiguration($get)))
                 ->schema([
 
                     Group::make([
@@ -240,9 +240,17 @@ class CustomFormImportAction extends Action
         ];
     }
 
+    protected function getDynamicFormConfiguration(Get|null $get = null, string $getPath = 'custom_form_identifier'): string|null
+    {
+        $existingForm = $this->getExistingForm();
+        if(!is_null($existingForm)) return $existingForm->custom_form_identifier;
+        if(!is_null($get)) return $get($getPath);
+        return null;
+    }
+
     protected function afterFileUpload($get, $set): void
     {
-        if(empty($get('form_file')) || is_null($get('custom_form_identifier'))) return;
+        if(empty($get('form_file')) || is_null($this->getDynamicFormConfiguration($get))) return;
 
         try {
             $set('should_import_rules', true);
@@ -319,7 +327,7 @@ class CustomFormImportAction extends Action
     protected function setUp(): void
     {
         parent::setUp();
-        $this->action($this->callExportAction(...));
+        $this->action($this->callImportAction(...));
         $this->label('Import Formular/Template'); //ToDo Translate
 
         $this->form($this->getFormSchema(...));
@@ -336,14 +344,6 @@ class CustomFormImportAction extends Action
             ->toArray();
 
          return array_map(fn($option) => $option ?? '',$options);
-    }
-
-    protected function getDynamicFormConfiguration(Get|null $get = null, string $getPath = 'custom_form_identifier'): string|null
-    {
-        $existingForm = $this->getExistingForm();
-        if(!is_null($existingForm)) return $existingForm->custom_form_identifier;
-        if(!is_null($get)) return $get($getPath);
-        return null;
     }
 
     protected function getGeneralFieldOptions($get): array

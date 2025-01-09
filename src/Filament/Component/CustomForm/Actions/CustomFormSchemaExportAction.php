@@ -10,8 +10,12 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class CustomFormSchemaExportAction extends Action
 {
-    public function callExportAction(CustomForm $record): StreamedResponse
+
+    private \Closure|CustomForm $customForm;
+
+    public function callExportAction(): StreamedResponse
     {
+        $record = $this->getCustomForm();
         $exporter = FormSchemaExporter::make();
         $exportData = $exporter->export($record);
         $exportJson  = json_encode($exportData, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT | JSON_THROW_ON_ERROR);
@@ -34,6 +38,11 @@ class CustomFormSchemaExportAction extends Action
 
     }
 
+    public function getCustomForm(): CustomForm
+    {
+        return $this->evaluate($this->customForm);
+    }
+
     public static function make(?string $name = 'export_custom_form'): static
     {
         return parent::make($name);
@@ -42,7 +51,14 @@ class CustomFormSchemaExportAction extends Action
     protected function setUp(): void
     {
         parent::setUp();
+        $this->customForm(fn(CustomForm $record) => $record);
         $this->action($this->callExportAction(...));
         $this->label('Export Formular'); //ToDo Translate
+    }
+
+    public function customForm(CustomForm|\Closure $customForm): static
+    {
+        $this->customForm = $customForm;
+        return $this;
     }
 }
