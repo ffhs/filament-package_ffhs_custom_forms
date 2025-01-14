@@ -16,7 +16,7 @@ class FieldMapper
     public static function getLabelName(CustomField|CustomFieldAnswer  $record) :String{
         if($record instanceof  CustomFieldAnswer) $record = $record->customField;
         $label = $record->name;
-        if($label != "") $label .= ":";
+       // if($label != "") $label .= ":"; ToDo can set or not
         return $label;
     }
 

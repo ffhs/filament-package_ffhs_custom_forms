@@ -151,7 +151,7 @@ class CustomFormSchemaImportAction extends Action
 
             FileUpload::make('form_file')
                 ->required()
-                ->label('Formular Datei')
+                ->label('Formulardatei')
                 ->orientImagesFromExif(false)
                 ->storeFiles(false)
                 ->deletable(false)
