@@ -56,12 +56,13 @@ describe('getFormSchema visible options after file upload and select of form con
 
         $this->livewire->assertDontSee('Formularart');
         $this->livewire->assertSee('Formulardatei');
-    })->only();
+    });
 });
 
 
-
-
+test('auto fill form informations', function () {})->todo('implement');
+test('auto on implements template disable is template option', function () {})->todo('implement');
+test('on import the form in an form, does it apply on the form', function () {})->todo('implement');
 
 /*
  *
