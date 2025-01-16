@@ -29,7 +29,8 @@
         "codeat3/blade-carbon-icons": "^2.18.2",
         "guava/filament-icon-picker": "^2.0",
         "filament/spatie-laravel-translatable-plugin": "^3.2",
-        "coolsam/flatpickr": "3.x-dev"
+        "coolsam/flatpickr": "3.x-dev",
+        "secondnetwork/blade-tabler-icons": "dev-main"
     },
     "extra": {
         "laravel": {
@@ -44,7 +45,8 @@
     "require-dev": {
         "pestphp/pest": "3.x-dev",
         "orchestra/testbench": "^9.0",
-        "pestphp/pest-plugin-laravel": "3.x-dev"
+        "pestphp/pest-plugin-laravel": "3.x-dev",
+        "pestphp/pest-plugin-livewire": "3.x-dev"
     },
     "config": {
         "allow-plugins": {

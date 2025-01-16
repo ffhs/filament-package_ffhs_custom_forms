@@ -1,0 +1,113 @@
+{
+    "form": {
+        "short_title": "My custom form title"
+    },
+    "fields": [
+        {
+            "identifier": "01",
+            "type": "section",
+            "name": {
+                "de": "Feld 1",
+                "end": "field 1"
+            },
+            "fields": [
+                {
+                    "options": {
+                        "required": true
+                    },
+                    "identifier": "02",
+                    "type": "text",
+                    "name": {
+                        "de": "Feld 2",
+                        "end": "field 2"
+                    }
+                },
+                {
+                    "options": {
+                        "required": true
+                    },
+                    "identifier": "03",
+                    "type": "select",
+                    "name": {
+                        "de": "Feld 3",
+                        "end": "field 3"
+                    },
+                    "customOptions": [
+                        {
+                            "identifier": "option_1",
+                            "name": {
+                                "en": "Option 1",
+                                "de": "Option 1"
+                            }
+                        },
+                        {
+                            "identifier": "option_2",
+                            "name": {
+                                "en": "Option 2",
+                                "de": "Option 2"
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "identifier": "04",
+            "template": "my_template"
+        },
+        {
+            "general_field": "test_general"
+        }
+    ],
+    "rules": [
+        {
+            "is_or_mode": true,
+            "triggers": [
+                {
+                    "is_inverted": false,
+                    "type": "value_equals_anchor",
+                    "data": {
+                        "target": "02",
+                        "value": "01"
+                    }
+                },
+                {
+                    "is_inverted": false,
+                    "type": "value_equals_anchor",
+                    "data": {
+                        "target": "02",
+                        "value": "02"
+                    }
+                }
+            ],
+            "events": [
+                {
+                    "type": "hidden_event",
+                    "data": {
+                        "target": "01"
+                    }
+                }
+            ]
+        },
+        {
+            "is_or_mode": false,
+            "triggers": [
+                {
+                    "is_inverted": true,
+                    "type": "value_equals_anchor",
+                    "data": {
+                        "target": "02"
+                    }
+                }
+            ],
+            "events": [
+                {
+                    "type": "visible_event",
+                    "data": {
+                        "target": "01"
+                    }
+                }
+            ]
+        }
+    ]
+}
