@@ -30,7 +30,7 @@
         "guava/filament-icon-picker": "^2.0",
         "filament/spatie-laravel-translatable-plugin": "^3.2",
         "coolsam/flatpickr": "3.x-dev",
-        "secondnetwork/blade-tabler-icons": "dev-main"
+        "secondnetwork/blade-tabler-icons": "^3.26"
     },
     "extra": {
         "laravel": {
