@@ -8,10 +8,12 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\SplittedType
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\SplittedType\Types\Views\RepeaterLayoutTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\LayoutTypeDefaultLayoutTypeOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\ValidationTypeOptionGroup;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\ActionLabelTypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\FastTypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\MaxAmountOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\MinAmountOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\ShowAsFieldsetOption;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\ShowLabelOption;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\TextInput;
 
@@ -39,6 +41,7 @@ class RepeaterLayoutType extends CustomSplitType
             LayoutTypeDefaultLayoutTypeOptionGroup::make()
                 //->removeTypeOption("helper_text")
                 ->mergeTypeOptions([
+                    'show_label' =>  ShowLabelOption::make(),
                     'show_as_fieldset' => ShowAsFieldsetOption::make()
                         ->modifyComponent(fn(Component $component) => $component->columnStart(2)),
                     'default_amount' => FastTypeOption::makeFast(1,
@@ -49,6 +52,7 @@ class RepeaterLayoutType extends CustomSplitType
                             ->integer()
                             ->required(),
                     ),
+                    'add_action_label' => ActionLabelTypeOption::make()
 //                    'ordered' => new FastTypeOption(false,
 //                        Toggle::make('ordered')
 //                            ->default(false)

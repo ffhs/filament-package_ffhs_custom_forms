@@ -108,6 +108,8 @@ return [
             'help_text' => 'Hilfetext',
             'min_amount' => 'Minimale Anzahl',
             'max_amount' => 'Maximale Anzahl',
+            'show_label' => 'Titel des Feldes anzeigen',
+            'action_Label' => 'Aktions Label',
 
             // custom field type (FastTypeOption)
             'color_type' => 'Farbformat',

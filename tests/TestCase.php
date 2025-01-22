@@ -6,7 +6,6 @@ use Filament\Facades\Filament;
 use Illuminate\Foundation\AliasLoader;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
 use Illuminate\Support\Facades\Artisan;
-use Orchestra\Testbench\Attributes\WithConfig;
 use Orchestra\Testbench\Attributes\WithMigration;
 use Orchestra\Testbench\Concerns\WithWorkbench;
 use Orchestra\Testbench\TestCase as Orchestra;
@@ -14,7 +13,7 @@ use Workbench\App\FFHs\TestDynamicFormConfiguration;
 use Workbench\Database\Seeders\DatabaseSeeder;
 
 
-#[WithConfig('database.default', 'mysql')]
+//#[WithConfig('database.default', 'mysql')]
 #[WithMigration]
 abstract class TestCase extends Orchestra
 {
@@ -26,7 +25,6 @@ abstract class TestCase extends Orchestra
     protected function getEnvironmentSetUp($app)
     {
         $app['config']->set('ffhs_custom_forms.forms', [TestDynamicFormConfiguration::class]);
-
 
 
         $loader = AliasLoader::getInstance();
