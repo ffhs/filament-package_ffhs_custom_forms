@@ -5,6 +5,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormAnswerResource\Pages\EditCustomFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\SplittedType\Types\RepeaterLayoutType;
+use Illuminate\Support\Facades\Cache;
 use Workbench\App\FFHs\TestDynamicFormConfiguration;
 use Workbench\App\Models\UserSuperAdmin;
 
@@ -66,6 +67,7 @@ test('repeater show add action label', function () {
 
 
     $this->customField->update(['options' => ['add_action_label' => null]]);
+    Cache::clear();
     $livewire = livewire(EditCustomFormAnswer::class, ['record' => $this->formAnsware->id]);
     $livewire->assertDontSeeText($testLabel);
 
