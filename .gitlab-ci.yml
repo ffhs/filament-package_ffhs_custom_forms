@@ -27,6 +27,7 @@ test:
   script:
     - composer install
     - ./vendor/bin/testbench vendor:publish --tag="filament-package_ffhs_custom_forms-migrations"
+    - ./vendor/bin/testbench workbench:build"
     - php vendor/bin/pest --coverage --parallel
   coverage: /Total:\s*([^%]+)/
 
