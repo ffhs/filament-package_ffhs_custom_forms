@@ -10,6 +10,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\LayoutType
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\ValidationTypeOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\ActionLabelTypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\FastTypeOption;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\HelptextTypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\MaxAmountOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\MinAmountOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\ShowAsFieldsetOption;
@@ -52,7 +53,8 @@ class RepeaterLayoutType extends CustomSplitType
                             ->integer()
                             ->required(),
                     ),
-                    'add_action_label' => ActionLabelTypeOption::make()
+                    'add_action_label' => ActionLabelTypeOption::make(),
+                    "helper_text" => HelptextTypeOption::make()
 //                    'ordered' => new FastTypeOption(false,
 //                        Toggle::make('ordered')
 //                            ->default(false)

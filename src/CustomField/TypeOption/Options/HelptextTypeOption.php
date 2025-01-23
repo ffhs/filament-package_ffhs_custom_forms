@@ -6,6 +6,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\TypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\TypeOptionPluginTranslate;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\TextInput;
 
 class HelptextTypeOption extends TypeOption
 {
@@ -17,17 +18,18 @@ class HelptextTypeOption extends TypeOption
 
 
     public function getComponent(string $name): Component {
-        return  RichEditor::make($name)
+        return  TextInput::make($name)
+        //RichTextEditor::make($name)
             ->label($this->translate("help_text"))
             ->grow(false)
             ->columnSpanFull()
-            ->live()
-            ->toolbarButtons([
-                'bold',
-                'italic',
-                'link',
-                'strike',
-                'underline',
-            ]);
+            ->live();
+//            ->toolbarButtons([
+//                'bold',
+//                'italic',
+//                'link',
+//                'strike',
+//                'underline',
+//            ]);
     }
 }
