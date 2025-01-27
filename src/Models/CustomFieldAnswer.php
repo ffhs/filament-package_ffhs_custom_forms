@@ -7,6 +7,8 @@ use Ffhs\FilamentPackageFfhsCustomForms\Helping\Caching\HasCacheModel;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOneThrough;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 /**
  * @property int $id
@@ -21,6 +23,7 @@ use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 class CustomFieldAnswer extends Model implements CachedModel
 {
     use HasCacheModel;
+    use LogsActivity;
 
     //private array $data = [];
 
@@ -43,6 +46,11 @@ class CustomFieldAnswer extends Model implements CachedModel
         "customFormAnswer",
     ];
 
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly(['answer', 'path']);
+    }
 
     public function customForm(): HasOneThrough
     {
