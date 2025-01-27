@@ -9,7 +9,6 @@ test:
     - when: never
 
   before_script:
-    - echo ${GITLAB_URL}
     - apt update && apt install -y git curl libcurl4-openssl-dev pkg-config
     - php -r 'copy("https://getcomposer.org/installer", "composer-setup.php");'
     - php composer-setup.php --install-dir=/usr/local/bin --filename=composer
@@ -28,6 +27,6 @@ test:
     - composer install
     - ./vendor/bin/testbench vendor:publish --tag="filament-package_ffhs_custom_forms-migrations"
     - ./vendor/bin/testbench workbench:build
-    - php vendor/bin/pest --coverage --parallel
+    - php vendor/bin/pest --coverage
   coverage: /Total:\s*([^%]+)/
 
