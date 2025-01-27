@@ -1,11 +1,16 @@
 <?php
 
-namespace Ffhs\FilamentPackageFfhsCustomForms;
+namespace Ffhs\FilamentPackageFfhsCustomForms\Facades;
 
+use Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\DataManagment\HasCustomFormSaveDataManagement;
 use Illuminate\Support\Facades\Facade;
 
-class FilamentPackageFfhsCustomFormsFacade extends Facade
+class CustomForms extends Facade
 {
+
+
+    use HasCustomFormSaveDataManagement;
+
     /**
      * Get the registered name of the component.
      *

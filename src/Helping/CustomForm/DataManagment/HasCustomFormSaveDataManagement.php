@@ -1,6 +1,6 @@
 <?php
 
-namespace Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\RenderHelp;
+namespace Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\DataManagment;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
@@ -10,7 +10,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\Rule;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Form;
 
-class CustomFormSaveHelper {
+trait HasCustomFormSaveDataManagement {
 
     public static function save(CustomFormAnswer $formAnswer, Form $form, string|null $path = null) :void{
         // $path is then path to the customFormData in the formData

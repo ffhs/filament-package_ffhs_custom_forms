@@ -4,8 +4,8 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm;
 
 
 use Closure;
+use Ffhs\FilamentPackageFfhsCustomForms\Facades\CustomForms;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\Render\CustomFormRender;
-use Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\RenderHelp\CustomFormSaveHelper;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
 use Filament\Forms\Components\Component;
@@ -45,7 +45,7 @@ class CustomFormComponent extends Component
         //SetUp Auto Update
         $this->afterStateUpdated(function (CustomFormComponent $component, array $state,?CustomFormAnswer $record){
             if(!$component->getIsAutoSave()) return;
-            CustomFormSaveHelper::save($record, $component->getLivewire()->getForm('form'));
+            CustomForms::save($record, $component->getLivewire()->getForm('form'));
         });
 
     }

@@ -38,7 +38,7 @@
                 "Ffhs\\FilamentPackageFfhsCustomForms\\FilamentPackageFfhsCustomFormsServiceProvider"
             ],
             "aliases": {
-                "FilamentPackageFfhsCustomForms": "Ffhs\\FilamentPackageFfhsCustomForms\\FilamentPackageFfhsCustomFormsFacade"
+                "FilamentPackageFfhsCustomForms": "CustomForms"
             }
         }
     },
