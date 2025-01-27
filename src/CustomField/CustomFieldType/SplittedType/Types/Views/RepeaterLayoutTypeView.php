@@ -29,6 +29,7 @@ class RepeaterLayoutTypeView implements FieldTypeView
         $defaultAmount = FieldMapper::getOptionParameter($record,'default_amount');
         $addActionLabel = FieldMapper::getOptionParameter($record,'add_action_label');
         $showLabel = FieldMapper::getOptionParameter($record,'show_label');
+        $helperText = FieldMapper::getOptionParameter($record,'helper_text') ?? '';
 
         $schema = $parameter["renderer"]();
 
@@ -43,6 +44,7 @@ class RepeaterLayoutTypeView implements FieldTypeView
             ->minItems($minAmount)
             ->maxItems($maxAmount)
             ->schema($schema)
+            ->helperText($helperText)
             ->deleteAction(self::modifyRepeaterAction(...))
             ->addAction(self::modifyRepeaterAction(...));
 

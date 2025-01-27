@@ -43,42 +43,63 @@ beforeEach(function () {
 //    $customForm->ownedFields()->save($customField);
 });
 
-test('repeater show label', function () {
-    $this->customField->update(['options' => ['show_label' => true]]);
+describe('repeater options', function () {
+    test('repeater show label', function () {
+        $this->customField->update(['options' => ['show_label' => true]]);
 
-    $livewire = livewire(EditCustomFormAnswer::class, ['record' => $this->formAnsware->id]);
-    $livewire->assertSeeText($this->customField->short_title);
+        $livewire = livewire(EditCustomFormAnswer::class, ['record' => $this->formAnsware->id]);
+        $livewire->assertSeeText($this->customField->short_title);
 
-    $this->customField->update(['options' => ['show_label' => false]]);
+        $this->customField->update(['options' => ['show_label' => false]]);
 
-    $livewire = livewire(EditCustomFormAnswer::class, ['record' => $this->formAnsware->id]);
-    $livewire->assertDontSee($this->customField->short_title);
+        $livewire = livewire(EditCustomFormAnswer::class, ['record' => $this->formAnsware->id]);
+        $livewire->assertDontSee($this->customField->short_title);
 
-    expect(true)->toBeTrue();
+        expect(true)->toBeTrue();
+    });
+
+
+    test('repeater show add action label', function () {
+        $testLabel = 'add to test';
+        $this->customField->update(['options' => ['add_action_label' => $testLabel]]);
+
+        $livewire = livewire(EditCustomFormAnswer::class, ['record' => $this->formAnsware->id]);
+        $livewire->assertSeeText($testLabel);
+
+
+        $this->customField->update(['options' => ['add_action_label' => null]]);
+        Cache::clear();
+        $livewire = livewire(EditCustomFormAnswer::class, ['record' => $this->formAnsware->id]);
+        $livewire->assertDontSeeText($testLabel);
+
+
+        expect(true)->toBeTrue();
+    });
+
+    test('Helpertext option', function () {
+        $testText = 'is for test';
+        $this->customField->update(['options' => ['helper_text' => $testText]]);
+
+        $livewire = livewire(EditCustomFormAnswer::class, ['record' => $this->formAnsware->id]);
+        $livewire->assertSeeText($testText);
+
+
+        $this->customField->update(['options' => ['helper_text' => null]]);
+        Cache::clear();
+        $livewire = livewire(EditCustomFormAnswer::class, ['record' => $this->formAnsware->id]);
+        $livewire->assertDontSeeText($testText);
+        $livewire->assertDontSeeText('null');
+
+
+        expect(true)->toBeTrue();
+    });
+
+    test('order option', function () {})->todo();
+    test('min_amount option', function () {})->todo();
+    test('max_amount option', function () {})->todo();
+    test('default_amount option', function () {})->todo();
+    test('render contend', function () {})->todo();
+    test('render infolist', function () {})->todo();
 });
 
 
-test('repeater show add action label', function () {
-    $testLabel = 'add to test';
-    $this->customField->update(['options' => ['add_action_label' => 'add to test']]);
-
-    $livewire = livewire(EditCustomFormAnswer::class, ['record' => $this->formAnsware->id]);
-    $livewire->assertSeeText($testLabel);
-
-
-    $this->customField->update(['options' => ['add_action_label' => null]]);
-    Cache::clear();
-    $livewire = livewire(EditCustomFormAnswer::class, ['record' => $this->formAnsware->id]);
-    $livewire->assertDontSeeText($testLabel);
-
-
-    expect(true)->toBeTrue();
-});
-
-
-test('order option', function () {})->todo();
-test('min_amount option', function () {})->todo();
-test('max_amount option', function () {})->todo();
-test('default_amount option', function () {})->todo();
-test('render contend', function () {})->todo();
-test('render infolist', function () {})->todo();
