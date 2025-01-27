@@ -4,15 +4,12 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\Form
 
 
 use Closure;
+use Ffhs\FilamentPackageFfhsCustomForms\Facades\CustomForms;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\EditHelper\EditCustomFormLoadHelper;
-use Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\EditHelper\EditCustomFormSaveHelper;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Concerns\EntanglesStateWithSingularRelationship;
 use Filament\Forms\Components\Contracts\CanEntangleWithSingularRelationships;
-use Filament\Forms\Components\Repeater;
-use Illuminate\Database\Eloquent\Model;
 
 class EmbeddedCustomFormEditor extends Component implements CanEntangleWithSingularRelationships
 {
@@ -51,7 +48,7 @@ class EmbeddedCustomFormEditor extends Component implements CanEntangleWithSingu
         });
         $this->saveRelationshipsUsing(function ($state, EmbeddedCustomFormEditor $component) {
             $form = $component->getRelationship()->first();
-            EditCustomFormSaveHelper::save($state, $form);
+            CustomForms::save($state, $form);
         });
     }
 

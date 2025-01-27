@@ -3,10 +3,10 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm;
 
 use Closure;
+use Ffhs\FilamentPackageFfhsCustomForms\Facades\CustomForms;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\Render\CustomFormRender;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\Render\SplitCustomFormRender;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\RenderHelp\CustomFormLoadHelper;
-use Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\RenderHelp\CustomFormSaveHelper;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\RenderHelp\UseFieldSplit;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\RenderHelp\UseLayoutSplit;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\RenderHelp\UsePosSplit;
@@ -182,7 +182,7 @@ class EmbeddedCustomForm extends Component implements CanEntangleWithSingularRel
         $answer = $record->$relationshipName;
         $formDataPath = $component->getStatePath(false);
 
-        CustomFormSaveHelper::save($answer,  $component->getLivewire()->getForm('form'), path: $formDataPath);
+        CustomForms::save($answer,  $component->getLivewire()->getForm('form'), path: $formDataPath);
     }
 
     protected function setUpAutoSaving(): void {

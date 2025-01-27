@@ -4,11 +4,11 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Templa
 
 use Closure;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\CustomFieldType;
+use Ffhs\FilamentPackageFfhsCustomForms\Facades\CustomForms;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\FormEditor\TypeActions\default\DefaultCustomActivationAction;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\FormEditor\TypeActions\default\DefaultCustomFieldDeleteAction;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\FormEditor\TypeActions\default\DefaultTemplateDissolveAction;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\html\HtmlBadge;
-use Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\RenderHelp\CustomFormSaveHelper;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
@@ -95,19 +95,19 @@ final class TemplateFieldType extends CustomFieldType
         $template = CustomForm::cached($templateId);
 
         // Mapping and combining filtered field answers
-        $fieldAnswersIdentify = CustomFormSaveHelper::mapFields(
+        $fieldAnswersIdentify = CustomForms::mapFields(
             $formAnswerer->customFieldAnswers,
             fn(CustomFieldAnswer $answer) => $answer->customField->identifier,
             fn(CustomFieldAnswer $answer) => $answer->customField->custom_form_id == $templateId
         );
 
         // Mapping and combining custom fields
-        $customFieldsIdentify = CustomFormSaveHelper::mapFields(
+        $customFieldsIdentify = CustomForms::mapFields(
             $template->customFields,
             fn(CustomField $customField) => $customField->identifier
         );
 
-        CustomFormSaveHelper::saveWithoutPreparation($formData, $customFieldsIdentify, $fieldAnswersIdentify, $formAnswerer); //Check with splited
+        CustomForms::saveWithoutPreparation($formData, $customFieldsIdentify, $fieldAnswersIdentify, $formAnswerer); //Check with splited
     }
 
 

@@ -1,7 +1,8 @@
 <?php
 
-namespace Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\RenderHelp;
+namespace Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\DataManagment;
 
+use Barryvdh\Debugbar\Facades\Debugbar;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
@@ -9,8 +10,10 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\Rule;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Form;
+use Spatie\Activitylog\Facades\LogBatch;
+use Spatie\Activitylog\Models\Activity;
 
-class CustomFormSaveHelper {
+trait HasCustomFormSaveDataManagement {
 
     public static function save(CustomFormAnswer $formAnswer, Form $form, string|null $path = null) :void{
         // $path is then path to the customFormData in the formData
@@ -66,7 +69,7 @@ class CustomFormSaveHelper {
         }
     }
 
-    public static function getFormData(Form $form, ?string $path): array {
+    protected static function getFormData(Form $form, ?string $path): array {
         $data = $form->getRawState();
 
         if (is_null($path)) return $data;
@@ -95,10 +98,6 @@ class CustomFormSaveHelper {
                 continue;
             }
 
-           // $dateSplitted[$path] = $type->getSplitFieldOwnedData($customField, $customFieldAnswererRawData);
-
-//            $splites = $type->getSplitField($customField, $customFieldAnswererRawData);
-
             foreach ($customFieldAnswererRawData as $subPath => $dateSplit){
                 $newParentPath = empty($parentPath) ? $subPath : $parentPath . "." . $subPath;
                 $getSplittedData = static::splittingFormComponents($dateSplit, $customFieldsIdentify, $newParentPath);
@@ -109,8 +108,11 @@ class CustomFormSaveHelper {
     }
 
 
+
+    //ToDo split method and reduce queries
     public static function saveWithoutPreparation(array $formData, array $customFieldsIdentify, CustomFormAnswer $formAnswer): void {
 
+        LogBatch::startBatch();
         $handledCustomIds = [];
         $handledPaths = [];
 
@@ -177,5 +179,23 @@ class CustomFormSaveHelper {
             ->whereNotIn("path",  $handledPaths)
             ->delete();
 
+
+//        $logedFieldActivity =  Activity::query()
+//            ->where('batch_uuid', LogBatch::getUuid())
+//            ->where('subject_type', CustomFieldAnswer::class)
+//            ->whereNot('event', 'created')
+//            ->exists();
+//
+//        if($logedFieldActivity){
+//            activity()
+//                ->causedBy(auth()->user())
+//                ->performedOn($formAnswer)
+//                ->event('update_fields')
+//                ->log(':causer.name updated field answares');
+//        }
+
+        LogBatch::endBatch();
     }
+
+
 }

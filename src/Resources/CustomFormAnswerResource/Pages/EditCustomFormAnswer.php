@@ -2,9 +2,9 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormAnswerResource\Pages;
 
+use Ffhs\FilamentPackageFfhsCustomForms\Facades\CustomForms;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\CustomFormComponent;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\RenderHelp\CustomFormLoadHelper;
-use Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\RenderHelp\CustomFormSaveHelper;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormAnswerResource;
 use Filament\Actions;
@@ -36,7 +36,7 @@ class EditCustomFormAnswer extends EditRecord
     protected function mutateFormDataBeforeSave(array $data): array {
         /**@var CustomFormAnswer  $customFormAnswer*/
         $customFormAnswer = $this->form->getRecord();
-        CustomFormSaveHelper::save($customFormAnswer, $this->form);
+        CustomForms::save($customFormAnswer, $this->form);
 
         return [];
     }

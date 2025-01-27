@@ -2,11 +2,11 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormResource\Pages;
 
+use Ffhs\FilamentPackageFfhsCustomForms\Facades\CustomForms;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\Actions\CustomFormSchemaExportAction;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\Actions\CustomFormSchemaImportAction;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\FormEditor\CustomFormEditor;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\EditHelper\EditCustomFormLoadHelper;
-use Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\EditHelper\EditCustomFormSaveHelper;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormResource;
 use Filament\Actions;
@@ -39,7 +39,7 @@ class EditCustomForm extends EditRecord
 
         $this->authorizeAccess();
 
-        EditCustomFormSaveHelper::save($this->data, $this->getRecord());
+        CustomForms::save($this->data, $this->getRecord());
 
         parent::save($shouldRedirect, $shouldSendSavedNotification);
 
