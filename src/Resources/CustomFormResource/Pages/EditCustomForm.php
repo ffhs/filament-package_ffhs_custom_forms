@@ -7,6 +7,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\Actions\Cu
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\Actions\CustomFormSchemaImportAction;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\FormEditor\CustomFormEditor;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\EditHelper\EditCustomFormLoadHelper;
+use Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\EditHelper\EditCustomFormSaveHelper;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormResource;
 use Filament\Actions;
@@ -39,7 +40,7 @@ class EditCustomForm extends EditRecord
 
         $this->authorizeAccess();
 
-        CustomForms::save($this->data, $this->getRecord());
+        EditCustomFormSaveHelper::save($this->data, $this->getRecord());
 
         parent::save($shouldRedirect, $shouldSendSavedNotification);
 
