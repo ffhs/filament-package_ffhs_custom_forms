@@ -10,7 +10,7 @@ trait ImportCustomForm
 
     public function importCustomForm(array $rawForm, array $formInformation, DynamicFormConfiguration $configuration)
     {
-        $formInformation = array_merge( $rawForm ?? [], $formInformation);
+        $formInformation = array_merge( $rawForm['form'] ?? [], $formInformation);
         $formInformation['custom_form_identifier'] = $configuration::identifier();
         return CustomForm::create($formInformation);
     }
