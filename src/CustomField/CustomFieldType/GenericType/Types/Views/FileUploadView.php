@@ -95,7 +95,7 @@ class FileUploadView implements FieldTypeView
         if(FieldMapper::getOptionParameter($record, "image") && FieldMapper::getOptionParameter($record, "show_images_in_view"))
             return static::getInfolistImageComponent($files, $diskRoot, $record, $names);
 
-        return static::getInfoListFiles($files, $diskRoot, $record, $names);
+        return static::getInfoListFiles($files, $diskRoot, $record, $names)->columnSpanFull();
     }
 
 
@@ -124,8 +124,7 @@ class FileUploadView implements FieldTypeView
 
 
         return Group::make([
-            TextEntry::make(FieldMapper::getIdentifyKey($record)."-title")
-                ->label(new HtmlString('</span> <span class="text-sm font-medium leading-6 text-gray-950 dark:text-white" style="margin-bottom: -25px; margin-left: -12px;">'.FieldMapper::getLabelName($record).'</span> <span>')),
+            static::getTextEntryLabel($record),
             Grid::make()->schema($groups)->columns(5)
         ])->columnSpanFull()->columns(1);
     }
@@ -189,10 +188,25 @@ class FileUploadView implements FieldTypeView
         }
 
         return Group::make([
-            TextEntry::make(FieldMapper::getIdentifyKey($record)."-title")
-                ->label(new HtmlString('</span> <span class="text-sm font-medium leading-6 text-gray-950 dark:text-white" style="margin-bottom: -25px; margin-left: -12px;">'.FieldMapper::getLabelName($record).'</span> <span>')),
+            static::getTextEntryLabel($record),
           Grid::make()->schema($fileComponents)->columns()
-        ])->columnSpanFull();
+        ]);
+    }
+
+    /**
+     * @param CustomFieldAnswer $record
+     * @return TextEntry
+     */
+    public static function getTextEntryLabel(CustomFieldAnswer $record): TextEntry
+    {
+        return TextEntry::make(FieldMapper::getIdentifyKey($record) . "-title")
+            ->label(
+                new HtmlString(
+                    '</span> <span class="text-sm font-medium leading-6 text-gray-950 dark:text-white" style="margin-bottom: -25px; margin-left: -12px;">' . FieldMapper::getLabelName(
+                        $record
+                    ) . '</span> <span>'
+                )
+            );
     }
 
 }
