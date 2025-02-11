@@ -185,14 +185,7 @@ trait HasCacheModel
         return $related::cached($this->$foreignKey, $ownerKey);
     }
 
-//    public function __get($key) {
-//        if(!$this->isCaching()) return parent::__get($key); ToDO reimplement
-//
-//        if(in_array($key, $this->getCachedRelations())) return $this->getRelationCached($key);
-//       // else if(in_array($key, $this->getCachedResults())) return $this->getResultCached($key);
-//
-//        return parent::__get($key);
-//    }
+
 
     public static function cached(mixed $value, string $attribute = "id", array $with = []): ?static
     {
