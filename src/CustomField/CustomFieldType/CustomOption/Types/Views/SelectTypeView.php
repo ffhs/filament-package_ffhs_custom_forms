@@ -7,7 +7,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\FieldTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Traits\HasDefaultViewComponent;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldMapper;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\PriorizedSelect;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\PrioritizeSelect;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Filament\Forms\Components\Component;
@@ -34,8 +34,8 @@ class SelectTypeView implements FieldTypeView
 
     public static function getPrioritizedSelect(CustomFieldType $type, CustomField $record, array $parameter): Component|\Filament\Infolists\Components\Component
     {
-        /**@var PriorizedSelect $select*/
-        $select = static::makeComponent(PriorizedSelect::class, $record);
+        /**@var PrioritizeSelect $select*/
+        $select = static::makeComponent(PrioritizeSelect::class, $record);
 
         $selectLabelTranlsation = __('filament-package_ffhs_custom_forms::custom_forms.fields.type_view.select.select');
 

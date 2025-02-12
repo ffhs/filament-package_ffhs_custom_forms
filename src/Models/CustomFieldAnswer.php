@@ -52,9 +52,9 @@ class CustomFieldAnswer extends Model implements CachedModel
             ->logOnly(['answer', 'path']);
     }
 
-    public function customForm(): HasOneThrough
+    public function customForm(): BelongsTo
     {
-        return $this->hasOneThrough(CustomForm::class,CustomField::class);
+        return $this->customFormAnswer->customForm();
     }
 
     public function cachedCustomForm(): CustomForm {

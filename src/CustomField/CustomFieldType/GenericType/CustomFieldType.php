@@ -130,7 +130,9 @@ abstract class CustomFieldType implements Type
 
     public function isEmptyAnswerer(CustomFieldAnswer $customFieldAnswer, ?array $fieldAnswererData): bool
     {
-        return empty($fieldAnswererData) ||( empty($fieldAnswererData["saved"]??[]) && sizeof($fieldAnswererData) == 1) ;
+        if(empty($fieldAnswererData) && !is_bool($fieldAnswererData)) return true;
+        if(empty($fieldAnswererData["saved"]??[]) && sizeof($fieldAnswererData) == 1 && !is_bool($fieldAnswererData["saved"])) return true;
+        return false;
     }
 
 

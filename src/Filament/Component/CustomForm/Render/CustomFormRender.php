@@ -169,6 +169,7 @@ class CustomFormRender
                 $answer->answer = null;
                 $answer->custom_field_id = $customField->id;
                 $answer->custom_form_answer_id = $formAnswer->id;
+                $answer->path = $path;
             }
 
             return $customField->getType()->getInfolistComponent($answer, $form, $viewMode, $parameter);

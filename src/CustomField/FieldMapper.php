@@ -2,8 +2,10 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField;
 
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\SplittedType\CustomSplitType;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
 use Illuminate\Support\Collection;
 
 class FieldMapper
@@ -58,6 +60,69 @@ class FieldMapper
     public static function getTypeConfigAttribute(CustomField|CustomFieldAnswer  $record, string $attribute) :mixed{
         if($record instanceof CustomFieldAnswer) $record = $record->customField;
         return  $record->getType()->getConfigAttribute($attribute);
+    }
+
+    /**
+     * Like an Repeater
+     * @param CustomField|CustomFieldAnswer $field
+     * @return bool
+     */
+    public static function isFieldInSplitGroup(CustomField|CustomFieldAnswer  $record): bool
+    {//ToDo Slow
+        if($record instanceof CustomFieldAnswer) $record = $record->customField;
+        $fields =  $record->customForm->customFields;
+        $parentSplitField = $fields
+            ->firstWhere(function (CustomField $field) use ($record) {
+                if($field->form_position >= $record->form_position) return false;
+                if($field->layout_end_position < $record->form_position) return false;
+                return $field->getType() instanceof CustomSplitType;
+            });
+        return !is_null($parentSplitField);
+    }
+
+    public static function getParentSplitGroups(CustomField|CustomFieldAnswer  $record): Collection
+    {//ToDo Slow
+        if($record instanceof CustomFieldAnswer) $record = $record->customField;
+        $fields =  $record->customForm->customFields;
+        return $fields
+            ->where('form_position', '<', $record->form_position)
+            ->where('layout_end_position', '>=', $record->form_position)
+            ->filter(function (CustomField $field) use ($record) {
+                 return $field->getType() instanceof CustomSplitType;
+            });
+    }
+
+
+    public static function getFieldsInLayout(CustomField|CustomFieldAnswer  $record) : Collection
+    { //ToDo Slow
+        if($record instanceof CustomFieldAnswer) $record = $record->customField;
+        $fields =  $record->customForm->customFields;
+        return $fields
+            ->filter(function (CustomField $field) use ($record) {
+                if($field->form_position > $record->layout_end_position) return false;
+                if($field->form_position <= $record->form_position) return false;
+                return true;
+            });
+    }
+
+
+    public static function getExistingPaths(CustomField|CustomFieldAnswer  $record, CustomFormAnswer $customFormAnswer = null) : Collection
+    { //ToDo Slow
+        if($record instanceof CustomFieldAnswer) {
+            $customFormAnswer = $record->customFormAnswer;
+            $record = $record->customField;
+        }
+
+        $splitGroup = FieldMapper::getParentSplitGroups($record)
+            ->sortByDesc('form_position')->first();
+
+        $fieldsInGroup = FieldMapper::getFieldsInLayout($splitGroup);
+
+        $answersWithPath = $customFormAnswer->customFieldAnswers
+            ->whereIn('custom_field_id', $fieldsInGroup->pluck('id'))
+            ->whereNotNull('path');
+
+        return $answersWithPath->keyBy('path')->keys();
     }
 
 }

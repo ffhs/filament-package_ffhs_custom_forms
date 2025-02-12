@@ -53,7 +53,6 @@ class CustomForm extends Model implements CachedModel
         'short_title',
     ];
 
-    //ToDo cache customFormOptions
     protected array $cachedRelations = [
         'customFields',
         'generalFields',
