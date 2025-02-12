@@ -14,6 +14,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\FastTypeO
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\InlineOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\NewLineOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\RequiredOption;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Toggle;
 
@@ -29,9 +30,23 @@ class ToggleButtonsType extends CustomOptionType
         ];
     }
 
+
+    public function prepareSaveFieldData(CustomFieldAnswer $answer, mixed $data): ?array { //ToDo Rename and in Template
+        if($data == '0') $data = false;
+        return parent::prepareSaveFieldData($answer, $data);
+    }
+
+//    public function prepareLoadFieldData(CustomFieldAnswer $answer, array $data): mixed { //ToDo Rename and in Template
+//        $data = parent::prepareLoadFieldData($answer, $data);
+//        if($data == false) dd($data);
+//        return $data;
+//    }
+
+
     public function icon(): String {
         return  "bi-toggles";
     }
+
     public function extraTypeOptions(): array {
         return [
             DefaultLayoutTypeOptionGroup::make()
