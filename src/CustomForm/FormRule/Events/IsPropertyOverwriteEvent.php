@@ -2,6 +2,7 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Events;
 
+use Barryvdh\Debugbar\Facades\Debugbar;
 use Closure;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\HasFormTargets;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Translations\HasRuleEventPluginTranslate;
@@ -32,16 +33,17 @@ abstract class  IsPropertyOverwriteEvent extends FormRuleEventType
         $property->setAccessible(true);
         $oldProperty = $property->getValue($component);
 
+
         if($component instanceof Component) $hiddenFunction = function (Component $component) use ($oldProperty, $triggers) {
                 $triggered = $triggers(["state" => $component->getGetCallback()(".")]);
-                if ($triggered == $this->dominatingSide()) $triggered = $component->evaluate($oldProperty);
+                if ($triggered == $this->dominatingSide()) $triggered = $component->evaluate($oldProperty); //ToDo Somthing is stange
                 // if($hidden && !is_null($set)) $set($customField->identifier, null);
                 return $triggered;
             };
         else $hiddenFunction = function (InfolistComponent $component, CustomFormAnswer $record) use ($oldProperty, $triggers) {
                 $state = Cache::remember($record->id . "custom_form_answare_state_load_infolist", 2, fn() => CustomFormLoadHelper::load($record));
                 $triggered = $triggers(["state" => $state]);
-                if ($triggered == $this->dominatingSide()) $triggered = $component->evaluate($oldProperty);
+                if ($triggered != $this->dominatingSide()) $triggered = $component->evaluate($oldProperty);
                 // if($hidden && !is_null($set)) $set($customField->identifier, null);
                 return $triggered;
             };
