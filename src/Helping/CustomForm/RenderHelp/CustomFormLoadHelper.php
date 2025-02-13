@@ -20,7 +20,7 @@ class CustomFormLoadHelper {
 
         $loadedData = [];
 
-        $customFields = $customForm->customFields->keyBy("id");
+        $customFields = $answerer->customForm->customFields->keyBy("id");
         $templateFields = $customForm->ownedFields;
         $formRules  = $customForm->rules;
 
