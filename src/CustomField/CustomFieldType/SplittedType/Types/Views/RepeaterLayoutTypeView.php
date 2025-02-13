@@ -70,8 +70,8 @@ class RepeaterLayoutTypeView implements FieldTypeView
         /** @var Collection $fields */
         $schema = [];
 
-        $loadedAnswars = CustomFormLoadHelper::load($record->customFormAnswer, $record->customField->form_position, $record->customField->layout_end_position);
-        $loadedAnswars = $loadedAnswars[$record->customField->identifier ?? ''] ?? [];
+        $loadedAnswers = CustomFormLoadHelper::load($record->customFormAnswer, $record->customField->form_position, $record->customField->layout_end_position, $record->customForm);
+        $loadedAnswers = $loadedAnswers[$record->customField->identifier ?? ''] ?? [];
 
         $fields = $parameter["customFieldData"];
         $fields = $fields->keyBy("form_position");
@@ -79,13 +79,11 @@ class RepeaterLayoutTypeView implements FieldTypeView
         $viewMode = $parameter["viewMode"];
         $customForm = $record->customFormAnswer->customForm;
 
-        $answerersFields =
-            $record->customFormAnswer
-            ->customFieldAnswers
+        $answerersFields = $record->customFormAnswer->customFieldAnswers
             ->whereIn("custom_field_id", $fields->pluck("id"));
 
 
-        foreach ($loadedAnswars as $id => $answer) {
+        foreach ($loadedAnswers as $id => $answer) {
             $render = CustomFormRender::getInfolistRender(
                 $parameter["viewMode"],
                 $customForm,
