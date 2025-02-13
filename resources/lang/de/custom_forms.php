@@ -110,6 +110,7 @@ return [
             'max_amount' => 'Maximale Anzahl',
             'show_label' => 'Titel des Feldes anzeigen',
             'action_Label' => 'Aktions Label',
+            'related_field' => 'Related Field',
 
             // custom field type (FastTypeOption)
             'color_type' => 'Farbformat',

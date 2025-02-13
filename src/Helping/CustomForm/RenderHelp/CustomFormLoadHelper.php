@@ -5,6 +5,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\RenderHelp;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\Rule;
 use Illuminate\Support\Arr;
@@ -12,12 +13,14 @@ use Illuminate\Support\Collection;
 
 class CustomFormLoadHelper {
 
-    public static function load(CustomFormAnswer $answerer, int|null $begin = null, int|null $end  = null):array {
+    public static function load(CustomFormAnswer $answerer, int|null $begin = null, int|null $end  = null, ?CustomForm $customForm = null):array {
         //ToDo check to Cache stuff for performance $customFields = $answerer->customForm->customFields;
+
+        if(is_null($customForm))$customForm = $answerer->customForm;
+
         $loadedData = [];
 
-        $customForm = $answerer->customForm;
-        $customFields = $customForm->customFields->keyBy("id");
+        $customFields = $answerer->customForm->customFields->keyBy("id");
         $templateFields = $customForm->ownedFields;
         $formRules  = $customForm->rules;
 
@@ -27,17 +30,7 @@ class CustomFormLoadHelper {
             /**@var CustomFieldType $type*/
             $customField = $customFields->get($fieldAnswer->custom_field_id);
 
-            $beginCondition = is_null($begin) || $begin <= $customField->form_position;
-            $endCondition = is_null($end) || $customField->form_position <= $end;
-
-            if($answerer->custom_form_id == $customField->custom_form_id) {
-                if(!($beginCondition && $endCondition)) continue;
-            }
-            else{
-                $templateField =  $templateFields->firstWhere("template_id",$customField->custom_form_id);
-                if(!$templateField) continue;
-                if($begin > $templateField->form_position || $templateField->form_position > $end) continue;
-            }
+            if(static::passField($customField, $customForm, $templateFields, $begin, $end)) continue;
 
             $fieldData = $customField
                 ->getType()
@@ -106,7 +99,18 @@ class CustomFormLoadHelper {
         return $nearestParent->identifier . ".". $path;
     }
 
+    private static function passField(CustomField $customField, CustomForm $customForm, Collection $templateFields, ?int $begin, ?int $end): bool
+    {
+        if($customForm->id != $customField->custom_form_id){
+            $customField = $templateFields->firstWhere("template_id",$customField->custom_form_id);
+            if(!$customField) return true;
+        }
 
+        $beginCondition = is_null($begin) || $begin <= $customField->form_position;
+        $endCondition = is_null($end) || $customField->form_position <= $end;
+
+        return !($beginCondition && $endCondition);
+    }
 
 
 }
