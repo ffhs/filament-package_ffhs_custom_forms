@@ -16,10 +16,14 @@ trait HasAllFieldDataFromFormData
             ->whereNotNull("template_id")
             ->flatMap(fn($templateData) => CustomForm::cached($templateData["template_id"])->customFields)
             ->mapWithKeys(fn(CustomField $customField) => [
-                $customField->identifier() => array_merge( EditCustomFormLoadHelper::loadField($customField))
-            ])
-            ->toArray();
-        return array_merge($fieldsFromTemplate, $fields);
+                $customField->identifier() => EditCustomFormLoadHelper::loadField($customField)
+            ]);
+
+        $fields = collect($fields)->mapWithKeys(fn(array $field) => [
+            (new CustomField())->fill($field)->identifier() => $field
+        ])->merge($fieldsFromTemplate);
+
+        return $fields->toArray();
     }
 
 }

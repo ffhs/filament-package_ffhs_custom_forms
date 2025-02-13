@@ -50,7 +50,7 @@ trait HasTriggerEventFormTargets
 
         $fields = $this->getAllFieldsData($get);
 
-        return $fields[$identifier];
+        return $fields[$identifier]??dd($identifier, $fields);
     }
 
 
