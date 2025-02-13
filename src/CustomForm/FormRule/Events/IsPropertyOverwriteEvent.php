@@ -3,11 +3,11 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Events;
 
 use Closure;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\HasFormTargets;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Translations\HasRuleEventPluginTranslate;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\RenderHelp\CustomFormLoadHelper;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\RuleEvent;
+use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasTriggerEventFormTargets;
 use Filament\Forms\Components\Component;
 use Filament\Infolists\Components\Component as InfolistComponent;
 use Illuminate\Support\Facades\Cache;
@@ -16,7 +16,7 @@ use ReflectionClass;
 abstract class  IsPropertyOverwriteEvent extends FormRuleEventType
 {
     use HasRuleEventPluginTranslate;
-    use HasFormTargets;
+    use HasTriggerEventFormTargets;
 
 
     public function handleAfterRenderForm(Closure $triggers, array $arguments, Component &$component, RuleEvent $rule): Component

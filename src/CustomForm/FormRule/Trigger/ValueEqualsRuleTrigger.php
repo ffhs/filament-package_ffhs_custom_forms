@@ -3,10 +3,10 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Trigger;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomOption\CustomOptionType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\HasFormTargets;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\RuleTrigger;
+use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasTriggerEventFormTargets;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Component;
@@ -24,7 +24,7 @@ use Illuminate\Support\HtmlString;
 
 class ValueEqualsRuleTrigger extends FormRuleTriggerType
 {
-    use HasFormTargets;
+    use HasTriggerEventFormTargets;
 
     public static function identifier(): string {
         return "value_equals_anchor";

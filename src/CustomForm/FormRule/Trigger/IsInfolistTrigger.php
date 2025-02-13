@@ -2,15 +2,15 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Trigger;
 
-use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\HasFormTargets;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Translations\HasRuleTriggerPluginTranslate;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\RuleTrigger;
+use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasTriggerEventFormTargets;
 use Filament\Infolists\Components\Component as InfoComponent;
 
 class IsInfolistTrigger extends FormRuleTriggerType
 {
     use HasRuleTriggerPluginTranslate;
-    use HasFormTargets;
+    use HasTriggerEventFormTargets;
 
     public static function identifier(): string {
         return "infolist_view";
