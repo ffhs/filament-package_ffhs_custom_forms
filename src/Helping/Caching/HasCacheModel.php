@@ -263,5 +263,12 @@ trait HasCacheModel
 //        return $result;
 //    }
 
+    public function refresh()
+    {
+        foreach ($this->getCachedRelations() as $cachedRelation) {
+            $this->cachedClear($cachedRelation);
+        }
+        return parent::refresh();
+    }
 
 }
