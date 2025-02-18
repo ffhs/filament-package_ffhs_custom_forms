@@ -161,10 +161,11 @@ class FileUploadType extends CustomFieldType
         Form $form,
         Collection $flattenFormComponents
     ): void {
-
-        $componentKey =  $customField->identifier . ".files";
+        $componentKey = $customField->identifier . ".files";
         $filesComponents = $flattenFormComponents->filter(function (Component $component) use ($componentKey) {
-            if(is_null($component->getKey())) return false;
+            if (is_null($component->getKey())) {
+                return false;
+            }
             return str_contains($component->getKey(), $componentKey);
         });
 
@@ -189,7 +190,9 @@ class FileUploadType extends CustomFieldType
             $acceptedFileTypes = $filesComponent->getAcceptedFileTypes();
             $canSave = true;
             foreach (Arr::wrap($filesComponent->getState()) as $file) {
-                if (!$file instanceof TemporaryUploadedFile) continue;
+                if (!$file instanceof TemporaryUploadedFile) {
+                    continue;
+                }
 
                 $mimeType = $file->getMimeType();
 
@@ -205,8 +208,7 @@ class FileUploadType extends CustomFieldType
             } else {
                 $component->state([]);
             }
-
-        }catch (\Exception|RuntimeException $exception){
+        } catch (\Exception|RuntimeException $exception) {
             foreach (Arr::wrap($filesComponent->getState()) as $file) {
                 $file->delete();
             }
@@ -222,14 +224,25 @@ class FileUploadType extends CustomFieldType
 
     public function isEmptyAnswerer(CustomFieldAnswer $customFieldAnswer, ?array $fieldAnswererData): bool
     {
-        return parent::isEmptyAnswerer($customFieldAnswer, $fieldAnswererData) || empty($fieldAnswererData["saved"]["files"]);
+        return parent::isEmptyAnswerer(
+                $customFieldAnswer,
+                $fieldAnswererData
+            ) || empty($fieldAnswererData["saved"]["files"]);
     }
 
     public function prepareSaveFieldData(CustomFieldAnswer $answer, mixed $data): array
     {
         $data = $data ?? ["files" => []];
+
+        if (is_string($data["files"] ?? null)) {
+            $data["files"] = [uniqid() => $data["files"]];
+        }
+
+
         foreach ($data["files"] ?? [] as $key => $file) {
-            if(is_array($file)) unset($data["files"][$key]);
+            if (is_array($file)) {
+                unset($data["files"][$key]);
+            }
         }
         return parent::prepareSaveFieldData($answer, $data);
     }
@@ -239,7 +252,9 @@ class FileUploadType extends CustomFieldType
         $data = parent::prepareLoadFieldData($answer, $data);
         $data = $data ?? ["files" => []];
         foreach ($data["files"] ?? [] as $key => $file) {
-            if(is_array($file)) unset($data["files"][$key]);
+            if (is_array($file)) {
+                unset($data["files"][$key]);
+            }
         }
         return $data;
     }
