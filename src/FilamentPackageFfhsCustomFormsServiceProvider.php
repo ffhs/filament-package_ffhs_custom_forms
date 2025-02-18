@@ -3,16 +3,14 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms;
 
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralFieldForm;
+use Ffhs\FilamentPackageFfhsCustomForms\Policies\CustomFieldPolicy;
+use Ffhs\FilamentPackageFfhsCustomForms\Policies\CustomFormPolicy;
 use Filament\Support\Assets\AlpineComponent;
 use Filament\Support\Assets\Css;
 use Filament\Support\Facades\FilamentAsset;
-use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Gate;
 use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
@@ -20,6 +18,11 @@ use Spatie\LaravelPackageTools\PackageServiceProvider;
 
 class FilamentPackageFfhsCustomFormsServiceProvider extends PackageServiceProvider
 {
+
+    protected array $policies = [
+        CustomForm::class => CustomFormPolicy::class,
+        CustomField::class => CustomFieldPolicy::class,
+    ];
 
     public function configurePackage(Package $package): void
     {
@@ -67,27 +70,28 @@ class FilamentPackageFfhsCustomFormsServiceProvider extends PackageServiceProvid
     public function boot(): void
     {
         parent::boot();
-        Factory::guessFactoryNamesUsing(function (string $modelName) {
-            $factoryNames = [
-                CustomField::class,
-                CustomFieldAnswer::class,
-                CustomForm::class,
-                CustomFormAnswer::class,
-                GeneralField::class,
-                GeneralFieldForm::class
-            ];
+        $this->registerPolicies();
+        $this->registerFilamentAssets();
 
-            if (in_array($modelName, $factoryNames)) {
-                return 'Ffhs\\FilamentPackageFfhsCustomForms\\Models\Factories\\' . class_basename(
-                        $modelName
-                    ) . 'Factory';
-            } else {
-                return 'Database\Factories\\' . class_basename($modelName) . 'Factory';
-            }
-        });
+        //        $this->publishes([
+//            __DIR__.'/../resources/js/dropping.js' => public_path('js/ffhs/'.$this->package->name.'/dropping.js'),
+//        ], 'filament-package_ffhs_custom_forms-assets');
 
+    }
 
-        //Drag and Drop
+    private function registerPolicies(): void
+    {
+        foreach ($this->policies as $model => $policy) {
+            Gate::policy($model, $policy);
+        }
+    }
+
+    /**
+     * @return void
+     */
+    public function registerFilamentAssets(): void
+    {
+//Drag and Drop
         FilamentAsset::register([
             AlpineComponent::make('parent', __DIR__ . '/../dist/js/drag-drop/parent.js')
                 ->loadedOnRequest(),
@@ -101,11 +105,6 @@ class FilamentPackageFfhsCustomFormsServiceProvider extends PackageServiceProvid
             Css::make('stylesheet', __DIR__ . '/../dist/css/drag_drop.css')
                 ->loadedOnRequest(),
         ], 'ffhs/filament-package_ffhs_drag-drop');
-
-//        $this->publishes([
-//            __DIR__.'/../resources/js/dropping.js' => public_path('js/ffhs/'.$this->package->name.'/dropping.js'),
-//        ], 'filament-package_ffhs_custom_forms-assets');
-
     }
 
 }

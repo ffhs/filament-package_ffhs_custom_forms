@@ -6,6 +6,7 @@ use App\Models\User;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
+/**@deprecated */
 class GeneralFieldPolicy
 {
     use HandlesAuthorization;

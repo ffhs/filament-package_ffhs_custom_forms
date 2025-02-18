@@ -6,11 +6,9 @@ use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormResource\Pa
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormResource\Pages\EditCustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormResource\Pages\ListCustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
-use Ffhs\FilamentPackageFfhsCustomForms\Policies\CustomFormPolicy;
 use Filament\Resources\Concerns\Translatable;
 use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\Gate;
 
 class CustomFormResource extends Resource
 {
@@ -19,9 +17,6 @@ class CustomFormResource extends Resource
 
     protected static ?string $model = CustomForm::class;
     protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-check';
-    protected array $policies = [
-        CustomForm::class => CustomFormPolicy::class,
-    ];
 
     public static function getNavigationGroup(): ?string
     {
@@ -63,13 +58,5 @@ class CustomFormResource extends Resource
             'create' => CreateCustomForm::route('/create'),
             'edit' => EditCustomForm::route('/{record}/edit'),
         ];
-    }
-
-
-    private function registerPolicies(): void
-    {
-        foreach ($this->policies as $model => $policy) {
-            Gate::policy($model, $policy);
-        }
     }
 }
