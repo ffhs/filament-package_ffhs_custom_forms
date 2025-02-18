@@ -1,22 +1,20 @@
 <?php
 
-namespace Ffhs\FilamentPackageFfhsCustomForms\Resources;
+namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources;
 
-use Barryvdh\Debugbar\Facades\Debugbar;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormConfiguration\DynamicFormConfiguration;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
-use Ffhs\FilamentPackageFfhsCustomForms\Resources\GeneralFieldsResource\Pages\{CreateGeneralField,
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\GeneralFieldsResource\Pages\{CreateGeneralField,
     EditGeneralField,
     ListGeneralField};
-use Ffhs\FilamentPackageFfhsCustomForms\Resources\GeneralFieldsResource\RelationManagers\GeneralFieldFormRelationManager;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\GeneralFieldsResource\RelationManagers\GeneralFieldFormRelationManager;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Field;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -28,20 +26,18 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Guava\FilamentIconPicker\Forms\IconPicker;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\App;
-use PHPUnit\TextUI\Application;
 
 class GeneralFieldResource extends Resource
 {
 
     use Translatable;
 
+    const langPrefix = "filament-package_ffhs_custom_forms::custom_forms.fields.";
     protected static ?string $model = GeneralField::class;
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    const langPrefix= "filament-package_ffhs_custom_forms::custom_forms.fields.";
-
-    public static function getRecordTitleAttribute(): ?string {
+    public static function getRecordTitleAttribute(): ?string
+    {
         return "name_" . app()->getLocale();
     }
 
@@ -55,33 +51,25 @@ class GeneralFieldResource extends Resource
         return __('filament-package_ffhs_custom_forms::custom_forms.navigation.general_fields');
     }
 
-    public static function getNavigationParentItem(): ?string {
+    public static function getNavigationParentItem(): ?string
+    {
         return __('filament-package_ffhs_custom_forms::custom_forms.navigation.forms');
     }
 
-    public static function getTitleCasePluralModelLabel(): string {
+    public static function getTitleCasePluralModelLabel(): string
+    {
         return __('filament-package_ffhs_custom_forms::custom_forms.navigation.general_fields');
     }
 
-    public static function getTitleCaseModelLabel(): string {
+    public static function getTitleCaseModelLabel(): string
+    {
         return __('filament-package_ffhs_custom_forms::custom_forms.fields.general_field');
     }
 
 
-    public static function getEloquentQuery(): Builder {
+    public static function getEloquentQuery(): Builder
+    {
         return parent::getEloquentQuery()->with("generalFieldForms");
-    }
-
-
-    private static function getTranslationTab(string $location, string $label): Tab {
-        return Tab::make($label)
-            ->schema([
-                TextInput::make("name")
-                    ->label("Name")
-                    ->required(),
-                TextInput::make("tool_tip")
-                    ->label(__(self::langPrefix . 'tool_tip')),
-            ]);
     }
 
     public static function form(Form $form): Form
@@ -93,37 +81,45 @@ class GeneralFieldResource extends Resource
                     ->columns()
                     ->schema([
 
-                        TextInput::make("name" )
+                        TextInput::make("name")
                             ->label(__(self::langPrefix . 'name'))
                             ->columnStart(1)
                             ->columnSpan(1),
 
-                       Group::make([
-                           Select::make("type")
-                               ->options(function (Select $component){
-                                   if(!$component->isDisabled()) $types = CustomFieldType::getSelectableGeneralFieldTypes();
-                                   else $types = CustomFieldType::getAllTypes();
-                                   $keys = array_keys($types);
-                                   $values = array_map(fn(string $type) => CustomFieldType::getTypeFromIdentifier($type)->getTranslatedName(), $keys);
-                                   return array_combine($keys,$values);
-                               })
-                               ->label(__(self::langPrefix . 'type'))
-                               ->helperText(__(self::langPrefix . 'helper_text.type'))
-                               ->disabledOn("edit")
-                               ->columnStart(1)
-                               ->columnSpan(1)
-                               ->required()
-                               ->live(),
-                           IconPicker::make('icon')
-                               ->required()
-                               ->label("Icon"),
-                       ]),
+                        Group::make([
+                            Select::make("type")
+                                ->options(function (Select $component) {
+                                    if (!$component->isDisabled()) {
+                                        $types = CustomFieldType::getSelectableGeneralFieldTypes();
+                                    } else {
+                                        $types = CustomFieldType::getAllTypes();
+                                    }
+                                    $keys = array_keys($types);
+                                    $values = array_map(
+                                        fn(string $type) => CustomFieldType::getTypeFromIdentifier(
+                                            $type
+                                        )->getTranslatedName(),
+                                        $keys
+                                    );
+                                    return array_combine($keys, $values);
+                                })
+                                ->label(__(self::langPrefix . 'type'))
+                                ->helperText(__(self::langPrefix . 'helper_text.type'))
+                                ->disabledOn("edit")
+                                ->columnStart(1)
+                                ->columnSpan(1)
+                                ->required()
+                                ->live(),
+                            IconPicker::make('icon')
+                                ->required()
+                                ->label("Icon"),
+                        ]),
 
 
                         TextInput::make("identifier")
                             ->label(__(self::langPrefix . 'identifier'))
                             ->helperText(__(self::langPrefix . 'helper_text.identifier'))
-                            ->disabled(fn ($livewire) => $livewire instanceof EditRecord)
+                            ->disabled(fn($livewire) => $livewire instanceof EditRecord)
                             ->columnSpan(1)
                             ->required(),
 
@@ -137,12 +133,13 @@ class GeneralFieldResource extends Resource
                     ]),
 
 
-
                 Fieldset::make("Einstellungen zum Überschreiben") //ToDo Translate
-                    ->columnSpan(1)
+                ->columnSpan(1)
                     ->columns(1)
-                    ->hidden(function($get, $record){
-                        if(is_null($get("type"))) return false;
+                    ->hidden(function ($get, $record) {
+                        if (is_null($get("type"))) {
+                            return false;
+                        }
                         $type = CustomFieldType::getTypeFromIdentifier($get("type"));
                         $array = $type->getFlattenExtraTypeOptions();
                         return empty($array);
@@ -152,27 +149,35 @@ class GeneralFieldResource extends Resource
                             ->label("")
                             ->multiple()
                             ->live()
-                            ->formatStateUsing(fn(GeneralField $record) => array_keys($record->overwrite_options??[]))
-                            ->options(function ($get){
+                            ->formatStateUsing(fn(GeneralField $record) => array_keys($record->overwrite_options ?? []))
+                            ->options(function ($get) {
                                 $type = CustomFieldType::getTypeFromIdentifier($get("type"));
-                                if(is_null($get("type"))) return [];
+                                if (is_null($get("type"))) {
+                                    return [];
+                                }
                                 $key = array_keys($type->getFlattenExtraTypeOptions());
                                 return array_combine($key, $key);
                             }),
 
                         Group::make()
                             ->statePath('overwrite_options')
-                            ->schema(function($get){if(is_null($get("type"))) return [];
+                            ->schema(function ($get) {
+                                if (is_null($get("type"))) {
+                                    return [];
+                                }
                                 $type = CustomFieldType::getTypeFromIdentifier($get("type"));
 
                                 $components = $type->getExtraTypeOptionComponents();
 
-                                $isOverwritten = fn($get, $component)=> in_array($component->getStatePath(false), $get('../extra_option_names') ?? []);
+                                $isOverwritten = fn($get, $component) => in_array(
+                                    $component->getStatePath(false),
+                                    $get('../extra_option_names') ?? []
+                                );
 
                                 foreach ($components as $item) {
-                                    if ($item instanceof Field) $item->visible($isOverwritten);
-
-                                    elseif ($item instanceof \Filament\Forms\Components\Section) {
+                                    if ($item instanceof Field) {
+                                        $item->visible($isOverwritten);
+                                    } elseif ($item instanceof \Filament\Forms\Components\Section) {
                                         //Hide if all child hidden
                                         $item->visible(static function (Component $component): bool {
                                             return count($component->getChildComponentContainer()->getComponents());
@@ -190,18 +195,22 @@ class GeneralFieldResource extends Resource
                     ]),
 
                 Fieldset::make("Optionen") //ToDo Translate
-                    //ToDo make by saving option and by load option (TypeOption)
-                    //ToDo fix  it  show the field is required (Error) if the field is filled
-                    ->columnSpan(1)
+                //ToDo make by saving option and by load option (TypeOption)
+                //ToDo fix  it  show the field is required (Error) if the field is filled
+                ->columnSpan(1)
                     ->columns(1)
                     ->statePath("options")
-                    ->visible(function($get){
-                        if(is_null($get("type"))) return false;
+                    ->visible(function ($get) {
+                        if (is_null($get("type"))) {
+                            return false;
+                        }
                         $type = CustomFieldType::getTypeFromIdentifier($get("type"));
                         return count($type->generalTypeOptions()) > 0;
                     })
-                    ->schema(function($get){
-                        if(is_null($get("type"))) return[];
+                    ->schema(function ($get) {
+                        if (is_null($get("type"))) {
+                            return [];
+                        }
                         $type = CustomFieldType::getTypeFromIdentifier($get("type"));
                         return $type->getGeneralTypeOptionComponents();
                     }),
@@ -215,27 +224,26 @@ class GeneralFieldResource extends Resource
             ->columns([
                 Tables\Columns\IconColumn::make('icon')
                     ->label("Icon")
-                    ->icon(fn($state)=> $state),
+                    ->icon(fn($state) => $state),
                 Tables\Columns\TextColumn::make('name')
                     ->label(__(self::langPrefix . 'label')),
 
                 Tables\Columns\TextColumn::make('type')
-                    ->label(__(self::langPrefix .'type'))
-                    ->getStateUsing(function (GeneralField $record){
-                        return  $record->getType()->getTranslatedName();
+                    ->label(__(self::langPrefix . 'type'))
+                    ->getStateUsing(function (GeneralField $record) {
+                        return $record->getType()->getTranslatedName();
                     }),
 
                 Tables\Columns\TextColumn::make('generalFieldForms.custom_form_identifier')
                     ->label(__(self::langPrefix . 'form_connections'))
                     ->listWithLineBreaks()
-                    ->state(fn(GeneralField $record) =>
-                        $record->generalFieldForms
-                            ->map(fn($generalFieldForm) => $generalFieldForm->dynamicFormConfiguration())
-                            ->map(fn(DynamicFormConfiguration $class) => ($class)::displayName())
+                    ->state(fn(GeneralField $record) => $record->generalFieldForms
+                        ->map(fn($generalFieldForm) => $generalFieldForm->dynamicFormConfiguration())
+                        ->map(fn(DynamicFormConfiguration $class) => ($class)::displayName())
                     ),
 
                 Tables\Columns\ToggleColumn::make('is_active')
-                    ->label(__(self::langPrefix .'is_general_field_active')),
+                    ->label(__(self::langPrefix . 'is_general_field_active')),
 
             ])
             ->filters([
@@ -263,5 +271,17 @@ class GeneralFieldResource extends Resource
             'create' => CreateGeneralField::route('/create'),
             'edit' => EditGeneralField::route('/{record}/edit'),
         ];
+    }
+
+    private static function getTranslationTab(string $location, string $label): Tab
+    {
+        return Tab::make($label)
+            ->schema([
+                TextInput::make("name")
+                    ->label("Name")
+                    ->required(),
+                TextInput::make("tool_tip")
+                    ->label(__(self::langPrefix . 'tool_tip')),
+            ]);
     }
 }

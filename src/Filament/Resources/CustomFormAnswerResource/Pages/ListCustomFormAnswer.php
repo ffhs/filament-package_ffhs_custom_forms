@@ -1,8 +1,8 @@
 <?php
 
-namespace Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormAnswerResource\Pages;
+namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormAnswerResource\Pages;
 
-use Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormAnswerResource;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormAnswerResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 

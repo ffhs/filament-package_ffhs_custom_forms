@@ -1,8 +1,8 @@
 <?php
 
-namespace Ffhs\FilamentPackageFfhsCustomForms\Resources\GeneralFieldsResource\Pages;
+namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\GeneralFieldsResource\Pages;
 
-use Ffhs\FilamentPackageFfhsCustomForms\Resources\GeneralFieldResource;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\GeneralFieldResource;
 use Filament\Resources\Pages\CreateRecord;
 use Filament\Actions;
 

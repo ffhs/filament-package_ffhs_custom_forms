@@ -1,8 +1,8 @@
 <?php
 
-namespace Ffhs\FilamentPackageFfhsCustomForms\Resources\GeneralFieldsResource\Pages;
+namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\GeneralFieldsResource\Pages;
 
-use Ffhs\FilamentPackageFfhsCustomForms\Resources\GeneralFieldResource;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\GeneralFieldResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 
@@ -22,14 +22,16 @@ class EditGeneralField extends EditRecord
     protected function mutateFormDataBeforeSave(array $data): array
     {
         //dd($data, $data['extra_option_names']);
-        if(!array_key_exists('extra_option_names', $data)){
+        if (!array_key_exists('extra_option_names', $data)) {
             return parent::mutateFormDataBeforeSave($data);
         }
         $names = $data['extra_option_names'];
 
         $overwriteOptions = $data['overwrite_options'];
         $allowedOverwriteOptions = [];
-        foreach ($names as $name) $allowedOverwriteOptions[$name] = $overwriteOptions[$name] ?? null;
+        foreach ($names as $name) {
+            $allowedOverwriteOptions[$name] = $overwriteOptions[$name] ?? null;
+        }
 
         unset($data['extra_option_names']);
         $data['overwrite_options'] = $allowedOverwriteOptions;

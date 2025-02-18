@@ -1,9 +1,9 @@
 <?php
 
-namespace Ffhs\FilamentPackageFfhsCustomForms\Resources\TemplateResource\Pages;
+namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\TemplateResource\Pages;
 
-use Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormResource\Pages\ListCustomForm;
-use Ffhs\FilamentPackageFfhsCustomForms\Resources\TemplateResource;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormResource\Pages\ListCustomForm;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\TemplateResource;
 use Filament\Actions;
 
 class ListTemplate extends ListCustomForm

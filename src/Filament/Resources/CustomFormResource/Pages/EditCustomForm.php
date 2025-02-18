@@ -1,6 +1,6 @@
 <?php
 
-namespace Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormResource\Pages;
+namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormResource\Pages;
 
 use Ffhs\FilamentPackageFfhsCustomForms\Facades\CustomForms;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\Actions\CustomFormSchemaExportAction;
@@ -9,7 +9,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\FormEditor
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\EditHelper\EditCustomFormLoadHelper;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\EditHelper\EditCustomFormSaveHelper;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
-use Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormResource;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormResource;
 use Filament\Actions;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Form;
@@ -21,33 +21,37 @@ use Illuminate\Contracts\Support\Htmlable;
 class EditCustomForm extends EditRecord
 {
     use Translatable;
+
     protected static string $resource = CustomFormResource::class;
 
 
-    public function getMaxContentWidth(): MaxWidth|string|null {
+    public function getMaxContentWidth(): MaxWidth|string|null
+    {
         return MaxWidth::Full;
     }
 
-    public function form(Form $form): Form {
+    public function form(Form $form): Form
+    {
         return $form->schema([Section::make()->schema([CustomFormEditor::make()])]);
     }
 
-    public function getTitle(): string|Htmlable {
+    public function getTitle(): string|Htmlable
+    {
         return $this->record->short_title . " - " . parent::getTitle();
     }
 
-    public function save(bool $shouldRedirect = true, bool $shouldSendSavedNotification = true): void {
-
+    public function save(bool $shouldRedirect = true, bool $shouldSendSavedNotification = true): void
+    {
         $this->authorizeAccess();
 
         EditCustomFormSaveHelper::save($this->data, $this->getRecord());
 
         parent::save($shouldRedirect, $shouldSendSavedNotification);
-
     }
 
-    protected function fillForm(): void {
-       $this->form->fill(EditCustomFormLoadHelper::load($this->getRecord()));
+    protected function fillForm(): void
+    {
+        $this->form->fill(EditCustomFormLoadHelper::load($this->getRecord()));
     }
 
     protected function getHeaderActions(): array
@@ -56,11 +60,10 @@ class EditCustomForm extends EditRecord
             CustomFormSchemaExportAction::make(),
             CustomFormSchemaImportAction::make()
                 ->existingForm(fn(CustomForm $record) => $record)
-                ->disabled(fn(CustomForm $record) =>
-                    $record->ownedFields->count() != 0 ||
+                ->disabled(fn(CustomForm $record) => $record->ownedFields->count() != 0 ||
                     $record->rules->count() != 0
                 )
-                ->action(function(CustomFormSchemaImportAction $action, $data){
+                ->action(function (CustomFormSchemaImportAction $action, $data) {
                     $action->callImportAction($data);
                     $action->redirect('edit');
                 }),

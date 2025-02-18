@@ -1,12 +1,12 @@
 <?php
 
-namespace Ffhs\FilamentPackageFfhsCustomForms\Resources;
+namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources;
 
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormAnswerResource\Pages\CreateCustomFormAnswer;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormAnswerResource\Pages\EditCustomFormAnswer;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormAnswerResource\Pages\ListCustomFormAnswer;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormAnswerResource\Pages\ViewCustomFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
-use Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormAnswerResource\Pages\CreateCustomFormAnswer;
-use Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormAnswerResource\Pages\EditCustomFormAnswer;
-use Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormAnswerResource\Pages\ListCustomFormAnswer;
-use Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormAnswerResource\Pages\ViewCustomFormAnswer;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -14,15 +14,12 @@ use Filament\Tables\Table;
 
 class CustomFormAnswerResource extends Resource
 {
+    const langPrefix = "filament-package_ffhs_custom_forms::custom_forms.fields.";
     protected static ?string $model = CustomFormAnswer::class;
-
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-
-
-    const langPrefix= "filament-package_ffhs_custom_forms::custom_forms.fields.";
-
-    public static function getRecordTitleAttribute(): ?string {
+    public static function getRecordTitleAttribute(): ?string
+    {
         return "name_" . app()->getLocale();
     }
 
@@ -36,20 +33,21 @@ class CustomFormAnswerResource extends Resource
         return __('filament-package_ffhs_custom_forms::custom_forms.navigation.custom_form_answer');
     }
 
-    public static function getNavigationParentItem(): ?string {
+    public static function getNavigationParentItem(): ?string
+    {
         return __('filament-package_ffhs_custom_forms::custom_forms.navigation.forms');
     }
 
-/*ToDo Translate
+    /*ToDo Translate
 
- *     public static function getTitleCasePluralModelLabel(): string {
-        return __('filament-package_ffhs_custom_forms::custom_forms.navigation.general_fields');
-    }
+     *     public static function getTitleCasePluralModelLabel(): string {
+            return __('filament-package_ffhs_custom_forms::custom_forms.navigation.general_fields');
+        }
 
-    public static function getTitleCaseModelLabel(): string {
-        return __('filament-package_ffhs_custom_forms::custom_forms.fields.general_field');
-    }
- */
+        public static function getTitleCaseModelLabel(): string {
+            return __('filament-package_ffhs_custom_forms::custom_forms.fields.general_field');
+        }
+     */
 
 
     public static function form(Form $form): Form
@@ -69,7 +67,9 @@ class CustomFormAnswerResource extends Resource
                     ->label("Formular Name"), //ToDo Translate,
                 Tables\Columns\TextColumn::make('customForm.custom_form_identifier')
                     ->label("Formular Art") //ToDo Translate,
-                    ->state(fn(CustomFormAnswer $record) =>($record->customForm->dynamicFormConfiguration())::displayName()),
+                    ->state(
+                        fn(CustomFormAnswer $record) => ($record->customForm->dynamicFormConfiguration())::displayName()
+                    ),
             ])
             ->filters([
                 //
@@ -99,7 +99,7 @@ class CustomFormAnswerResource extends Resource
             'index' => ListCustomFormAnswer::route('/'),
             'create' => CreateCustomFormAnswer::route('/create'),
             'edit' => EditCustomFormAnswer::route('/{record}/edit'),
-            'view'=> ViewCustomFormAnswer::route('/{record}')
+            'view' => ViewCustomFormAnswer::route('/{record}')
         ];
     }
 }

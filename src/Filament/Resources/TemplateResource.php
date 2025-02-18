@@ -1,12 +1,12 @@
 <?php
 
-namespace Ffhs\FilamentPackageFfhsCustomForms\Resources;
+namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources;
 
 
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\TemplateResource\Pages\CreateTemplate;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\TemplateResource\Pages\EditTemplate;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\TemplateResource\Pages\ListTemplate;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
-use Ffhs\FilamentPackageFfhsCustomForms\Resources\TemplateResource\Pages\CreateTemplate;
-use Ffhs\FilamentPackageFfhsCustomForms\Resources\TemplateResource\Pages\EditTemplate;
-use Ffhs\FilamentPackageFfhsCustomForms\Resources\TemplateResource\Pages\ListTemplate;
 use Filament\Forms\Form;
 use Filament\Resources\Concerns\Translatable;
 use Filament\Resources\Resource;
@@ -24,24 +24,30 @@ class TemplateResource extends Resource
     {
         return __('filament-package_ffhs_custom_forms::custom_forms.navigation.group.forms');
     }
-    public static function getNavigationParentItem(): ?string {
+
+    public static function getNavigationParentItem(): ?string
+    {
         return __('filament-package_ffhs_custom_forms::custom_forms.navigation.forms');
     }
+
     public static function getNavigationLabel(): string
     {
         return __('filament-package_ffhs_custom_forms::custom_forms.navigation.templates');
     }
 
-    public static function getTitleCasePluralModelLabel(): string {
+    public static function getTitleCasePluralModelLabel(): string
+    {
         return __('filament-package_ffhs_custom_forms::custom_forms.navigation.templates');
     }
 
-    public static function getTitleCaseModelLabel(): string {
+    public static function getTitleCaseModelLabel(): string
+    {
         return __('filament-package_ffhs_custom_forms::custom_forms.form.template');
     }
 
 
-    public static function getEloquentQuery(): Builder {
+    public static function getEloquentQuery(): Builder
+    {
         return parent::getEloquentQuery()
             ->whereNotNull('template_identifier');
     }
@@ -53,14 +59,13 @@ class TemplateResource extends Resource
 
     public static function table(Table $table): Table
     {
-       return CustomFormResource::table($table);
+        return CustomFormResource::table($table);
     }
 
     public static function getRelations(): array
     {
         return [];
     }
-
 
 
     public static function getPages(): array

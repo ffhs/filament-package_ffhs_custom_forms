@@ -1,11 +1,11 @@
 <?php
 
-namespace Ffhs\FilamentPackageFfhsCustomForms\Resources;
+namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources;
 
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormResource\Pages\CreateCustomForm;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormResource\Pages\EditCustomForm;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormResource\Pages\ListCustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
-use Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormResource\Pages\CreateCustomForm;
-use Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormResource\Pages\EditCustomForm;
-use Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormResource\Pages\ListCustomForm;
 use Filament\Resources\Concerns\Translatable;
 use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Builder;
@@ -21,17 +21,20 @@ class CustomFormResource extends Resource
     {
         return __('filament-package_ffhs_custom_forms::custom_forms.navigation.group.forms');
     }
+
     public static function getNavigationLabel(): string
     {
         return __('filament-package_ffhs_custom_forms::custom_forms.navigation.forms');
     }
 
 
-    public static function getTitleCasePluralModelLabel(): string {
+    public static function getTitleCasePluralModelLabel(): string
+    {
         return __('filament-package_ffhs_custom_forms::custom_forms.navigation.forms');
     }
 
-    public static function getTitleCaseModelLabel(): string {
+    public static function getTitleCaseModelLabel(): string
+    {
         return __('filament-package_ffhs_custom_forms::custom_forms.form.custom_form');
     }
 

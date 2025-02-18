@@ -1,9 +1,9 @@
 <?php
 
-namespace Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormAnswerResource\Pages;
+namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormAnswerResource\Pages;
 
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\EmbeddedAnswerInfolist;
-use Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormAnswerResource;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormAnswerResource;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ViewRecord;
@@ -14,7 +14,8 @@ class ViewCustomFormAnswer extends ViewRecord
     protected static ?string $title = 'Formular Anschauen'; //ToDo Translate
 
 
-    public function infolist(Infolist $infolist): Infolist {
+    public function infolist(Infolist $infolist): Infolist
+    {
         return $infolist
             ->schema([
                 Section::make()
@@ -23,7 +24,7 @@ class ViewCustomFormAnswer extends ViewRecord
                             ->autoViewMode()
                             ->columnSpanFull()
                     ])
-        ]);
+            ]);
     }
 
 
