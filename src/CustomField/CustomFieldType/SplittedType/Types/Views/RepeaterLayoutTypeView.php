@@ -20,26 +20,28 @@ class RepeaterLayoutTypeView implements FieldTypeView
 {
     use HasDefaultViewComponent;
 
-    public static function getFormComponent(CustomFieldType $type, CustomField $record, array  $parameter = []): \Filament\Forms\Components\Component {
-
-
-        $ordered = FieldMapper::getOptionParameter($record,'ordered');
-        $minAmount = FieldMapper::getOptionParameter($record,'min_amount');
-        $maxAmount = FieldMapper::getOptionParameter($record,'max_amount');
-        $defaultAmount = FieldMapper::getOptionParameter($record,'default_amount');
-        $addActionLabel = FieldMapper::getOptionParameter($record,'add_action_label');
-        $showLabel = FieldMapper::getOptionParameter($record,'show_label');
-        $helperText = FieldMapper::getOptionParameter($record,'helper_text') ?? '';
+    public static function getFormComponent(
+        CustomFieldType $type,
+        CustomField $record,
+        array $parameter = []
+    ): \Filament\Forms\Components\Component {
+        $ordered = FieldMapper::getOptionParameter($record, 'ordered');
+        $minAmount = FieldMapper::getOptionParameter($record, 'min_amount');
+        $maxAmount = FieldMapper::getOptionParameter($record, 'max_amount');
+        $defaultAmount = FieldMapper::getOptionParameter($record, 'default_amount');
+        $addActionLabel = FieldMapper::getOptionParameter($record, 'add_action_label');
+        $showLabel = FieldMapper::getOptionParameter($record, 'show_label');
+        $helperText = FieldMapper::getOptionParameter($record, 'helper_text') ?? '';
 
         $schema = $parameter["renderer"]();
 
 
-        /**@var \Filament\Forms\Components\Repeater $repeater*/
+        /**@var \Filament\Forms\Components\Repeater $repeater */
         $repeater = static::makeComponent(Repeater::class, $record);
         $repeater
-            ->columnSpan(FieldMapper::getOptionParameter($record,"column_span"))
-            ->columns(FieldMapper::getOptionParameter($record,"columns"))
-            ->columnStart(FieldMapper::getOptionParameter($record,"new_line_option"))
+            ->columnSpan(FieldMapper::getOptionParameter($record, "column_span"))
+            ->columns(FieldMapper::getOptionParameter($record, "columns"))
+            ->columnStart(FieldMapper::getOptionParameter($record, "new_line_option"))
             ->defaultItems($defaultAmount)
             ->minItems($minAmount)
             ->maxItems($maxAmount)
@@ -48,34 +50,49 @@ class RepeaterLayoutTypeView implements FieldTypeView
             ->deleteAction(self::modifyRepeaterAction(...))
             ->addAction(self::modifyRepeaterAction(...));
 
-        if(!$showLabel) $repeater->label('');
-        if(!is_null($addActionLabel)) $repeater->addActionLabel($addActionLabel);
+        if (!$showLabel) {
+            $repeater->label('');
+        }
+        if (!is_null($addActionLabel)) {
+            $repeater->addActionLabel($addActionLabel);
+        }
 
-        if($ordered) $repeater->orderColumn("order");
-        else $repeater->reorderable(false);
+        if ($ordered) {
+            $repeater->orderColumn("order");
+        } else {
+            $repeater->reorderable(false);
+        }
 
 
         return $repeater;
     }
 
-    public static function getInfolistComponent(CustomFieldType $type, CustomFieldAnswer $record,  array  $parameter = []): \Filament\Infolists\Components\Component
-    {
+    public static function getInfolistComponent(
+        CustomFieldType $type,
+        CustomFieldAnswer $record,
+        array $parameter = []
+    ): \Filament\Infolists\Components\Component {
 //        $ordered = FieldMapper::getOptionParameter($record,'ordered');
 
-        $isFieldset = FieldMapper::getOptionParameter($record,"show_as_fieldset");
+        $isFieldset = FieldMapper::getOptionParameter($record, "show_as_fieldset");
         $component = $isFieldset
-            ? Fieldset::make(FieldMapper::getLabelName($record))
+            ? Fieldset::make('')//FieldMapper::getLabelName($record)
             : Section::make(FieldMapper::getLabelName($record));
 
         /** @var Collection $fields */
         $schema = [];
 
-        $loadedAnswers = CustomFormLoadHelper::load($record->customFormAnswer, $record->customField->form_position, $record->customField->layout_end_position, $record->customForm);
+        $loadedAnswers = CustomFormLoadHelper::load(
+            $record->customFormAnswer,
+            $record->customField->form_position,
+            $record->customField->layout_end_position,
+            $record->customForm
+        );
         $loadedAnswers = $loadedAnswers[$record->customField->identifier ?? ''] ?? [];
 
         $fields = $parameter["customFieldData"];
         $fields = $fields->keyBy("form_position");
-        $offset = $fields->sortBy("form_position")->first()->form_position -1;
+        $offset = $fields->sortBy("form_position")->first()->form_position - 1;
         $viewMode = $parameter["viewMode"];
         $customForm = $record->customFormAnswer->customForm;
 
