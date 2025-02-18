@@ -2,14 +2,13 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormResource\Pages;
 
-use Ffhs\FilamentPackageFfhsCustomForms\Facades\CustomForms;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\Actions\CustomFormSchemaExportAction;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\Actions\CustomFormSchemaImportAction;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\FormEditor\CustomFormEditor;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormResource;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\EditHelper\EditCustomFormLoadHelper;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\EditHelper\EditCustomFormSaveHelper;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormResource;
 use Filament\Actions;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Form;
@@ -24,6 +23,11 @@ class EditCustomForm extends EditRecord
 
     protected static string $resource = CustomFormResource::class;
 
+    public static function canAccess(array $parameters = []): bool
+    {
+        return static::$resource::canAccess() &&
+            static::$resource::can('manageForms');
+    }
 
     public function getMaxContentWidth(): MaxWidth|string|null
     {

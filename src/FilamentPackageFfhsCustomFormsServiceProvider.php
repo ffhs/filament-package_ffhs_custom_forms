@@ -1,6 +1,7 @@
 <?php
 
 namespace Ffhs\FilamentPackageFfhsCustomForms;
+
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
@@ -20,7 +21,8 @@ use Spatie\LaravelPackageTools\PackageServiceProvider;
 class FilamentPackageFfhsCustomFormsServiceProvider extends PackageServiceProvider
 {
 
-    public function configurePackage(Package $package): void {
+    public function configurePackage(Package $package): void
+    {
         $package
             ->name('filament-package_ffhs_custom_forms')
             ->hasMigrations([
@@ -29,44 +31,43 @@ class FilamentPackageFfhsCustomFormsServiceProvider extends PackageServiceProvid
                 'create_custom_options_tables',
                 'create_rules_tables',
                 'create_form_relations_tables',
+                'seed_custom_forms_permissions'
             ])
             ->hasConfigFile('ffhs_custom_forms')
             ->hasTranslations()
-            ->hasInstallCommand(fn(InstallCommand $command) =>
-                $command
-                    ->startWith(function (InstallCommand $command){
-                        $command->info("Publish translation from Filament\Spatie-Translatable");
-                       // Artisan::call('vendor:publish', ["tag" => "filament-spatie-laravel-translatable-plugin-translations"]); ToDo repair
+            ->hasInstallCommand(fn(InstallCommand $command) => $command
+                ->startWith(function (InstallCommand $command) {
+                    $command->info("Publish translation from Filament\Spatie-Translatable");
+                    // Artisan::call('vendor:publish', ["tag" => "filament-spatie-laravel-translatable-plugin-translations"]); ToDo repair
 
-                        $command->info("Publish config from icon picker plugin");
-                        // Artisan::call('vendor:publish', ["tag" => "filament-icon-picker-config"]); ToDo repair
-                    })
-                    ->publishConfigFile()
-                    ->publishAssets()
-                    ->copyAndRegisterServiceProviderInApp()
-                    ->publishMigrations()
-                    ->askToRunMigrations()
-                    ->copyAndRegisterServiceProviderInApp()
-                    ->endWith(function (InstallCommand $command) {
-                        // Clear the application cache
-                        $command->info("Clear cache");
-                        Artisan::call('cache:clear');
+                    $command->info("Publish config from icon picker plugin");
+                    // Artisan::call('vendor:publish', ["tag" => "filament-icon-picker-config"]); ToDo repair
+                })
+                ->publishConfigFile()
+                ->publishAssets()
+                ->copyAndRegisterServiceProviderInApp()
+                ->publishMigrations()
+                ->askToRunMigrations()
+                ->copyAndRegisterServiceProviderInApp()
+                ->endWith(function (InstallCommand $command) {
+                    // Clear the application cache
+                    $command->info("Clear cache");
+                    Artisan::call('cache:clear');
 
-                        $command->info("Clear icon cache");
-                        Artisan::call('icons:cache');
+                    $command->info("Clear icon cache");
+                    Artisan::call('icons:cache');
 
-                        $command->info("Create storage symlink");
-                        Artisan::call('storage:link');
-                    })
+                    $command->info("Create storage symlink");
+                    Artisan::call('storage:link');
+                })
             )
             ->hasViews('filament-package_ffhs_custom_forms');
-
-
     }
 
-    public function boot(): void {
+    public function boot(): void
+    {
         parent::boot();
-        Factory::guessFactoryNamesUsing(function(string $modelName) {
+        Factory::guessFactoryNamesUsing(function (string $modelName) {
             $factoryNames = [
                 CustomField::class,
                 CustomFieldAnswer::class,
@@ -76,9 +77,13 @@ class FilamentPackageFfhsCustomFormsServiceProvider extends PackageServiceProvid
                 GeneralFieldForm::class
             ];
 
-            if(in_array($modelName,$factoryNames))
-                return 'Ffhs\\FilamentPackageFfhsCustomForms\\Models\Factories\\' . class_basename($modelName) . 'Factory';
-            else return 'Database\Factories\\' . class_basename($modelName) . 'Factory';
+            if (in_array($modelName, $factoryNames)) {
+                return 'Ffhs\\FilamentPackageFfhsCustomForms\\Models\Factories\\' . class_basename(
+                        $modelName
+                    ) . 'Factory';
+            } else {
+                return 'Database\Factories\\' . class_basename($modelName) . 'Factory';
+            }
         });
 
 

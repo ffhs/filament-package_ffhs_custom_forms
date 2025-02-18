@@ -2,12 +2,12 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\TemplateResource\Pages;
 
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormResource\Pages\EditCustomForm;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\TemplateResource;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\EditHelper\EditCustomFormHelper;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormResource\Pages\EditCustomForm;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\TemplateResource;
 use Filament\Actions\Action;
 use Filament\Support\Enums\MaxWidth;
 use Illuminate\Database\Eloquent\Builder;
@@ -20,6 +20,12 @@ class EditTemplate extends EditCustomForm
 {
     protected static string $resource = TemplateResource::class;
 
+
+    public static function canAccess(array $parameters = []): bool
+    {
+        return static::$resource::canAccess() &&
+            static::$resource::can('manageTemplates');
+    }
 
     protected function getSaveFormAction(): Action
     {

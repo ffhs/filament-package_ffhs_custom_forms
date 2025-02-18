@@ -67,6 +67,11 @@ class TemplateResource extends Resource
         return [];
     }
 
+    public static function canAccess(): bool
+    {
+        return parent::canAccess() && static::can('showTemplateResource');
+    }
+
 
     public static function getPages(): array
     {
