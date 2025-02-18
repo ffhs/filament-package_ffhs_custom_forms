@@ -4,8 +4,12 @@ namespace Ffhs\FilamentPackageFfhsCustomForms;
 
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomOption;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Ffhs\FilamentPackageFfhsCustomForms\Policies\CustomFieldPolicy;
 use Ffhs\FilamentPackageFfhsCustomForms\Policies\CustomFormPolicy;
+use Ffhs\FilamentPackageFfhsCustomForms\Policies\CustomOptionPolicy;
+use Ffhs\FilamentPackageFfhsCustomForms\Policies\GeneralFieldPolicy;
 use Filament\Support\Assets\AlpineComponent;
 use Filament\Support\Assets\Css;
 use Filament\Support\Facades\FilamentAsset;
@@ -22,6 +26,8 @@ class FilamentPackageFfhsCustomFormsServiceProvider extends PackageServiceProvid
     protected array $policies = [
         CustomForm::class => CustomFormPolicy::class,
         CustomField::class => CustomFieldPolicy::class,
+        GeneralField::class => GeneralFieldPolicy::class,
+        CustomOption::class => CustomOptionPolicy::class,
     ];
 
     public function configurePackage(Package $package): void

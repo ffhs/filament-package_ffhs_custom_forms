@@ -12,4 +12,8 @@ enum CustomFormPermissionName: string
     case FILAMENT_RESOURCE_TEMPLATES = 'custom_forms.filament.templates';
 
 
+    case MANAGE_GENERAL_FIELDS = 'custom_forms.manage_general_fields';
+    case FILAMENT_RESOURCE_GENERAL_FIELDS = 'custom_forms.filament.general_fields';
+
+
 }

@@ -15,6 +15,8 @@ return new class () extends Migration {
             CustomFormPermissionName::MANAGE_CUSTOM_FORMS->value,
             CustomFormPermissionName::MANAGE_TEMPLATES->value,
             CustomFormPermissionName::FILAMENT_RESOURCE_TEMPLATES->value,
+            CustomFormPermissionName::FILAMENT_RESOURCE_GENERAL_FIELDS->value,
+            CustomFormPermissionName::MANAGE_GENERAL_FIELDS->value,
         ];
     }
 

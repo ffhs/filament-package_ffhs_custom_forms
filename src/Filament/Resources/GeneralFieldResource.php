@@ -6,7 +6,8 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormConfiguration\DynamicFormConfiguration;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\GeneralFieldsResource\Pages\{CreateGeneralField,
     EditGeneralField,
-    ListGeneralField};
+    ListGeneralField
+};
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\GeneralFieldsResource\RelationManagers\GeneralFieldFormRelationManager;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Filament\Forms\Components\Component;
@@ -40,6 +41,12 @@ class GeneralFieldResource extends Resource
     {
         return "name_" . app()->getLocale();
     }
+
+    public static function canAccess(): bool
+    {
+        return parent::canAccess() && static::can('filamentResource');
+    }
+
 
     public static function getNavigationGroup(): ?string
     {
