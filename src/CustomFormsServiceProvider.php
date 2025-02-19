@@ -34,6 +34,11 @@ class CustomFormsServiceProvider extends PackageServiceProvider
         CustomOption::class => CustomOptionPolicy::class,
         GeneralFieldForm::class => GeneralFieldFormPolicy::class,
         FormRule::class => FormRulePolicy::class,
+        //CustomFormAnswer
+        //CustomFieldAnswer
+        //Rule
+        //RuleEvent
+        //RuleTrigger
 
     ];
 
