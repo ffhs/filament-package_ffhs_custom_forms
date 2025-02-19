@@ -13,8 +13,8 @@ class CustomFormPolicy
 
     public function view(User $user, CustomForm $customForm): bool
     {
-        if ($user->can(CustomFormPermissionName::FILL_CUSTOM_FORMS) ||
-            $user->can(CustomFormPermissionName::MANAGE_CUSTOM_FORMS)) {
+        if ($user->can(CustomFormPermissionName::FILL_CUSTOM_FORMS)
+            || $user->can(CustomFormPermissionName::MANAGE_CUSTOM_FORMS)) {
             return true;
         }
 
@@ -27,14 +27,14 @@ class CustomFormPolicy
 
     public function viewAny(User $user): bool
     {
-        return $user->can(CustomFormPermissionName::FILL_CUSTOM_FORMS) ||
-            $user->can(CustomFormPermissionName::MANAGE_CUSTOM_FORMS) ||
-            $user->can(CustomFormPermissionName::MANAGE_TEMPLATES);
+        return $user->can(CustomFormPermissionName::FILL_CUSTOM_FORMS)
+            || $user->can(CustomFormPermissionName::MANAGE_CUSTOM_FORMS)
+            || $user->can(CustomFormPermissionName::MANAGE_TEMPLATES);
     }
 
-    public function create(User $user, CustomForm $customForm): bool
+    public function create(User $user): bool
     {
-        return $this->update($user, $customForm);
+        return true;
     }
 
     public function update(User $user, CustomForm $customForm): bool
@@ -42,6 +42,7 @@ class CustomFormPolicy
         if (!empty($customForm->template_identifier)) {
             return $user->can(CustomFormPermissionName::MANAGE_TEMPLATES) ?? false;
         }
+
         return $user->can(CustomFormPermissionName::MANAGE_CUSTOM_FORMS) ?? false;
     }
 
@@ -69,5 +70,4 @@ class CustomFormPolicy
     {
         return $user->can(CustomFormPermissionName::FILAMENT_RESOURCE_TEMPLATES) ?? false;
     }
-
 }

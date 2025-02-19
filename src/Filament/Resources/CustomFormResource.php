@@ -14,7 +14,6 @@ class CustomFormResource extends Resource
 {
     use Translatable;
 
-
     protected static ?string $model = CustomForm::class;
     protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-check';
 
@@ -27,7 +26,6 @@ class CustomFormResource extends Resource
     {
         return __('filament-package_ffhs_custom_forms::custom_forms.navigation.forms');
     }
-
 
     public static function getTitleCasePluralModelLabel(): string
     {
@@ -49,7 +47,6 @@ class CustomFormResource extends Resource
     {
         return parent::canAccess() && static::can('showResource');
     }
-
 
     public static function getPages(): array
     {

@@ -3,10 +3,17 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\GeneralFieldsResource\RelationManagers;
 
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralFieldForm;
-use Filament\Forms;
+use Filament\Forms\Components\Group;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Tables;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\CreateAction;
+use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Actions\DeleteBulkAction;
+use Filament\Tables\Columns\CheckboxColumn;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 
@@ -14,36 +21,38 @@ class GeneralFieldFormRelationManager extends RelationManager
 {
     protected static string $relationship = 'generalFieldForms';
 
-
     //To Do set required and max
     public function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\Select::make('custom_form_identifier')
+                Select::make('custom_form_identifier')
                     ->label(__('filament-package_ffhs_custom_forms::custom_forms.form.custom_form_identifier.raw_name'))
                     ->required()
                     ->options(function ($livewire) {
                         $generalField = $livewire->getOwnerRecord();
-                        $selectedIdentifyers = $generalField->generalFieldForms->map(
-                            fn(GeneralFieldForm $fieldForm) => $fieldForm->custom_form_identifier
-                        );
+                        $selectedIdentifyers = $generalField
+                            ->generalFieldForms
+                            ->map(fn(GeneralFieldForm $fieldForm) => $fieldForm->custom_form_identifier);
+
                         $notSelecdetForms = collect(config('ffhs_custom_forms.forms'))
                             ->filter(
                                 fn($class) => $selectedIdentifyers
                                     ->filter(fn($identifier) => ($class)::identifier() == $identifier)
                                     ->isEmpty()
                             );
+
                         $keys = $notSelecdetForms->map(fn($class) => ($class)::identifier())->toArray();
                         $values = $notSelecdetForms->map(fn($class) => ($class)::displayName())->toArray();
+
                         return array_combine($keys, $values);
                     }),
-                Forms\Components\Group::make([
-                    Forms\Components\Toggle::make('is_required')
+                Group::make([
+                    Toggle::make('is_required')
                         ->label(__('filament-package_ffhs_custom_forms::custom_forms.fields.is_required'))
                         ->default(true),
-                    Forms\Components\Toggle::make('export')
-                        ->label("Wird exportiert") //ToDo Translate
+                    Toggle::make('export')
+                        ->label('Wird exportiert') //ToDo Translate
                         ->default(false),
                 ])
             ]);
@@ -54,8 +63,8 @@ class GeneralFieldFormRelationManager extends RelationManager
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('id'),
-                Tables\Columns\TextColumn::make('custom_form_identifier_name')
+                TextColumn::make('id'),
+                TextColumn::make('custom_form_identifier_name')
                     ->label(
                         __('filament-package_ffhs_custom_forms::custom_forms.form.custom_form_identifier.display_name')
                     )
@@ -64,30 +73,28 @@ class GeneralFieldFormRelationManager extends RelationManager
                      ->label(__('filament-package_ffhs_custom_forms::custom_forms.fields.is_required'))
                      ->boolean(),
                  Tables\Columns\IconColumn::make('export')
-                     ->label("Wird exportiert")//ToDo Translate
+                     ->label('Wird exportiert')//ToDo Translate
                      ->boolean(),*/
-                Tables\Columns\CheckboxColumn::make('is_required')
+                CheckboxColumn::make('is_required')
                     ->label(__('filament-package_ffhs_custom_forms::custom_forms.fields.is_required')),
-                Tables\Columns\CheckboxColumn::make('export')
-                    ->label("Wird exportiert"),//ToDo Translate
+                CheckboxColumn::make('export')
+                    ->label('Wird exportiert'),//ToDo Translate
                 /*
                 Tables\Columns\TextColumn::make('custom_form_identifier')
                     ->label(__('filament-package_ffhs_custom_forms::custom_forms.form.custom_form_identifier.raw_name')),
                  */
             ])
-            ->filters([
-                //
-            ])
+            ->filters([])
             ->headerActions([
-                Tables\Actions\CreateAction::make()
+                CreateAction::make()
                     ->label(__('filament-package_ffhs_custom_forms::custom_forms.functions.connect')), //ToDo Translate
             ])
             ->actions([
-                Tables\Actions\DeleteAction::make(),
+                DeleteAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }
@@ -96,6 +103,4 @@ class GeneralFieldFormRelationManager extends RelationManager
     {
         return false; //toDo Check if it is possible and required
     }
-
-
 }

@@ -2,6 +2,7 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Types;
 
+use Exception;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Types\Views\FileUploadView;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\HasCustomTypePackageTranslation;
@@ -26,7 +27,7 @@ class FileUploadType extends CustomFieldType
 
     public static function identifier(): string
     {
-        return "file_upload";
+        return 'file_upload';
     }
 
     public function extraTypeOptions(): array
@@ -34,13 +35,13 @@ class FileUploadType extends CustomFieldType
         return [
             DefaultLayoutTypeOptionGroup::make()
                 ->addTypeOptions(
-                    "grid_layout",
+                    'grid_layout',
                     FastTypeOption::makeFast(
                         false,
-                        Toggle::make("grid_layout")
+                        Toggle::make('grid_layout')
                             ->hidden(fn($get) => !$get('image'))
                             ->label(
-                                __("filament-package_ffhs_custom_forms::custom_forms.fields.type_options.grid_layout")
+                                __('filament-package_ffhs_custom_forms::custom_forms.fields.type_options.grid_layout')
                             )
                     )
                 ),
@@ -53,12 +54,13 @@ class FileUploadType extends CustomFieldType
                                 if ($state) {
                                     return;
                                 }
+
                                 $set('show_images', false);
                                 $set('show_images_in_view', false);
                                 $set('grid_layout', false);
                             })
                             ->label(
-                                __("filament-package_ffhs_custom_forms::custom_forms.fields.type_options.only_images")
+                                __('filament-package_ffhs_custom_forms::custom_forms.fields.type_options.only_images')
                             )
                             ->live()
                     ),
@@ -66,7 +68,7 @@ class FileUploadType extends CustomFieldType
                         false,
                         Toggle::make('show_images')
                             ->label(
-                                __("filament-package_ffhs_custom_forms::custom_forms.fields.type_options.show_images")
+                                __('filament-package_ffhs_custom_forms::custom_forms.fields.type_options.show_images')
                             )
                             ->disabled(fn($get) => !$get('image'))
                             ->hidden(fn($get) => !$get('image'))
@@ -77,7 +79,7 @@ class FileUploadType extends CustomFieldType
                         Toggle::make('show_images_in_view')
                             ->label(
                                 __(
-                                    "filament-package_ffhs_custom_forms::custom_forms.fields.type_options.show_images_in_view"
+                                    'filament-package_ffhs_custom_forms::custom_forms.fields.type_options.show_images_in_view'
                                 )
                             )
                             ->disabled(fn($get) => !$get('image'))
@@ -88,7 +90,7 @@ class FileUploadType extends CustomFieldType
                         true,
                         Toggle::make('downloadable')
                             ->label(
-                                __("filament-package_ffhs_custom_forms::custom_forms.fields.type_options.downloadable")
+                                __('filament-package_ffhs_custom_forms::custom_forms.fields.type_options.downloadable')
                             )
                     ),
                     'multiple' => FastTypeOption::makeFast(
@@ -98,12 +100,13 @@ class FileUploadType extends CustomFieldType
                                 if ($state) {
                                     return;
                                 }
+
                                 $set('reorderable', false);
                             })
                             ->live()
                             ->label(
                                 __(
-                                    "filament-package_ffhs_custom_forms::custom_forms.fields.type_options.multiple_uploads_allowed"
+                                    'filament-package_ffhs_custom_forms::custom_forms.fields.type_options.multiple_uploads_allowed'
                                 )
                             )
                     ),
@@ -112,7 +115,7 @@ class FileUploadType extends CustomFieldType
                         Toggle::make('reorderable')
                             ->hidden(fn($get) => !$get('multiple'))
                             ->label(
-                                __("filament-package_ffhs_custom_forms::custom_forms.fields.type_options.reorderable")
+                                __('filament-package_ffhs_custom_forms::custom_forms.fields.type_options.reorderable')
                             )
                     ),
                     'preserve_filenames' => FastTypeOption::makeFast(
@@ -120,30 +123,29 @@ class FileUploadType extends CustomFieldType
                         Toggle::make('preserve_filenames')
                             ->label(
                                 __(
-                                    "filament-package_ffhs_custom_forms::custom_forms.fields.type_options.preserve_filenames"
+                                    'filament-package_ffhs_custom_forms::custom_forms.fields.type_options.preserve_filenames'
                                 )
                             )
                     ),
-
                     'open_in_new_tab' => FastTypeOption::makeFast(
                         true,
                         Toggle::make('open_in_new_tab')
                             ->label(
                                 __(
-                                    "filament-package_ffhs_custom_forms::custom_forms.fields.type_options.open_in_new_tab"
+                                    'filament-package_ffhs_custom_forms::custom_forms.fields.type_options.open_in_new_tab'
                                 )
                             )
                             ->hidden(fn($get) => $get('image'))
                     ),
-
-                    'allowed_type' => new FastTypeOption([
-                        'application/pdf',
-                        'image/jpeg',
-                        'image/png'
-                    ],
-                        TagsInput::make("allowed_type")
+                    'allowed_type' => new FastTypeOption(
+                        [
+                            'application/pdf',
+                            'image/jpeg',
+                            'image/png'
+                        ],
+                        TagsInput::make('allowed_type')
                             ->columnSpanFull()
-                            ->label("Erlaubte Typen") //ToDo translate
+                            ->label('Erlaubte Typen') //ToDo translate
                     ),
                 ]),
 
@@ -152,7 +154,7 @@ class FileUploadType extends CustomFieldType
 
     public function icon(): string
     {
-        return "carbon-copy-file";
+        return 'carbon-copy-file';
     }
 
     public function updateFormComponentOnSave(
@@ -161,11 +163,12 @@ class FileUploadType extends CustomFieldType
         Form $form,
         Collection $flattenFormComponents
     ): void {
-        $componentKey = $customField->identifier . ".files";
+        $componentKey = $customField->identifier . '.files';
         $filesComponents = $flattenFormComponents->filter(function (Component $component) use ($componentKey) {
             if (is_null($component->getKey())) {
                 return false;
             }
+
             return str_contains($component->getKey(), $componentKey);
         });
 
@@ -183,12 +186,13 @@ class FileUploadType extends CustomFieldType
     {
         try {
             /**@var FileUpload $filesComponent */
-            // $filesComponent = $this->viewModes()["default"]::prepareFileUploadComponent($filesComponent, $customField);
+            // $filesComponent = $this->viewModes()['default']::prepareFileUploadComponent($filesComponent, $customField);
 
             // Check if the file mimetype matches one of the accepted file types
 
             $acceptedFileTypes = $filesComponent->getAcceptedFileTypes();
             $canSave = true;
+
             foreach (Arr::wrap($filesComponent->getState()) as $file) {
                 if (!$file instanceof TemporaryUploadedFile) {
                     continue;
@@ -208,7 +212,7 @@ class FileUploadType extends CustomFieldType
             } else {
                 $component->state([]);
             }
-        } catch (\Exception|RuntimeException $exception) {
+        } catch (Exception|RuntimeException $exception) {
             foreach (Arr::wrap($filesComponent->getState()) as $file) {
                 $file->delete();
             }
@@ -227,37 +231,37 @@ class FileUploadType extends CustomFieldType
         return parent::isEmptyAnswerer(
                 $customFieldAnswer,
                 $fieldAnswererData
-            ) || empty($fieldAnswererData["saved"]["files"]);
+            ) || empty($fieldAnswererData['saved']['files']);
     }
 
     public function prepareSaveFieldData(CustomFieldAnswer $answer, mixed $data): array
     {
-        $data = $data ?? ["files" => []];
+        $data = $data ?? ['files' => []];
 
-        if (is_string($data["files"] ?? null)) {
-            $data["files"] = [uniqid() => $data["files"]];
+        if (is_string($data['files'] ?? null)) {
+            $data['files'] = [uniqid() => $data['files']];
         }
 
-
-        foreach ($data["files"] ?? [] as $key => $file) {
+        foreach ($data['files'] ?? [] as $key => $file) {
             if (is_array($file)) {
-                unset($data["files"][$key]);
+                unset($data['files'][$key]);
             }
         }
+
         return parent::prepareSaveFieldData($answer, $data);
     }
 
     public function prepareLoadFieldData(CustomFieldAnswer $answer, array $data): mixed
     {
         $data = parent::prepareLoadFieldData($answer, $data);
-        $data = $data ?? ["files" => []];
-        foreach ($data["files"] ?? [] as $key => $file) {
+        $data = $data ?? ['files' => []];
+
+        foreach ($data['files'] ?? [] as $key => $file) {
             if (is_array($file)) {
-                unset($data["files"][$key]);
+                unset($data['files'][$key]);
             }
         }
+
         return $data;
     }
-
-
 }

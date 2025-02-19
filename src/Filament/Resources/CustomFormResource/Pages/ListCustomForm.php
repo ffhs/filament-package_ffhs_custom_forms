@@ -3,9 +3,9 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormResource\Pages;
 
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\Actions\CustomFormSchemaImportAction;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormResource;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\TemplateResource\Pages\ListTemplate;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Filament\Actions\CreateAction;
 use Filament\Resources\Components\Tab;
 use Filament\Resources\Pages\ListRecords;
@@ -25,30 +25,23 @@ class ListCustomForm extends ListRecords
         $query = static::$resource::getEloquentQuery();
 
         $tabs = [
-            'all' => Tab::make("All")
+            'all' => Tab::make('All')
                 ->badge($query->clone()->count()),
         ];
 
         foreach (config('ffhs_custom_forms.forms') as $formClass) {
             $tabs[$formClass::identifier()] =
                 Tab::make($formClass::displayName())
-                    ->badge($query->where("custom_form_identifier", $formClass::identifier())->count())
+                    ->badge($query->where('custom_form_identifier', $formClass::identifier())->count())
                     ->modifyQueryUsing(fn($query) => $this->prepareTabQuery($formClass::identifier(), $query));
         }
 
         return $tabs;
     }
 
-    private function prepareTabQuery($identifier, Builder $query): Builder
-    {
-//        dd($query->toRawSql());
-        $query = $query->where("custom_form_identifier", $identifier);
-        return $query;
-    }
-
     public function getDefaultActiveTab(): string|int|null
     {
-        return "all";
+        return 'all';
     }
 
     public function table(Table $table): Table
@@ -93,4 +86,9 @@ class ListCustomForm extends ListRecords
         ];
     }
 
+    private function prepareTabQuery($identifier, Builder $query): Builder
+    {
+        $query = $query->where('custom_form_identifier', $identifier);
+        return $query;
+    }
 }

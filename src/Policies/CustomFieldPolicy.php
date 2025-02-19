@@ -20,9 +20,9 @@ class CustomFieldPolicy
         return (new CustomFormPolicy())->viewAny($user);
     }
 
-    public function create(User $user, CustomField $customField): bool
+    public function create(User $user): bool
     {
-        return (new CustomFormPolicy())->create($user, $customField->customForm);
+        return true;
     }
 
     public function update(User $user, CustomField $customField): bool
@@ -34,5 +34,4 @@ class CustomFieldPolicy
     {
         return (new CustomFormPolicy())->delete($user, $customField->customForm);
     }
-
 }

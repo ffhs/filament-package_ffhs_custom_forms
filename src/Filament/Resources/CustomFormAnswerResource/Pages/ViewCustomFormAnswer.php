@@ -13,7 +13,6 @@ class ViewCustomFormAnswer extends ViewRecord
     protected static string $resource = CustomFormAnswerResource::class;
     protected static ?string $title = 'Formular Anschauen'; //ToDo Translate
 
-
     public function infolist(Infolist $infolist): Infolist
     {
         return $infolist
@@ -26,6 +25,4 @@ class ViewCustomFormAnswer extends ViewRecord
                     ])
             ]);
     }
-
-
 }

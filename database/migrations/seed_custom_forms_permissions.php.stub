@@ -4,8 +4,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\Enums\CustomFormPermissionName;
 use Illuminate\Database\Migrations\Migration;
 use Spatie\Permission\Models\Permission;
 
-return new class () extends Migration {
-
+return new class extends Migration {
 
     protected function getPermissionsToMigration(): array
     {
@@ -24,7 +23,10 @@ return new class () extends Migration {
     {
         collect($this->getPermissionsToMigration())
             ->each(function ($permission) {
-                Permission::create(['guard_name' => 'web', 'name' => $permission]);
+                Permission::create([
+                    'guard_name' => 'web',
+                    'name' => $permission
+                ]);
             });
     }
 
@@ -38,7 +40,10 @@ return new class () extends Migration {
         $permissions = collect($this->getPermissionsToMigration())
             ->map(fn(CustomFormPermissionName $permission) => $permission->value);
 
-        Permission::query()->whereIn('permission', $permissions)->where('guard_name', 'web')->delete();
+        Permission::query()
+            ->whereIn('permission', $permissions)
+            ->where('guard_name', 'web')
+            ->delete();
     }
 };
 

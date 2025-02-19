@@ -1,14 +1,12 @@
 <?php
 
-//CustomFormSchemaImportAction.php
-
+use App\Models\User;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Spatie\Permission\Models\Role;
 use Workbench\App\FFHs\TestDynamicFormConfiguration;
 
-
 beforeEach(function () {
-    $this->user = \App\Models\User::create([
+    $this->user = User::create([
         'name' => 'tester',
         'email' => 'testing@test.com',
         'password' => '1234'
@@ -28,7 +26,6 @@ beforeEach(function () {
 
     $this->customForm->save();
 });
-
 
 test('can view custom field in custom form')->todo();
 test('can update/create/delete custom field in custom form')->todo();

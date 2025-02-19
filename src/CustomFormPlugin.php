@@ -11,7 +11,6 @@ use Filament\Panel;
 
 class CustomFormPlugin implements Plugin
 {
-
     public static function make(): static
     {
         return app(static::class);
@@ -21,7 +20,6 @@ class CustomFormPlugin implements Plugin
     {
         return 'custom-forms';
     }
-
 
     public function register(Panel $panel): void
     {
@@ -33,7 +31,6 @@ class CustomFormPlugin implements Plugin
                 CustomFormAnswerResource::class,
             ]);
     }
-
 
     public function packageBooted(): void
     {

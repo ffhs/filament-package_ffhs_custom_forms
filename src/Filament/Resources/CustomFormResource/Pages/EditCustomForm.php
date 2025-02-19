@@ -9,7 +9,8 @@ use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormResource;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\EditHelper\EditCustomFormLoadHelper;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\EditHelper\EditCustomFormSaveHelper;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
-use Filament\Actions;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\LocaleSwitcher;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Form;
 use Filament\Resources\Pages\EditRecord;
@@ -25,8 +26,8 @@ class EditCustomForm extends EditRecord
 
     public static function canAccess(array $parameters = []): bool
     {
-        return static::$resource::canAccess() &&
-            static::$resource::can('manageForms');
+        return static::$resource::canAccess()
+            && static::$resource::can('manageForms');
     }
 
     public function getMaxContentWidth(): MaxWidth|string|null
@@ -41,7 +42,7 @@ class EditCustomForm extends EditRecord
 
     public function getTitle(): string|Htmlable
     {
-        return $this->record->short_title . " - " . parent::getTitle();
+        return $this->record->short_title . ' - ' . parent::getTitle();
     }
 
     public function save(bool $shouldRedirect = true, bool $shouldSendSavedNotification = true): void
@@ -71,10 +72,8 @@ class EditCustomForm extends EditRecord
                     $action->callImportAction($data);
                     $action->redirect('edit');
                 }),
-            Actions\LocaleSwitcher::make(),
-            Actions\DeleteAction::make(),
+            LocaleSwitcher::make(),
+            DeleteAction::make(),
         ];
     }
-
-
 }
