@@ -21,7 +21,12 @@ class CustomFieldAnswerPolicy
         return (new CustomFormAnswerPolicy())->viewAny($user);
     }
 
-    public function create(User $user, CustomFieldAnswer $customFieldAnswer): bool
+    public function create(User $user): bool
+    {
+        return (new CustomFormAnswerPolicy())->create($user);
+    }
+
+    public function delete(User $user, CustomFieldAnswer $customFieldAnswer): bool
     {
         return $this->update($user, $customFieldAnswer);
     }
@@ -29,11 +34,6 @@ class CustomFieldAnswerPolicy
     public function update(User $user, CustomFieldAnswer $customFieldAnswer): bool
     {
         return (new CustomFormAnswerPolicy())->update($user, $customFieldAnswer->customFormAnswer);
-    }
-
-    public function delete(User $user, CustomFieldAnswer $customFieldAnswer): bool
-    {
-        return $this->update($user, $customFieldAnswer);
     }
 
 

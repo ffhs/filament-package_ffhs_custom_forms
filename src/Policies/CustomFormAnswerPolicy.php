@@ -22,12 +22,7 @@ class CustomFormAnswerPolicy
         return $user->can(CustomFormPermissionName::FILL_CUSTOM_FORMS);
     }
 
-    public function create(User $user, CustomFormAnswer $customFormAnswer): bool
-    {
-        return $this->update($user, $customFormAnswer);
-    }
-
-    public function update(User $user, CustomFormAnswer $customFormAnswer): bool
+    public function create(User $user): bool
     {
         return $user->can(CustomFormPermissionName::FILL_CUSTOM_FORMS);
     }
@@ -35,6 +30,11 @@ class CustomFormAnswerPolicy
     public function delete(User $user, CustomFormAnswer $customFormAnswer): bool
     {
         return $this->update($user, $customFormAnswer);
+    }
+
+    public function update(User $user, CustomFormAnswer $customFormAnswer): bool
+    {
+        return $user->can(CustomFormPermissionName::FILL_CUSTOM_FORMS);
     }
 
     public function showResource(User $user): bool

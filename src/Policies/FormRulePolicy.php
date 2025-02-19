@@ -20,7 +20,12 @@ class FormRulePolicy
         return (new FormRulePolicy())->viewAny($user);
     }
 
-    public function create(User $user, FormRule $formRule): bool
+    public function create(User $user): bool
+    {
+        return (new CustomFormPolicy())->create($user);
+    }
+
+    public function delete(User $user, FormRule $formRule): bool
     {
         return $this->update($user, $formRule);
     }
@@ -28,11 +33,6 @@ class FormRulePolicy
     public function update(User $user, FormRule $formRule): bool
     {
         return (new CustomFormPolicy())->update($user, $formRule->customForm);
-    }
-
-    public function delete(User $user, FormRule $formRule): bool
-    {
-        return $this->update($user, $formRule);
     }
 
 

@@ -20,7 +20,12 @@ class GeneralFieldFormPolicy
         return (new GeneralFieldPolicy())->viewAny($user);
     }
 
-    public function create(User $user, GeneralFieldForm $generalFieldForm): bool
+    public function create(User $user): bool
+    {
+        return (new GeneralFieldPolicy())->create($user);
+    }
+
+    public function delete(User $user, GeneralFieldForm $generalFieldForm): bool
     {
         return $this->update($user, $generalFieldForm);
     }
@@ -28,11 +33,6 @@ class GeneralFieldFormPolicy
     public function update(User $user, GeneralFieldForm $generalFieldForm): bool
     {
         return (new GeneralFieldPolicy())->update($user, $generalFieldForm->generalField);
-    }
-
-    public function delete(User $user, GeneralFieldForm $generalFieldForm): bool
-    {
-        return $this->update($user, $generalFieldForm);
     }
 
 }
