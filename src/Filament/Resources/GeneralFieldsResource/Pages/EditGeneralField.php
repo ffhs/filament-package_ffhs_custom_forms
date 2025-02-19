@@ -3,12 +3,14 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\GeneralFieldsResource\Pages;
 
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\GeneralFieldResource;
-use Filament\Actions;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\LocaleSwitcher;
 use Filament\Resources\Pages\EditRecord;
+use Filament\Resources\Pages\EditRecord\Concerns\Translatable;
 
 class EditGeneralField extends EditRecord
 {
-    use EditRecord\Concerns\Translatable;
+    use Translatable;
 
     protected static string $resource = GeneralFieldResource::class;
 
@@ -18,17 +20,16 @@ class EditGeneralField extends EditRecord
         $recordModel = $this->getRecord();
     }
 
-
     protected function mutateFormDataBeforeSave(array $data): array
     {
-        //dd($data, $data['extra_option_names']);
         if (!array_key_exists('extra_option_names', $data)) {
             return parent::mutateFormDataBeforeSave($data);
         }
-        $names = $data['extra_option_names'];
 
+        $names = $data['extra_option_names'];
         $overwriteOptions = $data['overwrite_options'];
         $allowedOverwriteOptions = [];
+
         foreach ($names as $name) {
             $allowedOverwriteOptions[$name] = $overwriteOptions[$name] ?? null;
         }
@@ -39,12 +40,11 @@ class EditGeneralField extends EditRecord
         return parent::mutateFormDataBeforeSave($data);
     }
 
-
     protected function getHeaderActions(): array
     {
         return [
-            Actions\LocaleSwitcher::make(),
-            Actions\DeleteAction::make(),
+            LocaleSwitcher::make(),
+            DeleteAction::make(),
         ];
     }
 }

@@ -35,7 +35,6 @@ use Spatie\LaravelPackageTools\PackageServiceProvider;
 
 class CustomFormsServiceProvider extends PackageServiceProvider
 {
-
     protected array $policies = [
         CustomForm::class => CustomFormPolicy::class,
         CustomField::class => CustomFieldPolicy::class,
@@ -67,11 +66,11 @@ class CustomFormsServiceProvider extends PackageServiceProvider
             ->hasTranslations()
             ->hasInstallCommand(fn(InstallCommand $command) => $command
                 ->startWith(function (InstallCommand $command) {
-                    $command->info("Publish translation from Filament\Spatie-Translatable");
-                    // Artisan::call('vendor:publish', ["tag" => "filament-spatie-laravel-translatable-plugin-translations"]); ToDo repair
+                    $command->info('Publish translation from Filament\Spatie-Translatable');
+                    // Artisan::call('vendor:publish', ['tag' => 'filament-spatie-laravel-translatable-plugin-translations']); ToDo repair
 
-                    $command->info("Publish config from icon picker plugin");
-                    // Artisan::call('vendor:publish', ["tag" => "filament-icon-picker-config"]); ToDo repair
+                    $command->info('Publish config from icon picker plugin');
+                    // Artisan::call('vendor:publish', ['tag' => 'filament-icon-picker-config']); ToDo repair
                 })
                 ->publishConfigFile()
                 ->publishAssets()
@@ -81,13 +80,13 @@ class CustomFormsServiceProvider extends PackageServiceProvider
                 ->copyAndRegisterServiceProviderInApp()
                 ->endWith(function (InstallCommand $command) {
                     // Clear the application cache
-                    $command->info("Clear cache");
+                    $command->info('Clear cache');
                     Artisan::call('cache:clear');
 
-                    $command->info("Clear icon cache");
+                    $command->info('Clear icon cache');
                     Artisan::call('icons:cache');
 
-                    $command->info("Create storage symlink");
+                    $command->info('Create storage symlink');
                     Artisan::call('storage:link');
                 })
             )
@@ -101,19 +100,12 @@ class CustomFormsServiceProvider extends PackageServiceProvider
         $this->registerFilamentAssets();
     }
 
-    private function registerPolicies(): void
-    {
-        foreach ($this->policies as $model => $policy) {
-            Gate::policy($model, $policy);
-        }
-    }
-
     /**
      * @return void
      */
     public function registerFilamentAssets(): void
     {
-        //Drag and Drop Components
+        // Drag and Drop Components
         FilamentAsset::register([
             AlpineComponent::make('parent', __DIR__ . '/../dist/js/drag-drop/parent.js')
                 ->loadedOnRequest(),
@@ -123,10 +115,16 @@ class CustomFormsServiceProvider extends PackageServiceProvider
                 ->loadedOnRequest(),
             AlpineComponent::make('action', __DIR__ . '/../dist/js/drag-drop/action.js')
                 ->loadedOnRequest(),
-
             Css::make('stylesheet', __DIR__ . '/../dist/css/drag_drop.css')
                 ->loadedOnRequest(),
         ], 'ffhs/filament-package_ffhs_drag-drop');
+    }
+
+    private function registerPolicies(): void
+    {
+        foreach ($this->policies as $model => $policy) {
+            Gate::policy($model, $policy);
+        }
     }
 }
 

@@ -1,10 +1,10 @@
 <?php
 
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\SplittedType\Types\RepeaterLayoutType;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormAnswerResource\Pages\EditCustomFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormAnswerResource\Pages\EditCustomFormAnswer;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\SplittedType\Types\RepeaterLayoutType;
 use Illuminate\Support\Facades\Cache;
 use Workbench\App\FFHs\TestDynamicFormConfiguration;
 use Workbench\App\Models\UserSuperAdmin;
@@ -57,7 +57,6 @@ describe('repeater options', function () {
         expect(true)->toBeTrue();
     });
 
-
     test('repeater show add action label', function () {
         $testLabel = 'add to test';
         $this->customField->update(['options' => ['add_action_label' => $testLabel]]);
@@ -65,12 +64,10 @@ describe('repeater options', function () {
         $livewire = livewire(EditCustomFormAnswer::class, ['record' => $this->formAnsware->id]);
         $livewire->assertSeeText($testLabel);
 
-
         $this->customField->update(['options' => ['add_action_label' => null]]);
         Cache::clear();
         $livewire = livewire(EditCustomFormAnswer::class, ['record' => $this->formAnsware->id]);
         $livewire->assertDontSeeText($testLabel);
-
 
         expect(true)->toBeTrue();
     });
@@ -82,13 +79,12 @@ describe('repeater options', function () {
         $livewire = livewire(EditCustomFormAnswer::class, ['record' => $this->formAnsware->id]);
         $livewire->assertSeeText($testText);
 
-
         $this->customField->update(['options' => ['helper_text' => null]]);
         Cache::clear();
+
         $livewire = livewire(EditCustomFormAnswer::class, ['record' => $this->formAnsware->id]);
         $livewire->assertDontSeeText($testText);
         $livewire->assertDontSeeText('null');
-
 
         expect(true)->toBeTrue();
     });
@@ -106,5 +102,3 @@ describe('repeater options', function () {
     test('render infolist', function () {
     })->todo();
 });
-
-

@@ -19,7 +19,6 @@ class TemplateResource extends Resource
 
     protected static ?string $model = CustomForm::class;
 
-
     public static function getNavigationGroup(): ?string
     {
         return __('filament-package_ffhs_custom_forms::custom_forms.navigation.group.forms');
@@ -44,7 +43,6 @@ class TemplateResource extends Resource
     {
         return __('filament-package_ffhs_custom_forms::custom_forms.form.template');
     }
-
 
     public static function getEloquentQuery(): Builder
     {
@@ -71,7 +69,6 @@ class TemplateResource extends Resource
     {
         return parent::canAccess() && static::can('showTemplateResource');
     }
-
 
     public static function getPages(): array
     {

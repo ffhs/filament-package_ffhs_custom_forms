@@ -18,7 +18,8 @@ class GeneralFieldPolicy
 
     public function viewAny(User $user): bool
     {
-        return (new CustomFormPolicy())->viewAny($user) || $user->can(CustomFormPermissionName::MANAGE_GENERAL_FIELDS);
+        return (new CustomFormPolicy())->viewAny($user)
+            || $user->can(CustomFormPermissionName::MANAGE_GENERAL_FIELDS);
     }
 
     public function filamentResource(User $user): bool
@@ -40,6 +41,11 @@ class GeneralFieldPolicy
     public function update(User $user, GeneralField $generalField): bool
     {
         return $user->can(CustomFormPermissionName::MANAGE_GENERAL_FIELDS);
+    }
+
+    public function delete(User $user, GeneralField $generalField): bool
+    {
+        return $this->delete($user, $generalField);
     }
 
 }

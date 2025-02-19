@@ -35,9 +35,8 @@ class CustomOptionPolicy
 
     public function update(User $user, CustomOption $option): bool
     {
-        return $user->can(CustomFormPermissionName::MANAGE_CUSTOM_FORMS) || $user->can(
-                CustomFormPermissionName::MANAGE_TEMPLATES
-            );
+        return $user->can(CustomFormPermissionName::MANAGE_CUSTOM_FORMS)
+            || $user->can(CustomFormPermissionName::MANAGE_TEMPLATES);
     }
 
 }

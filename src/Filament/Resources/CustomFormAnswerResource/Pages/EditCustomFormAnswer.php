@@ -4,10 +4,10 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormAnswe
 
 use Ffhs\FilamentPackageFfhsCustomForms\Facades\CustomForms;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\CustomFormComponent;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormAnswerResource;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\RenderHelp\CustomFormLoadHelper;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormAnswerResource;
-use Filament\Actions;
+use Filament\Actions\DeleteAction;
 use Filament\Forms\Form;
 use Filament\Resources\Pages\EditRecord;
 
@@ -15,10 +15,20 @@ class EditCustomFormAnswer extends EditRecord
 {
     protected static string $resource = CustomFormAnswerResource::class;
 
+    public function form(Form $form): Form
+    {
+        return $form
+            ->schema([
+                CustomFormComponent::make()
+                    ->autoViewMode()
+                    ->columnSpanFull(),
+            ]);
+    }
+
     protected function getHeaderActions(): array
     {
         return [
-            Actions\DeleteAction::make(),
+            DeleteAction::make(),
         ];
     }
 
@@ -29,6 +39,7 @@ class EditCustomFormAnswer extends EditRecord
         if (!empty($customFormAnswer->customFieldAnswers)) {
             return $data;
         }
+
         /**@var CustomFormAnswer $customFormAnswer */
         $customFormAnswer = $this->form->getRecord();
 
@@ -44,17 +55,4 @@ class EditCustomFormAnswer extends EditRecord
 
         return [];
     }
-
-
-    public function form(Form $form): Form
-    {
-        return $form
-            ->schema([
-                CustomFormComponent::make()
-                    ->autoViewMode()
-                    ->columnSpanFull(),
-            ]);
-    }
-
-
 }

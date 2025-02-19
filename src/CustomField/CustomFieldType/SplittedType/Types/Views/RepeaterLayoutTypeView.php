@@ -10,11 +10,11 @@ use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\Render\Cus
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\RenderHelp\CustomFormLoadHelper;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
-use Filament\Forms\Components\{Actions\Action, Repeater};
+use Filament\Forms\Components\{Actions\Action, Component, Repeater};
+use Filament\Infolists\Components\Component as InfolistComponent;
 use Filament\Infolists\Components\Fieldset;
 use Filament\Infolists\Components\Section;
 use Illuminate\Support\Collection;
-
 
 class RepeaterLayoutTypeView implements FieldTypeView
 {
@@ -24,7 +24,7 @@ class RepeaterLayoutTypeView implements FieldTypeView
         CustomFieldType $type,
         CustomField $record,
         array $parameter = []
-    ): \Filament\Forms\Components\Component {
+    ): Component {
         $ordered = FieldMapper::getOptionParameter($record, 'ordered');
         $minAmount = FieldMapper::getOptionParameter($record, 'min_amount');
         $maxAmount = FieldMapper::getOptionParameter($record, 'max_amount');
@@ -33,15 +33,14 @@ class RepeaterLayoutTypeView implements FieldTypeView
         $showLabel = FieldMapper::getOptionParameter($record, 'show_label');
         $helperText = FieldMapper::getOptionParameter($record, 'helper_text') ?? '';
 
-        $schema = $parameter["renderer"]();
+        $schema = $parameter['renderer']();
 
-
-        /**@var \Filament\Forms\Components\Repeater $repeater */
+        /**@var Repeater $repeater */
         $repeater = static::makeComponent(Repeater::class, $record);
         $repeater
-            ->columnSpan(FieldMapper::getOptionParameter($record, "column_span"))
-            ->columns(FieldMapper::getOptionParameter($record, "columns"))
-            ->columnStart(FieldMapper::getOptionParameter($record, "new_line_option"))
+            ->columnSpan(FieldMapper::getOptionParameter($record, 'column_span'))
+            ->columns(FieldMapper::getOptionParameter($record, 'columns'))
+            ->columnStart(FieldMapper::getOptionParameter($record, 'new_line_option'))
             ->defaultItems($defaultAmount)
             ->minItems($minAmount)
             ->maxItems($maxAmount)
@@ -53,16 +52,16 @@ class RepeaterLayoutTypeView implements FieldTypeView
         if (!$showLabel) {
             $repeater->label('');
         }
+
         if (!is_null($addActionLabel)) {
             $repeater->addActionLabel($addActionLabel);
         }
 
         if ($ordered) {
-            $repeater->orderColumn("order");
+            $repeater->orderColumn('order');
         } else {
             $repeater->reorderable(false);
         }
-
 
         return $repeater;
     }
@@ -71,10 +70,10 @@ class RepeaterLayoutTypeView implements FieldTypeView
         CustomFieldType $type,
         CustomFieldAnswer $record,
         array $parameter = []
-    ): \Filament\Infolists\Components\Component {
+    ): InfolistComponent {
 //        $ordered = FieldMapper::getOptionParameter($record,'ordered');
 
-        $isFieldset = FieldMapper::getOptionParameter($record, "show_as_fieldset");
+        $isFieldset = FieldMapper::getOptionParameter($record, 'show_as_fieldset');
         $component = $isFieldset
             ? Fieldset::make('')//FieldMapper::getLabelName($record)
             : Section::make(FieldMapper::getLabelName($record));
@@ -90,19 +89,20 @@ class RepeaterLayoutTypeView implements FieldTypeView
         );
         $loadedAnswers = $loadedAnswers[$record->customField->identifier ?? ''] ?? [];
 
-        $fields = $parameter["customFieldData"];
-        $fields = $fields->keyBy("form_position");
-        $offset = $fields->sortBy("form_position")->first()->form_position - 1;
-        $viewMode = $parameter["viewMode"];
+        $fields = $parameter['customFieldData'];
+        $fields = $fields->keyBy('form_position');
+        $offset = $fields->sortBy('form_position')->first()->form_position - 1;
+        $viewMode = $parameter['viewMode'];
         $customForm = $record->customFormAnswer->customForm;
 
-        $answerersFields = $record->customFormAnswer->customFieldAnswers
-            ->whereIn("custom_field_id", $fields->pluck("id"));
-
+        $answerersFields = $record
+            ->customFormAnswer
+            ->customFieldAnswers
+            ->whereIn('custom_field_id', $fields->pluck('id'));
 
         foreach ($loadedAnswers as $id => $answer) {
             $render = CustomFormRender::getInfolistRender(
-                $parameter["viewMode"],
+                $parameter['viewMode'],
                 $customForm,
                 $record->customFormAnswer,
                 $answerersFields,
@@ -113,11 +113,9 @@ class RepeaterLayoutTypeView implements FieldTypeView
             $subSchema = $renderOutput[0];
             $allComponents = $renderOutput[1];
 
+            $parameter['registerComponents']($allComponents);
 
-            $parameter["registerComponents"]($allComponents);
-
-
-            $schema[] = Fieldset::make("")
+            $schema[] = Fieldset::make('')
                 ->statePath($id)
                 ->schema($subSchema)
                 ->statePath($id);
@@ -129,8 +127,6 @@ class RepeaterLayoutTypeView implements FieldTypeView
             ->columnSpanFull();
     }
 
-
-    //That is for call the Autosave
     public static function modifyRepeaterAction(Action $action): void
     {
         $oldAction = $action->getActionFunction();
@@ -142,5 +138,4 @@ class RepeaterLayoutTypeView implements FieldTypeView
                 ->callAfterStateUpdated($component->getStatePath());
         });
     }
-
 }

@@ -3,6 +3,7 @@
 
 use Ffhs\FilamentPackageFfhsCustomForms\Enums\CustomFormPermissionName;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormResource;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormResource\Pages\EditCustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\TemplateResource;
 use Ffhs\FilamentPackageFfhsCustomForms\Tests\Feature\Policies\HasPolicyTestSetup;
 use Spatie\Permission\Models\Permission;
@@ -18,6 +19,7 @@ describe('test filament custom form resource access', function () {
     it('no permissions forbidden', function () {
         expect(CustomFormResource::canAccess())->toBeFalse();
     });
+
     it(
         'permission to fill custom forms, but forbidden because  no permission to access the filament resource ',
         function () {
@@ -30,6 +32,7 @@ describe('test filament custom form resource access', function () {
                 ->and(CustomFormResource::canAccess())->toBeFalse();
         }
     );
+
     it(
         'permission to show resource, but forbidden because  no permission to view any form ',
         function () {
@@ -42,6 +45,7 @@ describe('test filament custom form resource access', function () {
                 ->and(CustomFormResource::canAccess())->toBeFalse();
         }
     );
+
     it(
         'permission to manage custom forms, but forbidden because  no permission to access the filament resource ',
         function () {
@@ -54,6 +58,7 @@ describe('test filament custom form resource access', function () {
                 ->and(CustomFormResource::canAccess())->toBeFalse();
         }
     );
+
     it(
         'permission to show resource (With fill forms)',
         function () {
@@ -63,11 +68,13 @@ describe('test filament custom form resource access', function () {
                     CustomFormPermissionName::FILL_CUSTOM_FORMS
                 ])->get();
             expect($permission)->count(2);
+
             $this->role->permissions()->sync($permission->pluck('id'));
             expect($this->role->permissions())->count(2)
                 ->and(CustomFormResource::canAccess())->toBeTrue();
         }
     );
+
     it(
         'permission to show resource (With manage forms)',
         function () {
@@ -77,6 +84,7 @@ describe('test filament custom form resource access', function () {
                     CustomFormPermissionName::MANAGE_CUSTOM_FORMS
                 ])->get();
             expect($permission)->count(2);
+
             $this->role->permissions()->sync($permission->pluck('id'));
             expect($this->role->permissions())->count(2)
                 ->and(CustomFormResource::canAccess())->toBeTrue();
@@ -84,11 +92,11 @@ describe('test filament custom form resource access', function () {
     );
 });
 
-
 describe('test filament custom form edit page access', function () {
     it('no permissions forbidden', function () {
-        expect(CustomFormResource\Pages\EditCustomForm::canAccess())->toBeFalse();
+        expect(EditCustomForm::canAccess())->toBeFalse();
     });
+
     it(
         'permission to edit custom forms, but forbidden because  no permission to access the filament resource ',
         function () {
@@ -98,9 +106,10 @@ describe('test filament custom form edit page access', function () {
 
             $this->role->permissions()->sync($permission->id);
             expect($this->role->permissions())->count(1)
-                ->and(CustomFormResource\Pages\EditCustomForm::canAccess())->toBeFalse();
+                ->and(EditCustomForm::canAccess())->toBeFalse();
         }
     );
+
     it(
         'permission to show resource, but forbidden because  no permission to edit ',
         function () {
@@ -110,9 +119,10 @@ describe('test filament custom form edit page access', function () {
 
             $this->role->permissions()->sync($permission->id);
             expect($this->role->permissions()->get())->count(1)
-                ->and(CustomFormResource\Pages\EditCustomForm::canAccess())->toBeFalse();
+                ->and(EditCustomForm::canAccess())->toBeFalse();
         }
     );
+
     it(
         'permission to manage custom forms, but forbidden because  no permission to access the filament resource ',
         function () {
@@ -122,9 +132,10 @@ describe('test filament custom form edit page access', function () {
 
             $this->role->permissions()->sync($permission->id);
             expect($this->role->permissions())->count(1)
-                ->and(CustomFormResource\Pages\EditCustomForm::canAccess())->toBeFalse();
+                ->and(EditCustomForm::canAccess())->toBeFalse();
         }
     );
+
     it(
         'permission to show resource but not to edit',
         function () {
@@ -134,11 +145,13 @@ describe('test filament custom form edit page access', function () {
                     CustomFormPermissionName::FILL_CUSTOM_FORMS
                 ])->get();
             expect($permission)->count(2);
+
             $this->role->permissions()->sync($permission->pluck('id'));
             expect($this->role->permissions())->count(2)
-                ->and(CustomFormResource\Pages\EditCustomForm::canAccess())->toBeFalse();
+                ->and(EditCustomForm::canAccess())->toBeFalse();
         }
     );
+
     it(
         'permission to show resolurce, but not to edit',
         function () {
@@ -148,11 +161,13 @@ describe('test filament custom form edit page access', function () {
                     CustomFormPermissionName::MANAGE_TEMPLATES
                 ])->get();
             expect($permission)->count(2);
+
             $this->role->permissions()->sync($permission->pluck('id'));
             expect($this->role->permissions())->count(2)
-                ->and(TemplateResource\Pages\EditTemplate::canAccess())->toBeFalse();
+                ->and(EditTemplate::canAccess())->toBeFalse();
         }
     );
+
     it(
         'permission to show page',
         function () {
@@ -162,18 +177,19 @@ describe('test filament custom form edit page access', function () {
                     CustomFormPermissionName::MANAGE_CUSTOM_FORMS
                 ])->get();
             expect($permission)->count(2);
+
             $this->role->permissions()->sync($permission->pluck('id'));
             expect($this->role->permissions())->count(2)
-                ->and(CustomFormResource\Pages\EditCustomForm::canAccess())->toBeTrue();
+                ->and(EditCustomForm::canAccess())->toBeTrue();
         }
     );
 });
-
 
 describe('test filament template resource access', function () {
     it('no permissions forbidden', function () {
         expect(TemplateResource::canAccess())->toBeFalse();
     });
+
     it(
         'permission to fill custom forms, but forbidden because  no permission to access the filament resource ',
         function () {
@@ -186,6 +202,7 @@ describe('test filament template resource access', function () {
                 ->and(TemplateResource::canAccess())->toBeFalse();
         }
     );
+
     it(
         'permission to show resource, but forbidden because  no permission to view any form ',
         function () {
@@ -198,6 +215,7 @@ describe('test filament template resource access', function () {
                 ->and(TemplateResource::canAccess())->toBeFalse();
         }
     );
+
     it(
         'permission to manage templates, but forbidden because  no permission to access the filament resource ',
         function () {
@@ -210,6 +228,7 @@ describe('test filament template resource access', function () {
                 ->and(TemplateResource::canAccess())->toBeFalse();
         }
     );
+
     it(
         'permission to show template resource (With fill forms)',
         function () {
@@ -219,11 +238,13 @@ describe('test filament template resource access', function () {
                     CustomFormPermissionName::FILL_CUSTOM_FORMS
                 ])->get();
             expect($permission)->count(2);
+
             $this->role->permissions()->sync($permission->pluck('id'));
             expect($this->role->permissions())->count(2)
                 ->and(TemplateResource::canAccess())->toBeTrue();
         }
     );
+
     it(
         'permission to show template resource (With manage templates)',
         function () {
@@ -233,11 +254,13 @@ describe('test filament template resource access', function () {
                     CustomFormPermissionName::MANAGE_TEMPLATES
                 ])->get();
             expect($permission)->count(2);
+
             $this->role->permissions()->sync($permission->pluck('id'));
             expect($this->role->permissions())->count(2)
                 ->and(TemplateResource::canAccess())->toBeTrue();
         }
     );
+
     it(
         'permission to show template resource (With manage forms)',
         function () {
@@ -247,6 +270,7 @@ describe('test filament template resource access', function () {
                     CustomFormPermissionName::MANAGE_CUSTOM_FORMS
                 ])->get();
             expect($permission)->count(2);
+
             $this->role->permissions()->sync($permission->pluck('id'));
             expect($this->role->permissions())->count(2)
                 ->and(TemplateResource::canAccess())->toBeTrue();
@@ -256,8 +280,9 @@ describe('test filament template resource access', function () {
 
 describe('test filament template edit page access', function () {
     it('no permissions forbidden', function () {
-        expect(CustomFormResource\Pages\EditCustomForm::canAccess())->toBeFalse();
+        expect(EditCustomForm::canAccess())->toBeFalse();
     });
+
     it(
         'permission to edit template, but forbidden because  no permission to access the filament resource ',
         function () {
@@ -267,9 +292,10 @@ describe('test filament template edit page access', function () {
 
             $this->role->permissions()->sync($permission->id);
             expect($this->role->permissions())->count(1)
-                ->and(TemplateResource\Pages\EditTemplate::canAccess())->toBeFalse();
+                ->and(EditTemplate::canAccess())->toBeFalse();
         }
     );
+
     it(
         'permission to show resource, but forbidden because  no permission to edit ',
         function () {
@@ -279,9 +305,10 @@ describe('test filament template edit page access', function () {
 
             $this->role->permissions()->sync($permission->id);
             expect($this->role->permissions()->get())->count(1)
-                ->and(TemplateResource\Pages\EditTemplate::canAccess())->toBeFalse();
+                ->and(EditTemplate::canAccess())->toBeFalse();
         }
     );
+
     it(
         'permission to manage custom forms, but forbidden because  no permission to access the filament resource ',
         function () {
@@ -291,9 +318,10 @@ describe('test filament template edit page access', function () {
 
             $this->role->permissions()->sync($permission->id);
             expect($this->role->permissions())->count(1)
-                ->and(TemplateResource\Pages\EditTemplate::canAccess())->toBeFalse();
+                ->and(EditTemplate::canAccess())->toBeFalse();
         }
     );
+
     it(
         'permission to show resource but not to edit',
         function () {
@@ -303,11 +331,13 @@ describe('test filament template edit page access', function () {
                     CustomFormPermissionName::FILL_CUSTOM_FORMS
                 ])->get();
             expect($permission)->count(2);
+
             $this->role->permissions()->sync($permission->pluck('id'));
             expect($this->role->permissions())->count(2)
-                ->and(TemplateResource\Pages\EditTemplate::canAccess())->toBeFalse();
+                ->and(EditTemplate::canAccess())->toBeFalse();
         }
     );
+
     it(
         'permission to show resolurce, but not to edit templates',
         function () {
@@ -317,11 +347,13 @@ describe('test filament template edit page access', function () {
                     CustomFormPermissionName::MANAGE_CUSTOM_FORMS
                 ])->get();
             expect($permission)->count(2);
+
             $this->role->permissions()->sync($permission->pluck('id'));
             expect($this->role->permissions())->count(2)
-                ->and(TemplateResource\Pages\EditTemplate::canAccess())->toBeFalse();
+                ->and(EditTemplate::canAccess())->toBeFalse();
         }
     );
+
     it(
         'permission to show page',
         function () {
@@ -331,13 +363,13 @@ describe('test filament template edit page access', function () {
                     CustomFormPermissionName::MANAGE_TEMPLATES
                 ])->get();
             expect($permission)->count(2);
+
             $this->role->permissions()->sync($permission->pluck('id'));
             expect($this->role->permissions())->count(2)
-                ->and(TemplateResource\Pages\EditTemplate::canAccess())->toBeTrue();
+                ->and(EditTemplate::canAccess())->toBeTrue();
         }
     );
 });
-
 
 test('test can not access custom form')->todo();
 test('test can not update/delete/create')->todo();

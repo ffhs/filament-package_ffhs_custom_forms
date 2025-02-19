@@ -12,26 +12,31 @@ class CreateTemplate extends CreateCustomForm
 {
     protected static string $resource = TemplateResource::class;
 
-
     public function form(Form $form): Form
     {
         return $form
             ->schema([
-                TextInput::make("template_identifier")
-                    ->label("Template Id")
+                TextInput::make('template_identifier')
+                    ->label('Template Id')
                     ->required(), //ToDo Translate
-                TextInput::make("short_title")
-                    ->label("Namen")
+                TextInput::make('short_title')
+                    ->label('Namen')
                     ->required(), //ToDo Translate
-                Select::make("custom_form_identifier")
-                    ->label("Formularart") //ToDo Translate
+                Select::make('custom_form_identifier')
+                    ->label('Formularart') //ToDo Translate
                     ->required()
                     ->options(function () {
-                        $keys = array_map(fn($config) => $config::identifier(), config("ffhs_custom_forms.forms"));
-                        $values = array_map(fn($config) => $config::displayName(), config("ffhs_custom_forms.forms"));
+                        $keys = array_map(
+                            fn($config) => $config::identifier(),
+                            config('ffhs_custom_forms.forms')
+                        );
+                        $values = array_map(
+                            fn($config) => $config::displayName(),
+                            config('ffhs_custom_forms.forms')
+                        );
+
                         return array_combine($keys, $values);
                     }),
             ]);
     }
-
 }

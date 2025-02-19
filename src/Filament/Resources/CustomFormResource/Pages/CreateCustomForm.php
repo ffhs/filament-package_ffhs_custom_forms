@@ -16,13 +16,11 @@ class CreateCustomForm extends CreateRecord
     {
         return $form
             ->schema([
-                TextInput::make("short_title")
-                    ->label("Name") //ToDo Translate
+                TextInput::make('short_title')
+                    ->label('Name') //ToDo Translate
                     ->required(),
                 CustomFormTypeSelector::make()
                     ->required()
             ]);
     }
-
-
 }

@@ -16,18 +16,16 @@ class CreateCustomFormAnswer extends CreateRecord
     public function form(Form $form): Form
     {
         return $form->schema([
-            TextInput::make("short_title")
-                ->label("Name"), //ToDo Translate
-            Select::make("custom_form_id")
-                ->label("Formular") //ToDo Translate
+            TextInput::make('short_title')
+                ->label('Name'), //ToDo Translate
+            Select::make('custom_form_id')
+                ->label('Formular') //ToDo Translate
                 ->relationship(
-                    "customForm",
-                    "short_title",
-                    fn(Builder $query) => $query->whereNull("template_identifier")
+                    'customForm',
+                    'short_title',
+                    fn(Builder $query) => $query->whereNull('template_identifier')
                 )
                 ->required(),
         ]);
     }
-
-
 }
