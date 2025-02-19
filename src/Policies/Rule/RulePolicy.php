@@ -3,6 +3,7 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\Policies\Rule;
 
 use App\Models\User;
+use Ffhs\FilamentPackageFfhsCustomForms\Enums\CustomFormPermissionName;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\Rule;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
@@ -18,7 +19,9 @@ class RulePolicy
 
     public function viewAny(User $user): bool
     {
-        return true; //ToDo how to make policy
+        return $user->can(CustomFormPermissionName::MANAGE_CUSTOM_FORMS) || $user->can( //ToDO do for rule only
+                CustomFormPermissionName::MANAGE_TEMPLATES
+            );
     }
 
     public function create(User $user, Rule $rule): bool
@@ -28,7 +31,9 @@ class RulePolicy
 
     public function update(User $user, Rule $rule): bool
     {
-        return true; //ToDo how to make policy
+        return $user->can(CustomFormPermissionName::MANAGE_CUSTOM_FORMS) || $user->can( //ToDO do for rule only
+                CustomFormPermissionName::MANAGE_TEMPLATES
+            );
     }
 
     public function delete(User $user, Rule $rule): bool
