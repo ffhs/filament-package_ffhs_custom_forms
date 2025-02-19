@@ -35,7 +35,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Ffhs\\FilamentPackageFfhsCustomForms\\FilamentPackageFfhsCustomFormsServiceProvider"
+                "Ffhs\\FilamentPackageFfhsCustomForms\\CustomFormsServiceProvider"
             ],
             "aliases": {
                 "FilamentPackageFfhsCustomForms": "CustomForms"

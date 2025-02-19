@@ -6,9 +6,11 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomOption;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralFieldForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Policies\CustomFieldPolicy;
 use Ffhs\FilamentPackageFfhsCustomForms\Policies\CustomFormPolicy;
 use Ffhs\FilamentPackageFfhsCustomForms\Policies\CustomOptionPolicy;
+use Ffhs\FilamentPackageFfhsCustomForms\Policies\GeneralFieldFormPolicy;
 use Ffhs\FilamentPackageFfhsCustomForms\Policies\GeneralFieldPolicy;
 use Filament\Support\Assets\AlpineComponent;
 use Filament\Support\Assets\Css;
@@ -20,7 +22,7 @@ use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
 
-class FilamentPackageFfhsCustomFormsServiceProvider extends PackageServiceProvider
+class CustomFormsServiceProvider extends PackageServiceProvider
 {
 
     protected array $policies = [
@@ -28,6 +30,7 @@ class FilamentPackageFfhsCustomFormsServiceProvider extends PackageServiceProvid
         CustomField::class => CustomFieldPolicy::class,
         GeneralField::class => GeneralFieldPolicy::class,
         CustomOption::class => CustomOptionPolicy::class,
+        GeneralFieldForm::class => GeneralFieldFormPolicy::class,
     ];
 
     public function configurePackage(Package $package): void

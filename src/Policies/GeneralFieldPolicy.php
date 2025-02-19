@@ -39,7 +39,7 @@ class GeneralFieldPolicy
 
     public function delete(User $user, GeneralField $generalField): bool
     {
-        return $this->delete($user, $generalField);
+        return $this->update($user, $generalField);
     }
 
 }
