@@ -1,6 +1,5 @@
 <?php
 
-//CustomFormSchemaImportAction.php
 
 use Ffhs\FilamentPackageFfhsCustomForms\Enums\CustomFormPermissionName;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\GeneralFieldResource;
