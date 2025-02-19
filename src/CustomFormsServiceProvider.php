@@ -33,7 +33,6 @@ use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
-
 class CustomFormsServiceProvider extends PackageServiceProvider
 {
 
@@ -100,11 +99,6 @@ class CustomFormsServiceProvider extends PackageServiceProvider
         parent::boot();
         $this->registerPolicies();
         $this->registerFilamentAssets();
-
-        //        $this->publishes([
-//            __DIR__.'/../resources/js/dropping.js' => public_path('js/ffhs/'.$this->package->name.'/dropping.js'),
-//        ], 'filament-package_ffhs_custom_forms-assets');
-
     }
 
     private function registerPolicies(): void
@@ -119,7 +113,7 @@ class CustomFormsServiceProvider extends PackageServiceProvider
      */
     public function registerFilamentAssets(): void
     {
-//Drag and Drop
+        //Drag and Drop Components
         FilamentAsset::register([
             AlpineComponent::make('parent', __DIR__ . '/../dist/js/drag-drop/parent.js')
                 ->loadedOnRequest(),
@@ -134,7 +128,6 @@ class CustomFormsServiceProvider extends PackageServiceProvider
                 ->loadedOnRequest(),
         ], 'ffhs/filament-package_ffhs_drag-drop');
     }
-
 }
 
 
