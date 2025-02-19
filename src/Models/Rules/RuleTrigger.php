@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string type
  * @property array data
  * @property boolean is_inverted
+ * @property Rule rule
  *
  *
  */
@@ -21,7 +22,7 @@ class RuleTrigger extends Model implements CachedModel
 {
     use HasCacheModel;
 
-    protected array $cachedRelations =[
+    protected array $cachedRelations = [
         'rule',
     ];
 
@@ -46,7 +47,9 @@ class RuleTrigger extends Model implements CachedModel
 
     public function getType(): TriggerType
     {
-        return collect(config("ffhs_custom_forms.rule.trigger"))->firstWhere(fn ($type) =>$type::identifier() == $this->type)::make();
+        return collect(config("ffhs_custom_forms.rule.trigger"))->firstWhere(
+            fn($type) => $type::identifier() == $this->type
+        )::make();
     }
 
 }

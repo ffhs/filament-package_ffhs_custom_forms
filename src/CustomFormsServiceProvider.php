@@ -10,6 +10,9 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomOption;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\FormRule;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralFieldForm;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\Rule;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\RuleEvent;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\RuleTrigger;
 use Ffhs\FilamentPackageFfhsCustomForms\Policies\CustomFieldAnswerPolicy;
 use Ffhs\FilamentPackageFfhsCustomForms\Policies\CustomFieldPolicy;
 use Ffhs\FilamentPackageFfhsCustomForms\Policies\CustomFormAnswerPolicy;
@@ -18,6 +21,9 @@ use Ffhs\FilamentPackageFfhsCustomForms\Policies\CustomOptionPolicy;
 use Ffhs\FilamentPackageFfhsCustomForms\Policies\FormRulePolicy;
 use Ffhs\FilamentPackageFfhsCustomForms\Policies\GeneralFieldFormPolicy;
 use Ffhs\FilamentPackageFfhsCustomForms\Policies\GeneralFieldPolicy;
+use Ffhs\FilamentPackageFfhsCustomForms\Policies\Rule\RuleEventPolicy;
+use Ffhs\FilamentPackageFfhsCustomForms\Policies\Rule\RulePolicy;
+use Ffhs\FilamentPackageFfhsCustomForms\Policies\Rule\RuleTriggerPolicy;
 use Filament\Support\Assets\AlpineComponent;
 use Filament\Support\Assets\Css;
 use Filament\Support\Facades\FilamentAsset;
@@ -40,9 +46,9 @@ class CustomFormsServiceProvider extends PackageServiceProvider
         FormRule::class => FormRulePolicy::class,
         CustomFormAnswer::class => CustomFormAnswerPolicy::class,
         CustomFieldAnswer::class => CustomFieldAnswerPolicy::class,
-        //Rule
-        //RuleEvent
-        //RuleTrigger
+        Rule::class => RulePolicy::class,
+        RuleEvent::class => RuleEventPolicy::class,
+        RuleTrigger::class => RuleTriggerPolicy::class,
 
     ];
 
