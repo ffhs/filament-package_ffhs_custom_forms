@@ -3,12 +3,16 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms;
 
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomOption;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\FormRule;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralFieldForm;
+use Ffhs\FilamentPackageFfhsCustomForms\Policies\CustomFieldAnswerPolicy;
 use Ffhs\FilamentPackageFfhsCustomForms\Policies\CustomFieldPolicy;
+use Ffhs\FilamentPackageFfhsCustomForms\Policies\CustomFormAnswerPolicy;
 use Ffhs\FilamentPackageFfhsCustomForms\Policies\CustomFormPolicy;
 use Ffhs\FilamentPackageFfhsCustomForms\Policies\CustomOptionPolicy;
 use Ffhs\FilamentPackageFfhsCustomForms\Policies\FormRulePolicy;
@@ -34,8 +38,8 @@ class CustomFormsServiceProvider extends PackageServiceProvider
         CustomOption::class => CustomOptionPolicy::class,
         GeneralFieldForm::class => GeneralFieldFormPolicy::class,
         FormRule::class => FormRulePolicy::class,
-        //CustomFormAnswer
-        //CustomFieldAnswer
+        CustomFormAnswer::class => CustomFormAnswerPolicy::class,
+        CustomFieldAnswer::class => CustomFieldAnswerPolicy::class,
         //Rule
         //RuleEvent
         //RuleTrigger
