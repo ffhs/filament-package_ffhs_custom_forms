@@ -1,10 +1,10 @@
 <?php
 
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\SplittedType\Types\RepeaterLayoutType;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormAnswerResource\Pages\EditCustomFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
-use Ffhs\FilamentPackageFfhsCustomForms\Resources\CustomFormAnswerResource\Pages\EditCustomFormAnswer;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\SplittedType\Types\RepeaterLayoutType;
 use Illuminate\Support\Facades\Cache;
 use Workbench\App\FFHs\TestDynamicFormConfiguration;
 use Workbench\App\Models\UserSuperAdmin;
@@ -19,7 +19,7 @@ beforeEach(function () {
     ]);
     $this->actingAs($user);
 
-    /**@var CustomForm $customForm*/
+    /**@var CustomForm $customForm */
     $this->customForm = CustomForm::create([
         'short_title' => 'My custom form title',
         'custom_form_identifier' => TestDynamicFormConfiguration::identifier(),
@@ -39,7 +39,6 @@ beforeEach(function () {
         'custom_form_id' => $this->customForm->id,
         'short_title' => 'test answare'
     ]);
-
 //    $customForm->ownedFields()->save($customField);
 });
 
@@ -58,7 +57,6 @@ describe('repeater options', function () {
         expect(true)->toBeTrue();
     });
 
-
     test('repeater show add action label', function () {
         $testLabel = 'add to test';
         $this->customField->update(['options' => ['add_action_label' => $testLabel]]);
@@ -66,12 +64,10 @@ describe('repeater options', function () {
         $livewire = livewire(EditCustomFormAnswer::class, ['record' => $this->formAnsware->id]);
         $livewire->assertSeeText($testLabel);
 
-
         $this->customField->update(['options' => ['add_action_label' => null]]);
         Cache::clear();
         $livewire = livewire(EditCustomFormAnswer::class, ['record' => $this->formAnsware->id]);
         $livewire->assertDontSeeText($testLabel);
-
 
         expect(true)->toBeTrue();
     });
@@ -83,23 +79,26 @@ describe('repeater options', function () {
         $livewire = livewire(EditCustomFormAnswer::class, ['record' => $this->formAnsware->id]);
         $livewire->assertSeeText($testText);
 
-
         $this->customField->update(['options' => ['helper_text' => null]]);
         Cache::clear();
+
         $livewire = livewire(EditCustomFormAnswer::class, ['record' => $this->formAnsware->id]);
         $livewire->assertDontSeeText($testText);
         $livewire->assertDontSeeText('null');
 
-
         expect(true)->toBeTrue();
     });
 
-    test('order option', function () {})->todo();
-    test('min_amount option', function () {})->todo();
-    test('max_amount option', function () {})->todo();
-    test('default_amount option', function () {})->todo();
-    test('render contend', function () {})->todo();
-    test('render infolist', function () {})->todo();
+    test('order option', function () {
+    })->todo();
+    test('min_amount option', function () {
+    })->todo();
+    test('max_amount option', function () {
+    })->todo();
+    test('default_amount option', function () {
+    })->todo();
+    test('render contend', function () {
+    })->todo();
+    test('render infolist', function () {
+    })->todo();
 });
-
-

@@ -3,6 +3,7 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\Policies;
 
 use App\Models\User;
+use Ffhs\FilamentPackageFfhsCustomForms\Enums\CustomFormPermissionName;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
@@ -10,28 +11,35 @@ class GeneralFieldPolicy
 {
     use HandlesAuthorization;
 
-    public function viewAny(User $user): bool
-    {
-        return $user->can('view_any_general_field') ?? false;
-    }
-
     public function view(User $user, GeneralField $generalField): bool
     {
-        return $user->can('view_general_field') ?? false;
+        return $this->viewAny($user);
+    }
+
+    public function viewAny(User $user): bool
+    {
+        return (new CustomFormPolicy())->viewAny($user)
+            || $user->can(CustomFormPermissionName::MANAGE_GENERAL_FIELDS);
+    }
+
+    public function filamentResource(User $user): bool
+    {
+        return $user->can(CustomFormPermissionName::FILAMENT_RESOURCE_GENERAL_FIELDS);
+    }
+
+
+    public function create(User $user): bool
+    {
+        return true;
     }
 
     public function update(User $user, GeneralField $generalField): bool
     {
-        return $user->can('update_general_field') ?? false;
-    }
-
-    public function create(User $user, GeneralField $generalField): bool
-    {
-        return $user->can('create_general_field') ?? false;
+        return $user->can(CustomFormPermissionName::MANAGE_GENERAL_FIELDS);
     }
 
     public function delete(User $user, GeneralField $generalField): bool
     {
-        return $user->can('delete_general_field') ?? false;
+        return $this->update($user, $generalField);
     }
 }

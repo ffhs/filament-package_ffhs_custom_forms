@@ -18,11 +18,10 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class GeneralField extends ACustomField
 {
-
-    protected $table = "general_fields";
+    protected $table = 'general_fields';
 
     protected $fillable = [
-        'is_term_bound',
+//        'is_term_bound',
         'overwrite_options',
         'options',
         'identifier',
@@ -33,7 +32,7 @@ class GeneralField extends ACustomField
     ];
 
     protected $casts = [
-        'extra_options'=>'array',
+        'extra_options' => 'array',
         'overwrite_options' => 'array',
         'options' => 'array',
     ];
@@ -49,16 +48,13 @@ class GeneralField extends ACustomField
         return $this->hasMany(CustomField::class);
     }
 
-
-    public function generalFieldForms(): HasMany {
+    public function generalFieldForms(): HasMany
+    {
         return $this->hasMany(GeneralFieldForm::class);
     }
 
-    public function customOptions(): BelongsToMany {
-        return $this->belongsToMany(CustomOption::class, "option_general_field");
+    public function customOptions(): BelongsToMany
+    {
+        return $this->belongsToMany(CustomOption::class, 'option_general_field');
     }
-
-
-
-
 }

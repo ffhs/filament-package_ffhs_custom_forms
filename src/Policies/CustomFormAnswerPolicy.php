@@ -6,6 +6,7 @@ use App\Models\User;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
+/**@deprecated */
 class CustomFormAnswerPolicy
 {
     use HandlesAuthorization;

@@ -1,0 +1,49 @@
+<?php
+
+use Ffhs\FilamentPackageFfhsCustomForms\Enums\CustomFormPermissionName;
+use Illuminate\Database\Migrations\Migration;
+use Spatie\Permission\Models\Permission;
+
+return new class extends Migration {
+
+    protected function getPermissionsToMigration(): array
+    {
+        return [
+            CustomFormPermissionName::FILAMENT_RESOURCE_CUSTOM_FORMS->value,
+            CustomFormPermissionName::FILL_CUSTOM_FORMS->value,
+            CustomFormPermissionName::MANAGE_CUSTOM_FORMS->value,
+            CustomFormPermissionName::MANAGE_TEMPLATES->value,
+            CustomFormPermissionName::FILAMENT_RESOURCE_TEMPLATES->value,
+            CustomFormPermissionName::FILAMENT_RESOURCE_GENERAL_FIELDS->value,
+            CustomFormPermissionName::MANAGE_GENERAL_FIELDS->value,
+        ];
+    }
+
+    public function up()
+    {
+        collect($this->getPermissionsToMigration())
+            ->each(function ($permission) {
+                Permission::create([
+                    'guard_name' => 'web',
+                    'name' => $permission
+                ]);
+            });
+    }
+
+    /**
+     * Reverse the migration
+     *
+     * @return void
+     */
+    public function down()
+    {
+        $permissions = collect($this->getPermissionsToMigration())
+            ->map(fn(CustomFormPermissionName $permission) => $permission->value);
+
+        Permission::query()
+            ->whereIn('permission', $permissions)
+            ->where('guard_name', 'web')
+            ->delete();
+    }
+};
+
