@@ -19,7 +19,6 @@ use Filament\Tables\Table;
 
 class CustomFormAnswerResource extends Resource
 {
-    public const langPrefix = 'filament-package_ffhs_custom_forms::custom_forms.fields.';
     protected static ?string $model = CustomFormAnswer::class;
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
@@ -43,16 +42,10 @@ class CustomFormAnswerResource extends Resource
         return __('filament-package_ffhs_custom_forms::custom_forms.navigation.forms');
     }
 
-    /*ToDo Translate
-
-     *     public static function getTitleCasePluralModelLabel(): string {
-            return __('filament-package_ffhs_custom_forms::custom_forms.navigation.general_fields');
-        }
-
-        public static function getTitleCaseModelLabel(): string {
-            return __('filament-package_ffhs_custom_forms::custom_forms.fields.general_field');
-        }
-     */
+    public static function canAccess(): bool
+    {
+        return parent::canAccess() && static::can('showResource');
+    }
 
     public static function form(Form $form): Form
     {
@@ -62,6 +55,7 @@ class CustomFormAnswerResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->recordUrl(fn($record) => static::getUrl('edit', [$record]))
             ->columns([
                 TextColumn::make('id'),
                 TextColumn::make('short_title')

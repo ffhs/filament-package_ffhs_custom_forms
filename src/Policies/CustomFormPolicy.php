@@ -34,7 +34,14 @@ class CustomFormPolicy
 
     public function create(User $user): bool
     {
-        return true;
+        return $user->can(CustomFormPermissionName::MANAGE_CUSTOM_FORMS) || $user->can(
+                CustomFormPermissionName::MANAGE_TEMPLATES
+            );
+    }
+
+    public function delete(User $user, CustomForm $customForm): bool
+    {
+        return $this->update($user, $customForm);
     }
 
     public function update(User $user, CustomForm $customForm): bool
@@ -44,11 +51,6 @@ class CustomFormPolicy
         }
 
         return $user->can(CustomFormPermissionName::MANAGE_CUSTOM_FORMS) ?? false;
-    }
-
-    public function delete(User $user, CustomForm $customForm): bool
-    {
-        return $this->update($user, $customForm);
     }
 
     public function manageForms(User $user): bool

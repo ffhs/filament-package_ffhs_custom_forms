@@ -3,13 +3,27 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms;
 
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomOption;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\FormRule;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralFieldForm;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\Rule;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\RuleEvent;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\RuleTrigger;
+use Ffhs\FilamentPackageFfhsCustomForms\Policies\CustomFieldAnswerPolicy;
 use Ffhs\FilamentPackageFfhsCustomForms\Policies\CustomFieldPolicy;
+use Ffhs\FilamentPackageFfhsCustomForms\Policies\CustomFormAnswerPolicy;
 use Ffhs\FilamentPackageFfhsCustomForms\Policies\CustomFormPolicy;
 use Ffhs\FilamentPackageFfhsCustomForms\Policies\CustomOptionPolicy;
+use Ffhs\FilamentPackageFfhsCustomForms\Policies\FormRulePolicy;
+use Ffhs\FilamentPackageFfhsCustomForms\Policies\GeneralFieldFormPolicy;
 use Ffhs\FilamentPackageFfhsCustomForms\Policies\GeneralFieldPolicy;
+use Ffhs\FilamentPackageFfhsCustomForms\Policies\Rule\RuleEventPolicy;
+use Ffhs\FilamentPackageFfhsCustomForms\Policies\Rule\RulePolicy;
+use Ffhs\FilamentPackageFfhsCustomForms\Policies\Rule\RuleTriggerPolicy;
 use Filament\Support\Assets\AlpineComponent;
 use Filament\Support\Assets\Css;
 use Filament\Support\Facades\FilamentAsset;
@@ -19,14 +33,21 @@ use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
-
-class FilamentPackageFfhsCustomFormsServiceProvider extends PackageServiceProvider
+class CustomFormsServiceProvider extends PackageServiceProvider
 {
     protected array $policies = [
         CustomForm::class => CustomFormPolicy::class,
         CustomField::class => CustomFieldPolicy::class,
         GeneralField::class => GeneralFieldPolicy::class,
         CustomOption::class => CustomOptionPolicy::class,
+        GeneralFieldForm::class => GeneralFieldFormPolicy::class,
+        FormRule::class => FormRulePolicy::class,
+        CustomFormAnswer::class => CustomFormAnswerPolicy::class,
+        CustomFieldAnswer::class => CustomFieldAnswerPolicy::class,
+        Rule::class => RulePolicy::class,
+        RuleEvent::class => RuleEventPolicy::class,
+        RuleTrigger::class => RuleTriggerPolicy::class,
+
     ];
 
     public function configurePackage(Package $package): void
@@ -77,10 +98,6 @@ class FilamentPackageFfhsCustomFormsServiceProvider extends PackageServiceProvid
         parent::boot();
         $this->registerPolicies();
         $this->registerFilamentAssets();
-
-        //        $this->publishes([
-//            __DIR__.'/../resources/js/dropping.js' => public_path('js/ffhs/'.$this->package->name.'/dropping.js'),
-//        ], 'filament-package_ffhs_custom_forms-assets');
     }
 
     /**
@@ -88,7 +105,7 @@ class FilamentPackageFfhsCustomFormsServiceProvider extends PackageServiceProvid
      */
     public function registerFilamentAssets(): void
     {
-        // Drag and Drop
+        // Drag and Drop Components
         FilamentAsset::register([
             AlpineComponent::make('parent', __DIR__ . '/../dist/js/drag-drop/parent.js')
                 ->loadedOnRequest(),

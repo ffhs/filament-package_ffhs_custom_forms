@@ -22,7 +22,7 @@ class CustomFieldPolicy
 
     public function create(User $user): bool
     {
-        return true;
+        return (new CustomFormPolicy())->create($user);
     }
 
     public function update(User $user, CustomField $customField): bool
@@ -34,4 +34,5 @@ class CustomFieldPolicy
     {
         return (new CustomFormPolicy())->delete($user, $customField->customForm);
     }
+
 }

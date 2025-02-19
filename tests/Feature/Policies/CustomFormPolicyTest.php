@@ -1,37 +1,18 @@
 <?php
 
-use App\Models\User;
+
 use Ffhs\FilamentPackageFfhsCustomForms\Enums\CustomFormPermissionName;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormResource;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormResource\Pages\EditCustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\TemplateResource;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\TemplateResource\Pages\EditTemplate;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
+use Ffhs\FilamentPackageFfhsCustomForms\Tests\Feature\Policies\HasPolicyTestSetup;
 use Spatie\Permission\Models\Permission;
-use Spatie\Permission\Models\Role;
-use Workbench\App\FFHs\TestDynamicFormConfiguration;
 
+
+pest()->use(HasPolicyTestSetup::class);
 
 beforeEach(function () {
-    $this->user = User::create([
-        'name' => 'tester',
-        'email' => 'testing@test.com',
-        'password' => '1234'
-    ]);
-    $this->actingAs($this->user);
-
-    $this->role = Role::create([
-        'name' => 'tester_role',
-        'guard_name' => 'web',
-    ]);
-    $this->user->assignRole('tester_role');
-
-    $this->customForm = new CustomForm([
-        'short_title' => 'testForm',
-        'custom_form_identifier' => TestDynamicFormConfiguration::identifier()
-    ]);
-
-    $this->customForm->save();
+    $this->beforeEachPolicy();
 });
 
 describe('test filament custom form resource access', function () {

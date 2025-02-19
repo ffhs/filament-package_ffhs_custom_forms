@@ -1,34 +1,16 @@
 <?php
 
-use App\Models\User;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Types\TextType;
+
 use Ffhs\FilamentPackageFfhsCustomForms\Enums\CustomFormPermissionName;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\GeneralFieldResource;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
+use Ffhs\FilamentPackageFfhsCustomForms\Tests\Feature\Policies\HasPolicyTestSetup;
 use Spatie\Permission\Models\Permission;
-use Spatie\Permission\Models\Role;
+
+
+pest()->use(HasPolicyTestSetup::class);
 
 beforeEach(function () {
-    $this->user = User::create([
-        'name' => 'tester',
-        'email' => 'testing@test.com',
-        'password' => '1234'
-    ]);
-    $this->actingAs($this->user);
-
-    $this->genField = GeneralField::create([
-        'identifier' => 'test',
-        'is_active' => true,
-        'name' => 'test',
-        'type' => TextType::identifier(),
-        'icon' => TextType::make()->icon(),
-    ]);
-
-    $this->role = Role::create([
-        'name' => 'tester_role',
-        'guard_name' => 'web',
-    ]);
-    $this->user->assignRole('tester_role');
+    $this->beforeEachPolicy();
 });
 
 describe('test filament general field resource access', function () {

@@ -30,7 +30,12 @@ class GeneralFieldPolicy
 
     public function create(User $user): bool
     {
-        return true;
+        return $user->can(CustomFormPermissionName::MANAGE_GENERAL_FIELDS);
+    }
+
+    public function delete(User $user, GeneralField $generalField): bool
+    {
+        return $this->update($user, $generalField);
     }
 
     public function update(User $user, GeneralField $generalField): bool
@@ -40,6 +45,7 @@ class GeneralFieldPolicy
 
     public function delete(User $user, GeneralField $generalField): bool
     {
-        return $this->update($user, $generalField);
+        return $this->delete($user, $generalField);
     }
+
 }

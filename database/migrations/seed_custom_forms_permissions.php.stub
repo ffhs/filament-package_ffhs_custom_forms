@@ -10,11 +10,13 @@ return new class extends Migration {
     {
         return [
             CustomFormPermissionName::FILAMENT_RESOURCE_CUSTOM_FORMS->value,
+            CustomFormPermissionName::FILAMENT_RESOURCE_CUSTOM_FORM_ANSWERS->value,
+            CustomFormPermissionName::FILAMENT_RESOURCE_TEMPLATES->value,
+            CustomFormPermissionName::FILAMENT_RESOURCE_GENERAL_FIELDS->value,
+
             CustomFormPermissionName::FILL_CUSTOM_FORMS->value,
             CustomFormPermissionName::MANAGE_CUSTOM_FORMS->value,
             CustomFormPermissionName::MANAGE_TEMPLATES->value,
-            CustomFormPermissionName::FILAMENT_RESOURCE_TEMPLATES->value,
-            CustomFormPermissionName::FILAMENT_RESOURCE_GENERAL_FIELDS->value,
             CustomFormPermissionName::MANAGE_GENERAL_FIELDS->value,
         ];
     }

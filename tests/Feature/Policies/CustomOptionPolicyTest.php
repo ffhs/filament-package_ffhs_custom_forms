@@ -1,30 +1,13 @@
 <?php
 
-use App\Models\User;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
-use Spatie\Permission\Models\Role;
-use Workbench\App\FFHs\TestDynamicFormConfiguration;
+
+use Ffhs\FilamentPackageFfhsCustomForms\Tests\Feature\Policies\HasPolicyTestSetup;
+
+
+pest()->use(HasPolicyTestSetup::class);
 
 beforeEach(function () {
-    $this->user = User::create([
-        'name' => 'tester',
-        'email' => 'testing@test.com',
-        'password' => '1234'
-    ]);
-    $this->actingAs($this->user);
-
-    $this->role = Role::create([
-        'name' => 'tester_role',
-        'guard_name' => 'web',
-    ]);
-    $this->user->assignRole('tester_role');
-
-    $this->customForm = new CustomForm([
-        'short_title' => 'testForm',
-        'custom_form_identifier' => TestDynamicFormConfiguration::identifier()
-    ]);
-
-    $this->customForm->save();
+    $this->beforeEachPolicy();
 });
 
 test('can view option in custom form')->todo();

@@ -23,17 +23,20 @@ class CustomOptionPolicy
 
     public function create(User $user): bool
     {
-        return true;
-    }
-
-    public function update(User $user, CustomOption $customField): bool
-    {
-        return $user->can(CustomFormPermissionName::MANAGE_CUSTOM_FORMS)
-            || $user->can(CustomFormPermissionName::MANAGE_TEMPLATES);
+        return $user->can(CustomFormPermissionName::MANAGE_CUSTOM_FORMS) || $user->can(
+                CustomFormPermissionName::MANAGE_TEMPLATES
+            );
     }
 
     public function delete(User $user, CustomOption $option): bool
     {
         return $this->update($user, $option);
     }
+
+    public function update(User $user, CustomOption $option): bool
+    {
+        return $user->can(CustomFormPermissionName::MANAGE_CUSTOM_FORMS)
+            || $user->can(CustomFormPermissionName::MANAGE_TEMPLATES);
+    }
+
 }
