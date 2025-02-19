@@ -193,7 +193,9 @@ class FileUploadType extends CustomFieldType
             $acceptedFileTypes = $filesComponent->getAcceptedFileTypes();
             $canSave = true;
 
-            foreach (Arr::wrap($filesComponent->getState()) as $file) {
+            $cleanedState = [];
+
+            foreach (Arr::wrap($filesComponent->getState()) as $key => $file) {
                 if (!$file instanceof TemporaryUploadedFile) {
                     continue;
                 }
@@ -204,8 +206,12 @@ class FileUploadType extends CustomFieldType
                 if (!in_array($mimeType, $acceptedFileTypes)) {
                     $canSave = false;
                     $file->delete();
+                } else {
+                    $cleanedState[$key] = $file;
                 }
             }
+
+            $filesComponent->state($cleanedState);
 
             if ($canSave) {
                 $filesComponent->saveUploadedFiles();
@@ -214,7 +220,10 @@ class FileUploadType extends CustomFieldType
             }
         } catch (Exception|RuntimeException $exception) {
             foreach (Arr::wrap($filesComponent->getState()) as $file) {
-                $file->delete();
+                /** @var TemporaryUploadedFile $file */
+                if ($file->exists()) {
+                    $file->delete();
+                }
             }
         }
     }

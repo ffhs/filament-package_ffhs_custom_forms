@@ -27,7 +27,6 @@ class GeneralFieldPolicy
         return $user->can(CustomFormPermissionName::FILAMENT_RESOURCE_GENERAL_FIELDS);
     }
 
-
     public function create(User $user): bool
     {
         return $user->can(CustomFormPermissionName::MANAGE_GENERAL_FIELDS);
@@ -43,9 +42,5 @@ class GeneralFieldPolicy
         return $user->can(CustomFormPermissionName::MANAGE_GENERAL_FIELDS);
     }
 
-    public function delete(User $user, GeneralField $generalField): bool
-    {
-        return $this->delete($user, $generalField);
-    }
 
 }
