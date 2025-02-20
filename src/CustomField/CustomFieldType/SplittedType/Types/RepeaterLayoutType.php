@@ -9,6 +9,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\SplittedType
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\LayoutTypeDefaultLayoutTypeOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\ValidationTypeOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\ActionLabelTypeOption;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\CustomValidationAttributeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\FastTypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\HelptextTypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\MaxAmountOption;
@@ -23,32 +24,41 @@ class RepeaterLayoutType extends CustomSplitType
 
     use HasCustomTypePackageTranslation;
 
-    public static function identifier(): string {
+    public static function identifier(): string
+    {
         return "repeater";
     }
 
-    public function viewModes(): array {
+    public function viewModes(): array
+    {
         return [
             "default" => RepeaterLayoutTypeView::class
         ];
     }
 
-    public function icon(): string {
-        return  "heroicon-m-wallet";
+    public function icon(): string
+    {
+        return "heroicon-m-wallet";
     }
 
-    public function extraTypeOptions(): array {
-        return[
+    public function extraTypeOptions(): array
+    {
+        return [
             LayoutTypeDefaultLayoutTypeOptionGroup::make()
                 //->removeTypeOption("helper_text")
                 ->mergeTypeOptions([
-                    'show_label' =>  ShowLabelOption::make(),
+                    'show_label' => ShowLabelOption::make(),
                     'show_as_fieldset' => ShowAsFieldsetOption::make()
                         ->modifyComponent(fn(Component $component) => $component->columnStart(2)),
-                    'default_amount' => FastTypeOption::makeFast(1,
+                    'default_amount' => FastTypeOption::makeFast(
+                        1,
                         TextInput::make("default_amount")
                             ->minValue(0)
-                            ->label(__('filament-package_ffhs_custom_forms::custom_forms.fields.type_options.default_amount'))
+                            ->label(
+                                __(
+                                    'filament-package_ffhs_custom_forms::custom_forms.fields.type_options.default_amount'
+                                )
+                            )
                             ->lte("max_amount")
                             ->integer()
                             ->required(),
@@ -64,6 +74,7 @@ class RepeaterLayoutType extends CustomSplitType
             ValidationTypeOptionGroup::make()
                 ->removeTypeOption("required")
                 ->mergeTypeOptions([
+                    'validation_attribute' => CustomValidationAttributeOption::make(),
                     "min_amount" => MinAmountOption::make(),
                     "max_amount" => MaxAmountOption::make(),
                 ])
