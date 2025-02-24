@@ -27,18 +27,14 @@ trait HasDefaultViewComponent
     ): Component {
         foreach ($record->getType()->getFlattenExtraTypeOptions() as $key => $typeOption) {
             if (in_array($key, $ignoredOptions)) continue;
-            $typeOption->modifyFormComponent(
-                $component,
-                FieldMapper::getOptionParameter($record, $key)
-            ); //ToDo null value
+            $value = FieldMapper::getOptionParameter($record, $key);
+            $typeOption->modifyFormComponent($component, $value); //ToDo null value
         }
         if ($record->isGeneralField()) {
             foreach ($record->getType()->getFlattenGeneralTypeOptions() as $key => $typeOption) {
                 if (in_array($key, $ignoredOptions)) continue;
-                $typeOption->modifyFormComponent(
-                    $component,
-                    FieldMapper::getOptionParameter($record, $key)
-                ); //ToDo null value
+                $value = FieldMapper::getOptionParameter($record, $key);
+                $typeOption->modifyFormComponent($component, $value); //ToDo null value
             }
         }
 
