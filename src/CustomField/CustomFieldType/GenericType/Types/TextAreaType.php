@@ -27,7 +27,7 @@ class TextAreaType extends CustomFieldType
     public function viewModes(): array
     {
         return [
-            'default' => TextAreaTypeView::class
+            'default' => TextAreaTypeView::class,
         ];
     }
 
@@ -47,13 +47,14 @@ class TextAreaType extends CustomFieldType
         $autoSize = FastTypeOption::makeFast(false, $autoSizeComponent);
 
         return [
-            DefaultLayoutTypeOptionGroup::make()->addTypeOptions("auto_size", $autoSize),
+            DefaultLayoutTypeOptionGroup::make()
+                ->addTypeOptions("auto_size", $autoSize),
             ValidationTypeOptionGroup::make(typeOptions: [
                 'max_length' => new MaxLengthOption(),
                 'min_length' => new MinLengthOption(),
                 'required' => RequiredOption::make(),
                 'validation_attribute' => CustomValidationAttributeOption::make(),
-            ])
+            ]),
         ];
     }
 

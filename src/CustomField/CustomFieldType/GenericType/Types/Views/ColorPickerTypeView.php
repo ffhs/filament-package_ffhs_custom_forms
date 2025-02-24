@@ -10,23 +10,30 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Filament\Forms\Components\ColorPicker;
 use Filament\Infolists\Components\ColorEntry;
-use Filament\Infolists\Components\TextEntry;
 
 class ColorPickerTypeView implements FieldTypeView
 {
     use HasDefaultViewComponent;
-    public static function getFormComponent(CustomFieldType $type, CustomField $record, array $parameter = []): ColorPicker {
 
-        $picker =  static::makeComponent(ColorPicker::class, $record);
+    public static function getFormComponent(
+        CustomFieldType $type,
+        CustomField $record,
+        array $parameter = []
+    ): \Filament\Forms\Components\Component {
+        $picker = static::makeComponent(ColorPicker::class, $record);
 
-        $colorType = FieldMapper::getOptionParameter($record,"color_type");
+        $colorType = FieldMapper::getOptionParameter($record, "color_type");
 
         $picker = $picker->$colorType();
 
-        return  $picker;
+        return $picker;
     }
 
-    public static function getInfolistComponent(CustomFieldType $type, CustomFieldAnswer $record, array   $parameter = []): ColorEntry {
+    public static function getInfolistComponent(
+        CustomFieldType $type,
+        CustomFieldAnswer $record,
+        array $parameter = []
+    ): \Filament\Infolists\Components\Component {
         return static::makeComponent(ColorEntry::class, $record);
     }
 

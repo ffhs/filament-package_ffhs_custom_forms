@@ -45,7 +45,6 @@ class RepeaterLayoutType extends CustomSplitType
     {
         return [
             LayoutTypeDefaultLayoutTypeOptionGroup::make()
-                //->removeTypeOption("helper_text")
                 ->mergeTypeOptions([
                     'show_label' => ShowLabelOption::make(),
                     'show_as_fieldset' => ShowAsFieldsetOption::make()
