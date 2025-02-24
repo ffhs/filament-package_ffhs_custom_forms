@@ -54,8 +54,9 @@ class TitleTypeView implements FieldTypeView
         CustomFieldAnswer $record,
         array $parameter = []
     ): Component {
-//        if(!FieldMapper::getOptionParameter($record,"show_in_view"))
-//            return \Filament\Infolists\Components\Group::make()->hidden();
+        if (!FieldMapper::getOptionParameter($record, "show_in_view")) {
+            return \Filament\Infolists\Components\Group::make()->hidden();
+        }
 
         $title = self::getTitle($record);
 

@@ -32,7 +32,7 @@ class WizardCustomNestType extends CustomNestLayoutType
     {
         return [
             'column_span' => new ColumnSpanOption(),
-            'show_title' => (new ShowTitleOption())->modifyOptionComponent(
+            'show_title' => (ShowTitleOption::make())->modifyOptionComponent(
                 fn(Toggle $toggle) => $toggle
                     ->label("Zeige den Title während dem Betrachten an")
                     ->columnSpanFull()

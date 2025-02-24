@@ -27,7 +27,7 @@ class DownloadType extends CustomFieldType
     public function viewModes(): array
     {
         return [
-            'default' => DownloadTypeView::class
+            'default' => DownloadTypeView::class,
         ];
     }
 
@@ -41,8 +41,8 @@ class DownloadType extends CustomFieldType
         return [
             DefaultLayoutTypeOptionGroup::make()
                 ->mergeTypeOptions([
-                    'show_in_view' => new ShowInViewOption(),
-                    'show_title' => new ShowTitleOption(),
+                    'show_in_view' => ShowInViewOption::make(),
+                    'show_title' => ShowTitleOption::make(),
                     'show_as_link' => new FastTypeOption(
                         true,
                         Toggle::make("show_as_link")
@@ -53,7 +53,7 @@ class DownloadType extends CustomFieldType
                         Toggle::make("title_as_filename")
                             ->disabled(fn($get) => sizeof($get('files') ?? []) > 1)
                             ->label("Titel als Filename") //ToDo Translate
-                    )
+                    ),
                 ]),
 
             ValidationTypeOptionGroup::make(typeOptions: [
