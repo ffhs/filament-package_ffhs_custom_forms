@@ -40,8 +40,8 @@ class SelectType extends CustomOptionType
     {
         return [
             TypeOptionGroup::make('Optionen', [
-                'customOptions' => new CustomOptionTypeOption()
-            ], 'heroicon-m-queue-list')
+                'customOptions' => new CustomOptionTypeOption(),
+            ], 'heroicon-m-queue-list'),
         ];
     }
 
@@ -138,7 +138,7 @@ class SelectType extends CustomOptionType
                         ),
                     ]),
                 TypeOptionGroup::make('Optionen', [
-                    'customOptions' => new CustomOptionTypeOption()
+                    'customOptions' => CustomOptionTypeOption::make(),
                 ], 'heroicon-m-queue-list'),
             ];
     }

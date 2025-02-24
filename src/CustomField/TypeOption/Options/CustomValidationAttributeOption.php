@@ -6,6 +6,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\TypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\TypeOptionPluginTranslate;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\TextInput;
+use Filament\Infolists\Components\Component as InfolistComponent;
 
 class CustomValidationAttributeOption extends TypeOption
 {
@@ -25,5 +26,16 @@ class CustomValidationAttributeOption extends TypeOption
             ->columnSpanFull()
             ->nullable()
             ->live();
+    }
+
+    public function modifyFormComponent(Component $component, mixed $value): Component
+    {
+        if (empty($value)) return $component;
+        return $component->validationAttribute($value);
+    }
+
+    public function modifyInfolistComponent(InfolistComponent $component, mixed $value): InfolistComponent
+    {
+        return $component;
     }
 }

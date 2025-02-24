@@ -32,7 +32,7 @@ class RepeaterLayoutType extends CustomSplitType
     public function viewModes(): array
     {
         return [
-            "default" => RepeaterLayoutTypeView::class
+            "default" => RepeaterLayoutTypeView::class,
         ];
     }
 
@@ -49,7 +49,7 @@ class RepeaterLayoutType extends CustomSplitType
                 ->mergeTypeOptions([
                     'show_label' => ShowLabelOption::make(),
                     'show_as_fieldset' => ShowAsFieldsetOption::make()
-                        ->modifyComponent(fn(Component $component) => $component->columnStart(2)),
+                        ->modifyOptionComponent(fn(Component $component) => $component->columnStart(2)),
                     'default_amount' => FastTypeOption::makeFast(
                         1,
                         TextInput::make("default_amount")
@@ -64,7 +64,7 @@ class RepeaterLayoutType extends CustomSplitType
                             ->required(),
                     ),
                     'add_action_label' => ActionLabelTypeOption::make(),
-                    "helper_text" => HelptextTypeOption::make()
+                    "helper_text" => HelptextTypeOption::make(),
 //                    'ordered' => new FastTypeOption(false,
 //                        Toggle::make('ordered')
 //                            ->default(false)
@@ -77,7 +77,7 @@ class RepeaterLayoutType extends CustomSplitType
                     'validation_attribute' => CustomValidationAttributeOption::make(),
                     "min_amount" => MinAmountOption::make(),
                     "max_amount" => MaxAmountOption::make(),
-                ])
+                ]),
         ];
     }
 

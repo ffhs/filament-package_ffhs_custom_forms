@@ -22,17 +22,22 @@ class ToggleButtonsType extends CustomOptionType
 {
     use HasCustomTypePackageTranslation;
 
-    public static function identifier(): string { return "toggle_buttons"; }
+    public static function identifier(): string
+    {
+        return "toggle_buttons";
+    }
 
-    public function viewModes(): array {
-        return  [
-            'default'  => ToggleButtonsView::class,
+    public function viewModes(): array
+    {
+        return [
+            'default' => ToggleButtonsView::class,
         ];
     }
 
 
-    public function prepareSaveFieldData(CustomFieldAnswer $answer, mixed $data): ?array { //ToDo Rename and in Template
-        if($data == '0') $data = false;
+    public function prepareSaveFieldData(CustomFieldAnswer $answer, mixed $data): ?array
+    { //ToDo Rename and in Template
+        if ($data == '0') $data = false;
         return parent::prepareSaveFieldData($answer, $data);
     }
 
@@ -43,40 +48,51 @@ class ToggleButtonsType extends CustomOptionType
 //    }
 
 
-    public function icon(): String {
-        return  "bi-toggles";
+    public function icon(): string
+    {
+        return "bi-toggles";
     }
 
-    public function extraTypeOptions(): array {
+    public function extraTypeOptions(): array
+    {
         return [
             DefaultLayoutTypeOptionGroup::make()
                 ->setTypeOptions([
                     'column_span' => ColumnSpanOption::make(),
-                    "columns" => new ColumnsOption(),
-                    'new_line_option' => NewLineOption::make()->modifyComponent(fn(Component $component) => $component->columnStart(1)),
+                    "columns" => ColumnsOption::make(),
+                    'new_line_option' => NewLineOption::make()->modifyOptionComponent(
+                        fn(Component $component) => $component->columnStart(1)
+                    ),
 
-                    "inline" => (new InlineOption())
-                        ->modifyComponent(fn(Toggle $component)=> $component->hidden(fn($get) => $get("grouped"))),
+                    "inline" => InlineOption::make()
+                        ->modifyOptionComponent(fn(Toggle $component) => $component->hidden(fn($get) => $get("grouped"))
+                        ),
 
-                    "grouped" => new FastTypeOption(false,
+                    "grouped" => new FastTypeOption(
+                        false,
                         Toggle::make("grouped")
-                            ->disabled(fn($get)=> $get("inline"))
-                            ->label(__("filament-package_ffhs_custom_forms::custom_forms.fields.type_options.toggle_grouped"))
+                            ->disabled(fn($get) => $get("inline"))
+                            ->label(
+                                __(
+                                    "filament-package_ffhs_custom_forms::custom_forms.fields.type_options.toggle_grouped"
+                                )
+                            )
                             ->live(),
                     ),
-                    "boolean" => (new BooleanOption())
-                        ->modifyComponent(fn(Toggle $component)=>
-                            $component
-                                ->disabled(fn($get)=> $get("multiple"))
-                                ->live(),
-                    ),
+                    "boolean" => BooleanOption::make()
+                        ->modifyOptionComponent(fn(Toggle $component) => $component
+                            ->disabled(fn($get) => $get("multiple"))
+                            ->live(),
+                        ),
                 ]),
             CustomOptionGroup::make()
                 ->setTypeOptions([
                     'required' => RequiredOption::make(),
                     'customOptions' => parent::extraTypeOptions()["customOptions"]
-                        ->modifyComponent(fn(Component $component) => $component->hidden(fn($get) => $get("boolean"))),
-                ])
+                        ->modifyOptionComponent(
+                            fn(Component $component) => $component->hidden(fn($get) => $get("boolean"))
+                        ),
+                ]),
         ];
     }
 

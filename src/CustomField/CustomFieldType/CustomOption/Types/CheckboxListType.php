@@ -44,8 +44,8 @@ class CheckboxListType extends CustomOptionType
             DefaultLayoutTypeOptionGroup::make()
                 ->setTypeOptions([
                     'column_span' => ColumnSpanOption::make(),
-                    "columns" => new ColumnsOption(),
-                    'new_line_option' => NewLineOption::make()->modifyComponent(
+                    "columns" => ColumnsOption::make(),
+                    'new_line_option' => NewLineOption::make()->modifyOptionComponent(
                         fn(Component $component) => $component->columnStart(1)
                     ),
                 ]),
@@ -88,7 +88,7 @@ class CheckboxListType extends CustomOptionType
                     'validation_attribute' => CustomValidationAttributeOption::make(),
                     'required' => RequiredOption::make(),
                 ]),
-            CustomOptionGroup::make()
+            CustomOptionGroup::make(),
 
 
         ];

@@ -17,30 +17,37 @@ class RadioType extends CustomOptionType
 {
     use HasCustomTypePackageTranslation;
 
-    public static function identifier(): string { return "radio"; }
+    public static function identifier(): string
+    {
+        return "radio";
+    }
 
-    public function viewModes(): array {
-        return  [
-            'default'  => RadioTypeView::class,
+    public function viewModes(): array
+    {
+        return [
+            'default' => RadioTypeView::class,
         ];
     }
 
-    public function extraTypeOptions(): array {
-
+    public function extraTypeOptions(): array
+    {
         return [
             DefaultLayoutTypeOptionGroup::make()
                 ->setTypeOptions([
                     'column_span' => ColumnSpanOption::make(),
-                    "columns" => new ColumnsOption(),
-                    'new_line_option' => NewLineOption::make()->modifyComponent(fn(Component $component) => $component->columnStart(1)),
+                    "columns" => ColumnsOption::make(),
+                    'new_line_option' => NewLineOption::make()->modifyOptionComponent(
+                        fn(Component $component) => $component->columnStart(1)
+                    ),
                 ]),
             CustomOptionGroup::make(),
-            ValidationTypeOptionGroup::make()
+            ValidationTypeOptionGroup::make(),
         ];
     }
 
 
-    public function icon(): String {
-        return  "carbon-radio-button-checked";
+    public function icon(): string
+    {
+        return "carbon-radio-button-checked";
     }
 }

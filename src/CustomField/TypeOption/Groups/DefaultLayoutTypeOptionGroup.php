@@ -10,20 +10,29 @@ use Filament\Forms\Components\Component;
 
 class DefaultLayoutTypeOptionGroup extends TypeOptionGroup
 {
-    public static function make(string $name= "Layout", array $typeOptions = [], ?string $icon = 'bi-layout-text-window'): static { //ToDo translate
-        return parent::make($name, $typeOptions, $icon);
-    }
-
-
-    public function __construct(string $name= "Layout", array $typeOptions = [], ?string $icon = 'bi-layout-text-window') { //ToDo translate
+    public function __construct(
+        string $name = "Layout",
+        array $typeOptions = [],
+        ?string $icon = 'bi-layout-text-window'
+    ) { //ToDo translate
         parent::__construct($name, $typeOptions, $icon);
 
         $this->mergeTypeOptions([
             //ToDo add Help Text
             'column_span' => ColumnSpanOption::make(),
-            'new_line_option' => NewLineOption::make()->modifyComponent(fn(Component $component) => $component->columnStart(1)),
-            "helper_text" => HelptextTypeOption::make()
+            'new_line_option' => NewLineOption::make()->modifyOptionComponent(
+                fn(Component $component) => $component->columnStart(1)
+            ),
+            "helper_text" => HelptextTypeOption::make(),
         ]);
+    }
+
+    public static function make(
+        string $name = "Layout",
+        array $typeOptions = [],
+        ?string $icon = 'bi-layout-text-window'
+    ): static { //ToDo translate
+        return parent::make($name, $typeOptions, $icon);
     }
 
 

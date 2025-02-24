@@ -36,9 +36,8 @@ class RepeaterLayoutTypeView implements FieldTypeView
         $schema = $parameter['renderer']();
 
         /**@var Repeater $repeater */
-        $repeater = static::makeComponent(Repeater::class, $record);
+        $repeater = static::makeComponent(Repeater::class, $record, ['min_amount', 'max_amount']);
         $repeater
-            ->columnSpan(FieldMapper::getOptionParameter($record, 'column_span'))
             ->columns(FieldMapper::getOptionParameter($record, 'columns'))
             ->columnStart(FieldMapper::getOptionParameter($record, 'new_line_option'))
             ->defaultItems($defaultAmount)

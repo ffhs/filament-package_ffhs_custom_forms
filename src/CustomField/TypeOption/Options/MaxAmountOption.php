@@ -6,15 +6,19 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\TypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\TypeOptionPluginTranslate;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\TextInput;
+use Filament\Infolists\Components\Component as InfolistComponent;
 
 class MaxAmountOption extends TypeOption
 {
     use TypeOptionPluginTranslate;
-    public function getDefaultValue(): mixed {
+
+    public function getDefaultValue(): mixed
+    {
         return null;
     }
 
-    public function getComponent(string $name): Component {
+    public function getComponent(string $name): Component
+    {
         return
             TextInput::make($name)
                 ->label($this->translate("max_amount"))
@@ -24,5 +28,15 @@ class MaxAmountOption extends TypeOption
                 ->minValue(0)
                 ->gt("min_amount")
                 ->integer();
+    }
+
+    public function modifyFormComponent(Component $component, mixed $value): Component
+    {
+        return $component->maxValue($value);
+    }
+
+    public function modifyInfolistComponent(InfolistComponent $component, mixed $value): InfolistComponent
+    {
+        return $component;
     }
 }

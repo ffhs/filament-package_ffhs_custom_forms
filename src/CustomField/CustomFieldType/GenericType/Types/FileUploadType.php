@@ -143,7 +143,7 @@ class FileUploadType extends CustomFieldType
                         [
                             'application/pdf',
                             'image/jpeg',
-                            'image/png'
+                            'image/png',
                         ],
                         TagsInput::make('allowed_type')
                             ->columnSpanFull()
@@ -182,6 +182,7 @@ class FileUploadType extends CustomFieldType
     /**
      * @param FileUpload $filesComponent
      * @param Component $component
+     *
      * @return void
      */
     public function checkFileComponentTempData(FileUpload $filesComponent, Component $component): void
@@ -195,7 +196,6 @@ class FileUploadType extends CustomFieldType
             $acceptedFileTypes = $filesComponent->getAcceptedFileTypes();
             $canSave = true;
 
-            $cleanedState = [];
 
             foreach (Arr::wrap($filesComponent->getState()) as $key => $file) {
                 if (!$file instanceof TemporaryUploadedFile) {
@@ -208,12 +208,8 @@ class FileUploadType extends CustomFieldType
                 if (!in_array($mimeType, $acceptedFileTypes)) {
                     $canSave = false;
                     $file->delete();
-                } else {
-                    $cleanedState[$key] = $file;
                 }
             }
-
-            $filesComponent->state($cleanedState);
 
             if ($canSave) {
                 $filesComponent->saveUploadedFiles();

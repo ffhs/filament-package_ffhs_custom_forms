@@ -31,7 +31,7 @@ class TextType extends CustomFieldType
     public function viewModes(): array
     {
         return [
-            'default' => TextTypeView::class
+            'default' => TextTypeView::class,
         ];
     }
 
@@ -65,7 +65,7 @@ class TextType extends CustomFieldType
                                     )
                                 )
                                 ->label("")
-                                ->schema([TextInput::make("value")->label("")])
+                                ->schema([TextInput::make("value")->label("")]),
                         ])
                 ),
             ]), //ToDo Translate

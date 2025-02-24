@@ -14,16 +14,22 @@ use Filament\Forms\Components\Component;
 class TagsType extends CustomOptionType
 {
     use HasCustomTypePackageTranslation;
-    public static function identifier(): string { return "tags_input"; }
 
-    public function viewModes(): array {
-        return  [
-            'default'  => TagsTypeView::class,
+    public static function identifier(): string
+    {
+        return "tags_input";
+    }
+
+    public function viewModes(): array
+    {
+        return [
+            'default' => TagsTypeView::class,
         ];
     }
 
-    public function icon(): String {
-        return  "bi-tags";
+    public function icon(): string
+    {
+        return "bi-tags";
     }
 
     public function extraTypeOptions(): array
@@ -32,8 +38,10 @@ class TagsType extends CustomOptionType
             DefaultLayoutTypeOptionGroup::make()
                 ->setTypeOptions([
                     'column_span' => ColumnSpanOption::make(),
-                    "columns" => new ColumnsOption(),
-                    'new_line_option' => NewLineOption::make()->modifyComponent(fn(Component $component) => $component->columnStart(1)),
+                    "columns" => ColumnsOption::make(),
+                    'new_line_option' => NewLineOption::make()->modifyOptionComponent(
+                        fn(Component $component) => $component->columnStart(1)
+                    ),
                 ]),
 
         ];
