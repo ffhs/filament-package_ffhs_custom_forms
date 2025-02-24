@@ -10,105 +10,102 @@ use Illuminate\Support\Collection;
 
 class FieldMapper
 {
-    public static function getIdentifyKey(CustomField|CustomFieldAnswer  $record) :String{
-        if($record instanceof  CustomFieldAnswer) $record = $record->customField;
-        return  $record->identifier;
+    public static function getIdentifyKey(CustomField|CustomFieldAnswer $record): string
+    {
+        if ($record instanceof CustomFieldAnswer) $record = $record->customField;
+        return $record->identifier;
     }
 
-    public static function getLabelName(CustomField|CustomFieldAnswer  $record) :String{
-        if($record instanceof  CustomFieldAnswer) $record = $record->customField;
+    public static function getLabelName(CustomField|CustomFieldAnswer $record): string
+    {
+        if ($record instanceof CustomFieldAnswer) $record = $record->customField;
         $label = $record->name;
-       // if($label != "") $label .= ":"; ToDo can set or not
-        return $label;
+        // if($label != "") $label .= ":"; ToDo can set or not
+        return is_null($label) ? '' : $label;
     }
 
-    public static function getOptionParameter(CustomField|CustomFieldAnswer $record, string $option, bool $canBeNull = false):mixed{
-        if($record instanceof CustomFieldAnswer) $record=  $record->customField;
-        if(is_null($record->options)) $record->options = [];
-        if(array_key_exists($option, $record->options) ){
+    public static function getOptionParameter(
+        CustomField|CustomFieldAnswer $record,
+        string $option,
+        bool $canBeNull = false
+    ): mixed {
+        if ($record instanceof CustomFieldAnswer) $record = $record->customField;
+        if (is_null($record->options)) $record->options = [];
+        if (array_key_exists($option, $record->options)) {
             $return = $record->options[$option];
-            if(!is_null($return)) return $return;
-            else if($canBeNull) return null;
+            if (!is_null($return)) {
+                return $return;
+            } elseif ($canBeNull) return null;
         }
 
-
         $generalOptions = $record->getType()->getDefaultGeneralOptionValues();
-        if(array_key_exists($option, $generalOptions)) return $generalOptions[$option];
+        if (array_key_exists($option, $generalOptions)) return $generalOptions[$option];
         $fieldOptions = $record->getType()->getDefaultTypeOptionValues();
-        if(array_key_exists($option, $fieldOptions)) return $fieldOptions[$option];
-        return $canBeNull?null:0;
+        if (array_key_exists($option, $fieldOptions)) return $fieldOptions[$option];
+        return $canBeNull ? null : 0;
     }
 
-    public static function getAnswer(CustomFieldAnswer $answer) {
+    public static function hasOptionParameter(CustomField|CustomFieldAnswer $record, string $option): bool
+    {
+        if ($record instanceof CustomFieldAnswer) $record = $record->customField;
+        if (!is_null($record->getType()->getFlattenExtraTypeOptions()[$option] ?? null)) return true;
+        if (!is_null($record->getType()->getFlattenGeneralTypeOptions()[$option] ?? null)) return true;
+        return false;
+    }
+
+    public static function getAnswer(CustomFieldAnswer $answer)
+    {
         $rawAnswerer = $answer->answer;
-        if(is_null($rawAnswerer)) return null;
+        if (is_null($rawAnswerer)) return null;
         return $answer->customField->getType()->prepareLoadFieldData($answer, $rawAnswerer);
     }
 
-    public static function getAvailableCustomOptions(CustomField $record) : Collection{
+    public static function getAvailableCustomOptions(CustomField $record): Collection
+    {
         return $record->customOptions
-            ->pluck("name","identifier");
+            ->pluck("name", "identifier");
     }
 
-    public static function getAllCustomOptions(CustomField|CustomFieldAnswer $record) : Collection{
-        if($record instanceof CustomFieldAnswer) $record = $record->customField;
-        if($record->isInheritFromGeneralField()) $options = $record->generalField->customOptions;
-        else $options = $record->customOptions;
+    public static function getAllCustomOptions(CustomField|CustomFieldAnswer $record): Collection
+    {
+        if ($record instanceof CustomFieldAnswer) $record = $record->customField;
+        if ($record->isInheritFromGeneralField()) {
+            $options = $record->generalField->customOptions;
+        } else $options = $record->customOptions;
         return $options->pluck("name", "identifier");
     }
 
-    public static function getTypeConfigAttribute(CustomField|CustomFieldAnswer  $record, string $attribute) :mixed{
-        if($record instanceof CustomFieldAnswer) $record = $record->customField;
-        return  $record->getType()->getConfigAttribute($attribute);
+    public static function getTypeConfigAttribute(CustomField|CustomFieldAnswer $record, string $attribute): mixed
+    {
+        if ($record instanceof CustomFieldAnswer) $record = $record->customField;
+        return $record->getType()->getConfigAttribute($attribute);
     }
 
     /**
      * Like an Repeater
+     *
      * @param CustomField|CustomFieldAnswer $field
+     *
      * @return bool
      */
-    public static function isFieldInSplitGroup(CustomField|CustomFieldAnswer  $record): bool
+    public static function isFieldInSplitGroup(CustomField|CustomFieldAnswer $record): bool
     {//ToDo Slow
-        if($record instanceof CustomFieldAnswer) $record = $record->customField;
-        $fields =  $record->customForm->customFields;
+        if ($record instanceof CustomFieldAnswer) $record = $record->customField;
+        $fields = $record->customForm->customFields;
         $parentSplitField = $fields
             ->firstWhere(function (CustomField $field) use ($record) {
-                if($field->form_position >= $record->form_position) return false;
-                if($field->layout_end_position < $record->form_position) return false;
+                if ($field->form_position >= $record->form_position) return false;
+                if ($field->layout_end_position < $record->form_position) return false;
                 return $field->getType() instanceof CustomSplitType;
             });
         return !is_null($parentSplitField);
     }
 
-    public static function getParentSplitGroups(CustomField|CustomFieldAnswer  $record): Collection
-    {//ToDo Slow
-        if($record instanceof CustomFieldAnswer) $record = $record->customField;
-        $fields =  $record->customForm->customFields;
-        return $fields
-            ->where('form_position', '<', $record->form_position)
-            ->where('layout_end_position', '>=', $record->form_position)
-            ->filter(function (CustomField $field) use ($record) {
-                 return $field->getType() instanceof CustomSplitType;
-            });
-    }
-
-
-    public static function getFieldsInLayout(CustomField|CustomFieldAnswer  $record) : Collection
-    { //ToDo Slow
-        if($record instanceof CustomFieldAnswer) $record = $record->customField;
-        $fields =  $record->customForm->customFields;
-        return $fields
-            ->filter(function (CustomField $field) use ($record) {
-                if($field->form_position > $record->layout_end_position) return false;
-                if($field->form_position <= $record->form_position) return false;
-                return true;
-            });
-    }
-
-
-    public static function getExistingPaths(CustomField|CustomFieldAnswer  $record, CustomFormAnswer $customFormAnswer = null) : Collection
-    { //ToDo Slow
-        if($record instanceof CustomFieldAnswer) {
+    public static function getExistingPaths(
+        CustomField|CustomFieldAnswer $record,
+        CustomFormAnswer $customFormAnswer = null
+    ): Collection { //ToDo Slow
+        if ($record instanceof CustomFieldAnswer) {
             $customFormAnswer = $record->customFormAnswer;
             $record = $record->customField;
         }
@@ -123,6 +120,30 @@ class FieldMapper
             ->whereNotNull('path');
 
         return $answersWithPath->keyBy('path')->keys();
+    }
+
+    public static function getParentSplitGroups(CustomField|CustomFieldAnswer $record): Collection
+    {//ToDo Slow
+        if ($record instanceof CustomFieldAnswer) $record = $record->customField;
+        $fields = $record->customForm->customFields;
+        return $fields
+            ->where('form_position', '<', $record->form_position)
+            ->where('layout_end_position', '>=', $record->form_position)
+            ->filter(function (CustomField $field) use ($record) {
+                return $field->getType() instanceof CustomSplitType;
+            });
+    }
+
+    public static function getFieldsInLayout(CustomField|CustomFieldAnswer $record): Collection
+    { //ToDo Slow
+        if ($record instanceof CustomFieldAnswer) $record = $record->customField;
+        $fields = $record->customForm->customFields;
+        return $fields
+            ->filter(function (CustomField $field) use ($record) {
+                if ($field->form_position > $record->layout_end_position) return false;
+                if ($field->form_position <= $record->form_position) return false;
+                return true;
+            });
     }
 
 }

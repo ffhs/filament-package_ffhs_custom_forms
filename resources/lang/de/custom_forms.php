@@ -35,7 +35,7 @@ return [
             'is_general_field_active' => 'Falls dies deaktiviert wird, werden alle generellen Felder deaktiviert, welches auf diesem Feld basieren.',
         ],
 
-        'type_view' =>[
+        'type_view' => [
             'select' => [
                 'select' => 'Auswahl'
             ]
@@ -111,6 +111,7 @@ return [
             'show_label' => 'Titel des Feldes anzeigen',
             'action_Label' => 'Aktions Label',
             'related_field' => 'Related Field',
+            'validation_attribute' => 'Validierungsattribut Option',
 
             // custom field type (FastTypeOption)
             'color_type' => 'Farbformat',

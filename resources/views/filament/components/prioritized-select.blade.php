@@ -1,8 +1,9 @@
+@php use Filament\Support\Enums\VerticalAlignment; @endphp
 
 <x-dynamic-component
     :component="$getFieldWrapperView()"
     :field="$field"
-    :inline-label-vertical-alignment="\Filament\Support\Enums\VerticalAlignment::Center"
+    :inline-label-vertical-alignment="VerticalAlignment::Center"
 >
 
     {{ $getChildComponentContainer() }}

@@ -16,12 +16,15 @@ class CheckboxListTypeView implements FieldTypeView
     use HasCustomOptionInfoListView;
     use HasDefaultViewComponent;
 
-    public static function getFormComponent(CustomFieldType $type, CustomField $record, array   $parameter = []): Component {
+    public static function getFormComponent(
+        CustomFieldType $type,
+        CustomField $record,
+        array $parameter = []
+    ): Component {
         return static::makeComponent(CheckboxList::class, $record)
-            ->columns(FieldMapper::getOptionParameter($record,"columns"))
             ->options(FieldMapper::getAvailableCustomOptions($record))
-            ->maxItems(FieldMapper::getOptionParameter($record,"max_items"))
-            ->minItems(FieldMapper::getOptionParameter($record,"min_items"));
+            ->maxItems(FieldMapper::getOptionParameter($record, "max_items"))
+            ->minItems(FieldMapper::getOptionParameter($record, "min_items"));
     }
 
 

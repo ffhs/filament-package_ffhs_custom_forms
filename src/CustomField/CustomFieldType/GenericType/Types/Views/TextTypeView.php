@@ -8,6 +8,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldMapper;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
+use Filament\Forms\Components\Component;
 use Filament\Forms\Components\TextInput;
 use Filament\Infolists\Components\TextEntry;
 use Illuminate\Support\Facades\Lang;
@@ -17,25 +18,28 @@ class TextTypeView implements FieldTypeView
 
     use HasDefaultViewComponent;
 
-    public static function getFormComponent(CustomFieldType $type, CustomField $record, array $parameter = []): TextInput {
+    public static function getFormComponent(
+        CustomFieldType $type,
+        CustomField $record,
+        array $parameter = []
+    ): Component {
+        $input = static::makeComponent(TextInput::class, $record);
 
-        $input = static::makeComponent(TextInput::class, $record)
-            ->maxLength(FieldMapper::getOptionParameter($record,"max_length"))
-            ->minLength(FieldMapper::getOptionParameter($record,"min_length"));
-
-        $suggestions = FieldMapper::getOptionParameter($record,"suggestions");
-        if(!empty($suggestions) && !empty($suggestions[Lang::locale()])) {
+        $suggestions = FieldMapper::getOptionParameter($record, "suggestions");
+        if (!empty($suggestions) && !empty($suggestions[Lang::locale()])) {
             $suggestionsList = array_map(fn($data) => $data["value"] ?? "", $suggestions[Lang::locale()]);
             $input->datalist($suggestionsList);
         }
 
-        $mask = FieldMapper::getOptionParameter($record,"alpine_mask");
-        if(!empty($mask)) $input = $input->mask($mask);
 
         return $input;
     }
 
-    public static function getInfolistComponent(CustomFieldType $type, CustomFieldAnswer $record, array $parameter = []): TextEntry {
+    public static function getInfolistComponent(
+        CustomFieldType $type,
+        CustomFieldAnswer $record,
+        array $parameter = []
+    ): \Filament\Infolists\Components\Component {
         return static::makeComponent(TextEntry::class, $record);
     }
 

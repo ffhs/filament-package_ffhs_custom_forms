@@ -9,15 +9,15 @@ return new class extends Migration {
     protected function getPermissionsToMigration(): array
     {
         return [
-            CustomFormPermissionName::FILAMENT_RESOURCE_CUSTOM_FORMS->value,
-            CustomFormPermissionName::FILAMENT_RESOURCE_CUSTOM_FORM_ANSWERS->value,
-            CustomFormPermissionName::FILAMENT_RESOURCE_TEMPLATES->value,
-            CustomFormPermissionName::FILAMENT_RESOURCE_GENERAL_FIELDS->value,
+            'custom_forms.fill_custom_forms',
+            'custom_forms.manage_custom_forms',
+            'custom_forms.manage_templates',
+            'custom_forms.manage_general_fields',
 
-            CustomFormPermissionName::FILL_CUSTOM_FORMS->value,
-            CustomFormPermissionName::MANAGE_CUSTOM_FORMS->value,
-            CustomFormPermissionName::MANAGE_TEMPLATES->value,
-            CustomFormPermissionName::MANAGE_GENERAL_FIELDS->value,
+            'custom_forms.filament.custom_forms',
+            'custom_forms.filament.templates',
+            'custom_forms.filament.general_fields',
+            'custom_forms.filament.custom_form_answers',
         ];
     }
 

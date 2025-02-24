@@ -13,26 +13,30 @@ class GroupType extends CustomLayoutType
 {
     use HasCustomTypePackageTranslation;
 
-    public static function identifier(): string {
+    public static function identifier(): string
+    {
         return "group";
     }
 
-    public function viewModes(): array {
+    public function viewModes(): array
+    {
         return [
-            "default" => GroupTypeView::class
+            "default" => GroupTypeView::class,
         ];
     }
 
-    public function icon(): string {
-        return  "carbon-cics-system-group";
+    public function icon(): string
+    {
+        return "carbon-cics-system-group";
     }
 
-    public function extraTypeOptions(): array {
-        return[
+    public function extraTypeOptions(): array
+    {
+        return [
             LayoutTypeDefaultLayoutTypeOptionGroup::make()
                 ->removeTypeOption("helper_text")
                 ->mergeTypeOptions([
-                    'show_in_view'=> new ShowInViewOption(),
+                    'show_in_view' => ShowInViewOption::make(),
                 ]),
         ];
     }

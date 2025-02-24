@@ -14,26 +14,32 @@ class TitleType extends CustomFieldType
 {
     use HasCustomTypePackageTranslation;
 
-    public static function identifier(): string {
+    public static function identifier(): string
+    {
         return "title";
     }
 
-    public function viewModes(): array {
+    public function viewModes(): array
+    {
         return [
-          'default' => TitleTypeView::class
+            'default' => TitleTypeView::class,
         ];
     }
 
-    public function icon(): string {
-       return "bi-card-heading";
+    public function icon(): string
+    {
+        return "bi-card-heading";
     }
 
-    public function extraTypeOptions(): array {
+    public function extraTypeOptions(): array
+    {
         return [
             DefaultLayoutTypeOptionGroup::make()
                 ->removeTypeOption("helper_text")
-                ->addTypeOptions('title_size',
-                    FastTypeOption::makeFast(1,
+                ->addTypeOptions(
+                    'title_size',
+                    FastTypeOption::makeFast(
+                        1,
                         TextInput::make('title_size')
                             ->label('Title grösse')
                             ->numeric()
@@ -43,13 +49,11 @@ class TitleType extends CustomFieldType
                             ->maxLength(3)
                             ->required()
                     ),
+                )
+                ->addTypeOptions(
+                    'show_in_view',
+                    ShowInViewOption::make()
                 ),
-        ];
-    }
-
-    protected function extraOptionsAfterBasic(): array {
-        return [
-            'show_in_view'=> new ShowInViewOption()
         ];
     }
 

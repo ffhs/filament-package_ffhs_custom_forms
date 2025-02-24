@@ -9,6 +9,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\HasCustomTyp
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\DefaultLayoutTypeOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\ValidationTypeOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\AlpineMaskOption;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\CustomValidationAttributeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\FastTypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\MaxLengthOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\MinLengthOption;
@@ -21,23 +22,31 @@ use Filament\Forms\Components\TextInput;
 class TextType extends CustomFieldType
 {
     use HasCustomTypePackageTranslation;
-    public static function identifier(): string {return "text";}
 
-    public function viewModes(): array {
+    public static function identifier(): string
+    {
+        return "text";
+    }
+
+    public function viewModes(): array
+    {
         return [
-          'default' => TextTypeView::class
+            'default' => TextTypeView::class,
         ];
     }
 
-    public function icon(): string {
-       return "bi-input-cursor-text";
+    public function icon(): string
+    {
+        return "bi-input-cursor-text";
     }
 
-    public function extraTypeOptions(): array {
+    public function extraTypeOptions(): array
+    {
         return [
             DefaultLayoutTypeOptionGroup::make(),
             ValidationTypeOptionGroup::make(typeOptions: [
                 'required' => RequiredOption::make(),
+                'validation_attribute' => CustomValidationAttributeOption::make(),
                 'alpine_mask' => AlpineMaskOption::make(),
                 'max_length' => MaxLengthOption::make(),
                 'min_length' => MinLengthOption::make(),
@@ -50,9 +59,13 @@ class TextType extends CustomFieldType
                         ->columnSpanFull()
                         ->schema(fn($record) => [
                             Repeater::make($record->getLocale())
-                                ->addActionLabel(__("filament-package_ffhs_custom_forms::custom_forms.fields.type_options.add_suggestion"))
+                                ->addActionLabel(
+                                    __(
+                                        "filament-package_ffhs_custom_forms::custom_forms.fields.type_options.add_suggestion"
+                                    )
+                                )
                                 ->label("")
-                                ->schema([TextInput::make("value")->label("")])
+                                ->schema([TextInput::make("value")->label("")]),
                         ])
                 ),
             ]), //ToDo Translate

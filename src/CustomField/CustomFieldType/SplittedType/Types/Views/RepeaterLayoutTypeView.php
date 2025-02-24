@@ -30,28 +30,20 @@ class RepeaterLayoutTypeView implements FieldTypeView
         $maxAmount = FieldMapper::getOptionParameter($record, 'max_amount');
         $defaultAmount = FieldMapper::getOptionParameter($record, 'default_amount');
         $addActionLabel = FieldMapper::getOptionParameter($record, 'add_action_label');
-        $showLabel = FieldMapper::getOptionParameter($record, 'show_label');
-        $helperText = FieldMapper::getOptionParameter($record, 'helper_text') ?? '';
 
         $schema = $parameter['renderer']();
 
         /**@var Repeater $repeater */
-        $repeater = static::makeComponent(Repeater::class, $record);
+        $repeater = static::makeComponent(Repeater::class, $record, ['min_amount', 'max_amount']);
         $repeater
-            ->columnSpan(FieldMapper::getOptionParameter($record, 'column_span'))
             ->columns(FieldMapper::getOptionParameter($record, 'columns'))
             ->columnStart(FieldMapper::getOptionParameter($record, 'new_line_option'))
             ->defaultItems($defaultAmount)
             ->minItems($minAmount)
             ->maxItems($maxAmount)
             ->schema($schema)
-            ->helperText($helperText)
             ->deleteAction(self::modifyRepeaterAction(...))
             ->addAction(self::modifyRepeaterAction(...));
-
-        if (!$showLabel) {
-            $repeater->label('');
-        }
 
         if (!is_null($addActionLabel)) {
             $repeater->addActionLabel($addActionLabel);

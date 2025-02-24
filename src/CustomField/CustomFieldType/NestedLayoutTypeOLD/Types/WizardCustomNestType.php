@@ -16,29 +16,33 @@ class WizardCustomNestType extends CustomNestLayoutType
 {
     use HasCustomTypePackageTranslation;
 
-    public static function identifier(): string {
+    public static function identifier(): string
+    {
         return "wizard";
     }
 
-    public function viewModes(): array {
-        return  [
-          'default'=> WizardNestTypeView::class,
+    public function viewModes(): array
+    {
+        return [
+            'default' => WizardNestTypeView::class,
         ];
     }
 
-    public function extraTypeOptions(): array{
+    public function extraTypeOptions(): array
+    {
         return [
             'column_span' => new ColumnSpanOption(),
-            'show_title' => (new ShowTitleOption())->modifyComponent(
-                fn (Toggle $toggle) => $toggle
+            'show_title' => (ShowTitleOption::make())->modifyOptionComponent(
+                fn(Toggle $toggle) => $toggle
                     ->label("Zeige den Title während dem Betrachten an")
                     ->columnSpanFull()
             ),
             'new_line_option' => new NewLineOption(),
-            'skippable' => new FastTypeOption(false,
+            'skippable' => new FastTypeOption(
+                false,
                 Toggle::make("skippable")
                     ->label("Die Schritte können übersprungen werden")
-                    ->afterStateUpdated(fn($set, bool $state)=> $state?null: $set("has_continue_action", true))
+                    ->afterStateUpdated(fn($set, bool $state) => $state ? null : $set("has_continue_action", true))
                     ->columnSpanFull()
                     ->live()
             ),
@@ -46,11 +50,13 @@ class WizardCustomNestType extends CustomNestLayoutType
     }
 
 
-    public function icon(): string {
-       return "carbon-connect";
+    public function icon(): string
+    {
+        return "carbon-connect";
     }
 
-    public function getEggType(): CustomEggLayoutType {
+    public function getEggType(): CustomEggLayoutType
+    {
         return new WizardStepCustomEggType();
     }
 }

@@ -7,6 +7,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\HasCustomTyp
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\LayoutType\Types\Views\DownloadTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\DefaultLayoutTypeOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\ValidationTypeOptionGroup;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\CustomValidationAttributeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\FastTypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\ShowInViewOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\ShowTitleOption;
@@ -18,42 +19,51 @@ class DownloadType extends CustomFieldType
 {
     use HasCustomTypePackageTranslation;
 
-    public static function identifier(): string {
+    public static function identifier(): string
+    {
         return "download_file";
     }
 
-    public function viewModes(): array {
+    public function viewModes(): array
+    {
         return [
-          'default' => DownloadTypeView::class
+            'default' => DownloadTypeView::class,
         ];
     }
 
-    public function icon(): string {
-       return "tabler-download";
+    public function icon(): string
+    {
+        return "tabler-download";
     }
 
-    public function extraTypeOptions(): array {
+    public function extraTypeOptions(): array
+    {
         return [
             DefaultLayoutTypeOptionGroup::make()
                 ->mergeTypeOptions([
-                    'show_in_view'=> new ShowInViewOption(),
-                    'show_title'=> new ShowTitleOption(),
-                    'show_as_link'=> new FastTypeOption(true,
+                    'show_in_view' => ShowInViewOption::make(),
+                    'show_title' => ShowTitleOption::make(),
+                    'show_as_link' => new FastTypeOption(
+                        true,
                         Toggle::make("show_as_link")
                             ->label("Link") //ToDo Translate
                     ),
-                    'title_as_filename'=> new FastTypeOption(false,
+                    'title_as_filename' => new FastTypeOption(
+                        false,
                         Toggle::make("title_as_filename")
-                            ->disabled(fn($get) => sizeof($get('files')?? []) > 1)
+                            ->disabled(fn($get) => sizeof($get('files') ?? []) > 1)
                             ->label("Titel als Filename") //ToDo Translate
-                    )
+                    ),
                 ]),
 
             ValidationTypeOptionGroup::make(typeOptions: [
                 'file_names' => new FastTypeOption([], Hidden::make('file_names')),
-                'files'=> new FastTypeOption([],
+                'validation_attribute' => CustomValidationAttributeOption::make(),
+                'files' => new FastTypeOption([],
                     FileUpload::make('files')
-                        ->afterStateUpdated(fn($set, $state) => sizeof($state) > 1? $set("title_as_filename", false):null)
+                        ->afterStateUpdated(
+                            fn($set, $state) => sizeof($state) > 1 ? $set("title_as_filename", false) : null
+                        )
                         ->directory($this->getConfigAttribute("save_path"))
                         ->disk($this->getConfigAttribute("disk"))
                         ->storeFileNamesIn('file_names')
@@ -68,12 +78,12 @@ class DownloadType extends CustomFieldType
             ]),
 
 
-
         ];
     }
 
 
-    public function canBeRequired(): bool {
+    public function canBeRequired(): bool
+    {
         return false;
     }
 

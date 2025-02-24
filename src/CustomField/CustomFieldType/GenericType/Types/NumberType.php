@@ -7,6 +7,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\HasCustomTypePackageTranslation;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\DefaultLayoutTypeOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\ValidationTypeOptionGroup;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\CustomValidationAttributeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\MaxValueOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\MinValueOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\RequiredOption;
@@ -15,26 +16,33 @@ class NumberType extends CustomFieldType
 {
     use HasCustomTypePackageTranslation;
 
-    public static function identifier(): string {return "number";}
+    public static function identifier(): string
+    {
+        return "number";
+    }
 
-    public function viewModes(): array {
+    public function viewModes(): array
+    {
         return [
             'default' => NumberTypeView::class
         ];
     }
 
-    public function icon(): string {
-        return  "carbon-character-whole-number";
+    public function icon(): string
+    {
+        return "carbon-character-whole-number";
     }
 
-    public function extraTypeOptions(): array {
+    public function extraTypeOptions(): array
+    {
         return [
             DefaultLayoutTypeOptionGroup::make(),
             ValidationTypeOptionGroup::make(typeOptions: [
-                'min_value'=>new MinValueOption(),
-                'max_value'=>new MaxValueOption(),
+                'min_value' => new MinValueOption(),
+                'max_value' => new MaxValueOption(),
                 'required' => RequiredOption::make(),
-            ] )
+                'validation_attribute' => CustomValidationAttributeOption::make(),
+            ])
         ];
     }
 

@@ -11,23 +11,27 @@ class CustomTabCustomEggType extends CustomEggLayoutType
 {
     use HasCustomTypePackageTranslation;
 
-    public static function identifier(): string {
+    public static function identifier(): string
+    {
         return "tab";
     }
 
-    public function viewModes(): array {
+    public function viewModes(): array
+    {
         return [
-            "default"=> TabEggTypeView::class
+            "default" => TabEggTypeView::class,
         ];
     }
 
-    public function icon(): string {
+    public function icon(): string
+    {
         return "tabler-slideshow";
     }
 
-    public function extraTypeOptions(): array{
+    public function extraTypeOptions(): array
+    {
         return [
-            'columns' => new ColumnsOption(),
+            'columns' => ColumnsOption::make(),
         ];
     }
 

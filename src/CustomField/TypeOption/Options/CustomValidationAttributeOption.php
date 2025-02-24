@@ -8,7 +8,7 @@ use Filament\Forms\Components\Component;
 use Filament\Forms\Components\TextInput;
 use Filament\Infolists\Components\Component as InfolistComponent;
 
-class MinAmountOption extends TypeOption
+class CustomValidationAttributeOption extends TypeOption
 {
     use TypeOptionPluginTranslate;
 
@@ -17,21 +17,21 @@ class MinAmountOption extends TypeOption
         return null;
     }
 
+
     public function getComponent(string $name): Component
     {
-        return
-            TextInput::make($name)
-                ->label($this->translate("min_amount"))
-                ->step(1)
-                ->live()
-                ->nullable()
-                ->minValue(0)
-                ->integer();
+        //validationAttribute
+        return TextInput::make($name)
+            ->label($this->translate("validation_attribute"))
+            ->columnSpanFull()
+            ->nullable()
+            ->live();
     }
 
     public function modifyFormComponent(Component $component, mixed $value): Component
     {
-        return $component; //ToDo Maby
+        if (empty($value)) return $component;
+        return $component->validationAttribute($value);
     }
 
     public function modifyInfolistComponent(InfolistComponent $component, mixed $value): InfolistComponent

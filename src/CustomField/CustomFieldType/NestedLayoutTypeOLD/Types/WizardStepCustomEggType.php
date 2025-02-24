@@ -12,27 +12,33 @@ class WizardStepCustomEggType extends CustomEggLayoutType
 {
     use HasCustomTypePackageTranslation;
 
-    public static function identifier(): string {
+    public static function identifier(): string
+    {
         return "wizard_step";
     }
 
-    public function viewModes(): array {
+    public function viewModes(): array
+    {
         return [
-            "default"=> WizardStepEggTypeView::class
+            "default" => WizardStepEggTypeView::class,
         ];
     }
 
-    public function icon(): string {
+    public function icon(): string
+    {
         return "tabler-column-insert-right";
     }
 
-    public function extraTypeOptions(): array{
+    public function extraTypeOptions(): array
+    {
         return [
-            'columns' => new ColumnsOption(),
-            'icon' => new IconOption(),
+            'columns' => ColumnsOption::make(),
+            'icon' => IconOption::make(),
         ];
     }
-    public function hasToolTips(): bool {
+
+    public function hasToolTips(): bool
+    {
         return true;
     }
 
