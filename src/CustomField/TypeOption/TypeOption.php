@@ -34,15 +34,6 @@ abstract class TypeOption
 
     public abstract function modifyInfolistComponent(InfolistComponent $component, mixed $value): InfolistComponent;
 
-    /* public function mutateOnCreate(mixed $value, CustomField $field): mixed { //ToDo for GeneralField
-         return $value;
-     }
-     public function mutateOnSave(mixed $value, CustomField $field): mixed { //ToDo for GeneralField
-         return $value;
-     }
-     public function mutateOnLoad(mixed $value, CustomField $field): mixed { //ToDo for GeneralField
-         return $value;
-     }*/
 
     public function getModifyOptionComponent(string $name): Component
     {
@@ -77,17 +68,17 @@ abstract class TypeOption
         return $data;
     }
 
-    public function beforeSaveField(mixed &$data, string $key, CustomField $field): void
-    {
-    }
+//    public function beforeSaveField(mixed &$data, string $key, CustomField $field): void
+//    {
+//    }
 
     public function afterSaveField(mixed &$data, string $key, CustomField $field): void
     {
     }
 
-    public function afterCreateField(mixed &$data, string $key, CustomField $field): void
-    {
-    }
+//    public function afterCreateField(mixed &$data, string $key, CustomField $field): void
+//    {
+//    }
 
     public function afterDeleteField(int|string $key, CustomField $field)
     {
@@ -102,5 +93,10 @@ abstract class TypeOption
         return $data;
     }
 
+
+    public function canBeOverwrittenByNonField(): bool
+    {
+        return true;
+    }
 
 }

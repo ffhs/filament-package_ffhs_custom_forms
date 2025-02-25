@@ -13,7 +13,7 @@ use Illuminate\Support\Collection;
 /**
  * @property int|null $general_field_id
  * @property int|null $template_id
- * @property int  $custom_form_id
+ * @property int $custom_form_id
  * @property bool $required
  * @property bool $is_active
  * @property int $form_position
@@ -29,8 +29,8 @@ use Illuminate\Support\Collection;
  * @property CustomForm $customForm
  * @property CustomForm|null $template
  * @property GeneralField|null $generalField
-*/
-class CustomField extends ACustomField implements NestingObject , Identifier
+ */
+class CustomField extends ACustomField implements NestingObject, Identifier
 {
     use HasFactory;
 
@@ -74,12 +74,12 @@ class CustomField extends ACustomField implements NestingObject , Identifier
 
     //Custom Form
 
-    protected static function booted(): void {
+    protected static function booted(): void
+    {
         parent::booted();
-
-        self::creating(function (CustomField $field){#
+        self::creating(function (CustomField $field) {#
             //Set identifier key to on other
-            if(empty($field->identifier()) && !$field->isGeneralField()) $field->identifier = uniqid();
+            if (empty($field->identifier()) && !$field->isGeneralField()) $field->identifier = uniqid();
             return $field;
         });
     }
@@ -95,26 +95,28 @@ class CustomField extends ACustomField implements NestingObject , Identifier
 
     //GeneralField
 
-    public function __get($key) {
-
-        if($key === "general_field_id") {
+    public function __get($key)
+    {
+        if ($key === "general_field_id") {
             return parent::__get($key);
         }
 
-        if(!$this->isGeneralField()) {
-            if('overwritten_options' === $key) return [];
+        if (!$this->isGeneralField()) {
+            if ('overwritten_options' === $key) return [];
             return parent::__get($key);
         }
 
 
         //PERFORMANCE!!!!
-        $genFieldFunction = function(): GeneralField {
-            if(!$this->exists) return parent::__get("generalField");
-            $genField = GeneralField::getModelCache()?->where("id",$this->general_field_id,)->first();
-            if(!is_null($genField)) return $genField;
+        $genFieldFunction = function (): GeneralField {
+            if (!$this->exists) return parent::__get("generalField");
+            $genField = GeneralField::getModelCache()?->where("id", $this->general_field_id)->first();
+            if (!is_null($genField)) return $genField;
 
-            $generalFieldIds = $this->customForm->customFields->whereNotNull('general_field_id')->pluck("general_field_id");
-            $generalFields = GeneralField::query()->whereIn("id",$generalFieldIds)->get();
+            $generalFieldIds = $this->customForm->customFields->whereNotNull('general_field_id')->pluck(
+                "general_field_id"
+            );
+            $generalFields = GeneralField::query()->whereIn("id", $generalFieldIds)->get();
             GeneralField::addToModelCache($generalFields);
             return GeneralField::cached($this->general_field_id);
         };
@@ -123,31 +125,34 @@ class CustomField extends ACustomField implements NestingObject , Identifier
         return match ($key) {
             'name' => $genFieldFunction()->name,
             'type' => $genFieldFunction()->type,
-            'options' => array_merge(parent::__get($key)??[], $genFieldFunction()->overwrite_options??[]),
-            'overwritten_options' => array_keys($genFieldFunction()->overwrite_options??[]),
+            'options' => array_merge(parent::__get($key) ?? [], $genFieldFunction()->overwrite_options ?? []),
+            'overwritten_options' => array_keys($genFieldFunction()->overwrite_options ?? []),
             'identifier' => $genFieldFunction()->identifier,
             'generalField' => $genFieldFunction(),
             default => parent::__get($key),
         };
-
     }
 
-    public function isGeneralField():bool{
+    public function isGeneralField(): bool
+    {
         return !empty($this->general_field_id);
     }
 
-    public function customForm(): BelongsTo {
+    public function customForm(): BelongsTo
+    {
         return $this->belongsTo(CustomForm::class);
     }
 
-    public function customOptions (): BelongsToMany {
+    public function customOptions(): BelongsToMany
+    {
         return $this->belongsToMany(CustomOption::class, "option_custom_field");
     }
 
 
     //Template
 
-    public function isInheritFromGeneralField():bool{
+    public function isInheritFromGeneralField(): bool
+    {
         return !is_null($this->general_field_id);
     }
 
@@ -161,12 +166,14 @@ class CustomField extends ACustomField implements NestingObject , Identifier
         return $this->hasMany(CustomFieldAnswer::class);
     }
 
-    public function isTemplate(): bool {
-        if(!isset($this->template_id)) return false;
+    public function isTemplate(): bool
+    {
+        if (!isset($this->template_id)) return false;
         return !empty($this->template_id);
     }
 
-    public function template(): BelongsTo {
+    public function template(): BelongsTo
+    {
         return $this->belongsTo(CustomForm::class, "template_id");
     }
 }

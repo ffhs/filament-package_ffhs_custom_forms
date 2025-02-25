@@ -1,7 +1,8 @@
 <?php
 
-namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomOption;
+namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomOption\TypeOptions;
 
+use Barryvdh\Debugbar\Facades\Debugbar;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\TypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomOption;
@@ -30,30 +31,26 @@ class CustomOptionTypeOption extends TypeOption
         return Group::make()
             ->columnSpanFull()
             ->schema([
-                Group::make()
-                    ->schema(
-                        fn($get) => is_null($get("../general_field_id")) ? [] : [$this->getCustomOptionsSelector($name)]
-                    )
-                    ->hidden(fn($get) => is_null($get("../general_field_id")))
-                    ->columnSpanFull(),
-                Group::make()
-                    ->schema(
-                        fn($get) => is_null($get("../general_field_id")) ? [$this->getCustomOptionsRepeater($name)] : []
-                    )
+                $this->getCustomOptionsSelector($name)
+                    ->hidden(fn($get) => is_null($get("../general_field_id"))),
+                $this->getCustomOptionsRepeater($name)
                     ->visible(fn($get) => is_null($get("../general_field_id")))
                     ->columnSpanFull(),
             ]);
     }
 
-    private function getCustomOptionsSelector($name): Component
+
+    protected function getCustomOptionsSelector($name): Component
     {
         return Select::make($name)
-            ->label("Mögliche Auswahlmöglichkeiten")
+            ->label(CustomOption::__('possible_options.label'))
+            ->helperText(CustomOption::__('possible_options.helper_text'))
             ->columnSpanFull()
             ->multiple()
             ->options(function ($get) {
                 $generalField = GeneralField::cached($get("../general_field_id"));
-                return $generalField->customOptions->pluck("name", "id"); //toDo Translate;
+                Debugbar::info($generalField->customOptions->pluck("name", "id"));
+                return $generalField->customOptions->pluck("name", "id")->toArray();
             });
     }
 
@@ -63,7 +60,7 @@ class CustomOptionTypeOption extends TypeOption
             ->collapseAllAction(fn($action) => $action->hidden())
             ->expandAllAction(fn($action) => $action->hidden())
             ->itemLabel(fn($state, $record) => $state["name"][$record->getLocale()]) //ToDo Translate
-            ->label("Feldoptionen") //ToDo Translate
+            ->label(CustomOption::__('label.multiple'))
             ->columnSpanFull()
             ->collapsible()
             ->collapsed()
@@ -74,12 +71,15 @@ class CustomOptionTypeOption extends TypeOption
                     if (empty($state[$optionKey]["identifier"])) $state[$optionKey]["identifier"] = uniqid();
                 }
                 $set($name, $state);
-            })->schema(fn($record) => [
+            })
+            ->schema(fn($record) => [
                 TextInput::make("name." . $record->getLocale())
-                    ->label("Name")
+                    ->label(CustomOption::__('name.label'))
+                    ->helperText(CustomOption::__('identifier.helper_text'))
                     ->required(),
                 TextInput::make("identifier")
-                    ->label("Identifikator")
+                    ->label(CustomOption::__('identifier.label'))
+                    ->helperText(CustomOption::__('identifier.helper_text'))
                     ->required(),
             ]);
     }
@@ -90,11 +90,7 @@ class CustomOptionTypeOption extends TypeOption
         return null;
     }
 
-    /**
-     * @param CustomField $field
-     *
-     * @return string
-     */
+
     public function getCachedOptionEditSaveKey(CustomField $field): string
     {
         return "custom_field-custom_options-" . $field->identifier . "-user_" . auth()->id();
@@ -155,5 +151,10 @@ class CustomOptionTypeOption extends TypeOption
         return parent::mutateOnFieldClone($options, $key, $original);
     }
 
+    public function canBeOverwrittenByNonField(): bool
+    {
+        return false;
+    }
 
 }
+

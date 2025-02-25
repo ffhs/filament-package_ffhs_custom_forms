@@ -119,15 +119,18 @@ trait HasGeneralFieldForm
         $type = $record->getType();
 
         return collect($type->getFlattenExtraTypeOptions())
+            //Remove any where can be use 
+            ->filter(fn(TypeOption $typeOption) => $typeOption->canBeOverwrittenByNonField())
             ->mapWithKeys(function (TypeOption $value, string $key) {
-                $label = $key;
                 try {
                     $label = $value->getModifyOptionComponent($key)->getLabel() ?? $key;
-                } catch (Error $exception) {
+                    return [$key => $label];
+                } catch (Error) {
+                    //When label need record or livewire component
+                    return [$key => $key];
                 }
-                return [$key => $label];
             });
-        //ToDo may with filtering (Some are not good to select in Generalfield)
+        //ToDo may with filtering (Some are not good to select in GeneralField)
     }
 
     public function getOverwrittenOptionDynamicSchema(): array
@@ -170,6 +173,7 @@ trait HasGeneralFieldForm
 
     protected function getGeneralFieldTypeOptions(): Fieldset
     {
+        /**@var CustomFieldType|null $type */
         $type = $this->getRecord()?->getType();
         $schema = [];
         $visable = true;
@@ -178,9 +182,7 @@ trait HasGeneralFieldForm
             $visable = count($type->generalTypeOptions()) > 0;
         }
 
-
         return Fieldset::make(GeneralField::__('options.label'))
-            //ToDo make by saving option and by load option (TypeOption)
             ->columnSpan(1)
             ->columns(1)
             ->statePath('options')

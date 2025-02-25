@@ -2,22 +2,26 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomOption;
 
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomOption\TypeOptions\CustomOptionGeneralTypeOption;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomOption\TypeOptions\CustomOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\CustomFieldType;
 
-abstract class  CustomOptionType extends CustomFieldType
+abstract class CustomOptionType extends CustomFieldType
 {
-
-    public function extraTypeOptions(): array {
+    public function extraTypeOptions(): array
+    {
         return [
-            "customOptions" => new CustomOptionTypeOption(),
+            CustomOptionGroup::make(),
         ];
     }
 
-    public function generalTypeOptions(): array {
+    public function generalTypeOptions(): array
+    {
         return [
-            "customOptions" => new CustomOptionTypeOption(),
+            CustomOptionGroup::make()
+                ->setTypeOptions([
+                    'customOptions' => CustomOptionGeneralTypeOption::make(),
+                ]),
         ];
     }
-
-
 }

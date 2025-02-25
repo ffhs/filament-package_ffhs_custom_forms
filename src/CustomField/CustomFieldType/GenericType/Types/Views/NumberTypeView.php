@@ -19,7 +19,7 @@ class NumberTypeView implements FieldTypeView
         CustomFieldType $type,
         CustomField $record,
         array $parameter = []
-    ): TextInput {
+    ): \Filament\Forms\Components\Component {
         return static::makeComponent(TextInput::class, $record)
             ->numeric();
     }
@@ -28,7 +28,7 @@ class NumberTypeView implements FieldTypeView
         CustomFieldType $type,
         CustomFieldAnswer $record,
         array $parameter = []
-    ): TextEntry {
+    ): \Filament\Infolists\Components\Component {
         return static::makeComponent(TextEntry::class, $record);
     }
 

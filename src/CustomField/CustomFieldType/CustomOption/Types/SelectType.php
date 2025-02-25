@@ -3,7 +3,7 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomOption\Types;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomOption\CustomOptionType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomOption\CustomOptionTypeOption;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomOption\TypeOptions\CustomOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomOption\Types\Views\SelectTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\HasCustomTypePackageTranslation;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\DefaultLayoutTypeOptionGroup;
@@ -11,7 +11,6 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\Validation
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\CustomValidationAttributeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\FastTypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\RequiredOption;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\TypeOptionGroup;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 
@@ -34,15 +33,6 @@ class SelectType extends CustomOptionType
     public function icon(): string
     {
         return 'carbon-select-window';
-    }
-
-    public function generalTypeOptions(): array
-    {
-        return [
-            TypeOptionGroup::make('Optionen', [
-                'customOptions' => new CustomOptionTypeOption(),
-            ], 'heroicon-m-queue-list'),
-        ];
     }
 
 
@@ -137,9 +127,7 @@ class SelectType extends CustomOptionType
                                 ->numeric(),
                         ),
                     ]),
-                TypeOptionGroup::make('Optionen', [
-                    'customOptions' => CustomOptionTypeOption::make(),
-                ], 'heroicon-m-queue-list'),
+                CustomOptionGroup::make(),
             ];
     }
 

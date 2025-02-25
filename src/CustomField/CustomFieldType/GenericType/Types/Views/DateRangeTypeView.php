@@ -15,17 +15,23 @@ class DateRangeTypeView implements FieldTypeView
 {
     use HasDefaultViewComponent;
 
-    public static function getFormComponent(CustomFieldType $type, CustomField $record, array $parameter = []): Component {
-
-        /**@var \Coolsam\FilamentFlatpickr\Forms\Components\Flatpickr $flatpickr*/
+    public static function getFormComponent(
+        CustomFieldType $type,
+        CustomField $record,
+        array $parameter = []
+    ): Component {
+        /**@var \Coolsam\FilamentFlatpickr\Forms\Components\Flatpickr $flatpickr */
         return static::makeComponent(Flatpickr::class, $record)
             ->range();
     }
 
-    public static function getInfolistComponent(CustomFieldType $type, CustomFieldAnswer $record, array $parameter = []): TextEntry {
+    public static function getInfolistComponent(
+        CustomFieldType $type,
+        CustomFieldAnswer $record,
+        array $parameter = []
+    ): \Filament\Infolists\Components\Component {
         return static::makeComponent(TextEntry::class, $record);
     }
-
 
 
 }

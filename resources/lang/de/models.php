@@ -38,4 +38,23 @@ return [
             'label' => 'Verknüpfte Formulartypen',
         ],
     ],
+
+    'custom_option' => [
+        'label' => [
+            'single' => 'Auswahlmöglichkeit',
+            'multiple' => 'Auswahlmöglichkeiten',
+        ],
+        'name' => [
+            'label' => 'Name',
+            'helper_text' => '',
+        ],
+        'identifier' => [
+            'label' => 'Identifikator',
+            'helper_text' => '',
+        ],
+        'possible_options' => [
+            'label' => 'Mögliche Auswahlmöglichkeiten',
+            'helper_text' => '',
+        ],
+    ],
 ];

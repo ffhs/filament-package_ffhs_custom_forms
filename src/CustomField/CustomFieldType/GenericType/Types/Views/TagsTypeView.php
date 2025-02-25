@@ -10,6 +10,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\TagsInput;
+use Filament\Infolists\Components\TextEntry;
 
 class TagsTypeView implements FieldTypeView
 {
@@ -33,7 +34,7 @@ class TagsTypeView implements FieldTypeView
         $answerer = FieldMapper::getAnswer($record);
         $answerer = empty($answerer) ? "" : $answerer;
 
-        return static::makeComponent(TagsInput::class, $record)
+        return static::makeComponent(TextEntry::class, $record)
             ->state($answerer)
             ->badge();
     }
