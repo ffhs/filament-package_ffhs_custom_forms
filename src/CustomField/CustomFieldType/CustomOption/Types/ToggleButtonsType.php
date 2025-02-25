@@ -4,6 +4,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Custom
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomOption\CustomOptionType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomOption\TypeOptions\CustomOptionGroup;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomOption\TypeOptions\CustomOptionTypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomOption\Types\Views\ToggleButtonsView;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\HasCustomTypePackageTranslation;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\LayoutTypeWithColumnsOptionGroup;
@@ -78,7 +79,7 @@ class ToggleButtonsType extends CustomOptionType
             ValidationTypeOptionGroup::make(),
             CustomOptionGroup::make()
                 ->setTypeOptions([
-                    'customOptions' => parent::extraTypeOptions()["customOptions"]
+                    'customOptions' => CustomOptionTypeOption::make()
                         ->modifyOptionComponent(
                             fn(Component $component) => $component->hidden(fn($get) => $get("boolean"))
                         ),
