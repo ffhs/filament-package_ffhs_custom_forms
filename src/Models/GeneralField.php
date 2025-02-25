@@ -31,6 +31,7 @@ class GeneralField extends ACustomField
         'icon',
     ];
 
+
     protected $casts = [
         'extra_options' => 'array',
         'overwrite_options' => 'array',
@@ -42,6 +43,11 @@ class GeneralField extends ACustomField
         'generalFieldForms',
         'customOptions',
     ];
+
+    public static function __($key)
+    {
+        return __('filament-package_ffhs_custom_forms::models.general_field.' . $key);
+    }
 
     public function customFields(): HasMany
     {

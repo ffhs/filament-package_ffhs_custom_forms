@@ -3,62 +3,63 @@
 
 return [
 
-    'functions'=>[
-        'connect'=>'Connect',
+
+    'functions' => [
+        'connect' => 'Connect',
         'add' => 'Add',
     ],
 
-    'navigation'=>[
-        'general_fields'=> 'General Fields',
+    'navigation' => [
+        'general_fields' => 'General Fields',
         'forms' => 'Forms',
         'group' => [
-            'forms'=> 'Forms'
+            'forms' => 'Forms',
         ],
-        'templates'=> 'Templates'
+        'templates' => 'Templates',
     ],
 
-    'fields' =>[
+    'fields' => [
         'type' => 'Field Type',
         'name' => 'Name',
-        'tool_tip'=> 'Short Description',
-        'identifier'=> 'Identification Key',
+        'tool_tip' => 'Short Description',
+        'identifier' => 'Identification Key',
         'is_general_field_active' => 'Active',
-        'label'=> 'Name',
-        'form_connections'=> 'Linked Forms',
+        'label' => 'Name',
+        'form_connections' => 'Linked Forms',
         'general_field' => 'General Field',
-        'is_required'=> 'Required',
+        'is_required' => 'Required',
 
         'helper_text' => [
-            'type'=> 'The field type of the field. ATTENTION: This cannot be changed after creation',
-            'identifier'=> 'This key is required to export the data',
-            'is_general_field_active'=> 'If this is deactivated, all general fields based on this field will be deactivated.',
+            'type' => 'The field type of the field. ATTENTION: This cannot be changed after creation',
+            'identifier' => 'This key is required to export the data',
+            'is_general_field_active' => 'If this is deactivated, all general fields based on this field will be deactivated.',
         ],
 
-        'type_view' =>[
+        'type_view' => [
             'select' => [
-                'select' => 'Select'
-            ]
+                'select' => 'Select',
+            ],
         ],
 
-        'types'=>[
+        'types' => [
             'text' => 'Text',
             'email' => 'Email',
             'number' => 'Number',
             'select' => 'Select',
             'checkbox' => 'Checkbox',
-            'section'=>'Section',
+            'section' => 'Section',
             'radio' => 'Radio',
             'date' => 'Date',
             'date-time' => 'Date and time',
             'textarea' => 'Textarea',
             'icon-select' => 'Icon selector',
             'checkbox_list' => 'Checkbox list',
-            'toggle_buttons'=> 'Toggle buttons',
-            'tags_input'=> 'Tags',
-            'color_input'=>'Color picker',
-            'key_value'=> 'Key value',
+            'toggle_buttons' => 'Toggle buttons',
+            'tags_input' => 'Tags',
+            'color_input' => 'Color picker',
+            'key_value' => 'Key value',
             'title' => 'Title',
-            'layout_text'=>'Layout text',
+            'layout_text' => 'Layout text',
             'fieldset' => 'Fieldset',
             'group' => 'Group',
             'tabs' => 'Tabs',
@@ -72,10 +73,10 @@ return [
             'repeater' => 'Repeater',
             'default_amount' => 'Default Amount',
             'ordered' => 'Ordered',
-            'date_range' => 'Date Range'
+            'date_range' => 'Date Range',
         ],
 
-        'rules'=>[
+        'rules' => [
             'is_disabled_rule' => 'Disable field',
             'is_hidden_rule' => 'Hide field',
             'is_required_rule' => 'Require field',
@@ -83,9 +84,9 @@ return [
             'always' => 'Always active',
         ],
 
-        'anchors'=>[
+        'anchors' => [
             'value_equals_anchor' => 'equal value anchor',
-            'infolist_view' => 'if is infolist'
+            'infolist_view' => 'if is infolist',
         ],
 
         'type_options' => [
@@ -138,22 +139,22 @@ return [
         ],
     ],
 
-    'form'=>[
-        'custom_form' =>'Form',
-        'short_title'=> 'Title',
+    'form' => [
+        'custom_form' => 'Form',
+        'short_title' => 'Title',
         'custom_fields_amount' => 'Amount Felder',
         'owned_fields_amount' => 'Owned Felder',
-        'custom_form_identifier'=> [
+        'custom_form_identifier' => [
             'display_name' => 'Form Type Name',
-            'raw_name' => 'Form Type Identifier'
+            'raw_name' => 'Form Type Identifier',
         ],
-        'template'=> 'Template',
+        'template' => 'Template',
         'compiler' => [
             'custom_fields' => 'Custom Fields',
             'general_fields' => 'General Fields',
             'add_a_name_field' => 'Add a :name Field',
             'template_has_existing_fields' => 'The template contains existing fields',
             'template_has_existing_fields_description' => 'There are fields that originally come from this template. These fields are deleted from this form and the existing answers are adopted',
-        ]
-    ]
+        ],
+    ],
 ];
