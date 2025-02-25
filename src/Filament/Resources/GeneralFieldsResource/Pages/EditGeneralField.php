@@ -28,11 +28,11 @@ class EditGeneralField extends EditRecord
 
     protected function mutateFormDataBeforeSave(array $data): array
     {
-        if (!array_key_exists('extra_option_names', $data)) {
+        if (!array_key_exists('overwrite_option_keys', $data)) {
             return parent::mutateFormDataBeforeSave($data);
         }
 
-        $names = $data['extra_option_names'];
+        $names = $data['overwrite_option_keys'];
         $overwriteOptions = $data['overwrite_options'];
         $allowedOverwriteOptions = [];
 
@@ -40,7 +40,7 @@ class EditGeneralField extends EditRecord
             $allowedOverwriteOptions[$name] = $overwriteOptions[$name] ?? null;
         }
 
-        unset($data['extra_option_names']);
+        unset($data['overwrite_option_keys']);
         $data['overwrite_options'] = $allowedOverwriteOptions;
 
         return parent::mutateFormDataBeforeSave($data);
