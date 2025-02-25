@@ -2,7 +2,6 @@
 //DE
 
 return [
-
     'functions' => [
         'connect' => 'Verknüpfen',
         'add' => 'Hinzufügen',
@@ -12,7 +11,7 @@ return [
         'general_fields' => 'Generelle Felder',
         'forms' => 'Formulare',
         'group' => [
-            'forms' => 'Formulare'
+            'forms' => 'Formulare',
         ],
         'custom_form_answer' => 'Ausgefüllte Formulare',
         'templates' => 'Templates',
@@ -20,11 +19,11 @@ return [
 
     'fields' => [
         'type' => 'Feldtyp',
-        'name' => 'Name',
+//        'name' => 'Name',
         'tool_tip' => 'Kurzbeschreibung',
         'identifier' => 'Identifikations Schlüssel',
-        'is_general_field_active' => 'Aktiv',
-        'label' => 'Name',
+//        'is_general_field_active' => 'Aktiv',
+//        'label' => 'Name',
         'form_connections' => 'Verknüpfte Formulare',
         'general_field' => 'Generelles Feld',
         'is_required' => 'Wird benötigt',
@@ -37,8 +36,8 @@ return [
 
         'type_view' => [
             'select' => [
-                'select' => 'Auswahl'
-            ]
+                'select' => 'Auswahl',
+            ],
         ],
 
         'types' => [
@@ -70,7 +69,7 @@ return [
             'space' => 'Absatz',
             'file_upload' => 'Dokumente',
             'repeater' => 'Repeater',
-            'date_range' => 'Bereich'
+            'date_range' => 'Bereich',
         ],
 
         'rules' => [
@@ -80,13 +79,13 @@ return [
                 'disabled_event' => 'Feld deaktivieren',
                 'required_event' => 'Feld benötigen',
 
-                'change_options_rule' => 'Feld Optionen ändern'
+                'change_options_rule' => 'Feld Optionen ändern',
             ],
             'trigger' => [
                 'value_equals_anchor' => 'Bestimmter Wert',
                 'infolist_view' => 'Wenn Infolist ist',
                 'always' => 'Immer Aktive',
-            ]
+            ],
         ],
 
         'type_options' => [
@@ -158,7 +157,7 @@ return [
         'owned_fields_amount' => 'Eigene Felder',
         'custom_form_identifier' => [
             'display_name' => 'Formulartype Name',
-            'raw_name' => 'Formulartype Identifier'
+            'raw_name' => 'Formulartype Identifier',
         ],
         'template' => 'Template',
         'compiler' => [
@@ -168,6 +167,6 @@ return [
             'template_has_existing_fields' => 'Es gibt Felder die ursprünglich von diesem Template stammen',
             'template_has_existing_fields_description' => 'Es gibt Felder die ursprünglich von diesem Template stammen. Diese Felder werden von
                             diesem Formular gelöscht und die existierenden Antworten übernommen',
-        ]
+        ],
     ],
 ];

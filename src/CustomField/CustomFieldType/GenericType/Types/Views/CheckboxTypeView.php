@@ -28,7 +28,7 @@ class CheckboxTypeView implements FieldTypeView
         array $parameter = []
     ): IconEntry {
         /**@var $iconEntry IconEntry */
-        $iconEntry = static::makeComponent(Checkbox::class, $record);
+        $iconEntry = static::makeComponent(IconEntry::class, $record);
 
         return $iconEntry
             ->state(is_null(FieldMapper::getAnswer($record)) ? false : FieldMapper::getAnswer($record))

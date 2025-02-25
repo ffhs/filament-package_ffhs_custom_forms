@@ -2,6 +2,7 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Models;
 
+use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasCustomFormModelTranslations;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -18,6 +19,10 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class GeneralField extends ACustomField
 {
+    use HasCustomFormModelTranslations;
+
+    protected static string $translationName = 'general_field';
+
     protected $table = 'general_fields';
 
     protected $fillable = [
@@ -30,6 +35,7 @@ class GeneralField extends ACustomField
         'type',
         'icon',
     ];
+
 
     protected $casts = [
         'extra_options' => 'array',
