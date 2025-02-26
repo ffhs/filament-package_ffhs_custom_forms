@@ -7,11 +7,9 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Generi
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Types\Views\DateTimeTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\HasCustomTypePackageTranslation;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\DefaultLayoutTypeOptionGroup;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\LayoutOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\ValidationTypeOptionGroup;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\CustomValidationAttributeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\DateFormatOption;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\RequiredOption;
 
 class DateTimeType extends CustomFieldType
 {
@@ -25,7 +23,7 @@ class DateTimeType extends CustomFieldType
     public function viewModes(): array
     {
         return [
-            'default' => DateTimeTypeView::class
+            'default' => DateTimeTypeView::class,
         ];
     }
 
@@ -37,13 +35,13 @@ class DateTimeType extends CustomFieldType
     public function extraTypeOptions(): array
     {
         return [
-            DefaultLayoutTypeOptionGroup::make(),
-            ValidationTypeOptionGroup::make(typeOptions: [
-                'required' => RequiredOption::make(),
-                'validation_attribute' => CustomValidationAttributeOption::make(),
-                'format' => DateFormatOption::make()
-                    ->modifyDefault("Y-m-d H:i:s")
-            ])
+            LayoutOptionGroup::make(),
+            ValidationTypeOptionGroup::make()
+                ->addTypeOptions(
+                    'format',
+                    DateFormatOption::make()
+                        ->modifyDefault("Y-m-d H:i:s")
+                ),
         ];
     }
 

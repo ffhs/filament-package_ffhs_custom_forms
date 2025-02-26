@@ -6,7 +6,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Layout
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\HasCustomTypePackageTranslation;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\LayoutType\Types\Views\SpaceTypeView;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\DefaultLayoutTypeOptionGroup;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\LayoutOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\FastTypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\ShowInViewOption;
 use Filament\Forms\Components\TextInput;
@@ -44,11 +44,11 @@ class SpaceType extends CustomFieldType
 
 
     public function extraTypeOptions(): array
-    { //ToDo
+    {
         return [
-            DefaultLayoutTypeOptionGroup::make()
-                ->removeTypeOption("helper_text")
-                ->mergeTypeOptions([
+            LayoutOptionGroup::make()
+                ->removeTypeOption('new_line')
+                ->setTypeOptions([
                     'amount' => new FastTypeOption(
                         1,
                         TextInput::make("amount")

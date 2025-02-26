@@ -7,7 +7,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomOption
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomOption\TypeOptions\CustomOptionTypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomOption\Types\Views\ToggleButtonsView;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\HasCustomTypePackageTranslation;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\LayoutTypeWithColumnsOptionGroup;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\LayoutWithColumnsOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\ValidationTypeOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\BooleanOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\FastTypeOption;
@@ -47,16 +47,13 @@ class ToggleButtonsType extends CustomOptionType
     public function extraTypeOptions(): array
     {
         return [
-            LayoutTypeWithColumnsOptionGroup::make()
-                ->addTypeOptions(
-                    "inline",
-                    InlineOption::make()
-                        ->modifyOptionComponent(fn(Toggle $component) => $component->hidden(fn($get) => $get("grouped"))
-                        )
-                )
-                ->addTypeOptions(
-                    "grouped",
-                    new FastTypeOption(
+            LayoutWithColumnsOptionGroup::make()
+                ->mergeTypeOptions([
+                    'inline' => InlineOption::make()
+                        ->modifyOptionComponent(function (Toggle $component) {
+                            return $component->hidden(fn($get) => $get("grouped"));
+                        }),
+                    'grouped' => FastTypeOption::makeFast(
                         false,
                         Toggle::make("grouped")
                             ->disabled(fn($get) => $get("inline"))
@@ -66,16 +63,13 @@ class ToggleButtonsType extends CustomOptionType
                                     "filament-package_ffhs_custom_forms::custom_forms.fields.type_options.toggle_grouped"
                                 )
                             ),
-                    )
-                )
-                ->addTypeOptions(
-                    "boolean",
-                    BooleanOption::make()
+                    ),
+                    'boolean' => BooleanOption::make()
                         ->modifyOptionComponent(fn(Toggle $component) => $component
                             ->disabled(fn($get) => $get("multiple"))
                             ->live(),
-                        )
-                ),
+                        ),
+                ]),
             ValidationTypeOptionGroup::make(),
             CustomOptionGroup::make()
                 ->setTypeOptions([

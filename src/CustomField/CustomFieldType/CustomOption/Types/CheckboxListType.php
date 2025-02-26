@@ -6,11 +6,9 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomOption
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomOption\TypeOptions\CustomOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomOption\Types\Views\CheckboxListTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\HasCustomTypePackageTranslation;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\LayoutTypeWithColumnsOptionGroup;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\LayoutWithColumnsOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\ValidationTypeOptionGroup;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\CustomValidationAttributeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\FastTypeOption;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\RequiredOption;
 use Filament\Forms\Components\TextInput;
 
 class CheckboxListType extends CustomOptionType
@@ -37,12 +35,12 @@ class CheckboxListType extends CustomOptionType
     public function extraTypeOptions(): array
     {
         return [
-            LayoutTypeWithColumnsOptionGroup::make(),
+            LayoutWithColumnsOptionGroup::make(),
             ValidationTypeOptionGroup::make()
-                ->setTypeOptions([
-                    "min_items" => new FastTypeOption(
+                ->mergeTypeOptions([
+                    "min_items" => new FastTypeOption( //ToDO Make CUstom Options? WIth repeater?
                         null,
-                        TextInput::make("min_select")
+                        TextInput::make("min_items")
                             ->hidden(fn($get) => !$get("several"))
                             ->label(
                                 __("filament-package_ffhs_custom_forms::custom_forms.fields.type_options.min_select")
@@ -59,7 +57,7 @@ class CheckboxListType extends CustomOptionType
                     ),
                     "max_items" => new FastTypeOption(
                         null,
-                        TextInput::make("max_select")
+                        TextInput::make("max_items")
                             ->hidden(fn($get) => !$get("several"))
                             ->label(
                                 __("filament-package_ffhs_custom_forms::custom_forms.fields.type_options.max_select")
@@ -73,13 +71,8 @@ class CheckboxListType extends CustomOptionType
                             ->step(1)
                             ->numeric(),
                     ),
-
-                    'validation_attribute' => CustomValidationAttributeOption::make(),
-                    'required' => RequiredOption::make(),
                 ]),
             CustomOptionGroup::make(),
-
-
         ];
     }
 

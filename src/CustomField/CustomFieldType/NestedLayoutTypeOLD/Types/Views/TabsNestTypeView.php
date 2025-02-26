@@ -16,28 +16,33 @@ use ReflectionClass;
 class TabsNestTypeView implements FieldTypeView
 {
 
-    public static function getFormComponent(CustomFieldType $type, CustomField $record,
-                                            array           $parameter = []): \Filament\Forms\Components\Component {
-
-        $label = FieldMapper::getOptionParameter($record,"show_title")? FieldMapper::getLabelName($record):"";
+    public static function getFormComponent(
+        CustomFieldType $type,
+        CustomField $record,
+        array $parameter = []
+    ): \Filament\Forms\Components\Component {
+        $label = FieldMapper::getOptionParameter($record, "show_title") ? FieldMapper::getLabelName($record) : "";
 
         return Tabs::make($label)
-            ->columnSpan(FieldMapper::getOptionParameter($record,"column_span"))
-            ->inlineLabel(FieldMapper::getOptionParameter($record,"in_line_label"))
-            ->columnStart(FieldMapper::getOptionParameter($record,"new_line_option"))
+            ->columnSpan(FieldMapper::getOptionParameter($record, "column_span"))
+            ->inlineLabel(FieldMapper::getOptionParameter($record, "in_line_label"))
+            ->columnStart(FieldMapper::getOptionParameter($record, "new_line"))
             ->tabs($parameter["rendered"]);
     }
 
-    public static function getInfolistComponent(CustomFieldType $type, CustomFieldAnswer $record,
-                                                array           $parameter = []): \Filament\Infolists\Components\Component {
+    public static function getInfolistComponent(
+        CustomFieldType $type,
+        CustomFieldAnswer $record,
+        array $parameter = []
+    ): \Filament\Infolists\Components\Component {
+        $label = FieldMapper::getOptionParameter($record, "show_title") ? FieldMapper::getLabelName($record) : "";
 
-        $label = FieldMapper::getOptionParameter($record,"show_title")? FieldMapper::getLabelName($record):"";
-
-        if (!FieldMapper::getOptionParameter($record,"show_as_fieldset"))
+        if (!FieldMapper::getOptionParameter($record, "show_as_fieldset")) {
             return \Filament\Infolists\Components\Tabs::make($label)
                 ->columnStart(1)
                 ->tabs($parameter["rendered"])
                 ->columnSpanFull();
+        }
 
         $schema = [];
         $tabs = $parameter["rendered"];
@@ -46,14 +51,15 @@ class TabsNestTypeView implements FieldTypeView
         $propertyLabel = $reflection->getProperty("label");
         $propertyChildComponents = $reflection->getProperty("childComponents");
 
-        foreach ($tabs as $tab){
-            /**@var Tab $tab*/
+        foreach ($tabs as $tab) {
+            /**@var Tab $tab */
             $schema[] = Fieldset::make($propertyLabel->getValue($tab))
                 ->schema($propertyChildComponents->getValue($tab));
         }
 
-        if($label == "") $output = Group::make();
-        else $output = Fieldset::make($label);
+        if ($label == "") {
+            $output = Group::make();
+        } else $output = Fieldset::make($label);
 
         return $output
             ->columns(1)

@@ -24,7 +24,7 @@ class FieldsetTypeView implements FieldTypeView
         $fieldSet = static::modifyFormComponent(Fieldset::make(FieldMapper::getLabelName($record)), $record);
         return $fieldSet
             ->columnSpan(FieldMapper::getOptionParameter($record, "column_span"))
-            ->columnStart(FieldMapper::getOptionParameter($record, "new_line_option"))
+            ->columnStart(FieldMapper::getOptionParameter($record, "new_line"))
             ->schema($parameter["renderer"]());
     }
 

@@ -5,7 +5,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Generi
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Types\Views\DateRangeTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\HasCustomTypePackageTranslation;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\DefaultLayoutTypeOptionGroup;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\LayoutOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\ValidationTypeOptionGroup;
 
 class DateRangeType extends CustomFieldType
@@ -21,7 +21,7 @@ class DateRangeType extends CustomFieldType
     public function viewModes(): array
     {
         return [
-            'default' => DateRangeTypeView::class
+            'default' => DateRangeTypeView::class,
         ];
     }
 
@@ -34,8 +34,8 @@ class DateRangeType extends CustomFieldType
     public function extraTypeOptions(): array
     {
         return [
-            DefaultLayoutTypeOptionGroup::make(),
-            ValidationTypeOptionGroup::make()
+            LayoutOptionGroup::make(),
+            ValidationTypeOptionGroup::make(),
         ];
     }
 

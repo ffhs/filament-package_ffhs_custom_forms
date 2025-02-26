@@ -9,7 +9,6 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Filament\Actions\CreateAction;
 use Filament\Resources\Components\Tab;
 use Filament\Resources\Pages\ListRecords;
-use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -39,6 +38,12 @@ class ListCustomForm extends ListRecords
         return $tabs;
     }
 
+    private function prepareTabQuery($identifier, Builder $query): Builder
+    {
+        $query = $query->where('custom_form_identifier', $identifier);
+        return $query;
+    }
+
     public function getDefaultActiveTab(): string|int|null
     {
         return 'all';
@@ -49,7 +54,7 @@ class ListCustomForm extends ListRecords
         return parent::table($table)
             ->actions([
                 EditAction::make(),
-                DeleteAction::make()
+//                DeleteAction::make() ToDo add extra permissions for it
             ])
             ->columns([
                 TextColumn::make('id'),
@@ -84,11 +89,5 @@ class ListCustomForm extends ListRecords
             CustomFormSchemaImportAction::make()->link(),
             CreateAction::make(),
         ];
-    }
-
-    private function prepareTabQuery($identifier, Builder $query): Builder
-    {
-        $query = $query->where('custom_form_identifier', $identifier);
-        return $query;
     }
 }

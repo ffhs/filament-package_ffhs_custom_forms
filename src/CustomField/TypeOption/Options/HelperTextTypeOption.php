@@ -9,7 +9,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Infolists\Components\Component as InfolistComponent;
 use Illuminate\Support\HtmlString;
 
-class HelptextTypeOption extends TypeOption
+class HelperTextTypeOption extends TypeOption
 {
     use TypeOptionPluginTranslate;
 

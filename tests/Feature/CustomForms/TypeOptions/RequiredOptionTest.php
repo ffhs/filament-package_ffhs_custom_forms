@@ -16,14 +16,10 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Types\TagsType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Types\TextAreaType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Types\TextType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\LayoutType\Types\TitleType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\SplittedType\Types\RepeaterLayoutType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\HelperTextTypeOption;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\RequiredOption;
 use Ffhs\FilamentPackageFfhsCustomForms\Tests\Feature\CustomForms\TypeOptions\HasTypeOptionEasyTest;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Concerns\HasHelperText;
-use Illuminate\Support\HtmlString;
-use Livewire\Features\SupportTesting\Testable;
 
 
 uses(HasTypeOptionEasyTest::class);
@@ -37,79 +33,25 @@ afterEach(function () {
 });
 
 test('required modify settings component', function () {
-    $component = HelperTextTypeOption::make()->getModifyOptionComponent('helper_text');
+    $component = RequiredOption::make()->getModifyOptionComponent('required');
     expect($component)->toBeInstanceOf(Component::class)
-        ->and($component->getStatePath(false))->toBe('helper_text');
+        ->and($component->getStatePath(false))->toBe('required');
 });
 
 
-test('field has helper text in livewire', function ($customFieldIdentifier, array $extraOptions = []) {
-    $helpText = 'Test-Helper-text ' . uniqid();
-
-    $checkNoOptionFunction = function (Testable $livewire) use ($helpText) {
-        $livewire->assertSeeText('test_field');
-        $livewire->assertDontSee($helpText);
-    };
-
-    $checkOptionFunction = function (Testable $livewire) use ($helpText) {
-        $livewire->assertSeeText('test_field');
-        $livewire->assertSeeText($helpText);
-    };
-
-    $this->livewireTestField(
-        $customFieldIdentifier,
-        $extraOptions,
-        ['helper_text' => $helpText],
-        $checkNoOptionFunction,
-        $checkOptionFunction
-    );
-})->with([
-//    //Generic Types
-    [CheckboxType::identifier(), []],
-    [ColorPickerType::identifier(), []],
-    [DateRangeType::identifier(), []],
-    [DateTimeType::identifier(), []],
-    [EmailType::identifier(), []],
-    [FileUploadType::identifier(), []],
-    [IconSelectType::identifier(), []],
-    [KeyValueType::identifier(), []],
-    [NumberType::identifier(), []],
-    [TagsType::identifier(), []],
-    [TextAreaType::identifier(), []],
-    [TextType::identifier(), []],
-
-    //OptionType
-    [CheckboxListType::identifier(), []],
-    [RadioType::identifier(), []],
-    [SelectType::identifier(), []],
-    [SelectType::identifier(), ['several' => true]],
-    [SelectType::identifier(), ['prioritized' => true]],
-    [ToggleButtonsType::identifier(), []],
-    [ToggleButtonsType::identifier(), ['boolean' => true]],
-
-    //Split
-    [RepeaterLayoutType::identifier(), []],
-    [TitleType::identifier(), []],
-]);
-
-
-test('field has helper text in component', function ($customFieldIdentifier, array $extraOptions = []) {
-    $helpText = 'Test-Helper-text ' . uniqid();
-
+test('field is required in component', function ($customFieldIdentifier, array $extraOptions = []) {
     $checkNoOptionFunction = function (Component|HasHelperText $component) {
-        expect($component->getHelperText())->toBeNull();
+        expect($component->isRequired())->toBeFalse();
     };
 
-    $checkOptionFunction = function (Component $component) use ($helpText) {
-        expect($component->getHelperText())->not()->toBeNull()
-            ->and($component->getHelperText())->toBeInstanceOf(HtmlString::class)
-            ->and($component->getHelperText()->toHtml())->toBe($helpText);
+    $checkOptionFunction = function (Component $component) {
+        expect($component->isRequired())->toBeTrue();
     };
 
     $this->componentTestField(
         $customFieldIdentifier,
         $extraOptions,
-        ['helper_text' => $helpText],
+        ['required' => true],
         $checkNoOptionFunction,
         $checkOptionFunction
     );
@@ -138,6 +80,5 @@ test('field has helper text in component', function ($customFieldIdentifier, arr
     [ToggleButtonsType::identifier(), ['boolean' => true]],
 
     //Split
-    [RepeaterLayoutType::identifier(), []],
-    [TitleType::identifier(), []],
+//    [RepeaterLayoutType::identifier(), []], it Has min_items which is used as required
 ]);

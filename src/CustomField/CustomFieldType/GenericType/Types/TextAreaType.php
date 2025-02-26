@@ -5,13 +5,11 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Generi
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Types\Views\TextAreaTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\HasCustomTypePackageTranslation;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\DefaultLayoutTypeOptionGroup;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\LayoutOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\ValidationTypeOptionGroup;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\CustomValidationAttributeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\FastTypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\MaxLengthOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\MinLengthOption;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\RequiredOption;
 use Filament\Forms\Components\Toggle;
 
 class TextAreaType extends CustomFieldType
@@ -47,14 +45,13 @@ class TextAreaType extends CustomFieldType
         $autoSize = FastTypeOption::makeFast(false, $autoSizeComponent);
 
         return [
-            DefaultLayoutTypeOptionGroup::make()
+            LayoutOptionGroup::make()
                 ->addTypeOptions("auto_size", $autoSize),
-            ValidationTypeOptionGroup::make(typeOptions: [
-                'max_length' => new MaxLengthOption(),
-                'min_length' => new MinLengthOption(),
-                'required' => RequiredOption::make(),
-                'validation_attribute' => CustomValidationAttributeOption::make(),
-            ]),
+            ValidationTypeOptionGroup::make()
+                ->mergeTypeOptions([
+                    'max_length' => new MaxLengthOption(),
+                    'min_length' => new MinLengthOption(),
+                ]),
         ];
     }
 
