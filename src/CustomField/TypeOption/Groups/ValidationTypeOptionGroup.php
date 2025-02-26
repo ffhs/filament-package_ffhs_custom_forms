@@ -4,6 +4,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\CustomValidationAttributeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\RequiredOption;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\ValidationMessageOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\TypeOptionGroup;
 
 class ValidationTypeOptionGroup extends TypeOptionGroup
@@ -16,6 +17,7 @@ class ValidationTypeOptionGroup extends TypeOptionGroup
         if (empty($typeOptions)) {
             $typeOptions = [
                 'validation_attribute' => CustomValidationAttributeOption::make(),
+                'validation_messages' => ValidationMessageOption::make(),
                 'required' => RequiredOption::make(),
             ];
         }

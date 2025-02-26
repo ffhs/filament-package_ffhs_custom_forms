@@ -7,9 +7,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\HasCustomTypePackageTranslation;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\LayoutOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\ValidationTypeOptionGroup;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\CustomValidationAttributeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\DateFormatOption;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\RequiredOption;
 
 class DateType extends CustomFieldType
 {
@@ -38,11 +36,8 @@ class DateType extends CustomFieldType
     {
         return [
             LayoutOptionGroup::make(),
-            ValidationTypeOptionGroup::make(typeOptions: [
-                'required' => RequiredOption::make(),
-                'validation_attribute' => CustomValidationAttributeOption::make(),
-                'format' => DateFormatOption::make(),
-            ]),
+            ValidationTypeOptionGroup::make()
+                ->addTypeOptions('format', DateFormatOption::make()),
         ];
     }
 
