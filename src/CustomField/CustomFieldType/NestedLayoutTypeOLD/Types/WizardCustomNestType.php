@@ -9,7 +9,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldType\NestedLayoutType\T
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\ColumnSpanOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\FastTypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\NewLineOption;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\ShowTitleOption;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\ShowLabelOption;
 use Filament\Forms\Components\Toggle;
 
 class WizardCustomNestType extends CustomNestLayoutType
@@ -32,7 +32,7 @@ class WizardCustomNestType extends CustomNestLayoutType
     {
         return [
             'column_span' => new ColumnSpanOption(),
-            'show_title' => (ShowTitleOption::make())->modifyOptionComponent(
+            'show_label' => (ShowLabelOption::make())->modifyOptionComponent(
                 fn(Toggle $toggle) => $toggle
                     ->label("Zeige den Title während dem Betrachten an")
                     ->columnSpanFull()

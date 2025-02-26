@@ -3,7 +3,6 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\TypeOption;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\TypeOptionPluginTranslate;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Component;
@@ -16,7 +15,7 @@ use Filament\Resources\Pages\EditRecord;
 
 class ValidationMessageOption extends TypeOption
 {
-    use TypeOptionPluginTranslate;
+
 
     public function getDefaultValue(): array
     {

@@ -3,14 +3,12 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\TypeOption;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\TypeOptionPluginTranslate;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Toggle;
 use Filament\Infolists\Components\Component as InfolistComponent;
 
 class ShowAsFieldsetOption extends TypeOption
 {
-    use TypeOptionPluginTranslate;
 
     public function getDefaultValue(): bool
     {
@@ -21,8 +19,9 @@ class ShowAsFieldsetOption extends TypeOption
     {
         return Toggle::make($name)
             ->columnSpanFull()
-            ->label($this->translate("show_as_fieldset"))
-            ->disabled(fn($get) => !$get("show_title"));
+            ->label(TypeOption::__('show_as_fieldset.label'))
+            ->helperText(TypeOption::__('show_as_fieldset.helper_text'))
+            ->disabled(fn($get) => !$get("show_label"));
     }
 
     public function modifyFormComponent(Component $component, mixed $value): Component

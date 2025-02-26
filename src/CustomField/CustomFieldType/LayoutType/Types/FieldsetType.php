@@ -8,7 +8,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\LayoutType\C
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\LayoutType\Types\Views\FieldsetTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\LayoutTypeLayoutOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\ShowInViewOption;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\ShowTitleOption;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\ShowLabelOption;
 
 class FieldsetType extends CustomLayoutType
 {
@@ -37,7 +37,7 @@ class FieldsetType extends CustomLayoutType
             LayoutTypeLayoutOptionGroup::make()
                 ->removeTypeOption("helper_text")
                 ->mergeTypeOptions([
-                    "show_title" => ShowTitleOption::make(),
+                    "show_label" => ShowLabelOption::make(),
                     'show_in_view' => ShowInViewOption::make(),
                 ]),
         ];

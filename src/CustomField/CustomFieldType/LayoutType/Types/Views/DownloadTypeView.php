@@ -29,7 +29,7 @@ class DownloadTypeView implements FieldTypeView
         } else $actions = self::getMultipleFileDownloadComponentAction($record, Actions::class);
 
         $titelAsFileName = FieldMapper::getOptionParameter($record, "title_as_filename");
-        $showTitle = FieldMapper::getOptionParameter($record, "show_title");
+        $showTitle = FieldMapper::getOptionParameter($record, "show_label");
 
         if (!$titelAsFileName && $showTitle) {
             $actions = [
@@ -140,7 +140,7 @@ class DownloadTypeView implements FieldTypeView
         }
 
         $titelAsFileName = FieldMapper::getOptionParameter($record, "title_as_filename");
-        $showTitle = FieldMapper::getOptionParameter($record, "show_title");
+        $showTitle = FieldMapper::getOptionParameter($record, "show_label");
 
         if (!$titelAsFileName && $showTitle) {
             $actions = [

@@ -3,14 +3,12 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\TypeOption;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\TypeOptionPluginTranslate;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\TextInput;
 use Filament\Infolists\Components\Component as InfolistComponent;
 
 class MinValueOption extends TypeOption
 {
-    use TypeOptionPluginTranslate;
 
     public function getDefaultValue(): int
     {
@@ -21,7 +19,8 @@ class MinValueOption extends TypeOption
     {
         return
             TextInput::make($name)
-                ->label($this->translate("min_value"))
+                ->label(TypeOption::__('min_value.label'))
+                ->helperText(TypeOption::__('min_value.helper_text'))
                 ->step(1)
                 ->required()
                 ->integer();

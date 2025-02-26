@@ -3,14 +3,12 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\TypeOption;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\TypeOptionPluginTranslate;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Toggle;
 use Filament\Infolists\Components\Component as InfolistComponent;
 
 class InlineOption extends TypeOption
 {
-    use TypeOptionPluginTranslate;
 
     public function getDefaultValue(): bool
     {
@@ -20,7 +18,8 @@ class InlineOption extends TypeOption
     public function getComponent(string $name): Component
     {
         return Toggle::make($name)
-            ->label($this->translate("inline"))
+            ->label(TypeOption::__('inline.label'))
+            ->helperText(TypeOption::__('inline.helper_text'))
             ->live();
     }
 

@@ -8,7 +8,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\LayoutType\T
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\LayoutOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\FastTypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\ShowInViewOption;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\ShowTitleOption;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\ShowLabelOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\TypeOptionGroup;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Hidden;
@@ -57,12 +57,12 @@ class DownloadType extends CustomFieldType
                         ->live()
                 ),
             ], "carbon-data-1"),
-            
+
             LayoutOptionGroup::make()
                 ->removeTypeOption('inline_label')
                 ->mergeTypeOptions([
                     'show_in_view' => ShowInViewOption::make(),
-                    'show_title' => ShowTitleOption::make(),
+                    'show_label' => ShowLabelOption::make(),
                     'show_as_link' => new FastTypeOption(
                         true,
                         Toggle::make("show_as_link")

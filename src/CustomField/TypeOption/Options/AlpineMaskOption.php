@@ -3,14 +3,13 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\TypeOption;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\TypeOptionPluginTranslate;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\TextInput;
 use Filament\Infolists\Components\Component as InfolistComponent;
 
 class AlpineMaskOption extends TypeOption
 {
-    use TypeOptionPluginTranslate;
+
 
     public function getDefaultValue(): null
     {
@@ -20,8 +19,8 @@ class AlpineMaskOption extends TypeOption
     public function getComponent(string $name): Component
     {
         return TextInput::make($name)
-            ->helperText($this->translate('alpine_mask_help_text'))
-            ->label($this->translate('alpine_mask'))
+            ->label(TypeOption::__('alpine_mask.label'))
+            ->helperText(TypeOption::__('alpine_mask.helper_text'))
             ->columnSpanFull()
             ->live();
     }

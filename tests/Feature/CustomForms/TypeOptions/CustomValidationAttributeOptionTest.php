@@ -17,7 +17,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Types\TextAreaType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Types\TextType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\SplittedType\Types\RepeaterLayoutType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\CustomValidationAttributeOption;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\ValidationAttributeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\Tests\Feature\CustomForms\TypeOptions\HasTypeOptionEasyTest;
 use Filament\Forms\Components\Component;
 use Livewire\Features\SupportTesting\Testable;
@@ -34,7 +34,7 @@ afterEach(function () {
 });
 
 test('validation attribute modify settings component', function () {
-    $component = CustomValidationAttributeOption::make()->getModifyOptionComponent('required');
+    $component = ValidationAttributeOption::make()->getModifyOptionComponent('required');
     expect($component)->toBeInstanceOf(Component::class)
         ->and($component->getStatePath(false))->toBe('required');
 });

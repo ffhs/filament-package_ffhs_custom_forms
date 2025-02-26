@@ -21,7 +21,7 @@ class TabsNestTypeView implements FieldTypeView
         CustomField $record,
         array $parameter = []
     ): \Filament\Forms\Components\Component {
-        $label = FieldMapper::getOptionParameter($record, "show_title") ? FieldMapper::getLabelName($record) : "";
+        $label = FieldMapper::getOptionParameter($record, "show_label") ? FieldMapper::getLabelName($record) : "";
 
         return Tabs::make($label)
             ->columnSpan(FieldMapper::getOptionParameter($record, "column_span"))
@@ -35,7 +35,7 @@ class TabsNestTypeView implements FieldTypeView
         CustomFieldAnswer $record,
         array $parameter = []
     ): \Filament\Infolists\Components\Component {
-        $label = FieldMapper::getOptionParameter($record, "show_title") ? FieldMapper::getLabelName($record) : "";
+        $label = FieldMapper::getOptionParameter($record, "show_label") ? FieldMapper::getLabelName($record) : "";
 
         if (!FieldMapper::getOptionParameter($record, "show_as_fieldset")) {
             return \Filament\Infolists\Components\Tabs::make($label)

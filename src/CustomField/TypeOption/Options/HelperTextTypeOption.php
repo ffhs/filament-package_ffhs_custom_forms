@@ -3,7 +3,6 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\TypeOption;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\TypeOptionPluginTranslate;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\TextInput;
 use Filament\Infolists\Components\Component as InfolistComponent;
@@ -11,7 +10,6 @@ use Illuminate\Support\HtmlString;
 
 class HelperTextTypeOption extends TypeOption
 {
-    use TypeOptionPluginTranslate;
 
     public function getDefaultValue(): mixed
     {
@@ -22,7 +20,8 @@ class HelperTextTypeOption extends TypeOption
     {
         return TextInput::make($name)
             //RichTextEditor::make($name) //ToDo maby change back?
-            ->label($this->translate("help_text"))
+            ->label(TypeOption::__('helper_text.label'))
+            ->helperText(TypeOption::__('helper_text.helper_text'))
             ->grow(false)
             ->columnSpanFull()
             ->nullable()

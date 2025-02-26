@@ -40,7 +40,7 @@ class TextLayoutTypeView implements FieldTypeView
 //            return Group::make()->hidden();
 //        }
 
-        $label = FieldMapper::getOptionParameter($record, "show_title") ? FieldMapper::getLabelName($record) : "";
+        $label = FieldMapper::getOptionParameter($record, "show_label") ? FieldMapper::getLabelName($record) : "";
         $text = FieldMapper::getOptionParameter($record, "text")[app()->getLocale()] ?? "";
 
         /**@var $placeholder TextEntry */

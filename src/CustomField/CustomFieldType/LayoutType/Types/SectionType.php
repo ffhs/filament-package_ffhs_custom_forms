@@ -10,7 +10,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\LayoutType
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\FastTypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\ShowAsFieldsetOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\ShowInViewOption;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\ShowTitleOption;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\ShowLabelOption;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Toggle;
 
@@ -45,12 +45,12 @@ class SectionType extends CustomLayoutType
                         ->modifyOptionComponent(fn(Component $component) => $component->columnStart(1)),
                     'show_as_fieldset' => ShowAsFieldsetOption::make()
                         ->modifyOptionComponent(fn(Component $component) => $component->columnStart(2)),
-                    "show_title" => ShowTitleOption::make(),
+                    "show_label" => ShowLabelOption::make(),
                     'aside' => new FastTypeOption(
                         false,
                         Toggle::make("aside")
                             ->label("Titel seitlich Anzeigen") //ToDo Translate,
-                            ->disabled(fn($get) => !$get("show_title"))
+                            ->disabled(fn($get) => !$get("show_label"))
                     ),
                 ]),
         ];
