@@ -21,6 +21,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormAnswerResou
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
+use Illuminate\Support\Facades\Artisan;
 use Workbench\App\FFHs\TestDynamicFormConfiguration;
 use Workbench\App\Models\UserSuperAdmin;
 
@@ -74,6 +75,7 @@ test('field show helper text', function ($customFieldIdentifier, array $extraOpt
     $livewire->assertDontSee($helpText);
 
     $this->customField->update(['options' => array_merge($extraOptions, ['helper_text' => $helpText])]);
+    Artisan::call('cache:clear');
     $this->customField->refresh();
     $this->customForm->refresh();
     $this->formAnsware->refresh();
@@ -108,4 +110,4 @@ test('field show helper text', function ($customFieldIdentifier, array $extraOpt
 
     //Split
     [RepeaterLayoutType::identifier(), []],
-])->skip()->todo('WTF');
+]);
