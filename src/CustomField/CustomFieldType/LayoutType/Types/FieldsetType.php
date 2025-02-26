@@ -6,7 +6,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Layout
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\HasCustomTypePackageTranslation;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\LayoutType\CustomLayoutType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\LayoutType\Types\Views\FieldsetTypeView;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\LayoutTypeDefaultLayoutTypeOptionGroup;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\LayoutTypeLayoutOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\ShowInViewOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\ShowTitleOption;
 
@@ -34,7 +34,7 @@ class FieldsetType extends CustomLayoutType
     public function extraTypeOptions(): array
     {
         return [
-            LayoutTypeDefaultLayoutTypeOptionGroup::make()
+            LayoutTypeLayoutOptionGroup::make()
                 ->removeTypeOption("helper_text")
                 ->mergeTypeOptions([
                     "show_title" => ShowTitleOption::make(),

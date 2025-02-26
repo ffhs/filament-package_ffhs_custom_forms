@@ -6,7 +6,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Layout
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\HasCustomTypePackageTranslation;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\LayoutType\CustomLayoutType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\LayoutType\Types\Views\SectionTypeView;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\LayoutTypeDefaultLayoutTypeOptionGroup;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\LayoutTypeLayoutOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\FastTypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\ShowAsFieldsetOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\ShowInViewOption;
@@ -39,8 +39,7 @@ class SectionType extends CustomLayoutType
     public function extraTypeOptions(): array
     {
         return [
-            LayoutTypeDefaultLayoutTypeOptionGroup::make()
-                ->removeTypeOption("helper_text")
+            LayoutTypeLayoutOptionGroup::make()
                 ->mergeTypeOptions([
                     'show_in_view' => ShowInViewOption::make()
                         ->modifyOptionComponent(fn(Component $component) => $component->columnStart(1)),

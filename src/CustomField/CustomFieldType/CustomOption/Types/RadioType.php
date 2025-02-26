@@ -6,7 +6,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomOption
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomOption\TypeOptions\CustomOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomOption\Types\Views\RadioTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\HasCustomTypePackageTranslation;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\LayoutTypeWithColumnsOptionGroup;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\LayoutWithColumnsOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\ValidationTypeOptionGroup;
 
 class RadioType extends CustomOptionType
@@ -28,9 +28,9 @@ class RadioType extends CustomOptionType
     public function extraTypeOptions(): array
     {
         return [
-            LayoutTypeWithColumnsOptionGroup::make(),
-            CustomOptionGroup::make(),
+            LayoutWithColumnsOptionGroup::make(),
             ValidationTypeOptionGroup::make(),
+            CustomOptionGroup::make(),
         ];
     }
 

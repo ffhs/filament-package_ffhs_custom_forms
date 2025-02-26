@@ -6,17 +6,17 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Splitt
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\HasCustomTypePackageTranslation;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\SplittedType\CustomSplitType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\SplittedType\Types\Views\RepeaterLayoutTypeView;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\LayoutTypeDefaultLayoutTypeOptionGroup;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\LayoutWithColumnsOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\ValidationTypeOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\ActionLabelTypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\CustomValidationAttributeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\FastTypeOption;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\HelperTextTypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\MaxAmountOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\MinAmountOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\ShowAsFieldsetOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\ShowLabelOption;
 use Filament\Forms\Components\Component;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\TextInput;
 
 class RepeaterLayoutType extends CustomSplitType
@@ -44,7 +44,7 @@ class RepeaterLayoutType extends CustomSplitType
     public function extraTypeOptions(): array
     {
         return [
-            LayoutTypeDefaultLayoutTypeOptionGroup::make()
+            LayoutWithColumnsOptionGroup::make()
                 ->mergeTypeOptions([
                     'show_label' => ShowLabelOption::make(),
                     'show_as_fieldset' => ShowAsFieldsetOption::make()
@@ -63,7 +63,6 @@ class RepeaterLayoutType extends CustomSplitType
                             ->required(),
                     ),
                     'add_action_label' => ActionLabelTypeOption::make(),
-                    "helper_text" => HelperTextTypeOption::make(),
 //                    'ordered' => new FastTypeOption(false,
 //                        Toggle::make('ordered')
 //                            ->default(false)

@@ -6,11 +6,9 @@ use Exception;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Types\Views\FileUploadView;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\HasCustomTypePackageTranslation;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\DefaultLayoutTypeOptionGroup;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\LayoutOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\ValidationTypeOptionGroup;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\CustomValidationAttributeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\FastTypeOption;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\RequiredOption;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Filament\Forms\Components\Component;
@@ -35,7 +33,7 @@ class FileUploadType extends CustomFieldType
     public function extraTypeOptions(): array
     {
         return [
-            DefaultLayoutTypeOptionGroup::make()
+            LayoutOptionGroup::make()
                 ->addTypeOptions(
                     'grid_layout',
                     FastTypeOption::makeFast(
@@ -48,9 +46,7 @@ class FileUploadType extends CustomFieldType
                     )
                 ),
             ValidationTypeOptionGroup::make()
-                ->setTypeOptions([
-                    'validation_attribute' => CustomValidationAttributeOption::make(),
-                    'required' => RequiredOption::make(),
+                ->mergeTypeOptions([
                     'image' => FastTypeOption::makeFast(
                         false,
                         Toggle::make('image')

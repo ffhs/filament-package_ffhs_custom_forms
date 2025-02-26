@@ -3,6 +3,7 @@
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomOption\Types\CheckboxListType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomOption\Types\ToggleButtonsType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\CustomFieldType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Types\TagsType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\LayoutType\Types\FieldsetType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\LayoutType\Types\GroupType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\LayoutType\Types\SectionType;
@@ -62,6 +63,9 @@ test('fields has columns type option', function ($customFieldIdentifier, array $
     [CheckboxListType::identifier(), []],
     [ToggleButtonsType::identifier(), []],
     [ToggleButtonsType::identifier(), ['boolean' => true]],
+
+    //Genereic
+    [TagsType::identifier(), []],
 
     //Split
     [RepeaterLayoutType::identifier(), []],

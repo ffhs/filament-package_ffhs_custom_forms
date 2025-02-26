@@ -5,7 +5,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Layout
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\HasCustomTypePackageTranslation;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\LayoutType\Types\Views\TextLayoutTypeView;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\DefaultLayoutTypeOptionGroup;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\LayoutOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\FastTypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\ShowInViewOption;
 use Filament\Forms\Components\RichEditor;
@@ -15,24 +15,26 @@ class TextLayoutType extends CustomFieldType
 {
     use HasCustomTypePackageTranslation;
 
-    public static function identifier(): string {
+    public static function identifier(): string
+    {
         return "layout_text";
     }
 
-    public function viewModes(): array {
+    public function viewModes(): array
+    {
         return [
-          'default' => TextLayoutTypeView::class
+            'default' => TextLayoutTypeView::class,
         ];
     }
 
-    public function icon(): string {
-       return "heroicon-m-chat-bubble-bottom-center-text";
+    public function icon(): string
+    {
+        return "heroicon-m-chat-bubble-bottom-center-text";
     }
 
 
-
-    public function extraTypeOptions(): array {
-
+    public function extraTypeOptions(): array
+    {
         $buttons = [
             'bold',
             'bulletList',
@@ -43,14 +45,18 @@ class TextLayoutType extends CustomFieldType
         ];
 
         return [
-            DefaultLayoutTypeOptionGroup::make()
+            LayoutOptionGroup::make()
                 ->addTypeOptions('show_in_view', ShowInViewOption::make())
                 ->removeTypeOption("helper_text")
-                ->addTypeOptions('text',
-                    FastTypeOption::makeFast("",
+                ->addTypeOptions(
+                    'text',
+                    FastTypeOption::makeFast(
+                        "",
                         RichEditor::make("text." . App::getLocale())
                             ->columnSpanFull()
-                            ->toolbarButtons($buttons) //ToDo Add Location Selection, add to FieldMapper the language Getter
+                            ->toolbarButtons(
+                                $buttons
+                            ) //ToDo Add Location Selection, add to FieldMapper the language Getter
                             ->label("Text")
                     )
                 ),

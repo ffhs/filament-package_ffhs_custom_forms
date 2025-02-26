@@ -5,10 +5,11 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\ColumnsOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\ColumnSpanOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\HelperTextTypeOption;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\InLineLabelOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\NewLineOption;
 use Filament\Forms\Components\Component;
 
-class LayoutTypeWithColumnsOptionGroup extends DefaultLayoutTypeOptionGroup
+class LayoutWithColumnsOptionGroup extends LayoutOptionGroup
 {
     public function __construct(
         string $name = "Layout",
@@ -20,6 +21,7 @@ class LayoutTypeWithColumnsOptionGroup extends DefaultLayoutTypeOptionGroup
         $this->mergeTypeOptions([
             'column_span' => ColumnSpanOption::make(),
             "columns" => ColumnsOption::make(),
+            'in_line_label' => InLineLabelOption::make(),
             'new_line_option' => NewLineOption::make()->modifyOptionComponent(
                 fn(Component $component) => $component->columnStart(1)
             ),
