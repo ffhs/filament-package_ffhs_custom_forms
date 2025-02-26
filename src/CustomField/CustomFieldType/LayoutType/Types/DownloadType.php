@@ -7,7 +7,6 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\HasCustomTyp
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\LayoutType\Types\Views\DownloadTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\DefaultLayoutTypeOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\ValidationTypeOptionGroup;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\CustomValidationAttributeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\FastTypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\ShowInViewOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\ShowTitleOption;
@@ -58,7 +57,6 @@ class DownloadType extends CustomFieldType
 
             ValidationTypeOptionGroup::make(typeOptions: [
                 'file_names' => new FastTypeOption([], Hidden::make('file_names')),
-                'validation_attribute' => CustomValidationAttributeOption::make(),
                 'files' => new FastTypeOption([],
                     FileUpload::make('files')
                         ->afterStateUpdated(
@@ -80,11 +78,4 @@ class DownloadType extends CustomFieldType
 
         ];
     }
-
-
-    public function canBeRequired(): bool
-    {
-        return false;
-    }
-
 }

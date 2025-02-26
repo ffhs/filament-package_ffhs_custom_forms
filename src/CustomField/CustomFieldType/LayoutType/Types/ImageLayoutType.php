@@ -55,8 +55,6 @@ class ImageLayoutType extends CustomFieldType
             DefaultLayoutTypeOptionGroup::make()
                 ->mergeTypeOptions([
                     'column_span' => new ColumnSpanOption(),
-
-
                     'width' => new FastTypeOption(
                         null,
                         TextInput::make('width')

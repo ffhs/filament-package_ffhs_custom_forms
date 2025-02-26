@@ -48,6 +48,7 @@ class SpaceType extends CustomFieldType
         return [
             DefaultLayoutTypeOptionGroup::make()
                 ->removeTypeOption("helper_text")
+                ->removeTypeOption("column_span")
                 ->mergeTypeOptions([
                     'amount' => new FastTypeOption(
                         1,

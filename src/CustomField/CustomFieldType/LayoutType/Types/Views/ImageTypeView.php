@@ -41,7 +41,7 @@ class ImageTypeView implements FieldTypeView
             ->label(FieldMapper::getOptionParameter($record, "show_title") ? FieldMapper::getLabelName($record) : "")
             ->checkFileExistence(false)
             ->visibility('private')
-            ->state(array_values($record->options["image"])[0])
+            ->state(array_values(FieldMapper::getOptionParameter($record, 'image'))[0] ?? null)
             ->disk(FieldMapper::getTypeConfigAttribute($record, "disk"))
             ->columnSpan(2)
             ->height(FieldMapper::getOptionParameter($record, 'height'))

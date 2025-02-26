@@ -24,7 +24,7 @@ class DownloadTypeView implements FieldTypeView
     ): \Filament\Forms\Components\Component {
         $filePaths = FieldMapper::getOptionParameter($record, "files");
 
-        if (sizeof($filePaths) <= 1) {
+        if (sizeof($filePaths) == 1) {
             $actions = self::getSingleFilDownloadComponentAction($record, Actions::class);
         } else $actions = self::getMultipleFileDownloadComponentAction($record, Actions::class);
 
@@ -132,10 +132,12 @@ class DownloadTypeView implements FieldTypeView
                 $record->customField,
                 \Filament\Infolists\Components\Actions::class
             );
-        } else $actions = self::getMultipleFileDownloadComponentAction(
-            $record->customField,
-            \Filament\Infolists\Components\Actions::class
-        );
+        } else {
+            $actions = self::getMultipleFileDownloadComponentAction(
+                $record->customField,
+                \Filament\Infolists\Components\Actions::class
+            );
+        }
 
         $titelAsFileName = FieldMapper::getOptionParameter($record, "title_as_filename");
         $showTitle = FieldMapper::getOptionParameter($record, "show_title");
