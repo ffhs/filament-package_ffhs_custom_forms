@@ -9,14 +9,12 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\SplittedType
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\LayoutWithColumnsOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\ValidationTypeOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\ActionLabelTypeOption;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\CustomValidationAttributeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\FastTypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\MaxAmountOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\MinAmountOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\ShowAsFieldsetOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\ShowLabelOption;
 use Filament\Forms\Components\Component;
-use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\TextInput;
 
 class RepeaterLayoutType extends CustomSplitType
@@ -72,7 +70,6 @@ class RepeaterLayoutType extends CustomSplitType
             ValidationTypeOptionGroup::make()
                 ->removeTypeOption("required")
                 ->mergeTypeOptions([
-                    'validation_attribute' => CustomValidationAttributeOption::make(),
                     "min_amount" => MinAmountOption::make(),
                     "max_amount" => MaxAmountOption::make(),
                 ]),

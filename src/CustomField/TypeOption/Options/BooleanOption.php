@@ -3,14 +3,13 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\TypeOption;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\TypeOptionPluginTranslate;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Toggle;
 use Filament\Infolists\Components\Component as InfolistComponent;
 
 class BooleanOption extends TypeOption
 {
-    use TypeOptionPluginTranslate;
+
 
     public function getDefaultValue(): bool
     {
@@ -20,7 +19,8 @@ class BooleanOption extends TypeOption
     public function getComponent(string $name): Component
     {
         return Toggle::make($name)
-            ->label($this->translate('boolean'))
+            ->label(TypeOption::__('boolean.label'))
+            ->helperText(TypeOption::__('boolean.helper_text'))
             ->live();
     }
 

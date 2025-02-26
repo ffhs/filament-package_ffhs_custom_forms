@@ -3,7 +3,6 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\TypeOption;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\TypeOptionPluginTranslate;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasAllFieldDataFromFormData;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasFieldsMapToSelectOptions;
@@ -14,7 +13,6 @@ use Illuminate\Support\Collection;
 
 class RelatedFieldOption extends TypeOption
 {
-    use TypeOptionPluginTranslate;
     use HasAllFieldDataFromFormData;
     use HasFieldsMapToSelectOptions;
     use HasOptionNoComponentModification;
@@ -27,7 +25,8 @@ class RelatedFieldOption extends TypeOption
     public function getComponent(string $name): Component
     {
         return Select::make($name)
-            ->label($this->translate('related_field'))
+            ->label(TypeOption::__('related_field.label'))
+            ->helperText(TypeOption::__('related_field.helper_text'))
             ->options($this->getOptions(...));
     }
 

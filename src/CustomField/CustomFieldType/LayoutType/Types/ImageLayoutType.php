@@ -9,7 +9,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\LayoutOpti
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\ColumnSpanOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\FastTypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\ShowInViewOption;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\ShowTitleOption;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\ShowLabelOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\TypeOptionGroup;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\TextInput;
@@ -63,7 +63,7 @@ class ImageLayoutType extends CustomFieldType
                             ->minValue(1)
                             ->numeric()
                     ),
-                    'show_title' => (ShowTitleOption::make())->modifyDefault(fn($default) => false),
+                    'show_label' => (ShowLabelOption::make())->modifyDefault(fn($default) => false),
                     'show_in_view' => (ShowInViewOption::make())->modifyDefault(fn($default) => false),
                 ]),
 

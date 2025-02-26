@@ -3,14 +3,13 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\TypeOption;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\TypeOptionPluginTranslate;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\TextInput;
 use Filament\Infolists\Components\Component as InfolistComponent;
 
 class MaxLengthOption extends TypeOption
 {
-    use TypeOptionPluginTranslate;
+
 
     public function getDefaultValue(): int
     {
@@ -21,7 +20,8 @@ class MaxLengthOption extends TypeOption
     {
         return
             TextInput::make($name)
-                ->label($this->translate("max_length"))
+                ->label(TypeOption::__('max_length.label'))
+                ->helperText(TypeOption::__('max_length.helper_text'))
                 ->columnStart(1)
                 ->step(1)
                 ->required()

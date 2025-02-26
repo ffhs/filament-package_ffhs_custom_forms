@@ -32,7 +32,7 @@ class WizardNestTypeView implements FieldTypeView
         CustomFieldAnswer $record,
         array $parameter = []
     ): \Filament\Infolists\Components\Component {
-        $label = FieldMapper::getOptionParameter($record, "show_title") ? FieldMapper::getLabelName($record) : "";
+        $label = FieldMapper::getOptionParameter($record, "show_label") ? FieldMapper::getLabelName($record) : "";
 
         if ($label != "") {
             $output = Fieldset::make($label);

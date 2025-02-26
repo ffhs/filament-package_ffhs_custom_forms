@@ -3,14 +3,13 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\TypeOption;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\TypeOptionPluginTranslate;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\TextInput;
 use Filament\Infolists\Components\Component as InfolistComponent;
 
-class CustomValidationAttributeOption extends TypeOption
+class ValidationAttributeOption extends TypeOption
 {
-    use TypeOptionPluginTranslate;
+
 
     public function getDefaultValue(): mixed
     {
@@ -22,7 +21,8 @@ class CustomValidationAttributeOption extends TypeOption
     {
         //validationAttribute
         return TextInput::make($name)
-            ->label($this->translate("validation_attribute"))
+            ->label(TypeOption::__('validation_attribute.label'))
+            ->helperText(TypeOption::__('validation_attribute.helper_text'))
             ->columnSpanFull()
             ->nullable()
             ->live();

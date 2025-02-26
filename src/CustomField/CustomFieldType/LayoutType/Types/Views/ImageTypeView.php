@@ -38,7 +38,7 @@ class ImageTypeView implements FieldTypeView
     private static function getImageEntry(CustomField $record): ImageEntry
     {
         return ImageEntry::make('customField.options.image')
-            ->label(FieldMapper::getOptionParameter($record, "show_title") ? FieldMapper::getLabelName($record) : "")
+            ->label(FieldMapper::getOptionParameter($record, "show_label") ? FieldMapper::getLabelName($record) : "")
             ->checkFileExistence(false)
             ->visibility('private')
             ->state(array_values(FieldMapper::getOptionParameter($record, 'image'))[0] ?? null)

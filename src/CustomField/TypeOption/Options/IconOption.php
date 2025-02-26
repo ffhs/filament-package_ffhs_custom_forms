@@ -3,14 +3,12 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\TypeOption;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\TypeOptionPluginTranslate;
 use Filament\Forms\Components\Component;
 use Filament\Infolists\Components\Component as InfolistComponent;
 use Guava\FilamentIconPicker\Forms\IconPicker;
 
 class IconOption extends TypeOption
 {
-    use TypeOptionPluginTranslate;
 
     public function getDefaultValue(): mixed
     {
@@ -20,7 +18,8 @@ class IconOption extends TypeOption
     public function getComponent(string $name): Component
     {
         return IconPicker::make($name)
-            ->label($this->translate("icon"))
+            ->label(TypeOption::__('icon.label'))
+            ->helperText(TypeOption::__('icon.helper_text'))
             ->columnSpanFull()
             ->columns()
             ->live();

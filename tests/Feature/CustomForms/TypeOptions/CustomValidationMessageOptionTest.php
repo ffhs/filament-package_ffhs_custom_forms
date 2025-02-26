@@ -17,7 +17,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Types\TextAreaType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Types\TextType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\SplittedType\Types\RepeaterLayoutType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\ValidationAttributeOption;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\ValidationMessageOption;
 use Ffhs\FilamentPackageFfhsCustomForms\Tests\Feature\CustomForms\TypeOptions\HasTypeOptionEasyTest;
 use Filament\Forms\Components\Component;
 use Livewire\Features\SupportTesting\Testable;
@@ -33,40 +33,51 @@ afterEach(function () {
     $this->typeOptionTestAfterEach();
 });
 
-test('validation attribute modify settings component', function () {
-    $component = ValidationAttributeOption::make()->getModifyOptionComponent('required');
+test('validation message modify settings component', function () {
+    $component = ValidationMessageOption::make()->getModifyOptionComponent('validation_messages');
     expect($component)->toBeInstanceOf(Component::class)
-        ->and($component->getStatePath(false))->toBe('required');
+        ->and($component->getStatePath(false))->toBe('validation_messages');
 });
 
 
-test('field validation attribute in livewire', function ($customFieldIdentifier, array $extraOptions = []) {
+test('field validation message in livewire', function ($customFieldIdentifier, array $extraOptions = []) {
     $extraOptions = array_merge($extraOptions, ['required' => true]);
-    $validationAttribute = 'validation-attribute ' . uniqid();
+    $validationMessage = 'FILAMENT!!!! ' . uniqid();
+    $validationMessageAttribute = [
+        uniqid() => [
+            'rule' => 'required',
+            'message' => $validationMessage,
+        ],
 
-    $checkNoOptionFunction = function (Testable $livewire) use ($validationAttribute) {
+        uniqid() => [
+            'rule' => 'min',
+            'message' => $validationMessage,
+        ],
+    ];
+
+    $checkNoOptionFunction = function (Testable $livewire) use ($validationMessage) {
         /** @var \Filament\Resources\Pages\EditRecord $instance */
         $instance = $livewire->instance();
         try {
             $instance->save();
         } catch (RuntimeException|Exception|Error $exception) {
-            expect($exception->getMessage())->not()->toContain($validationAttribute);
+            expect($exception->getMessage())->not()->toBe($validationMessage);
         }
     };
 
-    $checkOptionFunction = function (Testable $livewire) use ($validationAttribute) {
+    $checkOptionFunction = function (Testable $livewire) use ($validationMessage) {
         $instance = $livewire->instance();
         try {
             $instance->save();
         } catch (RuntimeException|Exception|Error $exception) {
-            expect($exception->getMessage())->toContain($validationAttribute);
+            expect($exception->getMessage())->toBe($validationMessage);
         }
     };
 
     $this->livewireTestField(
         $customFieldIdentifier,
         $extraOptions,
-        ['validation_attribute' => $validationAttribute],
+        ['validation_messages' => $validationMessageAttribute],
         $checkNoOptionFunction,
         $checkOptionFunction
     );
@@ -95,5 +106,5 @@ test('field validation attribute in livewire', function ($customFieldIdentifier,
     [ToggleButtonsType::identifier(), ['boolean' => true]],
 
     //Split
-    [RepeaterLayoutType::identifier(), ['max_amount' => 1]],
+    [RepeaterLayoutType::identifier(), ['min_amount' => 1]],
 ]);

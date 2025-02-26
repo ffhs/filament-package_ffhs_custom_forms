@@ -3,14 +3,13 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\TypeOption;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\TypeOptionPluginTranslate;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\TextInput;
 use Filament\Infolists\Components\Component as InfolistComponent;
 
 class ColumnsOption extends TypeOption
 {
-    use TypeOptionPluginTranslate;
+
 
     public function getDefaultValue(): int
     {
@@ -20,7 +19,8 @@ class ColumnsOption extends TypeOption
     public function getComponent(string $name): Component
     {
         return TextInput::make($name)
-            ->label($this->translate('columns_count'))
+            ->label(TypeOption::__('columns.label'))
+            ->helperText(TypeOption::__('columns.helper_text'))
             ->maxValue(10)
             ->minValue(1)
             ->step(1)

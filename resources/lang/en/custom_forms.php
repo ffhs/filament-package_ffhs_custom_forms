@@ -103,7 +103,7 @@ return [
             'new_line' => 'New Line',
             'show_as_fieldset' => 'Show as Fieldset in View',
             'show_in_view' => 'Visible in View',
-            'show_title' => 'Show Title',
+            'show_label' => 'Show Title',
             'min_amount' => 'Minimum Amount',
             'max_amount' => 'Minimum Amount',
 

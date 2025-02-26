@@ -7,7 +7,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\NestedLayout
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\NestedLayoutTypeOLD\CustomNestLayoutType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldType\NestedLayoutType\Types\Views\TabsNestTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\ShowAsFieldsetOption;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\ShowTitleOption;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\ShowLabelOption;
 
 class TabsCustomNestType extends CustomNestLayoutType
 {
@@ -38,7 +38,7 @@ class TabsCustomNestType extends CustomNestLayoutType
     protected function extraOptionsAfterBasic(): array
     {
         return [
-            'show_title' => ShowTitleOption::make(),
+            'show_label' => ShowLabelOption::make(),
             'show_as_fieldset' => new ShowAsFieldsetOption(),
         ];
     }
