@@ -2,7 +2,6 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomOption\TypeOptions;
 
-use Barryvdh\Debugbar\Facades\Debugbar;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\TypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomOption;
@@ -30,27 +29,12 @@ class CustomOptionTypeOption extends TypeOption
     {
         return Group::make()
             ->columnSpanFull()
-            ->schema([
-                $this->getCustomOptionsSelector($name)
-                    ->hidden(fn($get) => is_null($get("../general_field_id"))),
-                $this->getCustomOptionsRepeater($name)
-                    ->visible(fn($get) => is_null($get("../general_field_id")))
-                    ->columnSpanFull(),
-            ]);
-    }
-
-
-    protected function getCustomOptionsSelector($name): Component
-    {
-        return Select::make($name)
-            ->label(CustomOption::__('possible_options.label'))
-            ->helperText(CustomOption::__('possible_options.helper_text'))
-            ->columnSpanFull()
-            ->multiple()
-            ->options(function ($get) {
-                $generalField = GeneralField::cached($get("../general_field_id"));
-                Debugbar::info($generalField->customOptions->pluck("name", "id"));
-                return $generalField->customOptions->pluck("name", "id")->toArray();
+            ->schema(function ($get) use ($name) {
+                if (is_null($get("../general_field_id"))) {
+                    return [$this->getCustomOptionsRepeater($name)];
+                } else {
+                    return [$this->getCustomOptionsSelector($name)];
+                }
             });
     }
 
@@ -82,6 +66,20 @@ class CustomOptionTypeOption extends TypeOption
                     ->helperText(CustomOption::__('identifier.helper_text'))
                     ->required(),
             ]);
+    }
+
+    protected function getCustomOptionsSelector($name): Component
+    {
+        return Select::make($name)
+            ->label(CustomOption::__('possible_options.label'))
+            ->helperText(CustomOption::__('possible_options.helper_text'))
+            ->columnSpanFull()
+            ->multiple()
+            ->relationship()
+            ->options(function ($get) {
+                $generalField = GeneralField::cached($get("../general_field_id"));
+                return $generalField->customOptions->pluck("name", "id")->toArray();
+            });
     }
 
     public function mutateOnFieldSave(mixed $data, string $key, CustomField $field): null
