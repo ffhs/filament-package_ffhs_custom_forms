@@ -68,17 +68,17 @@ abstract class TypeOption
         return $data;
     }
 
-//    public function beforeSaveField(mixed &$data, string $key, CustomField $field): void
-//    {
-//    }
+    public function beforeSaveField(mixed &$data, string $key, CustomField $field): void
+    {
+    }
 
     public function afterSaveField(mixed &$data, string $key, CustomField $field): void
     {
     }
 
-//    public function afterCreateField(mixed &$data, string $key, CustomField $field): void
-//    {
-//    }
+    public function afterCreateField(mixed &$data, string $key, CustomField $field): void
+    {
+    }
 
     public function afterDeleteField(int|string $key, CustomField $field)
     {
