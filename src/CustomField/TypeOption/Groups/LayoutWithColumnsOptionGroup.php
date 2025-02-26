@@ -22,7 +22,7 @@ class LayoutWithColumnsOptionGroup extends LayoutOptionGroup
             'column_span' => ColumnSpanOption::make(),
             "columns" => ColumnsOption::make(),
             'in_line_label' => InLineLabelOption::make(),
-            'new_line_option' => NewLineOption::make()->modifyOptionComponent(
+            'new_line' => NewLineOption::make()->modifyOptionComponent(
                 fn(Component $component) => $component->columnStart(1)
             ),
             "helper_text" => HelperTextTypeOption::make(),

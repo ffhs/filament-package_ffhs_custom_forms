@@ -1,6 +1,7 @@
 <?php
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomOption\Types\CheckboxListType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomOption\Types\RadioType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomOption\Types\SelectType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomOption\Types\ToggleButtonsType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Types\CheckboxType;
@@ -15,10 +16,14 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Types\TagsType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Types\TextAreaType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Types\TextType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\LayoutType\Types\DownloadType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\LayoutType\Types\FieldsetType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\LayoutType\Types\ImageLayoutType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\LayoutType\Types\SectionType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\LayoutType\Types\TextLayoutType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\LayoutType\Types\TitleType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\SplittedType\Types\RepeaterLayoutType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\InLineLabelOption;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\NewLineOption;
 use Ffhs\FilamentPackageFfhsCustomForms\Tests\Feature\CustomForms\TypeOptions\HasTypeOptionEasyTest;
 use Filament\Forms\Components\Component;
 
@@ -33,28 +38,28 @@ afterEach(function () {
     $this->typeOptionTestAfterEach();
 });
 
-test('in line label modify settings component', function () {
-    $component = InLineLabelOption::make()->getModifyOptionComponent('column_span');
+test('new line modify settings component', function () {
+    $component = NewLineOption::make()->getModifyOptionComponent('new_line');
     expect($component)->toBeInstanceOf(Component::class)
-        ->and($component->getStatePath(false))->toBe('column_span');
+        ->and($component->getStatePath(false))->toBe('new_line');
 });
 
 
-test('field is in line label in component', function ($customFieldIdentifier, array $extraOptions = []) {
+test('field has new line in component', function ($customFieldIdentifier, array $extraOptions = []) {
     $checkNoOptionFunction = function (Component $component) {
         expect($component)->not()->toBeNull()
-            ->and($component->hasInlineLabel())->toBeFalse();
+            ->and($component->getColumnStart()['default'])->toBeIn([0, null]);
     };
 
     $checkOptionFunction = function (Component $component) {
         expect($component)->not()->toBeNull()
-            ->and($component->hasInlineLabel())->toBeTrue();
+            ->and($component->getColumnStart()['default'])->toBe(1);
     };
 
     $this->componentTestField(
         $customFieldIdentifier,
         $extraOptions,
-        ['in_line_label' => true],
+        ['new_line' => true],
         $checkNoOptionFunction,
         $checkOptionFunction
     );
@@ -76,23 +81,22 @@ test('field is in line label in component', function ($customFieldIdentifier, ar
 
     //OptionType
     [CheckboxListType::identifier(), []],
-//    [RadioType::identifier(), []], todo ??
+    [RadioType::identifier(), []],
     [SelectType::identifier(), []],
-
     [SelectType::identifier(), ['several' => true]],
     [SelectType::identifier(), ['prioritized' => true]],
     [ToggleButtonsType::identifier(), []],
     [ToggleButtonsType::identifier(), ['boolean' => true]],
 
     //Layout Type
-//    [DownloadType::identifier(), []],
-//    [FieldsetType::identifier(), []],
-//    [ImageLayoutType::identifier(), []],
-//    [SectionType::identifier(), []],
-//    [SpaceType::identifier(), []], // Has no label
+    [DownloadType::identifier(), []],
+    [FieldsetType::identifier(), []],
+    [ImageLayoutType::identifier(), []],
+    [SectionType::identifier(), []],
+//    [SpaceType::identifier(), []], // Has no new Line
     [TextLayoutType::identifier(), []],
     [TitleType::identifier(), []],
-//
-//    //Split
+
+    //Split
     [RepeaterLayoutType::identifier(), []],
 ]);

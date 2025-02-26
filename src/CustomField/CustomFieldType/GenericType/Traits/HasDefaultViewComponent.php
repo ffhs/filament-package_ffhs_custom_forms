@@ -50,7 +50,7 @@ trait HasDefaultViewComponent
         //ToDo
 
         return $component
-            ->columnStart(FieldMapper::getOptionParameter($record, "new_line_option"))
+            ->columnStart(FieldMapper::getOptionParameter($record, "new_line"))
             ->label(FieldMapper::getLabelName($record))
             ->state(FieldMapper::getAnswer($record))
             ->inlineLabel()

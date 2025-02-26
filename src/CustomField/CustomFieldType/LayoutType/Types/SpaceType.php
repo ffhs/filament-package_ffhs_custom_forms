@@ -44,9 +44,10 @@ class SpaceType extends CustomFieldType
 
 
     public function extraTypeOptions(): array
-    { //ToDo
+    {
         return [
             LayoutOptionGroup::make()
+                ->removeTypeOption('new_line')
                 ->setTypeOptions([
                     'amount' => new FastTypeOption(
                         1,

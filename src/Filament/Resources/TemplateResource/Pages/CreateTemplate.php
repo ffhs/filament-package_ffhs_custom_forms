@@ -12,6 +12,7 @@ class CreateTemplate extends CreateCustomForm
 {
     protected static string $resource = TemplateResource::class;
 
+
     public function form(Form $form): Form
     {
         return $form

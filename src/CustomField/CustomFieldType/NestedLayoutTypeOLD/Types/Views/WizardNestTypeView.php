@@ -14,24 +14,29 @@ use Filament\Infolists\Components\Group;
 class WizardNestTypeView implements FieldTypeView
 {
 
-    public static function getFormComponent(CustomFieldType $type, CustomField $record,
-                                            array           $parameter = []): \Filament\Forms\Components\Component {
-
+    public static function getFormComponent(
+        CustomFieldType $type,
+        CustomField $record,
+        array $parameter = []
+    ): \Filament\Forms\Components\Component {
         return Wizard::make()
-            ->columnSpan(FieldMapper::getOptionParameter($record,"column_span"))
-            ->inlineLabel(FieldMapper::getOptionParameter($record,"in_line_label"))
-            ->columnStart(FieldMapper::getOptionParameter($record,"new_line_option"))
-            ->skippable(FieldMapper::getOptionParameter($record,"skippable"))
+            ->columnSpan(FieldMapper::getOptionParameter($record, "column_span"))
+            ->inlineLabel(FieldMapper::getOptionParameter($record, "in_line_label"))
+            ->columnStart(FieldMapper::getOptionParameter($record, "new_line"))
+            ->skippable(FieldMapper::getOptionParameter($record, "skippable"))
             ->steps($parameter["rendered"]);
     }
 
-    public static function getInfolistComponent(CustomFieldType $type, CustomFieldAnswer $record,
-                                                array           $parameter = []): \Filament\Infolists\Components\Component {
+    public static function getInfolistComponent(
+        CustomFieldType $type,
+        CustomFieldAnswer $record,
+        array $parameter = []
+    ): \Filament\Infolists\Components\Component {
+        $label = FieldMapper::getOptionParameter($record, "show_title") ? FieldMapper::getLabelName($record) : "";
 
-        $label = FieldMapper::getOptionParameter($record,"show_title")? FieldMapper::getLabelName($record):"";
-
-        if($label != "") $output = Fieldset::make($label);
-        else $output = Group::make();
+        if ($label != "") {
+            $output = Fieldset::make($label);
+        } else $output = Group::make();
 
         return $output
             ->columns(1)

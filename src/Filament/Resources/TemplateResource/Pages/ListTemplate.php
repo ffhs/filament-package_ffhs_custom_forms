@@ -10,6 +10,7 @@ class ListTemplate extends ListCustomForm
 {
     protected static string $resource = TemplateResource::class;
 
+
     protected function getHeaderActions(): array
     {
         return [

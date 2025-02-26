@@ -37,7 +37,7 @@ class RepeaterLayoutTypeView implements FieldTypeView
         $repeater = static::makeComponent(Repeater::class, $record, ['min_amount', 'max_amount']);
         $repeater
             ->columns(FieldMapper::getOptionParameter($record, 'columns'))
-            ->columnStart(FieldMapper::getOptionParameter($record, 'new_line_option'))
+            ->columnStart(FieldMapper::getOptionParameter($record, 'new_line'))
             ->defaultItems($defaultAmount)
             ->minItems($minAmount)
             ->maxItems($maxAmount)

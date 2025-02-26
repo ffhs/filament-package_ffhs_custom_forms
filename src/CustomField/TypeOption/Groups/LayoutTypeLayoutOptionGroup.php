@@ -19,7 +19,7 @@ class LayoutTypeLayoutOptionGroup extends TypeOptionGroup
         $this->mergeTypeOptions([
             'column_span' => ColumnSpanOption::make(),
             "columns" => ColumnsOption::make(),
-            'new_line_option' => NewLineOption::make(),
+            'new_line' => NewLineOption::make(),
         ]);
     }
 

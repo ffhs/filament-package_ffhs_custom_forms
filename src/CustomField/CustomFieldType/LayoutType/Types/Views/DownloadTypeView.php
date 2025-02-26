@@ -59,7 +59,7 @@ class DownloadTypeView implements FieldTypeView
 
 
         $group->columnSpan(FieldMapper::getOptionParameter($record, 'column_span'));
-        $group->columnStart(FieldMapper::getOptionParameter($record, "new_line_option"));
+        $group->columnStart(FieldMapper::getOptionParameter($record, "new_line"));
 
         return $group;
     }
@@ -160,7 +160,7 @@ class DownloadTypeView implements FieldTypeView
         $group = \Filament\Infolists\Components\Group::make($actions);
 
         $group->columnSpan(FieldMapper::getOptionParameter($record, 'column_span'));
-        $group->columnStart(FieldMapper::getOptionParameter($record, "new_line_option"));
+        $group->columnStart(FieldMapper::getOptionParameter($record, "new_line"));
 
         return $group;
     }

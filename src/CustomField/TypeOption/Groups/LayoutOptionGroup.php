@@ -21,7 +21,7 @@ class LayoutOptionGroup extends TypeOptionGroup
         $this->mergeTypeOptions([
             'column_span' => ColumnSpanOption::make(),
             'in_line_label' => InLineLabelOption::make(),
-            'new_line_option' => NewLineOption::make()->modifyOptionComponent(
+            'new_line' => NewLineOption::make()->modifyOptionComponent(
                 fn(Component $component) => $component->columnStart(1)
             ),
             "helper_text" => HelperTextTypeOption::make(),

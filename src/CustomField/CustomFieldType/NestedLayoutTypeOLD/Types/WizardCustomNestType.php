@@ -37,7 +37,7 @@ class WizardCustomNestType extends CustomNestLayoutType
                     ->label("Zeige den Title während dem Betrachten an")
                     ->columnSpanFull()
             ),
-            'new_line_option' => new NewLineOption(),
+            'new_line' => NewLineOption::make(),
             'skippable' => new FastTypeOption(
                 false,
                 Toggle::make("skippable")
