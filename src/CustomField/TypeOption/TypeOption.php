@@ -12,6 +12,11 @@ abstract class TypeOption
     protected ?Closure $modifyComponentCloser = null;
     protected mixed $modifyDefault = null;
 
+    public static final function __($key)
+    {
+        return __('filament-package_ffhs_custom_forms::type_options.' . $key);
+    }
+
     public static function make(): static
     {
         return new static();

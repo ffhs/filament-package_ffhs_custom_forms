@@ -26,15 +26,22 @@ class ValidationMessageOption extends TypeOption
     public function getComponent(string $name): Component
     {
         return Repeater::make($name)
+            ->label(TypeOption::__('validation_messages.label'))
+            ->helperText(TypeOption::__('validation_messages.helper_text'))
             ->schema([
                 TextInput::make('rule')
+                    ->label(TypeOption::__('validation_messages.rule.label'))
+                    ->helperText(TypeOption::__('validation_messages.rule.helper_text'))
                     ->required()
                     ->datalist($this->getValidationMessageParameters(...)),
                 TextInput::make('message')
+                    ->label(TypeOption::__('validation_messages.message.label'))
+                    ->helperText(TypeOption::__('validation_messages.message.helper_text'))
                     ->nullable()
                     ->datalist($this->getValidationMessageParameters(...))
                     ->columnSpan(2),
             ])
+            ->addActionLabel(TypeOption::__('validation_messages.add_label'))
             ->collapsible(false)
             ->columns(3)
             ->columnSpanFull();
