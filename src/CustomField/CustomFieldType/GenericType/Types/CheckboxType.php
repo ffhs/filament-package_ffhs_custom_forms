@@ -7,7 +7,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\HasCustomTypePackageTranslation;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\DefaultLayoutTypeOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\ValidationTypeOptionGroup;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\HelptextTypeOption;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\HelperTextTypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\NewLineOption;
 
 class CheckboxType extends CustomFieldType
@@ -36,7 +36,7 @@ class CheckboxType extends CustomFieldType
         return [
             DefaultLayoutTypeOptionGroup::make()
                 ->setTypeOptions([
-                    "helper_text" => HelptextTypeOption::make(),
+                    "helper_text" => HelperTextTypeOption::make(),
                     'new_line_option' => NewLineOption::make(),
                 ]),
             ValidationTypeOptionGroup::make(),

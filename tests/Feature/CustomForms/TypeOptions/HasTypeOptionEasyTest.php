@@ -20,7 +20,7 @@ trait HasTypeOptionEasyTest
     protected User $user;
     protected CustomForm $customForm;
     protected CustomFormAnswer $formAnswer;
-    protected CustomField $customField;
+    protected ?CustomField $customField = null;
 
     public function typeOptionTestBeforeEach(): void
     {
@@ -45,13 +45,13 @@ trait HasTypeOptionEasyTest
 
     public function typeOptionTestAfterEach(): void
     {
-        $this->customField->delete();
+        if (!is_null($this->customField)) $this->customField->delete();
         $this->customForm->refresh();
         $this->formAnswer->refresh();
     }
 
 
-    public function testFieldLivewire(
+    public function livewireTestField(
         string $customFieldIdentifier,
         array $extraOptions,
         array $updateOptions,
@@ -86,7 +86,7 @@ trait HasTypeOptionEasyTest
     }
 
 
-    public function testComponent(
+    public function componentTestField(
         string $customFieldIdentifier,
         array $extraOptions,
         array $updateOptions,

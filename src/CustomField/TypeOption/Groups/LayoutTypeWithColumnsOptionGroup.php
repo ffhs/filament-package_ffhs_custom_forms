@@ -4,7 +4,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\ColumnsOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\ColumnSpanOption;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\HelptextTypeOption;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\HelperTextTypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\NewLineOption;
 use Filament\Forms\Components\Component;
 
@@ -23,7 +23,7 @@ class LayoutTypeWithColumnsOptionGroup extends DefaultLayoutTypeOptionGroup
             'new_line_option' => NewLineOption::make()->modifyOptionComponent(
                 fn(Component $component) => $component->columnStart(1)
             ),
-            "helper_text" => HelptextTypeOption::make(),
+            "helper_text" => HelperTextTypeOption::make(),
         ]);
     }
 

@@ -7,6 +7,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\LayoutType\T
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\LayoutType\Types\GroupType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\LayoutType\Types\SectionType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\SplittedType\Types\RepeaterLayoutType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\ColumnsOption;
 use Ffhs\FilamentPackageFfhsCustomForms\Tests\Feature\CustomForms\TypeOptions\HasTypeOptionEasyTest;
 use Filament\Forms\Components\Component;
 
@@ -19,6 +20,12 @@ beforeEach(function () {
 
 afterEach(function () {
     $this->typeOptionTestAfterEach();
+});
+
+test('columns modify settings component', function () {
+    $component = ColumnsOption::make()->getModifyOptionComponent('columns');
+    expect($component)->toBeInstanceOf(Component::class)
+        ->and($component->getStatePath(false))->toBe('columns');
 });
 
 
@@ -37,7 +44,7 @@ test('fields has columns type option', function ($customFieldIdentifier, array $
             ->and($component->getColumns()['lg'])->toBe($columns);
     };
 
-    $this->testComponent(
+    $this->componentTestField(
         $customFieldIdentifier,
         $extraOptions,
         ['columns' => $columns],
@@ -45,6 +52,7 @@ test('fields has columns type option', function ($customFieldIdentifier, array $
         $checkOptionFunction
     );
 })->with([
+
     //LayoutType
     [GroupType::identifier(), []],
     [SectionType::identifier(), []],
@@ -57,4 +65,5 @@ test('fields has columns type option', function ($customFieldIdentifier, array $
 
     //Split
     [RepeaterLayoutType::identifier(), []],
+
 ]);

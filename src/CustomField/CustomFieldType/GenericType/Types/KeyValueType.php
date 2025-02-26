@@ -37,7 +37,7 @@ class KeyValueType extends CustomOptionType
         return [
             DefaultLayoutTypeOptionGroup::make(),
             ValidationTypeOptionGroup::make()
-                ->setTypeOptions([
+                ->mergeTypeOptions([
                     'validation_attribute' => CustomValidationAttributeOption::make(),
                     'reorderable' => new FastTypeOption(
                         false,
@@ -64,8 +64,8 @@ class KeyValueType extends CustomOptionType
                                 )
                             )
                             ->columnSpanFull()
-                    )
-                ])
+                    ),
+                ]),
         ];
     }
 }

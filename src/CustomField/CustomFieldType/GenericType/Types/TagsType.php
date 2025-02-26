@@ -6,6 +6,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomOption
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Types\Views\TagsTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\HasCustomTypePackageTranslation;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\DefaultLayoutTypeOptionGroup;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\ValidationTypeOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\ColumnsOption;
 
 class TagsType extends CustomOptionType
@@ -34,6 +35,8 @@ class TagsType extends CustomOptionType
         return [
             DefaultLayoutTypeOptionGroup::make()
                 ->addTypeOptions("columns", ColumnsOption::make()),
+            ValidationTypeOptionGroup::make(),
+
 
         ];
     }
