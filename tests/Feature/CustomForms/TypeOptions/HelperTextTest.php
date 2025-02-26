@@ -17,73 +17,93 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Types\TextAreaType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Types\TextType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\SplittedType\Types\RepeaterLayoutType;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormAnswerResource\Pages\EditCustomFormAnswer;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
-use Illuminate\Support\Facades\Artisan;
-use Workbench\App\FFHs\TestDynamicFormConfiguration;
-use Workbench\App\Models\UserSuperAdmin;
+use Ffhs\FilamentPackageFfhsCustomForms\Tests\Feature\CustomForms\TypeOptions\HasTypeOptionEasyTest;
+use Filament\Forms\Components\Component;
+use Filament\Forms\Components\Concerns\HasHelperText;
+use Illuminate\Support\HtmlString;
+use Livewire\Features\SupportTesting\Testable;
 
-use function Pest\Livewire\livewire;
 
+uses(HasTypeOptionEasyTest::class);
 
 beforeEach(function () {
-    $user = UserSuperAdmin::create([
-        'name' => 'tester',
-        'email' => 'testing@test.com',
-        'password' => '1234',
-    ]);
-    $this->actingAs($user);
-
-    /**@var CustomForm $customForm */
-    $this->customForm = CustomForm::create([
-        'short_title' => 'My custom form title',
-        'custom_form_identifier' => TestDynamicFormConfiguration::identifier(),
-    ]);
-
-    $this->formAnsware = CustomFormAnswer::create([
-        'custom_form_id' => $this->customForm->id,
-        'short_title' => 'test answare',
-    ]);
+    $this->typeOptionTestBeforeEach();
 });
 
 afterEach(function () {
-    $this->customField->delete();
-    $this->customForm->refresh();
-    $this->formAnsware->refresh();
+    $this->typeOptionTestAfterEach();
 });
 
-test('field show helper text', function ($customFieldIdentifier, array $extraOptions = []) {
-    $helpText = 'Test-Helper-text';
 
-    $this->customField = CustomField::create([
-        'name' => ['en' => 'test_field'],
-        'form_position' => 1,
-        'layout_end_position' => 1,
-        'identifier' => uniqid(),
-        'type' => $customFieldIdentifier,
-        'custom_form_id' => $this->customForm->id,
-        'options' => $extraOptions,
-    ]);
+test('field has helper text in livewire', function ($customFieldIdentifier, array $extraOptions = []) {
+    $helpText = 'Test-Helper-text ' . uniqid();
 
-    $this->customForm->refresh();
+    $checkNoOptionFunction = function (Testable $livewire) use ($helpText) {
+        $livewire->assertSeeText('test_field');
+        $livewire->assertDontSee($helpText);
+    };
 
-    $livewire = livewire(EditCustomFormAnswer::class, ['record' => $this->formAnsware->id]);
-    $livewire->assertSuccessful();
-    $livewire->assertSeeText('test_field');
-    $livewire->assertDontSee($helpText);
+    $checkOptionFunction = function (Testable $livewire) use ($helpText) {
+        $livewire->assertSeeText('test_field');
+        $livewire->assertSeeText($helpText);
+    };
 
-    $this->customField->update(['options' => array_merge($extraOptions, ['helper_text' => $helpText])]);
-    Artisan::call('cache:clear');
-    $this->customField->refresh();
-    $this->customForm->refresh();
-    $this->formAnsware->refresh();
+    $this->testFieldLivewire(
+        $customFieldIdentifier,
+        $extraOptions,
+        ['helper_text' => $helpText],
+        $checkNoOptionFunction,
+        $checkOptionFunction
+    );
+})->with([
+//    //Generic Types
+    [CheckboxType::identifier(), []],
+    [ColorPickerType::identifier(), []],
+    [DateRangeType::identifier(), []],
+    [DateTimeType::identifier(), []],
+    [EmailType::identifier(), []],
+    [FileUploadType::identifier(), []],
+    [IconSelectType::identifier(), []],
+    [KeyValueType::identifier(), []],
+    [NumberType::identifier(), []],
+    [TagsType::identifier(), []],
+    [TextAreaType::identifier(), []],
+    [TextType::identifier(), []],
 
-    $livewire = livewire(EditCustomFormAnswer::class, ['record' => $this->formAnsware->id]);
-    $livewire->assertSuccessful();
-    $livewire->assertSeeText('test_field');
-    $livewire->assertSeeText($helpText);
+    //OptionType
+    [CheckboxListType::identifier(), []],
+    [RadioType::identifier(), []],
+    [SelectType::identifier(), []],
+    [SelectType::identifier(), ['several' => true]],
+    [SelectType::identifier(), ['prioritized' => true]],
+    [ToggleButtonsType::identifier(), []],
+    [ToggleButtonsType::identifier(), ['boolean' => true]],
+
+    //Split
+    [RepeaterLayoutType::identifier(), []],
+])->only();
+
+
+test('field has helper text in component', function ($customFieldIdentifier, array $extraOptions = []) {
+    $helpText = 'Test-Helper-text ' . uniqid();
+
+    $checkNoOptionFunction = function (Component|HasHelperText $component) {
+        expect($component->getHelperText())->toBeNull();
+    };
+
+    $checkOptionFunction = function (Component $component) use ($helpText) {
+        expect($component->getHelperText())->not()->toBeNull()
+            ->and($component->getHelperText())->toBeInstanceOf(HtmlString::class)
+            ->and($component->getHelperText()->toHtml())->toBe($helpText);
+    };
+
+    $this->testComponent(
+        $customFieldIdentifier,
+        $extraOptions,
+        ['helper_text' => $helpText],
+        $checkNoOptionFunction,
+        $checkOptionFunction
+    );
 })->with([
 //    //Generic Types
     [CheckboxType::identifier(), []],

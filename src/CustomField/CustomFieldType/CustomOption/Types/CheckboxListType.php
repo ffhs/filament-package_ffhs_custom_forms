@@ -78,8 +78,6 @@ class CheckboxListType extends CustomOptionType
                     'required' => RequiredOption::make(),
                 ]),
             CustomOptionGroup::make(),
-
-
         ];
     }
 
