@@ -21,7 +21,7 @@ class DateTypeView implements FieldTypeView
         array $parameter = []
     ): DatePicker {
         return static::makeComponent(DatePicker::class, $record)
-            ->format(self::getFormat($record));
+            ->format(FieldMapper::getOptionParameter($record, 'format'));
     }
 
     public static function getInfolistComponent(
