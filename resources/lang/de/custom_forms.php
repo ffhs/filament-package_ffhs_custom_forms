@@ -42,6 +42,7 @@ return [
 
         'types' => [
             'text' => 'Text',
+            'group' => 'Gruppe',
             'email' => 'Email',
             'number' => 'Nummer',
             'select' => 'Auswahl',
