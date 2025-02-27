@@ -23,7 +23,6 @@ class KeyValueTypeView implements FieldTypeView
         array $parameter = []
     ): Component {
         return static::makeComponent(KeyValue::class, $record)
-            ->reorderable(FieldMapper::getOptionParameter($record, "reorderable"))
             ->editableKeys(FieldMapper::getOptionParameter($record, "editableKeys"))
             ->editableValues(FieldMapper::getOptionParameter($record, "editableValues"));
     }

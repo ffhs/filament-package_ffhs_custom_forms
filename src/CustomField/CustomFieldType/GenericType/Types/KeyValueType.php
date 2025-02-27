@@ -8,6 +8,8 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\HasCustomTyp
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\LayoutOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\ValidationTypeOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\FastTypeOption;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\ReorderableTypeOption;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\TypeOption;
 use Filament\Forms\Components\Toggle;
 
 class KeyValueType extends CustomOptionType
@@ -16,7 +18,7 @@ class KeyValueType extends CustomOptionType
 
     public static function identifier(): string
     {
-        return "key_value";
+        return 'key_value';
     }
 
     public function viewModes(): array
@@ -28,7 +30,7 @@ class KeyValueType extends CustomOptionType
 
     public function icon(): string
     {
-        return "heroicon-o-key";
+        return 'heroicon-o-key';
     }
 
     public function extraTypeOptions(): array
@@ -37,30 +39,19 @@ class KeyValueType extends CustomOptionType
             LayoutOptionGroup::make(),
             ValidationTypeOptionGroup::make()
                 ->mergeTypeOptions([
-                    'reorderable' => new FastTypeOption(
-                        false,
-                        Toggle::make('reorderable')
-                            ->label(
-                                __("filament-package_ffhs_custom_forms::custom_forms.fields.type_options.reorderable")
-                            )
-                            ->columnSpanFull()
-                    ),
-                    'editableKeys' => new FastTypeOption(
+                    'reorderable' => ReorderableTypeOption::make(),
+                    'editableKeys' => new FastTypeOption( //ToDo continue Translations
                         true,
                         Toggle::make('editableKeys')
-                            ->label(
-                                __("filament-package_ffhs_custom_forms::custom_forms.fields.type_options.editable_keys")
-                            )
+                            ->label(TypeOption::__('editable_keys.label'))
+                            ->helperText(TypeOption::__('editable_keys.helper_text'))
                             ->columnSpanFull()
                     ),
                     'editableValues' => new FastTypeOption(
                         true,
                         Toggle::make('editableValues')
-                            ->label(
-                                __(
-                                    "filament-package_ffhs_custom_forms::custom_forms.fields.type_options.editable_values"
-                                )
-                            )
+                            ->label(TypeOption::__('editable_values.label'))
+                            ->helperText(TypeOption::__('editable_keys.helper_text'))
                             ->columnSpanFull()
                     ),
                 ]),

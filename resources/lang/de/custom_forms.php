@@ -87,42 +87,6 @@ return [
                 'always' => 'Immer Aktive',
             ],
         ],
-
-        'type_options' => [
-
-            // custom field type (FastTypeOption)
-            'color_type' => 'Farbformat',
-            'only_images' => 'Nur Bilder',
-            'show_images' => 'Bilder anzeigen',
-            'show_images_in_view' => 'Bilder anzeigen in der Ansicht',
-            'downloadable' => 'Herunterladbar',
-            'multiple_uploads_allowed' => 'mehrere hochladbar',
-            'preserve_filenames' => 'Ursprungsname erhalten',
-            'reorderable' => 'Kann umgeordnet werden',
-            'editable_keys' => 'Bearbeitbare Schlüssel',
-            'editable_values' => 'Bearbeitbare Werte',
-            'several' => 'Mehrere auswählbar',
-            'min_select' => 'Mindestanzahl',
-            'min_select_helper' => 'Greift nur bei (Benötigt)',
-            'max_select' => 'Maximalanzahl',
-            'max_select_helper' => '\'0\' entspricht keiner Begrenzung',
-            'auto_size' => 'Automatische Grösse',
-            'suggestions' => 'Vorschläge',
-            'add_suggestion' => 'Vorschlag hinzufügen',
-            'columns' => 'Spalten',
-            'toggle_grouped' => 'Schalter gruppiert',
-            'multiple_toggle_selectable' => 'Mehre Schalter auswählbar',
-            'grid_layout' => 'Dateien in einem Grid anzeigen lassen',
-            'open_in_new_tab' => 'Files können in einem veuen Tab geöffnet werden',
-            'prioritized' => 'Priorisiert',
-            'prioritized_helper' => 'Der User kann die Reihenfolge der Optionen wählen.',
-            'dynamic_prioritized' => 'Dynamisch priorisiert',
-            'dynamic_prioritized_helper' => 'Die einzelnen Auswahlfelder erscheinen schrittweise.',
-            'default_amount' => 'Standart Anzahl',
-            'ordered' => 'Geordnet',
-
-
-        ],
     ],
 
     'form' => [

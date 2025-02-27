@@ -8,6 +8,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\HasCustomTyp
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\LayoutOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\ValidationTypeOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\FastTypeOption;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\TypeOption;
 use Filament\Forms\Components\Select;
 
 class ColorPickerType extends CustomOptionType
@@ -16,7 +17,7 @@ class ColorPickerType extends CustomOptionType
 
     public static function identifier(): string
     {
-        return "color_input";
+        return 'color_input';
     }
 
     public function viewModes(): array
@@ -33,18 +34,17 @@ class ColorPickerType extends CustomOptionType
             ValidationTypeOptionGroup::make()
                 ->mergeTypeOptions([
                     'color_type' => new FastTypeOption(
-                        "rgb",
-                        Select::make("color_type")
-                            ->label(
-                                __("filament-package_ffhs_custom_forms::custom_forms.fields.type_options.color_type")
-                            )
+                        'rgb',
+                        Select::make('color_type')
+                            ->label(TypeOption::__('color_type.label'))
+                            ->helperText(TypeOption::__('color_type.helper_text'))
                             ->columnSpanFull()
                             ->required()
                             ->selectablePlaceholder(false)
                             ->options([
-                                "rgb" => "RGB",
-                                "hsl" => "HSL",
-                                "rgba" => "RGBA",
+                                'rgb' => 'RGB',
+                                'hsl' => 'HSL',
+                                'rgba' => 'RGBA',
                             ])
                     ),
                 ]),
@@ -54,7 +54,7 @@ class ColorPickerType extends CustomOptionType
 
     public function icon(): string
     {
-        return "carbon-color-palette";
+        return 'carbon-color-palette';
     }
 
 }
