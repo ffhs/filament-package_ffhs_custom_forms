@@ -10,6 +10,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\Validation
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\FastTypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\MaxLengthOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\MinLengthOption;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\TypeOption;
 use Filament\Forms\Components\Toggle;
 
 class TextAreaType extends CustomFieldType
@@ -37,20 +38,22 @@ class TextAreaType extends CustomFieldType
 
     public function extraTypeOptions(): array
     {
-        $autoSizeComponent =
-            Toggle::make("auto_size")
-                ->label(__("filament-package_ffhs_custom_forms::custom_forms.fields.type_options.auto_size"))
-                ->columnSpan(2);
-
-        $autoSize = FastTypeOption::makeFast(false, $autoSizeComponent);
-
         return [
             LayoutOptionGroup::make()
-                ->addTypeOptions("auto_size", $autoSize),
+                ->addTypeOptions(
+                    "auto_size",
+                    FastTypeOption::makeFast(
+                        false,
+                        Toggle::make("auto_size")
+                            ->helperText(TypeOption::__('auto_size.helper_text'))
+                            ->label(TypeOption::__('auto_size.label'))
+                            ->columnSpan(2)
+                    )
+                ),
             ValidationTypeOptionGroup::make()
                 ->mergeTypeOptions([
-                    'max_length' => new MaxLengthOption(),
-                    'min_length' => new MinLengthOption(),
+                    'max_length' => MaxLengthOption::make(),
+                    'min_length' => MinLengthOption::make(),
                 ]),
         ];
     }

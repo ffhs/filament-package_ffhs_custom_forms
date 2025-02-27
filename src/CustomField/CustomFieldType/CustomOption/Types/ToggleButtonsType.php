@@ -12,6 +12,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\Validation
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\BooleanOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\FastTypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\InlineOption;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\TypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Toggle;
@@ -56,13 +57,10 @@ class ToggleButtonsType extends CustomOptionType
                     'grouped' => FastTypeOption::makeFast(
                         false,
                         Toggle::make("grouped")
+                            ->helperText(TypeOption::__('toggle_grouped.helper_text'))
+                            ->label(TypeOption::__('toggle_grouped.label'))
                             ->disabled(fn($get) => $get("inline"))
-                            ->live()
-                            ->label(
-                                __(
-                                    "filament-package_ffhs_custom_forms::custom_forms.fields.type_options.toggle_grouped"
-                                )
-                            ),
+                            ->live(),
                     ),
                     'boolean' => BooleanOption::make()
                         ->modifyOptionComponent(fn(Toggle $component) => $component

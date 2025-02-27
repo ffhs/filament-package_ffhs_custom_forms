@@ -14,6 +14,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\MaxAmount
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\MinAmountOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\ShowAsFieldsetOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\ShowLabelOption;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\TypeOption;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\TextInput;
 
@@ -50,13 +51,10 @@ class RepeaterLayoutType extends CustomSplitType
                     'default_amount' => FastTypeOption::makeFast(
                         1,
                         TextInput::make("default_amount")
-                            ->minValue(0)
-                            ->label(
-                                __(
-                                    'filament-package_ffhs_custom_forms::custom_forms.fields.type_options.default_amount'
-                                )
-                            )
+                            ->helperText(TypeOption::__('default_amount.helper_text'))
+                            ->label(TypeOption::__('default_amount.label'))
                             ->lte("max_amount")
+                            ->minValue(0)
                             ->integer()
                             ->required(),
                     ),

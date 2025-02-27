@@ -12,6 +12,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\AlpineMas
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\FastTypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\MaxLengthOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\MinLengthOption;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\TypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\TypeOptionGroup;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Repeater;
@@ -49,23 +50,20 @@ class TextType extends CustomFieldType
                     'min_length' => MinLengthOption::make(),
                 ]),
 
-            TypeOptionGroup::make('Vorschläge', [
-                'suggestions' => new FastTypeOption([],
+            TypeOptionGroup::make(TypeOption::__('suggestions.label'), [
+                'suggestions' => FastTypeOption::makeFast([],
                     Group::make()
                         ->statePath('suggestions')
                         ->columnSpanFull()
                         ->schema(fn($record) => [
-                            Repeater::make($record->getLocale())
-                                ->addActionLabel(
-                                    __(
-                                        "filament-package_ffhs_custom_forms::custom_forms.fields.type_options.add_suggestion"
-                                    )
-                                )
-                                ->label("")
-                                ->schema([TextInput::make("value")->label("")]),
+                            Repeater::make($record->getLocale())//ToDo maby make simple repeater
+                            ->helperText(TypeOption::__('suggestions.helper_text'))
+                                ->addActionLabel(TypeOption::__('suggestions.add_label'))
+                                ->schema([TextInput::make("value")->label("")])
+                                ->label(""),
                         ])
                 ),
-            ]), //ToDo Translate
+            ]),
         ];
     }
 
