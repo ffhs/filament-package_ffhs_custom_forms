@@ -12,7 +12,7 @@ class ReorderableTypeOption extends TypeOption
 
     public function getDefaultValue(): mixed
     {
-        return null;
+        return false;
     }
 
     public function getComponent(string $name): Component
