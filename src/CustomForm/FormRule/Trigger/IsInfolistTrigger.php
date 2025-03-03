@@ -12,7 +12,8 @@ class IsInfolistTrigger extends FormRuleTriggerType
     use HasRuleTriggerPluginTranslate;
     use HasTriggerEventFormTargets;
 
-    public static function identifier(): string {
+    public static function identifier(): string
+    {
         return "infolist_view";
     }
 
@@ -21,8 +22,9 @@ class IsInfolistTrigger extends FormRuleTriggerType
         return [];
     }
 
+
     public function isTrigger(array $arguments, mixed &$target, RuleTrigger $rule): bool
     {
-        return $target instanceof InfoComponent;
+        return (array_values($target)[0] ?? null) instanceof InfoComponent;
     }
 }
