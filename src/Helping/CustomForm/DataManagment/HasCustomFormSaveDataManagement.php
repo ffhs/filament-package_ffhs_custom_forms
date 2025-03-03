@@ -10,6 +10,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\Rule;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Form;
 use Spatie\Activitylog\Facades\LogBatch;
+use Spatie\Activitylog\Models\Activity;
 
 trait HasCustomFormSaveDataManagement
 {
@@ -199,19 +200,19 @@ trait HasCustomFormSaveDataManagement
             ->delete();
 
 
-//        $logedFieldActivity =  Activity::query()
-//            ->where('batch_uuid', LogBatch::getUuid())
-//            ->where('subject_type', CustomFieldAnswer::class)
-//            ->whereNot('event', 'created')
-//            ->exists();
-//
-//        if($logedFieldActivity){
-//            activity()
-//                ->causedBy(auth()->user())
-//                ->performedOn($formAnswer)
-//                ->event('update_fields')
-//                ->log(':causer.name updated field answares');
-//        }
+        $logedFieldActivity = Activity::query()
+            ->where('batch_uuid', LogBatch::getUuid())
+            ->where('subject_type', CustomFieldAnswer::class)
+            ->whereNot('event', 'created')
+            ->exists();
+
+        if ($logedFieldActivity) {
+            activity()
+                ->causedBy(auth()->user())
+                ->performedOn($formAnswer)
+                ->event('update_fields')
+                ->log(':causer.name updated field answares');
+        }
 
         LogBatch::endBatch();
     }
