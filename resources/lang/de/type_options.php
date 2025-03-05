@@ -85,7 +85,7 @@ return [
     ],
     'validation_attribute' => [
         'label' => 'Validierungsname',
-        'helper_text' => 'Der name welcher verwendet wird, bei den Standartfehlermeldungen',
+        'helper_text' => 'Der Name welcher verwendet wird, bei Standardfehlermeldungen',
     ],
     'column_span' => [
         'label' => 'Grösse in Spalten',
