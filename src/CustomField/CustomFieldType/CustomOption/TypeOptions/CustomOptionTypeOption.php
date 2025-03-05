@@ -75,7 +75,6 @@ class CustomOptionTypeOption extends TypeOption
             ->helperText(CustomOption::__('possible_options.helper_text'))
             ->columnSpanFull()
             ->multiple()
-            ->relationship()
             ->options(function ($get) {
                 $generalField = GeneralField::cached($get("../general_field_id"));
                 return $generalField->customOptions->pluck("name", "id")->toArray();
