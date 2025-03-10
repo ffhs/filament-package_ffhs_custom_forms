@@ -9,9 +9,28 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * @property array $data
+ * 
+ *
+ * @property int $id
+ * @property int $order
  * @property string $type
- * @property Rule $rule
+ * @property array<array-key, mixed>|null $data
+ * @property int $rule_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read string $cache_key_for
+ * @property-read \Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\Rule $rule
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RuleEvent newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RuleEvent newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RuleEvent query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RuleEvent whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RuleEvent whereData($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RuleEvent whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RuleEvent whereOrder($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RuleEvent whereRuleId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RuleEvent whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RuleEvent whereUpdatedAt($value)
+ * @mixin \Eloquent
  */
 class RuleEvent extends Model implements CachedModel
 {

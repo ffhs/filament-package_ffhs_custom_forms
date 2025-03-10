@@ -11,9 +11,25 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
- * @property CustomForm $customForm
- * @property Rule $rule
- * @property int order
+ * 
+ *
+ * @property int $id
+ * @property int $custom_form_id
+ * @property int $rule_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm $customForm
+ * @property-read string $cache_key_for
+ * @property-read Rule $rule
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|FormRule newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|FormRule newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|FormRule query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|FormRule whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|FormRule whereCustomFormId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|FormRule whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|FormRule whereRuleId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|FormRule whereUpdatedAt($value)
+ * @mixin \Eloquent
  */
 class FormRule extends Model implements CachedModel
 {

@@ -10,9 +10,25 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection;
 
 /**
- * @property bool is_or_mode
- * @property Collection ruleEvents
- * @property Collection ruleTriggers
+ * 
+ *
+ * @property int $id
+ * @property int $is_or_mode
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read string $cache_key_for
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\RuleEvent> $ruleEvents
+ * @property-read int|null $rule_events_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\RuleTrigger> $ruleTriggers
+ * @property-read int|null $rule_triggers_count
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Rule newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Rule newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Rule query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Rule whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Rule whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Rule whereIsOrMode($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Rule whereUpdatedAt($value)
+ * @mixin \Eloquent
  */
 class Rule extends Model implements CachedModel
 {
