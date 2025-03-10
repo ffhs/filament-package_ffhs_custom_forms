@@ -5,7 +5,8 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Generi
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldMapper;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
-use Filament\Forms\Components\Component;
+use Filament\Forms\Components\Component as FormsComponent;
+use Filament\Infolists\Components\Component as InfolistsComponent;
 
 trait HasDefaultViewComponent
 {
@@ -13,26 +14,36 @@ trait HasDefaultViewComponent
         string $class,
         CustomField|CustomFieldAnswer $record,
         array $ignoredOptions = []
-    ): \Filament\Infolists\Components\Component|Component {
+    ): InfolistsComponent|FormsComponent {
         $component = $class::make(FieldMapper::getIdentifyKey($record));
-        if ($component instanceof Component) {
+
+        if ($component instanceof FormsComponent) {
             return static::modifyFormComponent($component, $record, $ignoredOptions);
-        } else return static::modifyInfolistComponent($component, $record, $ignoredOptions);
+        } else {
+            return static::modifyInfolistComponent($component, $record, $ignoredOptions);
+        }
     }
 
     protected static function modifyFormComponent(
-        Component $component,
+        FormsComponent $component,
         CustomField $record,
         array $ignoredOptions = []
-    ): Component {
+    ): FormsComponent {
         foreach ($record->getType()->getFlattenExtraTypeOptions() as $key => $typeOption) {
-            if (in_array($key, $ignoredOptions)) continue;
+            if (in_array($key, $ignoredOptions)) {
+                continue;
+            }
+
             $value = FieldMapper::getOptionParameter($record, $key);
             $typeOption->modifyFormComponent($component, $value); //ToDo null value
         }
+
         if ($record->isGeneralField()) {
             foreach ($record->getType()->getFlattenGeneralTypeOptions() as $key => $typeOption) {
-                if (in_array($key, $ignoredOptions)) continue;
+                if (in_array($key, $ignoredOptions)) {
+                    continue;
+                }
+
                 $value = FieldMapper::getOptionParameter($record, $key);
                 $typeOption->modifyFormComponent($component, $value); //ToDo null value
             }
@@ -43,18 +54,15 @@ trait HasDefaultViewComponent
     }
 
     protected static function modifyInfolistComponent(
-        \Filament\Infolists\Components\Component $component,
+        InfolistsComponent $component,
         CustomFieldAnswer $record,
         array $ignoredOptions = []
-    ): \Filament\Infolists\Components\Component {
-        //ToDo
-
+    ): InfolistsComponent {
         return $component
-            ->columnStart(FieldMapper::getOptionParameter($record, "new_line"))
+            ->columnStart(FieldMapper::getOptionParameter($record, 'new_line'))
             ->label(FieldMapper::getLabelName($record))
             ->state(FieldMapper::getAnswer($record))
             ->inlineLabel()
             ->columnSpanFull();
     }
-
 }
