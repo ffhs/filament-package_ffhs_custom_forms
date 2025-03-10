@@ -8,27 +8,55 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Support\Collection;
 
 /**
+ *
+ *
+ * @property int $id
+ * @property int|null $custom_form_id
  * @property int|null $general_field_id
  * @property int|null $template_id
- * @property int $custom_form_id
- * @property bool $required
- * @property bool $is_active
- * @property int $form_position
- * @property int|null $layout_end_position
- * @property array $overwritten_options
- *
- * @property Collection $customOptions
- * property Collection $fieldRules
- * @property Collection $answers
- *
  * @property string|null $identifier
- *
- * @property CustomForm $customForm
- * @property CustomForm|null $template
- * @property GeneralField|null $generalField
+ * @property string|null $name
+ * @property string|null $type
+ * @property int|null $form_position
+ * @property int|null $layout_end_position
+ * @property array<array-key, mixed>|null $options
+ * @property int $is_active
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer> $answers
+ * @property-read int|null $answers_count
+ * @property-read \Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm|null $customForm
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Ffhs\FilamentPackageFfhsCustomForms\Models\CustomOption> $customOptions
+ * @property-read int|null $custom_options_count
+ * @property-read \Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField|null $generalField
+ * @property-read string $cache_key_for
+ * @property-read string $end_container_position
+ * @property-read string $position
+ * @property-read \Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm|null $template
+ * @property-read mixed $translations
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomField newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomField newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomField query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomField whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomField whereCustomFormId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomField whereFormPosition($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomField whereGeneralFieldId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomField whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomField whereIdentifier($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomField whereIsActive($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomField whereJsonContainsLocale(string $column, string $locale, ?mixed $value, string $operand = '=')
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomField whereJsonContainsLocales(string $column, array $locales, ?mixed $value, string $operand = '=')
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomField whereLayoutEndPosition($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomField whereLocale(string $column, string $locale)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomField whereLocales(string $column, array $locales)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomField whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomField whereOptions($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomField whereTemplateId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomField whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomField whereUpdatedAt($value)
+ * @mixin \Eloquent
  */
 class CustomField extends ACustomField implements NestingObject, Identifier
 {
@@ -79,7 +107,9 @@ class CustomField extends ACustomField implements NestingObject, Identifier
         parent::booted();
         self::creating(function (CustomField $field) {#
             //Set identifier key to on other
-            if (empty($field->identifier()) && !$field->isGeneralField()) $field->identifier = uniqid();
+            if (empty($field->identifier()) && !$field->isGeneralField()) {
+                $field->identifier = uniqid();
+            }
             return $field;
         });
     }
@@ -102,16 +132,22 @@ class CustomField extends ACustomField implements NestingObject, Identifier
         }
 
         if (!$this->isGeneralField()) {
-            if ('overwritten_options' === $key) return [];
+            if ('overwritten_options' === $key) {
+                return [];
+            }
             return parent::__get($key);
         }
 
 
         //PERFORMANCE!!!!
         $genFieldFunction = function (): GeneralField {
-            if (!$this->exists) return parent::__get("generalField");
+            if (!$this->exists) {
+                return parent::__get("generalField");
+            }
             $genField = GeneralField::getModelCache()?->where("id", $this->general_field_id)->first();
-            if (!is_null($genField)) return $genField;
+            if (!is_null($genField)) {
+                return $genField;
+            }
 
             $generalFieldIds = $this->customForm->customFields->whereNotNull('general_field_id')->pluck(
                 "general_field_id"
@@ -168,7 +204,9 @@ class CustomField extends ACustomField implements NestingObject, Identifier
 
     public function isTemplate(): bool
     {
-        if (!isset($this->template_id)) return false;
+        if (!isset($this->template_id)) {
+            return false;
+        }
         return !empty($this->template_id);
     }
 
