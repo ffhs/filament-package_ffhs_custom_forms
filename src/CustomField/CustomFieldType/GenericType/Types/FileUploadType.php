@@ -188,6 +188,8 @@ class FileUploadType extends CustomFieldType
             }
 
             if ($canSave) {
+                $state = array_filter($filesComponent->getState() ?? [], fn($file) => !is_null($file));
+                $filesComponent->state($state);
                 $filesComponent->saveUploadedFiles();
             } else {
                 $component->state([]);
