@@ -6,6 +6,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\FieldTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Traits\HasDefaultViewComponent;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldMapper;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFieldType\FileUploadInfolistDisplay;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Filament\Forms\Components\Component;
@@ -219,19 +220,22 @@ class FileUploadView implements FieldTypeView
             }
 
 
-            $fileComponents[] = Group::make([
-                TextEntry::make("file_name" . $path)
-                    ->label("")
-                    ->state($names[$path] ?? $path)
-                    ->columnSpan(2),
-                Actions::make($actions),
-            ])
-                ->extraAttributes([
-                    'class' => 'fi-badge flex items-center justify-center gap-x-1 rounded-md text-xs font-medium ring-1 ring-inset px-2 min-w-[theme(spacing.6)] py-1 fi-color-custom bg-custom-50 text-custom-600 ring-custom-600/10
-                dark:bg-custom-400/10 dark:text-custom-400 dark:ring-custom-400/30 fi-color-primary fi-ac-action fi-ac-badge-action',
-                    "style" => "--c-50:var(--primary-50);--c-400:var(--primary-400);--c-600:var(--primary-600);",
-                ])->columns(3)
-                ->columnStart(1);
+            $fileComponents[] = FileUploadInfolistDisplay::make([Actions::make($actions)])
+                ->label($names[$path] ?? $path);
+
+//            $fileComponents[] = Group::make([
+//                TextEntry::make("file_name" . $path)
+//                    ->label("")
+//                    ->state($names[$path] ?? $path)
+//                    ->columnSpan(2),
+//                Actions::make($actions),
+//            ])
+//                ->extraAttributes([
+//                    'class' => 'fi-badge flex items-center justify-center gap-x-1 rounded-md text-xs font-medium ring-1 ring-inset px-2 min-w-[theme(spacing.6)] py-1 fi-color-custom bg-custom-50 text-custom-600 ring-custom-600/10
+//                dark:bg-custom-400/10 dark:text-custom-400 dark:ring-custom-400/30 fi-color-primary fi-ac-action fi-ac-badge-action',
+//                    "style" => "--c-50:var(--primary-50);--c-400:var(--primary-400);--c-600:var(--primary-600);",
+//                ])->columns(3)
+//                ->columnStart(1);
         }
 
         return Group::make([
