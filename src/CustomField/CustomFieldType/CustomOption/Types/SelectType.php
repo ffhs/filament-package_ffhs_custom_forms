@@ -10,6 +10,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\LayoutOpti
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\ValidationTypeOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\FastTypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\TypeOption;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 
@@ -39,10 +40,26 @@ class SelectType extends CustomOptionType
     {
         return
             [
-                LayoutOptionGroup::make(),
+                LayoutOptionGroup::make()
+                    ->addTypeOptions(
+                        'prioritized_labels',
+                        FastTypeOption::makeFast(
+                            [],
+                            Repeater::make('prioritized_labels')
+                                ->label(TypeOption::__('prioritized_labels.label'))
+                                ->schema([
+                                    TextInput::make('label')
+                                        ->label(''),
+                                ])
+                                ->whenTruthy('prioritized')
+                                ->addActionLabel('prioritized_labels.add_label')
+                                ->columnSpanFull()
+                                ->reorderable()
+                        )
+                    ),
                 ValidationTypeOptionGroup::make()
                     ->mergeTypeOptions([
-                        'several' => new FastTypeOption(
+                        'several' => FastTypeOption::makeFast(
                             false,
                             Toggle::make('several') //ToDo Put it in own option
                             ->label(TypeOption::__('several.label'))
@@ -50,7 +67,7 @@ class SelectType extends CustomOptionType
                                 ->columnSpanFull()
                                 ->live()
                         ),
-                        'prioritized' => new FastTypeOption(
+                        'prioritized' => FastTypeOption::makeFast(
                             false,
                             Toggle::make('prioritized')
                                 ->whenTruthy('several')
@@ -58,14 +75,14 @@ class SelectType extends CustomOptionType
                                 ->helperText(TypeOption::__('prioritized.helper_text'))
                                 ->live()
                         ),
-                        'dynamic_prioritized' => new FastTypeOption(
+                        'dynamic_prioritized' => FastTypeOption::makeFast(
                             false,
                             Toggle::make('dynamic_prioritized')
                                 ->whenTruthy('prioritized')
                                 ->label(TypeOption::__('dynamic_prioritized.label'))
                                 ->helperText(TypeOption::__('dynamic_prioritized.helper_text'))
                         ),
-                        'min_select' => new FastTypeOption(
+                        'min_select' => FastTypeOption::makeFast(
                             1,
                             TextInput::make('min_select') //ToDo Replace With min_items
                             ->helperText(TypeOption::__('min_select.helper_text'))
@@ -78,7 +95,7 @@ class SelectType extends CustomOptionType
                                 ->required()
                                 ->numeric(),
                         ),
-                        'max_select' => new FastTypeOption(
+                        'max_select' => FastTypeOption::makeFast(
                             1,
                             TextInput::make('max_select')
                                 ->helperText(TypeOption::__('max_select.helper_text'))
