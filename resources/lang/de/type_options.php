@@ -171,6 +171,12 @@ return [
         'label' => 'Dynamisch priorisiert',
         'helper_text' => 'Die einzelnen Auswahlfelder erscheinen schrittweise.',
     ],
+
+    'prioritized_labels' => [
+        'label' => 'Priorisiertauswahl Labels',
+        'add_label' => 'Bennenen',
+        'helper_text' => '',
+    ],
     'min_select' => [
         'label' => 'Mindestanzahl',
         'helper_text' => 'Greift nur bei (Benötigt)',
