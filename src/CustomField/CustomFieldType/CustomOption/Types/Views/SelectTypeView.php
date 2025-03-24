@@ -46,21 +46,32 @@ class SelectTypeView implements FieldTypeView
         $selectLabelTranslation = __('filament-package_ffhs_custom_forms::custom_forms.fields.type_view.select.select');
         $labels = FieldMapper::getOptionParameter($record, 'prioritized_labels');
         $labels = array_values($labels);
+        $validationMessagesRaw = FieldMapper::getOptionParameter($record, 'validation_messages_prioritized');
+
+        $validationMessages = [];
+        foreach ($validationMessagesRaw as $message) {
+            $validationMessages[$message['select_id'] ?? ''][$message['rule'] ?? ''] = $message['message'] ?? '';
+        }
+
 
         return $select
             ->minItems(FieldMapper::getOptionParameter($record, 'min_select'))
             ->maxItems(FieldMapper::getOptionParameter($record, 'max_select'))
             ->options(FieldMapper::getAvailableCustomOptions($record))
             ->dynamic(FieldMapper::getOptionParameter($record, 'dynamic_prioritized'))
-            ->mutateSelectUsing(function (Select $select, $selectId) use ($labels, $selectLabelTranslation) {
-                $label = $selectId + 1 . ". " . $selectLabelTranslation;
-                if (array_key_exists($selectId, $labels)) {
-                    $label = $labels[$selectId]['label'] ?? '';
-                }
+            ->mutateSelectUsing(
+                function (Select $select, $selectId) use ($validationMessages, $labels, $selectLabelTranslation) {
+                    $label = $selectId + 1 . ". " . $selectLabelTranslation;
+                    if (array_key_exists($selectId, $labels)) {
+                        $label = $labels[$selectId]['label'] ?? '';
+                    }
 
-                return $select
-                    ->label($label);
-            });
+
+                    return $select
+                        ->validationMessages($validationMessages[$selectId] ?? [])
+                        ->label($label);
+                }
+            );
     }
 
 

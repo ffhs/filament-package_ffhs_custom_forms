@@ -210,6 +210,23 @@ return [
 //        'label' => 'Geordnet',
 //        'helper_text' => '',
 //    ],
+    'validation_messages_prioritized' => [
+        'label' => 'Validierungsnachrichten',
+        'helper_text' => '',
+        'add_label' => 'Validierungsnachricht erstellen',
+        'rule' => [
+            'label' => 'Validation Regel',
+            'helper_text' => 'Dieser Identifikator legt fest, für welche Validierungsregel die entsprechende Fehlermeldung angezeigt werden soll.',
+        ],
+        'select_id' => [
+            'label' => 'Prioritized ',
+            'helper_text' => '0 ist das Erste',
+        ],
+        'message' => [
+            'label' => 'Nachricht',
+            'helper_text' => '',
+        ],
+    ],
 
 
 ];
