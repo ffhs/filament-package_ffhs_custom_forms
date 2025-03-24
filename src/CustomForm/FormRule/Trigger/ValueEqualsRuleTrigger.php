@@ -16,7 +16,6 @@ use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Support\Colors\Color;
 use Illuminate\Support\Collection;
@@ -288,7 +287,7 @@ class ValueEqualsRuleTrigger extends FormRuleTriggerType
     protected function getBooleanTypeGroup(): Component
     {
         return Group::make([
-            Toggle::make("boolean")
+            Checkbox::make("boolean")
                 ->label("Auslössen wenn der Wert Ja ist") //ToDo Translate
                 ->columnSpanFull(),
         ]);
