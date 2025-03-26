@@ -28,11 +28,11 @@ class MaxValueOption extends TypeOption
 
     public function modifyFormComponent(Component $component, mixed $value): Component
     {
-        return $component; //ToDo Maby?
+        return $component->maxValue($value);
     }
 
     public function modifyInfolistComponent(InfolistComponent $component, mixed $value): InfolistComponent
     {
-        return $component; //ToDo Maby?
+        return $component;
     }
 }
