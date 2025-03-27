@@ -20,8 +20,10 @@ class FieldMapper
     {
         if ($record instanceof CustomFieldAnswer) $record = $record->customField;
         $label = $record->name;
+        $label = is_null($label) ? '' : $label;
+
         // if($label != "") $label .= ":"; ToDo can set or not
-        return is_null($label) ? '' : $label;
+        return str($label)->sanitizeHtml();
     }
 
     public static function getOptionParameter(

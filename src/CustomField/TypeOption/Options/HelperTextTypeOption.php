@@ -37,7 +37,13 @@ class HelperTextTypeOption extends TypeOption
 
     public function modifyFormComponent(Component $component, mixed $value): Component
     {
-        return $component->helperText($value ? new HtmlString($value) : null);
+        if (!empty($value)) {
+            $text = str($value)->sanitizeHtml();
+            $text = new HtmlString($text);
+            $component = $component->helperText($text);
+        }
+
+        return $component;
     }
 
     public function modifyInfolistComponent(InfolistComponent $component, mixed $value): InfolistComponent
