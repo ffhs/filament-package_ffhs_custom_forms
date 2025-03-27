@@ -118,6 +118,7 @@ class FileUploadType extends CustomFieldType
                         [
                             'application/pdf',
                             'image/jpeg',
+                            'image/jpg',
                             'image/png',
                         ],
                         TagsInput::make('allowed_type')
@@ -181,7 +182,7 @@ class FileUploadType extends CustomFieldType
                 $mimeType = $file->getMimeType();
 
                 // Do not save if even one of the submitted files mimetype does not match the accepted file types
-                if (!in_array($mimeType, $acceptedFileTypes)) {
+                if (!in_array($mimeType, $acceptedFileTypes, true)) {
                     $canSave = false;
                     $file->delete();
                 }
@@ -224,7 +225,7 @@ class FileUploadType extends CustomFieldType
         $data = $data ?? ['files' => []];
 
         if (is_string($data['files'] ?? null)) {
-            $data['files'] = [uniqid() => $data['files']];
+            $data['files'] = [uniqid('', true) => $data['files']];
         }
 
         foreach ($data['files'] ?? [] as $key => $file) {
