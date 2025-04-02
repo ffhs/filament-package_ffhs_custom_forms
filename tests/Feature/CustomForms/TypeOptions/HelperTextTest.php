@@ -113,7 +113,7 @@ test('field has helper text in component', function ($customFieldIdentifier, arr
         $checkNoOptionFunction,
         $checkOptionFunction
     );
-})->only()->with([
+})->with([
 //    //Generic Types
     [CheckboxType::identifier(), []],
     [ColorPickerType::identifier(), []],
