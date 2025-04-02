@@ -40,6 +40,8 @@
         grid-column: {{$gridColumn}} span min(var(--cols-parent), {{$getItemGridSize($key)}});
      "
 
+    wire:key="{{$getStatePath() . "." . $key}}"
+
     ax-load
     ax-load-src="{{FilamentAsset::getAlpineComponentSrc("element", "ffhs/filament-package_ffhs_drag-drop")}}"
     x-ignore

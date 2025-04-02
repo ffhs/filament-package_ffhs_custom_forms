@@ -7,7 +7,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\FieldTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Traits\HasDefaultViewComponent;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldMapper;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\PriorizedSelect;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\PrioritizeSelect;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Filament\Forms\Components\Component;
@@ -16,45 +16,70 @@ use Filament\Infolists\Components\TextEntry;
 
 class SelectTypeView implements FieldTypeView
 {
-    use HasCustomOptionInfoListView{
-        getInfolistComponent as getInfolistComponentNormalSelect;
+    use HasCustomOptionInfoListView {
+        HasCustomOptionInfoListView::getInfolistComponent as getInfolistComponentNormalSelect;
     }
     use HasDefaultViewComponent;
 
-    public static function getFormComponent(CustomFieldType $type, CustomField $record, array $parameter = []): Component {
+    public static function getFormComponent(
+        CustomFieldType $type,
+        CustomField $record,
+        array $parameter = []
+    ): Component {
+        $several = FieldMapper::getOptionParameter($record, 'several');
+        $prioritized = FieldMapper::getOptionParameter($record, 'prioritized');
 
-        $several = FieldMapper::getOptionParameter($record,'several');
-        $prioritized = FieldMapper::getOptionParameter($record,'prioritized');
-
-        if($several && $prioritized)
-            return self::getPrioritizedSelect($type, $record, $parameter);
-        else
+        if ($several && $prioritized) {
+            return self::getPrioritizedSelect($record, $parameter);
+        } else {
             return self::getSingleSelect($record);
+        }
     }
 
-    public static function getPrioritizedSelect(CustomFieldType $type, CustomField $record, array $parameter): Component|\Filament\Infolists\Components\Component
-    {
-        /**@var PriorizedSelect $select*/
-        $select = static::makeComponent(PriorizedSelect::class, $record);
+    public static function getPrioritizedSelect(
+        CustomField $record,
+        array $parameter
+    ): Component|\Filament\Infolists\Components\Component {
+        /**@var PrioritizeSelect $select */
+        $select = static::makeComponent(PrioritizeSelect::class, $record);
 
-        $selectLabelTranlsation = __('filament-package_ffhs_custom_forms::custom_forms.fields.type_view.select.select');
+        $selectLabelTranslation = __('filament-package_ffhs_custom_forms::custom_forms.fields.type_view.select.select');
+        $labels = FieldMapper::getOptionParameter($record, 'prioritized_labels');
+        $labels = array_values($labels);
+        $validationMessagesRaw = FieldMapper::getOptionParameter($record, 'validation_messages_prioritized');
+
+        $validationMessages = [];
+        foreach ($validationMessagesRaw as $message) {
+            $validationMessages[$message['select_id'] ?? ''][$message['rule'] ?? ''] = $message['message'] ?? '';
+        }
+
 
         return $select
-            ->minItems(FieldMapper::getOptionParameter($record,'min_select'))
-            ->maxItems(FieldMapper::getOptionParameter($record,'max_select'))
+            ->minItems(FieldMapper::getOptionParameter($record, 'min_select'))
+            ->maxItems(FieldMapper::getOptionParameter($record, 'max_select'))
             ->options(FieldMapper::getAvailableCustomOptions($record))
-            ->dynamic(FieldMapper::getOptionParameter($record,'dynamic_prioritized'))
-            ->mutateSelectUsing(function (Select $select, $selectId) use ($selectLabelTranlsation) {
-                return $select
-                    ->label($selectId+1 . ". " . $selectLabelTranlsation);
-            });
+            ->dynamic(FieldMapper::getOptionParameter($record, 'dynamic_prioritized'))
+            ->mutateSelectUsing(
+                function (Select $select, $selectId) use ($validationMessages, $labels, $selectLabelTranslation) {
+                    $label = $selectId + 1 . ". " . $selectLabelTranslation;
+                    if (array_key_exists($selectId, $labels)) {
+                        $label = $labels[$selectId]['label'] ?? '';
+                    }
+
+
+                    return $select
+                        ->validationMessages($validationMessages[$selectId] ?? [])
+                        ->label($label);
+                }
+            );
     }
 
 
     public static function getSingleSelect(CustomField $record): Select
     {
-        $select = static::makeComponent(Select::class, $record)
-            ->options(FieldMapper::getAvailableCustomOptions($record));
+        /** @var Select $select */
+        $select = static::makeComponent(Select::class, $record);
+        $select = $select->options(FieldMapper::getAvailableCustomOptions($record));
 
         if (FieldMapper::getOptionParameter($record, 'several')) {
             $maxItems = FieldMapper::getOptionParameter($record, 'max_select');
@@ -69,44 +94,45 @@ class SelectTypeView implements FieldTypeView
     }
 
 
+    public static function getInfolistComponent(
+        CustomFieldType $type,
+        CustomFieldAnswer $record,
+        array $parameter = []
+    ): \Filament\Infolists\Components\Component {
+        $several = FieldMapper::getOptionParameter($record, 'several');
+        $prioritized = FieldMapper::getOptionParameter($record, 'prioritized');
 
-    public static function getInfolistComponent(CustomFieldType $type, CustomFieldAnswer $record, array $parameter = []): \Filament\Infolists\Components\Component
-    {
-        $several = FieldMapper::getOptionParameter($record,'several');
-        $prioritized = FieldMapper::getOptionParameter($record,'prioritized');
-        if(!($several && $prioritized)){
+        if (!($several && $prioritized)) {
             return static::getInfolistComponentNormalSelect($type, $record, $parameter);
         }
 
-
-        $textEntry = TextEntry::make(FieldMapper::getIdentifyKey($record));
+        /**@var TextEntry $textEntry */
+        $textEntry = static::makeComponent(TextEntry::class, $record);
         $answer = FieldMapper::getAnswer($record) ?? [];
         $stateList = FieldMapper::getAllCustomOptions($record)
             ->filter(fn($value, $id) => in_array($id, $answer));
 
         $cleanedAnswers = [];
-        if(!is_array($answer)) $answer = [];
+        if (!is_array($answer)) $answer = [];
         foreach ($answer as $key => $value) {
-            if(!str_contains($key, "prioritized_")) continue;
-            if($value == null) continue;
-            $selectId = str_replace("prioritized_","",$key);
+            if (!str_contains($key, "prioritized_")) continue;
+            if ($value == null) continue;
+            $selectId = str_replace("prioritized_", "", $key);
 
             $name = $stateList->toArray()[$value] ?? "";
             $translatedSelect = __('filament-package_ffhs_custom_forms::custom_forms.fields.type_view.select.select');
-            $cleanedAnswers[$selectId] = $selectId+1 . ". ". $translatedSelect .": " . $name; //ToDo Translate
+            $cleanedAnswers[$selectId] = $selectId + 1 . ". " . $translatedSelect . ": " . $name; //ToDo Translate
         }
 
         ksort($cleanedAnswers, SORT_NUMERIC);
 
 
         return $textEntry
-            ->columnStart(FieldMapper::getOptionParameter($record,"new_line_option"))
-            ->label(FieldMapper::getLabelName($record))
+            ->state($cleanedAnswers)
+            ->listWithLineBreaks()
             ->columnSpanFull()
             ->inlineLabel()
-            ->listWithLineBreaks()
-            ->badge()
-            ->state($cleanedAnswers);
+            ->badge();
     }
 
 }

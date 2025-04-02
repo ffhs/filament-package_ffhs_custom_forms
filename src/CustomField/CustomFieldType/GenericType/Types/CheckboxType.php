@@ -5,33 +5,35 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Generi
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Types\Views\CheckboxTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\HasCustomTypePackageTranslation;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\DefaultLayoutTypeOptionGroup;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\LayoutOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\ValidationTypeOptionGroup;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\NewLineOption;
 
 class CheckboxType extends CustomFieldType
 {
     use HasCustomTypePackageTranslation;
 
-    public static function identifier(): string { return "checkbox"; }
+    public static function identifier(): string
+    {
+        return "checkbox";
+    }
 
-    public function viewModes(): array {
-        return  [
-            'default'  => CheckboxTypeView::class
+    public function viewModes(): array
+    {
+        return [
+            'default' => CheckboxTypeView::class,
         ];
     }
 
-    public function icon(): string {
-        return  "bi-check-square";
+    public function icon(): string
+    {
+        return "bi-check-square";
     }
 
     public function extraTypeOptions(): array
     {
         return [
-            DefaultLayoutTypeOptionGroup::make()
-                ->setTypeOptions([
-                    'new_line_option' => NewLineOption::make(),
-                ]),
+            LayoutOptionGroup::make()
+                ->removeTypeOption('column_span'),
             ValidationTypeOptionGroup::make(),
         ];
     }

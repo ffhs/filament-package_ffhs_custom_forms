@@ -16,13 +16,17 @@ class RadioTypeView implements FieldTypeView
     use HasCustomOptionInfoListViewWithBoolean;
     use HasDefaultViewComponent;
 
-    public static function getFormComponent(CustomFieldType $type, CustomField $record, array  $parameter = []): Component {
+    public static function getFormComponent(
+        CustomFieldType $type,
+        CustomField $record,
+        array $parameter = []
+    ): Component {
         $radio = static::makeComponent(Radio::class, $record)
-            ->columns(FieldMapper::getOptionParameter($record,"columns"))
-            ->inline(FieldMapper::getOptionParameter($record,"inline"));
+            ->inline(FieldMapper::getOptionParameter($record, "inline"));
 
-        if(FieldMapper::getOptionParameter($record,"boolean")) $radio->boolean();
-        else $radio->options(FieldMapper::getAvailableCustomOptions($record));
+        if (FieldMapper::getOptionParameter($record, "boolean")) {
+            $radio->boolean();
+        } else $radio->options(FieldMapper::getAvailableCustomOptions($record));
 
         return $radio;
     }

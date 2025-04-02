@@ -1,4 +1,4 @@
-import {findTarget, getAction, getAlpineData, getElementKey, getGroup, getParent, isElement} from "./get_values.js";
+import {getAction, getAlpineData, getElementKey, getGroup, getParent} from "./get_values.js";
 import {moveElementToOnOtherElement, updatePositions} from "./move_elements.js";
 
 function createTemporaryChild(group, key, target) {
@@ -39,15 +39,14 @@ export function handleDropAction(target, dragElement) {
     let isFlatten = targetParentData.flatten
     let $wire = targetParentData.wire
     let targetState = $wire.get(targetParentData.statePath, '')
-    if(Array.isArray(targetState)) targetState = {}
 
-    if(targetParent.getAttribute("disabled")) return;
+    if(Array.isArray(targetState)) targetState = {}
 
     let targetId = getElementKey(target);
 
     //Prepare stuff
     let temporaryKey = generateElementKey();
-    let temporaryChild = createTemporaryChild(group, temporaryKey, target);
+    createTemporaryChild(group, temporaryKey, target);
 
 
     // Clone State to find position without updating the real state
@@ -58,10 +57,11 @@ export function handleDropAction(target, dragElement) {
     let position = findPosition(isFlatten, cloneState, temporaryKey, targetParentData);
 
     //parent element of Target element (target is in an container)
-    let targetIn = null
-    let targetInId = null
-    if(isFlatten) targetIn = findTarget(temporaryChild.parentNode, (element) => isElement(element))
-    if(targetIn) targetInId = getElementKey(targetIn)
+
+    // let targetIn = null
+    // let targetInId = null
+    // if(isFlatten) targetIn = findTarget(temporaryChild.parentNode, (element) => isElement(element))
+    // if(targetIn) targetInId = getElementKey(targetIn)
 
     //run Action
     let action = getAction(dragElement)
@@ -70,15 +70,27 @@ export function handleDropAction(target, dragElement) {
     let toDoAction = action.split("'")[3]
 
 
-    if(targetParent.getAttribute("disabled")) return;
 
     let metaData =  {
         targetPath:targetParentData.statePath,
         position:position,
         flatten:isFlatten,
-        targetIn:targetInId,
-        target:targetId
+        // targetIn:targetInId,
+        target:targetId,
+        stateWithField: cloneState,
+        temporaryKey: temporaryKey,
+        state: JSON.parse(JSON.stringify(targetState))
     };
 
+    Object.keys(cloneState).forEach(key => {
+        console.log(key, cloneState[key]["form_position"]);
+    });
+    Object.keys(targetState).forEach(key => {
+        console.log(key, targetState[key]["form_position"]);
+    });
+
+    // console.log(JSON.parse(JSON.stringify(targetState)))
+    // console.log(cloneState)
+    if(targetParent.getAttribute("disabled")) return;
     $wire.mountFormComponentAction(toActionPath, toDoAction, metaData);
 }

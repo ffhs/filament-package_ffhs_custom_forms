@@ -13,18 +13,21 @@ use Filament\Infolists\Components\Fieldset;
 class WizardStepEggTypeView implements FieldTypeView
 {
 
-    public static function getFormComponent(CustomFieldType $type, CustomField $record,
-                                            array           $parameter = []): \Filament\Forms\Components\Component {
-
+    public static function getFormComponent(
+        CustomFieldType $type,
+        CustomField $record,
+        array $parameter = []
+    ): \Filament\Forms\Components\Component {
         return Wizard\Step::make(FieldMapper::getLabelName($record))
-            ->columns(FieldMapper::getOptionParameter($record,"columns"))
-            ->icon(FieldMapper::getOptionParameter($record,"icon"))
             ->description(FieldMapper::getOptionParameter($record, "helper_text"))
             ->schema($parameter["rendered"]);
     }
 
-    public static function getInfolistComponent(CustomFieldType $type, CustomFieldAnswer $record,
-                                                array           $parameter = []): \Filament\Infolists\Components\Component {
+    public static function getInfolistComponent(
+        CustomFieldType $type,
+        CustomFieldAnswer $record,
+        array $parameter = []
+    ): \Filament\Infolists\Components\Component {
         return Fieldset::make(FieldMapper::getLabelName($record))
             ->schema($parameter["rendered"])
             ->columnStart(1)

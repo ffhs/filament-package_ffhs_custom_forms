@@ -14,7 +14,6 @@ return new class () extends Migration {
      */
     public function up()
     {
-
         Schema::create('form_rules', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(CustomForm::class)->constrained()->cascadeOnDelete();
@@ -22,17 +21,17 @@ return new class () extends Migration {
 
             $table->timestamps();
         });
-        
+
         Schema::create('general_field_form', function (Blueprint $table) {
-           $table->id();
-        
-           $table->foreignId("general_field_id")->constrained();
-           $table->string("custom_form_identifier");
-        
-           $table->boolean("is_required")->default(false);
-           $table->boolean("export")->default(false);
-        
-           $table->timestamps();
+            $table->id();
+
+            $table->foreignId("general_field_id")->constrained()->cascadeOnDelete();
+            $table->string("custom_form_identifier");
+
+            $table->boolean("is_required")->default(false);
+            $table->boolean("export")->default(false);
+
+            $table->timestamps();
         });
     }
 

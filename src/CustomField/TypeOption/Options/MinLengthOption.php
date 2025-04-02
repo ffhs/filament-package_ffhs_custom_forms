@@ -3,23 +3,35 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\TypeOption;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\TypeOptionPluginTranslate;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\TextInput;
+use Filament\Infolists\Components\Component as InfolistComponent;
 
 class MinLengthOption extends TypeOption
 {
-    use TypeOptionPluginTranslate;
-    public function getDefaultValue(): int {
+    public function getDefaultValue(): int
+    {
         return 0;
     }
 
-    public function getComponent(string $name): Component {
+    public function getComponent(string $name): Component
+    {
         return
             TextInput::make($name)
-                ->label($this->translate("min_length"))
+                ->label(TypeOption::__('min_length.label'))
+                ->helperText(TypeOption::__('min_length.helper_text'))
                 ->step(1)
                 ->required()
                 ->integer();
+    }
+
+    public function modifyFormComponent(Component $component, mixed $value): Component
+    {
+        return $component->minLength($value);
+    }
+
+    public function modifyInfolistComponent(InfolistComponent $component, mixed $value): InfolistComponent
+    {
+        return $component;
     }
 }

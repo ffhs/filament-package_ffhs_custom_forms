@@ -14,6 +14,7 @@ class EditCustomFields extends DragDropComponent
     /**
      * @param $form_position
      * @param $state
+     *
      * @return int|null
      */
 //    function getMaxGridSizeFromField($form_position, $state): ?int
@@ -31,8 +32,8 @@ class EditCustomFields extends DragDropComponent
 //        }
 //        return $maxSize;
 //    }
-    protected function setUp(): void {
-
+    protected function setUp(): void
+    {
         $this->label("");
 
         $this->flatten();
@@ -41,83 +42,78 @@ class EditCustomFields extends DragDropComponent
         $this->gridSize(config("ffhs_custom_forms.default_column_count"));
         $this->nestedFlattenListType(CustomField::class);
 
-        $this->itemGridSize(function ($itemState){
-               $size = $itemState['options']['column_span'] ?? null;
-               $maxSize = 12;
-               if(!empty($size)) return $size > $maxSize? $maxSize :$size;
-               $type = CustomFieldUtils::getFieldTypeFromRawDate($itemState);
-               if(!$type->isFullSizeField()) return 1;
-              // dump($maxSize);
-               return $maxSize;
+        $this->itemGridSize(function ($itemState) {
+            $size = $itemState['options']['column_span'] ?? null;
+            $maxSize = 12;
+            if (!empty($size)) return $size > $maxSize ? $maxSize : $size;
+            $type = CustomFieldUtils::getFieldTypeFromRawDate($itemState);
+            if (!$type->isFullSizeField()) return 1;
+            // dump($maxSize);
+            return $maxSize;
         });
 
 
-        $this->itemGridStart(function ($itemState){
-           if(empty($itemState['options'])) return null;
-           $newLineOption = $itemState['options']['new_line_option'] ?? false;
-           return $newLineOption ? 1: null;
-       });
+        $this->itemGridStart(function ($itemState) {
+            if (empty($itemState['options'])) return null;
+            $newLineOption = $itemState['options']['new_line'] ?? false;
+            return $newLineOption ? 1 : null;
+        });
 
-      $this->flattenGrid(function ($itemState){
-          $columns = $itemState['options']['columns'] ?? null;
-          if (!empty($columns)) return $columns;
-          $type = CustomFieldUtils::getFieldTypeFromRawDate($itemState);
-          if(is_null($type)) return $this->getGridSize();
-          return $type->getStaticColumns();
-      });
+        $this->flattenGrid(function ($itemState) {
+            $columns = $itemState['options']['columns'] ?? null;
+            if (!empty($columns)) return $columns;
+            $type = CustomFieldUtils::getFieldTypeFromRawDate($itemState);
+            if (is_null($type)) return $this->getGridSize();
+            return $type->getStaticColumns();
+        });
 
-       $this->flattenViewHidden(function ($itemState){
-           $type = CustomFieldUtils::getFieldTypeFromRawDate($itemState);
-           return is_null($type) || is_null($type->fieldEditorExtraComponent($itemState));
-       });
+        $this->flattenViewHidden(function ($itemState) {
+            $type = CustomFieldUtils::getFieldTypeFromRawDate($itemState);
+            return is_null($type) || is_null($type->fieldEditorExtraComponent($itemState));
+        });
 
-        $this->flattenView(function ($itemState){
+        $this->flattenView(function ($itemState) {
             $type = CustomFieldUtils::getFieldTypeFromRawDate($itemState);
             return $type->fieldEditorExtraComponent($itemState);
         });
 
 
-        $this->itemLabel(function ($itemState){
+        $this->itemLabel(function ($itemState) {
             $type = CustomFieldUtils::getFieldTypeFromRawDate($itemState);
-            if(is_null($type)) return null;
+            if (is_null($type)) return null;
             return $type->getEditorFieldTitle($itemState);
         });
-        $this->itemIcons(function ($itemState){
+        $this->itemIcons(function ($itemState) {
             $type = CustomFieldUtils::getFieldTypeFromRawDate($itemState);
-            if(is_null($type)) return null;
+            if (is_null($type)) return null;
             return $type->getEditorFieldIcon($itemState);
         });
         $this->flattenViewLabel("Felder"); //ToDo Translate
 
 
-        $this->itemActions(function ($itemState, $item){
+        $this->itemActions(function ($itemState, $item) {
             $type = CustomFieldUtils::getFieldTypeFromRawDate($itemState);
-            if(is_null($type)) return [];
+            if (is_null($type)) return [];
             return $type->getEditorActions($item, $itemState); //i think it doesnt need the key
         });
 
 
-
         $this->schema([
             Group::make()
-                ->schema(fn($record, $state)=> [
-                    TextInput::make('name.'. $record->getLocale())
+                ->schema(fn($record, $state) => [
+                    TextInput::make('name.' . $record->getLocale())
                         ->label("")
                         ->visible(function () use ($state) {
                             $type = CustomFieldUtils::getFieldTypeFromRawDate($state);
                             return !is_null($type) && $type->hasEditorNameElement($state);
-                        })
-                ])
+                        }),
+                ]),
         ]);
-
-
     }
-
 
 
     private function getGridColumns($itemState): ?int
     {
-
     }
 
 }

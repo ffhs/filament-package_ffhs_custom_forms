@@ -15,21 +15,23 @@ class CheckboxTypeView implements FieldTypeView
 {
     use HasDefaultViewComponent;
 
-    public static function getFormComponent(CustomFieldType $type, CustomField $record, array $parameter = []): Checkbox {
-        return Checkbox::make(FieldMapper::getIdentifyKey($record))
-            ->columnStart(FieldMapper::getOptionParameter($record,"new_line_option"))
-            ->inlineLabel(FieldMapper::getOptionParameter($record,"in_line_label"))
-            ->inlineLabel(FieldMapper::getOptionParameter($record,"helper_text"))
-            ->label(FieldMapper::getLabelName($record))
-;
+    public static function getFormComponent(CustomFieldType $type, CustomField $record, array $parameter = []): Checkbox
+    {
+        /**@var $checkbox Checkbox */
+        $checkbox = static::makeComponent(Checkbox::class, $record);
+        return $checkbox;
     }
 
-    public static function getInfolistComponent(CustomFieldType $type, CustomFieldAnswer $record,
-                                                array           $parameter = []): IconEntry {
-        return IconEntry::make(FieldMapper::getIdentifyKey($record))
-            ->columnStart(FieldMapper::getOptionParameter($record,"new_line_option"))
-            ->state(is_null(FieldMapper::getAnswer($record))? false : FieldMapper::getAnswer($record))
-            ->label(FieldMapper::getLabelName($record))
+    public static function getInfolistComponent(
+        CustomFieldType $type,
+        CustomFieldAnswer $record,
+        array $parameter = []
+    ): IconEntry {
+        /**@var $iconEntry IconEntry */
+        $iconEntry = static::makeComponent(IconEntry::class, $record);
+
+        return $iconEntry
+            ->state(is_null(FieldMapper::getAnswer($record)) ? false : FieldMapper::getAnswer($record))
             ->columnSpanFull()
             ->inlineLabel()
             ->boolean();

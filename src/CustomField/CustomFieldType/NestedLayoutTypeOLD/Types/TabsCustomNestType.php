@@ -7,35 +7,39 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\NestedLayout
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\NestedLayoutTypeOLD\CustomNestLayoutType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldType\NestedLayoutType\Types\Views\TabsNestTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\ShowAsFieldsetOption;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\ShowTitleOption;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\ShowLabelOption;
 
 class TabsCustomNestType extends CustomNestLayoutType
 {
     use HasCustomTypePackageTranslation;
 
-    public static function identifier(): string {
+    public static function identifier(): string
+    {
         return "tabs";
     }
 
-    public function viewModes(): array {
-        return  [
-          'default'=> TabsNestTypeView::class,
-        ];
-    }
-
-    protected function extraOptionsAfterBasic(): array {
+    public function viewModes(): array
+    {
         return [
-          'show_title' => new ShowTitleOption(),
-          'show_as_fieldset' => new ShowAsFieldsetOption()
+            'default' => TabsNestTypeView::class,
         ];
     }
 
-
-    public function icon(): string {
-       return "carbon-new-tab";
+    public function icon(): string
+    {
+        return "carbon-new-tab";
     }
 
-    public function getEggType(): CustomEggLayoutType {
+    public function getEggType(): CustomEggLayoutType
+    {
         return new CustomTabCustomEggType();
+    }
+
+    protected function extraOptionsAfterBasic(): array
+    {
+        return [
+            'show_label' => ShowLabelOption::make(),
+            'show_as_fieldset' => new ShowAsFieldsetOption(),
+        ];
     }
 }

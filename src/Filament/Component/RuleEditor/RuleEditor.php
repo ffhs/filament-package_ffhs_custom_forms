@@ -2,7 +2,6 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\RuleEditor;
 
-use Barryvdh\Debugbar\Facades\Debugbar;
 use Closure;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\DragDrop\DragDropComponent;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\Rules\Event\EventType;
@@ -20,6 +19,7 @@ class RuleEditor extends Group
     protected array|Closure|null $triggers;
     protected Closure|array|null $events;
 
+    //  ToDo check if fill bug if fixable with    $component->getChildComponentContainer($newUuid ?? array_key_last($items))->fill();
 
     protected function setUp(): void
     {
@@ -78,7 +78,55 @@ class RuleEditor extends Group
 
     }
 
+    public function triggers(array|Closure|null $triggers): static
+    {
+        $this->triggers = $triggers;
+        return $this;
+    }
 
+    public function events(array|Closure|null $events): static
+    {
+        $this->events = $events;
+        return $this;
+    }
+
+    private function getRemoveAction(): Action
+    {
+        return Action::make("remove_")
+            ->icon("heroicon-c-trash")
+            ->iconButton()
+            ->color(Color::Red)
+            ->action(function($arguments, $component, $get, $set){
+                $key = $arguments["item"];
+
+                //Delete Structure
+                $path =  explode('.', $component->getStatePath());
+                $path = '../' . $path[count($path)-1];
+                $state = $get($path);
+
+                unset($state[$key]);
+
+                $set($path, $state);
+        });
+    }
+
+    protected function getEventAddAction(): Action
+    {
+        return Action::make('addEvent')
+            ->icon("heroicon-o-play-circle")
+            ->label("Ausführung") //ToDo Translate
+            ->action($this->addEvent(...))
+            ->link();
+    }
+
+    protected function getTriggerAddAction(): Action
+    {
+        return Action::make('addTrigger')
+            ->icon("tabler-circuit-switch-open")
+            ->label("Auslöser") //ToDo Translate
+            ->action($this->addTrigger(...))
+            ->link();
+    }
 
     protected function getTriggerDropComponent(): DragDropComponent
     {
@@ -117,41 +165,28 @@ class RuleEditor extends Group
             ]);
     }
 
-    protected function getTriggerOptions(): array
+    protected function getTriggerInvertAction(): Action
     {
-        return collect($this->getTriggers())
-            ->map(fn(TriggerType $trigger) => [
-                    'identifier' => $trigger::identifier(),
-                    'label' => $trigger->getDisplayName(),
-                ])
-            ->pluck('label', 'identifier')
-            ->toArray();
+        return Action::make("invert")
+            ->action($this->invertTrigger(...))
+            ->tooltip("Invertieren") //ToDo Translate
+            ->label("")
+            ->link()
+            ->icon(function($get, $arguments){
+                if($get($arguments["item"].".is_inverted"))
+                    return"carbon-warning-alt-inverted-filled";
+                else
+                    return "tabler-triangle-inverted";
+            });
     }
 
-    protected function getTriggerAddAction(): Action
+    public function getTrigger($type): TriggerType
     {
-        return Action::make('addTrigger')
-            ->icon("tabler-circuit-switch-open")
-            ->label("Auslöser") //ToDo Translate
-            ->action($this->addTrigger(...))
-            ->link();
+        return collect($this->getTriggers())->filter(fn(TriggerType $event) => $event::identifier() === $type)->first();
     }
 
-    protected function addTrigger ($set, $get, $arguments): void {
-            $path = $arguments['item'] . '.triggers';
-            $triggers = $get($path);
-            if(is_null($triggers)) $triggers = [];
-            $triggers[uniqid()] = ['order' => 1, 'is_inverted' => false];
-            $set($path, $triggers);
 
-
-
-        Notification::make()
-            ->title('Auslöser hinzugefügt') //toDo Translate
-            ->icon("tabler-circuit-switch-open")
-            ->send();
-        }
-
+    //Events
 
     /**
      * @return TriggerType[]
@@ -171,60 +206,6 @@ class RuleEditor extends Group
 
         return  $finalTypes;
     }
-
-    public function triggers(array|Closure|null $triggers): static
-    {
-        $this->triggers = $triggers;
-        return $this;
-    }
-
-
-    protected function getTriggerInvertAction(): Action
-    {
-        return Action::make("invert")
-            ->action($this->invertTrigger(...))
-            ->tooltip("Invertieren") //ToDo Translate
-            ->label("")
-            ->link()
-            ->icon(function($get, $arguments){
-                if($get($arguments["item"].".is_inverted"))
-                    return"carbon-warning-alt-inverted-filled";
-                else
-                    return "tabler-triangle-inverted";
-            });
-    }
-
-    protected function invertTrigger ($set, $get, $arguments): void {
-        $trigger = $get($arguments['item']);
-        $trigger["is_inverted"] = !($trigger["is_inverted"] ?? false);
-        $set($arguments['item'], $trigger);
-    }
-
-
-    //Events
-    protected function getEventAddAction(): Action
-    {
-        return Action::make('addEvent')
-            ->icon("heroicon-o-play-circle")
-            ->label("Ausführung") //ToDo Translate
-            ->action($this->addEvent(...))
-            ->link();
-    }
-
-    protected function addEvent ($set, $get, $arguments): void
-    {
-        $path = $arguments['item'] . '.events';
-        $events = $get($path);
-        if (is_null($events)) $events = [];
-        $events[uniqid()] = ['order' => 1];
-        $set($path, $events);
-
-        Notification::make()
-            ->title('Aktion hinzugefügt') //toDo Translate
-            ->icon("heroicon-o-play-circle")
-            ->send();
-    }
-
 
     public function getEventDropComponent(): DragDropComponent
     {
@@ -265,6 +246,10 @@ class RuleEditor extends Group
             ]);
     }
 
+    public function getEvent($type): EventType
+    {
+        return collect($this->getEvents())->filter(fn(EventType $event) => $event::identifier() === $type)->first();
+    }
 
     public function getEvents(): array
     {
@@ -281,12 +266,51 @@ class RuleEditor extends Group
         return  $finalTypes;
     }
 
-    public function events(array|Closure|null $events): static
+    protected function getTriggerOptions(): array
     {
-        $this->events = $events;
-        return $this;
+        return collect($this->getTriggers())
+            ->map(fn(TriggerType $trigger) => [
+                    'identifier' => $trigger::identifier(),
+                    'label' => $trigger->getDisplayName(),
+                ])
+            ->pluck('label', 'identifier')
+            ->toArray();
     }
 
+    protected function addTrigger ($set, $get, $arguments): void {
+            $path = $arguments['item'] . '.triggers';
+            $triggers = $get($path);
+            if(is_null($triggers)) $triggers = [];
+            $triggers[uniqid()] = ['order' => 1, 'is_inverted' => false];
+            $set($path, $triggers);
+
+
+
+        Notification::make()
+            ->title('Auslöser hinzugefügt') //toDo Translate
+            ->icon("tabler-circuit-switch-open")
+            ->send();
+        }
+
+    protected function invertTrigger ($set, $get, $arguments): void {
+        $trigger = $get($arguments['item']);
+        $trigger["is_inverted"] = !($trigger["is_inverted"] ?? false);
+        $set($arguments['item'], $trigger);
+    }
+
+    protected function addEvent ($set, $get, $arguments): void
+    {
+        $path = $arguments['item'] . '.events';
+        $events = $get($path);
+        if (is_null($events)) $events = [];
+        $events[uniqid()] = ['order' => 1];
+        $set($path, $events);
+
+        Notification::make()
+            ->title('Aktion hinzugefügt') //toDo Translate
+            ->icon("heroicon-o-play-circle")
+            ->send();
+    }
 
     protected function getEventOptions(): array
     {
@@ -296,36 +320,6 @@ class RuleEditor extends Group
                 'label' => $events->getDisplayName(),
             ])->pluck('label', 'identifier')
             ->toArray();
-    }
-
-    public function getTrigger($type): TriggerType
-    {
-        return collect($this->getTriggers())->filter(fn(TriggerType $event) => $event::identifier() === $type)->first();
-    }
-
-    public function getEvent($type): EventType
-    {
-        return collect($this->getEvents())->filter(fn(EventType $event) => $event::identifier() === $type)->first();
-    }
-
-    private function getRemoveAction(): Action
-    {
-        return Action::make("remove_")
-            ->icon("heroicon-c-trash")
-            ->iconButton()
-            ->color(Color::Red)
-            ->action(function($arguments, $component, $get, $set){
-                $key = $arguments["item"];
-
-                //Delete Structure
-                $path =  explode('.', $component->getStatePath());
-                $path = '../' . $path[count($path)-1];
-                $state = $get($path);
-
-                unset($state[$key]);
-
-                $set($path, $state);
-        });
     }
 
 

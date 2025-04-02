@@ -6,6 +6,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomOption
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomOption\Types\ToggleButtonsType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Types\CheckboxType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Types\ColorPickerType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Types\DateRangeType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Types\DateTimeType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Types\DateType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Types\EmailType;
@@ -24,6 +25,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\LayoutType\T
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\LayoutType\Types\SpaceType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\LayoutType\Types\TextLayoutType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\LayoutType\Types\TitleType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\SplittedType\Types\RepeaterLayoutType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\TemplatesType\TemplateFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Events\ChangeOptionsEvent;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Events\DisabledEvent;
@@ -90,6 +92,7 @@ return [
         CheckboxType::class,
         DateTimeType::class,
         DateType::class,
+        DateRangeType::class,
         FileUploadType::class,
 
         TagsType::class,
@@ -105,6 +108,7 @@ return [
         ToggleButtonsType::class,
 
         SectionType::class,
+        RepeaterLayoutType::class,
         FieldsetType::class,
         GroupType::class,
         TitleType::class,
@@ -127,6 +131,7 @@ return [
         TextAreaType::class,
         DateTimeType::class,
         DateType::class,
+        DateRangeType::class,
         FileUploadType::class,
 
         TagsType::class,
@@ -142,6 +147,7 @@ return [
         ToggleButtonsType::class,
 
         SectionType::class,
+        RepeaterLayoutType::class,
         FieldsetType::class,
         GroupType::class,
         TitleType::class,
@@ -162,6 +168,7 @@ return [
         TextAreaType::class,
         DateTimeType::class,
         DateType::class,
+        DateRangeType::class,
 
         TagsType::class,
         KeyValueType::class,

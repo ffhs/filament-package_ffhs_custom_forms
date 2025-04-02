@@ -3,10 +3,10 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Trigger;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomOption\CustomOptionType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\HasFormTargets;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\RuleTrigger;
+use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasTriggerEventFormTargets;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Component;
@@ -16,35 +16,32 @@ use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Support\Colors\Color;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\HtmlString;
 
 class ValueEqualsRuleTrigger extends FormRuleTriggerType
 {
-    use HasFormTargets;
+    use HasTriggerEventFormTargets;
 
-    public static function identifier(): string {
-        return "value_equals_anchor";
-    }
-
-    public function prepareComponent(Component|\Filament\Infolists\Components\Component $component, RuleTrigger $trigger): Component|\Filament\Infolists\Components\Component
-    {
-        if($component instanceof Component)
+    public function prepareComponent(
+        Component|\Filament\Infolists\Components\Component $component,
+        RuleTrigger $trigger
+    ): Component|\Filament\Infolists\Components\Component {
+        if ($component instanceof Component) {
             return $component->live();
-        else return $component;
+        } else return $component;
     }
-
 
     public function isTrigger(array $arguments, mixed &$target, RuleTrigger $rule): bool
     {
-        if(!key_exists("state",$arguments)) return false;
+        if (!key_exists("state", $arguments)) return false;
 
-        if(empty($rule->data)) return false;
-        if(empty($rule->data["target"])) return false;
-        if(empty($rule->data["type"])) return false;
+        if (empty($rule->data)) return false;
+        if (empty($rule->data["target"])) return false;
+        if (empty($rule->data["type"])) return false;
 
         $targetFieldIdentifyer = $rule->data["target"];
         $state = $arguments["state"];
@@ -59,7 +56,76 @@ class ValueEqualsRuleTrigger extends FormRuleTriggerType
             "option" => $this->checkOption($targetValue, $rule->data),
             default => false,
         };
+    }
 
+    protected function checkNumber(mixed $targetValue, array $data): bool
+    {
+        $value = floatval($targetValue);
+        if ($data["exactly_number"]) return $data[" number"] == $value;
+
+        if (!empty($data["greater_than"])) {
+            if ($data["greater_equals"] && !($value >= $data["greater_than"])) return false;
+            if (!$data["greater_equals"] && !($value > $data["greater_than"])) return false;
+        }
+
+        if (!empty($data["smaller_than"])) {
+            if ($data["smaller_equals"] && !($value <= $data["smaller_than"])) return false;
+            if (!$data["smaller_equals"] && !($value < $data["smaller_than"])) return false;
+        }
+
+        return true;
+    }
+
+    protected function checkText(mixed $targetValue, array $data): bool
+    {
+        if (!is_string($targetValue)) return false;
+        if (empty($data["values"])) return false;
+
+        foreach ($data["values"] as $value) {
+            if (fnmatch($value, $targetValue)) return true;
+        }
+
+        return false;
+    }
+
+    protected function checkBoolean(mixed $targetValue, array $data): bool
+    {
+        if (is_null($targetValue)) return false;
+        if (!empty($data["boolean"])) {
+            $boolean = $data["boolean"];
+        } else $boolean = false;
+        return $targetValue == $boolean;
+    }
+
+    private function checkNull(mixed $targetValue): bool
+    {
+        if (is_null($targetValue)) return true;
+        if (is_bool($targetValue)) return false;
+        if ($targetValue == "0") return false;
+        return empty($targetValue);
+    }
+
+    protected function checkOption(mixed $targetValue, array $data): bool
+    {
+        if (empty($data)) {
+            return false;
+        }
+
+        $includeNull = $data['selected_include_null'] ?? false;
+        if ($includeNull && empty($targetValue)) {
+            return true;
+        }
+
+        if (empty($data['selected_options'])) {
+            return false;
+        }
+
+        //Custom Option Types like Select
+        $options = $data['selected_options'];
+        if (is_array($targetValue)) {
+            return sizeof(array_intersect($targetValue, $options)) > 0;
+        }
+        return !is_null($targetValue) && in_array($targetValue, $options, true);
     }
 
     public function getDisplayName(): string
@@ -80,33 +146,34 @@ class ValueEqualsRuleTrigger extends FormRuleTriggerType
                     "text" => "Text",
                     "boolean" => "Boolean",
                     "null" => "Leer",
-                    "option" => "Optionen"
+                    "option" => "Optionen",
                 ])
-               ->disableOptionWhen(function($value, $get) { //make Better
-                    if($value != "option") return false;
+                ->disableOptionWhen(function ($value, $get) { //make Better
+                    if ($value != "option") return false;
                     $target = $get("target");
-                    $formState = $get("../../../../../custom_fields")??[];
+                    $formState = $get("../../../../../custom_fields") ?? [];
                     $customField = [];
                     foreach ($formState as $field) {
                         $customField = new CustomField();
                         $customField->fill($field);
-                        if($customField->identifier() != $target) $customField = null;
-                        else break;
+                        if ($customField->identifier() != $target) {
+                            $customField = null;
+                        } else break;
                     }
 
 
-                    if(empty($customField)) return true;
+                    if (empty($customField)) return true;
                     return !($customField->getType() instanceof CustomOptionType);
                 })
                 ->afterStateUpdated(function ($get, $set, $old) {
-                     if($old == "option") $set("selected_options",[]);
+                    if ($old == "option") $set("selected_options", []);
 
-                     switch ($get("type")) {
+                    switch ($get("type")) {
                         case"text":
-                            $set("values",[]);
+                            $set("values", []);
                             break;
                         case"option":
-                            $set("selected_options",[]);
+                            $set("selected_options", []);
                             break;
                     }
                 })
@@ -122,34 +189,28 @@ class ValueEqualsRuleTrigger extends FormRuleTriggerType
                 ->visible(fn($get) => $get("type") == "number")
                 ->live(),
             $this->getBooleanTypeGroup()
-                ->visible(fn($get) =>  $get("type") == "boolean")
+                ->visible(fn($get) => $get("type") == "boolean")
                 ->live(),
             $this->getOptionTypeGroup()
-                ->visible(fn($get) =>  $get("type") == "option")
+                ->visible(fn($get) => $get("type") == "option")
                 ->live(),
         ];
     }
+
+    public static function identifier(): string
+    {
+        return "value_equals_anchor";
+    }
+
     protected function getTextTypeGroup(): Component
     {
         return Group::make([
             TagsInput::make("values")
                 ->reorderable(false)
                 ->columnSpanFull()
-                ->label("")
+                ->label(""),
         ]);
     }
-    protected function checkText(mixed $targetValue, array $data): bool
-    {
-        if(!is_string($targetValue)) return false;
-        if(empty($data["values"])) return false;
-
-        foreach($data["values"] as $value){
-            if(fnmatch($value, $targetValue)) return true;
-        }
-
-        return false;
-    }
-
 
     protected function getNumberTypeGroup(): Component
     {
@@ -162,13 +223,13 @@ class ValueEqualsRuleTrigger extends FormRuleTriggerType
 
             TextInput::make("number")
                 ->prefixIcon("carbon-character-whole-number")
-                ->visible(fn($get)=> $get("exactly_number"))
+                ->visible(fn($get) => $get("exactly_number"))
                 ->label("Nummer")
                 ->required()
                 ->numeric(),
 
             Group::make()
-                ->hidden(fn($get)=> $get("exactly_number"))
+                ->hidden(fn($get) => $get("exactly_number"))
                 ->columns(5)
                 ->columnSpanFull()
                 ->schema([
@@ -180,22 +241,36 @@ class ValueEqualsRuleTrigger extends FormRuleTriggerType
 
                     TextInput::make("greater_than")
                         ->label("Grösser als") //ToDo Translate
-                        ->suffixAction(Action::make("greater_equals_action")
-                            ->action(fn($set, $get) => $set("greater_equals", !($get("greater_equals")??false)))
-                            ->color(Color::hex("#000000"))
-                            ->icon(fn($get)=> $get("greater_equals")?"tabler-math-equal-lower":"tabler-math-lower")
+                        ->suffixAction(
+                            Action::make("greater_equals_action")
+                                ->action(fn($set, $get) => $set("greater_equals", !($get("greater_equals") ?? false)))
+                                ->color(Color::hex("#000000"))
+                                ->icon(
+                                    fn($get) => $get("greater_equals") ? "tabler-math-equal-lower" : "tabler-math-lower"
+                                )
                         )
                         ->columnStart(1)
                         ->columnSpan(2)
                         ->numeric(),
                     Placeholder::make("")
-                        ->content(fn()=>new HtmlString(Blade::render("<div class='flex flex-col items-center justify-center'><br><x-bi-input-cursor style='height: auto; width: 40px'/></div>"))) //ToDo Translate
+                        ->content(
+                            fn() => new HtmlString(
+                                Blade::render(
+                                    "<div class='flex flex-col items-center justify-center'><br><x-bi-input-cursor style='height: auto; width: 40px'/></div>"
+                                )
+                            )
+                        ) //ToDo Translate
                         ->label(" "),
                     TextInput::make("smaller_than")
-                        ->prefixAction(Action::make("smaller_than_action")
-                            ->action(fn($set, $get) => $set("smaller_equals", !($get("smaller_equals")??false)))
-                            ->color(Color::hex("#000000"))
-                            ->icon(fn($get)=> $get("smaller_equals")?"tabler-math-equal-greater":"tabler-math-greater")
+                        ->prefixAction(
+                            Action::make("smaller_than_action")
+                                ->action(fn($set, $get) => $set("smaller_equals", !($get("smaller_equals") ?? false)))
+                                ->color(Color::hex("#000000"))
+                                ->icon(
+                                    fn($get) => $get(
+                                        "smaller_equals"
+                                    ) ? "tabler-math-equal-greater" : "tabler-math-greater"
+                                )
                         )
                         ->label("Kleiner als") //ToDo Translate
                         ->columnStart(4)
@@ -203,95 +278,32 @@ class ValueEqualsRuleTrigger extends FormRuleTriggerType
                         ->numeric(),
                 ]),
             Placeholder::make("")
-                ->content(fn()=>"Feld leer lassen, damit keine Abfrage ausgeführt wird") //ToDo Translate
+                ->content(fn() => "Feld leer lassen, damit keine Abfrage ausgeführt wird") //ToDo Translate
                 ->columnSpanFull()
                 ->label(""),
         ]);
     }
+
     protected function getBooleanTypeGroup(): Component
     {
         return Group::make([
-            Toggle::make("boolean")
+            Checkbox::make("boolean")
                 ->label("Auslössen wenn der Wert Ja ist") //ToDo Translate
-                ->columnSpanFull()
+                ->columnSpanFull(),
         ]);
-    }
-
-    protected function checkBoolean(mixed $targetValue, array $data): bool
-    {
-        if(is_null($targetValue)) return false;
-        if(!empty($data["boolean"])) $boolean = $data["boolean"];
-        else $boolean = false;
-        return $targetValue == $boolean;
-    }
-    protected function checkNumber(mixed $targetValue, array $data): bool
-    {
-        $value = floatval($targetValue);
-        if($data["exactly_number"]) return $data[" number"] == $value;
-
-        if(!empty($data["greater_than"])){
-            if($data["greater_equals"] && !($value >= $data["greater_than"])) return false;
-            if(!$data["greater_equals"] && !($value > $data["greater_than"])) return false;
-        }
-
-        if(!empty($data["smaller_than"])){
-            if($data["smaller_equals"] && !($value <= $data["smaller_than"])) return false;
-            if(!$data["smaller_equals"] && !($value < $data["smaller_than"])) return false;
-        }
-
-        return true;
     }
 
     protected function getOptionTypeGroup(): Component
     {
-        return  Select::make("selected_options")
-            ->columnSpanFull()
-            ->multiple()
-            ->options(function ($get, CustomForm $record) {
-                $finalField = self::getTargetFieldData($get);
-                if(is_null($finalField)) return [];
+        return Group::make([
+            Checkbox::make("selected_include_null")
+                ->label('Null inklusive'), //ToDo Tranlsate
 
-
-                if(array_key_exists("general_field_id",$finalField) && !is_null($finalField["general_field_id"])){
-                    //GeneralFields
-                    $genField = (new CustomField())->fill($finalField)->generalField;
-
-                    if(!array_key_exists("options",$finalField)) return [];
-                    if(!array_key_exists("customOptions",$finalField["options"])) return [];
-                    $options = collect($finalField["options"]["customOptions"]);
-
-                    return $genField->customOptions
-                        ->whereIn("id",$options)
-                        ->pluck("name","identifier")
-                        ->toArray();
-                }else{
-                    if(!array_key_exists("options",$finalField)) return [];
-                    if(!array_key_exists("customOptions",$finalField["options"])) return [];
-                    $options = collect($finalField["options"]["customOptions"]);
-                    return $options->pluck("name." . $record->getLocale(),"identifier");
-                }
-
-            });
-    }
-
-    protected function checkOption(mixed $targetValue, array $data): bool|int
-    {
-        if(empty($data)) return false;
-        if(empty($data['selected_options'])) return false;
-
-        //Custom Option Types like Select
-        $options =  $data['selected_options'];
-        if(is_null($targetValue)) return false;
-        if(is_array($targetValue)) return sizeof(array_intersect($targetValue,$options));
-        return in_array($targetValue,$options);
-    }
-
-    private function checkNull(mixed $targetValue): bool
-    {
-        if(is_null($targetValue)) return true;
-        if(is_bool($targetValue)) return false;
-        if($targetValue == "0") return false;
-        return empty($targetValue);
+            Select::make("selected_options")
+                ->columnSpanFull()
+                ->multiple()
+                ->options($this->getOptionTypeGroupOptions(...)),
+        ]);
     }
 
 
@@ -401,5 +413,37 @@ class ValueEqualsRuleTrigger extends FormRuleTriggerType
         return $targetFieldName." in [".implode(", ", $selectedOptionsName)."]";
         }
              */
+
+    protected function getOptionTypeGroupOptions($get, CustomForm $record): array|Collection
+    {
+        $finalField = $this->getTargetFieldData($get);
+        if (is_null($finalField)) {
+            return [];
+        }
+
+
+        if (array_key_exists("general_field_id", $finalField) && !is_null($finalField["general_field_id"])) {
+            //GeneralFields
+            $genField = (new CustomField())->fill($finalField)->generalField;
+
+            if (!array_key_exists("options", $finalField)) return [];
+            if (!array_key_exists("customOptions", $finalField["options"])) return [];
+            $options = collect($finalField["options"]["customOptions"]);
+
+            return $genField->customOptions
+                ->whereIn("id", $options)
+                ->pluck("name", "identifier")
+                ->toArray();
+        }
+
+        if (!array_key_exists("options", $finalField)) {
+            return [];
+        }
+        if (!array_key_exists("customOptions", $finalField["options"])) {
+            return [];
+        }
+        $options = collect($finalField["options"]["customOptions"]);
+        return $options->pluck("name." . $record->getLocale(), "identifier");
+    }
 
 }

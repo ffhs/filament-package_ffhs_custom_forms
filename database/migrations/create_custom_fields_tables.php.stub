@@ -10,32 +10,31 @@ return new class () extends Migration {
 
     public function up()
     {
-
         Schema::create('general_fields', function (Blueprint $table) {
-                $table->id();
+            $table->id();
 
-                // general field stuff
-                $table->boolean('is_active')->nullable();
+            // general field stuff
+            $table->boolean('is_active')->nullable();
 
-                $table->string('icon');
+            $table->string('icon');
 
-                $table->string('identifier')->nullable()->unique();
+            $table->string('identifier')->nullable()->unique();
 
-                $table->json("overwrite_options")->nullable();
+            $table->json("overwrite_options")->nullable();
 
-                $table->json("options")->nullable();
-                $table->json('name')->nullable();
-                $table->string("type")->nullable();
+            $table->json("options")->nullable();
+            $table->json('name')->nullable();
+            $table->string("type")->nullable();
 
-                $table->timestamps();
-            });
+            $table->timestamps();
+        });
 
 
         // CustomFields
         Schema::create('custom_fields', function (Blueprint $table) {
             $table->id();
 
-            $table->foreignId('custom_form_id')->nullable()->constrained()->cascadeOnDelete();
+            $table->foreignId('custom_form_id')->constrained()->cascadeOnDelete();
 
             //Inherit GeneralField
             $table->foreignId("general_field_id")->nullable()
@@ -65,12 +64,13 @@ return new class () extends Migration {
 
         // Custom Field Answerer
         Schema::create('custom_field_answers', function (Blueprint $table) {
-             $table->id();
-             $table->foreignIdFor(CustomFormAnswer::class)->constrained()->cascadeOnDelete();
-             $table->foreignIdFor(CustomField::class)->constrained()->cascadeOnDelete();
-             $table->json("answer")->nullable();
+            $table->id();
+            $table->foreignIdFor(CustomFormAnswer::class)->constrained()->cascadeOnDelete();
+            $table->foreignIdFor(CustomField::class)->constrained()->cascadeOnDelete();
+            $table->json("answer")->nullable();
+            $table->string("path")->nullable();
 
-             $table->timestamps();
+            $table->timestamps();
         });
     }
 

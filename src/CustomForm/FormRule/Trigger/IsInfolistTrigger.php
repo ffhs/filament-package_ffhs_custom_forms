@@ -2,17 +2,18 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Trigger;
 
-use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\HasFormTargets;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Translations\HasRuleTriggerPluginTranslate;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\RuleTrigger;
+use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasTriggerEventFormTargets;
 use Filament\Infolists\Components\Component as InfoComponent;
 
 class IsInfolistTrigger extends FormRuleTriggerType
 {
     use HasRuleTriggerPluginTranslate;
-    use HasFormTargets;
+    use HasTriggerEventFormTargets;
 
-    public static function identifier(): string {
+    public static function identifier(): string
+    {
         return "infolist_view";
     }
 
@@ -21,8 +22,9 @@ class IsInfolistTrigger extends FormRuleTriggerType
         return [];
     }
 
+
     public function isTrigger(array $arguments, mixed &$target, RuleTrigger $rule): bool
     {
-        return $target instanceof InfoComponent;
+        return (array_values($target)[0] ?? null) instanceof InfoComponent;
     }
 }

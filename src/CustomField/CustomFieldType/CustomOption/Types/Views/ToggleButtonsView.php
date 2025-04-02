@@ -9,7 +9,6 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldMapper;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Filament\Forms\Components\Component;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Components\ToggleButtons;
 
 class ToggleButtonsView implements FieldTypeView
@@ -18,16 +17,25 @@ class ToggleButtonsView implements FieldTypeView
     use HasCustomOptionInfoListViewWithBoolean;
     use HasDefaultViewComponent;
 
-    public static function getFormComponent(CustomFieldType $type, CustomField $record, array $parameter = []): Component {
-        $toggles = static::makeComponent(ToggleButtons::class, $record)
-            ->columns(FieldMapper::getOptionParameter($record,"columns"));
+    public static function getFormComponent(
+        CustomFieldType $type,
+        CustomField $record,
+        array $parameter = []
+    ): Component {
+        /**@var ToggleButtons $toggles */
+        $toggles = static::makeComponent(ToggleButtons::class, $record, ['column_span']);
 
-        if(FieldMapper::getOptionParameter($record,"grouped")) $toggles->grouped();
-        else if(FieldMapper::getOptionParameter($record,"inline")) $toggles->inline();
-        else $toggles->columnSpan(FieldMapper::getOptionParameter($record,"column_span"));
+        if (FieldMapper::getOptionParameter($record, "grouped")) {
+            $toggles->grouped();
+        } else {
+            if (!FieldMapper::getOptionParameter($record, "inline")) {
+                $toggles->columnSpan(FieldMapper::getOptionParameter($record, "column_span"));
+            }
+        }
 
-        if(FieldMapper::getOptionParameter($record,"boolean")) $toggles->boolean();
-        else $toggles->options(FieldMapper::getAvailableCustomOptions($record));
+        if (!FieldMapper::getOptionParameter($record, "boolean")) {
+            $toggles->options(FieldMapper::getAvailableCustomOptions($record));
+        }
 
         return $toggles;
     }

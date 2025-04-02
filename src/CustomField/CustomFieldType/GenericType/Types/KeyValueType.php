@@ -5,47 +5,56 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Generi
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomOption\CustomOptionType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Types\Views\KeyValueTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\HasCustomTypePackageTranslation;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\DefaultLayoutTypeOptionGroup;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\LayoutOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Groups\ValidationTypeOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\FastTypeOption;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\ReorderableTypeOption;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\TypeOption;
 use Filament\Forms\Components\Toggle;
 
 class KeyValueType extends CustomOptionType
 {
     use HasCustomTypePackageTranslation;
-    public static function identifier(): string { return "key_value"; }
 
-    public function viewModes(): array {
-        return  [
-            'default'  => KeyValueTypeView::class,
+    public static function identifier(): string
+    {
+        return 'key_value';
+    }
+
+    public function viewModes(): array
+    {
+        return [
+            'default' => KeyValueTypeView::class,
         ];
     }
 
-    public function icon(): String {
-        return  "heroicon-o-key";
+    public function icon(): string
+    {
+        return 'heroicon-o-key';
     }
 
-    protected function extraOptionsAfterBasic(): array {
+    public function extraTypeOptions(): array
+    {
         return [
-            DefaultLayoutTypeOptionGroup::make(),
+            LayoutOptionGroup::make(),
             ValidationTypeOptionGroup::make()
-            ->setTypeOptions([
-                'reorderable' => new FastTypeOption(false,
-                    Toggle::make('reorderable')
-                        ->label(__("filament-package_ffhs_custom_forms::custom_forms.fields.type_options.reorderable"))
-                        ->columnSpanFull()
-                ),
-                'editableKeys' => new FastTypeOption(true,
-                    Toggle::make('editableKeys')
-                        ->label(__("filament-package_ffhs_custom_forms::custom_forms.fields.type_options.editable_keys"))
-                        ->columnSpanFull()
-                ),
-                'editableValues' => new FastTypeOption(true,
-                    Toggle::make('editableValues')
-                        ->label(__("filament-package_ffhs_custom_forms::custom_forms.fields.type_options.editable_values"))
-                        ->columnSpanFull()
-                )
-            ])
+                ->mergeTypeOptions([
+                    'reorderable' => ReorderableTypeOption::make(),
+                    'editableKeys' => new FastTypeOption( //ToDo continue Translations
+                        true,
+                        Toggle::make('editableKeys')
+                            ->label(TypeOption::__('editable_keys.label'))
+                            ->helperText(TypeOption::__('editable_keys.helper_text'))
+                            ->columnSpanFull()
+                    ),
+                    'editableValues' => new FastTypeOption(
+                        true,
+                        Toggle::make('editableValues')
+                            ->label(TypeOption::__('editable_values.label'))
+                            ->helperText(TypeOption::__('editable_keys.helper_text'))
+                            ->columnSpanFull()
+                    ),
+                ]),
         ];
     }
 }

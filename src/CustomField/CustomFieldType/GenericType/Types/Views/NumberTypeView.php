@@ -5,10 +5,8 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\Generi
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\FieldTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Traits\HasDefaultViewComponent;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldMapper;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
-use Filament\Forms\Components\KeyValue;
 use Filament\Forms\Components\TextInput;
 use Filament\Infolists\Components\TextEntry;
 
@@ -17,17 +15,22 @@ class NumberTypeView implements FieldTypeView
 
     use HasDefaultViewComponent;
 
-    public static function getFormComponent(CustomFieldType $type, CustomField $record, array  $parameter = []): TextInput {
+    public static function getFormComponent(
+        CustomFieldType $type,
+        CustomField $record,
+        array $parameter = []
+    ): \Filament\Forms\Components\Component {
         return static::makeComponent(TextInput::class, $record)
-            ->minValue(FieldMapper::getOptionParameter($record,"min_value"))
-            ->maxValue(FieldMapper::getOptionParameter($record,"max_value"))
             ->numeric();
     }
 
-    public static function getInfolistComponent(CustomFieldType $type, CustomFieldAnswer $record, array  $parameter = []): TextEntry {
+    public static function getInfolistComponent(
+        CustomFieldType $type,
+        CustomFieldAnswer $record,
+        array $parameter = []
+    ): \Filament\Infolists\Components\Component {
         return static::makeComponent(TextEntry::class, $record);
     }
-
 
 
 }

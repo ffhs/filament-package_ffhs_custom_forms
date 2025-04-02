@@ -17,18 +17,24 @@ class TagsTypeView implements FieldTypeView
 
     use HasDefaultViewComponent;
 
-    public static function getFormComponent(CustomFieldType $type, CustomField $record, array $parameter = []): Component {
-        return static::makeComponent(TagsInput::class, $record)
-            ->columns(FieldMapper::getOptionParameter($record,"columns"));
+    public static function getFormComponent(
+        CustomFieldType $type,
+        CustomField $record,
+        array $parameter = []
+    ): Component {
+        return static::makeComponent(TagsInput::class, $record);
     }
 
 
-    public static function getInfolistComponent(CustomFieldType $type, CustomFieldAnswer $record, array  $parameter = []): \Filament\Infolists\Components\Component {
+    public static function getInfolistComponent(
+        CustomFieldType $type,
+        CustomFieldAnswer $record,
+        array $parameter = []
+    ): \Filament\Infolists\Components\Component {
+        $answerer = FieldMapper::getAnswer($record);
+        $answerer = empty($answerer) ? "" : $answerer;
 
-        $answerer =FieldMapper::getAnswer($record);
-        $answerer = empty($answerer)?"":$answerer;
-
-        return static::makeComponent(TagsInput::class, $record)
+        return static::makeComponent(TextEntry::class, $record)
             ->state($answerer)
             ->badge();
     }

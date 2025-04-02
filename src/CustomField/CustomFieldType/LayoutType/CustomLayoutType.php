@@ -5,12 +5,8 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\
 
 abstract class CustomLayoutType extends CustomFieldType
 {
-
-    public function hasToolTips(): bool {
-        return false;
-    }
-
     public function fieldEditorExtraComponent(array $fieldData): ?string {
         return "filament-package_ffhs_custom_forms::filament.components.drag-drop.container";
     }
+
 }

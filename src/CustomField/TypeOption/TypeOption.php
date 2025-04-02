@@ -5,64 +5,103 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption;
 use Closure;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Filament\Forms\Components\Component;
+use Filament\Infolists\Components\Component as InfolistComponent;
 
-abstract class TypeOption {
-
+abstract class TypeOption
+{
     protected ?Closure $modifyComponentCloser = null;
-    protected ?Closure $modifyDefault = null;
+    protected mixed $modifyDefault = null;
 
-    public static function make(): static {
+    public static final function __($key)
+    {
+        return __('filament-package_ffhs_custom_forms::type_options.' . $key);
+    }
+
+    public static function make(): static
+    {
         return new static();
     }
 
-    public function modifyComponent(Closure $closure): static {
+    public function modifyOptionComponent(Closure $closure): static
+    {
         $this->modifyComponentCloser = $closure;
         return $this;
     }
 
-    public function modifyDefault(Closure $closure): static {
+    public function modifyDefault(mixed $closure): static
+    {
         $this->modifyDefault = $closure;
         return $this;
     }
 
-   /* public function mutateOnCreate(mixed $value, CustomField $field): mixed { //ToDo for GeneralField
-        return $value;
-    }
-    public function mutateOnSave(mixed $value, CustomField $field): mixed { //ToDo for GeneralField
-        return $value;
-    }
-    public function mutateOnLoad(mixed $value, CustomField $field): mixed { //ToDo for GeneralField
-        return $value;
-    }*/
 
-    public function getModifyComponent(string $name): Component {
+    public abstract function modifyFormComponent(Component $component, mixed $value): Component;
+
+    public abstract function modifyInfolistComponent(InfolistComponent $component, mixed $value): InfolistComponent;
+
+
+    public function getModifyOptionComponent(string $name): Component
+    {
         if (is_null($this->modifyComponentCloser)) return $this->getComponent($name);
         return ($this->modifyComponentCloser)($this->getComponent($name));
     }
 
     public abstract function getComponent(string $name): Component;
 
-    public function getModifyDefault(): mixed {
+    public function getModifyDefault(): mixed
+    {
         $default = $this->getDefaultValue();
         if (is_null($this->modifyDefault)) return $default;
-        return ($this->modifyDefault)($default);
+        $isClosure = $this->modifyDefault instanceof Closure;
+        return $isClosure
+            ? ($this->modifyDefault)($default)
+            : $this->modifyDefault;
     }
 
     public abstract function getDefaultValue(): mixed;
 
 
-
-
     //ToDo for GeneralField
 
-    public function mutateOnFieldSave(mixed $data, string $key, CustomField $field): mixed {return  $data;}
-    public function mutateOnFieldLoad(mixed $data, string $key, CustomField $field): mixed {return  $data;}
-    public function beforeSaveField(mixed &$data, string $key, CustomField $field):void{}
-    public function afterSaveField(mixed &$data, string $key, CustomField $field): void {}
-    public function afterCreateField(mixed &$data, string $key, CustomField $field): void {}
-    public function afterDeleteField(int|string $key, CustomField $field) {}
-    public function beforeDeleteField(int|string $key, CustomField $field) {}
+    public function mutateOnFieldSave(mixed $data, string $key, CustomField $field): mixed
+    {
+        return $data;
+    }
 
-    public function mutateOnFieldClone(mixed &$data, int|string $key, CustomField $original): mixed {return  $data;}
+    public function mutateOnFieldLoad(mixed $data, string $key, CustomField $field): mixed
+    {
+        return $data;
+    }
+
+    public function beforeSaveField(mixed &$data, string $key, CustomField $field): void
+    {
+    }
+
+    public function afterSaveField(mixed &$data, string $key, CustomField $field): void
+    {
+    }
+
+    public function afterCreateField(mixed &$data, string $key, CustomField $field): void
+    {
+    }
+
+    public function afterDeleteField(int|string $key, CustomField $field)
+    {
+    }
+
+    public function beforeDeleteField(int|string $key, CustomField $field)
+    {
+    }
+
+    public function mutateOnFieldClone(mixed &$data, int|string $key, CustomField $original): mixed
+    {
+        return $data;
+    }
+
+
+    public function canBeOverwrittenByNonField(): bool
+    {
+        return true;
+    }
 
 }

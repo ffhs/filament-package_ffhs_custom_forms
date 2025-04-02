@@ -3,8 +3,6 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\Render;
 
 use Closure;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\LayoutType\CustomLayoutType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\TemplatesType\TemplateFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Trigger\FormRuleTriggerType;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
@@ -29,39 +27,6 @@ class CustomFormRender
         ];
     }
 
-
-    public static function generateInfoListSchema(CustomFormAnswer $formAnswer, string $viewMode):array {
-        $form = CustomForm::cached($formAnswer->custom_form_id);
-        $customFields = $form->getOwnedFields();
-        $fieldAnswers = $formAnswer->customFieldAnswers;
-
-        $render= self::getInfolistRender($viewMode,$form,$formAnswer, $fieldAnswers);
-        $customViewSchema = self::render(0,$customFields,$render, $viewMode, $formAnswer->customForm)[0];
-
-        //ToDo Manage Components
-
-        return  [
-            \Filament\Infolists\Components\Group::make($customViewSchema)->columns(config("ffhs_custom_forms.default_column_count")),
-        ];
-    }
-
-
-    public static function getInfolistRender(string $viewMode, CustomForm $form, CustomFormAnswer $formAnswer, Collection $fieldAnswers): Closure {
-        return function (CustomField $customField,  array $parameter) use ($formAnswer, $form, $viewMode, $fieldAnswers) {
-
-            /** @var CustomFormAnswer $answer*/
-            $answer = $fieldAnswers->firstWhere("custom_field_id", $customField->id);
-            if (is_null($answer)) {
-                $answer = new CustomFieldAnswer();
-                $answer->answer = null;
-                $answer->custom_field_id = $customField->id;
-                $answer->custom_form_answer_id = $formAnswer->id;
-            }
-
-            return $customField->getType()->getInfolistComponent($answer, $form, $viewMode, $parameter);
-        };
-    }
-
     public static function getFormRender(string $viewMode,CustomForm $form): Closure {
         return function(CustomField $customField, array $parameter) use ($viewMode, $form) {
             //Render
@@ -70,23 +35,23 @@ class CustomFormRender
     }
 
     public static function render(int $indexOffset, Collection $customFields, Closure &$render, string $viewMode, CustomForm $customForm): array {
-        if($customFields->isEmpty()) return [];
-
-
+        if($customFields->isEmpty()) return [[], collect()];
         $rules = $customForm->rules;
 
-        //Rule before render
+        //Rule before render ca 70ms
         $rules->each(function(Rule $rule) use (&$customFields) {
             $customFields = $rule->handle(["action" => "before_render"], $customFields);
         });
 
-        //Render
+        //Render ca 72ms
         $renderOutput = self::renderRaw($indexOffset, $customFields, $render,$viewMode, $customForm);
         /**@var Collection $renderedComponent*/
-        $renderedComponents = $renderOutput[2];
+        $renderedComponents = $renderOutput[1];
 
 
-        //TriggerPreparation (maintain for live attribute) ca 30ms
+
+
+        //TriggerPreparation (maintain for live attribute)  ca 10ms
         $rules
             ->map(fn(Rule $rule) => $rule->ruleTriggers)
             ->flatten(1)
@@ -99,7 +64,7 @@ class CustomFormRender
 
         $customFields = $customForm->customFields->mapWithKeys(fn(CustomField $field) => [$field->identifier => $field]);
 
-        //Rule after Render
+        //Rule after Render ca 2ms - 10ms
         $rules->each(function(Rule $rule) use ($customForm, $customFields, &$renderedComponents) {
           $renderedComponents = $rule->handle(["action" => "after_render", "custom_fields" => $customFields], $renderedComponents);
         });
@@ -108,71 +73,107 @@ class CustomFormRender
         return $renderOutput;
     }
 
-
-
-    private static function renderRaw(int $indexOffset, Collection $customFields, Closure &$render, string $viewMode, CustomForm $form): array {
+    public static function renderRaw(int $indexOffset, Collection $customFields, Closure &$render, string $viewMode, CustomForm $form): array {
         $customFormSchema = [];
         $preparedFields = $customFields->keyBy("form_position");
-//        $customFields->each(function(CustomField $field) use (&$preparedFields){
-//            $preparedFields[$field->form_position] = $field;
-//        });
-
         $allComponents = [];
+        //This Function allows to register the rendered components to $allComponents for the rules
+        $registerRenderedComponents = function (array $components) use (&$allComponents){
+            $allComponents = array_merge($allComponents, $components);
+        };
 
-        for($formPossition = $indexOffset+1; $formPossition<= $customFields->count()+$indexOffset; $formPossition++){
+        //Define Parameters
+        $baseParameters = [
+            "viewMode" => $viewMode,
+            "registerComponents" => $registerRenderedComponents,
+            "render" => $render,
+        ];
+
+
+        for($formPosition = $indexOffset+1; $formPosition<= $customFields->count()+$indexOffset; $formPosition++){
+
+            if(empty($preparedFields[$formPosition])) continue;
 
             /** @var CustomField $customField*/
-            $customField =  $preparedFields[$formPossition];
-            $parameters = ["viewMode"=>$viewMode];
+            $customField =  $preparedFields[$formPosition];
 
-            if(($customField->getType() instanceof CustomLayoutType)){
-                $endLocation = $customField->layout_end_position;
+            //When field isn't Active skip it
+            if(!$customField->is_active) continue;
 
-                //Setup Render Data
+            $parameters = $baseParameters;
+
+            //if field is an layout field, add Render CComponents
+            if(!is_null( $customField->layout_end_position)){
+//
                 $fieldRenderData = [];
-                for ($formPositionSubForm = $customField->form_position + 1; $formPositionSubForm <= $endLocation; $formPositionSubForm++) {
+                for ($formPositionSubForm = $customField->form_position + 1; $formPositionSubForm <= $customField->layout_end_position; $formPositionSubForm++) {
                     $fieldRenderData[] = $preparedFields[$formPositionSubForm];
                 }
                 $fieldRenderData = collect($fieldRenderData);
+                $parameters["customFieldData"] = $fieldRenderData;
+
 
                 //Render Schema Input
-                $renderedOutput = self::renderRaw($formPossition, $fieldRenderData, $render, $viewMode, $form);
+                $parameters["renderer"] = function () use ($fieldRenderData, &$parameters, $form, $viewMode, $render, $formPosition, $registerRenderedComponents, &$allComponents){
+                    $renderOutput = self::renderRaw($formPosition, $fieldRenderData, $render, $viewMode, $form);
+                    $registerRenderedComponents($renderOutput[1]);
+                    return $renderOutput[0];
+                };
 
-                //Get Layout Schema
-                $parameters = array_merge([
-                    "customFieldData" => $fieldRenderData,
-                    "rendered" => $renderedOutput[0],
-                ],$parameters);
-
-                //Set Index
-                $formPossition = $renderedOutput[1] - 1;
-                $allComponents = array_merge($allComponents, $renderedOutput[2]);
-
+                //Skip fields where in the sub renderer Index
+                $formPosition += $fieldRenderData->count();
             }
 
-            if(($customField->getType() instanceof TemplateFieldType)){
-                //Setup Render Data
-                $fields = $customField->template->customFields;
-
-                //Render Schema Input
-                $renderedOutput = self::renderRaw(0, $fields, $render, $viewMode, $form);
-                //Get Layout Schema
-                $parameters["rendered"] = $renderedOutput[0];
-
-                $allComponents = array_merge($allComponents, $renderedOutput[2]);
-            }
-
-            if(!$customField->is_active) continue;
 
             //Render
             $renderedComponent = $render($customField, $parameters);
             $allComponents[$customField->identifier] = $renderedComponent;
-
             $customFormSchema[] = $renderedComponent;
         }
 
+        return [$customFormSchema, $allComponents];
+    }
 
-        return [$customFormSchema, $formPossition, $allComponents];
+    public static function generateInfoListSchema(CustomFormAnswer $formAnswer, string $viewMode):array {
+        $form = CustomForm::cached($formAnswer->custom_form_id);
+        $customFields = $form->getOwnedFields();
+        $fieldAnswers = $formAnswer->customFieldAnswers;
+
+
+        $render= self::getInfolistRender($viewMode,$form,$formAnswer, $fieldAnswers);
+        $customViewSchema = self::render(0,$customFields,$render, $viewMode, $formAnswer->customForm)[0];
+
+        //ToDo Manage Components
+
+        return  [
+            \Filament\Infolists\Components\Group::make($customViewSchema)->columns(config("ffhs_custom_forms.default_column_count")),
+        ];
+    }
+
+    public static function getInfolistRender(string $viewMode, CustomForm $form, CustomFormAnswer $formAnswer, Collection $fieldAnswers, ?string $path = null): Closure {
+
+        $fieldAnswers = $fieldAnswers->filter(function ($item) use ($path) {
+            if(is_null($item['path'] ) || is_null($path)) return $path == $item['path'];
+            return str_contains($item['path'], $path);
+        });
+        $fieldAnswers = $fieldAnswers->keyBy("custom_field_id");
+
+
+        return function (CustomField $customField,  array $parameter) use ($path, $formAnswer, $form, $viewMode, $fieldAnswers) {
+
+            //150us
+            /** @var CustomFormAnswer $answer*/
+            $answer = $fieldAnswers->get($customField->id);
+            if (is_null($answer)) {
+                $answer = new CustomFieldAnswer();
+                $answer->answer = null;
+                $answer->custom_field_id = $customField->id;
+                $answer->custom_form_answer_id = $formAnswer->id;
+                $answer->path = $path;
+            }
+
+            return $customField->getType()->getInfolistComponent($answer, $form, $viewMode, $parameter);
+        };
     }
 
 }

@@ -2,9 +2,9 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\LayoutType\Types\Views;
 
-use Barryvdh\Debugbar\Facades\Debugbar;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\FieldTypeView;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Traits\HasDefaultViewComponent;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\FieldMapper;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
@@ -15,35 +15,43 @@ use Illuminate\Support\HtmlString;
 
 class TextLayoutTypeView implements FieldTypeView
 {
+    use HasDefaultViewComponent;
 
-    public static function getFormComponent(CustomFieldType $type, CustomField $record, array  $parameter = []): Placeholder {
+    public static function getFormComponent(
+        CustomFieldType $type,
+        CustomField $record,
+        array $parameter = []
+    ): Placeholder {
+        $text = FieldMapper::getOptionParameter($record, "text")[app()->getLocale()] ?? "";
 
-        $text = FieldMapper::getOptionParameter($record,"text")[app()->getLocale()] ?? "";
-
-        return  Placeholder::make(FieldMapper::getIdentifyKey($record))
-            ->columnStart(FieldMapper::getOptionParameter($record,"new_line_option"))
-            ->inlineLabel(FieldMapper::getOptionParameter($record,"in_line_label"))
-            ->columnSpan(FieldMapper::getOptionParameter($record,"column_span"))
+        /**@var $placeholder Placeholder */
+        $placeholder = static::makeComponent(Placeholder::class, $record);
+        return $placeholder
             ->content(new HtmlString($text))
             ->label("");
     }
 
-    public static function getInfolistComponent(CustomFieldType $type, CustomFieldAnswer $record, array   $parameter = []): Component {
+    public static function getInfolistComponent(
+        CustomFieldType $type,
+        CustomFieldAnswer $record,
+        array $parameter = []
+    ): Component {
+//        if (!FieldMapper::getOptionParameter($record, "show_in_view")) {
+//            return Group::make()->hidden();
+//        }
 
-        if(!FieldMapper::getOptionParameter($record,"show_in_view"))
-            return \Filament\Infolists\Components\Group::make()->hidden();
+        $label = FieldMapper::getOptionParameter($record, "show_label") ? FieldMapper::getLabelName($record) : "";
+        $text = FieldMapper::getOptionParameter($record, "text")[app()->getLocale()] ?? "";
 
-        $label = FieldMapper::getOptionParameter($record,"show_title")? FieldMapper::getLabelName($record):"";
-        $text = FieldMapper::getOptionParameter($record,"text")[app()->getLocale()] ?? "";
+        /**@var $placeholder TextEntry */
+        $placeholder = static::makeComponent(TextEntry::class, $record);
 
-        return TextEntry::make(FieldMapper::getIdentifyKey($record))
-            ->columnStart(FieldMapper::getOptionParameter($record,"new_line_option"))
+        return $placeholder
             ->state(new HtmlString($text))
-            ->columnSpanFull()
             ->label($label)
+            ->columnSpanFull()
             ->inlineLabel();
     }
-
 
 
 }

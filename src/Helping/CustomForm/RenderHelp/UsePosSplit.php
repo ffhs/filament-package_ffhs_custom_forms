@@ -25,14 +25,14 @@ trait UsePosSplit
         return $this->evaluate($this->usePoseSplit);
     }
 
+    function loadPosTypeSplitAnswerData(mixed $answer): array {
+        [$beginPos, $endPos] = $this->getPoseSpilt();
+        return CustomFormLoadHelper::load($answer, $beginPos, $endPos);
+    }
+
     public function getPoseSpilt(): ?array{
         if(!$this->isUseFieldSplit()) return null;
         return $this->evaluate($this->poseSplit);
-    }
-
-    function loadPosTypeSplitAnswerData(mixed $answer): array {
-        [$beginPos, $endPos] = $this->getPoseSpilt();
-        return CustomFormLoadHelper::loadSplit($answer, $beginPos, $endPos);
     }
 
 
