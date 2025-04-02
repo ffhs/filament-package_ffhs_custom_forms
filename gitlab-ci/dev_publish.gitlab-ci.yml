@@ -1,0 +1,19 @@
+# Publishes a tag/branch to Composer Packages of the current project
+publish-dev:
+  image: node:latest
+  stage: publish
+  rules:
+    - if: '$CI_MERGE_REQUEST_ID' # Ensures the job does not run in MR pipelines
+      when: never
+    - if: '$CI_COMMIT_BRANCH =~ /^development\/.*$/ && $CI_PIPELINE_SOURCE == "push"' # Runs only on push after MR merge
+  before_script:
+    - apt-get update && apt-get install -y jq
+  script:
+    - VERSION=$(jq -r '.version' composer.json)
+    - TAG_NAME=v${VERSION}.${CI_JOB_ID}-dev
+    - 'echo "Tag to create: $TAG_NAME"'
+    - 'git config --global user.email "ci@example.com"'  # Set user email for git tagging
+    - 'git config --global user.name "GitLab CI"'  # Set user name for git tagging
+    - 'git tag $TAG_NAME  # Create the tag locally'
+    - 'git push https://oauth2:${CI_ACCESS_TOKEN}@${CI_SERVER_HOST}/$CI_PROJECT_PATH.git $TAG_NAME'  # Use CI_JOB_TOKEN to authenticate
+    - 'curl --fail-with-body --header "Job-Token: $CI_JOB_TOKEN" --data tag=$TAG_NAME "${CI_API_V4_URL}/projects/$CI_PROJECT_ID/packages/composer"'

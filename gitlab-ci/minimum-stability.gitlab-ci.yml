@@ -1,0 +1,20 @@
+set-minimum-stability:
+  image: node:latest
+  stage: build
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main" && $CI_COMMIT_MESSAGE =~ /^Merge branch/'
+      when: always
+  before_script:
+    - apt-get update && apt-get install -y jq git
+    - git config --global user.email "ci@example.com"
+    - git config --global user.name "GitLab CI"
+  script:
+    - 'jq ''."minimum-stability" = "stable"'' composer.json | jq ''."prefer-stable" = true'' > composer.tmp.json'
+    - mv composer.tmp.json composer.json
+    - git add composer.json
+    - 'git commit -m "ci: enforce stable Composer settings after merge"'
+    - git push --force "https://oauth2:${CI_ACCESS_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git" HEAD:main
+    - VERSION=$(jq -r '.version' composer.json)
+    - TAG_NAME=v${VERSION}
+    - 'git push https://oauth2:${CI_ACCESS_TOKEN}@${CI_SERVER_HOST}/$CI_PROJECT_PATH.git $TAG_NAME'
+    - 'curl --fail-with-body --header "Job-Token: $CI_JOB_TOKEN" --data tag=$TAG_NAME "${CI_API_V4_URL}/projects/$CI_PROJECT_ID/packages/composer"'
