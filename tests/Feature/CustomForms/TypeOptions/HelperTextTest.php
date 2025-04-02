@@ -22,7 +22,6 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\Options\HelperTex
 use Ffhs\FilamentPackageFfhsCustomForms\Tests\Feature\CustomForms\TypeOptions\HasTypeOptionEasyTest;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Concerns\HasHelperText;
-use Filament\Forms\Components\Field;
 use Illuminate\Support\HtmlString;
 use Livewire\Features\SupportTesting\Testable;
 
@@ -101,7 +100,7 @@ test('field has helper text in component', function ($customFieldIdentifier, arr
         expect($component->getHelperText())->toBeNull();
     };
 
-    $checkOptionFunction = function (Field $component) use ($helpText) {
+    $checkOptionFunction = function (Component $component) use ($helpText) {
         expect($component->getHelperText())->not()->toBeNull()
             ->and($component->getHelperText())->toBeInstanceOf(HtmlString::class)
             ->and($component->getHelperText())->toEqual($helpText);
