@@ -12,6 +12,6 @@ test:
     - ./vendor/bin/testbench vendor:publish --tag="filament-package_ffhs_custom_forms-migrations"
     - ./vendor/bin/testbench workbench:build
   script:
-    - php vendor/bin/pest --coverage
+    - php -d memory_limit=512M vendor/bin/pest --coverage
   coverage: /Total:\s*([^%]+)/
 
