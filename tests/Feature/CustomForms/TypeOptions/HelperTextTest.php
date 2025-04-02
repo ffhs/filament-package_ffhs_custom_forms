@@ -100,7 +100,7 @@ test('field has helper text in component', function ($customFieldIdentifier, arr
         expect($component->getHelperText())->toBeNull();
     };
 
-    $checkOptionFunction = function (Component $component) use ($helpText) {
+    $checkOptionFunction = function (Component|HasHelperText $component) use ($helpText) {
         expect($component->getHelperText())->not()->toBeNull()
             ->and($component->getHelperText())->toBeInstanceOf(HtmlString::class)
             ->and($component->getHelperText())->toEqual($helpText);
