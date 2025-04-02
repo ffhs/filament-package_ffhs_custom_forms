@@ -16,6 +16,6 @@ set-minimum-stability:
     - git push --force "https://oauth2:${CI_ACCESS_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git" HEAD:main
     - VERSION=$(jq -r '.version' composer.json)
     - TAG_NAME=v${VERSION}
-    - 'git push https://oauth2:${CI_ACCESS_TOKEN}@${CI_SERVER_HOST}/$CI_PROJECT_PATH.git $TAG_NAME'
     - 'git tag $TAG_NAME  # Create the tag locally'
+    - 'git push https://oauth2:${CI_ACCESS_TOKEN}@${CI_SERVER_HOST}/$CI_PROJECT_PATH.git $TAG_NAME'
     - 'curl --fail-with-body --header "Job-Token: $CI_JOB_TOKEN" --data tag=$TAG_NAME "${CI_API_V4_URL}/projects/$CI_PROJECT_ID/packages/composer"'
