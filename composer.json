@@ -1,83 +1,82 @@
 {
-  "version": "0.1",
-  "name": "ffhs/filament-package_ffhs_custom_forms",
-  "description": "Custom forms for Fernfachhochschule Schweiz (FFHS)",
-  "keywords": [
-    "ffhs",
-    "filament-package_ffhs_custom_forms"
-  ],
-  "type": "library",
-  "license": "MIT",
-  "autoload": {
-    "psr-4": {
-      "Ffhs\\FilamentPackageFfhsCustomForms\\": "src/",
-      "Ffhs\\FilamentPackageFfhsCustomForms\\Tests\\": "tests"
-    }
-  },
-  "minimum-stability": "stable",
-  "require": {
-    "php": "^8.2",
-    "filament/filament": "^3.0-stable",
-    "filament/notifications": "^3.0-stable",
-    "guzzlehttp/guzzle": "^7.0.1",
-    "laravel/framework": "^11.31",
-    "laravel/prompts": "^0.3.1",
-    "socialiteproviders/microsoft": "^4.2",
-    "spatie/laravel-activitylog": "^4.7",
-    "spatie/laravel-permission": "^6.4",
-    "stechstudio/filament-impersonate": "^3.5",
-    "davidhsianturi/blade-bootstrap-icons": "^1.4",
-    "codeat3/blade-carbon-icons": "^2.18.2",
-    "guava/filament-icon-picker": "^2.0",
-    "filament/spatie-laravel-translatable-plugin": "^3.2",
-    "coolsam/flatpickr": "3.x-dev",
-    "secondnetwork/blade-tabler-icons": "^3.26"
-  },
-  "extra": {
-    "laravel": {
-      "providers": [
-        "Ffhs\\FilamentPackageFfhsCustomForms\\CustomFormsServiceProvider"
-      ],
-      "aliases": {
-        "FilamentPackageFfhsCustomForms": "CustomForms"
-      }
-    }
-  },
-  "require-dev": {
-    "pestphp/pest": "3.x-dev",
-    "orchestra/testbench": "^9.0",
-    "pestphp/pest-plugin-laravel": "3.x-dev",
-    "pestphp/pest-plugin-livewire": "3.x-dev"
-  },
-  "config": {
-    "allow-plugins": {
-      "pestphp/pest-plugin": true
-    }
-  },
-  "autoload-dev": {
-    "psr-4": {
-      "Workbench\\App\\": "workbench/app/",
-      "Workbench\\Database\\Factories\\": "workbench/database/factories/",
-      "Workbench\\Database\\Seeders\\": "workbench/database/seeders/"
-    }
-  },
-  "scripts": {
-    "post-autoload-dump": [
-      "@clear",
-      "@prepare"
+    "version": "0.1",
+    "name": "ffhs/filament-package_ffhs_custom_forms",
+    "description": "Custom forms for Fernfachhochschule Schweiz (FFHS)",
+    "keywords": [
+        "ffhs",
+        "filament-package_ffhs_custom_forms"
     ],
-    "clear": "@php vendor/bin/testbench package:purge-skeleton --ansi",
-    "prepare": "@php vendor/bin/testbench package:discover --ansi",
-    "build": "@php vendor/bin/testbench workbench:build --ansi",
-    "serve": [
-      "Composer\\Config::disableProcessTimeout",
-      "@build",
-      "@php vendor/bin/testbench serve --ansi"
-    ],
-    "test": [
-      "@clear",
-      "@php vendor/bin/pest"
-    ]
-  },
-  "prefer-stable": true
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Ffhs\\FilamentPackageFfhsCustomForms\\": "src/",
+            "Ffhs\\FilamentPackageFfhsCustomForms\\Tests\\": "tests"
+        }
+    },
+    "minimum-stability": "dev",
+    "require": {
+        "php": "^8.2",
+        "filament/filament": "^3.0-stable",
+        "filament/notifications": "^3.0-stable",
+        "guzzlehttp/guzzle": "^7.0.1",
+        "laravel/framework": "^11.31",
+        "laravel/prompts": "^0.3.1",
+        "socialiteproviders/microsoft": "^4.2",
+        "spatie/laravel-activitylog": "^4.7",
+        "spatie/laravel-permission": "^6.4",
+        "stechstudio/filament-impersonate": "^3.5",
+        "davidhsianturi/blade-bootstrap-icons": "^1.4",
+        "codeat3/blade-carbon-icons": "^2.18.2",
+        "guava/filament-icon-picker": "^2.0",
+        "filament/spatie-laravel-translatable-plugin": "^3.2",
+        "coolsam/flatpickr": "3.x-dev",
+        "secondnetwork/blade-tabler-icons": "^3.26"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Ffhs\\FilamentPackageFfhsCustomForms\\CustomFormsServiceProvider"
+            ],
+            "aliases": {
+                "FilamentPackageFfhsCustomForms": "CustomForms"
+            }
+        }
+    },
+    "require-dev": {
+        "pestphp/pest": "3.x-dev",
+        "orchestra/testbench": "^9.0",
+        "pestphp/pest-plugin-laravel": "3.x-dev",
+        "pestphp/pest-plugin-livewire": "3.x-dev"
+    },
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Workbench\\App\\": "workbench/app/",
+            "Workbench\\Database\\Factories\\": "workbench/database/factories/",
+            "Workbench\\Database\\Seeders\\": "workbench/database/seeders/"
+        }
+    },
+    "scripts": {
+        "post-autoload-dump": [
+            "@clear",
+            "@prepare"
+        ],
+        "clear": "@php vendor/bin/testbench package:purge-skeleton --ansi",
+        "prepare": "@php vendor/bin/testbench package:discover --ansi",
+        "build": "@php vendor/bin/testbench workbench:build --ansi",
+        "serve": [
+            "Composer\\Config::disableProcessTimeout",
+            "@build",
+            "@php vendor/bin/testbench serve --ansi"
+        ],
+        "test": [
+            "@clear",
+            "@php vendor/bin/pest"
+        ]
+    }
 }
