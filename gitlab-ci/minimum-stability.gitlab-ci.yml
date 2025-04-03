@@ -23,4 +23,4 @@ set-minimum-stability:
     - TAG_NAME=v${VERSION}
     - 'git tag $TAG_NAME  # Create the tag locally '
     - 'git push https://oauth2:${CI_ACCESS_TOKEN}@${CI_SERVER_HOST}/$CI_PROJECT_PATH.git $TAG_NAME'
-    - 'curl --fail-with-body --header "PRIVATE-TOKEN: ${CI_ACCESS_TOKEN}" --data "tag=$TAG_NAME" "${CI_API_V4_URL}/projects/$CI_PROJECT_ID/packages/composer"'
+    - 'curl --fail-with-body --header "Job-Token: $CI_JOB_TOKEN" --data tag=$TAG_NAME "${CI_API_V4_URL}/projects/$CI_PROJECT_ID/packages/composer"'

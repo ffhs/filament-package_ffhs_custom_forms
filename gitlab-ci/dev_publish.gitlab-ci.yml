@@ -10,7 +10,7 @@ publish-dev:
     - apt-get update && apt-get install -y jq
   script:
     - VERSION=$(jq -r '.version' composer.json)
-    - TAG_NAME=v${VERSION}.${CI_JOB_ID}-dev
+    - TAG_NAME=v${VERSION}-dev.${CI_JOB_ID}
     - 'echo "Tag to create: $TAG_NAME"'
     - 'git config --global user.email "ci@example.com"'  # Set user email for git tagging
     - 'git config --global user.name "GitLab CI"'  # Set user name for git tagging
