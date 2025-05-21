@@ -4,8 +4,9 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\Form
 
 
 use Closure;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomForm\EditHelper\EditCustomFormLoadHelper;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomForm\EditHelper\EditCustomFormSaveHelper;
+use Ffhs\FilamentPackageFfhsCustomForms\Facades\CustomForms;
+use Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\EditHelper\EditCustomFormLoadHelper;
+use Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\EditHelper\EditCustomFormSaveHelper;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Concerns\EntanglesStateWithSingularRelationship;
@@ -17,6 +18,16 @@ class EmbeddedCustomFormEditor extends Component implements CanEntangleWithSingu
 
 
     protected string $view = 'filament-forms::components.group';
+
+    public static function make(Closure|string $relationship): static
+    {
+        $static = app(static::class, [
+            'relationship'=>$relationship,
+        ]);
+        $static->configure();
+
+        return $static;
+    }
 
     final public function __construct(Closure|string $relationship)
     {
@@ -42,23 +53,13 @@ class EmbeddedCustomFormEditor extends Component implements CanEntangleWithSingu
         });
     }
 
-    public static function make(Closure|string $relationship): static
-    {
-        $static = app(static::class, [
-            'relationship'=>$relationship,
-        ]);
-        $static->configure();
-
-        return $static;
-    }
-
  /*   public function getCachedExistingRecord(): ?Model
     {
         //Replace it with cached
         $forginkey = $this->getRelationship()->getForeignKeyName();
         $value =  $this->getRelationship()->getChild()->$forginkey;
         $onwerKey = $this->getRelationship()->getOwnerKeyName();
-        return CustomForms::cached($value,$onwerKey);
+        return CustomForm::cached($value,$onwerKey);
     }*/
 
 }
