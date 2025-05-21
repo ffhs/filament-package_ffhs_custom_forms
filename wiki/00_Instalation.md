@@ -57,7 +57,7 @@ public function panel(Panel $panel): Panel
 {  
     return $panel
 	     ... 
-	    ->plugin([CustomFormPlugins::make()]);}        
+	    ->plugin([CustomFormPlugin::make()]);}        
 	    ...          
 ```  
 

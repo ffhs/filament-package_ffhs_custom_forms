@@ -2,7 +2,7 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\Actions;
 
-use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomForm\FormConverter\SchemaExporter\FormSchemaExporter;
+use Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\FormConverter\SchemaExporter\FormSchemaExporter;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;

@@ -43,7 +43,7 @@ final class TemplateFieldType extends CustomFieldType
           $original = parent::repeaterFunctions();
           unset($original[EditAction::class]);
           return array_merge($original,[
-              TemplateDissolveAction::class => function (CustomForms $record,Get $get, array $state, array $arguments) {
+              TemplateDissolveAction::class => function (CustomForm $record,Get $get, array $state, array $arguments) {
                   $item = $state[$arguments["item"]];
                   return array_key_exists("template_id",$item) &&!is_null($item["template_id"]);
               },
@@ -52,7 +52,7 @@ final class TemplateFieldType extends CustomFieldType
 
 
       public function nameFormEditor(array $state):string {
-          $template = CustomForms::cached($state["template_id"]);
+          $template = CustomForm::cached($state["template_id"]);
           return $template->short_title;
       }
 
