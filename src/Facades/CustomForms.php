@@ -2,16 +2,18 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Facades;
 
-use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomForm\DataManagment\HasCustomFormSaveDataManagement;
 use Illuminate\Support\Facades\Facade;
 
+/**
+ * @method static array loadCustomFormEditorData(\Illuminate\Database\Eloquent\Model $getRecord)
+ * @method static array loadEditorField(\Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField $customField)
+ */
 class CustomForms extends Facade
 {
-    use HasCustomFormSaveDataManagement;
 
     protected static function getFacadeAccessor()
     {
-        return \Ffhs\FilamentWorkflows\FilamentWorkflows::class;
+        return \Ffhs\FilamentPackageFfhsCustomForms\CustomForms::class;
     }
 
 }

@@ -95,7 +95,7 @@ class EditCustomFormHelper
     public static function getEditKey(array|CustomField $toAdd)
     {
         if($toAdd instanceof CustomField)
-            return  empty($field->identifier)?uniqid(): $field->identifier;
+            return empty($field->identifier)?uniqid(): $field->identifier;
 
 
         if(array_key_exists("identifier", $toAdd) && !empty($toAdd["identifier"]))

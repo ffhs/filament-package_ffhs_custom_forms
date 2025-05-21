@@ -1,0 +1,57 @@
+<?php
+
+namespace Ffhs\FilamentPackageFfhsCustomForms\Traits;
+
+use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomForm\EditHelper\EditCustomFormHelper;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\Rule;
+use Illuminate\Support\Collection;
+
+trait CanLoadCustomFormEditorData
+{
+    public function loadCustomFormEditorData(CustomForm $customForm): array
+    {
+        $fields = $customForm->getOwnedFields();
+
+        return [
+            'custom_fields' => $this->loadEditorFields($fields),
+            'custom_form_identifier' => $customForm->custom_form_identifier,
+            'is_template' => $customForm->is_template,
+            'id' => $customForm->id,
+            'rules' => $this->loadRules($customForm)
+        ];
+    }
+
+    protected function loadEditorFields(Collection $fields):array {
+        $data = [];
+        foreach ($fields as $field) {
+            $key = EditCustomFormHelper::getEditKey($field);
+            $data[$key] = $this->loadEditorField($field);
+        }
+        return $data;
+    }
+
+    public function loadEditorField(CustomField $field): array
+    {
+        $fieldData = $field->attributesToArray();
+        $fieldData['options'] = $field->options;
+
+        unset($fieldData["updated_at"], $fieldData["created_at"]);
+
+        return $field->getType()->getMutateCustomFieldDataOnLoad($field, $fieldData);
+    }
+
+    protected function loadRules(CustomForm $form): array
+    {
+        $rules = [];
+        foreach ($form->ownedRules as $rule) {
+            /**@var Rule $rule*/
+            $rawRule = $rule->toArray();
+            $rawRule['events'] = $rule->ruleEvents->toArray();
+            $rawRule['triggers'] = $rule->ruleTriggers->toArray();
+            $rules[] = $rawRule;
+        }
+        return $rules;
+    }
+}

@@ -1,24 +1,16 @@
 <?php
 
-namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\FormEditor;
+namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormEditor;
 
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\FormEditor\EditCustomFields;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\RuleEditor\RuleEditor;
-use Filament\Forms\Components\Component;
+use Filament\Forms\Components\Field;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Tabs\Tab;
 
-class CustomFormEditor extends Component {
-
-
+class CustomFormEditor extends Field {
     protected string $view = 'filament-forms::components.group';
-
-    public static function make(): static {
-        $static = app(static::class);
-        $static->configure();
-
-        return $static;
-    }
 
     protected function setUp(): void {
         parent::setUp();

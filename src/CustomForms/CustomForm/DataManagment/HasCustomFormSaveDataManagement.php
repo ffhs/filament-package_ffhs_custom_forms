@@ -15,7 +15,7 @@ use Spatie\Activitylog\Models\Activity;
 trait HasCustomFormSaveDataManagement
 {
 
-    public static function save(CustomFormAnswer $formAnswer, Form $form, string|null $path = null): void
+    public  function save(CustomFormAnswer $formAnswer, Form $form, string|null $path = null): void
     {
         // $path is then path to the customFormData in the formData
         $customForm = $formAnswer->customForm;
@@ -43,7 +43,7 @@ trait HasCustomFormSaveDataManagement
         $formAnswer->cachedClear("customFieldAnswers");
     }
 
-    public static function mapFields($fields, $keyCallback, $filterCallback = null): array
+    public  function mapFields($fields, $keyCallback, $filterCallback = null): array
     {
         if ($filterCallback) {
             $fields = $fields->filter($filterCallback);
@@ -57,7 +57,7 @@ trait HasCustomFormSaveDataManagement
         return array_combine($keys, $fieldsArray);
     }
 
-    public static function prepareFormComponents(array $customFieldsIdentify, Form $form): void
+    public  function prepareFormComponents(array $customFieldsIdentify, Form $form): void
     {
         $components = collect($form->getFlatComponents()); //ToDo That is slow (Extreme Slow)
 
@@ -76,7 +76,7 @@ trait HasCustomFormSaveDataManagement
         }
     }
 
-    protected static function getFormData(Form $form, ?string $path): array
+    protected  function getFormData(Form $form, ?string $path): array
     {
         $data = $form->getRawState();
 
@@ -90,7 +90,7 @@ trait HasCustomFormSaveDataManagement
         return $data;
     }
 
-    public static function splittingFormComponents(
+    public  function splittingFormComponents(
         array $formData,
         array &$customFieldsIdentify,
         string $parentPath = ""
@@ -113,7 +113,7 @@ trait HasCustomFormSaveDataManagement
 
             foreach ($customFieldAnswererRawData as $subPath => $dateSplit) {
                 $newParentPath = empty($parentPath) ? $subPath : $parentPath . "." . $subPath;
-                $getSplittedData = static::splittingFormComponents($dateSplit, $customFieldsIdentify, $newParentPath);
+                $getSplittedData = $this->splittingFormComponents($dateSplit, $customFieldsIdentify, $newParentPath);
                 $dateSplitted = array_merge($dateSplitted, $getSplittedData);
             }
         }
@@ -122,7 +122,7 @@ trait HasCustomFormSaveDataManagement
 
 
     //ToDo split method and reduce queries
-    public static function saveWithoutPreparation(
+    public  function saveWithoutPreparation(
         array $formData,
         array $customFieldsIdentify,
         CustomFormAnswer $formAnswer

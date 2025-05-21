@@ -2,16 +2,15 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormResource\Pages;
 
+use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomForm\EditHelper\EditCustomFormSaveHelper;
+use Ffhs\FilamentPackageFfhsCustomForms\Facades\CustomForms;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\Actions\CustomFormSchemaExportAction;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\Actions\CustomFormSchemaImportAction;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\FormEditor\CustomFormEditor;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormEditor\CustomFormEditor;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormResource;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomForm\EditHelper\EditCustomFormLoadHelper;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomForm\EditHelper\EditCustomFormSaveHelper;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\LocaleSwitcher;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Form;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Resources\Pages\EditRecord\Concerns\Translatable;
@@ -37,26 +36,30 @@ class EditCustomForm extends EditRecord
 
     public function form(Form $form): Form
     {
-        return $form->schema([Section::make()->schema([CustomFormEditor::make()])]);
+        return $form->schema([
+            CustomFormEditor::make('custom_form')
+        ]);
     }
 
     public function getTitle(): string|Htmlable
     {
-        return $this->record->short_title . ' - ' . parent::getTitle();
+        return $this->getRecord()->short_title . ' - ' . parent::getTitle();
     }
 
     public function save(bool $shouldRedirect = true, bool $shouldSendSavedNotification = true): void
     {
         $this->authorizeAccess();
 
-        EditCustomFormSaveHelper::save($this->data, $this->getRecord());
+        EditCustomFormSaveHelper::save($this->data['custom_form'], $this->getRecord());
 
         parent::save($shouldRedirect, $shouldSendSavedNotification);
     }
 
     protected function fillForm(): void
     {
-        $this->form->fill(EditCustomFormLoadHelper::load($this->getRecord()));
+        $this->form->fill([
+            'custom_form' => CustomForms::loadCustomFormEditorData($this->getRecord())
+        ]);
     }
 
     protected function getHeaderActions(): array

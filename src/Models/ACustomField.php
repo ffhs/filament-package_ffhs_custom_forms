@@ -2,11 +2,11 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Models;
 
-use Barryvdh\Debugbar\Facades\Debugbar;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\CustomFieldType\TemplatesType\TemplateFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\Caching\CachedModel;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\Caching\HasCacheModel;
+use Ffhs\FilamentPackageFfhsCustomForms\Helping\Rules\Exeptions\FieldHasNoOrWrongCustomFieldTypeException;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Translatable\HasTranslations;
@@ -27,20 +27,26 @@ abstract class ACustomField extends Model implements CachedModel
 
     public $translatable = ['name'];
 
+    /**
+     * @throws FieldHasNoOrWrongCustomFieldTypeException
+     */
+    public function getType():CustomFieldType{
+        if($this instanceof CustomField && $this->isTemplate()) {
+            return new TemplateFieldType();
+        }
+
+        $typeClass = $this->getTypeClass();
+        if(is_null($typeClass)){
+            throw new FieldHasNoOrWrongCustomFieldTypeException($this->type);
+        }
+        return $this->getTypeClass()::make();
+    }
 
     public function getTypeClass():?string{
         if($this instanceof CustomField && $this->isTemplate()) return TemplateFieldType::class;
         $typeName = $this->type;
         if(is_null($typeName)) return null;
         return CustomFieldType::getTypeClassFromIdentifier($typeName);
-    }
-
-    public function getType():?CustomFieldType{
-        //ToDo add error witch say that the type doesn't exist if its empty
-        if($this instanceof CustomField && $this->isTemplate()) return new TemplateFieldType();
-        $typeClass = $this->getTypeClass();
-        if(is_null($typeClass)) return null;
-        return $this->getTypeClass()::make();
     }
 
 }
