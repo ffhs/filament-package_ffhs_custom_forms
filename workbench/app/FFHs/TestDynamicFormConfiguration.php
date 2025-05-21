@@ -2,7 +2,7 @@
 
 namespace Workbench\App\FFHs;
 
-use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormConfiguration\DynamicFormConfiguration;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomForm\FormConfiguration\DynamicFormConfiguration;
 
 class TestDynamicFormConfiguration extends DynamicFormConfiguration
 {

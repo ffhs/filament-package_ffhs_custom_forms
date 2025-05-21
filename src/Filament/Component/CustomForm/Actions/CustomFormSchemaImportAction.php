@@ -4,11 +4,11 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\Acti
 
 use Closure;
 use Error;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormConfiguration\DynamicFormConfiguration;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomForm\FormConfiguration\DynamicFormConfiguration;
 use Ffhs\FilamentPackageFfhsCustomForms\Exceptions\FormImportException;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\CustomFormTypeSelector;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormResource;
-use Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\FormConverter\FormImporter\FormSchemaImporter;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomForm\FormConverter\FormImporter\FormSchemaImporter;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralFieldForm;
@@ -29,11 +29,6 @@ class CustomFormSchemaImportAction extends Action
 {
 
     private Closure|CustomForm|null $existingForm = null;
-
-    public static function make(?string $name = 'import_custom_form'): static
-    {
-        return parent::make($name);
-    }
 
     public function existingForm(Closure|CustomForm|null $existingForm): static
     {
@@ -123,6 +118,20 @@ class CustomFormSchemaImportAction extends Action
         }
 
         $file->delete();
+    }
+
+    public static function make(?string $name = 'import_custom_form'): static
+    {
+        return parent::make($name);
+    }
+
+    protected function getUploadedInfos(?TemporaryUploadedFile $file): array
+    {
+        if (is_null($file)) {
+            return [];
+        }
+
+        return json_decode(json: $file->getContent(), associative: true);
     }
 
     public function hasExistingForm(): bool
@@ -220,15 +229,6 @@ class CustomFormSchemaImportAction extends Action
                         ]),
                 ])
         ];
-    }
-
-    protected function getUploadedInfos(?TemporaryUploadedFile $file): array
-    {
-        if (is_null($file)) {
-            return [];
-        }
-
-        return json_decode(json: $file->getContent(), associative: true);
     }
 
     protected function getDynamicFormConfiguration(

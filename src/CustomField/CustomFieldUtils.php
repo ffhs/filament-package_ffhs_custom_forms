@@ -24,7 +24,7 @@ class CustomFieldUtils
     public static function flattDownToCustomFields(mixed $data): mixed {
         for ($i = 0; $i <= 10; $i++) {
             if (array_key_exists("custom_fields", $data)) break;
-            // If the CustomForm isn't direct in the first layer, it will
+            // If the CustomForms isn't direct in the first layer, it will
             // break it up to the layer with the custom_fields
             $data = CustomFieldUtils::flattArrayOneLayer($data);
         }
