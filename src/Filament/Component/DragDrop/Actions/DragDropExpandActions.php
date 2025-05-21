@@ -4,7 +4,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\DragDrop\Action
 
 
 use Closure;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\OLDRepeaterFieldAction\Actions\NewEggActionComponent;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\OLDRepeaterFieldAction\Actions\NewEggActionComponent;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\DragDrop\HasDragGroup;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;

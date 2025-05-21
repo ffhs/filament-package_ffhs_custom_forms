@@ -1,6 +1,6 @@
 <?php
 
-namespace Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Trigger;
+namespace Ffhs\FilamentPackageFfhsCustomForms\CustomForms\FormRule\Trigger;
 
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\Rules\Trigger\TriggerType;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\Types\IsType;

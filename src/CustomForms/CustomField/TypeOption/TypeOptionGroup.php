@@ -1,6 +1,6 @@
 <?php
 
-namespace Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption;
+namespace Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\TypeOption;
 
 use Filament\Forms\Components\Section;
 

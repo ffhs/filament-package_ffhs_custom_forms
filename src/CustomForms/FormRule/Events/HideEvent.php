@@ -1,6 +1,6 @@
 <?php
 
-namespace Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Events;
+namespace Ffhs\FilamentPackageFfhsCustomForms\CustomForms\FormRule\Events;
 
 
 class HideEvent extends IsPropertyOverwriteEvent

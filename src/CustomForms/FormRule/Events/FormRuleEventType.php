@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Events;
+namespace Ffhs\FilamentPackageFfhsCustomForms\CustomForms\FormRule\Events;
 
 use Closure;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\Rules\Event\EventType;

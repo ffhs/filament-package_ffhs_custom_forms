@@ -1,6 +1,6 @@
 <?php
 
-namespace Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Trigger;
+namespace Ffhs\FilamentPackageFfhsCustomForms\CustomForms\FormRule\Trigger;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\CustomFieldType\CustomOption\CustomOptionType;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
