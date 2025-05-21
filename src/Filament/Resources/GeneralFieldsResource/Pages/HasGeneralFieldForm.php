@@ -3,7 +3,7 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\GeneralFieldsResource\Pages;
 
 use Error;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\CustomFieldType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomField\TypeOption\TypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Filament\Forms\Components\Component;
@@ -119,7 +119,7 @@ trait HasGeneralFieldForm
         $type = $record->getType();
 
         return collect($type->getFlattenExtraTypeOptions())
-            //Remove any where can be use 
+            //Remove any where can be use
             ->filter(fn(TypeOption $typeOption) => $typeOption->canBeOverwrittenByNonField())
             ->mapWithKeys(function (TypeOption $value, string $key) {
                 try {
