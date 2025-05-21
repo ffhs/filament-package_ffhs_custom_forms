@@ -4,11 +4,11 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomForms\FormRule\Events;
 
 use Closure;
-use Ffhs\FilamentPackageFfhsCustomForms\Helping\Rules\Event\EventType;
-use Ffhs\FilamentPackageFfhsCustomForms\Helping\Types\IsType;
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EventType;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\RuleEvent;
+use Ffhs\FilamentPackageFfhsCustomForms\Traits\IsType;
 use Filament\Forms\Components\Component;
 use Illuminate\Support\Collection;
 

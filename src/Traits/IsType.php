@@ -1,21 +1,9 @@
 <?php
 
-namespace Ffhs\FilamentPackageFfhsCustomForms\Helping\Types;
+namespace Ffhs\FilamentPackageFfhsCustomForms\Traits;
 
 trait IsType
 {
-    public static function make(): static{
-        return new static();
-    }
-
-
-    public abstract static function getConfigTypeList(): string;
-
-    public static function getTypeListConfig():array {
-        $path = static::getConfigTypeList();
-        return config('ffhs_custom_forms.' . $path);
-    }
-
     public static function getTypeFromIdentifier(string $identifier): ?static{
         $class = static::getTypeClassFromIdentifier($identifier);
         if(is_null($class)) return null;
@@ -27,6 +15,17 @@ trait IsType
         return collect($allTypes)->firstWhere(fn($class)=>$class::identifier() == $identifier);
     }
 
+    public static function getTypeListConfig():array {
+        $path = static::getConfigTypeList();
+        return config('ffhs_custom_forms.' . $path);
+    }
+
+    abstract public static function getConfigTypeList(): string;
+
+    public static function make(): static {
+        return new static();
+    }
+
     public static function getAllTypes(): ?array{
         $allTypes = static::getTypeListConfig();
         $output = [];
@@ -35,5 +34,4 @@ trait IsType
         }
         return $output;
     }
-
 }

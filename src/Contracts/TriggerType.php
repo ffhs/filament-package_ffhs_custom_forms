@@ -1,8 +1,7 @@
 <?php
 
-namespace Ffhs\FilamentPackageFfhsCustomForms\Helping\Rules\Trigger;
+namespace Ffhs\FilamentPackageFfhsCustomForms\Contracts;
 
-use Ffhs\FilamentPackageFfhsCustomForms\Helping\Types\Type;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\RuleTrigger;
 
 interface TriggerType extends Type

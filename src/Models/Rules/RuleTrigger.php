@@ -2,14 +2,14 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Models\Rules;
 
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\TriggerType;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\Caching\CachedModel;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\Caching\HasCacheModel;
-use Ffhs\FilamentPackageFfhsCustomForms\Helping\Rules\Trigger\TriggerType;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * 
+ *
  *
  * @property int $id
  * @property int $is_inverted

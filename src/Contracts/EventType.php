@@ -1,9 +1,9 @@
 <?php
 
-namespace Ffhs\FilamentPackageFfhsCustomForms\Helping\Rules\Event;
+namespace Ffhs\FilamentPackageFfhsCustomForms\Contracts;
 
 use Closure;
-use Ffhs\FilamentPackageFfhsCustomForms\Helping\Types\Type;
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\Type;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\RuleEvent;
 
 interface EventType extends Type

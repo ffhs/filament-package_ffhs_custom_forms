@@ -2,6 +2,7 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\CustomFieldType\GenericType;
 
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\Type;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\CustomFieldType\GenericType\Traits\HasConfigAttribute;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\CustomFieldType\GenericType\Traits\HasEditFieldCallbacks;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\CustomFieldType\GenericType\Traits\HasFieldSplitting;
@@ -12,10 +13,9 @@ use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\FormEditor
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\FormEditor\TypeActions\default\DefaultCustomFieldDeleteAction;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\FormEditor\TypeActions\default\DefaultCustomFieldEditTypeOptionsAction;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\html\HtmlBadge;
-use Ffhs\FilamentPackageFfhsCustomForms\Helping\Types\IsType;
-use Ffhs\FilamentPackageFfhsCustomForms\Helping\Types\Type;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
+use Ffhs\FilamentPackageFfhsCustomForms\Traits\IsType;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Form;
 use Filament\Support\Colors\Color;

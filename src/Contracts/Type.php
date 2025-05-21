@@ -1,12 +1,10 @@
 <?php
 
-namespace Ffhs\FilamentPackageFfhsCustomForms\Helping\Types;
+namespace Ffhs\FilamentPackageFfhsCustomForms\Contracts;
 
-use Ffhs\FilamentPackageFfhsCustomForms\Helping\Identifiers\StaticIdentifier;
-
-interface Type extends StaticIdentifier
+interface Type
 {
-
+    public static function identifier(): string;
     public static function make(): static;
 
     public static function getTypeFromIdentifier(string $identifier): ?static;

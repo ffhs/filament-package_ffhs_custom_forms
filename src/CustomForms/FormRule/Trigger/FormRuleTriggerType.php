@@ -2,12 +2,13 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomForms\FormRule\Trigger;
 
-use Ffhs\FilamentPackageFfhsCustomForms\Helping\Rules\Trigger\TriggerType;
-use Ffhs\FilamentPackageFfhsCustomForms\Helping\Types\IsType;
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\TriggerType;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\RuleTrigger;
+use Ffhs\FilamentPackageFfhsCustomForms\Traits\IsType;
 use Filament\Forms\Components\Component;
 use Filament\Infolists\Components\Component as InfolistComponent;
+
 
 abstract class FormRuleTriggerType implements TriggerType
 {

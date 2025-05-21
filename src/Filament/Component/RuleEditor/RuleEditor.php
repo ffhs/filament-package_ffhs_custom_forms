@@ -3,15 +3,16 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\RuleEditor;
 
 use Closure;
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EventType;
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\TriggerType;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\DragDrop\DragDropComponent;
-use Ffhs\FilamentPackageFfhsCustomForms\Helping\Rules\Event\EventType;
-use Ffhs\FilamentPackageFfhsCustomForms\Helping\Rules\Trigger\TriggerType;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Notifications\Notification;
 use Filament\Support\Colors\Color;
+
 
 class RuleEditor extends Group
 {

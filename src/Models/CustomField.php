@@ -58,7 +58,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomField whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-class CustomField extends ACustomField implements NestingObject, Identifier
+class CustomField extends ACustomField implements NestingObject
 {
     use HasFactory;
 

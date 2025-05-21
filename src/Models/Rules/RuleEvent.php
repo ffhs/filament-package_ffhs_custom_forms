@@ -2,14 +2,14 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Models\Rules;
 
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EventType;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\Caching\CachedModel;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\Caching\HasCacheModel;
-use Ffhs\FilamentPackageFfhsCustomForms\Helping\Rules\Event\EventType;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * 
+ *
  *
  * @property int $id
  * @property int $order

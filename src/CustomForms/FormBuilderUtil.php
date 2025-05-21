@@ -2,11 +2,8 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomForm;
 
-use Barryvdh\Debugbar\Facades\Debugbar;
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EventType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\CustomFieldType\GenericType\CustomFieldType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\FormRule\Trigger\FormRuleTriggerType;
-use Ffhs\FilamentPackageFfhsCustomForms\Helping\Rules\Event\EventType;
-use Ffhs\FilamentPackageFfhsCustomForms\Helping\Rules\Trigger\TriggerType;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
@@ -15,6 +12,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\RuleEvent;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\RuleTrigger;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
+
 
 class FormBuilderUtil
 {
@@ -116,24 +114,6 @@ class FormBuilderUtil
         $fieldData['options'] = array_merge($defaultOptions, $field['options'] ?? []);
     }
 
-
-    private static function setupLayoutFields(CustomForm $form, array $field, array &$fieldData , array &$toCreateFields): void {
-        if (!array_key_exists('fields', $field))
-            return;
-
-
-        $placeHolderId = uniqid();
-
-        $toCreateFields["placeHolder-".$placeHolderId] = $fieldData;
-        static::generateFields($form, $field['fields'], $toCreateFields);
-        $formEndPosition = sizeof($toCreateFields);
-
-        unset($toCreateFields["placeHolder-".$placeHolderId]);
-        $fieldData['layout_end_position'] = $formEndPosition;
-    }
-
-
-    //ToDo Name Converter
     private static function prepareCustomOptions(array $field, array &$fieldData): void {
         if (!array_key_exists("customOptions", $field)) return;
 
@@ -175,6 +155,23 @@ class FormBuilderUtil
     }
 
 
+    //ToDo Name Converter
+
+    private static function setupLayoutFields(CustomForm $form, array $field, array &$fieldData , array &$toCreateFields): void {
+        if (!array_key_exists('fields', $field))
+            return;
+
+
+        $placeHolderId = uniqid();
+
+        $toCreateFields["placeHolder-".$placeHolderId] = $fieldData;
+        static::generateFields($form, $field['fields'], $toCreateFields);
+        $formEndPosition = sizeof($toCreateFields);
+
+        unset($toCreateFields["placeHolder-".$placeHolderId]);
+        $fieldData['layout_end_position'] = $formEndPosition;
+    }
+
     public static function buildRules(?CustomForm $customForm, array $rules):CustomForm {
 
         $finalRules = [];
@@ -204,26 +201,6 @@ class FormBuilderUtil
         return $customForm;
     }
 
-
-
-
-
-    public static function prepareRuleEvents(array$rawEvents, Collection $fields): array
-    {
-        $order = 1;
-        foreach ($rawEvents ?? [] as $event) {
-            $type = $event['type'];
-            if ($type instanceof EventType) $event['type'] = $type::identifier();
-            if (!array_key_exists("data", $event)) $event['data'] = [];
-            $event["order"] = $order;
-            $event = self::prepareTarget($event, $fields);
-
-            $events[] = new RuleEvent($event);
-            $order++;
-        }
-        return $events;
-    }
-
     public static function prepareTriggers(array $rawTriggers, Collection $fields): array
     {
         $triggers = [];
@@ -244,7 +221,6 @@ class FormBuilderUtil
         }
         return $triggers;
     }
-
 
     public static function prepareTarget(mixed $hasData, Collection $fields): mixed
     {
@@ -277,6 +253,22 @@ class FormBuilderUtil
             $hasData['data'] = $data;
         }
         return $hasData;
+    }
+
+    public static function prepareRuleEvents(array$rawEvents, Collection $fields): array
+    {
+        $order = 1;
+        foreach ($rawEvents ?? [] as $event) {
+            $type = $event['type'];
+            if ($type instanceof EventType) $event['type'] = $type::identifier();
+            if (!array_key_exists("data", $event)) $event['data'] = [];
+            $event["order"] = $order;
+            $event = self::prepareTarget($event, $fields);
+
+            $events[] = new RuleEvent($event);
+            $order++;
+        }
+        return $events;
     }
 
 

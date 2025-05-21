@@ -2,13 +2,14 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomForm\EditHelper;
 
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EventType;
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\TriggerType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\TypeOption\TypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\FormRule\Events\FormRuleEventType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\FormRule\Trigger\FormRuleTriggerType;
-use Ffhs\FilamentPackageFfhsCustomForms\Helping\Rules\Event\EventType;
-use Ffhs\FilamentPackageFfhsCustomForms\Helping\Rules\Trigger\TriggerType;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
+
 
 class EditCustomFormCloneHelper
 {
