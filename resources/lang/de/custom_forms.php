@@ -19,7 +19,8 @@ return [
 
     'fields' => [
         'type' => 'Feldtyp',
-//        'name' => 'Name',
+        'name' => 'Feld',
+        'name_multiple' => 'Felder',
         'tool_tip' => 'Kurzbeschreibung',
         'identifier' => 'Identifikations Schlüssel',
 //        'is_general_field_active' => 'Aktiv',

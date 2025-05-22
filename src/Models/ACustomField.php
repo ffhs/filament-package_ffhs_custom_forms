@@ -4,9 +4,9 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Models;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\CustomFieldType\TemplatesType\TemplateFieldType;
+use Ffhs\FilamentPackageFfhsCustomForms\Exceptions\FieldHasNoOrWrongCustomFieldTypeException;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\Caching\CachedModel;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\Caching\HasCacheModel;
-use Ffhs\FilamentPackageFfhsCustomForms\Helping\Rules\Exeptions\FieldHasNoOrWrongCustomFieldTypeException;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Translatable\HasTranslations;
@@ -30,22 +30,28 @@ abstract class ACustomField extends Model implements CachedModel
     /**
      * @throws FieldHasNoOrWrongCustomFieldTypeException
      */
-    public function getType():CustomFieldType{
-        if($this instanceof CustomField && $this->isTemplate()) {
+    public function getType(): CustomFieldType
+    {
+        if ($this instanceof CustomField && $this->isTemplate()) {
             return new TemplateFieldType();
         }
 
         $typeClass = $this->getTypeClass();
-        if(is_null($typeClass)){
+        if (is_null($typeClass)) {
             throw new FieldHasNoOrWrongCustomFieldTypeException($this->type);
         }
         return $this->getTypeClass()::make();
     }
 
-    public function getTypeClass():?string{
-        if($this instanceof CustomField && $this->isTemplate()) return TemplateFieldType::class;
+    public function getTypeClass(): ?string
+    {
+        if ($this instanceof CustomField && $this->isTemplate()) {
+            return TemplateFieldType::class;
+        }
         $typeName = $this->type;
-        if(is_null($typeName)) return null;
+        if (is_null($typeName)) {
+            return null;
+        }
         return CustomFieldType::getTypeClassFromIdentifier($typeName);
     }
 

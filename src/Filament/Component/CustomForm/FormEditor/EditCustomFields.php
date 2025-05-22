@@ -2,36 +2,14 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\FormEditor;
 
-use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\CustomFieldUtils;
+use Ffhs\FilamentPackageFfhsCustomForms\Facades\CustomForms;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\DragDrop\DragDropComponent;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
-use Filament\Forms\Components\Group;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Filament\Forms\Components\TextInput;
 
 class EditCustomFields extends DragDropComponent
 {
-
-    /**
-     * @param $form_position
-     * @param $state
-     *
-     * @return int|null
-     */
-//    function getMaxGridSizeFromField($form_position, $state): ?int
-//    {
-//        $maxSize = config("ffhs_custom_forms.default_column_count");
-//        $position = $form_position;
-//        $nerastParent = 0;
-//        foreach ($state as $item) {
-//            if ($item["form_position"] >= $position) continue;
-//            if (($item["layout_end_position"] ?? 0) < $position) continue;
-//
-//            if ($position - $nerastParent < $position - $item["form_position"]) continue;
-//            $nerastParent = $item["form_position"];
-//            $maxSize = $this->getGridColumns($item);
-//        }
-//        return $maxSize;
-//    }
     protected function setUp(): void
     {
         $this->label("");
@@ -42,78 +20,81 @@ class EditCustomFields extends DragDropComponent
         $this->gridSize(config("ffhs_custom_forms.default_column_count"));
         $this->nestedFlattenListType(CustomField::class);
 
-        $this->itemGridSize(function ($itemState) {
-            $size = $itemState['options']['column_span'] ?? null;
-            $maxSize = 12;
-            if (!empty($size)) return $size > $maxSize ? $maxSize : $size;
-            $type = CustomFieldUtils::getFieldTypeFromRawDate($itemState);
-            if (!$type->isFullSizeField()) return 1;
-            // dump($maxSize);
-            return $maxSize;
-        });
+        $this->itemGridSize($this->getFieldGridSize(...));
+        $this->itemGridStart($this->getFieldGridStart(...));
+        $this->itemIcons($this->getFieldIcons(...));
+        $this->itemLabel($this->getFieldLabel(...));
+        $this->itemActions($this->getFieldActions(...));
 
+        $this->flattenGrid($this->getFieldFlattenGrid(...));
+        $this->flattenViewHidden($this->getFieldFlattenViewHidden(...));
+        $this->flattenView($this->getFieldFlattenView(...));
+        $this->flattenViewLabel(CustomForms::__('custom_forms.fields.name_multiple'));
 
-        $this->itemGridStart(function ($itemState) {
-            if (empty($itemState['options'])) return null;
-            $newLineOption = $itemState['options']['new_line'] ?? false;
-            return $newLineOption ? 1 : null;
-        });
-
-        $this->flattenGrid(function ($itemState) {
-            $columns = $itemState['options']['columns'] ?? null;
-            if (!empty($columns)) return $columns;
-            $type = CustomFieldUtils::getFieldTypeFromRawDate($itemState);
-            if (is_null($type)) return $this->getGridSize();
-            return $type->getStaticColumns();
-        });
-
-        $this->flattenViewHidden(function ($itemState) {
-            $type = CustomFieldUtils::getFieldTypeFromRawDate($itemState);
-            return is_null($type) || is_null($type->fieldEditorExtraComponent($itemState));
-        });
-
-        $this->flattenView(function ($itemState) {
-            $type = CustomFieldUtils::getFieldTypeFromRawDate($itemState);
-            return $type->fieldEditorExtraComponent($itemState);
-        });
-
-
-        $this->itemLabel(function ($itemState) {
-            $type = CustomFieldUtils::getFieldTypeFromRawDate($itemState);
-            if (is_null($type)) return null;
-            return $type->getEditorFieldTitle($itemState);
-        });
-        $this->itemIcons(function ($itemState) {
-            $type = CustomFieldUtils::getFieldTypeFromRawDate($itemState);
-            if (is_null($type)) return null;
-            return $type->getEditorFieldIcon($itemState);
-        });
-        $this->flattenViewLabel("Felder"); //ToDo Translate
-
-
-        $this->itemActions(function ($itemState, $item) {
-            $type = CustomFieldUtils::getFieldTypeFromRawDate($itemState);
-            if (is_null($type)) return [];
-            return $type->getEditorActions($item, $itemState); //i think it doesnt need the key
-        });
-
-
-        $this->schema([
-            Group::make()
-                ->schema(fn($record, $state) => [
-                    TextInput::make('name.' . $record->getLocale())
-                        ->label("")
-                        ->visible(function () use ($state) {
-                            $type = CustomFieldUtils::getFieldTypeFromRawDate($state);
-                            return !is_null($type) && $type->hasEditorNameElement($state);
-                        }),
-                ]),
+        $this->schema(fn(CustomForm $record) => [
+            TextInput::make('name.' . $record->getLocale()) //TODO CONTINUE
+            ->label('')
+                ->visible(function ($get) {
+                    $type = CustomForms::getFieldTypeFromRawDate($get('.'));
+                    return !is_null($type) && $type->hasEditorNameElement($get('.'));
+                })
         ]);
     }
 
-
-    private function getGridColumns($itemState): ?int
+    protected function getFieldGridSize(array $itemState): int
     {
+        $size = $itemState['options']['column_span'] ?? null;
+        $maxSize = 12;
+        if (!empty($size)) {
+            return min($size, $maxSize);
+        }
+        $type = CustomForms::getFieldTypeFromRawDate($itemState);
+        if (is_null($type) || !$type->isFullSizeField()) {
+            return 1;
+        }
+        return $maxSize;
     }
 
+    protected function getFieldGridStart(array $itemState): ?int
+    {
+        if (empty($itemState['options'])) {
+            return null;
+        }
+        $newLineOption = $itemState['options']['new_line'] ?? false;
+        return $newLineOption ? 1 : null;
+    }
+
+    protected function getFieldFlattenGrid(array $itemState): ?int
+    {
+        if (empty($itemState)) {
+            return $this->getGridSize();
+        }
+        return CustomForms::getFieldTypeFromRawDate($itemState)->getColumns($itemState);
+    }
+
+    protected function getFieldFlattenViewHidden(array $itemState): bool
+    {
+        $type = CustomForms::getFieldTypeFromRawDate($itemState);
+        return is_null($type->fieldEditorExtraComponent($itemState));
+    }
+
+    protected function getFieldFlattenView(array $itemState): ?string
+    {
+        return CustomForms::getFieldTypeFromRawDate($itemState)->fieldEditorExtraComponent($itemState);
+    }
+
+    protected function getFieldIcons(array $itemState): ?string
+    {
+        return CustomForms::getFieldTypeFromRawDate($itemState)->getEditorFieldIcon($itemState);
+    }
+
+    protected function getFieldLabel(array $itemState): ?string
+    {
+        return CustomForms::getFieldTypeFromRawDate($itemState)->getEditorFieldTitle($itemState);
+    }
+
+    protected function getFieldActions(array $itemState, $item): array
+    {
+        return CustomForms::getFieldTypeFromRawDate($itemState)->getEditorActions($item, $itemState);
+    }
 }

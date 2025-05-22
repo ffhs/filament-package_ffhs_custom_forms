@@ -35,7 +35,9 @@ class CustomOptionGeneralTypeOption extends TypeOption
             ->relationship('customOptions')
             ->afterStateUpdated(function ($set, array $state) use ($name) {
                 foreach (array_keys($state) as $optionKey) {
-                    if (empty($state[$optionKey]["identifier"])) $state[$optionKey]["identifier"] = uniqid();
+                    if (empty($state[$optionKey]["identifier"])) {
+                        $state[$optionKey]["identifier"] = uniqid();
+                    }
                 }
                 $set($name, $state);
             })->schema(fn($record) => [

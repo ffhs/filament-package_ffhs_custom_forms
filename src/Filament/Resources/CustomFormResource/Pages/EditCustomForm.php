@@ -68,8 +68,8 @@ class EditCustomForm extends EditRecord
             CustomFormSchemaExportAction::make(),
             CustomFormSchemaImportAction::make()
                 ->existingForm(fn(CustomForm $record) => $record)
-                ->disabled(fn(CustomForm $record) => $record->ownedFields->count() != 0 ||
-                    $record->rules->count() != 0
+                ->disabled(fn(CustomForm $record) =>
+                    $record->ownedFields->count() > 0 || $record->rules->count() > 0
                 )
                 ->action(function (CustomFormSchemaImportAction $action, $data) {
                     $action->callImportAction($data);

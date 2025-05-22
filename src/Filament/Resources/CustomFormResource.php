@@ -37,15 +37,15 @@ class CustomFormResource extends Resource
         return __('filament-package_ffhs_custom_forms::custom_forms.form.custom_form');
     }
 
+    public static function canAccess(): bool
+    {
+        return parent::canAccess() && static::can('showResource');
+    }
+
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()
             ->whereNull('template_identifier');
-    }
-
-    public static function canAccess(): bool
-    {
-        return parent::canAccess() && static::can('showResource');
     }
 
     public static function getPages(): array

@@ -2,30 +2,34 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\FormEditor\TypeActions\default;
 
-use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\CustomFieldUtils;
+use Ffhs\FilamentPackageFfhsCustomForms\Facades\CustomForms;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\FormEditor\Components\EditTypeOptionModal;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\FormEditor\TypeActions\OptionLikeAction;
 
 class DefaultCustomFieldEditTypeOptionsAction extends OptionLikeAction
 {
-    protected function setUp(): void {
+    protected function setUp(): void
+    {
 
-       parent::setUp();
+        parent::setUp();
 
-       $this->icon('carbon-settings-edit');
-       //Hidde if it hasn't any options
-       $this->visible(function($get, $arguments) {
-           if(!array_key_exists('item', $arguments)) return false;
-           return CustomFieldUtils::getFieldTypeFromRawDate($get($arguments['item']))?->extraTypeOptions() ?? false;
-       });
+        $this->icon('carbon-settings-edit');
+        //Hidde if it hasn't any options
+        $this->visible(function ($get, $arguments) {
+            if (!array_key_exists('item', $arguments)) {
+                return false;
+            }
+            return CustomForms::getFieldTypeFromRawDate($get($arguments['item']))?->extraTypeOptions() ?? false;
+        });
         $this->closeModalByClickingAway(false);
-       $this->form([
-           EditTypeOptionModal::make()
-       ]);
+        $this->form([
+            EditTypeOptionModal::make()
+        ]);
     }
 
 
-    protected function getTitleName(): string {
-       return "Field";
+    protected function getTitleName(): string
+    {
+        return "Field";
     }
 }

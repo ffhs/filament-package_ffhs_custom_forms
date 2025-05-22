@@ -9,10 +9,12 @@ use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Tabs\Tab;
 
-class CustomFormEditor extends Field {
+class CustomFormEditor extends Field
+{
     protected string $view = 'filament-forms::components.group';
 
-    protected function setUp(): void {
+    protected function setUp(): void
+    {
         parent::setUp();
         $this->columnSpanFull()
             ->label("");
@@ -23,7 +25,7 @@ class CustomFormEditor extends Field {
                 ->columnSpanFull()
                 ->tabs([
                     Tab::make("Formular") //ToDo Translate
-                        ->icon("carbon-data-format")
+                    ->icon("carbon-data-format")
                         ->columns(6)
                         ->schema([
                             Fieldset::make()
@@ -31,11 +33,12 @@ class CustomFormEditor extends Field {
                                 ->columnSpan(1)
                                 ->columns(1)
                                 ->schema(fn() => //ToDo Remove Closure
-                                $this->getRecord()?
+                                $this->getRecord() ?
                                     collect($this->getRecord()->getFormConfiguration()::editorFieldAdder())
-                                            ->map(fn(string $class) => $class::make())
-                                            ->toArray(): []
+                                        ->map(fn(string $class) => $class::make())
+                                        ->toArray() : []
                                 ),
+
                             EditCustomFields::make("custom_fields")
                                 ->columnStart(2)
                                 ->columnSpan(5),
@@ -43,7 +46,7 @@ class CustomFormEditor extends Field {
                         ]),
 
                     Tab::make("Regeln") //ToDo Translate
-                        ->icon("carbon-rule-draft")
+                    ->icon("carbon-rule-draft")
                         ->schema([
                             RuleEditor::make()
                                 ->columnSpanFull()
