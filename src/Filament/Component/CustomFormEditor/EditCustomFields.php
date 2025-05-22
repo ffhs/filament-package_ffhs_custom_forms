@@ -1,6 +1,6 @@
 <?php
 
-namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\FormEditor;
+namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormEditor;
 
 use Ffhs\FilamentPackageFfhsCustomForms\Facades\CustomForms;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\DragDrop\DragDropComponent;
@@ -31,14 +31,19 @@ class EditCustomFields extends DragDropComponent
         $this->flattenView($this->getFieldFlattenView(...));
         $this->flattenViewLabel(CustomForms::__('custom_forms.fields.name_multiple'));
 
-        $this->schema(fn(CustomForm $record) => [
-            TextInput::make('name.' . $record->getLocale()) //TODO CONTINUE
-            ->label('')
+        $this->schema($this->getFieldSchema(...));
+    }
+
+    protected function getFieldSchema(CustomForm $record): array
+    {
+        return [
+            TextInput::make('name.' . $record->getLocale())
+                ->label('')
                 ->visible(function ($get) {
                     $type = CustomForms::getFieldTypeFromRawDate($get('.'));
                     return !is_null($type) && $type->hasEditorNameElement($get('.'));
                 })
-        ]);
+        ];
     }
 
     protected function getFieldGridSize(array $itemState): int
@@ -49,17 +54,11 @@ class EditCustomFields extends DragDropComponent
             return min($size, $maxSize);
         }
         $type = CustomForms::getFieldTypeFromRawDate($itemState);
-        if (is_null($type) || !$type->isFullSizeField()) {
-            return 1;
-        }
-        return $maxSize;
+        return $type->isFullSizeField() ? $maxSize : 1;
     }
 
     protected function getFieldGridStart(array $itemState): ?int
     {
-        if (empty($itemState['options'])) {
-            return null;
-        }
         $newLineOption = $itemState['options']['new_line'] ?? false;
         return $newLineOption ? 1 : null;
     }

@@ -2,12 +2,13 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Traits;
 
-use Ffhs\FilamentPackageFfhsCustomForms\Facades\CustomForms;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 
 trait HasAllFieldDataFromFormData
 {
+
+    use CanLoadCustomFormEditorData;
 
     protected function getFieldDataFromFormData(array $fields): array
     {
@@ -16,7 +17,7 @@ trait HasAllFieldDataFromFormData
             ->whereNotNull("template_id")
             ->flatMap(fn($templateData) => CustomForm::cached($templateData["template_id"])->customFields)
             ->mapWithKeys(fn(CustomField $customField) => [
-                $customField->identifier() => CustomForms::loadEditorField($customField)
+                $customField->identifier() => $this->loadEditorField($customField)
             ]);
 
         $fields = collect($fields)->mapWithKeys(fn(array $field) => [

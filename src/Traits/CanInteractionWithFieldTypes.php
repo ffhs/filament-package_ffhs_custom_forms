@@ -14,10 +14,16 @@ trait CanInteractionWithFieldTypes
      * @throws FieldHasNoOrWrongCustomFieldTypeException
      * @throws FieldDataHasNoOrWrongCustomFieldTypeException
      */
-    public function getFieldTypeFromRawDate(array $data): CustomFieldType
+    public function getFieldTypeFromRawDate(array &$data): CustomFieldType
     {
         if (empty($data)) {
             throw new FieldDataHasNoOrWrongCustomFieldTypeException($data);
+        }
+        if (!empty($data['cachedFieldType'])) {
+            try {
+                return $data['cachedFieldType']::make();
+            } catch (\Exception $e) {
+            }
         }
 
         //ToDo modify to make it variable

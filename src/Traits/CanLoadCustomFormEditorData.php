@@ -23,7 +23,8 @@ trait CanLoadCustomFormEditorData
         ];
     }
 
-    protected function loadEditorFields(Collection $fields):array {
+    protected function loadEditorFields(Collection $fields): array
+    {
         $data = [];
         foreach ($fields as $field) {
             $key = EditCustomFormHelper::getEditKey($field);
@@ -39,14 +40,18 @@ trait CanLoadCustomFormEditorData
 
         unset($fieldData["updated_at"], $fieldData["created_at"]);
 
-        return $field->getType()->getMutateCustomFieldDataOnLoad($field, $fieldData);
+        $type = $field->getType();
+        $fieldData = $type->getMutateCustomFieldDataOnLoad($field, $fieldData);
+        $fieldData['cachedFieldType'] = $type::class;
+
+        return $fieldData;
     }
 
     protected function loadRules(CustomForm $form): array
     {
         $rules = [];
         foreach ($form->ownedRules as $rule) {
-            /**@var Rule $rule*/
+            /**@var Rule $rule */
             $rawRule = $rule->toArray();
             $rawRule['events'] = $rule->ruleEvents->toArray();
             $rawRule['triggers'] = $rule->ruleTriggers->toArray();

@@ -4,7 +4,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Exceptions;
 
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 
-class FieldHasNoOrWrongCustomFieldTypeException extends \Exception
+class FieldHasNoOrWrongCustomFieldTypeException extends \RuntimeException
 {
     public function __construct(string|CustomField $message)
     {

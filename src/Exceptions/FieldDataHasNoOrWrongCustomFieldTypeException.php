@@ -2,7 +2,7 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Exceptions;
 
-class FieldDataHasNoOrWrongCustomFieldTypeException extends \Exception
+class FieldDataHasNoOrWrongCustomFieldTypeException extends \RuntimeException
 {
     public function __construct(string|array $message)
     {

@@ -3,13 +3,9 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\Facades;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\CustomFieldType\GenericType\CustomFieldType;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Facade;
 
 /**
- * @method static array loadCustomFormEditorData(Model $getRecord)
- * @method static array loadEditorField(CustomField $customField)
  * @method static CustomFieldType getFieldTypeFromRawDate($param)
  */
 class CustomForms extends Facade
