@@ -100,7 +100,7 @@ abstract class CustomFieldType implements Type
 
     public function getTranslatedName(): string
     {
-        return __("custom_forms.types." . $this::identifier());
+        return __('custom_forms.types.' . $this::identifier());
     }
 
     public function getEditorFieldIcon(array $fieldData): string

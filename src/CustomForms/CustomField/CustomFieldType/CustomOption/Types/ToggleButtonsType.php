@@ -6,7 +6,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\CustomFieldType\
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\CustomFieldType\CustomOption\TypeOptions\CustomOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\CustomFieldType\CustomOption\TypeOptions\CustomOptionTypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\CustomFieldType\CustomOption\Types\Views\ToggleButtonsView;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\CustomFieldType\HasCustomTypePackageTranslation;
+use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasCustomTypePackageTranslation;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\TypeOption\Groups\LayoutWithColumnsOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\TypeOption\Groups\ValidationTypeOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\TypeOption\Options\BooleanOption;
@@ -36,7 +36,9 @@ class ToggleButtonsType extends CustomOptionType
 
     public function prepareSaveFieldData(CustomFieldAnswer $answer, mixed $data): ?array
     { //ToDo Rename and in Template
-        if ($data == '0') $data = false;
+        if ($data == '0') {
+            $data = false;
+        }
         return parent::prepareSaveFieldData($answer, $data);
     }
 

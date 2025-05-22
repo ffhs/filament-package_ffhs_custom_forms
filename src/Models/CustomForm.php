@@ -4,10 +4,11 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Models;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\CustomFieldType\CustomOption\CustomOptionType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomForm\FormConfiguration\DynamicFormConfiguration;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomForm\HasFormIdentifier;
+use Ffhs\FilamentPackageFfhsCustomForms\Facades\CustomForms;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\Caching\CachedModel;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\Caching\HasCacheModel;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\Caching\RelationCachedInformations;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomForm\HasFormIdentifier;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\FlattedNested\NestedFlattenList;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\Rule;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\RuleEvent;
@@ -90,6 +91,7 @@ class CustomForm extends Model implements CachedModel
 
     public static function getTemplateTypesToAdd(string|DynamicFormConfiguration $formType): Collection
     {
+        //ToDo change to Faced
         if ($formType instanceof DynamicFormConfiguration) {
             $formType = $formType::identifier();
         }
@@ -102,6 +104,12 @@ class CustomForm extends Model implements CachedModel
         $duration = config('ffhs_custom_forms.cache_duration');
         return Cache::remember($key, $duration, fn() => $query->get());
     }
+
+    public static function __(...$args): string
+    {
+        return CustomForms::__('models.custom_form.' . implode('.', $args));
+    }
+
 
     public function __get($key)
     {

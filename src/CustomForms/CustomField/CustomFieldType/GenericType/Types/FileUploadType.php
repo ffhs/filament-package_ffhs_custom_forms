@@ -5,7 +5,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\CustomFiel
 use Exception;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\CustomFieldType\GenericType\Types\Views\FileUploadView;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\CustomFieldType\HasCustomTypePackageTranslation;
+use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasCustomTypePackageTranslation;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\TypeOption\Groups\LayoutOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\TypeOption\Groups\ValidationTypeOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\TypeOption\Options\FastTypeOption;
@@ -54,7 +54,9 @@ class FileUploadType extends CustomFieldType
                             ->label(TypeOption::__('only_images.label'))
                             ->helperText(TypeOption::__('only_images.helper_text'))
                             ->afterStateUpdated(function ($state, $set) {
-                                if ($state) return;
+                                if ($state) {
+                                    return;
+                                }
 
                                 $set('show_images', false);
                                 $set('show_images_in_view', false);
@@ -92,7 +94,9 @@ class FileUploadType extends CustomFieldType
                             ->label(TypeOption::__('multiple_uploads_allowed.label'))
                             ->helperText(TypeOption::__('multiple_uploads_allowed.helper_text'))
                             ->afterStateUpdated(function ($state, $set) {
-                                if ($state) return;
+                                if ($state) {
+                                    return;
+                                }
                                 $set('reorderable', false);
                             })
                             ->live()

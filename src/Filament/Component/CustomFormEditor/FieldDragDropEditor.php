@@ -8,16 +8,16 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Filament\Forms\Components\TextInput;
 
-class EditCustomFields extends DragDropComponent
+class FieldDragDropEditor extends DragDropComponent
 {
     protected function setUp(): void
     {
-        $this->label("");
+        $this->label('');
 
         $this->flatten();
-        $this->dragDropGroup("custom_fields");
+        $this->dragDropGroup(fn($get) => 'custom_fields-' . $get('custom_form_identifier'));
 
-        $this->gridSize(config("ffhs_custom_forms.default_column_count"));
+        $this->gridSize(CustomForms::config('default_column_count'));
         $this->nestedFlattenListType(CustomField::class);
 
         $this->itemGridSize($this->getFieldGridSize(...));
@@ -29,7 +29,7 @@ class EditCustomFields extends DragDropComponent
         $this->flattenGrid($this->getFieldFlattenGrid(...));
         $this->flattenViewHidden($this->getFieldFlattenViewHidden(...));
         $this->flattenView($this->getFieldFlattenView(...));
-        $this->flattenViewLabel(CustomForms::__('custom_forms.fields.name_multiple'));
+        $this->flattenViewLabel(CustomField::__('label.multiple'));
 
         $this->schema($this->getFieldSchema(...));
     }

@@ -35,23 +35,23 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\FormRule\Events\VisibleEvent
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\FormRule\Trigger\AlwaysRuleTrigger;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\FormRule\Trigger\IsInfolistTrigger;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\FormRule\Trigger\ValueEqualsRuleTrigger;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\FormEditor\AdderComponents\default\CustomFieldTypeAdder;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\FormEditor\AdderComponents\default\GeneralFieldAdder;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\FormEditor\AdderComponents\default\TemplateFieldAdder;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormEditor\AdderComponents\default\CustomFieldTypeAdder;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormEditor\AdderComponents\default\GeneralFieldAdder;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormEditor\AdderComponents\default\TemplateFieldAdder;
 
 return [
 
-    'cache_duration'=> 1,
-    'save_stopper_time'=> 1,
+    'cache_duration' => 1,
+    'save_stopper_time' => 1,
     'default_column_count' => 4,
 
-    "rule"=>[
-        "trigger" =>[
+    "rule" => [
+        "trigger" => [
             IsInfolistTrigger::class,
             ValueEqualsRuleTrigger::class,
             AlwaysRuleTrigger::class,
         ],
-        "event"=>[
+        "event" => [
             HideEvent::class,
             VisibleEvent::class,
             DisabledEvent::class,
@@ -61,8 +61,7 @@ return [
     ],
 
 
-
-    "forms"=>[
+    "forms" => [
 
     ],
 
@@ -78,8 +77,6 @@ return [
             GeneralFieldAdder::class
         ],
     ],
-
-
 
 
     "custom_field_types" => [
@@ -160,7 +157,7 @@ return [
         // WizardCustomNestType::class,
     ],
 
-    "selectable_general_field_types"=>[
+    "selectable_general_field_types" => [
         CheckboxType::class,
         TextType::class,
         EmailType::class,
@@ -184,7 +181,7 @@ return [
     ],
 
 
-    "type_settings"=>[
+    "type_settings" => [
         "download_file" => [
             "save_path" => "/custom-form-plugin/custom-fields/specified-data",
             "disk" => "local",
@@ -199,11 +196,11 @@ return [
                 "save_path" => "/custom-form-plugin/custom-fields/uploaded",
                 "disk" => "local",
             ],
-           'images' => [
-               "url_prefix" => null, // Null means default path
-               "save_path" => "/custom-form-plugin/uploaded-images",
-               "disk" => "public",
-           ]
+            'images' => [
+                "url_prefix" => null, // Null means default path
+                "save_path" => "/custom-form-plugin/uploaded-images",
+                "disk" => "public",
+            ]
         ]
     ],
 

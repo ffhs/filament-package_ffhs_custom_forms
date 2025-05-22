@@ -39,6 +39,13 @@ return [
         ],
     ],
 
+    'custom_field' => [
+        'label' => [
+            'single' => 'Feld',
+            'multiple' => 'Felder',
+        ],
+    ],
+
     'custom_option' => [
         'label' => [
             'single' => 'Auswahlmöglichkeit',
@@ -57,4 +64,18 @@ return [
             'helper_text' => '',
         ],
     ],
+
+    'rule' => [
+        'label' => [
+            'single' => 'Regel',
+            'multiple' => 'Regeln',
+        ],
+    ],
+
+    'custom_form' => [
+        'label' => [
+            'single' => 'Formular',
+            'multiple' => 'Formulare',
+        ],
+    ]
 ];

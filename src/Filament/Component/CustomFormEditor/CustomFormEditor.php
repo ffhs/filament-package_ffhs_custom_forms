@@ -2,9 +2,9 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormEditor;
 
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\FormEditor\EmbeddedCustomFormEditor;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\RuleEditor\RuleEditor;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\Rule;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanLoadCustomFormEditorData;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanSaveCustomFormEditorData;
 use Filament\Forms\Components\Concerns\EntanglesStateWithSingularRelationship;
@@ -20,7 +20,45 @@ class CustomFormEditor extends Field implements CanEntangleWithSingularRelations
     use CanSaveCustomFormEditorData;
     use CanLoadCustomFormEditorData;
 
-    protected string $view = 'filament-package_ffhs_custom_forms::filament.components.custom-form-editor';
+    protected string $view = 'filament-package_ffhs_custom_forms::filament.components.custom-form-editor.index';
+
+    public function getFormTab(): Tab
+    {
+        return Tab::make(CustomForm::__('label.single'))
+            ->icon('carbon-data-format')
+            ->columns(6)
+            ->schema([
+                Fieldset::make()
+                    ->columnStart(1)
+                    ->columnSpan(1)
+                    ->columns(1)
+                    ->schema(function ($record) {
+                        if (is_null($record)) {
+                            return [];
+                        }
+                        return once(static function () use ($record) {
+                            return collect($record->getFormConfiguration()::editorFieldAdder())
+                                ->map(fn(string $class) => $class::make())
+                                ->toArray();
+                        });
+                    }),
+
+                FieldDragDropEditor::make('custom_fields')
+                    ->label('')
+                    ->columnStart(2)
+                    ->columnSpan(5),
+            ]);
+    }
+
+    public function getRuleTab(): Tab
+    {
+        return Tab::make(Rule::__('label.multiple'))
+            ->icon('carbon-rule-draft')
+            ->schema([
+                RuleEditor::make()
+                    ->columnSpanFull()
+            ]);
+    }
 
     protected function setUp(): void
     {
@@ -30,7 +68,7 @@ class CustomFormEditor extends Field implements CanEntangleWithSingularRelations
 
         $this->schema([
             Tabs::make()
-                ->extraAttributes(["class" => "overflow-y-auto scroll-smooth"])
+                ->extraAttributes(['class' => 'overflow-y-auto scroll-smooth'])
                 ->columnSpanFull()
                 ->tabs([
                     $this->getFormTab(),
@@ -38,60 +76,18 @@ class CustomFormEditor extends Field implements CanEntangleWithSingularRelations
                 ]),
 
         ]);
-        $this->mutateRelationshipDataBeforeFillUsing(function (array $data) {
-            $customForm = CustomForm::cached($data["id"]);
+        $this->mutateRelationshipDataBeforeFillUsing(function () {
+            $customForm = $this->getCachedExistingRecord();
             if (is_null($customForm)) {
                 $customForm = new CustomForm();
             }
             return $this->loadCustomFormEditorData($customForm);
         });
 
-        $this->saveRelationshipsUsing(function ($state, EmbeddedCustomFormEditor $component) {
-            $form = $component->getRelationship()->first();
-            $this->saveCustomFormEditorData($state, $form);
+        $this->saveRelationshipsUsing(function ($state, CustomFormEditor $component) {
+            /**@var CustomForm $customForm */
+            $customForm = $component->getCachedExistingRecord();
+            $this->saveCustomFormEditorData($state, $customForm);
         });
     }
-
-    public function getFormTab(): Tab
-    {
-        return Tab::make("Formular") //ToDo Translate
-        ->icon("carbon-data-format")
-            ->columns(6)
-            ->schema([
-                Fieldset::make()
-                    ->columnStart(1)
-                    ->columnSpan(1)
-                    ->columns(1)
-                    ->schema(fn($record) => //ToDo Remove Closure
-                    $record ?
-                        collect($record->getFormConfiguration()::editorFieldAdder())
-                            ->map(fn(string $class) => $class::make())
-                            ->toArray() : []
-                    ),
-
-                EditCustomFields::make("custom_fields")
-                    ->columnStart(2)
-                    ->columnSpan(5),
-
-            ]);
-    }
-
-    public function getRuleTab(): Tab
-    {
-        return Tab::make("Regeln") //ToDo Translate
-        ->icon("carbon-rule-draft")
-            ->schema([
-                RuleEditor::make()
-                    ->columnSpanFull()
-            ]);
-    }
-
-    /*   public function getCachedExistingRecord(): ?Model
-   {
-       //Replace it with cached
-       $forginkey = $this->getRelationship()->getForeignKeyName();
-       $value =  $this->getRelationship()->getChild()->$forginkey;
-       $onwerKey = $this->getRelationship()->getOwnerKeyName();
-       return CustomForms::cached($value,$onwerKey);
-   }*/
 }
