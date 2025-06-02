@@ -4,10 +4,10 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\TemplateResourc
 
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormResource\Pages\EditCustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\TemplateResource;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomForm\EditHelper\EditCustomFormHelper;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
+use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanModifyCustomFormEditorData;
 use Filament\Actions\Action;
 use Filament\Support\Enums\MaxWidth;
 use Illuminate\Database\Eloquent\Builder;
@@ -17,6 +17,8 @@ use Illuminate\Support\HtmlString;
 
 class EditTemplate extends EditCustomForm
 {
+    use CanModifyCustomFormEditorData;
+
     protected static string $resource = TemplateResource::class;
 
     public static function canAccess(array $parameters = []): bool
@@ -158,7 +160,7 @@ class EditTemplate extends EditCustomForm
     protected function getGeneralFieldsOverwritten($livewire): Builder
     { //ToDo Optimize Cache
         $customFields = array_values($livewire->getCachedForms())[0]->getRawState()['custom_fields'];
-        $usedGeneralIDs = EditCustomFormHelper::getUsedGeneralFieldIds($customFields);
+        $usedGeneralIDs = $this->getUsedGeneralFieldIds($customFields);
 
         $templateFieldsQuery = CustomField::query()
             ->where('template_id', $this->record->id);
@@ -199,7 +201,7 @@ class EditTemplate extends EditCustomForm
 
         return CustomField::query()
             ->whereIn('custom_form_id', $otherTemplatesQuery->select('template_id'))
-            ->whereIn('general_field_id', EditCustomFormHelper::getUsedGeneralFieldIds($customFields));
+            ->whereIn('general_field_id', $this->getUsedGeneralFieldIds($customFields));
     }
 
     protected function collideMessageDescription($livewire): HtmlString

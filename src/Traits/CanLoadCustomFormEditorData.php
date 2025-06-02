@@ -23,16 +23,6 @@ trait CanLoadCustomFormEditorData
         ];
     }
 
-    protected function loadEditorFields(Collection $fields): array
-    {
-        $data = [];
-        foreach ($fields as $field) {
-            $key = EditCustomFormHelper::getEditKey($field);
-            $data[$key] = $this->loadEditorField($field);
-        }
-        return $data;
-    }
-
     public function loadEditorField(CustomField $field): array
     {
         $fieldData = $field->attributesToArray();
@@ -45,6 +35,29 @@ trait CanLoadCustomFormEditorData
         $fieldData['cachedFieldType'] = $type::class;
 
         return $fieldData;
+    }
+
+    protected function loadEditorFields(Collection $fields): array
+    {
+        $data = [];
+        foreach ($fields as $field) {
+            $key = $this->getFieldEditorKey($field);
+            $data[$key] = $this->loadEditorField($field);
+        }
+        return $data;
+    }
+
+    protected function getFieldEditorKey(array|CustomField $toAdd)
+    {
+        if ($toAdd instanceof CustomField) {
+            return empty($field->identifier) ? uniqid() : $field->identifier;
+        }
+
+        if (array_key_exists("identifier", $toAdd) && !empty($toAdd["identifier"])) {
+            return $toAdd["identifier"];
+        }
+
+        return uniqid();
     }
 
     protected function loadRules(CustomForm $form): array

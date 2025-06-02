@@ -68,7 +68,7 @@ final class CustomFieldTypeAdder extends FormEditorFieldAdder
         return collect($fieldTypes)->map(fn($class) => app($class))->toArray();
     }
 
-    function getNewFieldData(CustomFieldType $type): array
+    protected function getNewFieldData(CustomFieldType $type): array
     {
         return [
             'identifier' => uniqid(),

@@ -2,15 +2,17 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormEditor\AdderComponents\default;
 
-use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomForm\EditHelper\EditCustomFormHelper;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomForm\FormConfiguration\DynamicFormConfiguration;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormEditor\AdderComponents\FormEditorFieldAdder;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\DragDrop\Actions\DragDropExpandActions;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
+use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanModifyCustomFormEditorData;
 use Filament\Support\Colors\Color;
 
 final class TemplateFieldAdder extends FormEditorFieldAdder
 {
+    use CanModifyCustomFormEditorData;
+
     public function getGeneralFieldSelectOptions(): array
     {
         return once(function () {
@@ -41,7 +43,7 @@ final class TemplateFieldAdder extends FormEditorFieldAdder
     public function useTemplateUsedGeneralFields(int $templateId): bool
     {
         $templateGenIds = CustomForm::cached($templateId)->generalFields->pluck('id')->toArray();
-        $existingIds = EditCustomFormHelper::getUsedGeneralFieldIds($this->getState()['custom_fields']);
+        $existingIds = $this->getUsedGeneralFieldIds($this->getState()['custom_fields']);
         $commonValues = array_intersect($templateGenIds, $existingIds);
 
         return !empty($commonValues);
