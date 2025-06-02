@@ -2,18 +2,17 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\CustomFieldType\GenericType\Traits;
 
-use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\TypeOption\TypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 
 trait HasEditFieldCallbacks
 {
-    public final function getMutateCustomFieldDataOnSave(CustomField $field, array $data): array
+    final public function getMutateCustomFieldDataOnSave(CustomField $field, array $data): array
     {
         $this->mutateOptions($data, $field, 'mutateOnFieldSave');
         return $this->mutateCustomFieldDataOnSave($field, $data);
     }
 
-    public final function getMutateCustomFieldDataOnLoad(CustomField $field, array $data): array
+    final public function getMutateCustomFieldDataOnLoad(CustomField $field, array $data): array
     {
         $this->mutateOptions($data, $field, 'mutateOnFieldLoad');
         return $this->mutateCustomFieldDataOnLoad($field, $data);
@@ -40,7 +39,6 @@ trait HasEditFieldCallbacks
     public function doBeforeDeleteField(CustomField $field): void
     {
         foreach ($this->getFlattenExtraTypeOptions() as $key => $option) {
-            /**@var TypeOption $option */
             $option->beforeDeleteField($key, $field);
         }
 
@@ -50,13 +48,12 @@ trait HasEditFieldCallbacks
     public function doAfterDeleteField(CustomField $field): void
     {
         foreach ($this->getFlattenExtraTypeOptions() as $key => $option) {
-            /**@var TypeOption $option */
             $option->afterDeleteField($key, $field);
         }
         $this->afterDeleteField($field);
     }
 
-    public final function mutateCustomFieldDataOnLoad(CustomField $field, array $data): array
+    public function mutateCustomFieldDataOnLoad(CustomField $field, array $data): array
     {
         return $data;
     }

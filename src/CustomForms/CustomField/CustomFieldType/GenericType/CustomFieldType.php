@@ -9,9 +9,9 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\CustomFieldType\
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\CustomFieldType\GenericType\Traits\HasGridModifiers;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\CustomFieldType\GenericType\Traits\HasTypeOptions;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\CustomFieldType\GenericType\Traits\HasTypeView;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\FormEditor\TypeActions\default\DefaultCustomActivationAction;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\FormEditor\TypeActions\default\DefaultCustomFieldDeleteAction;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\FormEditor\TypeActions\default\DefaultCustomFieldEditTypeOptionsAction;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormEditor\TypeActions\Default\DefaultCustomActivationAction;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormEditor\TypeActions\Default\DefaultCustomFieldDeleteAction;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormEditor\TypeActions\Default\DefaultCustomFieldEditTypeOptionsAction;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\html\HtmlBadge;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
@@ -55,7 +55,10 @@ abstract class CustomFieldType implements Type
         return $output;
     }
 
-    public abstract function viewModes(): array;
+    public static function make(): static
+    {
+        return app(static::class);
+    }
 
 
     /*
@@ -63,6 +66,8 @@ abstract class CustomFieldType implements Type
      */
 
     //public static abstract function identifier(): string;
+
+    public abstract function viewModes(): array;
 
     public function prepareSaveFieldData(CustomFieldAnswer $answer, mixed $data): ?array
     { //ToDo Rename and in Template
@@ -125,11 +130,6 @@ abstract class CustomFieldType implements Type
             DefaultCustomFieldEditTypeOptionsAction::make('edit-field-' . $key),
             DefaultCustomActivationAction::make('active-' . $key)->visible($this->canBeDeactivate()),
         ];
-    }
-
-    public static function make(): static
-    {
-        return app(static::class);
     }
 
     public function canBeDeactivate(): bool

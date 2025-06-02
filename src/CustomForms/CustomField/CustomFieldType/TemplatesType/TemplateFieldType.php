@@ -5,9 +5,9 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\CustomFiel
 use Closure;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\Facades\CustomForms;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\FormEditor\TypeActions\default\DefaultCustomActivationAction;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\FormEditor\TypeActions\default\DefaultCustomFieldDeleteAction;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\FormEditor\TypeActions\default\DefaultTemplateDissolveAction;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormEditor\TypeActions\Default\DefaultCustomActivationAction;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormEditor\TypeActions\Default\DefaultCustomFieldDeleteAction;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormEditor\TypeActions\Default\DefaultTemplateDissolveAction;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\html\HtmlBadge;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
@@ -19,17 +19,20 @@ use Illuminate\Support\Collection;
 final class TemplateFieldType extends CustomFieldType
 {
 
-    public static function identifier(): string {
+    public static function identifier(): string
+    {
         return "template";
     }
 
-    public function viewModes(): array {
+    public function viewModes(): array
+    {
         return [
-          "default"=> TemplateTypeView::class,
+            "default" => TemplateTypeView::class,
         ];
     }
 
-    public function icon(): string {
+    public function icon(): string
+    {
         return "carbon-copy-file";
     }
 
@@ -59,37 +62,39 @@ final class TemplateFieldType extends CustomFieldType
       public function nameBeforeIconFormEditor(array $state):string {
           return new HtmlBadge("Template", Color::rgb("rgb(34, 135, 0)"));
       }*/
-    public function mutateCustomFieldDataOnSave(CustomField $field, array $data): array {
+    public function mutateCustomFieldDataOnSave(CustomField $field, array $data): array
+    {
         unset($data['options']);
-        return  $data;
+        return $data;
     }
 
 
-
-
-    public function getEditorActions(string $key, array $fieldState): array {
+    public function getEditorActions(string $key, array $fieldState): array
+    {
         return [
             DefaultCustomFieldDeleteAction::make('delete-field-' . $key),
             DefaultTemplateDissolveAction::make('dissolve-template-' . $key),
             DefaultCustomActivationAction::make('active-' . $key)->visible($this->canBeDeactivate()),
         ];
     }
-    public function getEditorFieldTitle(array $fieldData): string {
+
+    public function getEditorFieldTitle(array $fieldData): string
+    {
 
         $template = CustomForm::cached($fieldData['template_id']);
 
-        return "<div>". new HtmlBadge('Template', Color::rgb("rgb(34, 135, 0)"))."</div>" .
-            '<p style="margin-left: 70px; margin-top: -20px">'. $template->short_title.'</p>'; //ToDo Improve
+        return "<div>" . new HtmlBadge('Template', Color::rgb("rgb(34, 135, 0)")) . "</div>" .
+            '<p style="margin-left: 70px; margin-top: -20px">' . $template->short_title . '</p>'; //ToDo Improve
     }
 
-    public function hasEditorNameElement(array $fielData): bool {
+    public function hasEditorNameElement(array $fielData): bool
+    {
         return false;
     }
 
 
-
-
-    public function afterAnswerFieldSave(CustomFieldAnswer $field, mixed $rawData, array $formData): void {
+    public function afterAnswerFieldSave(CustomFieldAnswer $field, mixed $rawData, array $formData): void
+    {
         $templateId = $field->customField->template_id;
         $formAnswerer = $field->customFormAnswer;
         $template = CustomForm::cached($templateId);
@@ -107,54 +112,68 @@ final class TemplateFieldType extends CustomFieldType
             fn(CustomField $customField) => $customField->identifier
         );
 
-        CustomForms::saveWithoutPreparation($formData, $customFieldsIdentify, $fieldAnswersIdentify, $formAnswerer); //Check with splited
+        CustomForms::saveWithoutPreparation($formData, $customFieldsIdentify, $fieldAnswersIdentify,
+            $formAnswerer); //Check with splited
     }
 
 
     //ToDo Reimplement
 
-    public function afterDeleteField(CustomField $field):void {
+    public function afterDeleteField(CustomField $field): void
+    {
         $templateFields = $field->template->customFields;
         $formFields = $field->customForm->customFields;
-        $field->customForm->customFormAnswers->each(function (CustomFormAnswer $formAnswer) use ($formFields, $field, $templateFields) {
+        $field->customForm->customFormAnswers->each(function (CustomFormAnswer $formAnswer) use (
+            $formFields,
+            $field,
+            $templateFields
+        ) {
             $formAnswer->customFieldAnswers
-                ->whereIn("custom_field_id",$templateFields->pluck("id"))
-                ->each($this->getFieldTransferClosure($formFields,  $templateFields));
+                ->whereIn("custom_field_id", $templateFields->pluck("id"))
+                ->each($this->getFieldTransferClosure($formFields, $templateFields));
         });
     }
 
-    function getFieldTransferClosure(Collection $newFields, Collection $originalFields): Closure {
-        return function (CustomFieldAnswer $fieldAnswer) use ($newFields, $originalFields):void {
+    function getFieldTransferClosure(Collection $newFields, Collection $originalFields): Closure
+    {
+        return function (CustomFieldAnswer $fieldAnswer) use ($newFields, $originalFields): void {
             /**@var CustomField $oldField */
             $oldField = $originalFields->where("id", $fieldAnswer->custom_field_id)->first();
-            if(is_null($oldField)) return;
+            if (is_null($oldField)) {
+                return;
+            }
 
 
             $identifier = $oldField->identifier;
             $newField = $newFields
-                ->filter(fn(CustomField $customField) => $customField->identifier==$identifier)
+                ->filter(fn(CustomField $customField) => $customField->identifier == $identifier)
                 ->first();
 
-            if (is_null($newField)) return;
+            if (is_null($newField)) {
+                return;
+            }
             $fieldAnswer->custom_field_id = $newField->id;
             $fieldAnswer->save();
         };
     }
 
-    public function afterSaveField(CustomField $field, array $data): void {
+    public function afterSaveField(CustomField $field, array $data): void
+    {
         $templateFields = $field->template->customFields;
         $formFields = $field->customForm->customFields;
 
-        $field->customForm->customFormAnswers->each(function (CustomFormAnswer $formAnswer) use ($formFields, $field, $templateFields) {
+        $field->customForm->customFormAnswers->each(function (CustomFormAnswer $formAnswer) use (
+            $formFields,
+            $field,
+            $templateFields
+        ) {
             $templateIdentifiers = $templateFields->pluck("identifier");
-            $formFieldIds = $formFields->whereIn("identifier",$templateIdentifiers)->pluck("id");
+            $formFieldIds = $formFields->whereIn("identifier", $templateIdentifiers)->pluck("id");
             $formAnswer->customFieldAnswers
-                ->whereIn("custom_field_id",$formFieldIds)
+                ->whereIn("custom_field_id", $formFieldIds)
                 ->each($this->getFieldTransferClosure($templateFields, $formFields));
         });
     }
-
-
 
 
 }

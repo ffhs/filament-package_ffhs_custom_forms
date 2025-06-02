@@ -44,6 +44,20 @@ return [
             'single' => 'Feld',
             'multiple' => 'Felder',
         ],
+        'attributes' => [
+            'is_active' => [
+                'active' => 'Aktive',
+                'not_active' => 'Nicht aktiv',
+            ]
+        ],
+        'actions' => [
+            'delete' => [
+                'confirmation_message' => 'Löschen des :type Feldes :name" '
+            ],
+            'edit_options' => [
+                'modal_heading' => ':name - Feld bearbeiten'
+            ]
+        ]
     ],
 
     'custom_option' => [
