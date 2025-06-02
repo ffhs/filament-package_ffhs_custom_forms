@@ -8,7 +8,6 @@ use Ffhs\FilamentPackageFfhsCustomForms\Facades\CustomForms;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormEditor\TypeActions\Default\DefaultCustomActivationAction;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormEditor\TypeActions\Default\DefaultCustomFieldDeleteAction;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormEditor\TypeActions\Default\DefaultTemplateDissolveAction;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\html\HtmlBadge;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
@@ -82,7 +81,8 @@ final class TemplateFieldType extends CustomFieldType
     {
         $template = CustomForm::cached($fieldData['template_id']);
 
-        return "<div>" . new HtmlBadge('Template', Color::rgb("rgb(34, 135, 0)")) . "</div>" .
+        return "<div>" . view('filament-package_ffhs_custom_forms::badge',
+                ['text' => 'Template', 'color' => Color::rgb("rgb(34, 135, 0)")]) . "</div>" .
             '<p style="margin-left: 70px; margin-top: -20px">' . $template->short_title . '</p>'; //ToDo Improve
     }
 

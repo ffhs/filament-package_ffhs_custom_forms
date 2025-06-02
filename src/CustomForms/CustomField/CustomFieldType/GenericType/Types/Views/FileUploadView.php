@@ -6,7 +6,6 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\CustomFieldType\
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\CustomFieldType\GenericType\FieldTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\CustomFieldType\GenericType\Traits\HasDefaultViewComponent;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\FieldMapper;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFieldType\FileUploadInfolistDisplay;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Filament\Forms\Components\Component;
@@ -18,8 +17,8 @@ use Filament\Infolists\Components\Grid;
 use Filament\Infolists\Components\Group;
 use Filament\Infolists\Components\ImageEntry;
 use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Components\View;
 use Filament\Support\Enums\Alignment;
-use Illuminate\Support\Facades\Request;
 use Illuminate\Support\HtmlString;
 
 class FileUploadView implements FieldTypeView
@@ -97,7 +96,9 @@ class FileUploadView implements FieldTypeView
         $image = FieldMapper::getOptionParameter($record, "image");
         if ($image) {
             $disk = FieldMapper::getTypeConfigAttribute($record, "images.disk");
-        } else $disk = FieldMapper::getTypeConfigAttribute($record, "files.disk");
+        } else {
+            $disk = FieldMapper::getTypeConfigAttribute($record, "files.disk");
+        }
         $diskRoot = config('filesystems.disks.' . $disk . '.root');
 
 
@@ -120,7 +121,9 @@ class FileUploadView implements FieldTypeView
     ): Group {
         $groups = [];
         foreach ($files as $path) {
-            if (!is_array($names)) $names = [$path => $names];
+            if (!is_array($names)) {
+                $names = [$path => $names];
+            }
             $urlPrefix = FieldMapper::getTypeConfigAttribute($record, "images.url_prefix") ?? $diskRoot;
 
             $groups[] = Fieldset::make($names[$path])
@@ -205,7 +208,9 @@ class FileUploadView implements FieldTypeView
 
 
         foreach ($files as $path) {
-            if (!is_array($names)) $names = [$path => $names];
+            if (!is_array($names)) {
+                $names = [$path => $names];
+            }
 
             $absolutePath = $diskRoot . "/" . $path;
             $actions = [];
@@ -220,22 +225,10 @@ class FileUploadView implements FieldTypeView
             }
 
 
-            $fileComponents[] = FileUploadInfolistDisplay::make([Actions::make($actions)])
-                ->label($names[$path] ?? $path);
-
-//            $fileComponents[] = Group::make([
-//                TextEntry::make("file_name" . $path)
-//                    ->label("")
-//                    ->state($names[$path] ?? $path)
-//                    ->columnSpan(2),
-//                Actions::make($actions),
-//            ])
-//                ->extraAttributes([
-//                    'class' => 'fi-badge flex items-center justify-center gap-x-1 rounded-md text-xs font-medium ring-1 ring-inset px-2 min-w-[theme(spacing.6)] py-1 fi-color-custom bg-custom-50 text-custom-600 ring-custom-600/10
-//                dark:bg-custom-400/10 dark:text-custom-400 dark:ring-custom-400/30 fi-color-primary fi-ac-action fi-ac-badge-action',
-//                    "style" => "--c-50:var(--primary-50);--c-400:var(--primary-400);--c-600:var(--primary-600);",
-//                ])->columns(3)
-//                ->columnStart(1);
+            $fileComponents[] =
+                View::make('filament-package_ffhs_custom_forms::filament.components.file-upload-display')
+                    ->schema([Actions::make($actions)])
+                    ->label($names[$path] ?? $path);
         }
 
         return Group::make([

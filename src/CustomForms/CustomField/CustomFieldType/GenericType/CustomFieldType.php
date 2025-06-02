@@ -12,7 +12,6 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\CustomFieldType\
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormEditor\TypeActions\Default\DefaultCustomActivationAction;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormEditor\TypeActions\Default\DefaultCustomFieldDeleteAction;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormEditor\TypeActions\Default\DefaultCustomFieldEditTypeOptionsAction;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\html\HtmlBadge;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\IsType;
@@ -99,7 +98,9 @@ abstract class CustomFieldType implements Type
             return $this->getTranslatedName();
         }
 
-        return "<div>" . new HtmlBadge('Gen', Color::rgb('rgb(43, 164, 204)')) . "</div>" .
+        $badge = view('filament-package_ffhs_custom_forms::badge',
+            ['text' => 'Gen', 'color' => Color::rgb('rgb(43, 164, 204)')]);
+        return "<div>" . $badge . "</div>" .
             '<p style="margin-left: 40px; margin-top: -20px">' . $field->name . '</p>'; //ToDo Badges function reimplement
     }
 
