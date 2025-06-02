@@ -35,9 +35,9 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\FormRule\Events\VisibleEvent
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\FormRule\Trigger\AlwaysRuleTrigger;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\FormRule\Trigger\IsInfolistTrigger;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\FormRule\Trigger\ValueEqualsRuleTrigger;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormEditor\AdderComponents\default\CustomFieldTypeAdder;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormEditor\AdderComponents\default\GeneralFieldAdder;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormEditor\AdderComponents\default\TemplateFieldAdder;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormEditor\AdderComponents\Default\CustomFieldTypeAdder;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormEditor\AdderComponents\Default\GeneralFieldAdder;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormEditor\AdderComponents\Default\TemplateFieldAdder;
 
 return [
 

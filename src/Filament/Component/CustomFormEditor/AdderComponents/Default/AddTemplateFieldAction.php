@@ -1,6 +1,6 @@
 <?php
 
-namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormEditor\AdderComponents\default;
+namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormEditor\AdderComponents\Default;
 
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormEditor\AdderComponents\FormEditorFieldAdder;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;

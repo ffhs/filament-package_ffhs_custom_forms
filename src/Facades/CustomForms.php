@@ -3,12 +3,12 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\Facades;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\CustomFieldType\GenericType\CustomFieldType;
-use Illuminate\Support\Collection;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomForm\FormConfiguration\CustomFormConfiguration;
 use Illuminate\Support\Facades\Facade;
 
 /**
  * @method static CustomFieldType getFieldTypeFromRawDate($param)
- * @method static Collection getAllowedGeneralFieldsInFormIdentifier(string $formIdentifier)
+ * @method static CustomFormConfiguration getFormConfiguration($custom_form_identifier)
  */
 class CustomForms extends Facade
 {

@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Artisan;
 use Orchestra\Testbench\Attributes\WithMigration;
 use Orchestra\Testbench\Concerns\WithWorkbench;
 use Orchestra\Testbench\TestCase as Orchestra;
-use Workbench\App\FFHs\TestDynamicFormConfiguration;
+use Workbench\App\FFHs\TestCustomFormConfiguration;
 use Workbench\Database\Seeders\DatabaseSeeder;
 
 
@@ -19,12 +19,13 @@ abstract class TestCase extends Orchestra
 {
     use LazilyRefreshDatabase;
     use WithWorkbench;
+
     protected $enablesPackageDiscoveries = true;
     protected $seeder = DatabaseSeeder::class;
 
     protected function getEnvironmentSetUp($app)
     {
-        $app['config']->set('ffhs_custom_forms.forms', [TestDynamicFormConfiguration::class]);
+        $app['config']->set('ffhs_custom_forms.forms', [TestCustomFormConfiguration::class]);
 
 
         $loader = AliasLoader::getInstance();

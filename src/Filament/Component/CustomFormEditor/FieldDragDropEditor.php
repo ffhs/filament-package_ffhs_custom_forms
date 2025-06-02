@@ -7,6 +7,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\DragDrop\DragDropComp
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Get;
 
 class FieldDragDropEditor extends DragDropComponent
 {
@@ -15,7 +16,7 @@ class FieldDragDropEditor extends DragDropComponent
         $this->label('');
 
         $this->flatten();
-        $this->dragDropGroup(fn($get) => 'custom_fields-' . $get('custom_form_identifier'));
+        $this->dragDropGroup(fn(Get $get) => 'custom_fields-' . $get('custom_form_identifier'));
 
         $this->gridSize(CustomForms::config('default_column_count'));
         $this->nestedFlattenListType(CustomField::class);

@@ -6,9 +6,8 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
 use Illuminate\Support\Facades\Cache;
-use Workbench\App\FFHs\TestDynamicFormConfiguration;
+use Workbench\App\FFHs\TestCustomFormConfiguration;
 use Workbench\App\Models\UserSuperAdmin;
-
 use function Pest\Livewire\livewire;
 
 beforeEach(function () {
@@ -22,7 +21,7 @@ beforeEach(function () {
     /**@var CustomForm $customForm */
     $this->customForm = CustomForm::create([
         'short_title' => 'My custom form title',
-        'custom_form_identifier' => TestDynamicFormConfiguration::identifier(),
+        'custom_form_identifier' => TestCustomFormConfiguration::identifier(),
     ]);
 
     $this->customField = CustomField::create([

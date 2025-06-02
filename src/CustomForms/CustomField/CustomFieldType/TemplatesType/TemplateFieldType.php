@@ -80,7 +80,6 @@ final class TemplateFieldType extends CustomFieldType
 
     public function getEditorFieldTitle(array $fieldData): string
     {
-
         $template = CustomForm::cached($fieldData['template_id']);
 
         return "<div>" . new HtmlBadge('Template', Color::rgb("rgb(34, 135, 0)")) . "</div>" .

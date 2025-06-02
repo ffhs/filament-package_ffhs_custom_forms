@@ -4,9 +4,8 @@ use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\Actions\Cu
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormResource\Pages\EditCustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormResource\Pages\ListCustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
-use Workbench\App\FFHs\TestDynamicFormConfiguration;
+use Workbench\App\FFHs\TestCustomFormConfiguration;
 use Workbench\App\Models\UserSuperAdmin;
-
 use function Pest\Livewire\livewire;
 
 beforeEach(function () {
@@ -40,7 +39,7 @@ describe('getFormSchema visible options after file upload and select of form con
 
     test('import with form', function () {
         $customFormExisting = new CustomForm([
-            'custom_form_identifier' => TestDynamicFormConfiguration::identifier(),
+            'custom_form_identifier' => TestCustomFormConfiguration::identifier(),
             'short_title' => 'test'
         ]);
         $customFormExisting->save();

@@ -37,6 +37,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property-read string $position
  * @property-read \Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm|null $template
  * @property-read mixed $translations
+ * @property string[] $overwritten_options
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomField newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomField newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomField query()

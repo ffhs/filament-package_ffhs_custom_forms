@@ -3,11 +3,11 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomForm\FormConverter\FormImporter;
 
 use Error;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomForm\FormConfiguration\DynamicFormConfiguration;
-use Ffhs\FilamentPackageFfhsCustomForms\Exceptions\FormImportException;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomForm\FormConfiguration\CustomFormConfiguration;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomForm\FormConverter\FormImporter\Traids\ImportCustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomForm\FormConverter\FormImporter\Traids\ImportFieldInformation;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomForm\FormConverter\FormImporter\Traids\ImportRuleInformation;
+use Ffhs\FilamentPackageFfhsCustomForms\Exceptions\FormImportException;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Illuminate\Support\Facades\DB;
 
@@ -22,7 +22,13 @@ class FormSchemaImporter
         return app(static::class);
     }
 
-    public function import(array $rawForm, DynamicFormConfiguration $configuration, array $formInformation = [], array $templateMap = [], array $generalFieldMap = []): CustomForm{
+    public function import(
+        array $rawForm,
+        CustomFormConfiguration $configuration,
+        array $formInformation = [],
+        array $templateMap = [],
+        array $generalFieldMap = []
+    ): CustomForm {
 
         //ToDo Check if the identifiers of the fields exist
 
@@ -43,14 +49,19 @@ class FormSchemaImporter
 
             DB::commit();
             return $customForm;
-        }catch (Error|\Exception $exception){
+        } catch (Error|\Exception $exception) {
             DB::rollBack();
             throw new FormImportException($exception);
         }
     }
 
 
-    public function importWithExistingForm(array $rawForm, CustomForm $customForm,  array $templateMap = [], array $generalFieldMap = []): CustomForm{
+    public function importWithExistingForm(
+        array $rawForm,
+        CustomForm $customForm,
+        array $templateMap = [],
+        array $generalFieldMap = []
+    ): CustomForm {
 
         //ToDo Check if the identifiers of the fields exist
 
@@ -69,7 +80,7 @@ class FormSchemaImporter
 
             DB::commit();
             return $customForm;
-        }catch (Error|\Exception $exception){
+        } catch (Error|\Exception $exception) {
             DB::rollBack();
             throw new FormImportException($exception);
         }

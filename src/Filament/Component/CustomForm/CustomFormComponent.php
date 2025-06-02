@@ -18,7 +18,13 @@ class CustomFormComponent extends Component
     protected string|Closure $viewMode;
     protected bool|Closure $isAutoSave;
 
-    public static function make(string|Closure $viewMode= "default"): static
+    final public function __construct(string|Closure $viewMode = "default")
+    {
+        $this->viewMode = $viewMode;
+        $this->isAutoSave = false;
+    }
+
+    public static function make(string|Closure $viewMode = "default"): static
     {
         $static = app(static::class, [
             'viewMode' => $viewMode,
@@ -28,39 +34,21 @@ class CustomFormComponent extends Component
         return $static;
     }
 
-    final public function __construct(string|Closure $viewMode = "default")
+    public function getViewMode(): string|Closure
     {
-        $this->viewMode= $viewMode;
-        $this->isAutoSave=false;
-    }
-
-    protected function setUp(): void {
-        parent::setUp();
-        $this->label("");
-        $this->schema(fn(CustomFormAnswer $record, CustomFormComponent $component)=>
-            CustomFormRender::generateFormSchema(CustomForm::cached($record->custom_form_id),$component->getViewMode())
-        );
-        $this->columns(1);
-
-        //SetUp Auto Update
-        $this->afterStateUpdated(function (CustomFormComponent $component, array $state,?CustomFormAnswer $record){
-            if(!$component->getIsAutoSave()) return;
-            CustomForms::save($record, $component->getLivewire()->getForm('form'));
-        });
-
-    }
-
-    public function getViewMode(): string|Closure {
         return $this->evaluate($this->viewMode);
     }
 
-
-    public function autoViewMode(bool|Closure $autoViewMode = true):static {
-        if(!$this->evaluate($autoViewMode)) return $this;
-        $this->viewMode = function (CustomFormAnswer $record){
+    public function autoViewMode(bool|Closure $autoViewMode = true): static
+    {
+        if (!$this->evaluate($autoViewMode)) {
+            return $this;
+        }
+        $this->viewMode = function (CustomFormAnswer $record) {
             $form = CustomForm::cached($record->custom_form_id);
-            if($record->customFieldAnswers->count() == 0) return $form->getFormConfiguration()::displayCreateMode();
-            else{
+            if ($record->customFieldAnswers->count() === 0) {
+                return $form->getFormConfiguration()::displayCreateMode();
+            } else {
                 $form = CustomForm::cached($record->custom_form_id);
                 return $form->getFormConfiguration()::displayEditMode();
             }
@@ -68,13 +56,37 @@ class CustomFormComponent extends Component
         return $this;
     }
 
-    public function getIsAutoSave():bool {
+    public function getIsAutoSave(): bool
+    {
         return $this->evaluate($this->isAutoSave);
     }
 
-    public function autoSave(bool|Closure $isAutoSave = true):static {
+    public function autoSave(bool|Closure $isAutoSave = true): static
+    {
         $this->isAutoSave = $isAutoSave;
         return $this;
+    }
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->label("");
+        $this->schema(fn(
+            CustomFormAnswer $record,
+            CustomFormComponent $component
+        ) => CustomFormRender::generateFormSchema(CustomForm::cached($record->custom_form_id),
+            $component->getViewMode())
+        );
+        $this->columns(1);
+
+        //SetUp Auto Update
+        $this->afterStateUpdated(function (CustomFormComponent $component, array $state, ?CustomFormAnswer $record) {
+            if (!$component->getIsAutoSave()) {
+                return;
+            }
+            CustomForms::save($record, $component->getLivewire()->getForm('form'));
+        });
+
     }
 
 

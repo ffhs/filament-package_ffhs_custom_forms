@@ -17,12 +17,12 @@ class DragDropActions extends Actions
 
     public function actions(array $actions): static
     {
-        $this->childComponents(fn()=> array_map(
-            fn (Action $action): Component => DragDropActionContainer::make($action)->dragDropGroup($this->getDragDropGroup()),
+        $this->childComponents(fn() => array_map(
+            fn(Action $action
+            ): Component => DragDropActionContainer::make($action)->dragDropGroup($this->getDragDropGroup()),
             $actions,
         ));
 
         return $this;
     }
-
 }

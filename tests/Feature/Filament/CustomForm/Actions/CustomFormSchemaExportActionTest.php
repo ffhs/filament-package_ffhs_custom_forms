@@ -3,9 +3,8 @@
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\Actions\CustomFormSchemaExportAction;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormResource\Pages\EditCustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
-use Workbench\App\FFHs\TestDynamicFormConfiguration;
+use Workbench\App\FFHs\TestCustomFormConfiguration;
 use Workbench\App\Models\UserSuperAdmin;
-
 use function Pest\Livewire\livewire;
 
 beforeEach(function () {
@@ -18,7 +17,7 @@ beforeEach(function () {
 
     $this->customForm = new CustomForm([
         'short_title' => 'testForm',
-        'custom_form_identifier' => TestDynamicFormConfiguration::identifier()
+        'custom_form_identifier' => TestCustomFormConfiguration::identifier()
     ]);
 
     $this->customForm->save();

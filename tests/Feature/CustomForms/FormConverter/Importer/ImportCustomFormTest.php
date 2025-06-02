@@ -3,7 +3,7 @@
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomForm\FormConverter\FormImporter\FormSchemaImporter;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Tests\Feature\CustomForms\FormConverter\FormConverterCase;
-use Workbench\App\FFHs\TestDynamicFormConfiguration;
+use Workbench\App\FFHs\TestCustomFormConfiguration;
 
 uses(FormConverterCase::class);
 
@@ -12,25 +12,24 @@ beforeEach(function () {
 });
 
 
-
-
 test('Import form information\'s', function () {
     $importer = FormSchemaImporter::make();
-    $config = new TestDynamicFormConfiguration();
+    $config = new TestCustomFormConfiguration();
 
-    /**@var CustomForm $form*/
+    /**@var CustomForm $form */
     $form = $importer->importCustomForm(['form' => $this->exportedFormInformation], [], $config);
     expect($form)->not->toBeNull()
         ->and($form->is_template)->toBeFalse()
         ->and($form->short_title)->toBe($this->exportedFormInformation['short_title']);
 
-    /**@var CustomForm $form*/
-    $form = $importer->importCustomForm(['form' => $this->exportedFormInformation], ['short_title' => 'hallo'], $config);
+    /**@var CustomForm $form */
+    $form = $importer->importCustomForm(['form' => $this->exportedFormInformation], ['short_title' => 'hallo'],
+        $config);
     expect($form)->not->toBeNull()
         ->and($form->is_template)->toBeFalse()
         ->and($form->short_title)->toBe('hallo');
 
-    /**@var CustomForm $form*/
+    /**@var CustomForm $form */
     $form = $importer->importCustomForm(['form' => $this->exportedTemplateInformation], [], $config);
     expect($form)->not->toBeNull()
         ->and($form->is_template)->toBeTrue()

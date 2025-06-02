@@ -2,9 +2,9 @@
 
 namespace Workbench\App\FFHs;
 
-use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomForm\FormConfiguration\DynamicFormConfiguration;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomForm\FormConfiguration\CustomFormConfiguration;
 
-class TestDynamicFormConfiguration extends DynamicFormConfiguration
+class TestCustomFormConfiguration extends CustomFormConfiguration
 {
 
     public static function identifier(): string

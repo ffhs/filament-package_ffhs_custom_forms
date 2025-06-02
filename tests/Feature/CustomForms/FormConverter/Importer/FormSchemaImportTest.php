@@ -1,12 +1,12 @@
 <?php
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\CustomFieldType\GenericType\Types\TextType;
-use Ffhs\FilamentPackageFfhsCustomForms\Exceptions\FormImportException;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomForm\FormConverter\FormImporter\FormSchemaImporter;
+use Ffhs\FilamentPackageFfhsCustomForms\Exceptions\FormImportException;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Ffhs\FilamentPackageFfhsCustomForms\Tests\Feature\CustomForms\FormConverter\FormConverterCase;
-use Workbench\App\FFHs\TestDynamicFormConfiguration;
+use Workbench\App\FFHs\TestCustomFormConfiguration;
 
 uses(FormConverterCase::class);
 
@@ -36,7 +36,7 @@ test('Make FormSchemaImporter without an Error', function () {
 test('Import Form', function () {
     $importer = FormSchemaImporter::make();
     $countFormsBefore = CustomForm::query()->count();
-    $form = $importer->import($this->formData, new TestDynamicFormConfiguration());
+    $form = $importer->import($this->formData, new TestCustomFormConfiguration());
     expect(CustomForm::query()->count())->toBe($countFormsBefore + 1)
         ->and($form)->not->toBeNull();
 });
@@ -57,7 +57,7 @@ test('Import Form with overwritten template', function () {
     $countFormsBefore = CustomForm::query()->count();
     $form = $importer->import(
         $this->formData,
-        configuration: new TestDynamicFormConfiguration(),
+        configuration: new TestCustomFormConfiguration(),
         templateMap: $templateMap
     );
 
@@ -72,7 +72,8 @@ test('Import Form with overwritten template', function () {
 
 test('Import Form with overwritten generalfield', function () {
     $testOverwrittenGeneralField = GeneralField::create([
-        'name' => ['de' => 'test generales Feld 2', 'en' => 'test general field 2'],//['de' => 'test generales Feld', 'en' => 'test general field'],
+        'name' => ['de' => 'test generales Feld 2', 'en' => 'test general field 2'],
+        //['de' => 'test generales Feld', 'en' => 'test general field'],
         'identifier' => 'test_general2',
         'type' => TextType::identifier(),
         'icon' => 'test-icon',
@@ -87,7 +88,7 @@ test('Import Form with overwritten generalfield', function () {
     $countFormsBefore = CustomForm::query()->count();
     $form = $importer->import(
         $this->formData,
-        configuration: new TestDynamicFormConfiguration(),
+        configuration: new TestCustomFormConfiguration(),
         generalFieldMap: $generalMap
     );
 
@@ -110,11 +111,12 @@ test('Import Form with an error and rollback', function () {
             "fields" => [
                 'coffee' => 'programmer'
             ]
-        ], new TestDynamicFormConfiguration());
+        ], new TestCustomFormConfiguration());
 
         // If no exception is thrown, fail the test
         expect(false)->toBe(true, 'no exception');
-    } catch (FormImportException) {}
+    } catch (FormImportException) {
+    }
 
 
     expect(CustomForm::query()->count())->toBe($countFormsBefore);
@@ -125,10 +127,11 @@ test('Import Form with an error and rollback', function () {
 test('Import Form on existing Form', function () {
     $importer = FormSchemaImporter::make();
     $form = CustomForm::create(
-        ['short_title' => 'test_2',
-            'custom_form_identifier' => TestDynamicFormConfiguration::identifier()
+        [
+            'short_title' => 'test_2',
+            'custom_form_identifier' => TestCustomFormConfiguration::identifier()
         ]);
-    $formsCountBefore= CustomForm::query()->count();
+    $formsCountBefore = CustomForm::query()->count();
     $form = $importer->importWithExistingForm($this->formData, $form);
     expect($form)->not->toBeNull()
         ->and($form->ownedFields)->toHaveCount(count($this->exportedFlattenFieldInformation))

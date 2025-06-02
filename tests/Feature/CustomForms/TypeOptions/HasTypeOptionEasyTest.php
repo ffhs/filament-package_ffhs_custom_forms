@@ -10,9 +10,8 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
 use Illuminate\Support\Facades\Artisan;
-use Workbench\App\FFHs\TestDynamicFormConfiguration;
+use Workbench\App\FFHs\TestCustomFormConfiguration;
 use Workbench\App\Models\UserSuperAdmin;
-
 use function Pest\Livewire\livewire;
 
 trait HasTypeOptionEasyTest
@@ -34,7 +33,7 @@ trait HasTypeOptionEasyTest
         /**@var CustomForm $customForm */
         $this->customForm = CustomForm::create([
             'short_title' => 'My custom form title',
-            'custom_form_identifier' => TestDynamicFormConfiguration::identifier(),
+            'custom_form_identifier' => TestCustomFormConfiguration::identifier(),
         ]);
 
         $this->formAnswer = CustomFormAnswer::create([
@@ -45,7 +44,9 @@ trait HasTypeOptionEasyTest
 
     public function typeOptionTestAfterEach(): void
     {
-        if (!is_null($this->customField)) $this->customField->delete();
+        if (!is_null($this->customField)) {
+            $this->customField->delete();
+        }
         $this->customForm->refresh();
         $this->formAnswer->refresh();
     }

@@ -1,7 +1,8 @@
 <?php
 
-namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormEditor\AdderComponents\default;
+namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormEditor\AdderComponents\Default;
 
+use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomForm\FormConfiguration\CustomFormConfiguration;
 use Ffhs\FilamentPackageFfhsCustomForms\Facades\CustomForms;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormEditor\AdderComponents\FormEditorFieldAdder;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\DragDrop\Actions\DragDropExpandActions;
@@ -9,25 +10,30 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralFieldForm;
 use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Get;
 use Filament\Support\Colors\Color;
 
 final class GeneralFieldAdder extends FormEditorFieldAdder
 {
+
+    public function getCustomFormConfiguration(): CustomFormConfiguration
+    {
+        return CustomForms::getFormConfiguration($this->getGetCallback()('custom_form_identifier'));
+    }
+
     public function getGeneralFieldSelectOptions()
     {
-        $formIdentifier = $this->getGetCallback()('custom_form_identifier');
-        return once(static function () use ($formIdentifier) {
-            $allowedGeneralFields = CustomForms::getAllowedGeneralFieldsInFormIdentifier($formIdentifier);
+        return once(function () {
+            $formIdentifier = $this->getGetCallback()('custom_form_identifier');
+            $customFormConfiguration = $this->getCustomFormConfiguration();
 
-            //Mark Required GeneralFields
-            return $allowedGeneralFields
+            return $customFormConfiguration->getAvailableGeneralFields()
                 ->mapWithKeys(function (GeneralField $generalField) use ($formIdentifier) {
+                    //Mark Required GeneralFields
                     /**@var GeneralFieldForm $generalFieldForm */
-                    $generalFieldForm = $generalField->generalFieldForms->firstWhere('custom_form_identifier',
-                        $formIdentifier);
-
+                    $generalFieldForm = $generalField->generalFieldForms
+                        ->firstWhere('custom_form_identifier', $formIdentifier);
                     $name = ($generalFieldForm->is_required ? '* ' : '') . $generalField->name;
-
                     return [$generalField->id => $name];
                 });
         });
@@ -64,7 +70,7 @@ final class GeneralFieldAdder extends FormEditorFieldAdder
         $this->label(CustomForms::__('custom_form_editor.field_adder.general_field_adder.label'));
         $this->schema([
             DragDropExpandActions::make()
-                ->dragDropGroup('custom_fields')
+                ->dragDropGroup(fn(Get $get) => 'custom_fields-' . $get('custom_form_identifier'))
                 ->options($this->getGeneralFieldSelectOptions(...))
                 ->disableOptionWhen($this->isGeneralDisabled(...))
                 ->color(Color::Blue)

@@ -126,7 +126,6 @@ abstract class CustomFieldType implements Type
     {
         return [
             DefaultCustomFieldDeleteAction::make('delete-field-' . $key),
-            // DefaultCustomRulesAction::make('edit-rule-field-' . $key), //toDo Delete Class
             DefaultCustomFieldEditTypeOptionsAction::make('edit-field-' . $key),
             DefaultCustomActivationAction::make('active-' . $key)->visible($this->canBeDeactivate()),
         ];
