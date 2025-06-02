@@ -10,7 +10,6 @@ use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanSaveCustomFormEditorData;
 use Filament\Forms\Components\Concerns\EntanglesStateWithSingularRelationship;
 use Filament\Forms\Components\Contracts\CanEntangleWithSingularRelationships;
 use Filament\Forms\Components\Field;
-use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Tabs\Tab;
 
@@ -28,20 +27,7 @@ class CustomFormEditor extends Field implements CanEntangleWithSingularRelations
             ->icon('carbon-data-format')
             ->columns(6)
             ->schema([
-                Fieldset::make()
-                    ->columnStart(1)
-                    ->columnSpan(1)
-                    ->columns(1)
-                    ->schema(function ($record) {
-                        if (is_null($record)) {
-                            return [];
-                        }
-                        return once(static function () use ($record) {
-                            return collect($record->getFormConfiguration()::editorFieldAdder())
-                                ->map(fn(string $class) => $class::make())
-                                ->toArray();
-                        });
-                    }),
+                FieldAdders::make(),
 
                 FieldDragDropEditor::make('custom_fields')
                     ->label('')
