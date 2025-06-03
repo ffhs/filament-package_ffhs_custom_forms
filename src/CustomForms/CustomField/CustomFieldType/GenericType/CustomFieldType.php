@@ -137,7 +137,7 @@ abstract class CustomFieldType implements Type
         return true;
     }
 
-    public function afterAnswerFieldSave(CustomFieldAnswer $field, mixed $rawData, array $formData): void
+    public function afterAnswerFieldSave(CustomFieldAnswer $field, array $formData): void
     { //ToDo to Traits
     }
 

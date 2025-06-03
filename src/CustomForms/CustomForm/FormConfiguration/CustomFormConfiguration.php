@@ -39,30 +39,26 @@ abstract class CustomFormConfiguration
         return config("ffhs_custom_forms.editor.field_adders");
     }
 
-
-    public static function displayViewMode(): string
+    public static function overwriteViewModes(): array
     {
-        return self::defaultViewMode();
+        return [];
     }
 
-    public static function defaultViewMode(): string
+    abstract public static function identifier(): string;
+
+    public function displayViewMode(): string
+    {
+        return $this->defaultViewMode();
+    }
+
+    public function defaultViewMode(): string
     {
         return 'default';
     }
 
-    public static function displayEditMode(): string
+    public function displayEditMode(): string
     {
-        return self::defaultViewMode();
-    }
-
-    public static function displayCreateMode(): string
-    {
-        return self::defaultViewMode();
-    }
-
-    public static function overwriteViewModes(): array
-    {
-        return [];
+        return $this->defaultViewMode();
     }
 
 //    public static function editorValidations(CustomForm $form): array
@@ -74,7 +70,10 @@ abstract class CustomFormConfiguration
 //        return config("ffhs_custom_forms.custom_form_editor_validations");
 //    } ToDo may reimplement?
 
-    abstract public static function identifier(): string;
+    public function displayCreateMode(): string
+    {
+        return $this->defaultViewMode();
+    }
 
     public function getAvailableTemplates(): Collection
     {

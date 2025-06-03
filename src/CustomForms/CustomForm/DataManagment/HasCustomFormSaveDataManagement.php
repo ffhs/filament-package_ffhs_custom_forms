@@ -15,7 +15,7 @@ use Spatie\Activitylog\Models\Activity;
 trait HasCustomFormSaveDataManagement
 {
 
-    public  function save(CustomFormAnswer $formAnswer, Form $form, string|null $path = null): void
+    public function save(CustomFormAnswer $formAnswer, Form $form, string|null $path = null): void
     {
         // $path is then path to the customFormData in the formData
         $customForm = $formAnswer->customForm;
@@ -43,7 +43,7 @@ trait HasCustomFormSaveDataManagement
         $formAnswer->cachedClear("customFieldAnswers");
     }
 
-    public  function mapFields($fields, $keyCallback, $filterCallback = null): array
+    public function mapFields($fields, $keyCallback, $filterCallback = null): array
     {
         if ($filterCallback) {
             $fields = $fields->filter($filterCallback);
@@ -57,7 +57,7 @@ trait HasCustomFormSaveDataManagement
         return array_combine($keys, $fieldsArray);
     }
 
-    public  function prepareFormComponents(array $customFieldsIdentify, Form $form): void
+    public function prepareFormComponents(array $customFieldsIdentify, Form $form): void
     {
         $components = collect($form->getFlatComponents()); //ToDo That is slow (Extreme Slow)
 
@@ -70,27 +70,15 @@ trait HasCustomFormSaveDataManagement
                     )
             );
             foreach ($fieldComponents as $fieldComponent) {
-                if (is_null($fieldComponent)) continue;
+                if (is_null($fieldComponent)) {
+                    continue;
+                }
                 $customField->getType()->updateFormComponentOnSave($fieldComponent, $customField, $form, $components);
             }
         }
     }
 
-    protected  function getFormData(Form $form, ?string $path): array
-    {
-        $data = $form->getRawState();
-
-        if (is_null($path)) return $data;
-
-        $pathFragments = explode('.', $path);
-        foreach ($pathFragments as $pathFragment) {
-            $data = $data[$pathFragment];
-        }
-
-        return $data;
-    }
-
-    public  function splittingFormComponents(
+    public function splittingFormComponents(
         array $formData,
         array &$customFieldsIdentify,
         string $parentPath = ""
@@ -101,7 +89,9 @@ trait HasCustomFormSaveDataManagement
             /**@var CustomFieldType $type */
             $customField = $customFieldsIdentify[$identifyKey] ?? null;
 
-            if (null === $customField) continue;
+            if (null === $customField) {
+                continue;
+            }
 
             $type = $customField->getType();
             $path = empty($parentPath) ? $identifyKey : $identifyKey . "." . $parentPath;
@@ -120,9 +110,7 @@ trait HasCustomFormSaveDataManagement
         return $dateSplitted;
     }
 
-
-    //ToDo split method and reduce queries
-    public  function saveWithoutPreparation(
+    public function saveWithoutPreparation(
         array $formData,
         array $customFieldsIdentify,
         CustomFormAnswer $formAnswer
@@ -144,7 +132,9 @@ trait HasCustomFormSaveDataManagement
             $path = implode('.', array_slice(explode('.', $identifierPath), 1)) ?? null;
             $path = empty($path) ? null : $path;
 
-            if (!array_key_exists($identifier, $customFieldsIdentify)) continue;//$fieldData = null
+            if (!array_key_exists($identifier, $customFieldsIdentify)) {
+                continue;
+            }//$fieldData = null
 
             /**@var $customField CustomField */
             $customField = $customFieldsIdentify[$identifier];
@@ -153,7 +143,9 @@ trait HasCustomFormSaveDataManagement
 
             // Which Fields are active and used
             $handledCustomIds[] = $customField->id;
-            if (!is_null($path)) $handledPaths[] = $path;
+            if (!is_null($path)) {
+                $handledPaths[] = $path;
+            }
 
 
             /**@var null|CustomFieldAnswer $customFieldAnswer */
@@ -169,7 +161,9 @@ trait HasCustomFormSaveDataManagement
 
             $fieldAnswererData = $customField->getType()->prepareSaveFieldData($customFieldAnswer, $fieldRawData);
             if ($type->isEmptyAnswerer($customFieldAnswer, $fieldAnswererData)) {
-                if ($customFieldAnswer->exists) $customFieldAnswer->delete();
+                if ($customFieldAnswer->exists) {
+                    $customFieldAnswer->delete();
+                }
                 $type->afterAnswerFieldSave($customFieldAnswer, $fieldRawData, $formData);
                 continue;
             }
@@ -185,7 +179,9 @@ trait HasCustomFormSaveDataManagement
             }
 
             $customFieldAnswer->answer = $fieldAnswererData;
-            if (!$customFieldAnswer->exists || $customFieldAnswer->isDirty()) $customFieldAnswer->save();
+            if (!$customFieldAnswer->exists || $customFieldAnswer->isDirty()) {
+                $customFieldAnswer->save();
+            }
             $type->afterAnswerFieldSave($customFieldAnswer, $fieldRawData, $formData);
         }
 
@@ -215,6 +211,25 @@ trait HasCustomFormSaveDataManagement
         }
 
         LogBatch::endBatch();
+    }
+
+
+    //ToDo split method and reduce queries
+
+    protected function getFormData(Form $form, ?string $path): array
+    {
+        $data = $form->getRawState();
+
+        if (is_null($path)) {
+            return $data;
+        }
+
+        $pathFragments = explode('.', $path);
+        foreach ($pathFragments as $pathFragment) {
+            $data = $data[$pathFragment];
+        }
+
+        return $data;
     }
 
 

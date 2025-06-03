@@ -197,6 +197,16 @@ class CustomForm extends Model implements CachedModel
         );
     }
 
+    public function getOwnedFieldsFromFields(): Collection
+    {
+        if ($this->relationLoaded('ownedFields')) {
+            return $this->ownedFields;
+        }
+        $ownedFields = $this->customFields->where('custom_form_id', $this->id);
+        $this->setRelation('ownedFields', $ownedFields);
+        return $ownedFields;
+    }
+
     protected function cacheTemplatesAndTemplatesFields(Collection $customFields): void
     {
         //Cache Templates and Templates Fields

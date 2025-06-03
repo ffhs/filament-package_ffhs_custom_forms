@@ -49,8 +49,8 @@ class CustomFormEditor extends Field implements CanEntangleWithSingularRelations
     protected function setUp(): void
     {
         parent::setUp();
-        $this->columnSpanFull()
-            ->columns(1);
+        $this->columnSpanFull();
+        $this->columns(1);
 
         $this->schema([
             Tabs::make()
@@ -60,8 +60,14 @@ class CustomFormEditor extends Field implements CanEntangleWithSingularRelations
                     $this->getFormTab(),
                     $this->getRuleTab()
                 ]),
-
         ]);
+
+        $this->setupRelationships();
+    }
+
+
+    protected function setupRelationships(): void
+    {
         $this->mutateRelationshipDataBeforeFillUsing(function () {
             $customForm = $this->getCachedExistingRecord();
             if (is_null($customForm)) {

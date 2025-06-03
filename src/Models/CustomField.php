@@ -124,7 +124,7 @@ class CustomField extends ACustomField implements NestingObject
 
     public function identifier(): string
     {
-        return $this->__get("identifier");
+        return $this->__get('identifier');
     }
 
 

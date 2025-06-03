@@ -92,7 +92,7 @@ final class TemplateFieldType extends CustomFieldType
     }
 
 
-    public function afterAnswerFieldSave(CustomFieldAnswer $field, mixed $rawData, array $formData): void
+    public function afterAnswerFieldSave(CustomFieldAnswer $field, array $formData): void
     {
         $templateId = $field->customField->template_id;
         $formAnswerer = $field->customFormAnswer;

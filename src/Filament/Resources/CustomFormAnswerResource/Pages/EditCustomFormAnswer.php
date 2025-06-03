@@ -2,24 +2,28 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormAnswerResource\Pages;
 
-use Ffhs\FilamentPackageFfhsCustomForms\Facades\CustomForms;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\CustomFormComponent;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\EmbeddedCustomForm\EmbeddedCustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormAnswerResource;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomForm\RenderHelp\CustomFormLoadHelper;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
+use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanLoadFormAnswerer;
+use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanSaveFormAnswerer;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Form;
 use Filament\Resources\Pages\EditRecord;
 
 class EditCustomFormAnswer extends EditRecord
 {
+    use CanLoadFormAnswerer;
+    use CanSaveFormAnswerer;
+
     protected static string $resource = CustomFormAnswerResource::class;
+
 
     public function form(Form $form): Form
     {
         return $form
             ->schema([
-                CustomFormComponent::make()
+                EmbeddedCustomForm::make('form_answerer')
                     ->autoViewMode()
                     ->columnSpanFull(),
             ]);
@@ -44,14 +48,14 @@ class EditCustomFormAnswer extends EditRecord
         $customFormAnswer = $this->form->getRecord();
 
         //Load datas from fields
-        return array_merge($data, CustomFormLoadHelper::load($customFormAnswer));
+        return ['form_answerer' => array_merge($data, $this->loadCustomAnswerData($customFormAnswer))];
     }
 
     protected function mutateFormDataBeforeSave(array $data): array
     {
         /**@var CustomFormAnswer $customFormAnswer */
         $customFormAnswer = $this->form->getRecord();
-        CustomForms::save($customFormAnswer, $this->form);
+        $this->saveFormAnswerer($customFormAnswer, $this->form, $data['form_answerer'], 'form_answerer');
 
         return [];
     }
