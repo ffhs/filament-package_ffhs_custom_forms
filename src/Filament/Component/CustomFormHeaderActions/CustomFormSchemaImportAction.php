@@ -1,6 +1,6 @@
 <?php
 
-namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\Actions;
+namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormHeaderActions;
 
 use Closure;
 use Error;
@@ -43,38 +43,41 @@ class CustomFormSchemaImportAction extends Action
 
     public function callImportAction($data): void
     {
+
+        $importer = FormSchemaImporter::make();
+
+        $file = $data['form_file'];
+        $formData = $this->getUploadedInfos($data['form_file']);
+        $type = '';
+
+        $shouldImportRules = $data['should_import_rules'] ?? true;
+
+        $generalFieldMapRaw = $data['general_field_map'];
+        $templateMapRaw = $data['template_map'];
+
+        if (!$shouldImportRules) {
+            unset($formData['rules']);
+        }
+
+        $templateMap = [];
+
+        foreach ($templateMapRaw as $templateMapped) {
+            $templateMap[$templateMapped['template_identifier']] = $templateMapped['template_id'];
+        }
+
+        $generalFieldMap = [];
+
+        foreach ($generalFieldMapRaw as $generalFieldMapped) {
+            $generalFieldMap[$generalFieldMapped['general_field_identifier']] = $generalFieldMapped['general_field_id'];
+        }
         try {
-            $importer = FormSchemaImporter::make();
-
-            $file = $data['form_file'];
-            $formData = $this->getUploadedInfos($data['form_file']);
-            $type = '';
-
-            $shouldImportRules = $data['should_import_rules'] ?? true;
-
-            $generalFieldMapRaw = $data['general_field_map'];
-            $templateMapRaw = $data['template_map'];
-
-            if (!$shouldImportRules) {
-                unset($formData['rules']);
-            }
-
-            $templateMap = [];
-
-            foreach ($templateMapRaw as $templateMapped) {
-                $templateMap[$templateMapped['template_identifier']] = $templateMapped['template_id'];
-            }
-
-            $generalFieldMap = [];
-
-            foreach ($generalFieldMapRaw as $generalFieldMapped) {
-                $generalFieldMap[$generalFieldMapped['general_field_identifier']] = $generalFieldMapped['general_field_id'];
-            }
-
             /**@var TemporaryUploadedFile $file */
-            if ($this->hasExistingForm()) {
-                $form = $this->getExistingForm();
-                $type = $form->is_template ? 'Template' : 'Form'; //ToDo Translate
+            $form = $this->getExistingForm();
+            if ($form) {
+                $type = $form->is_template
+                    ? CustomForm::__('label.template')
+                    : CustomForm::__('label.form');
+
                 $form = $importer->importWithExistingForm(
                     rawForm: $formData,
                     customForm: $form,
@@ -82,26 +85,18 @@ class CustomFormSchemaImportAction extends Action
                     generalFieldMap: $generalFieldMap
                 );
             } else {
-                $customFormIdentifier = CustomForms::getFormConfiguration($data['custom_form_identifier']);
-
                 $isTemplate = $data['is_template'] ?? false;
-                $templateIdentifier = $isTemplate ? $data['template_identifier'] : null;
-                $type = $isTemplate ? 'Template' : 'Form'; //ToDo Translate
-                $shortTitle = $data['short_title'];
-                $formInformation = ['short_title' => $shortTitle];
+                $type = $isTemplate
+                    ? CustomForm::__('label.template')
+                    : CustomForm::__('label.form');
 
-                if ($isTemplate) {
-                    $formInformation['template_identifier'] = $templateIdentifier;
-                } else {
-                    unset($formData['form']['template_identifier']);
-                }
-
-                $form = $importer->import(
-                    rawForm: $formData,
-                    configuration: $customFormIdentifier,
-                    formInformation: $formInformation,
-                    templateMap: $templateMap,
-                    generalFieldMap: $generalFieldMap
+                $form = $this->importNotExisingForm(
+                    $data,
+                    $isTemplate,
+                    $formData,
+                    $importer,
+                    $templateMap,
+                    $generalFieldMap
                 );
             }
 
@@ -218,6 +213,45 @@ class CustomFormSchemaImportAction extends Action
                         ]),
                 ])
         ];
+    }
+
+    /**
+     * @param $data
+     * @param false $isTemplate
+     * @param array $formData
+     * @param FormSchemaImporter $importer
+     * @param array $templateMap
+     * @param array $generalFieldMap
+     * @return CustomForm
+     * @throws FormImportException
+     */
+    public function importNotExisingForm(
+        $data,
+        false $isTemplate,
+        array $formData,
+        FormSchemaImporter $importer,
+        array $templateMap,
+        array $generalFieldMap
+    ): CustomForm {
+        $customFormIdentifier = CustomForms::getFormConfiguration($data['custom_form_identifier']);
+
+        $templateIdentifier = $isTemplate ? $data['template_identifier'] : null;
+        $shortTitle = $data['short_title'];
+        $formInformation = ['short_title' => $shortTitle];
+
+        if ($isTemplate) {
+            $formInformation['template_identifier'] = $templateIdentifier;
+        } else {
+            unset($formData['form']['template_identifier']);
+        }
+
+        return $importer->import(
+            rawForm: $formData,
+            configuration: $customFormIdentifier,
+            formInformation: $formInformation,
+            templateMap: $templateMap,
+            generalFieldMap: $generalFieldMap
+        );
     }
 
     protected function getUploadedInfos(?TemporaryUploadedFile $file): array

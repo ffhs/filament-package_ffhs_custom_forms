@@ -2,6 +2,12 @@
 //DE
 
 return [
+
+    'label' => [
+        'template' => 'Template',
+        'form' => 'Formular'
+    ],
+
     'functions' => [
         'connect' => 'Verknüpfen',
         'add' => 'Hinzufügen',
@@ -40,7 +46,7 @@ return [
                 'select' => 'Auswahl',
             ],
         ],
-        
+
 
         'rules' => [
             'event' => [

@@ -2,7 +2,7 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormResource\Pages;
 
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\Actions\CustomFormSchemaImportAction;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormHeaderActions\CustomFormSchemaImportAction;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormResource;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\TemplateResource\Pages\ListTemplate;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
@@ -36,12 +36,6 @@ class ListCustomForm extends ListRecords
         }
 
         return $tabs;
-    }
-
-    private function prepareTabQuery($identifier, Builder $query): Builder
-    {
-        $query = $query->where('custom_form_identifier', $identifier);
-        return $query;
     }
 
     public function getDefaultActiveTab(): string|int|null
@@ -89,5 +83,11 @@ class ListCustomForm extends ListRecords
             CustomFormSchemaImportAction::make()->link(),
             CreateAction::make(),
         ];
+    }
+
+    private function prepareTabQuery($identifier, Builder $query): Builder
+    {
+        $query = $query->where('custom_form_identifier', $identifier);
+        return $query;
     }
 }

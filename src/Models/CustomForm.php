@@ -26,6 +26,7 @@ use Spatie\Translatable\HasTranslations;
  *
  *
  * @property int $id
+ * @property bool $is_template
  * @property string $custom_form_identifier
  * @property string|null $short_title
  * @property string|null $template_identifier
