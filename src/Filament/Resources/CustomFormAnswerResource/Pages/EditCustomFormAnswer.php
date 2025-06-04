@@ -6,7 +6,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\EmbeddedCustomForm\Em
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormAnswerResource;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanLoadFormAnswerer;
-use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanSaveFormAnswerer;
+use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanSaveFormAnswer;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Form;
 use Filament\Resources\Pages\EditRecord;
@@ -14,7 +14,7 @@ use Filament\Resources\Pages\EditRecord;
 class EditCustomFormAnswer extends EditRecord
 {
     use CanLoadFormAnswerer;
-    use CanSaveFormAnswerer;
+    use CanSaveFormAnswer;
 
     protected static string $resource = CustomFormAnswerResource::class;
 
@@ -28,6 +28,7 @@ class EditCustomFormAnswer extends EditRecord
                     ->columnSpanFull(),
             ]);
     }
+
 
     protected function getHeaderActions(): array
     {
@@ -55,7 +56,7 @@ class EditCustomFormAnswer extends EditRecord
     {
         /**@var CustomFormAnswer $customFormAnswer */
         $customFormAnswer = $this->form->getRecord();
-        $this->saveFormAnswerer($customFormAnswer, $this->form, $data['form_answerer'], 'form_answerer');
+        $this->saveFormAnswer($customFormAnswer, $this->form, $data['form_answerer'], 'form_answerer');
 
         return [];
     }

@@ -76,14 +76,13 @@ trait HasEditFieldCallbacks
         $this->doAfterSaveField($field, $data);
     }
 
-    public function beforeDeleteField(CustomField $field): void
-    {
-    }
-
     public function afterDeleteField(CustomField $field): void
     {
     }
 
+    protected function beforeDeleteField(CustomField $field): void
+    {
+    }
 
     private function mutateOptions(array &$data, CustomField $field, string $method): void
     {

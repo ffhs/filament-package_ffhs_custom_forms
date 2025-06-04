@@ -3,6 +3,7 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\Traits;
 
 use Closure;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
 
 trait HasViewMode
@@ -22,12 +23,15 @@ trait HasViewMode
 
     public function autoViewMode(): static
     {
-        $this->viewMode = static function (CustomFormAnswer $record) {
-            $form = $record->customForm;
-            if ($record->customFieldAnswers->count() === 0) {
-                return $form->getFormConfiguration()->displayEditMode();
+        $this->viewMode = static function (?CustomForm $customForm, ?CustomFormAnswer $customFormAnswer) {
+            if (is_null($customFormAnswer) || is_null($customForm)) {
+                return 'default';
             }
-            return $form->getFormConfiguration()->displayCreateMode();
+
+            if ($customFormAnswer->customFieldAnswers->count() === 0) {
+                return $customForm->getFormConfiguration()->displayEditMode();
+            }
+            return $customForm->getFormConfiguration()->displayCreateMode();
         };
         return $this;
     }

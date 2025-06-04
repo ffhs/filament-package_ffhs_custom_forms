@@ -3,10 +3,14 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\Traits;
 
 use Closure;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\Render\SplitCustomFormRender;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\EmbeddedCustomForm\EmbeddedCustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
 
 trait UseFieldSplit
 {
+    use CanLoadFormAnswerer;
 
     protected bool|Closure $useFieldSplit = false;
     protected null|CustomField $fieldSplit = null;
@@ -28,18 +32,19 @@ trait UseFieldSplit
         return $this->evaluate($this->useFieldSplit);
     }
 
-    function loadFieldTypeSplitAnswerData(mixed $answer): array
+    public function loadFieldTypeSplitAnswerData(CustomFormAnswer $answer): array
     {
         $field = $this->getFieldSplit();
         if (is_null($field)) {
             return [];
         }
-        if ($field->form_position == $field->layout_end_position) {
+        if ($field->form_position === $field->layout_end_position) {
             return [];
         }
+        $beginPos = $field->form_position + 1;
+        $endPos = $field->layout_end_position;
 
-        return CustomFormLoadHelper::load($answer, $field->form_position + 1,
-            $field->layout_end_position);
+        return $this->loadCustomAnswerData($answer, $beginPos, $endPos);
     }
 
     public function getFieldSplit(): ?CustomField
@@ -47,4 +52,16 @@ trait UseFieldSplit
         return $this->evaluate($this->fieldSplit);
     }
 
+    private function getFieldSplitFormSchema(EmbeddedCustomForm $component): array
+    {
+        $customForm = $component->getCustomForm();
+        if (is_null($customForm)) {
+            return [];
+        }
+
+        return SplitCustomFormRender::renderFormFromField(
+            $component->getFieldSplit(),
+            $component->getViewMode()
+        );
+    }
 }

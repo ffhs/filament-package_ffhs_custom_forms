@@ -11,10 +11,11 @@ use Filament\Forms\Form;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Spatie\Activitylog\Facades\LogBatch;
+use Spatie\Activitylog\Models\Activity;
 
-trait CanSaveFormAnswerer
+trait CanSaveFormAnswer
 {
-    public function saveFormAnswerer(CustomFormAnswer $formAnswer, Form $form, array $data, string $pathRaw = ''): void
+    public function saveFormAnswer(CustomFormAnswer $formAnswer, Form $form, array $data, string $pathRaw = ''): void
     {
         $customForm = $formAnswer->customForm;
         $path = 'data.' . $pathRaw;
@@ -41,14 +42,27 @@ trait CanSaveFormAnswerer
             throw $e;
         }
 
-        CustomFieldAnswer::clearModelCache($formAnswer->customFieldAnswers->pluck("id")->toArray());
-        $formAnswer->cachedClear("customFieldAnswers");
+        CustomFieldAnswer::clearModelCache($formAnswer->customFieldAnswers->pluck('id')->toArray());
+        $formAnswer->cachedClear('customFieldAnswers');
+    }
+
+
+    protected function getFieldAttributesToSave(CustomFieldAnswer $answer): array
+    {
+        $attributes = $answer->attributesToArray();
+
+        foreach ($answer->getCasts() as $key => $type) {
+            if ($type === 'array' && isset($attributes[$key])) {
+                $attributes[$key] = json_encode($attributes[$key], JSON_THROW_ON_ERROR);
+            }
+        }
+        return $attributes;
     }
 
     protected function splittingFormComponents(
         array $formData,
         Collection $customFieldsIdentify,
-        string $parentPath = ""
+        string $parentPath = ''
     ): array {
         $dateSplit = [];
         foreach ($formData as $identifyKey => $customFieldAnswererRawData) {
@@ -107,81 +121,106 @@ trait CanSaveFormAnswerer
             $customFieldAnswer = $existingFieldAnswers->get($identifierPath);
             if (is_null($customFieldAnswer)) {
                 $customFieldAnswer = new CustomFieldAnswer([
-                    "custom_field_id" => $customField->id,
-                    "custom_form_answer_id" => $formAnswer->id,
-                    "path" => $path,
+                    'custom_field_id' => $customField->id,
+                    'custom_form_answer_id' => $formAnswer->id,
+                    'path' => $path,
                 ]);
             }
 
             $type = $customField->getType();
             $fieldAnswererData = $type->prepareSaveFieldData($customFieldAnswer, $fieldRawData);
-
-
             $fieldAnswererData = $this->mutateAnswerDataByRule($formRules, $customFieldAnswer, $fieldAnswererData);
 
             $customFieldAnswer->answer = $fieldAnswererData;
+            $customFieldAnswer->setRelation('customField', $customField);
             $answersToHandle->add($customFieldAnswer);
         }
 
-        $this->handleDeleteFields($formAnswer, $handledCustomIds, $handledPaths);
         $answersToHandle = $answersToHandle->groupBy(fn(CustomFieldAnswer $answer) => $answer->exists);
         $answersToCreate = $answersToHandle->get(false)
             ?->filter(fn(CustomFieldAnswer $answer) => !empty($answer->answer));
+        $answersToDelete = $answersToHandle->get(true)
+            ?->filter(fn(CustomFieldAnswer $answer) => $answer->customField->getType()->isEmptyAnswerer($answer,
+                $answer->answer));
         $answersToSave = $answersToHandle->get(true)
-            ?->filter(fn(CustomFieldAnswer $answer) => $answer->isDirty());
+            ?->whereNotIn('id', $answersToDelete->pluck('id'))
+            ->filter(fn(CustomFieldAnswer $answer) => $answer->isDirty());
 
-        if (!is_null($answersToCreate)) {
-            $answerDataToCreate = $answersToCreate
-                ->map(fn(CustomFieldAnswer $answer) => $answer->attributesToArray())
-                ->toArray();
+        $this->handleDeleteFields($formAnswer, $answersToDelete ?? collect(), $handledCustomIds, $handledPaths);
+        $this->handleSaveFields($answersToSave ?? collect());
+        $this->handleCreateFields($answersToCreate ?? collect());
 
-            CustomFieldAnswer::insert($answerDataToCreate);
+        $loggedFieldActivity = Activity::query()
+            ->where('batch_uuid', LogBatch::getUuid())
+            ->where('subject_type', CustomFieldAnswer::class)
+            ->whereNot('event', 'created')
+            ->exists();
+
+        if ($loggedFieldActivity) {
+            activity()
+                ->causedBy(auth()->user())
+                ->performedOn($formAnswer)
+                ->event('update_fields')
+                ->log(':causer.name updated field answares');
         }
-
-        if (!is_null($answersToSave)) {
-            $answerDataToSave = $answersToSave
-                ->map(fn(CustomFieldAnswer $answer) => $answer->attributesToArray())
-                ->toArray();
-
-            CustomFieldAnswer::upsert($answerDataToSave, ['id']);
-        }
-
-
-        $updatedFields = CustomFormAnswer::whereIn('id', $answerDataToSave->pluck("id"))->get();
-
-        $existingFieldAnswers->keyBy('id');
-        $updatedFields->each(function (CustomFieldAnswer $answer) use ($formData, $existingFieldAnswers): void {
-            /**@var CustomField $customField */
-            $customField = $existingFieldAnswers->get($answer->id);
-            $type = $customField->getType();
-            $answer->setRelation('customField', $customField);
-            $type->afterAnswerFieldSave($answer, $formData);
-        });
-#
-        //ToDo
-//        if ($type->isEmptyAnswerer($customFieldAnswer, $fieldAnswererData)) {
-//            if ($customFieldAnswer->exists) {
-//                $customFieldAnswer->delete();
-//            }
-//            $type->afterAnswerFieldSave($customFieldAnswer, $fieldRawData, $formData);
-//            continue;
-//        }
-
 
         LogBatch::endBatch();
     }
 
     private function handleDeleteFields(
         CustomFormAnswer $formAnswer,
+        Collection $customFieldsToDelete,
         Collection $handledCustomIds,
         Collection $handledPaths
     ): void {
         CustomFieldAnswer::query()
-            ->where("custom_form_answer_id", $formAnswer->id)
-            ->whereIn("custom_field_id", $handledCustomIds)
-            ->whereNotNull("path")
-            ->whereNotIn("path", $handledPaths)
-            ->delete();
+            ->whereIn('id', $customFieldsToDelete->pluck('id'))
+            ->orWhere(fn($query) => $query
+                ->where('custom_form_answer_id', $formAnswer->id)
+                ->whereIn('custom_field_id', $handledCustomIds)
+                ->whereNotNull('path')
+                ->whereNotIn('path', $handledPaths)
+            )->delete();
+    }
+
+    private function handleSaveFields(Collection $toSave): void
+    {
+        if ($toSave->isEmpty()) {
+            return;
+        }
+        $now = now()->toDateTimeString();
+        $answerDataToSave = $toSave
+            ->map(function (CustomFieldAnswer $answer) use ($now) {
+                $attributes = $this->getFieldAttributesToSave($answer);
+
+                $attributes['updated_at'] = $now;
+
+                unset($attributes['created_at']);
+                return $attributes;
+            })
+            ->toArray();
+
+        CustomFieldAnswer::upsert($answerDataToSave, ['id'], (app(CustomFieldAnswer::class))->getFillable());
+    }
+
+    private function handleCreateFields(Collection $toCreate): void
+    {
+        if ($toCreate->isEmpty()) {
+            return;
+        }
+        $now = now()->toDateTimeString();
+        $answerDataToSave = $toCreate
+            ->map(function (CustomFieldAnswer $answer) use ($now) {
+                $attributes = $this->getFieldAttributesToSave($answer);
+
+                $attributes['updated_at'] = $now;
+                $attributes['created_at'] = $now;
+
+                return $attributes;
+            })
+            ->toArray();
+
+        CustomFieldAnswer::insert($answerDataToSave);
     }
 
     private function getExistingFieldAnswers(CustomFormAnswer $formAnswer): Collection
@@ -205,7 +244,7 @@ trait CanSaveFormAnswerer
         foreach ($formRules as $rule) {
             /**@var Rule $rule */
             $fieldAnswererData = $rule->handle(
-                ['action' => "save_answerer", 'custom_field_answer' => $customFieldAnswer],
+                ['action' => 'save_answerer', 'custom_field_answer' => $customFieldAnswer],
                 $fieldAnswererData
             );
         }

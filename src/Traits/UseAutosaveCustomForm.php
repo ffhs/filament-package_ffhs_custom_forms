@@ -14,4 +14,9 @@ trait UseAutosaveCustomForm
         return $this;
     }
 
+    public function isAutoSaving(): bool
+    {
+        return $this->evaluate($this->isAutoSaving);
+    }
+
 }

@@ -3,23 +3,33 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\Traits;
 
 use Closure;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\Render\SplitCustomFormRender;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\EmbeddedCustomForm\EmbeddedCustomForm;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
 
 trait UsePosSplit
 {
+    use CanLoadFormAnswerer;
+
     protected bool|Closure $usePoseSplit = false;
-    protected array|Closure|null $poseSplit = [];
+    protected Closure|null $poseSplitStart = null;
+    protected Closure|null $poseSplitEnd = null;
 
-
-    //The array have to look like: [$beginPos,$endPos]
     public function usePoseSplit(bool|Closure $usePosSplit = true): static
     {
         $this->usePoseSplit = $usePosSplit;
         return $this;
     }
 
-    public function poseSplit(array|Closure|null $posSplit): static
+    public function poseSplitStart(int|Closure|null $poseSplitStart): static
     {
-        $this->poseSplit = $posSplit;
+        $this->poseSplitStart = $poseSplitStart;
+        return $this;
+    }
+
+    public function poseSplitEnd(int|Closure|null $poseSplitEnd): static
+    {
+        $this->poseSplitEnd = $poseSplitEnd;
         return $this;
     }
 
@@ -28,19 +38,42 @@ trait UsePosSplit
         return $this->evaluate($this->usePoseSplit);
     }
 
-    function loadPosTypeSplitAnswerData(mixed $answer): array
+    public function loadPosTypeSplitAnswerData(CustomFormAnswer $answer): array
     {
-        [$beginPos, $endPos] = $this->getPoseSpilt();
-        return CustomFormLoadHelper::load($answer, $beginPos, $endPos);
+        $beginPos = $this->getPoseSpiltStart();
+        $endPos = $this->getPoseSpiltEnd();
+        return $this->loadCustomAnswerData($answer, $beginPos, $endPos);
     }
 
-    public function getPoseSpilt(): ?array
+    public function getPoseSpiltStart(): ?int
     {
         if (!$this->isUseFieldSplit()) {
             return null;
         }
-        return $this->evaluate($this->poseSplit);
+        return $this->evaluate($this->poseSplitStart);
     }
 
+    public function getPoseSpiltEnd(): ?int
+    {
+        if (!$this->isUseFieldSplit()) {
+            return null;
+        }
+        return $this->evaluate($this->poseSplitEnd);
+    }
 
+    public function getPosSplitFormSchema(EmbeddedCustomForm $component): array
+    {
+        $customForm = $component->getCustomForm();
+        if (is_null($customForm)) {
+            return [];
+        }
+
+        return
+            SplitCustomFormRender::renderFormPose(
+                $this->getPoseSpiltStart(),
+                $this->getPoseSpiltEnd(),
+                $customForm,
+                $component->getViewMode()
+            );
+    }
 }
