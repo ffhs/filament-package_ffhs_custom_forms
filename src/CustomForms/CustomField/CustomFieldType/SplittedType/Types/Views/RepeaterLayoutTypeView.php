@@ -6,10 +6,12 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\CustomFieldType\
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\CustomFieldType\GenericType\FieldTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\CustomFieldType\GenericType\Traits\HasDefaultViewComponent;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\FieldMapper;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\Render\CustomFormRender;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomForm\RenderHelp\CustomFormLoadHelper;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\Render\CustomFormRender;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\EmbeddedCustomForm\Render\InfolistFieldDisplayer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
+use Ffhs\FilamentPackageFfhsCustomForms\TemporaryRenderClass;
 use Filament\Forms\Components\{Actions\Action, Component, Repeater};
 use Filament\Infolists\Components\Component as InfolistComponent;
 use Filament\Infolists\Components\Fieldset;
@@ -31,7 +33,7 @@ class RepeaterLayoutTypeView implements FieldTypeView
         $defaultAmount = FieldMapper::getOptionParameter($record, 'default_amount');
         $addActionLabel = FieldMapper::getOptionParameter($record, 'add_action_label');
 
-        $schema = $parameter['renderer']();
+        $schema = $parameter['child_render']();
 
         /**@var Repeater $repeater */
         $repeater = static::makeComponent(Repeater::class, $record, ['min_amount', 'max_amount']);
@@ -81,7 +83,7 @@ class RepeaterLayoutTypeView implements FieldTypeView
         );
         $loadedAnswers = $loadedAnswers[$record->customField->identifier ?? ''] ?? [];
 
-        $fields = $parameter['customFieldData'];
+        $fields = $parameter['child_fields'];
         $fields = $fields->keyBy('form_position');
         $offset = $fields->sortBy('form_position')->first()->form_position - 1;
         $viewMode = $parameter['viewMode'];
@@ -93,15 +95,10 @@ class RepeaterLayoutTypeView implements FieldTypeView
             ->whereIn('custom_field_id', $fields->pluck('id'));
 
         foreach ($loadedAnswers as $id => $answer) {
-            $render = CustomFormRender::getInfolistRender(
-                $parameter['viewMode'],
-                $customForm,
-                $record->customFormAnswer,
-                $answerersFields,
-                $id
-            );
+            $displayer = InfolistFieldDisplayer::make($record->customFormAnswer, $id);
 
-            $renderOutput = CustomFormRender::renderRaw($offset, $fields, $render, $viewMode, $customForm);
+            $renderOutput = TemporaryRenderClass::make()
+                ->renderCustomFormRaw($viewMode, $displayer, $customForm, $fields, $offset);
             $subSchema = $renderOutput[0];
             $allComponents = $renderOutput[1];
 

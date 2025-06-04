@@ -3,11 +3,9 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\Traits;
 
 use Closure;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\Render\SplitCustomFormRender;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\EmbeddedCustomForm\EmbeddedCustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
 
-trait UsePosSplit
+trait HasPosSplit
 {
     use CanLoadFormAnswerer;
 
@@ -59,21 +57,5 @@ trait UsePosSplit
             return null;
         }
         return $this->evaluate($this->poseSplitEnd);
-    }
-
-    public function getPosSplitFormSchema(EmbeddedCustomForm $component): array
-    {
-        $customForm = $component->getCustomForm();
-        if (is_null($customForm)) {
-            return [];
-        }
-
-        return
-            SplitCustomFormRender::renderFormPose(
-                $this->getPoseSpiltStart(),
-                $this->getPoseSpiltEnd(),
-                $customForm,
-                $component->getViewMode()
-            );
     }
 }

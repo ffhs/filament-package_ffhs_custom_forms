@@ -4,12 +4,10 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Traits;
 
 use Closure;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\CustomFieldType\LayoutType\CustomLayoutType;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\Render\SplitCustomFormRender;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\EmbeddedCustomForm\EmbeddedCustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
 
-trait UseLayoutSplit
+trait HasLayoutSplit
 {
     use CanLoadFormAnswerer;
 
@@ -24,6 +22,7 @@ trait UseLayoutSplit
 
     public function layoutTypeSplit(CustomLayoutType|Closure|null $layoutTypeSplit): static
     {
+        $this->useLayoutTypeSplit(!is_null($layoutTypeSplit));
         $this->layoutTypeSplit = $layoutTypeSplit;
         return $this;
     }
@@ -32,6 +31,12 @@ trait UseLayoutSplit
     {
         return $this->evaluate($this->useLayoutTypeSplit);
     }
+
+    public function getLayoutTypeSplit(): CustomLayoutType
+    {
+        return $this->evaluate($this->layoutTypeSplit);
+    }
+
 
     public function loadLayoutTypeSplitAnswerData(CustomFormAnswer $answer): array
     {
@@ -50,24 +55,5 @@ trait UseLayoutSplit
         $endPos = $layoutField->layout_end_position;
 
         return $this->loadCustomAnswerData($answer, $beginPos, $endPos);
-    }
-
-    public function getLayoutTypeSplit(): CustomLayoutType
-    {
-        return $this->evaluate($this->layoutTypeSplit);
-    }
-
-    public function getLayoutTypeSplitFormSchema(EmbeddedCustomForm $component): array
-    {
-        $customForm = $component->getCustomForm();
-        if (is_null($customForm)) {
-            return [];
-        }
-
-        return SplitCustomFormRender::renderFormLayoutType(
-            $component->getLayoutTypeSplit(),
-            $customForm,
-            $component->getViewMode()
-        );
     }
 }

@@ -11,6 +11,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasViewMode;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\UseAutosaveCustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\UseParentFilamentForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\UseSplitCustomForm;
+use Ffhs\FilamentPackageFfhsCustomForms\Traits\UseSplitFormSchema;
 use Filament\Forms\Components\Concerns\EntanglesStateWithSingularRelationship;
 use Filament\Forms\Components\Contracts\CanEntangleWithSingularRelationships;
 use Filament\Forms\Components\Field;
@@ -29,6 +30,7 @@ class EmbeddedCustomForm extends Field implements CanEntangleWithSingularRelatio
     use HasFallbackCustomForm;
     use HasViewMode;
     use UseParentFilamentForm;
+    use UseSplitFormSchema;
 
     public function getChildComponents(): array
     {

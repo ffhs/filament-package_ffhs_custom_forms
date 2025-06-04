@@ -4,21 +4,15 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\EmbeddedCustomF
 
 
 use Closure;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\Render\CustomFormRender;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\Render\SplitCustomFormRender;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasViewMode;
-use Ffhs\FilamentPackageFfhsCustomForms\Traits\UseFieldSplit;
-use Ffhs\FilamentPackageFfhsCustomForms\Traits\UseLayoutSplit;
-use Ffhs\FilamentPackageFfhsCustomForms\Traits\UsePosSplit;
+use Ffhs\FilamentPackageFfhsCustomForms\Traits\UseSplitInfolistSchema;
 use Filament\Infolists\ComponentContainer;
 use Filament\Infolists\Components\Component;
 
 class EmbeddedAnswerInfolist extends Component
 {
-    use UseLayoutSplit;
-    use UseFieldSplit;
-    use UsePosSplit;
+    use UseSplitInfolistSchema;
     use HasViewMode;
 
     protected string $view = 'filament-infolists::components.group';
@@ -33,32 +27,6 @@ class EmbeddedAnswerInfolist extends Component
         $static->answer(fn($record) => $record);
 
         return $static;
-    }
-
-    public function getChildComponents(): array
-    {
-        if (!is_array($this->childComponents) || empty($this->childComponents)) {
-            if ($this->isUseLayoutTypeSplit()) {
-                $schema = $this->getSplitLayoutInfolistSchema();
-            } //Field Splitting
-            else {
-                if ($this->isUseFieldSplit()) {
-                    $schema = $this->getSplitFieldInfolistSchema();
-                } //Position Splitting
-                else {
-                    if ($this->isUsePoseSplit()) {
-                        $schema = $this->getSplitPosInfolistSchema();
-                    } //Default
-                    else {
-                        $schema = $this->getDefaultInfolistSchema();
-                    }
-                }
-            }
-
-            $this->childComponents = $schema;
-        }
-
-        return $this->childComponents;
     }
 
 
@@ -106,43 +74,7 @@ class EmbeddedAnswerInfolist extends Component
     {
         parent::setUp();
         $this->columns(1);
+        $this->schema(fn() => once(fn() => $this->getCustomFormSchema()));
         $this->label("");
     }
-
-    protected function getSplitPosInfolistSchema(): array
-    {
-        [$beginPos, $endPos] = $this->getPoseSpilt();
-
-        return SplitCustomFormRender::renderInfolistPose(
-            $beginPos,
-            $endPos,
-            $this->getAnswer(),
-            $this->getViewMode()
-        );
-    }
-
-    protected function getDefaultInfolistSchema(): array
-    {
-        return CustomFormRender::generateInfoListSchema($this->getAnswer(), $this->getViewMode());
-    }
-
-    protected function getSplitFieldInfolistSchema(): array
-    {
-        return SplitCustomFormRender::renderInfolistFromField(
-            $this->getFieldSplit(),
-            $this->getAnswer(),
-            $this->getViewMode()
-        );
-    }
-
-    protected function getSplitLayoutInfolistSchema(): array
-    {
-        return SplitCustomFormRender::renderInfoListLayoutType(
-            $this->getLayoutTypeSplit(),
-            $this->getAnswer(),
-            $this->getViewMode()
-        );
-    }
-
-
 }

@@ -25,7 +25,7 @@ class FieldsetTypeView implements FieldTypeView
         return $fieldSet
             ->columnSpan(FieldMapper::getOptionParameter($record, "column_span"))
             ->columnStart(FieldMapper::getOptionParameter($record, "new_line"))
-            ->schema($parameter["renderer"]());
+            ->schema($parameter['child_render']());
     }
 
     public static function getInfolistComponent(
@@ -33,7 +33,7 @@ class FieldsetTypeView implements FieldTypeView
         CustomFieldAnswer $record,
         array $parameter = []
     ): \Filament\Infolists\Components\Component {
-        $schema = $parameter["renderer"]();
+        $schema = $parameter["child_render"]();
 
         if (!FieldMapper::getOptionParameter($record, "show_in_view")) {
             return static::modifyInfolistComponent(Group::make($schema), $record)
