@@ -72,17 +72,17 @@ class GeneralFieldResource extends Resource
         return $table
             ->columns([
                 IconColumn::make('icon')
-                    ->label(GeneralField::__('icon.label'))
+                    ->label(GeneralField::__('attributes.icon.label'))
                     ->icon(fn($state) => $state),
                 TextColumn::make('name')
                     ->searchable()
-                    ->label(GeneralField::__('name.label')),
+                    ->label(GeneralField::__('attributes.name.label')),
                 TextColumn::make('type')
-                    ->label(GeneralField::__('type.label'))
+                    ->label(GeneralField::__('attributes.type.label'))
                     ->searchable()
                     ->getStateUsing(fn(GeneralField $record) => $record->getType()->getTranslatedName()),
                 TextColumn::make('generalFieldForms.custom_form_identifier')
-                    ->label(GeneralField::__('form_connections.label'))
+                    ->label(GeneralField::__('attributes.form_connections.label'))
                     ->listWithLineBreaks()
                     ->searchable()
                     ->state(fn(GeneralField $record) => $record->generalFieldForms

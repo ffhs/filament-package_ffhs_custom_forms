@@ -2,9 +2,10 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Models;
 
+use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomForm\HasFormIdentifier;
+use Ffhs\FilamentPackageFfhsCustomForms\Facades\CustomForms;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\Caching\CachedModel;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\Caching\HasCacheModel;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomForm\HasFormIdentifier;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -53,12 +54,14 @@ class GeneralFieldForm extends Model implements CachedModel
         "generalField",
     ];
 
-    public function generalField(): BelongsTo {
-        return $this->belongsTo(GeneralField::class);
+    public static function __(...$args): string
+    {
+        return CustomForms::__('models.general_field_form.' . implode('.', $args));
     }
 
-    public static function getFromFormIdentifier($formIdentifier): Collection {
-        return Cache::remember("general_filed_form-from-identifier_".$formIdentifier, 5,
+    public static function getFromFormIdentifier($formIdentifier): Collection
+    {
+        return Cache::remember("general_filed_form-from-identifier_" . $formIdentifier, 5,
             fn() => GeneralFieldForm::query()
                 ->where("custom_form_identifier", $formIdentifier)
                 ->get()
@@ -66,13 +69,18 @@ class GeneralFieldForm extends Model implements CachedModel
         );
     }
 
-
-    public static function getGeneralFieldQuery(string $identifier): Builder {
+    public static function getGeneralFieldQuery(string $identifier): Builder
+    {
         return GeneralField::query()->whereIn("id",
             GeneralFieldForm::query()
                 ->select("general_field_id")
-                ->where("custom_form_identifier",$identifier)
+                ->where("custom_form_identifier", $identifier)
         );
+    }
+
+    public function generalField(): BelongsTo
+    {
+        return $this->belongsTo(GeneralField::class);
     }
 
 

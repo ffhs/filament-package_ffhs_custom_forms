@@ -2,6 +2,7 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources;
 
+use Ffhs\FilamentPackageFfhsCustomForms\Facades\CustomForms;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormResource\Pages\CreateCustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormResource\Pages\EditCustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormResource\Pages\ListCustomForm;
@@ -19,22 +20,22 @@ class CustomFormResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return __('filament-package_ffhs_custom_forms::custom_forms.navigation.group.forms');
+        return CustomForms::__('custom_forms.navigation.group.forms');
     }
 
     public static function getNavigationLabel(): string
     {
-        return __('filament-package_ffhs_custom_forms::custom_forms.navigation.forms');
+        return CustomForms::__('custom_forms.navigation.forms');
     }
 
     public static function getTitleCasePluralModelLabel(): string
     {
-        return __('filament-package_ffhs_custom_forms::custom_forms.navigation.forms');
+        return CustomForm::__('label.plural');
     }
 
     public static function getTitleCaseModelLabel(): string
     {
-        return __('filament-package_ffhs_custom_forms::custom_forms.form.custom_form');
+        return CustomForm::__('label.single');
     }
 
     public static function canAccess(): bool

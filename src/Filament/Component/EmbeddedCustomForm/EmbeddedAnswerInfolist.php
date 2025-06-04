@@ -4,6 +4,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\EmbeddedCustomF
 
 
 use Closure;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasViewMode;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\UseSplitInfolistSchema;
@@ -20,54 +21,32 @@ class EmbeddedAnswerInfolist extends Component
 
     public static function make(string|Closure $viewMode = "default"): static
     {
-        $static = app(static::class, [
-            'viewMode' => $viewMode
-        ]);
+        $static = app(static::class, ['viewMode' => $viewMode]);
         $static->configure();
-        $static->answer(fn($record) => $record);
-
+        $static->customFormAnswer(fn($record) => $record);
         return $static;
     }
-
 
     public function getChildComponentContainer($key = null): ComponentContainer
     {
         return parent::getChildComponentContainer($key)
-            ->record($this->getAnswer());
+            ->record($this->getCustomFormAnswer());
     }
 
-    public function autoViewMode(bool|Closure $autoViewMode = true): static
-    {
-        if (!$this->evaluate($autoViewMode)) {
-            return $this;
-        }
-        $this->viewMode = function (EmbeddedAnswerInfolist $component) {
-            $customForm = $component->getAnswer()->customForm;
-            return $customForm->getFormConfiguration()->displayViewMode();
-        };
-        return $this;
-    }
-
-    public function viewMode(string|Closure $viewMode = "default"): static
-    {
-        $this->viewMode = $viewMode;
-        return $this;
-    }
-
-    public function getViewMode(): string
-    {
-        return $this->evaluate($this->viewMode);
-    }
-
-    public function answer(CustomFormAnswer|Closure $answer): static
+    public function customFormAnswer(CustomFormAnswer|Closure $answer): static
     {
         $this->answer = $answer;
         return $this;
     }
 
-    public function getAnswer(): CustomFormAnswer
+    public function getCustomFormAnswer(): CustomFormAnswer
     {
         return $this->evaluate($this->answer);
+    }
+
+    public function getCustomForm(): CustomForm
+    {
+        return $this->getCustomFormAnswer()->customForm;
     }
 
     protected function setUp(): void
@@ -76,5 +55,16 @@ class EmbeddedAnswerInfolist extends Component
         $this->columns(1);
         $this->schema(fn() => once(fn() => $this->getCustomFormSchema()));
         $this->label("");
+        $this->autoViewMode();
+    }
+
+    protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
+    {
+        return match ($parameterName) {
+            'viewMode' => [$this->getViewMode()],
+            'customForm' => [$this->getCustomForm()],
+            'customFormAnswer' => [$this->getCustomFormAnswer()],
+            default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName)
+        };
     }
 }

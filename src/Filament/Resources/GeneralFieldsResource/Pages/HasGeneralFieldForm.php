@@ -21,6 +21,56 @@ use Illuminate\Support\Collection;
 
 trait HasGeneralFieldForm
 {
+    public function getPossibleTypeOptions(?GeneralField $record): array|Collection
+    {
+        if (is_null($record)) {
+            return [];
+        }
+        $type = $record->getType();
+
+        return collect($type->getFlattenExtraTypeOptions())
+            //Remove any where can be use
+            ->filter(fn(TypeOption $typeOption) => $typeOption->canBeOverwrittenByNonField())
+            ->mapWithKeys(function (TypeOption $value, string $key) {
+                try {
+                    $label = $value->getModifyOptionComponent($key)->getLabel() ?? $key;
+                    return [$key => $label];
+                } catch (Error) {
+                    //When label need record or livewire component
+                    return [$key => $key];
+                }
+            });
+        //ToDo may with filtering (Some are not good to select in GeneralField)
+    }
+
+    public function getOverwrittenOptionDynamicSchema(): array
+    {
+        $record = $this->getRecord();
+        if (is_null($record)) {
+            return [];
+        }
+        $type = $record->getType();
+
+        $components = $type->getExtraTypeOptionComponents();
+
+        $isOverwritten = function ($component, $get) {
+            $key = $component->getStatePath(false);
+            $values = $get('../overwrite_option_keys') ?? [];
+            return in_array($key, $values);
+        };
+
+        foreach ($components as $item) {
+            if ($item instanceof Field) {
+                $item->visible($isOverwritten);
+            } elseif ($item instanceof Section) {
+                foreach ($item->getChildComponents() as $field) {
+                    $field->visible($isOverwritten);
+                }
+            }
+        }
+
+        return $components;
+    }
 
     protected function getGeneralFieldBasicSettings(): Section
     {
@@ -69,12 +119,12 @@ trait HasGeneralFieldForm
 
     protected function helperText(Component $component)
     {
-        return GeneralField::__($component->getStatePath(false) . '.helper_text');
+        return GeneralField::__('attributes.' . $component->getStatePath(false) . '.helper_text');
     }
 
     protected function label(Component $component): string
     {
-        return GeneralField::__($component->getStatePath(false) . '.label');
+        return GeneralField::__('attributes.' . $component->getStatePath(false) . '.label');
     }
 
     protected function getAllCustomFieldTypeOptions(): Collection
@@ -86,14 +136,14 @@ trait HasGeneralFieldForm
 
     protected function getOverwriteTypeOptions(): Component
     {
-        return Fieldset::make(GeneralField::__('overwrite_options.label'))
+        return Fieldset::make(GeneralField::__('attributes.overwrite_options.label'))
             ->columnSpan(1)
             ->columns(1)
             ->hidden($this->hasFieldTypeOptions(...))
             ->schema([
 
                 Placeholder::make('message')
-                    ->label(GeneralField::__('overwrite_options.message_on_create'))
+                    ->label(GeneralField::__('attributes.overwrite_options.message_on_create'))
                     ->hiddenOn('edit'),
 
                 Select::make('overwrite_option_keys')
@@ -113,56 +163,11 @@ trait HasGeneralFieldForm
             ]);
     }
 
-    public function getPossibleTypeOptions(?GeneralField $record): array|Collection
-    {
-        if (is_null($record)) return [];
-        $type = $record->getType();
-
-        return collect($type->getFlattenExtraTypeOptions())
-            //Remove any where can be use
-            ->filter(fn(TypeOption $typeOption) => $typeOption->canBeOverwrittenByNonField())
-            ->mapWithKeys(function (TypeOption $value, string $key) {
-                try {
-                    $label = $value->getModifyOptionComponent($key)->getLabel() ?? $key;
-                    return [$key => $label];
-                } catch (Error) {
-                    //When label need record or livewire component
-                    return [$key => $key];
-                }
-            });
-        //ToDo may with filtering (Some are not good to select in GeneralField)
-    }
-
-    public function getOverwrittenOptionDynamicSchema(): array
-    {
-        $record = $this->getRecord();
-        if (is_null($record)) return [];
-        $type = $record->getType();
-
-        $components = $type->getExtraTypeOptionComponents();
-
-        $isOverwritten = function ($component, $get) {
-            $key = $component->getStatePath(false);
-            $values = $get('../overwrite_option_keys') ?? [];
-            return in_array($key, $values);
-        };
-
-        foreach ($components as $item) {
-            if ($item instanceof Field) {
-                $item->visible($isOverwritten);
-            } elseif ($item instanceof Section) {
-                foreach ($item->getChildComponents() as $field) {
-                    $field->visible($isOverwritten);
-                }
-            }
-        }
-
-        return $components;
-    }
-
     protected function hasFieldTypeOptions(?GeneralField $record): bool
     {
-        if (is_null($record)) return false;
+        if (is_null($record)) {
+            return false;
+        }
         $type = $record->getType();
 
         $array = $type->getFlattenExtraTypeOptions();
@@ -182,20 +187,18 @@ trait HasGeneralFieldForm
             $visable = count($type->generalTypeOptions()) > 0;
         }
 
-        return Fieldset::make(GeneralField::__('options.label'))
+        return Fieldset::make(GeneralField::__('attributes.options.label'))
             ->columnSpan(1)
             ->columns(1)
             ->statePath('options')
             ->visible($visable)
             ->schema([
                 Placeholder::make('message')
-                    ->label(GeneralField::__('options.message_on_create'))
+                    ->label(GeneralField::__('attributes.options.message_on_create'))
                     ->hiddenOn('edit'),
                 Group::make()
                     ->hiddenOn('create')
                     ->schema($schema),
             ]);
     }
-
-
 }

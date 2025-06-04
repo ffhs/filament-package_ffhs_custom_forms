@@ -2,16 +2,16 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Models;
 
+use Ffhs\FilamentPackageFfhsCustomForms\Facades\CustomForms;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\Caching\CachedModel;
 use Ffhs\FilamentPackageFfhsCustomForms\Helping\Caching\HasCacheModel;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 
 /**
- * 
+ *
  *
  * @property int $id
  * @property int $custom_form_id
@@ -38,34 +38,42 @@ class CustomFormAnswer extends Model implements CachedModel
 
 
     protected $fillable = [
-            'custom_form_id',
-            'short_title',
+        'custom_form_id',
+        'short_title',
     ];
 
-    protected  array $cachedRelations = [
+    protected array $cachedRelations = [
         "customFieldAnswers",
         "customForm"
     ];
 
-    public function customForm(): BelongsTo {
+    public static function __(string ...$args): string
+    {
+        return CustomForms::__('models.custom_form_answer.' . implode('.', $args));
+    }
+
+    public function customForm(): BelongsTo
+    {
         return $this->belongsTo(CustomForm::class);
     }
 
-    public function cachedCustomFieldAnswers (): mixed {
+    public function cachedCustomFieldAnswers(): mixed
+    {
         return Cache::remember($this->getCacheKeyForAttribute("customFieldAnswers"), self::getCacheDuration(),
-            function(){
+            function () {
                 $answers = $this->customFieldAnswers()
                     ->with("customField")
                     ->get();
                 $this->customForm->customFields;
 
                 return $answers;
-               // return new RelationCachedInformations(CustomFieldAnswer::class, $answers->pluck("id")->toArray());
+                // return new RelationCachedInformations(CustomFieldAnswer::class, $answers->pluck("id")->toArray());
             }
         );
     }
 
-    public function customFieldAnswers (): HasMany {
+    public function customFieldAnswers(): HasMany
+    {
         return $this->hasMany(CustomFieldAnswer::class);
     }
 }

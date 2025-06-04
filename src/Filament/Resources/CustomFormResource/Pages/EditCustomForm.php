@@ -33,6 +33,12 @@ class EditCustomForm extends EditRecord
             && static::$resource::can('manageForms');
     }
 
+    public function getTitle(): string|Htmlable
+    {
+        $attributes = $this->getRecord()->attributesToArray();
+        return trans(CustomForm::__('pages.edit.title'), $attributes);
+    }
+
     public function getMaxContentWidth(): MaxWidth|string|null
     {
         return MaxWidth::Full;
@@ -44,11 +50,6 @@ class EditCustomForm extends EditRecord
             CustomFormEditor::make('custom_form')
                 ->label('')
         ]);
-    }
-
-    public function getTitle(): string|Htmlable
-    {
-        return $this->getRecord()->short_title . ' - ' . parent::getTitle();
     }
 
     public function save(bool $shouldRedirect = true, bool $shouldSendSavedNotification = true): void

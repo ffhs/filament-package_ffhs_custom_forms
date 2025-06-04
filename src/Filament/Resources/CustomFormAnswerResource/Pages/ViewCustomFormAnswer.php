@@ -4,14 +4,24 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormAnswe
 
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\EmbeddedCustomForm\EmbeddedAnswerInfolist;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormAnswerResource;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\EditAction;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ViewRecord;
+use Illuminate\Contracts\Support\Htmlable;
 
 class ViewCustomFormAnswer extends ViewRecord
 {
     protected static string $resource = CustomFormAnswerResource::class;
     protected static ?string $title = 'Formular Anschauen'; //ToDo Translate
+
+    public function getTitle(): string|Htmlable
+    {
+        $attributes = $this->getRecord()->attributesToArray();
+        return trans(CustomFormAnswer::__('pages.view.title'), $attributes);
+    }
 
     public function infolist(Infolist $infolist): Infolist
     {
@@ -24,5 +34,13 @@ class ViewCustomFormAnswer extends ViewRecord
                             ->columnSpanFull()
                     ])
             ]);
+    }
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            DeleteAction::make(),
+            EditAction::make(),
+        ];
     }
 }

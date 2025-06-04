@@ -10,6 +10,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanModifyCustomFormEditorData;
 use Filament\Actions\Action;
 use Filament\Support\Enums\MaxWidth;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
@@ -25,6 +26,12 @@ class EditTemplate extends EditCustomForm
     {
         return static::$resource::canAccess()
             && static::$resource::can('manageTemplates');
+    }
+
+    public function getTitle(): string|Htmlable
+    {
+        $attributes = $this->getRecord()->attributesToArray();
+        return trans(CustomForm::__('pages.edit_template.title'), $attributes);
     }
 
     public function save(bool $shouldRedirect = true, bool $shouldSendSavedNotification = true): void

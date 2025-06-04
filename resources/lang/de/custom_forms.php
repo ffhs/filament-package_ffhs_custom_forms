@@ -3,10 +3,6 @@
 
 return [
 
-    'label' => [
-        'template' => 'Template',
-        'form' => 'Formular'
-    ],
 
     'functions' => [
         'connect' => 'Verknüpfen',
@@ -33,7 +29,7 @@ return [
 //        'label' => 'Name',
         'form_connections' => 'Verknüpfte Formulare',
         'general_field' => 'Generelles Feld',
-        'is_required' => 'Wird benötigt',
+//        'is_required' => 'Wird benötigt',
 
         'helper_text' => [
             'type' => 'Der Feldtyp des Felds. ACHTUNG: Dieser kann nach dem Erstellen nicht mehr geändert werden',

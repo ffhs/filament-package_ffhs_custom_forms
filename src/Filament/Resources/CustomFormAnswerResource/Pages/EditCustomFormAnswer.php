@@ -8,8 +8,10 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanLoadFormAnswerer;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanSaveFormAnswer;
 use Filament\Actions\DeleteAction;
+use Filament\Actions\ViewAction;
 use Filament\Forms\Form;
 use Filament\Resources\Pages\EditRecord;
+use Illuminate\Contracts\Support\Htmlable;
 
 class EditCustomFormAnswer extends EditRecord
 {
@@ -17,6 +19,12 @@ class EditCustomFormAnswer extends EditRecord
     use CanSaveFormAnswer;
 
     protected static string $resource = CustomFormAnswerResource::class;
+
+    public function getTitle(): string|Htmlable
+    {
+        $attributes = $this->getRecord()->attributesToArray();
+        return trans(CustomFormAnswer::__('pages.edit.title'), $attributes);
+    }
 
 
     public function form(Form $form): Form
@@ -29,11 +37,11 @@ class EditCustomFormAnswer extends EditRecord
             ]);
     }
 
-
     protected function getHeaderActions(): array
     {
         return [
             DeleteAction::make(),
+            ViewAction::make()
         ];
     }
 
@@ -48,7 +56,7 @@ class EditCustomFormAnswer extends EditRecord
         /**@var CustomFormAnswer $customFormAnswer */
         $customFormAnswer = $this->form->getRecord();
 
-        //Load datas from fields
+        //Load data's from fields
         return ['form_answerer' => array_merge($data, $this->loadCustomAnswerData($customFormAnswer))];
     }
 

@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Facade;
 /**
  * @method static CustomFieldType getFieldTypeFromRawDate($param)
  * @method static CustomFormConfiguration getFormConfiguration($custom_form_identifier)
+ * @method static array getFormConfigurations()
  */
 class CustomForms extends Facade
 {
@@ -21,7 +22,6 @@ class CustomForms extends Facade
     {
         return config('ffhs_custom_forms.' . $string);
     }
-
 
     protected static function getFacadeAccessor()
     {

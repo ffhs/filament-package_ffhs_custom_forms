@@ -12,12 +12,18 @@ use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Builder;
 
 class ListCustomForm extends ListRecords
 {
     protected const langPrefix = 'filament-package_ffhs_custom_forms::custom_forms.form.';
     protected static string $resource = CustomFormResource::class;
+
+    public function getTitle(): string|Htmlable
+    {
+        return CustomForm::__('pages.list.title');
+    }
 
     public function getTabs(): array
     {
@@ -48,7 +54,6 @@ class ListCustomForm extends ListRecords
         return parent::table($table)
             ->actions([
                 EditAction::make(),
-//                DeleteAction::make() ToDo add extra permissions for it
             ])
             ->columns([
                 TextColumn::make('id'),
@@ -87,7 +92,6 @@ class ListCustomForm extends ListRecords
 
     private function prepareTabQuery($identifier, Builder $query): Builder
     {
-        $query = $query->where('custom_form_identifier', $identifier);
-        return $query;
+        return $query->where('custom_form_identifier', $identifier);
     }
 }

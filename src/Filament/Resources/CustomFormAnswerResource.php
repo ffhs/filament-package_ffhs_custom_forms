@@ -2,10 +2,12 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources;
 
+use Ffhs\FilamentPackageFfhsCustomForms\Facades\CustomForms;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormAnswerResource\Pages\CreateCustomFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormAnswerResource\Pages\EditCustomFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormAnswerResource\Pages\ListCustomFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormAnswerResource\Pages\ViewCustomFormAnswer;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -29,17 +31,17 @@ class CustomFormAnswerResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return __('filament-package_ffhs_custom_forms::custom_forms.navigation.group.forms');
+        return CustomForms::__('custom_forms.navigation.group.forms');
     }
 
     public static function getNavigationLabel(): string
     {
-        return __('filament-package_ffhs_custom_forms::custom_forms.navigation.custom_form_answer');
+        return CustomForms::__('custom_forms.navigation.custom_form_answer');
     }
 
     public static function getNavigationParentItem(): ?string
     {
-        return __('filament-package_ffhs_custom_forms::custom_forms.navigation.forms');
+        return CustomForms::__('custom_forms.navigation.forms');
     }
 
     public static function canAccess(): bool
@@ -59,13 +61,15 @@ class CustomFormAnswerResource extends Resource
             ->columns([
                 TextColumn::make('id'),
                 TextColumn::make('short_title')
-                    ->label('Name'), //ToDo Translate
+                    ->label(CustomFormAnswer::__('attributes.short_title')),
                 TextColumn::make('customForm.short_title')
-                    ->label('Formular Name'), //ToDo Translate,
+                    ->label(
+                        CustomForm::__('label.single') . ' ' . CustomForm::__('attributes.short_title')
+                    ),
                 TextColumn::make('customForm.custom_form_identifier')
-                    ->label('Formular Art') //ToDo Translate,
+                    ->label(CustomForm::__('attributes.custom_form_identifier'))
                     ->state(
-                        fn(CustomFormAnswer $record) => ($record->customForm->dynamicFormConfiguration())::displayName()
+                        fn(CustomFormAnswer $record) => $record->customForm->dynamicFormConfiguration()::displayName()
                     ),
             ])
             ->filters([])

@@ -35,5 +35,4 @@ trait HasViewMode
         };
         return $this;
     }
-
 }

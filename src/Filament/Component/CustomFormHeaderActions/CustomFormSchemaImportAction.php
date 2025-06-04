@@ -7,7 +7,7 @@ use Error;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomForm\FormConverter\FormImporter\FormSchemaImporter;
 use Ffhs\FilamentPackageFfhsCustomForms\Exceptions\FormImportException;
 use Ffhs\FilamentPackageFfhsCustomForms\Facades\CustomForms;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\CustomFormTypeSelector;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormTypeSelector;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormResource;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
@@ -76,7 +76,7 @@ class CustomFormSchemaImportAction extends Action
             if ($form) {
                 $type = $form->is_template
                     ? CustomForm::__('label.template')
-                    : CustomForm::__('label.form');
+                    : CustomForm::__('label.single');
 
                 $form = $importer->importWithExistingForm(
                     rawForm: $formData,
@@ -88,7 +88,7 @@ class CustomFormSchemaImportAction extends Action
                 $isTemplate = $data['is_template'] ?? false;
                 $type = $isTemplate
                     ? CustomForm::__('label.template')
-                    : CustomForm::__('label.form');
+                    : CustomForm::__('label.single');
 
                 $form = $this->importNotExisingForm(
                     $data,
