@@ -62,33 +62,12 @@ class CustomFormLoadHelper
             $identifier = $keyPath[0];
 
             $path = implode('.', array_slice($keyPath, 1));
-            $pathResolved = static::findPath($fields, $fields->get($identifier), $path) . 'RenderHelp' . $identifier;
+            $pathResolved = static::findPath($fields, $fields->get($identifier), $path) . '.' . $identifier;
             Arr::set($loadedData, $pathResolved, $data);
             unset($loadedData[$key]);
         }
 
         return $loadedData;
-    }
-
-    private static function passField(
-        CustomField $customField,
-        CustomForm $customForm,
-        Collection $templateFields,
-        ?int $begin,
-        ?int $end
-    ): bool {
-        if ($customForm->id !== $customField->custom_form_id) {
-            $customField = $templateFields->firstWhere('template_id', $customField->custom_form_id);
-
-            if (!$customField) {
-                return true;
-            }
-        }
-
-        $beginCondition = is_null($begin) || $begin <= $customField->form_position;
-        $endCondition = is_null($end) || $customField->form_position <= $end;
-
-        return !($beginCondition && $endCondition);
     }
 
     public static function runRulesForFieldData(CustomFormAnswer $answerer, mixed $fieldData, $formRules): mixed
@@ -136,5 +115,26 @@ class CustomFormLoadHelper
         }
 
         return $nearestParent->identifier . '.' . $path;
+    }
+
+    private static function passField(
+        CustomField $customField,
+        CustomForm $customForm,
+        Collection $templateFields,
+        ?int $begin,
+        ?int $end
+    ): bool {
+        if ($customForm->id !== $customField->custom_form_id) {
+            $customField = $templateFields->firstWhere('template_id', $customField->custom_form_id);
+
+            if (!$customField) {
+                return true;
+            }
+        }
+
+        $beginCondition = is_null($begin) || $begin <= $customField->form_position;
+        $endCondition = is_null($end) || $customField->form_position <= $end;
+
+        return !($beginCondition && $endCondition);
     }
 }

@@ -35,7 +35,6 @@ abstract class CustomFieldType implements Type
         return "custom_field_types";
     }
 
-
     final public static function getSelectableGeneralFieldTypes(): array
     {
         $output = [];

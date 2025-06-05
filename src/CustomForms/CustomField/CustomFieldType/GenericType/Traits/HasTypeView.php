@@ -68,11 +68,11 @@ trait HasTypeView
         CustomForm $form,
         string $viewMode = "default",
         array $parameter = []
-    ): Component { //ToDo Remove Parameters?
+    ): Component {
         $viewMods = $this->getViewModes($form->getFormConfiguration());
         //FieldTypeView.php
         if (empty($viewMods[$viewMode])) {
-            return ($viewMods["default"])::getFormComponent($this, $record, $parameter);
+            $viewMode = "default";
         }
         return ($viewMods[$viewMode])::getFormComponent($this, $record, $parameter);
     }
