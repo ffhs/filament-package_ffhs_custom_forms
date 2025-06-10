@@ -10,7 +10,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\Rule;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 
-trait CanLoadFormAnswerer
+trait CanLoadFormAnswer
 {
     public function modifyFieldDataFormRules(CustomFormAnswer $answerer, mixed $fieldData, $formRules): mixed
     {

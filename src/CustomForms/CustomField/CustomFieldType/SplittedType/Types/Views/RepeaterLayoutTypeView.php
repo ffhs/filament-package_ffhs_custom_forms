@@ -12,6 +12,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\EmbeddedCustomForm\Re
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\TemporaryRenderClass;
+use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanLoadCustomFormEditorData;
 use Filament\Forms\Components\{Actions\Action, Component, Repeater};
 use Filament\Infolists\Components\Component as InfolistComponent;
 use Filament\Infolists\Components\Fieldset;
@@ -21,6 +22,7 @@ use Illuminate\Support\Collection;
 class RepeaterLayoutTypeView implements FieldTypeView
 {
     use HasDefaultViewComponent;
+    use CanLoadCustomFormEditorData;
 
     public static function getFormComponent(
         CustomFieldType $type,

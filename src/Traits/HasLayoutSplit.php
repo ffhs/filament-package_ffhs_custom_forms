@@ -9,7 +9,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
 
 trait HasLayoutSplit
 {
-    use CanLoadFormAnswerer;
+    use CanLoadFormAnswer;
 
     protected bool|Closure $useLayoutTypeSplit = false;
     protected CustomLayoutType|Closure|null $layoutTypeSplit = null;

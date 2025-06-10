@@ -4,9 +4,9 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomForms\FormRule\Events;
 
 use Closure;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\FormRule\Translations\HasRuleEventPluginTranslate;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomForm\RenderHelp\CustomFormLoadHelper;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\RuleEvent;
+use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanLoadFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasTriggerEventFormTargets;
 use Filament\Forms\Components\Component;
 use Filament\Infolists\Components\Component as InfolistComponent;
@@ -17,6 +17,7 @@ abstract class  IsPropertyOverwriteEvent extends FormRuleEventType
 {
     use HasRuleEventPluginTranslate;
     use HasTriggerEventFormTargets;
+    use CanLoadFormAnswer;
 
 
     public function handleAfterRenderForm(
@@ -25,8 +26,40 @@ abstract class  IsPropertyOverwriteEvent extends FormRuleEventType
         Component &$component,
         RuleEvent $rule
     ): Component {
-        if (!in_array($arguments["identifier"], $rule->data["targets"])) return $component;
+        if (!in_array($arguments["identifier"], $rule->data["targets"])) {
+            return $component;
+        }
         return $this->prepareComponent($component, $triggers);
+    }
+
+    public function handleAfterRenderInfolist(
+        Closure $triggers,
+        array $arguments,
+        InfolistComponent &$component,
+        RuleEvent $rule
+    ): InfolistComponent {
+        if (empty($rule->data)) {
+            return $component;
+        }
+        if (empty($rule->data["targets"])) {
+            return $component;
+        }
+
+        $getCustomField = $this->getCustomField($arguments);
+        if (is_null($getCustomField)) {
+            return $component;
+        }
+        $customFieldId = $getCustomField->identifier;
+
+        $inTargets = in_array($customFieldId, $rule->data["targets"]);
+        return $inTargets
+            ? $this->prepareComponent($component, $triggers)
+            : $component;
+    }
+
+    public function getFormSchema(): array
+    {
+        return [$this->getTargetsSelect()];
     }
 
     protected function prepareComponent(Component|InfolistComponent $component, $triggers): Component|InfolistComponent
@@ -52,9 +85,9 @@ abstract class  IsPropertyOverwriteEvent extends FormRuleEventType
                 $triggers
             ) {
                 $state = Cache::remember(
-                    $record->id . "custom_form_answare_state_load_infolist",
+                    $record->id . "custom_form_answer_state_load_infolist",
                     2,
-                    fn() => CustomFormLoadHelper::load($record)
+                    fn() => $this->loadCustomAnswerData($record)
                 );
                 $triggered = $triggers(["state" => $state]);
                 if ($triggered != $this->dominatingSide()) {
@@ -72,28 +105,4 @@ abstract class  IsPropertyOverwriteEvent extends FormRuleEventType
     protected abstract function property(): string;
 
     protected abstract function dominatingSide(): bool;
-
-    public function handleAfterRenderInfolist(
-        Closure $triggers,
-        array $arguments,
-        InfolistComponent &$component,
-        RuleEvent $rule
-    ): InfolistComponent {
-        if (empty($rule->data)) return $component;
-        if (empty($rule->data["targets"])) return $component;
-
-        $getCustomField = $this->getCustomField($arguments);
-        if (is_null($getCustomField)) return $component;
-        $customFieldId = $getCustomField->identifier;
-
-        $inTargets = in_array($customFieldId, $rule->data["targets"]);
-        return $inTargets
-            ? $this->prepareComponent($component, $triggers)
-            : $component;
-    }
-
-    public function getFormSchema(): array
-    {
-        return [$this->getTargetsSelect()];
-    }
 }

@@ -8,7 +8,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
 
 trait HasFieldSplit
 {
-    use CanLoadFormAnswerer;
+    use CanLoadFormAnswer;
 
     protected bool|Closure $useFieldSplit = false;
     protected null|CustomField $fieldSplit = null;

@@ -7,7 +7,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
 
 trait HasPosSplit
 {
-    use CanLoadFormAnswerer;
+    use CanLoadFormAnswer;
 
     protected bool|Closure $usePoseSplit = false;
     protected Closure|null $poseSplitStart = null;

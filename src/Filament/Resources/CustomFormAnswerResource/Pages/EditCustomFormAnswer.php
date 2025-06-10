@@ -5,7 +5,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormAnswe
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\EmbeddedCustomForm\EmbeddedCustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormAnswerResource;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
-use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanLoadFormAnswerer;
+use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanLoadFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanSaveFormAnswer;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
@@ -15,7 +15,7 @@ use Illuminate\Contracts\Support\Htmlable;
 
 class EditCustomFormAnswer extends EditRecord
 {
-    use CanLoadFormAnswerer;
+    use CanLoadFormAnswer;
     use CanSaveFormAnswer;
 
     protected static string $resource = CustomFormAnswerResource::class;

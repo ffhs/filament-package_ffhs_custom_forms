@@ -4,7 +4,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\EmbeddedCustomF
 
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
-use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanLoadFormAnswerer;
+use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanLoadFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanSaveFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasFallbackCustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasViewMode;
@@ -25,7 +25,7 @@ class EmbeddedCustomForm extends Field implements CanEntangleWithSingularRelatio
     use EntanglesStateWithSingularRelationship;
     use UseSplitCustomForm;
     use UseAutosaveCustomForm;
-    use CanLoadFormAnswerer;
+    use CanLoadFormAnswer;
     use CanSaveFormAnswer;
     use HasFallbackCustomForm;
     use HasViewMode;

@@ -19,7 +19,7 @@ trait CanLoadCustomFormEditorData
             'custom_form_identifier' => $customForm->custom_form_identifier,
             'is_template' => $customForm->is_template,
             'id' => $customForm->id,
-            'rules' => $this->loadRules($customForm)
+            'rules' => $this->loadEditorRules($customForm)
         ];
     }
 
@@ -60,7 +60,7 @@ trait CanLoadCustomFormEditorData
         return uniqid();
     }
 
-    protected function loadRules(CustomForm $form): array
+    protected function loadEditorRules(CustomForm $form): array
     {
         $rules = [];
         foreach ($form->ownedRules as $rule) {
