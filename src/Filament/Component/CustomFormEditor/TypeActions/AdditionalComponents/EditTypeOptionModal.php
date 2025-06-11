@@ -40,7 +40,7 @@ class EditTypeOptionModal extends Component
 
                 foreach ($items as $itemField) {
                     $itemKey = $itemField->getStatePath(false);
-                    $isItemDisabled = in_array($itemKey, $disabledOption, true);
+                    $isItemDisabled = in_array($itemKey, $disabledOption, false);
                     $itemField->disabled($isItemDisabled);
                 }
             }

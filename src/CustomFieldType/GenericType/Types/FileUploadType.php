@@ -186,7 +186,7 @@ class FileUploadType extends CustomFieldType
                 $mimeType = $file->getMimeType();
 
                 // Do not save if even one of the submitted files mimetype does not match the accepted file types
-                if (!in_array($mimeType, $acceptedFileTypes, true)) {
+                if (!in_array($mimeType, $acceptedFileTypes, false)) {
                     $canSave = false;
                     $file->delete();
                 }

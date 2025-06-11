@@ -26,15 +26,20 @@ class ValueEqualsRuleTrigger extends FormRuleTriggerType
 {
     use HasTriggerEventFormTargets;
 
+    public static function identifier(): string
+    {
+        return "value_equals_anchor";
+    }
+
     public function prepareComponent(
         Component|\Filament\Infolists\Components\Component $component,
         RuleTrigger $trigger
     ): Component|\Filament\Infolists\Components\Component {
         if ($component instanceof Component) {
             return $component->live();
-        } else {
-            return $component;
         }
+
+        return $component;
     }
 
     public function isTrigger(array $arguments, mixed &$target, RuleTrigger $rule): bool
@@ -66,102 +71,6 @@ class ValueEqualsRuleTrigger extends FormRuleTriggerType
             "option" => $this->checkOption($targetValue, $rule->data),
             default => false,
         };
-    }
-
-    protected function checkNumber(mixed $targetValue, array $data): bool
-    {
-        $value = floatval($targetValue);
-        if ($data["exactly_number"]) {
-            return $data[" number"] == $value;
-        }
-
-        if (!empty($data["greater_than"])) {
-            if ($data["greater_equals"] && !($value >= $data["greater_than"])) {
-                return false;
-            }
-            if (!$data["greater_equals"] && !($value > $data["greater_than"])) {
-                return false;
-            }
-        }
-
-        if (!empty($data["smaller_than"])) {
-            if ($data["smaller_equals"] && !($value <= $data["smaller_than"])) {
-                return false;
-            }
-            if (!$data["smaller_equals"] && !($value < $data["smaller_than"])) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    protected function checkText(mixed $targetValue, array $data): bool
-    {
-        if (!is_string($targetValue)) {
-            return false;
-        }
-        if (empty($data["values"])) {
-            return false;
-        }
-
-        foreach ($data["values"] as $value) {
-            if (fnmatch($value, $targetValue)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    protected function checkBoolean(mixed $targetValue, array $data): bool
-    {
-        if (is_null($targetValue)) {
-            return false;
-        }
-        if (!empty($data["boolean"])) {
-            $boolean = $data["boolean"];
-        } else {
-            $boolean = false;
-        }
-        return $targetValue == $boolean;
-    }
-
-    private function checkNull(mixed $targetValue): bool
-    {
-        if (is_null($targetValue)) {
-            return true;
-        }
-        if (is_bool($targetValue)) {
-            return false;
-        }
-        if ($targetValue == "0") {
-            return false;
-        }
-        return empty($targetValue);
-    }
-
-    protected function checkOption(mixed $targetValue, array $data): bool
-    {
-        if (empty($data)) {
-            return false;
-        }
-
-        $includeNull = $data['selected_include_null'] ?? false;
-        if ($includeNull && empty($targetValue)) {
-            return true;
-        }
-
-        if (empty($data['selected_options'])) {
-            return false;
-        }
-
-        //Custom Option Types like Select
-        $options = $data['selected_options'];
-        if (is_array($targetValue)) {
-            return sizeof(array_intersect($targetValue, $options)) > 0;
-        }
-        return !is_null($targetValue) && in_array($targetValue, $options, true);
     }
 
     public function getDisplayName(): string
@@ -241,9 +150,86 @@ class ValueEqualsRuleTrigger extends FormRuleTriggerType
         ];
     }
 
-    public static function identifier(): string
+    protected function checkNumber(mixed $targetValue, array $data): bool
     {
-        return "value_equals_anchor";
+        $value = floatval($targetValue);
+        if ($data["exactly_number"]) {
+            return $data[" number"] == $value;
+        }
+
+        if (!empty($data["greater_than"])) {
+            if ($data["greater_equals"] && !($value >= $data["greater_than"])) {
+                return false;
+            }
+            if (!$data["greater_equals"] && !($value > $data["greater_than"])) {
+                return false;
+            }
+        }
+
+        if (!empty($data["smaller_than"])) {
+            if ($data["smaller_equals"] && !($value <= $data["smaller_than"])) {
+                return false;
+            }
+            if (!$data["smaller_equals"] && !($value < $data["smaller_than"])) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    protected function checkText(mixed $targetValue, array $data): bool
+    {
+        if (!is_string($targetValue)) {
+            return false;
+        }
+        if (empty($data["values"])) {
+            return false;
+        }
+
+        foreach ($data["values"] as $value) {
+            if (fnmatch($value, $targetValue)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    protected function checkBoolean(mixed $targetValue, array $data): bool
+    {
+        if (is_null($targetValue)) {
+            return false;
+        }
+        if (!empty($data["boolean"])) {
+            $boolean = $data["boolean"];
+        } else {
+            $boolean = false;
+        }
+        return $targetValue == $boolean;
+    }
+
+    protected function checkOption(mixed $targetValue, array $data): bool
+    {
+        if (empty($data)) {
+            return false;
+        }
+
+        $includeNull = $data['selected_include_null'] ?? false;
+        if ($includeNull && empty($targetValue)) {
+            return true;
+        }
+
+        $options = $data['selected_options'] ?? [];
+        if (empty($options)) {
+            return false;
+        }
+
+        //Custom Option Types like Select
+        if (is_array($targetValue)) {
+            return sizeof(array_intersect($targetValue, $options)) > 0;
+        }
+        return !is_null($targetValue) && in_array($targetValue, $options, false);
     }
 
     protected function getTextTypeGroup(): Component
@@ -348,6 +334,42 @@ class ValueEqualsRuleTrigger extends FormRuleTriggerType
                 ->multiple()
                 ->options($this->getOptionTypeGroupOptions(...)),
         ]);
+    }
+
+    protected function getOptionTypeGroupOptions($get, CustomForm $record): array|Collection
+    {
+        $finalField = $this->getTargetFieldData($get);
+        if (is_null($finalField)) {
+            return [];
+        }
+
+
+        if (array_key_exists("general_field_id", $finalField) && !is_null($finalField["general_field_id"])) {
+            //GeneralFields
+            $genField = (new CustomField())->fill($finalField)->generalField;
+
+            if (!array_key_exists("options", $finalField)) {
+                return [];
+            }
+            if (!array_key_exists("customOptions", $finalField["options"])) {
+                return [];
+            }
+            $options = collect($finalField["options"]["customOptions"]);
+
+            return $genField->customOptions
+                ->whereIn("id", $options)
+                ->pluck("name", "identifier")
+                ->toArray();
+        }
+
+        if (!array_key_exists("options", $finalField)) {
+            return [];
+        }
+        if (!array_key_exists("customOptions", $finalField["options"])) {
+            return [];
+        }
+        $options = collect($finalField["options"]["customOptions"]);
+        return $options->pluck("name." . $record->getLocale(), "identifier");
     }
 
 
@@ -458,40 +480,18 @@ class ValueEqualsRuleTrigger extends FormRuleTriggerType
         }
              */
 
-    protected function getOptionTypeGroupOptions($get, CustomForm $record): array|Collection
+    private function checkNull(mixed $targetValue): bool
     {
-        $finalField = $this->getTargetFieldData($get);
-        if (is_null($finalField)) {
-            return [];
+        if (is_null($targetValue)) {
+            return true;
         }
-
-
-        if (array_key_exists("general_field_id", $finalField) && !is_null($finalField["general_field_id"])) {
-            //GeneralFields
-            $genField = (new CustomField())->fill($finalField)->generalField;
-
-            if (!array_key_exists("options", $finalField)) {
-                return [];
-            }
-            if (!array_key_exists("customOptions", $finalField["options"])) {
-                return [];
-            }
-            $options = collect($finalField["options"]["customOptions"]);
-
-            return $genField->customOptions
-                ->whereIn("id", $options)
-                ->pluck("name", "identifier")
-                ->toArray();
+        if (is_bool($targetValue)) {
+            return false;
         }
-
-        if (!array_key_exists("options", $finalField)) {
-            return [];
+        if ($targetValue == "0") {
+            return false;
         }
-        if (!array_key_exists("customOptions", $finalField["options"])) {
-            return [];
-        }
-        $options = collect($finalField["options"]["customOptions"]);
-        return $options->pluck("name." . $record->getLocale(), "identifier");
+        return empty($targetValue);
     }
 
 }
