@@ -31,16 +31,11 @@ trait CanSaveFormAnswer
         $this->prepareFormComponents($customFieldsIdentify, $form, $path);
 
         // Mapping and combining field answers
-        $data = $this->splittingFormComponents($data, $customFieldsIdentify);
+        $preparedData = $this->splittingFormComponents($data, $customFieldsIdentify);
 
-        try {
-            DB::beginTransaction();
-            $this->saveWithoutPreparation($formAnswer, $customFieldsIdentify, $data);
-            DB::commit();
-        } catch (\Exception $e) {
-            DB::rollBack();
-            throw $e;
-        }
+        DB::transaction(function () use ($preparedData, $customFieldsIdentify, $formAnswer) {
+            $this->saveWithoutPreparation($formAnswer, $customFieldsIdentify, $preparedData);
+        });
 
         CustomFieldAnswer::clearModelCache($formAnswer->customFieldAnswers->pluck('id')->toArray());
         $formAnswer->cachedClear('customFieldAnswers');
@@ -60,8 +55,7 @@ trait CanSaveFormAnswer
 
     protected function splittingFormComponents(
         array $formData,
-        Collection $customFieldsIdentify,
-        string $parentPath = ''
+        Collection $customFieldsIdentify
     ): array {
         $dateSplit = [];
         foreach ($formData as $identifyKey => $customFieldAnswererRawData) {
@@ -72,17 +66,16 @@ trait CanSaveFormAnswer
             }
 
             $type = $customField->getType();
-            $path = empty($parentPath) ? $identifyKey : $identifyKey . '.' . $parentPath;
-
             if (!$type->hasSplitFields()) {
-                $dateSplit[$path] = $customFieldAnswererRawData;
+                $dateSplit[$identifyKey] = $customFieldAnswererRawData;
                 continue;
             }
 
-            foreach ($customFieldAnswererRawData as $subPath => $dateSplit) {
-                $newParentPath = empty($parentPath) ? $subPath : $parentPath . '.' . $subPath;
-                $getSplitData = $this->splittingFormComponents($dateSplit, $customFieldsIdentify, $newParentPath);
-                $dateSplit = [...$dateSplit, ...$getSplitData];
+            foreach ($customFieldAnswererRawData as $subPath => $subData) {
+                $getSplitData = $this->splittingFormComponents($subData, $customFieldsIdentify);
+                foreach ($getSplitData as $subKey => $subValue) {
+                    $dateSplit[$subKey . '.' . $subPath] = $subValue;
+                }
             }
         }
         return $dateSplit;
@@ -102,9 +95,13 @@ trait CanSaveFormAnswer
 
         foreach ($formData as $identifierPath => $fieldRawData) {
             //Exclude Path and Identifier
-            $identifier = explode('.', $identifierPath)[0];
-            $path = implode('.', array_slice(explode('.', $identifierPath), 1));
-            $path = empty($path) ? null : $path;
+            $explodedIdentifierPath = explode('.', $identifierPath);
+            $identifier = $explodedIdentifierPath[0];
+            $path = null;
+            if (sizeof($explodedIdentifierPath) !== 1) {
+                $path = implode('.', array_slice(explode('.', $identifierPath), 1));
+                $handledPaths->add($path);
+            }
 
             /**@var $customField CustomField */
             $customField = $customFields->get($identifier);
@@ -114,7 +111,6 @@ trait CanSaveFormAnswer
 
             //Add custom field ids ans paths in handled to identify which fields can be deleted
             $handledCustomIds->add($customField->id);
-            $handledPaths->add($path);
 
             /**@var ?CustomFieldAnswer $customFieldAnswer */
             $customFieldAnswer = $existingFieldAnswers->get($identifierPath);
@@ -134,20 +130,26 @@ trait CanSaveFormAnswer
             $customFieldAnswer->setRelation('customField', $customField);
             $answersToHandle->add($customFieldAnswer);
         }
-
+        $handledPaths = $handledPaths->filter(fn($path) => !is_null($path));
         $answersToHandle = $answersToHandle->groupBy(fn(CustomFieldAnswer $answer) => $answer->exists);
-        $answersToCreate = $answersToHandle->get(false)
-            ?->filter(fn(CustomFieldAnswer $answer) => !empty($answer->answer));
-        $answersToDelete = $answersToHandle->get(true)
-            ?->filter(fn(CustomFieldAnswer $answer) => $answer->customField->getType()->isEmptyAnswer($answer,
-                $answer->answer));
-        $answersToSave = $answersToHandle->get(true)
-            ?->whereNotIn('id', $answersToDelete->pluck('id'))
+
+        $answersToCreate = $answersToHandle->get(false, collect())
+            ->filter(function (CustomFieldAnswer $answer) {
+                return !$answer->customField->getType()->isEmptyAnswer($answer, $answer->answer);
+            });
+
+        $answersToDelete = $answersToHandle->get(true, collect())
+            ->filter(function (CustomFieldAnswer $answer) {
+                return $answer->customField->getType()->isEmptyAnswer($answer, $answer->answer);
+            });
+
+        $answersToSave = $answersToHandle->get(true, collect())
+            ->whereNotIn('id', $answersToDelete->pluck('id'))
             ->filter(fn(CustomFieldAnswer $answer) => $answer->isDirty());
 
-        $this->handleDeleteFields($formAnswer, $answersToDelete ?? collect(), $handledCustomIds, $handledPaths);
-        $this->handleSaveFields($answersToSave ?? collect());
-        $this->handleCreateFields($answersToCreate ?? collect());
+        $this->handleDeleteFields($formAnswer, $answersToDelete, $handledCustomIds, $handledPaths);
+        $this->handleSaveFields($answersToSave);
+        $this->handleCreateFields($answersToCreate);
 
         $loggedFieldActivity = Activity::query()
             ->where('batch_uuid', LogBatch::getUuid())

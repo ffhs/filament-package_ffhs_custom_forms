@@ -132,7 +132,7 @@ trait CanLoadFormAnswer
     private function getDataIdentifier(CustomFieldAnswer $fieldAnswer, CustomField $customField): string
     {
         $dataIdentifier = $customField->identifier;
-        $dataIdentifier .= empty($fieldAnswer->path) ? '' : '.' . $fieldAnswer->path;
+        $dataIdentifier .= is_null($fieldAnswer->path) ? '' : '.' . $fieldAnswer->path;
         return $dataIdentifier;
     }
 

@@ -31,9 +31,9 @@ trait HasAnswerCallbacks
         return ['saved' => $data];
     }
 
-    public function prepareLoadAnswerData(CustomFieldAnswer $answer, array $data): mixed
+    public function prepareLoadAnswerData(CustomFieldAnswer $answer, ?array $data): mixed
     {
-        if (!array_key_exists('saved', $data) || is_null($data['saved'])) {
+        if (is_null($data) || !array_key_exists('saved', $data) || is_null($data['saved'])) {
             return null;
         }
         return $data['saved'];
