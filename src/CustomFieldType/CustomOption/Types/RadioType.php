@@ -5,9 +5,9 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\CustomOption\Types
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\CustomOption\CustomOptionType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\CustomOption\TypeOptions\CustomOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\CustomOption\Types\Views\RadioTypeView;
-use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasCustomTypePackageTranslation;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\TypeOption\Groups\LayoutWithColumnsOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\TypeOption\Groups\ValidationTypeOptionGroup;
+use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasCustomTypePackageTranslation;
 
 class RadioType extends CustomOptionType
 {
@@ -15,7 +15,7 @@ class RadioType extends CustomOptionType
 
     public static function identifier(): string
     {
-        return "radio";
+        return 'radio';
     }
 
     public function viewModes(): array
@@ -37,6 +37,6 @@ class RadioType extends CustomOptionType
 
     public function icon(): string
     {
-        return "carbon-radio-button-checked";
+        return 'carbon-radio-button-checked';
     }
 }

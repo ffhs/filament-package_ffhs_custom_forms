@@ -5,7 +5,6 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\Types;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\Types\Views\TextTypeView;
-use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasCustomTypePackageTranslation;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\TypeOption\Groups\LayoutOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\TypeOption\Groups\ValidationTypeOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\TypeOption\Options\AlpineMaskOption;
@@ -14,6 +13,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\TypeOption\Optio
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\TypeOption\Options\MinLengthOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\TypeOption\TypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\TypeOption\TypeOptionGroup;
+use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasCustomTypePackageTranslation;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\TextInput;
@@ -24,7 +24,7 @@ class TextType extends CustomFieldType
 
     public static function identifier(): string
     {
-        return "text";
+        return 'text';
     }
 
     public function viewModes(): array
@@ -36,7 +36,7 @@ class TextType extends CustomFieldType
 
     public function icon(): string
     {
-        return "bi-input-cursor-text";
+        return 'bi-input-cursor-text';
     }
 
     public function extraTypeOptions(): array
@@ -56,15 +56,14 @@ class TextType extends CustomFieldType
                         ->statePath('suggestions')
                         ->columnSpanFull()
                         ->schema(fn($record) => [
-                            Repeater::make($record->getLocale())//ToDo maby make simple repeater
+                            Repeater::make($record->getLocale()) //ToDo may make simple repeater
                             ->helperText(TypeOption::__('suggestions.helper_text'))
                                 ->addActionLabel(TypeOption::__('suggestions.add_label'))
-                                ->schema([TextInput::make("value")->label("")])
-                                ->label(""),
+                                ->schema([TextInput::make('value')->label('')])
+                                ->label(''),
                         ])
                 ),
             ]),
         ];
     }
-
 }

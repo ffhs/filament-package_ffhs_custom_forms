@@ -21,7 +21,7 @@ class FastTypeOption extends TypeOption
 
     public static function makeFast(mixed $defaultValue, Component $component): FastTypeOption
     {
-        return new FastTypeOption($defaultValue, $component);
+        return app(static::class, ['defaultValue' => $defaultValue, 'component' => $component]);
     }
 
     public function getDefaultValue(): mixed

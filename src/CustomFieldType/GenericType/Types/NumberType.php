@@ -4,11 +4,11 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\Types;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\Types\Views\NumberTypeView;
-use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasCustomTypePackageTranslation;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\TypeOption\Groups\LayoutOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\TypeOption\Groups\ValidationTypeOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\TypeOption\Options\MaxValueOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\TypeOption\Options\MinValueOption;
+use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasCustomTypePackageTranslation;
 
 class NumberType extends CustomFieldType
 {
@@ -16,7 +16,7 @@ class NumberType extends CustomFieldType
 
     public static function identifier(): string
     {
-        return "number";
+        return 'number';
     }
 
     public function viewModes(): array
@@ -28,7 +28,7 @@ class NumberType extends CustomFieldType
 
     public function icon(): string
     {
-        return "carbon-character-whole-number";
+        return 'carbon-character-whole-number';
     }
 
     public function extraTypeOptions(): array
@@ -42,6 +42,4 @@ class NumberType extends CustomFieldType
                 ]),
         ];
     }
-
-
 }

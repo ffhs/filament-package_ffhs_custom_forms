@@ -7,44 +7,42 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldT
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\Render\CustomFormRender;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
-use Ffhs\FilamentPackageFfhsCustomForms\TemporaryRenderClass;
+use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanRenderCustomForm;
+use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasStaticMake;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Group;
 
 class TemplateTypeView implements FieldTypeView
 {
+    use HasStaticMake;
+    use CanRenderCustomForm;
 
-    public static function getFormComponent(
+    public function getFormComponent(
         TemplateFieldType|CustomFieldType $type,
         CustomField $record,
         array $parameter = []
     ): Component {
 
-        $schema = static::renderTemplate($record, $parameter);
+        $schema = $this->renderTemplate($record, $parameter);
 
         return Group::make($schema)
             ->columns(config("ffhs_custom_forms.default_column_count"))
             ->columnSpanFull();
     }
 
-    public static function getInfolistComponent(
+    public function getInfolistComponent(
         TemplateFieldType|CustomFieldType $type,
         CustomFieldAnswer $record,
         array $parameter = []
     ): \Filament\Infolists\Components\Component {
 
-        $schema = static::renderTemplate($record, $parameter);
+        $schema = $this->renderTemplate($record, $parameter);
 
         return \Filament\Infolists\Components\Group::make($schema)
             ->columnSpanFull();
     }
 
-    public static function make(): static
-    {
-        return app(static::class);
-    }
-
-    protected static function renderTemplate(CustomField|CustomFieldAnswer $customField, array $parameter)
+    protected function renderTemplate(CustomField|CustomFieldAnswer $customField, array $parameter)
     {
         if ($customField instanceof CustomFieldAnswer) {
             $customField = $customField->customField;
@@ -57,7 +55,7 @@ class TemplateTypeView implements FieldTypeView
         $displayer = $parameter['displayer'];
 
         //Render Schema Input
-        $renderedOutput = TemporaryRenderClass::make()->renderCustomFormRaw(
+        $renderedOutput = $this->renderCustomFormRaw(
             $viewMode,
             $displayer,
             $form,

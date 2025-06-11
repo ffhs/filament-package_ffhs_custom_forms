@@ -2,7 +2,7 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormResource\Pages;
 
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\CustomFormTypeSelector;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormTypeSelector;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormResource;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Filament\Forms\Components\TextInput;

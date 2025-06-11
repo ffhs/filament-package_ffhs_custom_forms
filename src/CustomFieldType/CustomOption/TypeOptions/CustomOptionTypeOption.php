@@ -30,56 +30,11 @@ class CustomOptionTypeOption extends TypeOption
         return Group::make()
             ->columnSpanFull()
             ->schema(function ($get) use ($name) {
-                if (is_null($get("../general_field_id"))) {
+                if (is_null($get('../general_field_id'))) {
                     return [$this->getCustomOptionsRepeater($name)];
                 } else {
                     return [$this->getCustomOptionsSelector($name)];
                 }
-            });
-    }
-
-    private function getCustomOptionsRepeater($name): Repeater
-    {
-        return Repeater::make($name)
-            ->collapseAllAction(fn($action) => $action->hidden())
-            ->expandAllAction(fn($action) => $action->hidden())
-            ->itemLabel(fn($state, $record) => $state["name"][$record->getLocale()]) //ToDo Translate
-            ->label(CustomOption::__('label.multiple'))
-            ->columnSpanFull()
-            ->collapsible()
-            ->collapsed()
-            ->addable()
-            ->columns()
-            ->afterStateUpdated(function ($set, array $state) use ($name) {
-                foreach (array_keys($state) as $optionKey) {
-                    if (empty($state[$optionKey]["identifier"])) {
-                        $state[$optionKey]["identifier"] = uniqid();
-                    }
-                }
-                $set($name, $state);
-            })
-            ->schema(fn($record) => [
-                TextInput::make("name." . $record->getLocale())
-                    ->label(CustomOption::__('name.label'))
-                    ->helperText(CustomOption::__('identifier.helper_text'))
-                    ->required(),
-                TextInput::make("identifier")
-                    ->label(CustomOption::__('identifier.label'))
-                    ->helperText(CustomOption::__('identifier.helper_text'))
-                    ->required(),
-            ]);
-    }
-
-    protected function getCustomOptionsSelector($name): Component
-    {
-        return Select::make($name)
-            ->label(CustomOption::__('possible_options.label'))
-            ->helperText(CustomOption::__('possible_options.helper_text'))
-            ->columnSpanFull()
-            ->multiple()
-            ->options(function ($get) {
-                $generalField = GeneralField::cached($get("../general_field_id"));
-                return $generalField->customOptions->pluck("name", "id")->toArray();
             });
     }
 
@@ -89,10 +44,9 @@ class CustomOptionTypeOption extends TypeOption
         return null;
     }
 
-
     public function getCachedOptionEditSaveKey(CustomField $field): string
     {
-        return "custom_field-custom_options-" . $field->identifier . "-user_" . auth()->id();
+        return 'custom_field-custom_options-' . $field->identifier . '-user_' . auth()->id();
     }
 
     public function afterSaveField(mixed &$data, string $key, CustomField $field): void
@@ -109,18 +63,18 @@ class CustomOptionTypeOption extends TypeOption
             $data = [];
         }
         foreach ($data as $optionData) {
-            if (!array_key_exists("id", $optionData)) {
-                if (empty($optionData["identifier"])) {
-                    $optionData = array_merge($optionData, ["identifier" => uniqid()]);
+            if (!array_key_exists('id', $optionData)) {
+                if (empty($optionData['identifier'])) {
+                    $optionData = array_merge($optionData, ['identifier' => uniqid()]);
                 }
                 $toCreate[] = $optionData;
                 continue;
             }
-            $ids[] = $optionData["id"];
-            $field->customOptions->where("id", $optionData["id"])->first()?->update($optionData);
+            $ids[] = $optionData['id'];
+            $field->customOptions->where('id', $optionData['id'])->first()?->update($optionData);
         }
 
-        $field->customOptions()->whereNotIn("custom_options.id", $ids)->delete();
+        $field->customOptions()->whereNotIn('custom_options.id', $ids)->delete();
         $field->customOptions()->createMany($toCreate);
     }
 
@@ -128,10 +82,10 @@ class CustomOptionTypeOption extends TypeOption
     {
         //if(!is_null($value) &&!isEmpty($value))return $value;
         if ($field->isGeneralField()) {
-            return $field->customOptions->pluck("id")->toArray();
+            return $field->customOptions->pluck('id')->toArray();
         }
         $field->customOptions->each(function (CustomOption $option) use (&$value) {
-            $value["record-" . $option->id] = $option->toArray();
+            $value['record-' . $option->id] = $option->toArray();
         });
         return $value;
     }
@@ -145,11 +99,13 @@ class CustomOptionTypeOption extends TypeOption
         foreach ($original->customOptions as $customOption) {
             /**@var CustomOption $customOption */
             $customOptionData = $customOption->toArray();
-            unset($customOptionData["id"]);
-            unset($customOptionData["created_at"]);
-            unset($customOptionData["deleted_at"]);
-            unset($customOptionData["updated_at"]);
-            unset($customOptionData["pivot"]);
+            unset(
+                $customOptionData['id'],
+                $customOptionData['created_at'],
+                $customOptionData['deleted_at'],
+                $customOptionData['updated_at'],
+                $customOptionData['pivot']
+            );
             $options[uniqid()] = $customOptionData;
         }
         return parent::mutateOnFieldClone($options, $key, $original);
@@ -160,5 +116,49 @@ class CustomOptionTypeOption extends TypeOption
         return false;
     }
 
+    protected function getCustomOptionsSelector($name): Component
+    {
+        return Select::make($name)
+            ->label(CustomOption::__('possible_options.label'))
+            ->helperText(CustomOption::__('possible_options.helper_text'))
+            ->columnSpanFull()
+            ->multiple()
+            ->options(function ($get) {
+                $generalField = GeneralField::cached($get('../general_field_id'));
+                return $generalField->customOptions->pluck('name', 'id')->toArray();
+            });
+    }
+
+    private function getCustomOptionsRepeater($name): Repeater
+    {
+        return Repeater::make($name)
+            ->collapseAllAction(fn($action) => $action->hidden())
+            ->expandAllAction(fn($action) => $action->hidden())
+            ->itemLabel(fn($state, $record) => $state['name'][$record->getLocale()]) //ToDo Translate
+            ->label(CustomOption::__('label.multiple'))
+            ->columnSpanFull()
+            ->collapsible()
+            ->collapsed()
+            ->addable()
+            ->columns()
+            ->afterStateUpdated(function ($set, array $state) use ($name) {
+                foreach (array_keys($state) as $optionKey) {
+                    if (empty($state[$optionKey]['identifier'])) {
+                        $state[$optionKey]['identifier'] = uniqid();
+                    }
+                }
+                $set($name, $state);
+            })
+            ->schema(fn($record) => [
+                TextInput::make('name.' . $record->getLocale())
+                    ->label(CustomOption::__('name.label'))
+                    ->helperText(CustomOption::__('identifier.helper_text'))
+                    ->required(),
+                TextInput::make('identifier')
+                    ->label(CustomOption::__('identifier.label'))
+                    ->helperText(CustomOption::__('identifier.helper_text'))
+                    ->required(),
+            ]);
+    }
 }
 

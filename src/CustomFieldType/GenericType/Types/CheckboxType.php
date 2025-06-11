@@ -4,9 +4,9 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\Types;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\Types\Views\CheckboxTypeView;
-use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasCustomTypePackageTranslation;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\TypeOption\Groups\LayoutOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\TypeOption\Groups\ValidationTypeOptionGroup;
+use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasCustomTypePackageTranslation;
 
 class CheckboxType extends CustomFieldType
 {
@@ -14,7 +14,7 @@ class CheckboxType extends CustomFieldType
 
     public static function identifier(): string
     {
-        return "checkbox";
+        return 'checkbox';
     }
 
     public function viewModes(): array
@@ -26,7 +26,7 @@ class CheckboxType extends CustomFieldType
 
     public function icon(): string
     {
-        return "bi-check-square";
+        return 'bi-check-square';
     }
 
     public function extraTypeOptions(): array
@@ -37,6 +37,4 @@ class CheckboxType extends CustomFieldType
             ValidationTypeOptionGroup::make(),
         ];
     }
-
-
 }

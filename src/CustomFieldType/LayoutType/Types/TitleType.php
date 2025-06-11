@@ -3,11 +3,12 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\LayoutType\Types;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldType;
-use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasCustomTypePackageTranslation;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\LayoutType\Types\Views\TitleTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\TypeOption\Groups\LayoutOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\TypeOption\Options\FastTypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\TypeOption\Options\ShowInViewOption;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\TypeOption\TypeOption;
+use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasCustomTypePackageTranslation;
 use Filament\Forms\Components\TextInput;
 
 class TitleType extends CustomFieldType
@@ -16,7 +17,7 @@ class TitleType extends CustomFieldType
 
     public static function identifier(): string
     {
-        return "title";
+        return 'title';
     }
 
     public function viewModes(): array
@@ -28,7 +29,7 @@ class TitleType extends CustomFieldType
 
     public function icon(): string
     {
-        return "bi-card-heading";
+        return 'bi-card-heading';
     }
 
     public function extraTypeOptions(): array
@@ -40,7 +41,8 @@ class TitleType extends CustomFieldType
                     FastTypeOption::makeFast(
                         1,
                         TextInput::make('title_size')
-                            ->label('Title grösse')
+                            ->label(TypeOption::__('title_size.label'))
+                            ->helperText(TypeOption::__('title_size.helper_text'))
                             ->numeric()
                             ->columnStart(1)
                             ->step(1)
@@ -55,5 +57,4 @@ class TitleType extends CustomFieldType
                 ),
         ];
     }
-
 }

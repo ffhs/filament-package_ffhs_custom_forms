@@ -4,18 +4,17 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\Types;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\Types\Views\DateRangeTypeView;
-use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasCustomTypePackageTranslation;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\TypeOption\Groups\LayoutOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\TypeOption\Groups\ValidationTypeOptionGroup;
+use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasCustomTypePackageTranslation;
 
 class DateRangeType extends CustomFieldType
 {
     use HasCustomTypePackageTranslation;
 
-
     public static function identifier(): string
     {
-        return "date_range";
+        return 'date_range';
     }
 
     public function viewModes(): array
@@ -27,7 +26,7 @@ class DateRangeType extends CustomFieldType
 
     public function icon(): string
     {
-        return "bi-calendar-range";
+        return 'bi-calendar-range';
     }
 
 
@@ -38,6 +37,4 @@ class DateRangeType extends CustomFieldType
             ValidationTypeOptionGroup::make(),
         ];
     }
-
-
 }

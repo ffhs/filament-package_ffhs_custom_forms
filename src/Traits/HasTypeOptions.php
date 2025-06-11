@@ -83,9 +83,6 @@ trait HasTypeOptions
 
     protected function getDefaultTypeOptionValuesFormArray(array $typeOptions): array
     {
-        /**@var TypeOption $extraTypeOption */
-        return array_map(static function ($extraTypeOption) {
-            return $extraTypeOption->getModifyDefault();
-        }, $typeOptions);
+        return array_map(static fn(TypeOption $extraTypeOption) => $extraTypeOption->getModifyDefault(), $typeOptions);
     }
 }

@@ -10,13 +10,13 @@ interface FieldTypeView
 {
     public static function make(): static;
 
-    public static function getFormComponent(
+    public function getFormComponent(
         CustomFieldType $type,
         CustomField $record,
         array $parameter = []
     ): \Filament\Forms\Components\Component;
 
-    public static function getInfolistComponent(
+    public function getInfolistComponent(
         CustomFieldType $type,
         CustomFieldAnswer $record,
         array $parameter = []

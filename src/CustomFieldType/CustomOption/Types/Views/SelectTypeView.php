@@ -2,14 +2,13 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\CustomOption\Types\Views;
 
-use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\FieldMapper;
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\FieldTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\CustomOption\HasCustomOptionInfoListView;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldType;
-use Ffhs\FilamentPackageFfhsCustomForms\Contracts\FieldTypeView;
-use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasDefaultViewComponent;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\PrioritizeSelect;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
+use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasDefaultViewComponent;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Select;
 use Filament\Infolists\Components\TextEntry;
@@ -21,32 +20,32 @@ class SelectTypeView implements FieldTypeView
     }
     use HasDefaultViewComponent;
 
-    public static function getFormComponent(
+    public function getFormComponent(
         CustomFieldType $type,
         CustomField $record,
         array $parameter = []
     ): Component {
-        $several = FieldMapper::getOptionParameter($record, 'several');
-        $prioritized = FieldMapper::getOptionParameter($record, 'prioritized');
+        $several = $this->getOptionParameter($record, 'several');
+        $prioritized = $this->getOptionParameter($record, 'prioritized');
 
         if ($several && $prioritized) {
-            return self::getPrioritizedSelect($record, $parameter);
-        } else {
-            return self::getSingleSelect($record);
+            return $this->getPrioritizedSelect($record, $parameter);
         }
+
+        return $this->getSingleSelect($record);
     }
 
-    public static function getPrioritizedSelect(
+    public function getPrioritizedSelect(
         CustomField $record,
         array $parameter
     ): Component|\Filament\Infolists\Components\Component {
         /**@var PrioritizeSelect $select */
-        $select = static::makeComponent(PrioritizeSelect::class, $record);
+        $select = $this->makeComponent(PrioritizeSelect::class, $record);
 
         $selectLabelTranslation = __('filament-package_ffhs_custom_forms::custom_forms.fields.type_view.select.select');
-        $labels = FieldMapper::getOptionParameter($record, 'prioritized_labels');
+        $labels = $this->getOptionParameter($record, 'prioritized_labels');
         $labels = array_values($labels);
-        $validationMessagesRaw = FieldMapper::getOptionParameter($record, 'validation_messages_prioritized');
+        $validationMessagesRaw = $this->getOptionParameter($record, 'validation_messages_prioritized');
 
         $validationMessages = [];
         foreach ($validationMessagesRaw as $message) {
@@ -55,13 +54,13 @@ class SelectTypeView implements FieldTypeView
 
 
         return $select
-            ->minItems(FieldMapper::getOptionParameter($record, 'min_select'))
-            ->maxItems(FieldMapper::getOptionParameter($record, 'max_select'))
-            ->options(FieldMapper::getAvailableCustomOptions($record))
-            ->dynamic(FieldMapper::getOptionParameter($record, 'dynamic_prioritized'))
+            ->minItems($this->getOptionParameter($record, 'min_select'))
+            ->maxItems($this->getOptionParameter($record, 'max_select'))
+            ->options($this->getAvailableCustomOptions($record))
+            ->dynamic($this->getOptionParameter($record, 'dynamic_prioritized'))
             ->mutateSelectUsing(
                 function (Select $select, $selectId) use ($validationMessages, $labels, $selectLabelTranslation) {
-                    $label = $selectId + 1 . ". " . $selectLabelTranslation;
+                    $label = $selectId + 1 . '. ' . $selectLabelTranslation;
                     if (array_key_exists($selectId, $labels)) {
                         $label = $labels[$selectId]['label'] ?? '';
                     }
@@ -74,18 +73,17 @@ class SelectTypeView implements FieldTypeView
             );
     }
 
-
-    public static function getSingleSelect(CustomField $record): Select
+    public function getSingleSelect(CustomField $record): Select
     {
         /** @var Select $select */
-        $select = static::makeComponent(Select::class, $record);
-        $select = $select->options(FieldMapper::getAvailableCustomOptions($record));
+        $select = $this->makeComponent(Select::class, $record);
+        $select = $select->options($this->getAvailableCustomOptions($record));
+        $required = $this->getOptionParameter($record, 'required');
+        $minItems = $required ? $this->getOptionParameter($record, 'min_select') : 0;
 
-        if (FieldMapper::getOptionParameter($record, 'several')) {
-            $maxItems = FieldMapper::getOptionParameter($record, 'max_select');
-            $select->multiple()->minItems(
-                $record->required ? FieldMapper::getOptionParameter($record, 'min_select') : 0
-            );
+        if ($this->getOptionParameter($record, 'several')) {
+            $maxItems = $this->getOptionParameter($record, 'max_select');
+            $select = $select->multiple()->minItems($minItems);
             if ($maxItems > 0) {
                 $select->maxItems($maxItems);
             }
@@ -93,45 +91,40 @@ class SelectTypeView implements FieldTypeView
         return $select;
     }
 
-
-    public static function getInfolistComponent(
+    public function getInfolistComponent(
         CustomFieldType $type,
         CustomFieldAnswer $record,
         array $parameter = []
     ): \Filament\Infolists\Components\Component {
-        $several = FieldMapper::getOptionParameter($record, 'several');
-        $prioritized = FieldMapper::getOptionParameter($record, 'prioritized');
+        $several = $this->getOptionParameter($record, 'several');
+        $prioritized = $this->getOptionParameter($record, 'prioritized');
 
         if (!($several && $prioritized)) {
-            return static::getInfolistComponentNormalSelect($type, $record, $parameter);
+            return $this->getInfolistComponentNormalSelect($type, $record, $parameter);
         }
 
         /**@var TextEntry $textEntry */
-        $textEntry = static::makeComponent(TextEntry::class, $record);
-        $answer = FieldMapper::getAnswer($record) ?? [];
-        $stateList = FieldMapper::getAllCustomOptions($record)
-            ->filter(fn($value, $id) => in_array($id, $answer));
+        $textEntry = $this->makeComponent(TextEntry::class, $record);
+        $answer = $this->getAnswer($record) ?? [];
+        $stateList = $this->getAllCustomOptions($record)
+            ->filter(fn($value, $id) => in_array($id, $answer, false));
 
         $cleanedAnswers = [];
         if (!is_array($answer)) {
             $answer = [];
         }
         foreach ($answer as $key => $value) {
-            if (!str_contains($key, "prioritized_")) {
+            if (is_null($value) || !str_contains($key, 'prioritized_')) {
                 continue;
             }
-            if ($value == null) {
-                continue;
-            }
-            $selectId = str_replace("prioritized_", "", $key);
+            $selectId = str_replace('prioritized_', '', $key);
 
-            $name = $stateList->toArray()[$value] ?? "";
-            $translatedSelect = __('filament-package_ffhs_custom_forms::custom_forms.fields.type_view.select.select');
-            $cleanedAnswers[$selectId] = $selectId + 1 . ". " . $translatedSelect . ": " . $name; //ToDo Translate
+            $name = $stateList->toArray()[$value] ?? '';
+            $translatedSelect = $type->getTranslatedName();
+            $cleanedAnswers[$selectId] = $selectId + 1 . '. ' . $translatedSelect . ': ' . $name;
         }
 
         ksort($cleanedAnswers, SORT_NUMERIC);
-
 
         return $textEntry
             ->state($cleanedAnswers)
@@ -140,5 +133,4 @@ class SelectTypeView implements FieldTypeView
             ->inlineLabel()
             ->badge();
     }
-
 }

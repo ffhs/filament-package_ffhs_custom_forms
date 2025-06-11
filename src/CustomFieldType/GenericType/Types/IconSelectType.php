@@ -4,9 +4,9 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\Types;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\Types\Views\IconSelectView;
-use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasCustomTypePackageTranslation;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\TypeOption\Groups\LayoutOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\TypeOption\Groups\ValidationTypeOptionGroup;
+use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasCustomTypePackageTranslation;
 
 class IconSelectType extends CustomFieldType
 {
@@ -14,7 +14,7 @@ class IconSelectType extends CustomFieldType
 
     public static function identifier(): string
     {
-        return "icon-select";
+        return 'icon-select';
     }
 
     public function viewModes(): array
@@ -26,7 +26,7 @@ class IconSelectType extends CustomFieldType
 
     public function icon(): string
     {
-        return "carbon-color-palette";
+        return 'carbon-color-palette';
     }
 
     public function extraTypeOptions(): array
@@ -36,6 +36,4 @@ class IconSelectType extends CustomFieldType
             ValidationTypeOptionGroup::make(),
         ];
     }
-
-
 }

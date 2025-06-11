@@ -3,7 +3,6 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\LayoutType\Types;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldType;
-use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasCustomTypePackageTranslation;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\LayoutType\Types\Views\ImageTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\TypeOption\Groups\LayoutOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\TypeOption\Options\ColumnSpanOption;
@@ -11,6 +10,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\TypeOption\Optio
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\TypeOption\Options\ShowInViewOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\TypeOption\Options\ShowLabelOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\TypeOption\TypeOptionGroup;
+use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasCustomTypePackageTranslation;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\TextInput;
 
@@ -20,7 +20,7 @@ class ImageLayoutType extends CustomFieldType
 
     public static function identifier(): string
     {
-        return "image_layout";
+        return 'image_layout';
     }
 
     public function viewModes(): array
@@ -32,18 +32,18 @@ class ImageLayoutType extends CustomFieldType
 
     public function icon(): string
     {
-        return "bi-card-image";
+        return 'bi-card-image';
     }
 
     public function extraTypeOptions(): array
     {
         return [
-            TypeOptionGroup::make("Data", [
-                'image' => new FastTypeOption([],
+            TypeOptionGroup::make('Data', [
+                'image' => FastTypeOption::makeFast([],
                     FileUpload::make('image')
-                        ->directory($this->getConfigAttribute("save_path"))
-                        ->disk($this->getConfigAttribute("disk"))
-                        ->label("Bild") //ToDo Translate
+                        ->directory($this->getConfigAttribute('save_path'))
+                        ->disk($this->getConfigAttribute('disk'))
+                        ->label('Bild') //ToDo Translate
                         ->visibility('private')
                         ->columnSpanFull()
                         ->downloadable()
@@ -51,15 +51,15 @@ class ImageLayoutType extends CustomFieldType
                         ->image()
                         ->live()
                 ),
-            ], "carbon-data-1"),
+            ], 'carbon-data-1'),
             LayoutOptionGroup::make()
                 ->removeTypeOption('inline_label')
                 ->mergeTypeOptions([
                     'column_span' => new ColumnSpanOption(),
-                    'width' => new FastTypeOption(
+                    'width' => FastTypeOption::makeFast(
                         null,
                         TextInput::make('width')
-                            ->label("Breite") //ToDo Translate
+                            ->label('Breite') //ToDo Translate
                             ->minValue(1)
                             ->numeric()
                     ),
@@ -69,11 +69,4 @@ class ImageLayoutType extends CustomFieldType
 
         ];
     }
-
-
-    public function canBeRequired(): bool
-    {
-        return false;
-    }
-
 }

@@ -48,11 +48,6 @@ abstract class CustomFieldType implements Type
         return $output;
     }
 
-    public static function make(): static
-    {
-        return app(static::class);
-    }
-
     abstract public function viewModes(): array;
 
     public function getTranslatedName(): string

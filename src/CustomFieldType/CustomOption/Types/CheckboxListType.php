@@ -5,10 +5,10 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\CustomOption\Types
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\CustomOption\CustomOptionType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\CustomOption\TypeOptions\CustomOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\CustomOption\Types\Views\CheckboxListTypeView;
-use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasCustomTypePackageTranslation;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\TypeOption\Groups\LayoutWithColumnsOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\TypeOption\Groups\ValidationTypeOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\TypeOption\Options\FastTypeOption;
+use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasCustomTypePackageTranslation;
 use Filament\Forms\Components\TextInput;
 
 class CheckboxListType extends CustomOptionType
@@ -38,7 +38,7 @@ class CheckboxListType extends CustomOptionType
             LayoutWithColumnsOptionGroup::make(),
             ValidationTypeOptionGroup::make()
                 ->mergeTypeOptions([
-                    "min_items" => new FastTypeOption( //ToDO Make CUstom Options? WIth repeater?
+                    "min_items" => FastTypeOption::makeFast( //ToDO Make CUstom Options? WIth repeater?
                         null,
                         TextInput::make("min_items")
                             ->hidden(fn($get) => !$get("several"))
@@ -55,7 +55,7 @@ class CheckboxListType extends CustomOptionType
                             ->step(1)
                             ->numeric(),
                     ),
-                    "max_items" => new FastTypeOption(
+                    "max_items" => FastTypeOption::makeFast(
                         null,
                         TextInput::make("max_items")
                             ->hidden(fn($get) => !$get("several"))

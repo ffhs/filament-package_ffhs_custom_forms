@@ -4,12 +4,12 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\Types;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\CustomOption\CustomOptionType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\Types\Views\KeyValueTypeView;
-use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasCustomTypePackageTranslation;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\TypeOption\Groups\LayoutOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\TypeOption\Groups\ValidationTypeOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\TypeOption\Options\FastTypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\TypeOption\Options\ReorderableTypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\TypeOption\TypeOption;
+use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasCustomTypePackageTranslation;
 use Filament\Forms\Components\Toggle;
 
 class KeyValueType extends CustomOptionType
@@ -40,14 +40,14 @@ class KeyValueType extends CustomOptionType
             ValidationTypeOptionGroup::make()
                 ->mergeTypeOptions([
                     'reorderable' => ReorderableTypeOption::make(),
-                    'editableKeys' => new FastTypeOption( //ToDo continue Translations
+                    'editableKeys' => FastTypeOption::makeFast(
                         true,
                         Toggle::make('editableKeys')
                             ->label(TypeOption::__('editable_keys.label'))
                             ->helperText(TypeOption::__('editable_keys.helper_text'))
                             ->columnSpanFull()
                     ),
-                    'editableValues' => new FastTypeOption(
+                    'editableValues' => FastTypeOption::makeFast(
                         true,
                         Toggle::make('editableValues')
                             ->label(TypeOption::__('editable_values.label'))

@@ -2,13 +2,12 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\LayoutType\Types;
 
-
-use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasCustomTypePackageTranslation;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\LayoutType\CustomLayoutType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\LayoutType\Types\Views\FieldsetTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\TypeOption\Groups\LayoutTypeLayoutOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\TypeOption\Options\ShowInViewOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\TypeOption\Options\ShowLabelOption;
+use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasCustomTypePackageTranslation;
 
 class FieldsetType extends CustomLayoutType
 {
@@ -16,28 +15,28 @@ class FieldsetType extends CustomLayoutType
 
     public static function identifier(): string
     {
-        return "fieldset";
+        return 'fieldset';
     }
 
     public function viewModes(): array
     {
         return [
-            "default" => FieldsetTypeView::class,
+            'default' => FieldsetTypeView::class,
         ];
     }
 
     public function icon(): string
     {
-        return "bi-columns-gap";
+        return 'bi-columns-gap';
     }
 
     public function extraTypeOptions(): array
     {
         return [
             LayoutTypeLayoutOptionGroup::make()
-                ->removeTypeOption("helper_text")
+                ->removeTypeOption('helper_text')
                 ->mergeTypeOptions([
-                    "show_label" => ShowLabelOption::make(),
+                    'show_label' => ShowLabelOption::make(),
                     'show_in_view' => ShowInViewOption::make(),
                 ]),
         ];

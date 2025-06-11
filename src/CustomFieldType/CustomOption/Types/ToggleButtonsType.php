@@ -23,7 +23,7 @@ class ToggleButtonsType extends CustomOptionType
 
     public static function identifier(): string
     {
-        return "toggle_buttons";
+        return 'toggle_buttons';
     }
 
     public function viewModes(): array
@@ -44,7 +44,7 @@ class ToggleButtonsType extends CustomOptionType
 
     public function icon(): string
     {
-        return "bi-toggles";
+        return 'bi-toggles';
     }
 
     public function extraTypeOptions(): array
@@ -54,19 +54,19 @@ class ToggleButtonsType extends CustomOptionType
                 ->mergeTypeOptions([
                     'inline' => InlineOption::make()
                         ->modifyOptionComponent(function (Toggle $component) {
-                            return $component->hidden(fn($get) => $get("grouped"));
+                            return $component->hidden(fn($get) => $get('grouped'));
                         }),
                     'grouped' => FastTypeOption::makeFast(
                         false,
-                        Toggle::make("grouped")
+                        Toggle::make('grouped')
                             ->helperText(TypeOption::__('toggle_grouped.helper_text'))
                             ->label(TypeOption::__('toggle_grouped.label'))
-                            ->disabled(fn($get) => $get("inline"))
+                            ->disabled(fn($get) => $get('inline'))
                             ->live(),
                     ),
                     'boolean' => BooleanOption::make()
                         ->modifyOptionComponent(fn(Toggle $component) => $component
-                            ->disabled(fn($get) => $get("multiple"))
+                            ->disabled(fn($get) => $get('multiple'))
                             ->live(),
                         ),
                 ]),
@@ -75,7 +75,7 @@ class ToggleButtonsType extends CustomOptionType
                 ->setTypeOptions([
                     'customOptions' => CustomOptionTypeOption::make()
                         ->modifyOptionComponent(
-                            fn(Component $component) => $component->hidden(fn($get) => $get("boolean"))
+                            fn(Component $component) => $component->hidden(fn($get) => $get('boolean'))
                         ),
                 ]),
         ];

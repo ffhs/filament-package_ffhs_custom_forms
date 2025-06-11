@@ -24,7 +24,7 @@ class CustomOptionGeneralTypeOption extends TypeOption
         return Repeater::make($name)
             ->collapseAllAction(fn($action) => $action->hidden())
             ->expandAllAction(fn($action) => $action->hidden())
-            ->itemLabel(fn($state, $record) => $state["name"])
+            ->itemLabel(fn($state, $record) => $state['name'])
             ->visible(fn($livewire) => $livewire instanceof EditGeneralField)
             ->label(CustomOption::__('label.multiple'))
             ->columnSpanFull()
@@ -35,21 +35,20 @@ class CustomOptionGeneralTypeOption extends TypeOption
             ->relationship('customOptions')
             ->afterStateUpdated(function ($set, array $state) use ($name) {
                 foreach (array_keys($state) as $optionKey) {
-                    if (empty($state[$optionKey]["identifier"])) {
-                        $state[$optionKey]["identifier"] = uniqid();
+                    if (empty($state[$optionKey]['identifier'])) {
+                        $state[$optionKey]['identifier'] = uniqid();
                     }
                 }
                 $set($name, $state);
             })->schema(fn($record) => [
-                TextInput::make("name")
+                TextInput::make('name')
                     ->label(CustomOption::__('name.label'))
                     ->helperText(CustomOption::__('identifier.helper_text'))
                     ->required(),
-                TextInput::make("identifier")
+                TextInput::make('identifier')
                     ->label(CustomOption::__('identifier.label'))
                     ->helperText(CustomOption::__('identifier.helper_text'))
                     ->required(),
             ]);
     }
-
 }

@@ -16,22 +16,21 @@ use Illuminate\Support\Collection;
 
 final class TemplateFieldType extends CustomFieldType
 {
-
     public static function identifier(): string
     {
-        return "template";
+        return 'template';
     }
 
     public function viewModes(): array
     {
         return [
-            "default" => TemplateTypeView::class,
+            'default' => TemplateTypeView::class,
         ];
     }
 
     public function icon(): string
     {
-        return "carbon-copy-file";
+        return 'carbon-copy-file';
     }
 
     public function isFullSizeField(): bool
@@ -66,30 +65,7 @@ final class TemplateFieldType extends CustomFieldType
         return false;
     }
 
-//    public function afterAnswerFieldSave(CustomFieldAnswer $field, array $formData): void
-//    {
-//        dd('test');
-//        $templateId = $field->customField->template_id;
-//        $formAnswerer = $field->customFormAnswer;
-//        $template = CustomForm::cached($templateId);
-//
-//        // Mapping and combining filtered field answers
-//        $fieldAnswersIdentify = CustomForms::mapFields(
-//            $formAnswerer->customFieldAnswers,
-//            fn(CustomFieldAnswer $answer) => $answer->customField->identifier,
-//            fn(CustomFieldAnswer $answer) => $answer->customField->custom_form_id === $templateId
-//        );
-//
-//        // Mapping and combining custom fields
-//        $customFieldsIdentify = CustomForms::mapFields(
-//            $template->customFields,
-//            fn(CustomField $customField) => $customField->identifier
-//        );
-//
-//        CustomForms::saveWithoutPreparation($formData, $customFieldsIdentify, $fieldAnswersIdentify,
-//            $formAnswerer); //Check with splited
-//    }
-
+    //ToDo check if it works
     public function afterDeleteField(CustomField $field): void
     {
         $templateFields = $field->template->customFields;
@@ -100,37 +76,12 @@ final class TemplateFieldType extends CustomFieldType
             $templateFields
         ) {
             $formAnswer->customFieldAnswers
-                ->whereIn("custom_field_id", $templateFields->pluck("id"))
+                ->whereIn('custom_field_id', $templateFields->pluck('id'))
                 ->each($this->getFieldTransferClosure($formFields, $templateFields));
         });
     }
 
-    function getFieldTransferClosure(Collection $newFields, Collection $originalFields): Closure
-    {
-        return function (CustomFieldAnswer $fieldAnswer) use ($newFields, $originalFields): void {
-            /**@var CustomField $oldField */
-            $oldField = $originalFields->where("id", $fieldAnswer->custom_field_id)->first();
-            if (is_null($oldField)) {
-                return;
-            }
-
-
-            $identifier = $oldField->identifier;
-            $newField = $newFields
-                ->filter(fn(CustomField $customField) => $customField->identifier == $identifier)
-                ->first();
-
-            if (is_null($newField)) {
-                return;
-            }
-            $fieldAnswer->custom_field_id = $newField->id;
-            $fieldAnswer->save();
-        };
-    }
-
-
-    //ToDo Reimplement
-
+    //ToDo check if it works
     public function afterSaveField(CustomField $field, array $data): void
     {
         $templateFields = $field->template->customFields;
@@ -141,12 +92,35 @@ final class TemplateFieldType extends CustomFieldType
             $field,
             $templateFields
         ) {
-            $templateIdentifiers = $templateFields->pluck("identifier");
-            $formFieldIds = $formFields->whereIn("identifier", $templateIdentifiers)->pluck("id");
+            $templateIdentifiers = $templateFields->pluck('identifier');
+            $formFieldIds = $formFields->whereIn('identifier', $templateIdentifiers)->pluck('id');
             $formAnswer->customFieldAnswers
-                ->whereIn("custom_field_id", $formFieldIds)
+                ->whereIn('custom_field_id', $formFieldIds)
                 ->each($this->getFieldTransferClosure($templateFields, $formFields));
         });
+    }
+
+    protected function getFieldTransferClosure(Collection $newFields, Collection $originalFields): Closure
+    {
+        return static function (CustomFieldAnswer $fieldAnswer) use ($newFields, $originalFields): void {
+            /**@var CustomField $oldField */
+            $oldField = $originalFields->where('id', $fieldAnswer->custom_field_id)->first();
+            if (is_null($oldField)) {
+                return;
+            }
+
+
+            $identifier = $oldField->identifier;
+            $newField = $newFields
+                ->filter(fn(CustomField $customField) => $customField->identifier === $identifier)
+                ->first();
+
+            if (is_null($newField)) {
+                return;
+            }
+            $fieldAnswer->custom_field_id = $newField->id;
+            $fieldAnswer->save();
+        };
     }
 
     protected function getEditorFieldBadgeColor(array $rawData): ?array
@@ -158,6 +132,4 @@ final class TemplateFieldType extends CustomFieldType
     {
         return 'Template';
     }
-
-
 }

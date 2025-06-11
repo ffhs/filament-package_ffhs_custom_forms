@@ -2,14 +2,14 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\LayoutType\Types\Views;
 
-use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\FieldMapper;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\FieldTypeView;
-use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasDefaultViewComponent;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
+use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasDefaultViewComponent;
 use Filament\Forms\Components\Placeholder;
 use Filament\Infolists\Components\Component;
+use Filament\Infolists\Components\Group;
 use Filament\Infolists\Components\TextEntry;
 use Illuminate\Support\HtmlString;
 
@@ -17,34 +17,34 @@ class TextLayoutTypeView implements FieldTypeView
 {
     use HasDefaultViewComponent;
 
-    public static function getFormComponent(
+    public function getFormComponent(
         CustomFieldType $type,
         CustomField $record,
         array $parameter = []
     ): Placeholder {
-        $text = FieldMapper::getOptionParameter($record, "text")[app()->getLocale()] ?? "";
+        $text = $this->getOptionParameter($record, 'text')[app()->getLocale()] ?? '';
 
         /**@var $placeholder Placeholder */
-        $placeholder = static::makeComponent(Placeholder::class, $record);
+        $placeholder = $this->makeComponent(Placeholder::class, $record);
         return $placeholder
             ->content(new HtmlString($text))
-            ->label("");
+            ->label('');
     }
 
-    public static function getInfolistComponent(
+    public function getInfolistComponent(
         CustomFieldType $type,
         CustomFieldAnswer $record,
         array $parameter = []
     ): Component {
-//        if (!FieldMapper::getOptionParameter($record, "show_in_view")) {
-//            return Group::make()->hidden();
-//        }
+        if (!$this->getOptionParameter($record, 'show_in_view')) {
+            return Group::make()->hidden();
+        }
 
-        $label = FieldMapper::getOptionParameter($record, "show_label") ? FieldMapper::getLabelName($record) : "";
-        $text = FieldMapper::getOptionParameter($record, "text")[app()->getLocale()] ?? "";
+        $label = $this->getOptionParameter($record, 'show_label') ? $this->getLabelName($record) : '';
+        $text = $this->getOptionParameter($record, 'text')[app()->getLocale()] ?? '';
 
         /**@var $placeholder TextEntry */
-        $placeholder = static::makeComponent(TextEntry::class, $record);
+        $placeholder = $this->makeComponent(TextEntry::class, $record);
 
         return $placeholder
             ->state(new HtmlString($text))

@@ -9,6 +9,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomForm\FormConverter\For
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomForm\FormConverter\FormImporter\Traids\ImportRuleInformation;
 use Ffhs\FilamentPackageFfhsCustomForms\Exceptions\FormImportException;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
+use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasStaticMake;
 use Illuminate\Support\Facades\DB;
 
 class FormSchemaImporter
@@ -16,11 +17,7 @@ class FormSchemaImporter
     use ImportFieldInformation;
     use ImportCustomForm;
     use ImportRuleInformation;
-
-    public static function make(): static
-    {
-        return app(static::class);
-    }
+    use HasStaticMake;
 
     public function import(
         array $rawForm,

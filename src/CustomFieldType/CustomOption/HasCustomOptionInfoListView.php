@@ -3,47 +3,45 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\CustomOption;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\FieldMapper;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
+use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanMapFields;
 use Filament\Infolists\Components\Component;
 use Filament\Infolists\Components\TextEntry;
 
 trait HasCustomOptionInfoListView
 {
+    use CanMapFields;
 
-    public static function getInfolistComponent(
+    public function getInfolistComponent(
         CustomFieldType $type,
         CustomFieldAnswer $record,
         array $parameter = []
     ): Component {
-        $textEntry = TextEntry::make(FieldMapper::getIdentifyKey($record));
-        $answer = FieldMapper::getAnswer($record);
+        $textEntry = TextEntry::make($this->getIdentifyKey($record));
+        $answer = $this->getAnswer($record);
         $stateList = collect();
 
         if (empty($answer)) {
-            $answer = "";
+            $answer = '';
+        } elseif (is_array($answer)) {
+            $stateList = $this->getAllCustomOptions($record)
+                ->filter(fn($value, $id) => in_array($id, $answer, false))
+                ->toArray();
         } else {
-            if (is_array($answer)) {
-                $stateList = FieldMapper::getAllCustomOptions($record)->filter(fn($value, $id) => in_array($id, $answer)
-                );
-            } else {
-                $stateList = FieldMapper::getAllCustomOptions($record)->filter(fn($value, $id) => $id == $answer);
-                $textEntry->color("info");
-            }
+            $stateList = $this->getAllCustomOptions($record)->firstWhere(fn($value, $id) => $id == $answer);
+            $stateList = [$answer => $stateList];
+            $textEntry->color('info');
         }
 
-
         $textEntry
-            ->columnStart(FieldMapper::getOptionParameter($record, "new_line"))
-            ->label(FieldMapper::getLabelName($record))
+            ->columnStart($this->getOptionParameter($record, 'new_line'))
+            ->label($this->getLabelName($record))
             ->columnSpanFull()
             ->inlineLabel()
-            ->state(FieldMapper::getAnswer($record))
-            ->formatStateUsing(fn($state) => $stateList->toArray()[$state] ?? "")
+            ->state($this->getAnswer($record))
+            ->formatStateUsing(fn($state) => $stateList->toArray()[$state] ?? '')
             ->badge();
-
 
         return $textEntry;
     }
-
 }

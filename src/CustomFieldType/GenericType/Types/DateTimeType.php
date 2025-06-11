@@ -6,10 +6,10 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\Types;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\Types\Views\DateTimeTypeView;
-use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasCustomTypePackageTranslation;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\TypeOption\Groups\LayoutOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\TypeOption\Groups\ValidationTypeOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\TypeOption\Options\DateFormatOption;
+use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasCustomTypePackageTranslation;
 
 class DateTimeType extends CustomFieldType
 {
@@ -17,7 +17,7 @@ class DateTimeType extends CustomFieldType
 
     public static function identifier(): string
     {
-        return "date-time";
+        return 'date-time';
     }
 
     public function viewModes(): array
@@ -29,7 +29,7 @@ class DateTimeType extends CustomFieldType
 
     public function icon(): string
     {
-        return "heroicon-s-clock";
+        return 'heroicon-s-clock';
     }
 
     public function extraTypeOptions(): array
@@ -40,10 +40,8 @@ class DateTimeType extends CustomFieldType
                 ->addTypeOptions(
                     'format',
                     DateFormatOption::make()
-                        ->modifyDefault("Y-m-d H:i:s")
+                        ->modifyDefault('Y-m-d H:i:s')
                 ),
         ];
     }
-
-
 }

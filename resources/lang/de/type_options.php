@@ -206,6 +206,27 @@ return [
         'label' => 'Standart Anzahl',
         'helper_text' => '',
     ],
+    'title_size' => [
+        'label' => 'Title Grösse',
+        'helper_text' => '',
+    ],
+    'text' => [
+        'label' => 'Text',
+        'helper_text' => '',
+    ],
+    'size' => [
+        'label' => 'Grösse',
+        'helper_text' => '',
+    ],
+    'aside' => [
+        'label' => 'Seitlich anzeigen',
+        'helper_text' => '',
+    ],
+    'show_as_link' => [
+        'label' => 'Link',
+        'helper_text' => '',
+    ],
+
 //    'ordered' => [
 //        'label' => 'Geordnet',
 //        'helper_text' => '',

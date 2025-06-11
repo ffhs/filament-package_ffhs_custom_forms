@@ -2,8 +2,6 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\LayoutType\Types;
 
-
-use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasCustomTypePackageTranslation;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\LayoutType\CustomLayoutType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\LayoutType\Types\Views\SectionTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\TypeOption\Groups\LayoutTypeLayoutOptionGroup;
@@ -11,29 +9,30 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\TypeOption\Optio
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\TypeOption\Options\ShowAsFieldsetOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\TypeOption\Options\ShowInViewOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\TypeOption\Options\ShowLabelOption;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\TypeOption\TypeOption;
+use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasCustomTypePackageTranslation;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Toggle;
 
 class SectionType extends CustomLayoutType
 {
-
     use HasCustomTypePackageTranslation;
 
     public static function identifier(): string
     {
-        return "section";
+        return 'section';
     }
 
     public function viewModes(): array
     {
         return [
-            "default" => SectionTypeView::class,
+            'default' => SectionTypeView::class,
         ];
     }
 
     public function icon(): string
     {
-        return "tabler-section";
+        return 'tabler-section';
     }
 
     public function extraTypeOptions(): array
@@ -45,15 +44,15 @@ class SectionType extends CustomLayoutType
                         ->modifyOptionComponent(fn(Component $component) => $component->columnStart(1)),
                     'show_as_fieldset' => ShowAsFieldsetOption::make()
                         ->modifyOptionComponent(fn(Component $component) => $component->columnStart(2)),
-                    "show_label" => ShowLabelOption::make(),
-                    'aside' => new FastTypeOption(
+                    'show_label' => ShowLabelOption::make(),
+                    'aside' => FastTypeOption::makeFast(
                         false,
-                        Toggle::make("aside")
-                            ->label("Titel seitlich Anzeigen") //ToDo Translate,
-                            ->disabled(fn($get) => !$get("show_label"))
+                        Toggle::make('aside')
+                            ->label(TypeOption::__('aside.label'))
+                            ->helperText(TypeOption::__('aside.helper_text'))
+                            ->disabled(fn($get) => !$get('show_label'))
                     ),
                 ]),
         ];
     }
-
 }

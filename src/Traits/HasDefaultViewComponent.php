@@ -11,27 +11,23 @@ use Filament\Infolists\Components\Component as InfolistsComponent;
 trait HasDefaultViewComponent
 {
     use CanMapFields;
+    use HasStaticMake;
 
-    public static function make(): static
-    {
-        return new static();
-    }
-
-    protected static function makeComponent(
+    protected function makeComponent(
         string $class,
         CustomField|CustomFieldAnswer $record,
         array $ignoredOptions = []
     ): InfolistsComponent|FormsComponent {
-        $component = $class::make(FieldMapper::getIdentifyKey($record));
+        $component = $class::make($this->getIdentifyKey($record));
 
         if ($component instanceof FormsComponent) {
-            return static::modifyFormComponent($component, $record, $ignoredOptions);
+            return $this->modifyFormComponent($component, $record, $ignoredOptions);
         }
 
-        return static::modifyInfolistComponent($component, $record, $ignoredOptions);
+        return $this->modifyInfolistComponent($component, $record, $ignoredOptions);
     }
 
-    protected static function modifyFormComponent(
+    protected function modifyFormComponent(
         FormsComponent $component,
         CustomField $record,
         array $ignoredOptions = []
@@ -41,7 +37,7 @@ trait HasDefaultViewComponent
                 continue;
             }
 
-            $value = FieldMapper::getOptionParameter($record, $key);
+            $value = $this->getOptionParameter($record, $key);
             $typeOption->modifyFormComponent($component, $value); //ToDo null value
         }
 
@@ -51,24 +47,24 @@ trait HasDefaultViewComponent
                     continue;
                 }
 
-                $value = FieldMapper::getOptionParameter($record, $key);
+                $value = $this->getOptionParameter($record, $key);
                 $typeOption->modifyFormComponent($component, $value); //ToDo null value
             }
         }
 
         return $component
-            ->label(FieldMapper::getLabelName($record));
+            ->label($this->getLabelName($record));
     }
 
-    protected static function modifyInfolistComponent(
+    protected function modifyInfolistComponent(
         InfolistsComponent $component,
         CustomFieldAnswer $record,
         array $ignoredOptions = []
     ): InfolistsComponent {
         return $component
-            ->columnStart(FieldMapper::getOptionParameter($record, 'new_line'))
-            ->label(FieldMapper::getLabelName($record))
-            ->state(FieldMapper::getAnswer($record))
+            ->columnStart($this->getOptionParameter($record, 'new_line'))
+            ->label($this->getLabelName($record))
+            ->state($this->getAnswer($record))
             ->inlineLabel()
             ->columnSpanFull();
     }

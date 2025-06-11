@@ -4,19 +4,18 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\Types;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\Types\Views\DateTypeView;
-use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasCustomTypePackageTranslation;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\TypeOption\Groups\LayoutOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\TypeOption\Groups\ValidationTypeOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\TypeOption\Options\DateFormatOption;
+use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasCustomTypePackageTranslation;
 
 class DateType extends CustomFieldType
 {
     use HasCustomTypePackageTranslation;
 
-
     public static function identifier(): string
     {
-        return "date";
+        return 'date';
     }
 
     public function viewModes(): array
@@ -28,7 +27,7 @@ class DateType extends CustomFieldType
 
     public function icon(): string
     {
-        return "bi-calendar3";
+        return 'bi-calendar3';
     }
 
 
@@ -40,6 +39,4 @@ class DateType extends CustomFieldType
                 ->addTypeOptions('format', DateFormatOption::make()),
         ];
     }
-
-
 }

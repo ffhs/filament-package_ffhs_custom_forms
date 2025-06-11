@@ -2,16 +2,14 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\SplittedType\Types\Views;
 
-use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\FieldMapper;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\FieldTypeView;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomForm\RenderHelp\CustomFormLoadHelper;
-use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasDefaultViewComponent;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\EmbeddedCustomForm\Render\InfolistFieldDisplayer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
-use Ffhs\FilamentPackageFfhsCustomForms\TemporaryRenderClass;
-use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanLoadCustomFormEditorData;
+use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanLoadFormAnswer;
+use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanRenderCustomForm;
+use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasDefaultViewComponent;
 use Filament\Forms\Components\{Actions\Action, Component, Repeater};
 use Filament\Infolists\Components\Component as InfolistComponent;
 use Filament\Infolists\Components\Fieldset;
@@ -21,66 +19,74 @@ use Illuminate\Support\Collection;
 class RepeaterLayoutTypeView implements FieldTypeView
 {
     use HasDefaultViewComponent;
-    use CanLoadCustomFormEditorData;
+    use CanRenderCustomForm;
+    use CanLoadFormAnswer;
 
-    public static function getFormComponent(
+    public static function modifyRepeaterAction(Action $action): void
+    {
+        $oldAction = $action->getActionFunction();
+
+        $action->action(function ($livewire, Repeater $component, Action $action) use ($oldAction) {
+            $action->evaluate($oldAction);
+            $livewire
+                ->getForm('form')
+                ->callAfterStateUpdated($component->getStatePath());
+        });
+    }
+
+    public function getFormComponent(
         CustomFieldType $type,
         CustomField $record,
         array $parameter = []
     ): Component {
-        $ordered = FieldMapper::getOptionParameter($record, 'ordered');
-        $minAmount = FieldMapper::getOptionParameter($record, 'min_amount');
-        $maxAmount = FieldMapper::getOptionParameter($record, 'max_amount');
-        $defaultAmount = FieldMapper::getOptionParameter($record, 'default_amount');
-        $addActionLabel = FieldMapper::getOptionParameter($record, 'add_action_label');
+//      $ordered = $this->getOptionParameter($record, 'ordered');
+        $minAmount = $this->getOptionParameter($record, 'min_amount');
+        $maxAmount = $this->getOptionParameter($record, 'max_amount');
+        $defaultAmount = $this->getOptionParameter($record, 'default_amount');
+        $addActionLabel = $this->getOptionParameter($record, 'add_action_label');
+        $columns = $this->getOptionParameter($record, 'columns');
+        $columnStart = $this->getOptionParameter($record, 'new_line');
 
         $schema = $parameter['child_render']();
 
         /**@var Repeater $repeater */
-        $repeater = static::makeComponent(Repeater::class, $record, ['min_amount', 'max_amount']);
+        $repeater = $this->makeComponent(Repeater::class, $record, ['min_amount', 'max_amount']);
         $repeater
-//            ->columns(FieldMapper::getOptionParameter($record, 'columns'))
-//            ->columnStart(FieldMapper::getOptionParameter($record, 'new_line'))
+            ->columns($columns)
+            ->columnStart($columnStart)
             ->defaultItems($defaultAmount)
             ->minItems($minAmount)
             ->maxItems($maxAmount)
             ->schema($schema)
             ->deleteAction(self::modifyRepeaterAction(...))
-            ->addAction(self::modifyRepeaterAction(...));
+            ->addAction(self::modifyRepeaterAction(...))
+            ->reorderable(false);
 
         if (!is_null($addActionLabel)) {
             $repeater->addActionLabel($addActionLabel);
         }
 
-        if ($ordered) {
-            $repeater->orderColumn('order');
-        } else {
-            $repeater->reorderable(false);
-        }
 
         return $repeater;
     }
 
-    public static function getInfolistComponent(
+    public function getInfolistComponent(
         CustomFieldType $type,
         CustomFieldAnswer $record,
         array $parameter = []
     ): InfolistComponent {
-//        $ordered = FieldMapper::getOptionParameter($record,'ordered');
 
-        $isFieldset = FieldMapper::getOptionParameter($record, 'show_as_fieldset');
-        $component = $isFieldset
-            ? Fieldset::make('')//FieldMapper::getLabelName($record)
-            : Section::make(FieldMapper::getLabelName($record));
+        $label = $this->getLabelName($record);
+        $isFieldset = $this->getOptionParameter($record, 'show_as_fieldset');
+        $component = $isFieldset ? Fieldset::make($label) : Section::make($label);
 
         /** @var Collection $fields */
         $schema = [];
 
-        $loadedAnswers = CustomFormLoadHelper::load(
+        $loadedAnswers = $this->loadCustomAnswerData(
             $record->customFormAnswer,
             $record->customField->form_position,
             $record->customField->layout_end_position,
-            $record->customForm
         );
         $loadedAnswers = $loadedAnswers[$record->customField->identifier ?? ''] ?? [];
 
@@ -90,18 +96,11 @@ class RepeaterLayoutTypeView implements FieldTypeView
         $viewMode = $parameter['viewMode'];
         $customForm = $record->customFormAnswer->customForm;
 
-        $answerersFields = $record
-            ->customFormAnswer
-            ->customFieldAnswers
-            ->whereIn('custom_field_id', $fields->pluck('id'));
-
         foreach ($loadedAnswers as $id => $answer) {
             $displayer = InfolistFieldDisplayer::make($record->customFormAnswer, $id);
 
-            $renderOutput = TemporaryRenderClass::make()
-                ->renderCustomFormRaw($viewMode, $displayer, $customForm, $fields, $offset);
-            $subSchema = $renderOutput[0];
-            $allComponents = $renderOutput[1];
+            $renderOutput = $this->renderCustomFormRaw($viewMode, $displayer, $customForm, $fields, $offset);
+            [$subSchema, $allComponents] = $renderOutput;
 
             $parameter['registerComponents']($allComponents);
 
@@ -115,17 +114,5 @@ class RepeaterLayoutTypeView implements FieldTypeView
             ->schema($schema)
             ->columnStart(1)
             ->columnSpanFull();
-    }
-
-    public static function modifyRepeaterAction(Action $action): void
-    {
-        $oldAction = $action->getActionFunction();
-
-        $action->action(function ($livewire, Repeater $component, Action $action) use ($oldAction) {
-            $action->evaluate($oldAction);
-            $livewire
-                ->getForm('form')
-                ->callAfterStateUpdated($component->getStatePath());
-        });
     }
 }

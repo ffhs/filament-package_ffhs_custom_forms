@@ -30,7 +30,7 @@ class CustomFormResource extends Resource
 
     public static function getTitleCasePluralModelLabel(): string
     {
-        return CustomForm::__('label.plural');
+        return CustomForm::__('label.multiple');
     }
 
     public static function getTitleCaseModelLabel(): string

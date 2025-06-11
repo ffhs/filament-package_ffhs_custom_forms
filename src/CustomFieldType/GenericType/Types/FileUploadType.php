@@ -118,7 +118,7 @@ class FileUploadType extends CustomFieldType
                             ->helperText(TypeOption::__('open_in_new_tab.helper_text'))
                             ->hidden(fn($get) => $get('image'))
                     ),
-                    'allowed_type' => new FastTypeOption(
+                    'allowed_type' => FastTypeOption::makeFast(
                         [
                             'application/pdf',
                             'image/jpeg',
@@ -238,12 +238,12 @@ class FileUploadType extends CustomFieldType
             }
         }
 
-        return parent::prepareToSaveAnswerData($answer, $data);
+        return $this->prepareToSaveAnswerData($answer, $data);
     }
 
     public function prepareLoadFieldData(CustomFieldAnswer $answer, array $data): mixed
     {
-        $data = parent::prepareLoadAnswerData($answer, $data);
+        $data = $this->prepareLoadAnswerData($answer, $data);
         $data = $data ?? ['files' => []];
 
         foreach ($data['files'] ?? [] as $key => $file) {

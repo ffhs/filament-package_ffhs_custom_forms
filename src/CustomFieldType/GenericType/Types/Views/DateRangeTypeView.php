@@ -2,12 +2,12 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\Types\Views;
 
-use Coolsam\FilamentFlatpickr\Forms\Components\Flatpickr;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldType;
+use Coolsam\Flatpickr\Forms\Components\Flatpickr;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\FieldTypeView;
-use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasDefaultViewComponent;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
+use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasDefaultViewComponent;
 use Filament\Forms\Components\Component;
 use Filament\Infolists\Components\TextEntry;
 
@@ -15,23 +15,18 @@ class DateRangeTypeView implements FieldTypeView
 {
     use HasDefaultViewComponent;
 
-    public static function getFormComponent(
-        CustomFieldType $type,
-        CustomField $record,
-        array $parameter = []
-    ): Component {
-        /**@var \Coolsam\FilamentFlatpickr\Forms\Components\Flatpickr $flatpickr */
-        return static::makeComponent(Flatpickr::class, $record)
-            ->range();
+    public function getFormComponent(CustomFieldType $type, CustomField $record, array $parameter = []): Component
+    {
+        /**@var Flatpickr $flatpickr */
+        $flatpickr = $this->makeComponent(Flatpickr::class, $record);
+        return $flatpickr->rangePicker();
     }
 
-    public static function getInfolistComponent(
+    public function getInfolistComponent(
         CustomFieldType $type,
         CustomFieldAnswer $record,
         array $parameter = []
     ): \Filament\Infolists\Components\Component {
-        return static::makeComponent(TextEntry::class, $record);
+        return $this->makeComponent(TextEntry::class, $record);
     }
-
-
 }

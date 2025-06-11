@@ -4,9 +4,9 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\Types;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\CustomOption\CustomOptionType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\Types\Views\TagsTypeView;
-use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasCustomTypePackageTranslation;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\TypeOption\Groups\LayoutWithColumnsOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\TypeOption\Groups\ValidationTypeOptionGroup;
+use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasCustomTypePackageTranslation;
 
 class TagsType extends CustomOptionType
 {
@@ -14,7 +14,7 @@ class TagsType extends CustomOptionType
 
     public static function identifier(): string
     {
-        return "tags_input";
+        return 'tags_input';
     }
 
     public function viewModes(): array
@@ -26,7 +26,7 @@ class TagsType extends CustomOptionType
 
     public function icon(): string
     {
-        return "bi-tags";
+        return 'bi-tags';
     }
 
     public function extraTypeOptions(): array
@@ -38,6 +38,4 @@ class TagsType extends CustomOptionType
 
         ];
     }
-
-
 }

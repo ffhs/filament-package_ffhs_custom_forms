@@ -4,11 +4,11 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomForms\FormRule\Events;
 
 use Closure;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\CustomOption\CustomOptionType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\FieldMapper;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\FormRule\Translations\HasRuleEventPluginTranslate;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\RuleEvent;
+use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanMapFields;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasTriggerEventFormTargets;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Concerns\HasOptions;
@@ -20,6 +20,7 @@ class ChangeOptionsEvent extends FormRuleEventType
 {
     use HasRuleEventPluginTranslate;
     use HasTriggerEventFormTargets;
+    use CanMapFields;
 
     public static function identifier(): string
     {
@@ -81,7 +82,7 @@ class ChangeOptionsEvent extends FormRuleEventType
             }
 
             //Check to replace the current value
-            $currentValue = $get(FieldMapper::getIdentifyKey($customField));
+            $currentValue = $get($this->getIdentifyKey($customField));
             if (is_array($currentValue)) {
                 if (!is_array(($currentValue[0] ?? []))) {
                     $diff = array_intersect($currentValue, array_keys($options));

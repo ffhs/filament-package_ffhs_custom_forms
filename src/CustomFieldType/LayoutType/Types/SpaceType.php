@@ -4,11 +4,12 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\LayoutType\Types;
 
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldType;
-use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasCustomTypePackageTranslation;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\LayoutType\Types\Views\SpaceTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\TypeOption\Groups\LayoutOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\TypeOption\Options\FastTypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\TypeOption\Options\ShowInViewOption;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\TypeOption\TypeOption;
+use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasCustomTypePackageTranslation;
 use Filament\Forms\Components\TextInput;
 
 class SpaceType extends CustomFieldType
@@ -17,24 +18,19 @@ class SpaceType extends CustomFieldType
 
     public static function identifier(): string
     {
-        return "space";
+        return 'space';
     }
 
     public function viewModes(): array
     {
         return [
-            "default" => SpaceTypeView::class,
+            'default' => SpaceTypeView::class,
         ];
     }
 
     public function icon(): string
     {
-        return "carbon-name-space";
-    }
-
-    public function hasToolTips(): bool
-    {
-        return false;
+        return 'carbon-name-space';
     }
 
     public function hasEditorNameElement(array $fielData): bool
@@ -42,17 +38,17 @@ class SpaceType extends CustomFieldType
         return false;
     }
 
-
     public function extraTypeOptions(): array
     {
         return [
             LayoutOptionGroup::make()
                 ->removeTypeOption('new_line')
                 ->setTypeOptions([
-                    'amount' => new FastTypeOption(
+                    'amount' => FastTypeOption::makeFast(
                         1,
-                        TextInput::make("amount")
-                            ->label("Grösse")
+                        TextInput::make('amount')
+                            ->label(TypeOption::__('size.label'))
+                            ->helperText(TypeOption::__('size.helper_text'))
                             ->columnStart(1)
                             ->minValue(1)
                             ->required()
@@ -62,5 +58,4 @@ class SpaceType extends CustomFieldType
                 ]),
         ];
     }
-
 }

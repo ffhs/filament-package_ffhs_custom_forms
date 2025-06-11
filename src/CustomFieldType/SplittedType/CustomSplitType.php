@@ -10,6 +10,4 @@ abstract class CustomSplitType extends CustomLayoutType
     {
         return true;
     }
-
-
 }

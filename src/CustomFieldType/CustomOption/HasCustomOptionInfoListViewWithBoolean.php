@@ -3,7 +3,6 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\CustomOption;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\FieldMapper;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Filament\Infolists\Components\Component;
 use Filament\Infolists\Components\IconEntry;
@@ -14,25 +13,24 @@ trait HasCustomOptionInfoListViewWithBoolean
         HasCustomOptionInfoListView::getInfolistComponent as getBasicInfolistComponent;
     }
 
-    public static function getInfolistComponent(
+    public function getInfolistComponent(
         CustomFieldType $type,
         CustomFieldAnswer $record,
         array $parameter = []
     ): Component {
 
-        if (!FieldMapper::getOptionParameter($record, "boolean")) {
-            return self::getBasicInfolistComponent($type, $record, $parameter);
+        if (!$this->getOptionParameter($record, "boolean")) {
+            return $this->getBasicInfolistComponent($type, $record, $parameter);
         }
 
-        $answer = FieldMapper::getAnswer($record);
+        $answer = $this->getAnswer($record);
         $answer = is_null($answer) ? false : $answer;
 
-        return IconEntry::make(FieldMapper::getIdentifyKey($record))
-            ->label(FieldMapper::getLabelName($record))
+        return IconEntry::make($this->getIdentifyKey($record))
+            ->label($this->getLabelName($record))
             ->state($answer)
             ->columnSpanFull()
             ->inlineLabel()
             ->boolean();
     }
-
 }

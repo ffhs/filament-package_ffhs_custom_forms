@@ -4,11 +4,11 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\Types;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\CustomOption\CustomOptionType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\Types\Views\ColorPickerTypeView;
-use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasCustomTypePackageTranslation;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\TypeOption\Groups\LayoutOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\TypeOption\Groups\ValidationTypeOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\TypeOption\Options\FastTypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\TypeOption\TypeOption;
+use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasCustomTypePackageTranslation;
 use Filament\Forms\Components\Select;
 
 class ColorPickerType extends CustomOptionType
@@ -33,7 +33,7 @@ class ColorPickerType extends CustomOptionType
             LayoutOptionGroup::make(),
             ValidationTypeOptionGroup::make()
                 ->mergeTypeOptions([
-                    'color_type' => new FastTypeOption(
+                    'color_type' => FastTypeOption::makeFast(
                         'rgb',
                         Select::make('color_type')
                             ->label(TypeOption::__('color_type.label'))
@@ -51,10 +51,8 @@ class ColorPickerType extends CustomOptionType
         ];
     }
 
-
     public function icon(): string
     {
         return 'carbon-color-palette';
     }
-
 }

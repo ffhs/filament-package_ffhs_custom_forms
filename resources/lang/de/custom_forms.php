@@ -37,13 +37,6 @@ return [
             'is_general_field_active' => 'Falls dies deaktiviert wird, werden alle generellen Felder deaktiviert, welches auf diesem Feld basieren.',
         ],
 
-        'type_view' => [
-            'select' => [
-                'select' => 'Auswahl',
-            ],
-        ],
-
-
         'rules' => [
             'event' => [
                 'hidden_event' => 'Feld verstecken',
