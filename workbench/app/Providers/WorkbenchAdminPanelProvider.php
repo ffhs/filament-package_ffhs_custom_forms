@@ -2,7 +2,7 @@
 
 namespace Workbench\App\Providers;
 
-use Ffhs\FilamentPackageFfhsCustomForms\CustomFormsPlugin;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomFormPlugin;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -43,7 +43,7 @@ class WorkbenchAdminPanelProvider extends PanelProvider
                Authenticate::class,
            ])
            ->plugins([
-               CustomFormsPlugin::make(),
+               CustomFormPlugin::make(),
                SpatieLaravelTranslatablePlugin::make(),
            ]);
     }

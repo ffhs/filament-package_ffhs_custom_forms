@@ -1,6 +1,6 @@
 <?php
 
-namespace Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomForm\EditHelper;
+namespace Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\EditHelper;
 
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\Rule;

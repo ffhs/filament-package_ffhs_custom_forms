@@ -1,10 +1,10 @@
 <?php
 
-namespace Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomForm\FormConverter\SchemaExporter;
+namespace Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\FormConverter\SchemaExporter;
 
-use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomForm\FormConverter\SchemaExporter\Traids\ExportFieldInformation;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomForm\FormConverter\SchemaExporter\Traids\ExportFormInformation;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomForm\FormConverter\SchemaExporter\Traids\ExportRuleInformation;
+use Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\FormConverter\SchemaExporter\Traids\ExportFieldInformation;
+use Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\FormConverter\SchemaExporter\Traids\ExportFormInformation;
+use Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\FormConverter\SchemaExporter\Traids\ExportRuleInformation;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasStaticMake;
 

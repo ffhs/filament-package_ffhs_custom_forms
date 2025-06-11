@@ -9,7 +9,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\TemplateResource;
 use Filament\Contracts\Plugin;
 use Filament\Panel;
 
-class CustomFormsPlugin implements Plugin
+class CustomFormPlugin implements Plugin
 {
     public static function make(): static
     {
