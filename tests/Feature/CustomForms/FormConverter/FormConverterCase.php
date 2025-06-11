@@ -5,9 +5,9 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Tests\Feature\CustomForms\FormConv
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\CustomOption\Types\SelectType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\Types\TextType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\LayoutType\Types\SectionType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\FormRule\Events\HideEvent;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\FormRule\Events\VisibleEvent;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\FormRule\Trigger\ValueEqualsRuleTrigger;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Events\HideEvent;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Events\VisibleEvent;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Trigger\ValueEqualsRuleTrigger;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomOption;

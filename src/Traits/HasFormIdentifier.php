@@ -1,12 +1,12 @@
 <?php
 
-namespace Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomForm;
+namespace Ffhs\FilamentPackageFfhsCustomForms\Traits;
 
-use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomForm\FormConfiguration\CustomFormConfiguration;
+
+use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormConfiguration\CustomFormConfiguration;
 
 trait HasFormIdentifier
 {
-
     public function dynamicFormConfiguration(): CustomFormConfiguration
     {
         $clazz = collect(config("ffhs_custom_forms.forms"))
@@ -14,5 +14,4 @@ trait HasFormIdentifier
             ->first();
         return new $clazz();
     }
-
 }

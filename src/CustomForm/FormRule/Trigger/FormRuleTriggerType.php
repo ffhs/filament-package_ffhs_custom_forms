@@ -1,6 +1,6 @@
 <?php
 
-namespace Ffhs\FilamentPackageFfhsCustomForms\CustomForms\FormRule\Trigger;
+namespace Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Trigger;
 
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\TriggerType;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
@@ -18,6 +18,7 @@ abstract class FormRuleTriggerType implements TriggerType
     {
         return "rule.trigger";
     }
+
     public function prepareComponents(array &$components, RuleTrigger $trigger): array
     {
         foreach ($components as $fieldIdentifier => $component) {
@@ -26,12 +27,16 @@ abstract class FormRuleTriggerType implements TriggerType
 
         return $components;
     }
-    public function prepareComponent(Component|InfolistComponent $component, RuleTrigger $trigger): Component|InfolistComponent
-    {
+
+    public function prepareComponent(
+        Component|InfolistComponent $component,
+        RuleTrigger $trigger
+    ): Component|InfolistComponent {
         return $component;
     }
 
-    public function mutateDataOnClone(array $data, CustomForm $target):array{
+    public function mutateDataOnClone(array $data, CustomForm $target): array
+    {
         return $data;
     }
 

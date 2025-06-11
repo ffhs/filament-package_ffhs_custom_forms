@@ -2,7 +2,7 @@
 
 namespace Workbench\App\FFHs;
 
-use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomForm\FormConfiguration\CustomFormConfiguration;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormConfiguration\CustomFormConfiguration;
 
 class TestCustomFormConfiguration extends CustomFormConfiguration
 {

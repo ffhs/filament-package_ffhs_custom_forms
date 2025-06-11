@@ -126,7 +126,7 @@ You can add the resources to your panel with in your PanelProvider:
 
 ```php
 ->plugins([
-    CustomFormsPlugin::make(),
+    CustomFormPlugin::make(),
 ])
 ```
 
