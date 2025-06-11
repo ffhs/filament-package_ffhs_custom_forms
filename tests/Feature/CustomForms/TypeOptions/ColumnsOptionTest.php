@@ -8,8 +8,8 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\LayoutType\Types\Fieldse
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\LayoutType\Types\GroupType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\LayoutType\Types\SectionType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\SplittedType\Types\RepeaterLayoutType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\TypeOption\Options\ColumnsOption;
 use Ffhs\FilamentPackageFfhsCustomForms\Tests\Feature\CustomForms\TypeOptions\HasTypeOptionEasyTest;
+use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\ColumnsOption;
 use Filament\Forms\Components\Component;
 
 

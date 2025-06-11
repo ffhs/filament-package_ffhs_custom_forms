@@ -17,8 +17,8 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\Types\TagsTy
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\Types\TextAreaType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\Types\TextType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\SplittedType\Types\RepeaterLayoutType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\TypeOption\Options\ValidationAttributeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\Tests\Feature\CustomForms\TypeOptions\HasTypeOptionEasyTest;
+use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\ValidationAttributeOption;
 use Filament\Forms\Components\Component;
 use Livewire\Features\SupportTesting\Testable;
 

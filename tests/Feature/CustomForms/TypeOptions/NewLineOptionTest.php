@@ -23,8 +23,8 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\LayoutType\Types\Section
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\LayoutType\Types\TextLayoutType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\LayoutType\Types\TitleType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\SplittedType\Types\RepeaterLayoutType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\TypeOption\Options\NewLineOption;
 use Ffhs\FilamentPackageFfhsCustomForms\Tests\Feature\CustomForms\TypeOptions\HasTypeOptionEasyTest;
+use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\NewLineOption;
 use Filament\Forms\Components\Component;
 
 
