@@ -5,11 +5,13 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Tests\Feature\CustomForms\TypeOpti
 use App\Models\User;
 use Closure;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldType;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\EmbeddedCustomForm\Render\FormFieldDisplayer;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormAnswerResource\Pages\EditCustomFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
 use Illuminate\Support\Facades\Artisan;
+use Mockery;
 use Workbench\App\FFHs\TestCustomFormConfiguration;
 use Workbench\App\Models\UserSuperAdmin;
 use function Pest\Livewire\livewire;
@@ -86,7 +88,6 @@ trait HasTypeOptionEasyTest
         $checkOptionFunction($livewire);
     }
 
-
     public function componentTestField(
         string $customFieldIdentifier,
         array $extraOptions,
@@ -108,7 +109,6 @@ trait HasTypeOptionEasyTest
 
         $component = $type->getFormComponent(
             $this->customField,
-            $this->customForm,
             'default',
             ['renderer' => fn() => []]
         );
@@ -122,11 +122,13 @@ trait HasTypeOptionEasyTest
 
         $component = $type->getFormComponent(
             $this->customField,
-            $this->customForm,
             'default',
-            ['renderer' => fn() => []]
+            [
+                'viewMode' => 'default',
+                'registerComponents' => fn(array $components) => null,
+                'displayer' => Mockery::mock(FormFieldDisplayer::class),
+            ]
         );
         $checkOptionFunction($component);
     }
-
 }

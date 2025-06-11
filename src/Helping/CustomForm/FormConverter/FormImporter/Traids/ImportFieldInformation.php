@@ -9,10 +9,12 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 
 trait ImportFieldInformation
 {
-
-
-    public function importFields(array $rawFields,  CustomForm $customForm, array $templateMap = [], array $generalFieldMap = []): void
-    {
+    public function importFields(
+        array $rawFields,
+        CustomForm $customForm,
+        array $templateMap = [],
+        array $generalFieldMap = []
+    ): void {
         $templateImportedMap = CustomForm::query()
             ->whereNot("template_identifier")
             ->pluck('id', 'template_identifier')
@@ -32,15 +34,20 @@ trait ImportFieldInformation
             unset($field['customOptions']);
             $field = new CustomField($field);
             $field->save();
-            if(!empty($options)){
+            if (!empty($options)) {
                 $field->customOptions()->saveMany($options);
             }
         }
 
     }
 
-    public function importFieldDatas(array $rawFields,  CustomForm $customForm, array $templateMap = [], array $generalFieldMap = [], int &$fieldCounter = 0): array
-    {
+    public function importFieldDatas(
+        array $rawFields,
+        CustomForm $customForm,
+        array $templateMap = [],
+        array $generalFieldMap = [],
+        int &$fieldCounter = 0
+    ): array {
         $fieldsToCreate = [];
         foreach ($rawFields as $rawField) {
             $fieldCounter++;
@@ -49,30 +56,31 @@ trait ImportFieldInformation
                 'custom_form_id' => $customForm->id,
             ];
 
-            if(array_key_exists('fields', $rawField)){
+            if (array_key_exists('fields', $rawField)) {
                 $subFields = $rawField["fields"];
-                $subFieldData = $this->importFieldDatas($subFields, $customForm, $templateMap, $generalFieldMap, $fieldCounter);
+                $subFieldData = $this->importFieldDatas($subFields, $customForm, $templateMap, $generalFieldMap,
+                    $fieldCounter);
                 $fieldsToCreate = array_merge($fieldsToCreate, $subFieldData);
                 $field["layout_end_position"] = $fieldCounter;
                 unset($rawField["fields"]);
             }
 
 
-            if(array_key_exists('template', $rawField)){
+            if (array_key_exists('template', $rawField)) {
                 $template = $rawField['template'];
                 $field['template_id'] = $templateMap[$template] ?? $template;
                 unset($rawField["template"]);
             }
 
-            if(array_key_exists('general_field', $rawField)){
+            if (array_key_exists('general_field', $rawField)) {
                 $generalField = $rawField['general_field'];
                 $field['general_field_id'] = $generalFieldMap[$generalField] ?? $generalField; //ToDo to test
                 unset($rawField["general_field"]);
             }
 
-            if(array_key_exists('customOptions', $rawField)){
+            if (array_key_exists('customOptions', $rawField)) {
                 $customOptions = array_map(
-                    fn ($item) => new CustomOption($item),
+                    fn($item) => new CustomOption($item),
                     $rawField['customOptions']
                 );
                 $field["customOptions"] = $customOptions;

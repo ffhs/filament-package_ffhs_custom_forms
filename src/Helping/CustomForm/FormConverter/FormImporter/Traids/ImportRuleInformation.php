@@ -29,6 +29,7 @@ trait ImportRuleInformation
             $count++;
         }
     }
+
     // @codeCoverageIgnoreStart
 
     public function importRuleElements(Rule $rule, array $rawRuleData): void
@@ -39,6 +40,7 @@ trait ImportRuleInformation
         $rule->ruleEvents()->saveMany($events);
         $rule->ruleTriggers()->saveMany($triggers);
     }
+
     // @codeCoverageIgnoreEnd
 
     private function mapRuleElements(array $elements, string $class): array
