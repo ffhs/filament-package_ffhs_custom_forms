@@ -90,7 +90,14 @@ class FieldDragDropEditor extends DragDropComponent
 
     protected function getFieldLabel(array $itemState): ?string
     {
-        return CustomForms::getFieldTypeFromRawDate($itemState)->getEditorFieldTitle($itemState);
+        $title = CustomForms::getFieldTypeFromRawDate($itemState)->getEditorFieldTitle($itemState);
+        $badge = CustomForms::getFieldTypeFromRawDate($itemState)->getEditorFieldBadge($itemState);
+
+        if (is_null($badge)) {
+            return $title;
+        }
+
+        return '<div class="flex">' . $badge . '<p>' . $title . '</p> </div>';
     }
 
     protected function getFieldActions(array $itemState, $item): array

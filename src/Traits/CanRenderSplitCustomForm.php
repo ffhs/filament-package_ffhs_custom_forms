@@ -3,7 +3,7 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\Traits;
 
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\FieldDisplayer;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\CustomFieldType\LayoutType\CustomLayoutType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\LayoutType\CustomLayoutType;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 
@@ -59,7 +59,7 @@ trait CanRenderSplitCustomForm
     ) {
         $endPos = $field->layout_end_position;
         $beginPos = $field->form_position;
-        
+
         if ($endPos === 0) {
             $endPos = $beginPos;
             --$beginPos;

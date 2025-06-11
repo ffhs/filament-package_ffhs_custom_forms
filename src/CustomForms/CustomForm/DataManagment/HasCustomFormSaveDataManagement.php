@@ -2,7 +2,7 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomForm\DataManagment;
 
-use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\CustomFieldType\GenericType\CustomFieldType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
@@ -73,7 +73,8 @@ trait HasCustomFormSaveDataManagement
                 if (is_null($fieldComponent)) {
                     continue;
                 }
-                $customField->getType()->updateFormComponentOnSave($fieldComponent, $customField, $form, $components);
+                $customField->getType()->updateAnswerFormComponentOnSave($fieldComponent, $customField, $form,
+                    $components);
             }
         }
     }
@@ -159,8 +160,8 @@ trait HasCustomFormSaveDataManagement
                 ]);
             }
 
-            $fieldAnswererData = $customField->getType()->prepareSaveFieldData($customFieldAnswer, $fieldRawData);
-            if ($type->isEmptyAnswerer($customFieldAnswer, $fieldAnswererData)) {
+            $fieldAnswererData = $customField->getType()->prepareToSaveAnswerData($customFieldAnswer, $fieldRawData);
+            if ($type->isEmptyAnswer($customFieldAnswer, $fieldAnswererData)) {
                 if ($customFieldAnswer->exists) {
                     $customFieldAnswer->delete();
                 }

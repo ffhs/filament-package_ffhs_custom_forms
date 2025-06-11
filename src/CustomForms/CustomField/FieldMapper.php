@@ -2,7 +2,7 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField;
 
-use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\CustomFieldType\SplittedType\CustomSplitType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\SplittedType\CustomSplitType;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
@@ -12,13 +12,17 @@ class FieldMapper
 {
     public static function getIdentifyKey(CustomField|CustomFieldAnswer $record): string
     {
-        if ($record instanceof CustomFieldAnswer) $record = $record->customField;
+        if ($record instanceof CustomFieldAnswer) {
+            $record = $record->customField;
+        }
         return $record->identifier;
     }
 
     public static function getLabelName(CustomField|CustomFieldAnswer $record): string
     {
-        if ($record instanceof CustomFieldAnswer) $record = $record->customField;
+        if ($record instanceof CustomFieldAnswer) {
+            $record = $record->customField;
+        }
         $label = $record->name;
         $label = is_null($label) ? '' : $label;
 
@@ -31,34 +35,52 @@ class FieldMapper
         string $option,
         bool $canBeNull = false
     ): mixed {
-        if ($record instanceof CustomFieldAnswer) $record = $record->customField;
-        if (is_null($record->options)) $record->options = [];
+        if ($record instanceof CustomFieldAnswer) {
+            $record = $record->customField;
+        }
+        if (is_null($record->options)) {
+            $record->options = [];
+        }
         if (array_key_exists($option, $record->options)) {
             $return = $record->options[$option];
             if (!is_null($return)) {
                 return $return;
-            } elseif ($canBeNull) return null;
+            } elseif ($canBeNull) {
+                return null;
+            }
         }
 
         $generalOptions = $record->getType()->getDefaultGeneralOptionValues();
-        if (array_key_exists($option, $generalOptions)) return $generalOptions[$option];
+        if (array_key_exists($option, $generalOptions)) {
+            return $generalOptions[$option];
+        }
         $fieldOptions = $record->getType()->getDefaultTypeOptionValues();
-        if (array_key_exists($option, $fieldOptions)) return $fieldOptions[$option];
+        if (array_key_exists($option, $fieldOptions)) {
+            return $fieldOptions[$option];
+        }
         return $canBeNull ? null : 0;
     }
 
     public static function hasOptionParameter(CustomField|CustomFieldAnswer $record, string $option): bool
     {
-        if ($record instanceof CustomFieldAnswer) $record = $record->customField;
-        if (!is_null($record->getType()->getFlattenExtraTypeOptions()[$option] ?? null)) return true;
-        if (!is_null($record->getType()->getFlattenGeneralTypeOptions()[$option] ?? null)) return true;
+        if ($record instanceof CustomFieldAnswer) {
+            $record = $record->customField;
+        }
+        if (!is_null($record->getType()->getFlattenExtraTypeOptions()[$option] ?? null)) {
+            return true;
+        }
+        if (!is_null($record->getType()->getFlattenGeneralTypeOptions()[$option] ?? null)) {
+            return true;
+        }
         return false;
     }
 
     public static function getAnswer(CustomFieldAnswer $answer)
     {
         $rawAnswerer = $answer->answer;
-        if (is_null($rawAnswerer)) return null;
+        if (is_null($rawAnswerer)) {
+            return null;
+        }
         return $answer->customField->getType()->prepareLoadFieldData($answer, $rawAnswerer);
     }
 
@@ -70,16 +92,22 @@ class FieldMapper
 
     public static function getAllCustomOptions(CustomField|CustomFieldAnswer $record): Collection
     {
-        if ($record instanceof CustomFieldAnswer) $record = $record->customField;
+        if ($record instanceof CustomFieldAnswer) {
+            $record = $record->customField;
+        }
         if ($record->isInheritFromGeneralField()) {
             $options = $record->generalField->customOptions;
-        } else $options = $record->customOptions;
+        } else {
+            $options = $record->customOptions;
+        }
         return $options->pluck("name", "identifier");
     }
 
     public static function getTypeConfigAttribute(CustomField|CustomFieldAnswer $record, string $attribute): mixed
     {
-        if ($record instanceof CustomFieldAnswer) $record = $record->customField;
+        if ($record instanceof CustomFieldAnswer) {
+            $record = $record->customField;
+        }
         return $record->getType()->getConfigAttribute($attribute);
     }
 
@@ -92,12 +120,18 @@ class FieldMapper
      */
     public static function isFieldInSplitGroup(CustomField|CustomFieldAnswer $record): bool
     {//ToDo Slow
-        if ($record instanceof CustomFieldAnswer) $record = $record->customField;
+        if ($record instanceof CustomFieldAnswer) {
+            $record = $record->customField;
+        }
         $fields = $record->customForm->customFields;
         $parentSplitField = $fields
             ->firstWhere(function (CustomField $field) use ($record) {
-                if ($field->form_position >= $record->form_position) return false;
-                if ($field->layout_end_position < $record->form_position) return false;
+                if ($field->form_position >= $record->form_position) {
+                    return false;
+                }
+                if ($field->layout_end_position < $record->form_position) {
+                    return false;
+                }
                 return $field->getType() instanceof CustomSplitType;
             });
         return !is_null($parentSplitField);
@@ -126,7 +160,9 @@ class FieldMapper
 
     public static function getParentSplitGroups(CustomField|CustomFieldAnswer $record): Collection
     {//ToDo Slow
-        if ($record instanceof CustomFieldAnswer) $record = $record->customField;
+        if ($record instanceof CustomFieldAnswer) {
+            $record = $record->customField;
+        }
         $fields = $record->customForm->customFields;
         return $fields
             ->where('form_position', '<', $record->form_position)
@@ -138,14 +174,19 @@ class FieldMapper
 
     public static function getFieldsInLayout(CustomField|CustomFieldAnswer $record): Collection
     { //ToDo Slow
-        if ($record instanceof CustomFieldAnswer) $record = $record->customField;
+        if ($record instanceof CustomFieldAnswer) {
+            $record = $record->customField;
+        }
         $fields = $record->customForm->customFields;
         return $fields
             ->filter(function (CustomField $field) use ($record) {
-                if ($field->form_position > $record->layout_end_position) return false;
-                if ($field->form_position <= $record->form_position) return false;
+                if ($field->form_position > $record->layout_end_position) {
+                    return false;
+                }
+                if ($field->form_position <= $record->form_position) {
+                    return false;
+                }
                 return true;
             });
     }
-
 }

@@ -46,7 +46,6 @@ trait CanSaveFormAnswer
         $formAnswer->cachedClear('customFieldAnswers');
     }
 
-
     protected function getFieldAttributesToSave(CustomFieldAnswer $answer): array
     {
         $attributes = $answer->attributesToArray();
@@ -128,7 +127,7 @@ trait CanSaveFormAnswer
             }
 
             $type = $customField->getType();
-            $fieldAnswererData = $type->prepareSaveFieldData($customFieldAnswer, $fieldRawData);
+            $fieldAnswererData = $type->prepareToSaveAnswerData($customFieldAnswer, $fieldRawData);
             $fieldAnswererData = $this->mutateAnswerDataByRule($formRules, $customFieldAnswer, $fieldAnswererData);
 
             $customFieldAnswer->answer = $fieldAnswererData;
@@ -140,7 +139,7 @@ trait CanSaveFormAnswer
         $answersToCreate = $answersToHandle->get(false)
             ?->filter(fn(CustomFieldAnswer $answer) => !empty($answer->answer));
         $answersToDelete = $answersToHandle->get(true)
-            ?->filter(fn(CustomFieldAnswer $answer) => $answer->customField->getType()->isEmptyAnswerer($answer,
+            ?->filter(fn(CustomFieldAnswer $answer) => $answer->customField->getType()->isEmptyAnswer($answer,
                 $answer->answer));
         $answersToSave = $answersToHandle->get(true)
             ?->whereNotIn('id', $answersToDelete->pluck('id'))
@@ -262,7 +261,9 @@ trait CanSaveFormAnswer
                 return str_contains($key, $identifier);
             });
             foreach ($fieldComponents as $fieldComponent) {
-                $customField->getType()->updateFormComponentOnSave($fieldComponent, $customField, $form, $components);
+                /**@var CustomField $customField */
+                $customField->getType()->updateAnswerFormComponentOnSave($fieldComponent, $customField, $form,
+                    $components);
             }
         }
     }

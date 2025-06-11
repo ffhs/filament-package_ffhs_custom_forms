@@ -7,7 +7,6 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 
 trait HasAllFieldDataFromFormData
 {
-
     use CanLoadCustomFormEditorData;
 
     protected function getFieldDataFromFormData(array $fields): array
@@ -20,11 +19,12 @@ trait HasAllFieldDataFromFormData
                 $customField->identifier() => $this->loadEditorField($customField)
             ]);
 
-        $fields = collect($fields)->mapWithKeys(fn(array $field) => [
-            (new CustomField())->fill($field)->identifier() => $field
-        ])->merge($fieldsFromTemplate);
-
-        return $fields->toArray();
+        return collect($fields)
+            ->mapWithKeys(function (array $field) {
+                $customField = app(CustomField::class)->fill($field);
+                return [$customField->identifier() => $field];
+            })
+            ->merge($fieldsFromTemplate)
+            ->toArray();
     }
-
 }

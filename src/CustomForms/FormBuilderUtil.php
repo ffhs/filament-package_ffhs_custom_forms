@@ -3,7 +3,7 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomForm;
 
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EventType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\CustomFieldType\GenericType\CustomFieldType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
@@ -16,14 +16,17 @@ use Illuminate\Support\Collection;
 
 class FormBuilderUtil
 {
-    public static function buildSchema(?CustomForm $customForm, array $layout):CustomForm {
-        if(is_null($customForm)) $customForm = CustomForm::create();
+    public static function buildSchema(?CustomForm $customForm, array $layout): CustomForm
+    {
+        if (is_null($customForm)) {
+            $customForm = CustomForm::create();
+        }
         $customField = [];
 
         static::generateFields($customForm, $layout, $customField);
 
 
-        foreach ($customField as $data){
+        foreach ($customField as $data) {
             $customOptions = $data['customOptions'] ?? [];
 
             $names = $data['name'] ?? [];
@@ -35,20 +38,28 @@ class FormBuilderUtil
             $field = new CustomField();
             $field->fill($data);
 
-            foreach ($names as $local => $name) $field->setTranslation("name", $local, $name);
+            foreach ($names as $local => $name) {
+                $field->setTranslation("name", $local, $name);
+            }
 
             $field->save();
 
-            if($field->isGeneralField() && !empty($customOptions)) $field->customOptions()->sync($customOptions);
-            else if(!empty($customOptions)) $field->customOptions()->createMany($customOptions);
+            if ($field->isGeneralField() && !empty($customOptions)) {
+                $field->customOptions()->sync($customOptions);
+            } else {
+                if (!empty($customOptions)) {
+                    $field->customOptions()->createMany($customOptions);
+                }
+            }
         }
 
         return $customForm;
     }
 
 
-    public static function generateFields(CustomForm $form, array $fields, array &$toCreateFields): void {
-        foreach ($fields as $field){
+    public static function generateFields(CustomForm $form, array $fields, array &$toCreateFields): void
+    {
+        foreach ($fields as $field) {
 
             $formPosition = sizeof($toCreateFields) + 1;
 
@@ -59,38 +70,40 @@ class FormBuilderUtil
             ];
 
             $defaultOptions = [];
-            if(array_key_exists('general_field', $field)){
-                $genField = GeneralField::cached($field['general_field'],'identifier');
+            if (array_key_exists('general_field', $field)) {
+                $genField = GeneralField::cached($field['general_field'], 'identifier');
                 $fieldData['general_field_id'] = $genField->id;
                 $defaultOptions = $genField->getType()->getDefaultTypeOptionValues();
-            }
-            else if(array_key_exists('general_field_id', $field)){
-                $fieldData['general_field_id'] = $field['general_field_id'];
-                $genField = GeneralField::cached($field['general_field_id']);
-                $defaultOptions = $genField->getType()->getDefaultTypeOptionValues();
-            }
-            else if(array_key_exists('template', $field)){
-                $template = CustomForm::cached($field['template'],'short_title');
-                $fieldData['template_id'] = $template->id;
-                $fieldData['identifier'] = uniqid();
-            }
-            else if(array_key_exists('template_id', $field)){
-                $fieldData['template_id'] = $field['template_id'];
-            }
-            else{
-                //Names
-                $fieldData['name'] = [];
-                # $fieldData['tool_tip'] = [];
-                foreach ($field as $key => $value){
-                    if(str_contains($key, "name_")){
-                        $fieldData['name'][str_replace("name_", "", $key)] = $value ;
+            } else {
+                if (array_key_exists('general_field_id', $field)) {
+                    $fieldData['general_field_id'] = $field['general_field_id'];
+                    $genField = GeneralField::cached($field['general_field_id']);
+                    $defaultOptions = $genField->getType()->getDefaultTypeOptionValues();
+                } else {
+                    if (array_key_exists('template', $field)) {
+                        $template = CustomForm::cached($field['template'], 'short_title');
+                        $fieldData['template_id'] = $template->id;
+                        $fieldData['identifier'] = uniqid();
+                    } else {
+                        if (array_key_exists('template_id', $field)) {
+                            $fieldData['template_id'] = $field['template_id'];
+                        } else {
+                            //Names
+                            $fieldData['name'] = [];
+                            # $fieldData['tool_tip'] = [];
+                            foreach ($field as $key => $value) {
+                                if (str_contains($key, "name_")) {
+                                    $fieldData['name'][str_replace("name_", "", $key)] = $value;
+                                }
+                            }
+
+
+                            $fieldData['type'] = $field['type'];
+                            $fieldData['identifier'] = $field['identifier'] ?? uniqid();
+                            $defaultOptions = CustomFieldType::getTypeFromIdentifier($field['type'])->getDefaultTypeOptionValues();
+                        }
                     }
                 }
-
-
-                $fieldData['type'] = $field['type'];
-                $fieldData['identifier']= $field['identifier'] ?? uniqid();
-                $defaultOptions = CustomFieldType::getTypeFromIdentifier($field['type'])->getDefaultTypeOptionValues();
             }
 
 
@@ -101,7 +114,7 @@ class FormBuilderUtil
             self::prepareCustomOptions($field, $fieldData);
 
             //Layout Fields
-            self::setupLayoutFields($form, $field,$fieldData, $toCreateFields);
+            self::setupLayoutFields($form, $field, $fieldData, $toCreateFields);
 
             $toCreateFields[] = $fieldData;
 
@@ -109,27 +122,36 @@ class FormBuilderUtil
     }
 
 
-
-    private static function prepareOptionData(array $field, array &$fieldData, array $defaultOptions): void {
+    private static function prepareOptionData(array $field, array &$fieldData, array $defaultOptions): void
+    {
         $fieldData['options'] = array_merge($defaultOptions, $field['options'] ?? []);
     }
 
-    private static function prepareCustomOptions(array $field, array &$fieldData): void {
-        if (!array_key_exists("customOptions", $field)) return;
+    private static function prepareCustomOptions(array $field, array &$fieldData): void
+    {
+        if (!array_key_exists("customOptions", $field)) {
+            return;
+        }
 
         //General Field
-        if(array_key_exists("general_field_id", $fieldData)){
+        if (array_key_exists("general_field_id", $fieldData)) {
             $generalField = GeneralField::cached($fieldData['general_field_id']);
             $allOptions = $generalField->customOptions;
 
             $fieldData['customOptions'] = [];
 
-            foreach ($field['customOptions'] as $customOption){
+            foreach ($field['customOptions'] as $customOption) {
                 $optionId = $allOptions->where('id', $customOption)->first()?->id;
-                if(is_null($optionId)) $optionId = $allOptions->where('identifier', $customOption)->first()?->id;
-                if(is_null($optionId)) $optionId = $allOptions->where('name', $customOption)->first()?->id;
+                if (is_null($optionId)) {
+                    $optionId = $allOptions->where('identifier', $customOption)->first()?->id;
+                }
+                if (is_null($optionId)) {
+                    $optionId = $allOptions->where('name', $customOption)->first()?->id;
+                }
 
-                if(!is_null($optionId))  $fieldData['customOptions'][] = $optionId;
+                if (!is_null($optionId)) {
+                    $fieldData['customOptions'][] = $optionId;
+                }
             }
             return;
         }
@@ -139,9 +161,9 @@ class FormBuilderUtil
         foreach ($field['customOptions'] as $customOption) {
 
             $names = [];
-            foreach ($customOption as $key => $value){
-                if(str_contains($key, "name_")){
-                    $names[str_replace("name_", "", $key)] = $value ;
+            foreach ($customOption as $key => $value) {
+                if (str_contains($key, "name_")) {
+                    $names[str_replace("name_", "", $key)] = $value;
                 }
             }
 
@@ -157,30 +179,39 @@ class FormBuilderUtil
 
     //ToDo Name Converter
 
-    private static function setupLayoutFields(CustomForm $form, array $field, array &$fieldData , array &$toCreateFields): void {
-        if (!array_key_exists('fields', $field))
+    private static function setupLayoutFields(
+        CustomForm $form,
+        array $field,
+        array &$fieldData,
+        array &$toCreateFields
+    ): void {
+        if (!array_key_exists('fields', $field)) {
             return;
+        }
 
 
         $placeHolderId = uniqid();
 
-        $toCreateFields["placeHolder-".$placeHolderId] = $fieldData;
+        $toCreateFields["placeHolder-" . $placeHolderId] = $fieldData;
         static::generateFields($form, $field['fields'], $toCreateFields);
         $formEndPosition = sizeof($toCreateFields);
 
-        unset($toCreateFields["placeHolder-".$placeHolderId]);
+        unset($toCreateFields["placeHolder-" . $placeHolderId]);
         $fieldData['layout_end_position'] = $formEndPosition;
     }
 
-    public static function buildRules(?CustomForm $customForm, array $rules):CustomForm {
+    public static function buildRules(?CustomForm $customForm, array $rules): CustomForm
+    {
 
         $finalRules = [];
         $fields = $customForm->customFields;
 
-        foreach ($rules as $rule){
-            if(!key_exists("is_or_mode", $rule)) $rule["is_or_mode"] = false;
+        foreach ($rules as $rule) {
+            if (!key_exists("is_or_mode", $rule)) {
+                $rule["is_or_mode"] = false;
+            }
 
-            $triggers =  self::prepareTriggers($rule['triggers'], $fields);
+            $triggers = self::prepareTriggers($rule['triggers'], $fields);
             $events = self::prepareRuleEvents($rule['events'], $fields);
 
             unset($rule['triggers']);
@@ -206,15 +237,15 @@ class FormBuilderUtil
         $triggers = [];
         $order = 1;
 
-        foreach ($rawTriggers??[] as $trigger){
+        foreach ($rawTriggers ?? [] as $trigger) {
             $trigger["order"] = $order;
             $order++;
 
-           /*
-            *  $type = $trigger['type'];
-            if ($type instanceof TriggerType) $trigger['type'] = $type::identifier();
-            if (array_key_exists("is_inverted", $trigger)) $trigger['type'] = $type::identifier();
-            */
+            /*
+             *  $type = $trigger['type'];
+             if ($type instanceof TriggerType) $trigger['type'] = $type::identifier();
+             if (array_key_exists("is_inverted", $trigger)) $trigger['type'] = $type::identifier();
+             */
 
             $trigger = self::prepareTarget($trigger, $fields);
             $triggers[] = new RuleTrigger($trigger);
@@ -224,15 +255,18 @@ class FormBuilderUtil
 
     public static function prepareTarget(mixed $hasData, Collection $fields): mixed
     {
-        if (!array_key_exists("data", $hasData)) $hasData['data'] = [];
-        else {
+        if (!array_key_exists("data", $hasData)) {
+            $hasData['data'] = [];
+        } else {
             $data = $hasData['data'];
             if (array_key_exists('target', $data)) {
                 $target = $data['target'];
                 $found = $fields->firstWhere(fn(CustomField $field) => $field->identifier == $target);
                 if (is_null($found)) {
                     $found = $fields->firstWhere(fn(CustomField $field) => $field->name == $target);
-                    if (!is_null($found)) $data['target'] = $found->identifier;
+                    if (!is_null($found)) {
+                        $data['target'] = $found->identifier;
+                    }
                 }
             }
 
@@ -240,11 +274,15 @@ class FormBuilderUtil
                 $targets = [];
                 foreach ($data['targets'] ?? [] as $target) {
                     $found = $fields->firstWhere(fn(CustomField $field) => $field->identifier == $target);
-                    if (!is_null($found)) $targets[] = $target;
-                    else{
+                    if (!is_null($found)) {
+                        $targets[] = $target;
+                    } else {
                         $found = $fields->firstWhere(fn(CustomField $field) => $field->name == $target);
-                        if (!is_null($found)) $targets[] = $found->identifier;
-                        else $targets[] = $target;
+                        if (!is_null($found)) {
+                            $targets[] = $found->identifier;
+                        } else {
+                            $targets[] = $target;
+                        }
                     }
                 }
                 $data['targets'] = $targets;
@@ -255,13 +293,17 @@ class FormBuilderUtil
         return $hasData;
     }
 
-    public static function prepareRuleEvents(array$rawEvents, Collection $fields): array
+    public static function prepareRuleEvents(array $rawEvents, Collection $fields): array
     {
         $order = 1;
         foreach ($rawEvents ?? [] as $event) {
             $type = $event['type'];
-            if ($type instanceof EventType) $event['type'] = $type::identifier();
-            if (!array_key_exists("data", $event)) $event['data'] = [];
+            if ($type instanceof EventType) {
+                $event['type'] = $type::identifier();
+            }
+            if (!array_key_exists("data", $event)) {
+                $event['data'] = [];
+            }
             $event["order"] = $order;
             $event = self::prepareTarget($event, $fields);
 

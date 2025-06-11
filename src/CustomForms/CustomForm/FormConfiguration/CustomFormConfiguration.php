@@ -2,7 +2,7 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomForm\FormConfiguration;
 
-use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\CustomFieldType\GenericType\CustomFieldType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralFieldForm;
@@ -25,18 +25,18 @@ abstract class CustomFormConfiguration
 
     public static function ruleTypes(): array
     {
-        return config("ffhs_custom_forms.field_rule_types");
+        return config('ffhs_custom_forms.field_rule_types');
     }
 
 
     public static function anchorRuleTypes(): array
     {
-        return config("ffhs_custom_forms.field_rule_anchor_types");
+        return config('ffhs_custom_forms.field_rule_anchor_types');
     }
 
     public static function editorFieldAdder(): array
     {
-        return config("ffhs_custom_forms.editor.field_adders");
+        return config('ffhs_custom_forms.editor.field_adders');
     }
 
     public static function overwriteViewModes(): array
@@ -67,7 +67,7 @@ abstract class CustomFormConfiguration
 //        if ($form->is_template) {
 //            return [];
 //        }
-//        return config("ffhs_custom_forms.custom_form_editor_validations");
+//        return config('ffhs_custom_forms.custom_form_editor_validations');
 //    } ToDo may reimplement?
 
     public function displayCreateMode(): string

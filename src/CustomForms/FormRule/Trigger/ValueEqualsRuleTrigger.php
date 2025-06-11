@@ -2,7 +2,7 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomForms\FormRule\Trigger;
 
-use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\CustomFieldType\CustomOption\CustomOptionType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\CustomOption\CustomOptionType;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\RuleTrigger;
@@ -32,16 +32,26 @@ class ValueEqualsRuleTrigger extends FormRuleTriggerType
     ): Component|\Filament\Infolists\Components\Component {
         if ($component instanceof Component) {
             return $component->live();
-        } else return $component;
+        } else {
+            return $component;
+        }
     }
 
     public function isTrigger(array $arguments, mixed &$target, RuleTrigger $rule): bool
     {
-        if (!key_exists("state", $arguments)) return false;
+        if (!key_exists("state", $arguments)) {
+            return false;
+        }
 
-        if (empty($rule->data)) return false;
-        if (empty($rule->data["target"])) return false;
-        if (empty($rule->data["type"])) return false;
+        if (empty($rule->data)) {
+            return false;
+        }
+        if (empty($rule->data["target"])) {
+            return false;
+        }
+        if (empty($rule->data["type"])) {
+            return false;
+        }
 
         $targetFieldIdentifyer = $rule->data["target"];
         $state = $arguments["state"];
@@ -61,16 +71,26 @@ class ValueEqualsRuleTrigger extends FormRuleTriggerType
     protected function checkNumber(mixed $targetValue, array $data): bool
     {
         $value = floatval($targetValue);
-        if ($data["exactly_number"]) return $data[" number"] == $value;
+        if ($data["exactly_number"]) {
+            return $data[" number"] == $value;
+        }
 
         if (!empty($data["greater_than"])) {
-            if ($data["greater_equals"] && !($value >= $data["greater_than"])) return false;
-            if (!$data["greater_equals"] && !($value > $data["greater_than"])) return false;
+            if ($data["greater_equals"] && !($value >= $data["greater_than"])) {
+                return false;
+            }
+            if (!$data["greater_equals"] && !($value > $data["greater_than"])) {
+                return false;
+            }
         }
 
         if (!empty($data["smaller_than"])) {
-            if ($data["smaller_equals"] && !($value <= $data["smaller_than"])) return false;
-            if (!$data["smaller_equals"] && !($value < $data["smaller_than"])) return false;
+            if ($data["smaller_equals"] && !($value <= $data["smaller_than"])) {
+                return false;
+            }
+            if (!$data["smaller_equals"] && !($value < $data["smaller_than"])) {
+                return false;
+            }
         }
 
         return true;
@@ -78,11 +98,17 @@ class ValueEqualsRuleTrigger extends FormRuleTriggerType
 
     protected function checkText(mixed $targetValue, array $data): bool
     {
-        if (!is_string($targetValue)) return false;
-        if (empty($data["values"])) return false;
+        if (!is_string($targetValue)) {
+            return false;
+        }
+        if (empty($data["values"])) {
+            return false;
+        }
 
         foreach ($data["values"] as $value) {
-            if (fnmatch($value, $targetValue)) return true;
+            if (fnmatch($value, $targetValue)) {
+                return true;
+            }
         }
 
         return false;
@@ -90,18 +116,28 @@ class ValueEqualsRuleTrigger extends FormRuleTriggerType
 
     protected function checkBoolean(mixed $targetValue, array $data): bool
     {
-        if (is_null($targetValue)) return false;
+        if (is_null($targetValue)) {
+            return false;
+        }
         if (!empty($data["boolean"])) {
             $boolean = $data["boolean"];
-        } else $boolean = false;
+        } else {
+            $boolean = false;
+        }
         return $targetValue == $boolean;
     }
 
     private function checkNull(mixed $targetValue): bool
     {
-        if (is_null($targetValue)) return true;
-        if (is_bool($targetValue)) return false;
-        if ($targetValue == "0") return false;
+        if (is_null($targetValue)) {
+            return true;
+        }
+        if (is_bool($targetValue)) {
+            return false;
+        }
+        if ($targetValue == "0") {
+            return false;
+        }
         return empty($targetValue);
     }
 
@@ -149,7 +185,9 @@ class ValueEqualsRuleTrigger extends FormRuleTriggerType
                     "option" => "Optionen",
                 ])
                 ->disableOptionWhen(function ($value, $get) { //make Better
-                    if ($value != "option") return false;
+                    if ($value != "option") {
+                        return false;
+                    }
                     $target = $get("target");
                     $formState = $get("../../../../../custom_fields") ?? [];
                     $customField = [];
@@ -158,15 +196,21 @@ class ValueEqualsRuleTrigger extends FormRuleTriggerType
                         $customField->fill($field);
                         if ($customField->identifier() != $target) {
                             $customField = null;
-                        } else break;
+                        } else {
+                            break;
+                        }
                     }
 
 
-                    if (empty($customField)) return true;
+                    if (empty($customField)) {
+                        return true;
+                    }
                     return !($customField->getType() instanceof CustomOptionType);
                 })
                 ->afterStateUpdated(function ($get, $set, $old) {
-                    if ($old == "option") $set("selected_options", []);
+                    if ($old == "option") {
+                        $set("selected_options", []);
+                    }
 
                     switch ($get("type")) {
                         case"text":
@@ -426,8 +470,12 @@ class ValueEqualsRuleTrigger extends FormRuleTriggerType
             //GeneralFields
             $genField = (new CustomField())->fill($finalField)->generalField;
 
-            if (!array_key_exists("options", $finalField)) return [];
-            if (!array_key_exists("customOptions", $finalField["options"])) return [];
+            if (!array_key_exists("options", $finalField)) {
+                return [];
+            }
+            if (!array_key_exists("customOptions", $finalField["options"])) {
+                return [];
+            }
             $options = collect($finalField["options"]["customOptions"]);
 
             return $genField->customOptions

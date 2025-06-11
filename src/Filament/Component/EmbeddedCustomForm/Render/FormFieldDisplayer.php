@@ -22,6 +22,6 @@ class FormFieldDisplayer implements FieldDisplayer
     {
         return $customField
             ->getType()
-            ->getFormComponent($customField, $customField->customForm, $viewMode, $parameter);
+            ->getFormComponent($customField, $viewMode, $parameter);
     }
 }

@@ -44,7 +44,7 @@ trait CanLoadFormAnswer
                 continue;
             }
 
-            $fieldData = $customField->getType()?->prepareLoadFieldData($fieldAnswer, $fieldAnswer->answer);
+            $fieldData = $customField->getType()?->prepareLoadAnswerData($fieldAnswer, $fieldAnswer->answer);
             $fieldData = $this->modifyFieldDataFormRules($answerer, $fieldData, $formRules); //10ms
             $dataIdentifier = $this->getDataIdentifier($fieldAnswer, $customField);
 

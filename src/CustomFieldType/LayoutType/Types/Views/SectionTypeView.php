@@ -1,0 +1,57 @@
+<?php
+
+namespace Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\LayoutType\Types\Views;
+
+use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\FieldMapper;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldType;
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\FieldTypeView;
+use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasDefaultViewComponent;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
+use Filament\Forms\Components\Section;
+use Filament\Infolists\Components\Fieldset;
+use Filament\Infolists\Components\Group;
+
+class SectionTypeView implements FieldTypeView
+{
+    use HasDefaultViewComponent;
+
+    public static function getFormComponent(
+        CustomFieldType $type,
+        CustomField $record,
+        array $parameter = []
+    ): \Filament\Forms\Components\Component {
+        $section = Section::make(FieldMapper::getLabelName($record));
+        /**@var $section Section */
+        $section = static::modifyFormComponent($section, $record);
+        return $section
+            ->aside(FieldMapper::getOptionParameter($record, "aside"))
+            ->schema($parameter["child_render"]());
+    }
+
+    public static function getInfolistComponent(
+        CustomFieldType $type,
+        CustomFieldAnswer $record,
+        array $parameter = []
+    ): \Filament\Infolists\Components\Component {
+        $schema = $parameter["child_render"]();
+
+        if (!FieldMapper::getOptionParameter($record, "show_in_view")) {
+            return Group::make($schema)->columnStart(1)->columnSpanFull();
+        }
+
+
+        if (FieldMapper::getOptionParameter($record, "show_as_fieldset")) {
+            return Fieldset::make(FieldMapper::getLabelName($record))
+                ->schema($schema)
+                ->columnStart(1)
+                ->columnSpanFull();
+        }
+
+        return \Filament\Infolists\Components\Section::make(FieldMapper::getLabelName($record))
+            ->schema($schema)
+            ->columnStart(1)
+            ->columnSpanFull();
+    }
+
+}

@@ -3,7 +3,7 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\Traits;
 
 use Closure;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\CustomFieldType\LayoutType\CustomLayoutType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\LayoutType\CustomLayoutType;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
 
@@ -36,7 +36,6 @@ trait HasLayoutSplit
     {
         return $this->evaluate($this->layoutTypeSplit);
     }
-
 
     public function loadLayoutTypeSplitAnswerData(CustomFormAnswer $answer): array
     {

@@ -1,0 +1,75 @@
+<?php
+
+namespace Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\TemplatesType;
+
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\FieldTypeView;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldType;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\Render\CustomFormRender;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
+use Ffhs\FilamentPackageFfhsCustomForms\TemporaryRenderClass;
+use Filament\Forms\Components\Component;
+use Filament\Forms\Components\Group;
+
+class TemplateTypeView implements FieldTypeView
+{
+
+    public static function getFormComponent(
+        TemplateFieldType|CustomFieldType $type,
+        CustomField $record,
+        array $parameter = []
+    ): Component {
+
+        $schema = static::renderTemplate($record, $parameter);
+
+        return Group::make($schema)
+            ->columns(config("ffhs_custom_forms.default_column_count"))
+            ->columnSpanFull();
+    }
+
+    public static function getInfolistComponent(
+        TemplateFieldType|CustomFieldType $type,
+        CustomFieldAnswer $record,
+        array $parameter = []
+    ): \Filament\Infolists\Components\Component {
+
+        $schema = static::renderTemplate($record, $parameter);
+
+        return \Filament\Infolists\Components\Group::make($schema)
+            ->columnSpanFull();
+    }
+
+    public static function make(): static
+    {
+        return app(static::class);
+    }
+
+    protected static function renderTemplate(CustomField|CustomFieldAnswer $customField, array $parameter)
+    {
+        if ($customField instanceof CustomFieldAnswer) {
+            $customField = $customField->customField;
+        }
+
+        //Setup Render Data
+        $fields = $customField->template->customFields;
+        $viewMode = $parameter['viewMode'];
+        $form = $customField->customForm;
+        $displayer = $parameter['displayer'];
+
+        //Render Schema Input
+        $renderedOutput = TemporaryRenderClass::make()->renderCustomFormRaw(
+            $viewMode,
+            $displayer,
+            $form,
+            $fields,
+            0
+        );
+
+        //Register Components for rule stuff
+        $allComponents = $renderedOutput[1];
+        $parameter["registerComponents"]($allComponents);
+
+        //return Schema
+        return $renderedOutput[0];
+    }
+}
