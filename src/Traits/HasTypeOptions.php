@@ -2,8 +2,8 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Traits;
 
-use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\TypeOption\TypeOption;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\TypeOption\TypeOptionGroup;
+use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\TypeOption;
+use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\TypeOptionGroup;
 
 trait HasTypeOptions
 {

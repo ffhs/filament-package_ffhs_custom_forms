@@ -249,5 +249,7 @@ return [
         ],
     ],
 
-
+    //Groups
+    'layout-group' => ['label' => 'Layout',],
+    'validation-group' => ['label' => 'Validation',],
 ];

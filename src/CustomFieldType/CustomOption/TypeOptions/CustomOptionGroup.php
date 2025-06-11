@@ -2,8 +2,8 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\CustomOption\TypeOptions;
 
-use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\TypeOption\TypeOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomOption;
+use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\TypeOptionGroup;
 
 class CustomOptionGroup extends TypeOptionGroup
 {
