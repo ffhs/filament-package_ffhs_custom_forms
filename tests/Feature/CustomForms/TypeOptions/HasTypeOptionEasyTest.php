@@ -5,11 +5,13 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Tests\Feature\CustomForms\TypeOpti
 use App\Models\User;
 use Closure;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldType;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\EmbeddedCustomForm\Render\ChildFieldRender;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\EmbeddedCustomForm\Render\FormFieldDisplayer;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormAnswerResource\Pages\EditCustomFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
+use Filament\Forms\Components\Placeholder;
 use Illuminate\Support\Facades\Artisan;
 use Mockery;
 use Workbench\App\FFHs\TestCustomFormConfiguration;
@@ -95,6 +97,24 @@ trait HasTypeOptionEasyTest
         Closure $checkNoOptionFunction,
         Closure $checkOptionFunction
     ): void {
+        $displayerMock = Mockery::mock(FormFieldDisplayer::class);
+        $displayerMock->shouldReceive('__invoke')
+            ->zeroOrMoreTimes()
+            ->andReturn(Placeholder::make('test'));
+
+        $childRenderMock = Mockery::mock(ChildFieldRender::class);
+        $childRenderMock->shouldReceive('__invoke')
+            ->zeroOrMoreTimes()
+            ->andReturn([]);
+
+        $parameters = [
+            'viewMode' => 'default',
+            'registerComponents' => fn(array $components) => null,
+            'displayer' => $displayerMock,
+            'child_render' => $childRenderMock,
+            'child_fields' => collect()
+        ];
+
         $type = CustomFieldType::getTypeFromIdentifier($customFieldIdentifier);
         $this->customField = CustomField::create([
             'name' => ['en' => 'test_field'],
@@ -107,11 +127,7 @@ trait HasTypeOptionEasyTest
         ]);
         $this->customForm->refresh();
 
-        $component = $type->getFormComponent(
-            $this->customField,
-            'default',
-            ['renderer' => fn() => []]
-        );
+        $component = $type->getFormComponent($this->customField, parameter: $parameters);
         $checkNoOptionFunction($component);
 
         $this->customField->update(['options' => array_merge($extraOptions, $updateOptions)]);
@@ -120,15 +136,7 @@ trait HasTypeOptionEasyTest
         $this->customForm->refresh();
         $this->formAnswer->refresh();
 
-        $component = $type->getFormComponent(
-            $this->customField,
-            'default',
-            [
-                'viewMode' => 'default',
-                'registerComponents' => fn(array $components) => null,
-                'displayer' => Mockery::mock(FormFieldDisplayer::class),
-            ]
-        );
+        $component = $type->getFormComponent($this->customField, parameter: $parameters);
         $checkOptionFunction($component);
     }
 }

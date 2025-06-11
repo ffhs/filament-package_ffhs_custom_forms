@@ -22,8 +22,8 @@ class FieldsetTypeView implements FieldTypeView
         /**@var $fieldSet Fieldset */
         $fieldSet = $this->modifyFormComponent(Fieldset::make($this->getLabelName($record)), $record);
         return $fieldSet
-            ->columnSpan($this->getOptionParameter($record, "column_span"))
-            ->columnStart($this->getOptionParameter($record, "new_line"))
+            ->columnSpan($this->getOptionParameter($record, 'column_span'))
+            ->columnStart($this->getOptionParameter($record, 'new_line'))
             ->schema($parameter['child_render']());
     }
 
@@ -32,9 +32,9 @@ class FieldsetTypeView implements FieldTypeView
         CustomFieldAnswer $record,
         array $parameter = []
     ): \Filament\Infolists\Components\Component {
-        $schema = $parameter["child_render"]();
+        $schema = $parameter['child_render']();
 
-        if (!$this->getOptionParameter($record, "show_in_view")) {
+        if (!$this->getOptionParameter($record, 'show_in_view')) {
             return $this->modifyInfolistComponent(Group::make($schema), $record)
                 ->columnStart(1)
                 ->columnSpanFull();
