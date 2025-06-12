@@ -27,14 +27,9 @@ trait CanLoadFormAnswer
         int|null $begin = null,
         int|null $end = null
     ): array {
-        $loadFieldsWith = [
-            'generalField',
-            'generalField.customOptions',
-            'customOptions'
-        ];
         $loadedData = [];
         $customForm = $answerer->customForm;
-        $customFields = $customForm->customFields($loadFieldsWith)->keyBy('id');
+        $customFields = $customForm->customFields()->keyBy('id');
         $templateTypeFields = $customFields->whereNotNull('template_id')->keyBy('template_id');
         $formRules = $customForm->rules;
 

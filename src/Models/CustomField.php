@@ -85,7 +85,7 @@ class CustomField extends ACustomField implements NestingObject
 
 
     protected array $cachedRelations = [
-        'customOptions',
+        //'customOptions',
         'customForm',
         'generalField',
         'template',

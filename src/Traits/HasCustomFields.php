@@ -17,7 +17,7 @@ trait HasCustomFields
         return $this->hasMany(CustomField::class);
     }
 
-    public function customFields(array $with = []): Collection
+    public function customFields(): Collection
     {
         if ($this->relationLoaded('customFields')) {
             return $this->getRelation('customFields');
@@ -40,9 +40,12 @@ trait HasCustomFields
             ->keyBy('id');
 
         $customFields = $customFieldQuery
-            ->with($with)
+            ->with([
+                'generalField',
+                'generalField.customOptions',
+                'customOptions'
+            ])
             ->get();
-
 
         $groupedCustomFields = $customFields->groupBy('custom_form_id');
         $this->setRelation('ownedFields', $groupedCustomFields->get($this->id));
