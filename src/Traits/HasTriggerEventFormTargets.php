@@ -17,13 +17,13 @@ trait HasTriggerEventFormTargets
     {
         return Select::make('targets')
             ->multiple()
-            ->label("Target")
+            ->label('Target')
             ->options($this->getTargetOptions(...))
             ->lazy()
             ->hidden(function ($set, $get) {
                 //Fields with an array doesn't generate properly
                 if ($get('targets') == null) {
-                    $set("targets", []);
+                    $set('targets', []);
                 }
             })
             ->live();
@@ -32,7 +32,7 @@ trait HasTriggerEventFormTargets
     public function getTargetSelect(): Select
     {
         return Select::make('target')
-            ->label("Target")
+            ->label('Target')
             ->options($this->getTargetOptions(...))
             ->live();
     }
@@ -47,15 +47,19 @@ trait HasTriggerEventFormTargets
 
     public function getAllFieldsData(Get $get): array
     {
-        if (!is_null($this->cachedAllFieldsData)) return $this->cachedAllFieldsData;
-        $fields = $get("../../../../../custom_fields") ?? [];
+        if (!is_null($this->cachedAllFieldsData)) {
+            return $this->cachedAllFieldsData;
+        }
+        $fields = $get('../../../../../custom_fields') ?? [];
         return $this->cachedAllFieldsData = $this->getFieldDataFromFormData($fields);
     }
 
     public function getTargetFieldData(Get $get): array|null
     {
-        $identifier = $get("target");
-        if (is_null($identifier)) return null;
+        $identifier = $get('target');
+        if (is_null($identifier)) {
+            return null;
+        }
 
         $fields = $this->getAllFieldsData($get);
 

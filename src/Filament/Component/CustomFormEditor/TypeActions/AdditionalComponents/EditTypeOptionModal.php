@@ -47,7 +47,7 @@ class EditTypeOptionModal extends Component
 
             return [
                 Group::make($components)
-                    ->statePath("options")
+                    ->statePath('options')
                     ->columns()
             ];
         });

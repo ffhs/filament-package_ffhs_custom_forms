@@ -63,7 +63,7 @@ class RuleTrigger extends Model implements CachedModel
 
     public function getType(): TriggerType
     {
-        return collect(config("ffhs_custom_forms.rule.trigger"))->firstWhere(
+        return collect(config('ffhs_custom_forms.rule.trigger'))->firstWhere(
             fn($type) => $type::identifier() == $this->type
         )::make();
     }

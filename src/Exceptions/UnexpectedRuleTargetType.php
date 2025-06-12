@@ -12,9 +12,9 @@ class UnexpectedRuleTargetType extends \Exception
         ?Throwable $previous = null
     ) {
         parent::__construct(
-            "Only allowed [" . implode(',', $allowedTypes) . "] as target but get "
+            'Only allowed [' . implode(',', $allowedTypes) . '] as target but get '
             . $actualType
-            . " in " . $class
+            . ' in ' . $class
             , $code, $previous);
     }
 

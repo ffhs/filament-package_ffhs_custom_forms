@@ -8,6 +8,6 @@ abstract class CustomLayoutType extends CustomFieldType
 {
     public function fieldEditorExtraComponent(array $rawData): ?string
     {
-        return "filament-package_ffhs_custom_forms::filament.components.drag-drop.container";
+        return 'filament-package_ffhs_custom_forms::filament.components.drag-drop.container';
     }
 }

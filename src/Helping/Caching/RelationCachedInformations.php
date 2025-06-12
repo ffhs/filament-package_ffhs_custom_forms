@@ -42,15 +42,15 @@ class RelationCachedInformations
 
         $ids = $this->getIds();
 
-        $cached = $emptyModel::getModelCache()->whereIn("id", $ids);
+        $cached = $emptyModel::getModelCache()->whereIn('id', $ids);
         if(empty($ids)) return $this->isCollection() ? Collection::make(): null;
 
         $cached = Collection::make($cached);
         if($cached->count() == sizeof($ids)) return $this->isCollection() ? $cached: $cached->first();
 
         //Get the missing models
-        $missingIds = collect($ids)->whereNotIn("id", $cached->pluck("id"));
-        $result = $emptyModel::query()->whereIn("id", $missingIds)->get();
+        $missingIds = collect($ids)->whereNotIn('id', $cached->pluck('id'));
+        $result = $emptyModel::query()->whereIn('id', $missingIds)->get();
 
         $emptyModel::addToModelCache($result);
 

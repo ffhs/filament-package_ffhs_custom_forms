@@ -24,8 +24,8 @@ class SectionTypeView implements FieldTypeView
         $section = $this->modifyFormComponent($section, $record);
         /**@var $section Section */
         return $section
-            ->aside($this->getOptionParameter($record, "aside"))
-            ->schema($parameter["child_render"]());
+            ->aside($this->getOptionParameter($record, 'aside'))
+            ->schema($parameter['child_render']());
     }
 
     public function getInfolistComponent(
@@ -33,13 +33,13 @@ class SectionTypeView implements FieldTypeView
         CustomFieldAnswer $record,
         array $parameter = []
     ): \Filament\Infolists\Components\Component {
-        $schema = $parameter["child_render"]();
+        $schema = $parameter['child_render']();
 
-        if (!$this->getOptionParameter($record, "show_in_view")) {
+        if (!$this->getOptionParameter($record, 'show_in_view')) {
             return Group::make($schema)->columnStart(1)->columnSpanFull();
         }
 
-        if ($this->getOptionParameter($record, "show_as_fieldset")) {
+        if ($this->getOptionParameter($record, 'show_as_fieldset')) {
             return Fieldset::make($this->getLabelName($record))
                 ->schema($schema)
                 ->columnStart(1)

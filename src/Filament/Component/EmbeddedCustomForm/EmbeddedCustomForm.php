@@ -111,7 +111,7 @@ class EmbeddedCustomForm extends Field implements CanEntangleWithSingularRelatio
     protected function setUp(): void
     {
         $this->autoViewMode();
-        $this->label("");
+        $this->label('');
         $this->columns(1);
 
         //AutoSave

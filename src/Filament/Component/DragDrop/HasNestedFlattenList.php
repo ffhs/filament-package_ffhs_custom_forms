@@ -11,7 +11,7 @@ trait HasNestedFlattenList //ToDo if not flatten order and stuff
 
     protected string|Closure|null $nestedFlattenListType = null;
     protected bool|Closure $flatten = false;
-    protected string|Closure $flattenView = "filament-package_ffhs_custom_forms::filament.components.drag-drop.container";
+    protected string|Closure $flattenView = 'filament-package_ffhs_custom_forms::filament.components.drag-drop.container';
 
     protected int|Closure $gridSize = 1;
     protected bool|Closure $isFlattenViewHidden = false;

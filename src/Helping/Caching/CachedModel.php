@@ -22,7 +22,7 @@ interface CachedModel
 
     public static function allCached(): Collection;
 
-    public static function cached(mixed $value, string $attribute = "id", array $with = []);
+    public static function cached(mixed $value, string $attribute = 'id', array $with = []);
 
     public function caching(bool|Closure $disable = true):static;
 

@@ -21,8 +21,8 @@ class KeyValueTypeView implements FieldTypeView
         array $parameter = []
     ): Component {
         return $this->makeComponent(KeyValue::class, $record)
-            ->editableKeys($this->getOptionParameter($record, "editableKeys"))
-            ->editableValues($this->getOptionParameter($record, "editableValues"));
+            ->editableKeys($this->getOptionParameter($record, 'editableKeys'))
+            ->editableValues($this->getOptionParameter($record, 'editableValues'));
     }
 
     public function getInfolistComponent(
@@ -31,7 +31,7 @@ class KeyValueTypeView implements FieldTypeView
         array $parameter = []
     ): \Filament\Infolists\Components\Component {
         $answerer = $this->getAnswer($record);
-        $answerer = empty($answerer) ? "" : $answerer;
+        $answerer = empty($answerer) ? '' : $answerer;
 
         return $this->makeComponent(KeyValueEntry::class, $record)
             ->state($answerer);

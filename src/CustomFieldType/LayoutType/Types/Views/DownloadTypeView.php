@@ -25,7 +25,7 @@ class DownloadTypeView implements FieldTypeView
         CustomField $record,
         array $parameter = []
     ): \Filament\Forms\Components\Component {
-        $filePaths = $this->getOptionParameter($record, "files");
+        $filePaths = $this->getOptionParameter($record, 'files');
 
         if (sizeof($filePaths) === 1) {
             $actions = $this->getSingleFilDownloadComponentAction($record, Actions::class);
@@ -33,12 +33,12 @@ class DownloadTypeView implements FieldTypeView
             $actions = $this->getMultipleFileDownloadComponentAction($record, Actions::class);
         }
 
-        $titelAsFileName = $this->getOptionParameter($record, "title_as_filename");
-        $showTitle = $this->getOptionParameter($record, "show_label");
+        $titelAsFileName = $this->getOptionParameter($record, 'title_as_filename');
+        $showTitle = $this->getOptionParameter($record, 'show_label');
 
         if (!$titelAsFileName && $showTitle) {
             $actions = [
-                Placeholder::make($this->getIdentifyKey($record) . "-title")
+                Placeholder::make($this->getIdentifyKey($record) . '-title')
                     ->label(
                         new HtmlString(
                             '</span> <span class="text-sm font-medium leading-6 text-gray-950 dark:text-white" style="margin-bottom: -25px; margin-left: -12px;">' . $this->getLabelName(
@@ -53,9 +53,9 @@ class DownloadTypeView implements FieldTypeView
         }
 
         //Toll Tip
-        $helpText = $this->getOptionParameter($record, "helper_text");
-        $actions[] = Placeholder::make("helper_text" . "-help_text")
-            ->label("")
+        $helpText = $this->getOptionParameter($record, 'helper_text');
+        $actions[] = Placeholder::make('helper_text' . '-help_text')
+            ->label('')
             ->helperText(
                 new HtmlString(
                     '</div> <div class="fi-fo-field-wrp-helper-text text-sm text-gray-500" style="margin-top: -30px; ">' . empty($helpText) ? "" : $helpText . '</div><div>'
@@ -66,7 +66,7 @@ class DownloadTypeView implements FieldTypeView
 
 
         $group->columnSpan($this->getOptionParameter($record, 'column_span'));
-        $group->columnStart($this->getOptionParameter($record, "new_line"));
+        $group->columnStart($this->getOptionParameter($record, 'new_line'));
 
         return $group;
     }
@@ -76,11 +76,11 @@ class DownloadTypeView implements FieldTypeView
         CustomFieldAnswer $record,
         array $parameter = []
     ): Component {
-        if (!$this->getOptionParameter($record, "show_in_view")) {
-            return \Filament\Infolists\Components\Group::make($parameter["rendered"])->columnStart(1)->columnSpanFull()->hidden();
+        if (!$this->getOptionParameter($record, 'show_in_view')) {
+            return \Filament\Infolists\Components\Group::make($parameter['rendered'])->columnStart(1)->columnSpanFull()->hidden();
         }
 
-        $filePaths = $this->getOptionParameter($record, "files");
+        $filePaths = $this->getOptionParameter($record, 'files');
 
         if (sizeof($filePaths) <= 1) {
             $actions = $this->getSingleFilDownloadComponentAction(
@@ -94,12 +94,12 @@ class DownloadTypeView implements FieldTypeView
             );
         }
 
-        $titelAsFileName = $this->getOptionParameter($record, "title_as_filename");
-        $showTitle = $this->getOptionParameter($record, "show_label");
+        $titelAsFileName = $this->getOptionParameter($record, 'title_as_filename');
+        $showTitle = $this->getOptionParameter($record, 'show_label');
 
         if (!$titelAsFileName && $showTitle) {
             $actions = [
-                TextEntry::make($this->getIdentifyKey($record) . "-title")
+                TextEntry::make($this->getIdentifyKey($record) . '-title')
                     ->label(
                         new HtmlString(
                             '</span> <span class="text-sm font-medium leading-6 text-gray-950 dark:text-white" style="margin-bottom: -25px; margin-left: -12px;">' . $this->getLabelName(
@@ -117,14 +117,14 @@ class DownloadTypeView implements FieldTypeView
         $group = \Filament\Infolists\Components\Group::make($actions);
 
         $group->columnSpan($this->getOptionParameter($record, 'column_span'));
-        $group->columnStart($this->getOptionParameter($record, "new_line"));
+        $group->columnStart($this->getOptionParameter($record, 'new_line'));
 
         return $group;
     }
 
     private function getSingleFilDownloadComponentAction(CustomField $record, string $actionClass): mixed
     {
-        $paths = $this->getOptionParameter($record, "files");
+        $paths = $this->getOptionParameter($record, 'files');
         $path = array_values($paths)[0];
         $fileName = $this->getOptionParameter($record, "file_names")[$path];
         $pathAbsolute = $this->getPathOfFileAbsolute($record, $path);

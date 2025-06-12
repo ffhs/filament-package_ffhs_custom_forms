@@ -42,7 +42,7 @@ class GeneralFieldForm extends Model implements CachedModel
 
     use HasFormIdentifier;
 
-    protected $table = "general_field_form";
+    protected $table = 'general_field_form';
     protected $fillable = [
         'general_field_id',
         'custom_form_identifier',
@@ -51,7 +51,7 @@ class GeneralFieldForm extends Model implements CachedModel
     ];
 
     protected array $cachedRelations = [
-        "generalField",
+        'generalField',
     ];
 
     public static function __(...$args): string
@@ -61,9 +61,9 @@ class GeneralFieldForm extends Model implements CachedModel
 
     public static function getFromFormIdentifier($formIdentifier): Collection
     {
-        return Cache::remember("general_filed_form-from-identifier_" . $formIdentifier, 5,
+        return Cache::remember('general_filed_form-from-identifier_' . $formIdentifier, 5,
             fn() => GeneralFieldForm::query()
-                ->where("custom_form_identifier", $formIdentifier)
+                ->where('custom_form_identifier', $formIdentifier)
                 ->get()
 
         );
@@ -71,10 +71,10 @@ class GeneralFieldForm extends Model implements CachedModel
 
     public static function getGeneralFieldQuery(string $identifier): Builder
     {
-        return GeneralField::query()->whereIn("id",
+        return GeneralField::query()->whereIn('id',
             GeneralFieldForm::query()
-                ->select("general_field_id")
-                ->where("custom_form_identifier", $identifier)
+                ->select('general_field_id')
+                ->where('custom_form_identifier', $identifier)
         );
     }
 

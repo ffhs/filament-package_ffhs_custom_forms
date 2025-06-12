@@ -6,12 +6,12 @@ class DisabledEvent extends IsPropertyOverwriteEvent
 {
     public static function identifier(): string
     {
-        return "disabled_event";
+        return 'disabled_event';
     }
 
     protected function property(): string
     {
-        return "isDisabled";
+        return 'isDisabled';
     }
 
     protected function dominatingSide(): bool

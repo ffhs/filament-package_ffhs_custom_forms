@@ -21,7 +21,7 @@ class ShowAsFieldsetOption extends TypeOption
             ->columnSpanFull()
             ->label(TypeOption::__('show_as_fieldset.label'))
             ->helperText(TypeOption::__('show_as_fieldset.helper_text'))
-            ->disabled(fn($get) => !$get("show_label"));
+            ->disabled(fn($get) => !$get('show_label'));
     }
 
     public function modifyFormComponent(Component $component, mixed $value): Component

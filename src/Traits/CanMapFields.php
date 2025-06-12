@@ -87,7 +87,7 @@ trait CanMapFields
 
     public function getAvailableCustomOptions(CustomField $record): Collection
     {
-        return $record->customOptions->pluck("name", "identifier");
+        return $record->customOptions->pluck('name', 'identifier');
     }
 
     public function getAllCustomOptions(CustomField|CustomFieldAnswer $record): Collection
@@ -100,7 +100,7 @@ trait CanMapFields
         } else {
             $options = $record->customOptions;
         }
-        return $options->pluck("name", "identifier");
+        return $options->pluck('name', 'identifier');
     }
 
     public function getTypeConfigAttribute(CustomField|CustomFieldAnswer $record, string $attribute): mixed

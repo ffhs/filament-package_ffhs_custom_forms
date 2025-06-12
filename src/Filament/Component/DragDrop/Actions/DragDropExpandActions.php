@@ -48,7 +48,7 @@ class DragDropExpandActions extends Component implements CanDisableOptions
             if (is_null($this->name)) {
                 $this->name = $action->getName();
             }
-            $actions[] = $action->name($this->name . "-" . $option);
+            $actions[] = $action->name($this->name . '-' . $option);
         }
 
         return Actions::make($actions);

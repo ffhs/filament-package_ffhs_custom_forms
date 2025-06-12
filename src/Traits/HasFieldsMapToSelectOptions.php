@@ -18,10 +18,10 @@ trait HasFieldsMapToSelectOptions
            $title = '';
            if(is_null($field?->customForm)) $title = $formName;
            if(empty($title)) $title = $field?->customForm?->short_title;
-           if(empty($title)) $title = "?";
+           if(empty($title)) $title = '?';
 
-           if($field->template_id == null) $options[$title][$field->identifier] = $field->name ?? "?";
-           else $options[$title][$field->identifier] = $field->template->short_title ?? "?";
+           if($field->template_id == null) $options[$title][$field->identifier] = $field->name ?? '?';
+           else $options[$title][$field->identifier] = $field->template->short_title ?? '?';
        }
 
 

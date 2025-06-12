@@ -28,7 +28,7 @@ trait CanLoadCustomFormEditorData
         $fieldData = $field->attributesToArray();
         $fieldData['options'] = $field->options;
 
-        unset($fieldData["updated_at"], $fieldData["created_at"]);
+        unset($fieldData['updated_at'], $fieldData['created_at']);
 
         $type = $field->getType();
         $fieldData = $type->getMutateCustomFieldDataOnLoad($field, $fieldData);
@@ -53,8 +53,8 @@ trait CanLoadCustomFormEditorData
             return empty($field->identifier) ? uniqid() : $field->identifier;
         }
 
-        if (array_key_exists("identifier", $toAdd) && !empty($toAdd["identifier"])) {
-            return $toAdd["identifier"];
+        if (array_key_exists('identifier', $toAdd) && !empty($toAdd['identifier'])) {
+            return $toAdd['identifier'];
         }
 
         return uniqid();

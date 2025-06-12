@@ -13,7 +13,7 @@ use Filament\Forms\Components\Component;
 class LayoutOptionGroup extends TypeOptionGroup
 {
     public function __construct(
-        string $name = "Layout",
+        string $name = 'Layout',
         array $typeOptions = [],
         ?string $icon = 'bi-layout-text-window'
     ) {
@@ -25,12 +25,12 @@ class LayoutOptionGroup extends TypeOptionGroup
             'new_line' => NewLineOption::make()->modifyOptionComponent(
                 fn(Component $component) => $component->columnStart(1)
             ),
-            "helper_text" => HelperTextTypeOption::make(),
+            'helper_text' => HelperTextTypeOption::make(),
         ]);
     }
 
     public static function make(
-        string $name = "Layout",
+        string $name = 'Layout',
         array $typeOptions = [],
         ?string $icon = 'bi-layout-text-window'
     ): static {

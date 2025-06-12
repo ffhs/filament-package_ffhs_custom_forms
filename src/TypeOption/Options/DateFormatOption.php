@@ -19,7 +19,7 @@ class DateFormatOption extends TypeOption
         return TextInput::make($name)
             ->label(TypeOption::__('format.label'))
             ->helperText(TypeOption::__('format.helper_text'))
-            ->placeholder("Y-m-d");
+            ->placeholder('Y-m-d');
     }
 
     public function modifyFormComponent(Component $component, mixed $value): Component

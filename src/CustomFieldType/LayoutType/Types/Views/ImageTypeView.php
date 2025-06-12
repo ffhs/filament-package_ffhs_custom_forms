@@ -31,7 +31,7 @@ class ImageTypeView implements FieldTypeView
                     app(Infolist::class)->columns(1)->schema([$this->getImageEntry($record)])->record($record)->render()
                 )
             )
-            ->label("");
+            ->label('');
     }
 
     public function getInfolistComponent(
@@ -39,7 +39,7 @@ class ImageTypeView implements FieldTypeView
         CustomFieldAnswer $record,
         array $parameter = []
     ): Component {
-        if (!$this->getOptionParameter($record, "show_in_view")) {
+        if (!$this->getOptionParameter($record, 'show_in_view')) {
             return Group::make()->hidden();
         }
 
@@ -49,11 +49,11 @@ class ImageTypeView implements FieldTypeView
     private function getImageEntry(CustomField $record): ImageEntry
     {
         return ImageEntry::make('customField.options.image')
-            ->label($this->getOptionParameter($record, "show_label") ? $this->getLabelName($record) : "")
+            ->label($this->getOptionParameter($record, 'show_label') ? $this->getLabelName($record) : '')
             ->checkFileExistence(false)
             ->visibility('private')
             ->state(array_values($this->getOptionParameter($record, 'image'))[0] ?? null)
-            ->disk($this->getTypeConfigAttribute($record, "disk"))
+            ->disk($this->getTypeConfigAttribute($record, 'disk'))
             ->columnSpan(2)
             ->height($this->getOptionParameter($record, 'height'))
             ->width($this->getOptionParameter($record, 'width'));

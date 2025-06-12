@@ -54,10 +54,10 @@ class TitleTypeView implements FieldTypeView
     {
         $titleSize = $this->getOptionParameter($record, 'title_size');
 
-        if ($titleSize === 3) {
-            $textClass = 'class="text-xl"';
-        } elseif ($titleSize < 3) {
+        if ($titleSize < 3) {
             $textClass = 'class="text-' . (4 - $titleSize) . 'xl"';
+        } elseif ($titleSize === 3) {
+            $textClass = 'class="text-xl"';
         } elseif ($titleSize === 4) {
             $textClass = 'class="text-lg"';
         } elseif ($titleSize === 5) {

@@ -159,14 +159,14 @@ class PrioritizeSelect extends Field
 
     public function mutateSelect(Select $select, int $selectId): Select
     {
-        return $this->evaluate($this->mutateSelectUsing, ["selectId" => $selectId, "select" => $select]);
+        return $this->evaluate($this->mutateSelectUsing, ['selectId' => $selectId, 'select' => $select]);
     }
 
     protected function setUp(): void
     {
         parent::setUp();
         $this->mutateSelectUsing(fn(Select $select) => $select);
-        $this->prioritizedLabels(fn($selectId) => $selectId + 1 . ". selection");
+        $this->prioritizedLabels(fn($selectId) => $selectId + 1 . '. selection');
     }
 
     public function mutateSelectUsing(Closure $mutateSelectUsing): static

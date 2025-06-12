@@ -40,7 +40,7 @@ class DragDropComponent extends Field
 
         foreach ($this->getState() ?? [] as $key => $element) {
             $containers[$key] = $this->generateItemContainer($key);
-            $containers[$key . "-actions"] = $this->generateItemActions($key);
+            $containers[$key . '-actions'] = $this->generateItemActions($key);
         }
 
         return $containers;

@@ -13,7 +13,7 @@ class AlwaysRuleTrigger extends FormRuleTriggerType
 
     public static function identifier(): string
     {
-        return "always";
+        return 'always';
     }
 
     public function isTrigger(array $arguments, mixed &$target, RuleTrigger $rule): bool

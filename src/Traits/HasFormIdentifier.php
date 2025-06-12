@@ -9,7 +9,7 @@ trait HasFormIdentifier
 {
     public function dynamicFormConfiguration(): CustomFormConfiguration
     {
-        $clazz = collect(config("ffhs_custom_forms.forms"))
+        $clazz = collect(config('ffhs_custom_forms.forms'))
             ->where(fn(string $class) => $class::identifier() == $this->custom_form_identifier)
             ->first();
         return new $clazz();

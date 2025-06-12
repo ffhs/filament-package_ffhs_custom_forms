@@ -19,7 +19,7 @@ class EmbeddedAnswerInfolist extends Component
     protected string $view = 'filament-infolists::components.group';
     protected CustomFormAnswer|Closure $answer;
 
-    public static function make(string|Closure $viewMode = "default"): static
+    public static function make(string|Closure $viewMode = 'default'): static
     {
         $static = app(static::class, ['viewMode' => $viewMode]);
         $static->configure();
@@ -54,7 +54,7 @@ class EmbeddedAnswerInfolist extends Component
         parent::setUp();
         $this->columns(1);
         $this->schema(fn() => once(fn() => $this->getCustomFormSchema()));
-        $this->label("");
+        $this->label('');
         $this->autoViewMode();
     }
 

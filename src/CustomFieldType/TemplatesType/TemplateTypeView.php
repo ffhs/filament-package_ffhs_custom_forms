@@ -26,7 +26,7 @@ class TemplateTypeView implements FieldTypeView
         $schema = $this->renderTemplate($record, $parameter);
 
         return Group::make($schema)
-            ->columns(config("ffhs_custom_forms.default_column_count"))
+            ->columns(config('ffhs_custom_forms.default_column_count'))
             ->columnSpanFull();
     }
 
@@ -65,7 +65,7 @@ class TemplateTypeView implements FieldTypeView
 
         //Register Components for rule stuff
         $allComponents = $renderedOutput[1];
-        $parameter["registerComponents"]($allComponents);
+        $parameter['registerComponents']($allComponents);
 
         //return Schema
         return $renderedOutput[0];

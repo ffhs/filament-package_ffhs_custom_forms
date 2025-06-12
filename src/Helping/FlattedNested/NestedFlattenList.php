@@ -14,13 +14,19 @@ class NestedFlattenList
 
     public function __construct(array|Collection $items = [], ?string $type = null)
     {
-        if($items instanceof Collection) $this->data = $items;
-        else $this->data = collect($items);
+        if ($items instanceof Collection) {
+            $this->data = $items;
+        } else {
+            $this->data = collect($items);
+        }
 
-        if(!is_null($type)) $this->fixedType = $type;
+        if (!is_null($type)) {
+            $this->fixedType = $type;
+        }
     }
 
-    public static function make(array|Collection $items = [], ?string $type = null):static{
+    public static function make(array|Collection $items = [], ?string $type = null): static
+    {
         return new static($items, $type);
     }
 
@@ -29,73 +35,39 @@ class NestedFlattenList
         return $this->loadStructure($this->data, $useKey);
     }
 
-    protected function loadStructure(Collection $objects, bool $useKey): array {
-
-        if($objects->count() === 0) return [];
-
-        $poseAttribute = $this->getPositionAttribute();
-        $endPosAttribute = $this->getEndContainerPositionAttribute();
-
-        $objects = $objects->sortBy($poseAttribute);
-        $start = $objects->first()[$poseAttribute];
-        $end = $objects->last()[$poseAttribute];
-
-        $structure = [];
-
-        for ($i = $start; $i <= $end; $i++) {
-
-            $result =$objects->where($poseAttribute, $i);
-            $field = $result->first();
-            $originalKey = $result->keys()->first();
-
-            if($field == null) continue; //ToDo make a warning that the array is Damaged
-
-            //GetKey
-            $key = null;
-            if($useKey)$key = $originalKey;
-            if(is_null($key)) $key = $field['identifier'];
-
-            if(empty($field[$endPosAttribute])) {
-                $structure[$key] = [];
-                continue;
-            }
-
-            $subFields = $objects
-                ->where($poseAttribute, ">", $field[$poseAttribute])
-                ->where($poseAttribute, "<=", $field[$endPosAttribute]);
-
-            $i = $field[$endPosAttribute] ;
-
-            $structure[$key] = static::loadStructure($subFields, $useKey);
-        }
-
-        return  $structure;
-    }
-
     public function getPositionAttribute(): string
     {
-        if(!$this->getType()) return "";
+        if (!$this->getType()) {
+            return '';
+        }
         return $this->getType()::getPositionAttribute();
 
     }
 
     public function getType(): string
     {
-        if(!is_null($this->fixedType)) return $this->fixedType;
+        if (!is_null($this->fixedType)) {
+            return $this->fixedType;
+        }
 
         $first = $this->data->first();
 
-        if(is_null($first)) return NestedListElement::class;
+        if (is_null($first)) {
+            return NestedListElement::class;
+        }
 
-        if(!($first instanceof NestingObject))
-            throw new Exception("the objects must been instance of NestingObject");
+        if (!($first instanceof NestingObject)) {
+            throw new Exception('the objects must been instance of NestingObject');
+        }
 
         return $first::class;
     }
 
     public function getEndContainerPositionAttribute(): string
     {
-        if(!$this->getType()) return "";
+        if (!$this->getType()) {
+            return '';
+        }
         return $this->getType()::getEndContainerPositionAttribute();
     }
 
@@ -106,15 +78,21 @@ class NestedFlattenList
 
         $data[$poseAttribute] = $pos;
 
-        foreach ($this->data as $elementKey => $element){
-            if($element[$poseAttribute] >= $pos) $element[$poseAttribute]+=1;
-            if(!empty($element[$endPosAttribute]) && $element[$endPosAttribute] >= $pos)
-                $element[$endPosAttribute]+=1;
+        foreach ($this->data as $elementKey => $element) {
+            if ($element[$poseAttribute] >= $pos) {
+                $element[$poseAttribute] += 1;
+            }
+            if (!empty($element[$endPosAttribute]) && $element[$endPosAttribute] >= $pos) {
+                $element[$endPosAttribute] += 1;
+            }
             $this->data->put($elementKey, $element);
         }
 
-        if(is_null($key)) $this->data->add($data);
-        else $this->data->put($key, $data);
+        if (is_null($key)) {
+            $this->data->add($data);
+        } else {
+            $this->data->put($key, $data);
+        }
     }
 
     public function addManyOnPosition(int $startPos, array $elementsToAdd, bool $withKeys = false): void
@@ -125,21 +103,28 @@ class NestedFlattenList
         $amountToAdd = count($elementsToAdd);
 
         //Rearrange
-        foreach ($this->data as $itemKey => $item){
-            if($item[$poseAttribute] >= $startPos) $item[$poseAttribute] += $amountToAdd;
-            if($item[$endPosAttribute] >= $startPos) $item[$endPosAttribute] += $amountToAdd;
+        foreach ($this->data as $itemKey => $item) {
+            if ($item[$poseAttribute] >= $startPos) {
+                $item[$poseAttribute] += $amountToAdd;
+            }
+            if ($item[$endPosAttribute] >= $startPos) {
+                $item[$endPosAttribute] += $amountToAdd;
+            }
             $this->data->put($itemKey, $item);
         }
 
-        foreach ($elementsToAdd as $key => $newElement){
-            $newElement[$poseAttribute] += $startPos -1;
+        foreach ($elementsToAdd as $key => $newElement) {
+            $newElement[$poseAttribute] += $startPos - 1;
             // If it has an end position
-            if(array_key_exists($endPosAttribute, $newElement) && !is_null($newElement[$endPosAttribute])){
-                $newElement[$endPosAttribute] += $startPos -1;
+            if (array_key_exists($endPosAttribute, $newElement) && !is_null($newElement[$endPosAttribute])) {
+                $newElement[$endPosAttribute] += $startPos - 1;
             }
 
-            if($withKeys) $this->data->put($key, $newElement);
-            else  $this->data->add($newElement);
+            if ($withKeys) {
+                $this->data->put($key, $newElement);
+            } else {
+                $this->data->add($newElement);
+            }
         }
 
         //dd( collect($this->data)->sortBy($poseAttribute)->toArray());
@@ -158,29 +143,85 @@ class NestedFlattenList
         $endPos = $toRemove[$endPosAttribute] ?? $pos;
         $keysToDelete = [];
 
-        foreach ($this->data as $key => $element){
-            if( $pos <= $element[$poseAttribute] && $endPos >= $element[$poseAttribute])
+        foreach ($this->data as $key => $element) {
+            if ($pos <= $element[$poseAttribute] && $endPos >= $element[$poseAttribute]) {
                 $keysToDelete[] = $key;
+            }
         }
 
-        foreach ($keysToDelete as $key){
+        foreach ($keysToDelete as $key) {
             $this->data->forget($key);
         }
 
         $amountDeletedFields = count($keysToDelete);
 
         //Rearrange Fields
-        foreach ($this->data as $key => $item){
-            if($item[$poseAttribute] >= $pos) $item[$poseAttribute]-=$amountDeletedFields;
-            if(!empty($item[$endPosAttribute]) && $item[$endPosAttribute] >= $pos)
+        foreach ($this->data as $key => $item) {
+            if ($item[$poseAttribute] >= $pos) {
+                $item[$poseAttribute] -= $amountDeletedFields;
+            }
+            if (!empty($item[$endPosAttribute]) && $item[$endPosAttribute] >= $pos) {
                 $item[$endPosAttribute] -= $amountDeletedFields;
+            }
             $this->data->put($key, $item);
         }
 
     }
 
-    public function getData():array
+    public function getData(): array
     {
-       return $this->data->toArray();
+        return $this->data->toArray();
+    }
+
+    protected function loadStructure(Collection $objects, bool $useKey): array
+    {
+
+        if ($objects->count() === 0) {
+            return [];
+        }
+
+        $poseAttribute = $this->getPositionAttribute();
+        $endPosAttribute = $this->getEndContainerPositionAttribute();
+
+        $objects = $objects->sortBy($poseAttribute);
+        $start = $objects->first()[$poseAttribute];
+        $end = $objects->last()[$poseAttribute];
+
+        $structure = [];
+
+        for ($i = $start; $i <= $end; $i++) {
+
+            $result = $objects->where($poseAttribute, $i);
+            $field = $result->first();
+            $originalKey = $result->keys()->first();
+
+            if ($field == null) {
+                continue;
+            } //ToDo make a warning that the array is Damaged
+
+            //GetKey
+            $key = null;
+            if ($useKey) {
+                $key = $originalKey;
+            }
+            if (is_null($key)) {
+                $key = $field['identifier'];
+            }
+
+            if (empty($field[$endPosAttribute])) {
+                $structure[$key] = [];
+                continue;
+            }
+
+            $subFields = $objects
+                ->where($poseAttribute, '>', $field[$poseAttribute])
+                ->where($poseAttribute, '<=', $field[$endPosAttribute]);
+
+            $i = $field[$endPosAttribute];
+
+            $structure[$key] = static::loadStructure($subFields, $useKey);
+        }
+
+        return $structure;
     }
 }

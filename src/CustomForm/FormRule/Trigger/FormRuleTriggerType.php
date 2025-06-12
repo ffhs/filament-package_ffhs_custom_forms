@@ -16,7 +16,7 @@ abstract class FormRuleTriggerType implements TriggerType
 
     public static function getConfigTypeList(): string
     {
-        return "rule.trigger";
+        return 'rule.trigger';
     }
 
     public function prepareComponents(array &$components, RuleTrigger $trigger): array

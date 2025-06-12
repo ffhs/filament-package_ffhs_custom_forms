@@ -16,7 +16,7 @@ trait ImportFieldInformation
         array $generalFieldMap = []
     ): void {
         $templateImportedMap = CustomForm::query()
-            ->whereNot("template_identifier")
+            ->whereNot('template_identifier')
             ->pluck('id', 'template_identifier')
             ->toArray();
         $templateMap = array_merge($templateImportedMap, $templateMap);
@@ -57,25 +57,25 @@ trait ImportFieldInformation
             ];
 
             if (array_key_exists('fields', $rawField)) {
-                $subFields = $rawField["fields"];
+                $subFields = $rawField['fields'];
                 $subFieldData = $this->importFieldDatas($subFields, $customForm, $templateMap, $generalFieldMap,
                     $fieldCounter);
                 $fieldsToCreate = array_merge($fieldsToCreate, $subFieldData);
-                $field["layout_end_position"] = $fieldCounter;
-                unset($rawField["fields"]);
+                $field['layout_end_position'] = $fieldCounter;
+                unset($rawField['fields']);
             }
 
 
             if (array_key_exists('template', $rawField)) {
                 $template = $rawField['template'];
                 $field['template_id'] = $templateMap[$template] ?? $template;
-                unset($rawField["template"]);
+                unset($rawField['template']);
             }
 
             if (array_key_exists('general_field', $rawField)) {
                 $generalField = $rawField['general_field'];
                 $field['general_field_id'] = $generalFieldMap[$generalField] ?? $generalField; //ToDo to test
-                unset($rawField["general_field"]);
+                unset($rawField['general_field']);
             }
 
             if (array_key_exists('customOptions', $rawField)) {
@@ -83,7 +83,7 @@ trait ImportFieldInformation
                     fn($item) => new CustomOption($item),
                     $rawField['customOptions']
                 );
-                $field["customOptions"] = $customOptions;
+                $field['customOptions'] = $customOptions;
             }
 
             $field = array_merge($rawField, $field);

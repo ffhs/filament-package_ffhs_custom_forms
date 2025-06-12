@@ -20,7 +20,7 @@ trait CanInteractWithCustomFormConfiguration
     private function getFormConfigurations(): array
     {
         return once(function () {
-            return collect(config("ffhs_custom_forms.forms"))->mapWithKeys(function ($formConfig) {
+            return collect(config('ffhs_custom_forms.forms'))->mapWithKeys(function ($formConfig) {
                 return [$formConfig::identifier() => $formConfig::make()];
             })->toArray();
         });

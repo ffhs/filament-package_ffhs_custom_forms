@@ -59,6 +59,6 @@ class RuleEvent extends Model implements CachedModel
 
     public function getType(): EventType
     {
-        return collect(config("ffhs_custom_forms.rule.event"))->firstWhere(fn ($type) =>$type::identifier() == $this->type)::make();
+        return collect(config('ffhs_custom_forms.rule.event'))->firstWhere(fn ($type) =>$type::identifier() == $this->type)::make();
     }
 }

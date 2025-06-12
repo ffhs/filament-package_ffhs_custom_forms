@@ -30,14 +30,14 @@ trait CanModifyCustomFormEditorData
     protected function getUsedGeneralFieldIds(array $customFields): array
     {
         //GeneralFieldIds From GeneralFields
-        $generalFields = array_filter($customFields, fn($fieldData) => !empty($fieldData["general_field_id"]));
-        $generalFieldId = array_map(fn($used) => $used["general_field_id"], $generalFields);
+        $generalFields = array_filter($customFields, fn($fieldData) => !empty($fieldData['general_field_id']));
+        $generalFieldId = array_map(fn($used) => $used['general_field_id'], $generalFields);
 
         //GeneralFieldIds From Templates
-        $templateData = array_filter($customFields, fn($fieldData) => !empty($fieldData["template_id"]));
-        $templateIds = array_map(fn($used) => $used["template_id"], $templateData);
+        $templateData = array_filter($customFields, fn($fieldData) => !empty($fieldData['template_id']));
+        $templateIds = array_map(fn($used) => $used['template_id'], $templateData);
         foreach ($templateIds as $templateId) {
-            $genFields = CustomForm::cached($templateId)?->generalFields->pluck("id")->toArray();
+            $genFields = CustomForm::cached($templateId)?->generalFields->pluck('id')->toArray();
             $generalFieldId = [
                 ...$generalFieldId,
                 ...$genFields,

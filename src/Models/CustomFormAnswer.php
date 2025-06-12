@@ -43,8 +43,8 @@ class CustomFormAnswer extends Model implements CachedModel
     ];
 
     protected array $cachedRelations = [
-        "customFieldAnswers",
-        "customForm"
+        'customFieldAnswers',
+        'customForm'
     ];
 
     public static function __(string ...$args): string
@@ -59,15 +59,15 @@ class CustomFormAnswer extends Model implements CachedModel
 
     public function cachedCustomFieldAnswers(): mixed
     {
-        return Cache::remember($this->getCacheKeyForAttribute("customFieldAnswers"), self::getCacheDuration(),
+        return Cache::remember($this->getCacheKeyForAttribute('customFieldAnswers'), self::getCacheDuration(),
             function () {
                 $answers = $this->customFieldAnswers()
-                    ->with("customField")
+                    ->with('customField')
                     ->get();
                 $this->customForm->customFields;
 
                 return $answers;
-                // return new RelationCachedInformations(CustomFieldAnswer::class, $answers->pluck("id")->toArray());
+                // return new RelationCachedInformations(CustomFieldAnswer::class, $answers->pluck('id')->toArray());
             }
         );
     }

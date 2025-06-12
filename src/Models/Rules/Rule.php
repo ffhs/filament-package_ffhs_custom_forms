@@ -33,12 +33,12 @@ class Rule extends Model implements CachedModel
     use HasCacheModel;
 
     protected array $cachedRelations = [
-        "ruleTriggers",
-        "ruleEvents",
+        'ruleTriggers',
+        'ruleEvents',
     ];
 
     protected $fillable = [
-        "is_or_mode",
+        'is_or_mode',
     ];
 
     public static function __(...$args): string
@@ -54,7 +54,7 @@ class Rule extends Model implements CachedModel
         if ($events == null) {
             $events = $this->ruleEvents()->get();
         }
-        $events = $events->sortBy("order");
+        $events = $events->sortBy('order');
         foreach ($events as $event) {
             /**@var RuleEvent $event */
             $targetResult = $event->getType()->handle($triggers, $arguments, $target, $event);
@@ -74,7 +74,7 @@ class Rule extends Model implements CachedModel
             if ($triggers == null) {
                 $triggers = $this->ruleTriggers()->get();
             }
-            $triggers = $triggers->sortBy("order");
+            $triggers = $triggers->sortBy('order');
 
             foreach ($triggers as $trigger) {
                 /**@var RuleTrigger $trigger */

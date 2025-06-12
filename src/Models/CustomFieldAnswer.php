@@ -59,8 +59,8 @@ class CustomFieldAnswer extends Model implements CachedModel
 
     protected array $cachedRelations = [
         'customForm',
-        "customField",
-        "customFormAnswer",
+        'customField',
+        'customFormAnswer',
     ];
 
     public function getActivitylogOptions(): LogOptions

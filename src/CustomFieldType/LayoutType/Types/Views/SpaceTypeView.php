@@ -22,10 +22,10 @@ class SpaceTypeView implements FieldTypeView
     ): \Filament\Forms\Components\Component {
         $spaces = [];
 
-        for ($count = 0; $count < $this->getOptionParameter($record, "amount"); $count += 1) {
-            $spaces[] = Placeholder::make($this->getIdentifyKey($record) . "-" . $count)
-                ->content("")
-                ->label("")
+        for ($count = 0; $count < $this->getOptionParameter($record, 'amount'); $count += 1) {
+            $spaces[] = Placeholder::make($this->getIdentifyKey($record) . '-' . $count)
+                ->content('')
+                ->label('')
                 ->columnSpanFull();
         }
 
@@ -39,16 +39,16 @@ class SpaceTypeView implements FieldTypeView
         CustomFieldAnswer $record,
         array $parameter = []
     ): \Filament\Infolists\Components\Component {
-        if (!$this->getOptionParameter($record, "show_in_view")) {
+        if (!$this->getOptionParameter($record, 'show_in_view')) {
             return \Filament\Infolists\Components\Group::make()->hidden();
         }
 
         $spaces = [];
 
-        for ($count = 0; $count < $this->getOptionParameter($record, "amount"); $count += 1) {
-            $spaces[] = TextEntry::make($this->getIdentifyKey($record) . "-" . $count)
-                ->state(" ")
-                ->label("");
+        for ($count = 0; $count < $this->getOptionParameter($record, 'amount'); $count += 1) {
+            $spaces[] = TextEntry::make($this->getIdentifyKey($record) . '-' . $count)
+                ->state(' ')
+                ->label('');
         }
         return $this->modifyInfolistComponent(\Filament\Infolists\Components\Group::make($spaces), $record)
             ->columns(1)

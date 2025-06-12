@@ -18,9 +18,9 @@ beforeEach(function () {
 
 
     $this->formData = [
-        "form" => $this->exportedFormInformation,
-        "fields" => $this->exportedFieldInformation,
-        "rules" => $this->exportedRuleInformation,
+        'form' => $this->exportedFormInformation,
+        'fields' => $this->exportedFieldInformation,
+        'rules' => $this->exportedRuleInformation,
     ];
 });
 
@@ -107,8 +107,8 @@ test('Import Form with an error and rollback', function () {
     $countFormsBefore = CustomForm::query()->count();
     try {
         $importer->import([
-            "form" => $this->exportedFormInformation,
-            "fields" => [
+            'form' => $this->exportedFormInformation,
+            'fields' => [
                 'coffee' => 'programmer'
             ]
         ], new TestCustomFormConfiguration());

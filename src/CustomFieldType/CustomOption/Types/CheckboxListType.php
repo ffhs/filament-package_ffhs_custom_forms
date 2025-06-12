@@ -17,7 +17,7 @@ class CheckboxListType extends CustomOptionType
 
     public static function identifier(): string
     {
-        return "checkbox_list";
+        return 'checkbox_list';
     }
 
     public function viewModes(): array
@@ -29,7 +29,7 @@ class CheckboxListType extends CustomOptionType
 
     public function icon(): string
     {
-        return "bi-ui-checks-grid";
+        return 'bi-ui-checks-grid';
     }
 
     public function extraTypeOptions(): array
@@ -38,33 +38,33 @@ class CheckboxListType extends CustomOptionType
             LayoutWithColumnsOptionGroup::make(),
             ValidationTypeOptionGroup::make()
                 ->mergeTypeOptions([
-                    "min_items" => FastTypeOption::makeFast( //ToDO Make CUstom Options? WIth repeater?
+                    'min_items' => FastTypeOption::makeFast( //ToDO Make CUstom Options? WIth repeater?
                         null,
-                        TextInput::make("min_items")
-                            ->hidden(fn($get) => !$get("several"))
+                        TextInput::make('min_items')
+                            ->hidden(fn($get) => !$get('several'))
                             ->label(
-                                __("filament-package_ffhs_custom_forms::custom_forms.fields.type_options.min_select")
+                                __('filament-package_ffhs_custom_forms::custom_forms.fields.type_options.min_select')
                             )
                             ->columnStart(1)
                             ->helperText(
                                 __(
-                                    "filament-package_ffhs_custom_forms::custom_forms.fields.type_options.min_select_helper"
+                                    'filament-package_ffhs_custom_forms::custom_forms.fields.type_options.min_select_helper'
                                 )
                             )
                             ->minValue(0)
                             ->step(1)
                             ->numeric(),
                     ),
-                    "max_items" => FastTypeOption::makeFast(
+                    'max_items' => FastTypeOption::makeFast(
                         null,
-                        TextInput::make("max_items")
-                            ->hidden(fn($get) => !$get("several"))
+                        TextInput::make('max_items')
+                            ->hidden(fn($get) => !$get('several'))
                             ->label(
-                                __("filament-package_ffhs_custom_forms::custom_forms.fields.type_options.max_select")
+                                __('filament-package_ffhs_custom_forms::custom_forms.fields.type_options.max_select')
                             )
                             ->helperText(
                                 __(
-                                    "filament-package_ffhs_custom_forms::custom_forms.fields.type_options.max_select_helper"
+                                    'filament-package_ffhs_custom_forms::custom_forms.fields.type_options.max_select_helper'
                                 )
                             )
                             ->minValue(0)

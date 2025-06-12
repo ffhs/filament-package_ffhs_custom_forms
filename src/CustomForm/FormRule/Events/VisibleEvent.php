@@ -6,12 +6,12 @@ class VisibleEvent extends IsPropertyOverwriteEvent
 {
     public static function identifier(): string
     {
-        return "visible_event";
+        return 'visible_event';
     }
 
     protected function property(): string
     {
-        return "isVisible";
+        return 'isVisible';
     }
 
     protected function dominatingSide(): bool

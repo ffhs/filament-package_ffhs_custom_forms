@@ -11,7 +11,6 @@ beforeEach(function () {
 });
 
 
-
 test('Make FormSchemaExporter without an Error', function () {
     $exporter = FormSchemaExporter::make();
     expect($exporter)
@@ -24,9 +23,9 @@ test('Export form', function () {
     $exporter = FormSchemaExporter::make();
     expect($exporter->export($this->testForm))
         ->toEqual([
-            "form" => $this->exportedFormInformation,
-            "fields" => $this->exportedFieldInformation,
-            "rules" => $this->exportedRuleInformation,
+            'form' => $this->exportedFormInformation,
+            'fields' => $this->exportedFieldInformation,
+            'rules' => $this->exportedRuleInformation,
         ]);
 });
 
@@ -34,9 +33,9 @@ test('Export Template', function () {
     $exporter = FormSchemaExporter::make();
     expect($exporter->export($this->testForm))
         ->toEqual([
-            "form" => $this->exportedFormInformation,
-            "fields" => $this->exportedFieldInformation,
-            "rules" => $this->exportedRuleInformation,
+            'form' => $this->exportedFormInformation,
+            'fields' => $this->exportedFieldInformation,
+            'rules' => $this->exportedRuleInformation,
         ]);
 });
 

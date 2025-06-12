@@ -24,20 +24,20 @@ class ChangeOptionsEvent extends FormRuleEventType
 
     public static function identifier(): string
     {
-        return "change_options_rule";
+        return 'change_options_rule';
     }
 
     public function getFormSchema(): array
     {
         return [
             $this->getTargetSelect(),
-            Select::make("selected_options")
-                ->label("Anzuzeigende Optionen")
+            Select::make('selected_options')
+                ->label('Anzuzeigende Optionen')
                 ->multiple()
                 ->hidden(function ($set, $get) {
                     //Fields with an array doesn't generate properly
                     if ($get('selected_options') == null) {
-                        $set("selected_options", []);
+                        $set('selected_options', []);
                     }
                 })
                 ->options($this->getCustomOptionsOptions(...))
@@ -50,7 +50,7 @@ class ChangeOptionsEvent extends FormRuleEventType
         Component &$component,
         RuleEvent $rule
     ): Component {
-        if ($arguments["identifier"] !== ($rule->data["target"] ?? "")) {
+        if ($arguments['identifier'] !== ($rule->data['target'] ?? '')) {
             return $component;
         }
         $customField = $this->getCustomField($arguments);
@@ -60,13 +60,13 @@ class ChangeOptionsEvent extends FormRuleEventType
 
 
         $reflection = new ReflectionClass($component);
-        $property = $reflection->getProperty("options");
+        $property = $reflection->getProperty('options');
         $property->setAccessible(true);
         $optionsOld = $property->getValue($component);
 
         //ToDo Refactor and maybie simplify
         $component->options(function ($get, $set) use ($triggers, $optionsOld, $customField, $component, $rule) {
-            $triggered = $triggers(["state" => $get(".")]);
+            $triggered = $triggers(['state' => $get('.')]);
             $options = $component->evaluate($optionsOld);
             if (!$triggered) {
                 return $options;
@@ -75,7 +75,7 @@ class ChangeOptionsEvent extends FormRuleEventType
                 $options = $options->toArray();
             }
             foreach ($options as $key => $option) {
-                if (in_array($key, $rule->data["selected_options"])) {
+                if (in_array($key, $rule->data['selected_options'])) {
                     continue;
                 }
                 unset($options[$key]);
@@ -112,24 +112,24 @@ class ChangeOptionsEvent extends FormRuleEventType
         }
 
 
-        if (!empty($field["general_field_id"])) {
+        if (!empty($field['general_field_id'])) {
             $customField = new CustomField();
             $customField->fill($field);
             $genOptions = $customField->generalField->customOptions;
-            $selectedOptions = $this->getTargetFieldData($get)["options"]["customOptions"] ?? [];
-            $genOptions = $genOptions->whereIn("id", $selectedOptions);
-            return $genOptions->pluck("name", "identifier");
+            $selectedOptions = $this->getTargetFieldData($get)['options']['customOptions'] ?? [];
+            $genOptions = $genOptions->whereIn('id', $selectedOptions);
+            return $genOptions->pluck('name', 'identifier');
         }
 
-        if (!array_key_exists("options", $field)) {
-            $field["options"] = [];
+        if (!array_key_exists('options', $field)) {
+            $field['options'] = [];
         }
-        if (!array_key_exists("customOptions", $field["options"])) {
-            $field["options"]["customOptions"] = [];
+        if (!array_key_exists('customOptions', $field['options'])) {
+            $field['options']['customOptions'] = [];
         }
-        $options = $field["options"]["customOptions"];
+        $options = $field['options']['customOptions'];
 
-        return collect($options)->pluck("name." . $record->getLocale(), "identifier");
+        return collect($options)->pluck('name.' . $record->getLocale(), 'identifier');
     }
 
 
@@ -145,10 +145,10 @@ class ChangeOptionsEvent extends FormRuleEventType
                     $title = $record?->short_title;
                 }
                 if (empty($title)) {
-                    $title = "?";
+                    $title = '?';
                 }
 
-                $output[$title][$field->identifier] = $field->name ?? " ";
+                $output[$title][$field->identifier] = $field->name ?? ' ';
             });
 
         return $output;

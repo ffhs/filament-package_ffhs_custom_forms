@@ -21,7 +21,7 @@ class GroupTypeView implements FieldTypeView
         array $parameter = []
     ): \Filament\Forms\Components\Component {
         return $this->modifyFormComponent(Group::make(), $record)
-            ->schema($parameter["child_render"]());
+            ->schema($parameter['child_render']());
     }
 
     public function getInfolistComponent(
@@ -29,9 +29,9 @@ class GroupTypeView implements FieldTypeView
         CustomFieldAnswer $record,
         array $parameter = []
     ): \Filament\Infolists\Components\Component {
-        $schema = $parameter["child_render"]();
+        $schema = $parameter['child_render']();
 
-        if ($this->getOptionParameter($record, "show_in_view")) {
+        if ($this->getOptionParameter($record, 'show_in_view')) {
             $fieldset = Fieldset::make($this->getLabelName($record));
             return $this->modifyInfolistComponent($fieldset, $record, ['show_in_view'])
                 ->columnStart(1)

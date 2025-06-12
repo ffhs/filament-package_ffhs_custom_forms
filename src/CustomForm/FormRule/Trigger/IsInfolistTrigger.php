@@ -14,7 +14,7 @@ class IsInfolistTrigger extends FormRuleTriggerType
 
     public static function identifier(): string
     {
-        return "infolist_view";
+        return 'infolist_view';
     }
 
     public function getFormSchema(): array

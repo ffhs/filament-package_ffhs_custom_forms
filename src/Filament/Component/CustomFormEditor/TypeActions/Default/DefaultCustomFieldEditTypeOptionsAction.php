@@ -33,14 +33,14 @@ class DefaultCustomFieldEditTypeOptionsAction extends FieldTypeAction
             $forms = array_values($action->getLivewire()->getCachedForms());
             $form = $forms[sizeof($forms) - 1];
             $state = $form->getRawState();
-            unset($state["key"]);
+            unset($state['key']);
             return $state;
         }); //ToDo Try with editor in modal
         $this->modalHeading(function (array $fieldData, CustomForm $record) {
             $modalHeading = CustomField::__('actions.edit_options.modal_heading');
             $name = empty($fieldData['general_field_id'])
                 ? ($fieldData['name'][$record->getLocale()] ?? '')
-                : ('G. ' . GeneralField::cached($fieldData["general_field_id"])->name); //ToDo Try to do it maybe without cache
+                : ('G. ' . GeneralField::cached($fieldData['general_field_id'])->name); //ToDo Try to do it maybe without cache
 
             return trans($modalHeading, ['name' => $name]);
         });

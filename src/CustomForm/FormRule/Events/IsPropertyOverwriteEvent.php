@@ -26,7 +26,7 @@ abstract class  IsPropertyOverwriteEvent extends FormRuleEventType
         Component &$component,
         RuleEvent $rule
     ): Component {
-        if (!in_array($arguments["identifier"], $rule->data["targets"])) {
+        if (!in_array($arguments['identifier'], $rule->data['targets'])) {
             return $component;
         }
         return $this->prepareComponent($component, $triggers);
@@ -41,7 +41,7 @@ abstract class  IsPropertyOverwriteEvent extends FormRuleEventType
         if (empty($rule->data)) {
             return $component;
         }
-        if (empty($rule->data["targets"])) {
+        if (empty($rule->data['targets'])) {
             return $component;
         }
 
@@ -51,7 +51,7 @@ abstract class  IsPropertyOverwriteEvent extends FormRuleEventType
         }
         $customFieldId = $getCustomField->identifier;
 
-        $inTargets = in_array($customFieldId, $rule->data["targets"]);
+        $inTargets = in_array($customFieldId, $rule->data['targets']);
         return $inTargets
             ? $this->prepareComponent($component, $triggers)
             : $component;
@@ -72,7 +72,7 @@ abstract class  IsPropertyOverwriteEvent extends FormRuleEventType
 
         if ($component instanceof Component) {
             $hiddenFunction = function (Component $component) use ($oldProperty, $triggers) {
-                $triggered = $triggers(["state" => $component->getGetCallback()(".")]);
+                $triggered = $triggers(['state' => $component->getGetCallback()('.')]);
                 if ($triggered != $this->dominatingSide()) {
                     $triggered = $component->evaluate($oldProperty);
                 }
@@ -85,11 +85,11 @@ abstract class  IsPropertyOverwriteEvent extends FormRuleEventType
                 $triggers
             ) {
                 $state = Cache::remember(
-                    $record->id . "custom_form_answer_state_load_infolist",
+                    $record->id . 'custom_form_answer_state_load_infolist',
                     2,
                     fn() => $this->loadCustomAnswerData($record)
                 );
-                $triggered = $triggers(["state" => $state]);
+                $triggered = $triggers(['state' => $state]);
                 if ($triggered != $this->dominatingSide()) {
                     $triggered = $component->evaluate($oldProperty);
                 }
