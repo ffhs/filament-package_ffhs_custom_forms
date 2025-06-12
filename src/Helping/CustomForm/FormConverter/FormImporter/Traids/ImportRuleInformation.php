@@ -20,8 +20,7 @@ trait ImportRuleInformation
             $rules[] = $rule;
         }
 
-        $customForm->rules()->saveMany($rules);
-
+        $customForm->ownedRules()->saveMany($rules);
 
         $count = 0;
         foreach ($rawDataRule as $ruleRaw) {

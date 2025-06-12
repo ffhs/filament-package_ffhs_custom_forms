@@ -64,7 +64,7 @@ test('Import Form with overwritten template', function () {
     expect(CustomForm::query()->count())->toBe($countFormsBefore + 1)
         ->and($form)->not->toBeNull();
 
-    $templateField = $form->customFields()
+    $templateField = $form->customFieldsQuery()
         ->firstWhere('template_id', $testOverwrittenTemplate->id);
 
     expect($templateField)->not->toBeNull();
@@ -95,7 +95,7 @@ test('Import Form with overwritten generalfield', function () {
     expect(CustomForm::query()->count())->toBe($countFormsBefore + 1)
         ->and($form)->not->toBeNull();
 
-    $templateField = $form->customFields()
+    $templateField = $form->customFieldsQuery()
         ->firstWhere('general_field_id', $testOverwrittenGeneralField->id);
 
     expect($templateField)->not->toBeNull();

@@ -27,17 +27,21 @@ trait CanLoadFormAnswer
         int|null $begin = null,
         int|null $end = null
     ): array {
-        //ToDo check to Cache stuff for performance $customFields = $answerer->customForm->customFields;
+        $loadFieldsWith = [
+            'generalField',
+            'generalField.customOptions',
+            'customOptions'
+        ];
         $loadedData = [];
         $customForm = $answerer->customForm;
-        $customFields = $customForm->customFields->keyBy('id');
+        $customFields = $customForm->customFields($loadFieldsWith)->keyBy('id');
         $templateTypeFields = $customFields->whereNotNull('template_id')->keyBy('template_id');
         $formRules = $customForm->rules;
 
         /**@var CustomFieldAnswer $fieldAnswer */
         foreach ($answerer->customFieldAnswers as $fieldAnswer) {
             /**@var CustomField $customField */
-            $customField = $customFields->get($fieldAnswer->custom_field_id) ?? new CustomField(['custom_form_id' => $fieldAnswer->custom_form_id]);
+            $customField = $customFields->get($fieldAnswer->custom_field_id);
             $isFieldInRange = $this->isFieldInRange($customField, $customForm, $templateTypeFields, $begin, $end);
 
             if ($isFieldInRange) {

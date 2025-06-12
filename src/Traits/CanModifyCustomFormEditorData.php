@@ -37,7 +37,7 @@ trait CanModifyCustomFormEditorData
         $templateData = array_filter($customFields, fn($fieldData) => !empty($fieldData['template_id']));
         $templateIds = array_map(fn($used) => $used['template_id'], $templateData);
         foreach ($templateIds as $templateId) {
-            $genFields = CustomForm::cached($templateId)?->generalFields->pluck('id')->toArray();
+            $genFields = CustomForm::cached($templateId)?->ownedGeneralFields->pluck('id')->toArray();
             $generalFieldId = [
                 ...$generalFieldId,
                 ...$genFields,

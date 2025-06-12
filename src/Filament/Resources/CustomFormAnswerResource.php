@@ -9,7 +9,6 @@ use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormAnswerResou
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormAnswerResource\Pages\ViewCustomFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteAction;
@@ -18,6 +17,7 @@ use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 
 class CustomFormAnswerResource extends Resource
 {
@@ -47,11 +47,6 @@ class CustomFormAnswerResource extends Resource
     public static function canAccess(): bool
     {
         return parent::canAccess() && static::can('showResource');
-    }
-
-    public static function form(Form $form): Form
-    {
-        return $form;
     }
 
     public static function table(Table $table): Table
@@ -98,5 +93,13 @@ class CustomFormAnswerResource extends Resource
             'edit' => EditCustomFormAnswer::route('/{record}/edit'),
             'view' => ViewCustomFormAnswer::route('/{record}')
         ];
+    }
+
+    public static function resolveRecordRouteBinding(int|string $key): ?Model
+    {
+        return app(static::getModel())
+            ->resolveRouteBindingQuery(static::getEloquentQuery(), $key, static::getRecordRouteKeyName())
+            ->with(['customForm', 'customFieldAnswers'])
+            ->first();
     }
 }

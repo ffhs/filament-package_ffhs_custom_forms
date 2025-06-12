@@ -50,14 +50,13 @@ class ChangeOptionsEvent extends FormRuleEventType
         Component &$component,
         RuleEvent $rule
     ): Component {
-        if ($arguments['identifier'] !== ($rule->data['target'] ?? '')) {
+        $identifier = $arguments['identifier'];
+        if ($identifier !== ($rule->data['target'] ?? '')) {
             return $component;
         }
-        $customField = $this->getCustomField($arguments);
         if (!in_array(HasOptions::class, class_uses_recursive($component::class))) {
             return $component;
         }
-
 
         $reflection = new ReflectionClass($component);
         $property = $reflection->getProperty('options');
@@ -65,43 +64,10 @@ class ChangeOptionsEvent extends FormRuleEventType
         $optionsOld = $property->getValue($component);
 
         //ToDo Refactor and maybie simplify
-        $component->options(function ($get, $set) use ($triggers, $optionsOld, $customField, $component, $rule) {
-            $triggered = $triggers(['state' => $get('.')]);
-            $options = $component->evaluate($optionsOld);
-            if (!$triggered) {
-                return $options;
-            }
-            if ($options instanceof Collection) {
-                $options = $options->toArray();
-            }
-            foreach ($options as $key => $option) {
-                if (in_array($key, $rule->data['selected_options'])) {
-                    continue;
-                }
-                unset($options[$key]);
-            }
-
-            //Check to replace the current value
-            $currentValue = $get($this->getIdentifyKey($customField));
-            if (is_array($currentValue)) {
-                if (!is_array(($currentValue[0] ?? []))) {
-                    $diff = array_intersect($currentValue, array_keys($options));
-                    if (sizeof($diff) != sizeof($currentValue)) {
-                        $set($customField->identifier, $diff);
-                    }
-                }
-            } else {
-                if (!array_key_exists($currentValue, $options)) {
-                    $set($customField->identifier, null);
-                }
-            }
-
-            return $options;
-        });
+        $component->options($this->getModifiedOptions($identifier, $triggers, $optionsOld, $component, $rule));
 
         return $component;
     }
-
 
     public function getCustomOptionsOptions($get, CustomForm $record)
     {
@@ -110,7 +76,6 @@ class ChangeOptionsEvent extends FormRuleEventType
         if (empty($field)) {
             return [];
         }
-
 
         if (!empty($field['general_field_id'])) {
             $customField = new CustomField();
@@ -130,6 +95,57 @@ class ChangeOptionsEvent extends FormRuleEventType
         $options = $field['options']['customOptions'];
 
         return collect($options)->pluck('name.' . $record->getLocale(), 'identifier');
+    }
+
+    /**
+     * @param mixed $identifier
+     * @param Closure $triggers
+     * @param mixed $optionsOld
+     * @param Component $component
+     * @param RuleEvent $rule
+     * @return Closure
+     */
+    public function getModifiedOptions(
+        mixed $identifier,
+        Closure $triggers,
+        mixed $optionsOld,
+        Component $component,
+        RuleEvent $rule
+    ): Closure {
+        return static function ($get, $set) use (
+            $identifier,
+            $triggers,
+            $optionsOld,
+            $component,
+            $rule
+        ) {
+            /**@var array|Collection $options */
+            $triggered = $triggers(['state' => $get('.')]);
+            $options = $component->evaluate($optionsOld);
+            $options = is_array($options) ? collect($options) : $options;
+            if (!$triggered) {
+                return $options;
+            }
+
+            /**@var array|Collection $array */
+            $options = $options
+                ->filter(fn($key, $option) => in_array($key, $rule->data['selected_options'], false))
+                ->toArray();
+
+            //Check to replace the current value
+            $currentValue = $get($identifier);
+            if (is_array($currentValue)) {
+                //If Multiple
+                $diff = array_intersect($currentValue, array_keys($options));
+                if (sizeof($diff) !== sizeof($currentValue)) {
+                    $set($identifier, $diff);
+                }
+            } elseif (!array_key_exists($currentValue, $options)) {
+                $set($identifier, null);
+            }
+
+            return $options;
+        };
     }
 
 
@@ -153,6 +169,4 @@ class ChangeOptionsEvent extends FormRuleEventType
 
         return $output;
     }
-
-
 }

@@ -54,5 +54,4 @@ abstract class ACustomField extends Model implements CachedModel
         }
         return CustomFieldType::getTypeClassFromIdentifier($typeName);
     }
-
 }

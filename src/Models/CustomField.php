@@ -146,20 +146,24 @@ class CustomField extends ACustomField implements NestingObject
 
         //PERFORMANCE!!!!
         $genFieldFunction = function (): GeneralField {
-            if (!$this->exists) {
-                return parent::__get('generalField');
+            if ($this->relationLoaded('generalField')) {
+                return $this->getRelation('generalField');
             }
             $genField = GeneralField::getModelCache()?->where('id', $this->general_field_id)->first();
             if (!is_null($genField)) {
                 return $genField;
             }
 
-            $generalFieldIds = $this->customForm->customFields->whereNotNull('general_field_id')->pluck(
-                'general_field_id'
-            );
+            $generalFieldIds = $this->customForm->customFields
+                ->whereNotNull('general_field_id')
+                ->pluck('general_field_id');
+
             $generalFields = GeneralField::query()->whereIn('id', $generalFieldIds)->get();
             GeneralField::addToModelCache($generalFields);
-            return GeneralField::cached($this->general_field_id);
+
+            $genField = GeneralField::cached($this->general_field_id);
+            $this->setRelation('generalField', $genField);
+            return $genField;
         };
 
 

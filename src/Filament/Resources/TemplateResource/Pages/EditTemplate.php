@@ -46,7 +46,7 @@ class EditTemplate extends EditCustomForm
         /**@var CustomForm $template */
         $template = CustomForm::query()->where('id', $this->record->id)->first();
 
-        $templateGeneralFieldQuery = $template->customFields()->whereNotNull('general_field_id');
+        $templateGeneralFieldQuery = $template->customFieldsQuery()->whereNotNull('general_field_id');
         $toDeleteGenFieldQuery = CustomField::query()
             ->whereIn(
                 'general_field_id',
