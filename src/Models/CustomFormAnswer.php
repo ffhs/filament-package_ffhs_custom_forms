@@ -8,7 +8,6 @@ use Ffhs\FilamentPackageFfhsCustomForms\Helping\Caching\HasCacheModel;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Support\Facades\Cache;
 
 /**
  *
@@ -42,10 +41,10 @@ class CustomFormAnswer extends Model implements CachedModel
         'short_title',
     ];
 
-    protected array $cachedRelations = [
-        'customFieldAnswers',
-        'customForm'
-    ];
+//    protected array $cachedRelations = [
+//        'customFieldAnswers',
+//        'customForm'
+//    ];
 
     public static function __(string ...$args): string
     {
@@ -57,20 +56,20 @@ class CustomFormAnswer extends Model implements CachedModel
         return $this->belongsTo(CustomForm::class);
     }
 
-    public function cachedCustomFieldAnswers(): mixed
-    {
-        return Cache::remember($this->getCacheKeyForAttribute('customFieldAnswers'), self::getCacheDuration(),
-            function () {
-                $answers = $this->customFieldAnswers()
-                    ->with('customField')
-                    ->get();
-                $this->customForm->customFields;
-
-                return $answers;
-                // return new RelationCachedInformations(CustomFieldAnswer::class, $answers->pluck('id')->toArray());
-            }
-        );
-    }
+//    public function cachedCustomFieldAnswers(): mixed
+//    {
+//        return Cache::remember($this->getCacheKeyForAttribute('customFieldAnswers'), self::getCacheDuration(),
+//            function () {
+//                $answers = $this->customFieldAnswers()
+//                    ->with('customField')
+//                    ->get();
+//                $this->customForm->customFields;
+//
+//                return $answers;
+//                // return new RelationCachedInformations(CustomFieldAnswer::class, $answers->pluck('id')->toArray());
+//            }
+//        );
+//    }
 
     public function customFieldAnswers(): HasMany
     {
