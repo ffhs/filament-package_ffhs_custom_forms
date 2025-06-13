@@ -52,7 +52,7 @@ return [
     ],
     'general_field_form' => [
         'attributes' => [
-            'custom_form_identifier_name' => 'Fomularart',
+            'custom_form_identifier_name' => 'Formularart',
             'export' => 'Wird exportiert',
             'is_required' => 'Wird benötigt',
         ],
@@ -116,7 +116,7 @@ return [
 
         'attributes' => [
             'short_title' => 'Name',
-            'custom_form_identifier' => 'Fomularart'
+            'custom_form_identifier' => 'Formularart'
         ],
 
         'pages' => [

@@ -30,9 +30,7 @@ abstract class TestCase extends Orchestra
 
         $loader = AliasLoader::getInstance();
         $loader->alias('App\Models\User', 'Workbench\App\Models\User');
-
     }
-
 
     protected function setUp(): void
     {
@@ -44,8 +42,6 @@ abstract class TestCase extends Orchestra
             Filament::setCurrentPanel(
                 Filament::getPanel('admin'), // Where `app` is the ID of the panel you want to test.
             );
-
-
         });
 
         parent::setUp();

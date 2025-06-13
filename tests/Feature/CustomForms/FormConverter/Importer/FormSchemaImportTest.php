@@ -61,6 +61,7 @@ test('Import Form with overwritten template', function () {
         templateMap: $templateMap
     );
 
+    $form->unsetRelations();
     expect(CustomForm::query()->count())->toBe($countFormsBefore + 1)
         ->and($form)->not->toBeNull();
 
@@ -92,6 +93,7 @@ test('Import Form with overwritten generalfield', function () {
         generalFieldMap: $generalMap
     );
 
+    $form->unsetRelations();
     expect(CustomForm::query()->count())->toBe($countFormsBefore + 1)
         ->and($form)->not->toBeNull();
 
@@ -133,6 +135,7 @@ test('Import Form on existing Form', function () {
         ]);
     $formsCountBefore = CustomForm::query()->count();
     $form = $importer->importWithExistingForm($this->formData, $form);
+    $form->unsetRelations();
     expect($form)->not->toBeNull()
         ->and($form->ownedFields)->toHaveCount(count($this->exportedFlattenFieldInformation))
         ->and(CustomForm::query()->count())->toBe($formsCountBefore);

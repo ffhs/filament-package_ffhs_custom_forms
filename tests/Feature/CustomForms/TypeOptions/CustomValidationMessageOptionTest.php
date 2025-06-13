@@ -38,8 +38,6 @@ test('validation message modify settings component', function () {
     expect($component)->toBeInstanceOf(Component::class)
         ->and($component->getStatePath(false))->toBe('validation_messages');
 });
-
-
 test('field validation message in livewire', function ($customFieldIdentifier, array $extraOptions = []) {
     $extraOptions = array_merge($extraOptions, ['required' => true]);
     $validationMessage = 'FILAMENT!!!! ' . uniqid();

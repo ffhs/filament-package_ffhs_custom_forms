@@ -11,7 +11,6 @@ trait ImportRuleInformation
 {
     public function importRule(array $rawDataRule, CustomForm $customForm): void
     {
-
         $rules = [];
         foreach ($rawDataRule as $rule) {
             $rule = new Rule([

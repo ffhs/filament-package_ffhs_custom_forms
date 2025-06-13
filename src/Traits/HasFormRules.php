@@ -6,9 +6,9 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\FormRule;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\Rule;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Collection;
 
 trait HasFormRules
 {
@@ -28,9 +28,13 @@ trait HasFormRules
             return parent::__get('ownedRules');
         }
 
-        $ownedRules = $this->rules->where('formRule.custom_form_id', $this->id);
-        $this->setRelation('ownedRules', $ownedRules);
-        return $ownedRules;
+        if ($this->relationLoaded('rules')) {
+            $ownedRules = $this->rules->where('formRule.custom_form_id', $this->id);
+            $this->setRelation('ownedRules', $ownedRules);
+            return $ownedRules;
+        }
+
+        return parent::__get('ownedRules');
     }
 
     public function rules(): \Illuminate\Support\Collection

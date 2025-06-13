@@ -36,9 +36,6 @@ trait CanSaveFormAnswer
         DB::transaction(function () use ($preparedData, $customFieldsIdentify, $formAnswer) {
             $this->saveWithoutPreparation($formAnswer, $customFieldsIdentify, $preparedData);
         });
-
-        CustomFieldAnswer::clearModelCache($formAnswer->customFieldAnswers->pluck('id')->toArray());
-        $formAnswer->cachedClear('customFieldAnswers');
     }
 
     protected function getFieldAttributesToSave(CustomFieldAnswer $answer): array

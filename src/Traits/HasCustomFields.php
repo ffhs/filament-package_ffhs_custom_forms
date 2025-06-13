@@ -6,9 +6,9 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Collection;
 
 trait HasCustomFields
 {
@@ -71,7 +71,7 @@ trait HasCustomFields
         return $customFields;
     }
 
-    public function customFieldsQuery(): Collection
+    public function customFieldsQuery(): Builder
     {
         $templateIdQueries = CustomField::query()
             ->select('template_id')
@@ -91,8 +91,10 @@ trait HasCustomFields
             return parent::__get('ownedFields');
         }
 
-        $this->customFields();
-        return $this->getRelation('ownedFields');
+        $customFields = $this->customFields();
+        $ownedFields = $customFields->where('custom_form_id', $this->id);
+        $this->setRelation('ownedFields', $ownedFields);
+        return $ownedFields;
     }
 
     public function ownedGeneralFields(): BelongsToMany
