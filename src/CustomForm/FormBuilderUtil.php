@@ -6,13 +6,11 @@ use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EventType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\Rule;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\RuleEvent;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\RuleTrigger;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
-
 
 class FormBuilderUtil
 {
@@ -62,7 +60,11 @@ class FormBuilderUtil
         foreach ($fields as $field) {
 
             $formPosition = sizeof($toCreateFields) + 1;
-
+            $generalFieldsIdentifier = $form->getFormConfiguration()
+                ->getAvailableGeneralFields()
+                ->keyBy('identifier');
+            $generalFields = $form->getFormConfiguration()
+                ->getAvailableGeneralFields();
             $fieldData = [
                 'form_position' => $formPosition,
                 'custom_form_id' => $form->id,
@@ -71,39 +73,38 @@ class FormBuilderUtil
 
             $defaultOptions = [];
             if (array_key_exists('general_field', $field)) {
-                $genField = GeneralField::cached($field['general_field'], 'identifier');
+                $genField = $generalFieldsIdentifier->get($field['general_field']);
                 $fieldData['general_field_id'] = $genField->id;
                 $defaultOptions = $genField->getType()->getDefaultTypeOptionValues();
+
+            } elseif (array_key_exists('general_field_id', $field)) {
+                $fieldData['general_field_id'] = $field['general_field_id'];
+                $genField = $generalFields->get($field['general_field_id']);
+                $defaultOptions = $genField->getType()->getDefaultTypeOptionValues();
+
+            } elseif (array_key_exists('template', $field)) {
+                $template = $form
+                    ->getFormConfiguration()
+                    ->getAvailableTemplates()
+                    ->firstWhere('short_title', $field['template']);
+                $fieldData['template_id'] = $template->id;
+                $fieldData['identifier'] = uniqid();
+
+            } elseif (array_key_exists('template_id', $field)) {
+                $fieldData['template_id'] = $field['template_id'];
             } else {
-                if (array_key_exists('general_field_id', $field)) {
-                    $fieldData['general_field_id'] = $field['general_field_id'];
-                    $genField = GeneralField::cached($field['general_field_id']);
-                    $defaultOptions = $genField->getType()->getDefaultTypeOptionValues();
-                } else {
-                    if (array_key_exists('template', $field)) {
-                        $template = CustomForm::cached($field['template'], 'short_title');
-                        $fieldData['template_id'] = $template->id;
-                        $fieldData['identifier'] = uniqid();
-                    } else {
-                        if (array_key_exists('template_id', $field)) {
-                            $fieldData['template_id'] = $field['template_id'];
-                        } else {
-                            //Names
-                            $fieldData['name'] = [];
-                            # $fieldData['tool_tip'] = [];
-                            foreach ($field as $key => $value) {
-                                if (str_contains($key, 'name_')) {
-                                    $fieldData['name'][str_replace('name_', '', $key)] = $value;
-                                }
-                            }
-
-
-                            $fieldData['type'] = $field['type'];
-                            $fieldData['identifier'] = $field['identifier'] ?? uniqid();
-                            $defaultOptions = CustomFieldType::getTypeFromIdentifier($field['type'])->getDefaultTypeOptionValues();
-                        }
+                //Names
+                $fieldData['name'] = [];
+                foreach ($field as $key => $value) {
+                    if (str_contains($key, 'name_')) {
+                        $fieldData['name'][str_replace('name_', '', $key)] = $value;
                     }
                 }
+
+
+                $fieldData['type'] = $field['type'];
+                $fieldData['identifier'] = $field['identifier'] ?? uniqid();
+                $defaultOptions = CustomFieldType::getTypeFromIdentifier($field['type'])->getDefaultTypeOptionValues();
             }
 
 
@@ -111,7 +112,7 @@ class FormBuilderUtil
             self::prepareOptionData($field, $fieldData, $defaultOptions);
 
             //CustomOptions
-            self::prepareCustomOptions($field, $fieldData);
+            self::prepareCustomOptions($field, $fieldData, $form);
 
             //Layout Fields
             self::setupLayoutFields($form, $field, $fieldData, $toCreateFields);
@@ -142,7 +143,8 @@ class FormBuilderUtil
             $rule->save();
 
             //ToDo Save Many at once
-            collect($triggers)->merge($events)
+            collect($triggers)
+                ->merge($events)
                 ->map(fn(Model $model) => $model->fill(['rule_id' => $rule->id])->save());
 
             $finalRules[] = $rule;
@@ -246,15 +248,18 @@ class FormBuilderUtil
         ];
     }
 
-    private static function prepareCustomOptions(array $field, array &$fieldData): void
+    private static function prepareCustomOptions(array $field, array &$fieldData, CustomForm $form): void
     {
         if (!array_key_exists('customOptions', $field)) {
             return;
         }
 
+        $generalFields = $form->getFormConfiguration()
+            ->getAvailableGeneralFields();
+
         //General Field
         if (array_key_exists('general_field_id', $fieldData)) {
-            $generalField = GeneralField::cached($fieldData['general_field_id']);
+            $generalField = $generalFields->get($fieldData['general_field_id']);;
             $allOptions = $generalField->customOptions;
 
             $fieldData['customOptions'] = [];
@@ -267,7 +272,6 @@ class FormBuilderUtil
                 if (is_null($optionId)) {
                     $optionId = $allOptions->where('name', $customOption)->first()?->id;
                 }
-
                 if (!is_null($optionId)) {
                     $fieldData['customOptions'][] = $optionId;
                 }
@@ -290,8 +294,6 @@ class FormBuilderUtil
                 'name' => $names,
                 'identifier' => $customOption['identifier'] ?? uniqid(),
             ];
-
-
         }
     }
 
@@ -304,8 +306,6 @@ class FormBuilderUtil
         if (!array_key_exists('fields', $field)) {
             return;
         }
-
-
         $placeHolderId = uniqid();
 
         $toCreateFields['placeHolder-' . $placeHolderId] = $fieldData;
@@ -315,6 +315,4 @@ class FormBuilderUtil
         unset($toCreateFields['placeHolder-' . $placeHolderId]);
         $fieldData['layout_end_position'] = $formEndPosition;
     }
-
-
 }

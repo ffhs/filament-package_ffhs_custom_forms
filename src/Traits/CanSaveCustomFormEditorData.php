@@ -26,15 +26,5 @@ trait CanSaveCustomFormEditorData
             throw $exception;
         }
 
-        //Clear Cache
-        $form->cachedClear('customFields');
-        $form->cachedClear('rules');
-        $form->cachedClear('ownedRules');
-        $form->cachedClear('formRules');
-
-//        RuleEvent::clearModelCache();
-//        RuleTrigger::clearModelCache();
-//        CustomField::clearModelCache();
-//        Rule::clearModelCache();
     }
 }

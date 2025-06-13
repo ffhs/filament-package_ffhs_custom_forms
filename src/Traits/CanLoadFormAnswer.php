@@ -39,7 +39,7 @@ trait CanLoadFormAnswer
             $customField = $customFields->get($fieldAnswer->custom_field_id);
             $isFieldInRange = $this->isFieldInRange($customField, $customForm, $templateTypeFields, $begin, $end);
 
-            if ($isFieldInRange) {
+            if (!$isFieldInRange) {
                 continue;
             }
 
@@ -105,20 +105,19 @@ trait CanLoadFormAnswer
     }
 
     private function isFieldInRange(
-        CustomField $customField,
+        ?CustomField $customField,
         CustomForm $customForm,
         Collection $templateTypeFields,
         ?int $begin,
         ?int $end
     ): bool {
-
         //If field is in template, get template field for position
-        if ($customForm->id !== $customField->custom_form_id) {
+        if (!is_null($customField) && $customForm->id !== $customField->custom_form_id) {
             /** @var CustomField $customField */
             $customField = $templateTypeFields->get($customField->custom_form_id);
         }
 
-        if (!is_null($customField)) {
+        if (is_null($customField)) {
             return false;
         }
 

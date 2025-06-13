@@ -3,7 +3,6 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\Models\Rules;
 
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\TriggerType;
-use Ffhs\FilamentPackageFfhsCustomForms\Helping\Caching\HasCacheModel;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -35,8 +34,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class RuleTrigger extends Model
 {
-    use HasCacheModel;
-
     protected $fillable = [
         'rule_id',
         'is_inverted',
