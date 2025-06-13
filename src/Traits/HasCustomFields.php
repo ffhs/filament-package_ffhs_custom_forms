@@ -97,7 +97,7 @@ trait HasCustomFields
             return $ownedFields;
         }
 
-        return parent::__get('customFields');
+        return parent::__get('ownedFields');
     }
 
     public function ownedGeneralFields(): BelongsToMany
