@@ -96,9 +96,6 @@ trait CanSaveCustomFormEditorRules
                 ...$updatedEvents
             ];
 
-
-            $rule->cachedClear('ruleTriggers');
-            $rule->cachedClear('ruleEvents');
             $rules->add($rule);
         }
 
@@ -121,7 +118,7 @@ trait CanSaveCustomFormEditorRules
         if (empty($rawData['id'])) {
             return app($type);
         }
-        
+
         return $existingComponents->get($rawData['id']) ?? app($type);
     }
 

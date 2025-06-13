@@ -363,7 +363,7 @@ class CustomFormSchemaImportAction extends Action
 
     protected function getTemplateOptions($get): array
     {
-        $options = CustomForm::allCached()
+        $options = CustomForm::query()
             ->where('custom_form_identifier', $this->getDynamicFormConfiguration($get, '../../custom_form_identifier'))
             ->whereNotNull('template_identifier')
             ->pluck('short_title', 'id')
@@ -374,15 +374,15 @@ class CustomFormSchemaImportAction extends Action
 
     protected function getGeneralFieldOptions($get): array
     {
-        $options = GeneralField::allCached()
+        $options = GeneralField::query()
             ->whereIn(
                 'id',
-                GeneralFieldForm::allCached()
+                GeneralFieldForm::query()
                     ->where(
                         'custom_form_identifier',
                         $this->getDynamicFormConfiguration($get, '../../custom_form_identifier')
                     )
-                    ->pluck('general_field_id')
+                    ->select('general_field_id')
             )
             ->pluck('name', 'id')->toArray();
         return array_map(fn($option) => $option ?? '', $options);

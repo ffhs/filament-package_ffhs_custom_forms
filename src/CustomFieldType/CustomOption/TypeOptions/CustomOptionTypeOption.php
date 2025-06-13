@@ -124,8 +124,10 @@ class CustomOptionTypeOption extends TypeOption
             ->columnSpanFull()
             ->multiple()
             ->options(function ($get) {
-                $generalField = GeneralField::cached($get('../general_field_id'));
-                return $generalField->customOptions->pluck('name', 'id')->toArray();
+                return once(function () use ($get) {
+                    $generalField = GeneralField::firstWhere('id', $get('../general_field_id'));
+                    return $generalField->customOptions->pluck('name', 'id')->toArray();
+                });
             });
     }
 

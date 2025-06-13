@@ -11,7 +11,7 @@ class  AddTemplateFieldAction extends Action
 {
     protected $option;
 
-    public function createField(array $arguments, $set, $component, $get, $livewire): void
+    public function createField(array $arguments, $set, $component, $get, $livewire, CustomForm $record): void
     {
         $templateId = $this->getOption();
 
@@ -24,7 +24,7 @@ class  AddTemplateFieldAction extends Action
 
         $customFields = $get($component->getStatePath(true) . '.custom_fields', true);
 
-        $identifiers = $this->getOverlappedIdentifier($customFields, $templateId);
+        $identifiers = $this->getOverlappedIdentifier($customFields, $templateId, $record);
         if (sizeof($identifiers) === 0) {
             return;
         }
@@ -64,7 +64,7 @@ class  AddTemplateFieldAction extends Action
         $this->action($this->createField(...));
     }
 
-    private function getOverlappedIdentifier(array $customFields, int $templateId): array
+    private function getOverlappedIdentifier(array $customFields, int $templateId, CustomForm $form): array
     {
         //Fields with the same identify key
         $usedFieldIdentifier = [];
@@ -75,7 +75,12 @@ class  AddTemplateFieldAction extends Action
         foreach ($customFieldWithIdentifyKey as $customField) {
             $usedFieldIdentifier[] = $customField['identifier'];
         }
-        return CustomForm::cached($templateId)->customFields
+
+        $template = $form->getFormConfiguration()
+            ->getAvailableTemplates()
+            ->firstWhere('id', $templateId);
+
+        return $template->customFields
             ->whereIn('identifier', $usedFieldIdentifier)
             ->pluck('identifier')
             ->toArray();
@@ -83,8 +88,6 @@ class  AddTemplateFieldAction extends Action
 
     private function deletingExistingFields(Get $get, $set, array $overlappedIdentifier, string $prefix = ''): void
     {
-
-
         //TODO MAKE FOR NEW SYSTEM
 
         $toSet = [];
