@@ -95,7 +95,7 @@ trait CanMapFields
         if ($record instanceof CustomFieldAnswer) {
             $record = $record->customField;
         }
-        if ($record->isInheritFromGeneralField()) {
+        if ($record->isGeneralField()) {
             $options = $record->generalField->customOptions;
         } else {
             $options = $record->customOptions;
@@ -113,10 +113,6 @@ trait CanMapFields
 
     /**
      * Like an Repeater
-     *
-     * @param CustomField|CustomFieldAnswer $field
-     *
-     * @return bool
      */
     public function isFieldInSplitGroup(CustomField|CustomFieldAnswer $record): bool
     {//ToDo Slow

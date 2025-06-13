@@ -4,8 +4,6 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Models;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormConfiguration\CustomFormConfiguration;
 use Ffhs\FilamentPackageFfhsCustomForms\Facades\CustomForms;
-use Ffhs\FilamentPackageFfhsCustomForms\Helping\Caching\CachedModel;
-use Ffhs\FilamentPackageFfhsCustomForms\Helping\Caching\HasCacheModel;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\Rule;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasCustomFields;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasFormIdentifier;
@@ -58,18 +56,13 @@ use Spatie\Translatable\HasTranslations;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomForm whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-class CustomForm extends Model implements CachedModel
+class CustomForm extends Model
 {
-    use HasCacheModel;
     use HasTranslations;
     use HasFormIdentifier;
     use HasFactory;
     use HasFormRules;
     use HasCustomFields;
-
-    public array $translatable = [
-        'does_not_exist' // <= It needs something     ToDo Realy?
-    ];
 
     protected $fillable = [
         'custom_form_identifier',
@@ -81,7 +74,6 @@ class CustomForm extends Model implements CachedModel
     {
         return CustomForms::__('models.custom_form.' . implode('.', $args));
     }
-
 
     public function __get($key)
     {

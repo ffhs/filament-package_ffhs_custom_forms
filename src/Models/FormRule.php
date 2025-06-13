@@ -2,8 +2,6 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Models;
 
-use Ffhs\FilamentPackageFfhsCustomForms\Helping\Caching\CachedModel;
-use Ffhs\FilamentPackageFfhsCustomForms\Helping\Caching\HasCacheModel;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\Rule;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -29,21 +27,14 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|FormRule whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-class FormRule extends Model implements CachedModel
+class FormRule extends Model
 {
-    use HasCacheModel;
-
-    protected array $cachedRelations = [
-        'rule',
-        'customForm',
-    ];
 
     protected $fillable = [
         'order',
         'custom_form_id',
         'rule_id',
     ];
-
 
     public function rule(): BelongsTo
     {
@@ -54,5 +45,4 @@ class FormRule extends Model implements CachedModel
     {
         return $this->belongsTo(CustomForm::class);
     }
-
 }

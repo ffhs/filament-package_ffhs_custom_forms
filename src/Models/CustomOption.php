@@ -2,8 +2,6 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Models;
 
-use Ffhs\FilamentPackageFfhsCustomForms\Helping\Caching\CachedModel;
-use Ffhs\FilamentPackageFfhsCustomForms\Helping\Caching\HasCacheModel;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasCustomFormModelTranslations;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasFormIdentifier;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -36,11 +34,10 @@ use Spatie\Translatable\HasTranslations;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomOption whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-class CustomOption extends Model implements CachedModel
+class CustomOption extends Model
 {
     use HasFormIdentifier;
     use HasTranslations;
-    use HasCacheModel;
     use HasFactory;
     use HasCustomFormModelTranslations;
 
@@ -52,7 +49,6 @@ class CustomOption extends Model implements CachedModel
         'icon',
     ];
 
-
     protected static function booted()
     {
         parent::booted();
@@ -62,6 +58,4 @@ class CustomOption extends Model implements CachedModel
             }
         });
     }
-
-
 }

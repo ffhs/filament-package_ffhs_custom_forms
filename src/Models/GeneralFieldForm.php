@@ -3,8 +3,6 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\Models;
 
 use Ffhs\FilamentPackageFfhsCustomForms\Facades\CustomForms;
-use Ffhs\FilamentPackageFfhsCustomForms\Helping\Caching\CachedModel;
-use Ffhs\FilamentPackageFfhsCustomForms\Helping\Caching\HasCacheModel;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasFormIdentifier;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -36,10 +34,8 @@ use Illuminate\Support\Facades\Cache;
  * @method static Builder<static>|GeneralFieldForm whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-class GeneralFieldForm extends Model implements CachedModel
+class GeneralFieldForm extends Model
 {
-    use HasCacheModel;
-
     use HasFormIdentifier;
 
     protected $table = 'general_field_form';
@@ -48,10 +44,6 @@ class GeneralFieldForm extends Model implements CachedModel
         'custom_form_identifier',
         'is_required',
         'export',
-    ];
-
-    protected array $cachedRelations = [
-        'generalField',
     ];
 
     public static function __(...$args): string
@@ -82,6 +74,4 @@ class GeneralFieldForm extends Model implements CachedModel
     {
         return $this->belongsTo(GeneralField::class);
     }
-
-
 }

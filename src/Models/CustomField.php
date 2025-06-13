@@ -83,14 +83,6 @@ class CustomField extends ACustomField implements NestingObject
         'options' => 'array',
     ];
 
-
-    protected array $cachedRelations = [
-        //'customOptions',
-        'customForm',
-        'generalField',
-        'template',
-    ];
-
     public static function getPositionAttribute(): string
     {
         return 'form_position';
@@ -110,7 +102,7 @@ class CustomField extends ACustomField implements NestingObject
     protected static function booted(): void
     {
         parent::booted();
-        self::creating(function (CustomField $field) {#
+        self::creating(static function (CustomField $field) {#
             //Set identifier key to on other
             if (empty($field->identifier()) && !$field->isGeneralField()) {
                 $field->identifier = uniqid();
@@ -118,17 +110,6 @@ class CustomField extends ACustomField implements NestingObject
             return $field;
         });
     }
-
-
-    //Options
-
-    public function identifier(): string
-    {
-        return $this->__get('identifier');
-    }
-
-
-    //GeneralField
 
     public function __get($key)
     {
@@ -143,44 +124,29 @@ class CustomField extends ACustomField implements NestingObject
             return parent::__get($key);
         }
 
-
-        //PERFORMANCE!!!!
-        $genFieldFunction = function (): GeneralField {
-            if ($this->relationLoaded('generalField')) {
-                return $this->getRelation('generalField');
-            }
-            $genField = GeneralField::getModelCache()?->where('id', $this->general_field_id)->first();
-            if (!is_null($genField)) {
-                return $genField;
-            }
-
-            $generalFieldIds = $this->customForm->customFields
-                ->whereNotNull('general_field_id')
-                ->pluck('general_field_id');
-
-            $generalFields = GeneralField::query()->whereIn('id', $generalFieldIds)->get();
-            GeneralField::addToModelCache($generalFields);
-
-            $genField = GeneralField::cached($this->general_field_id);
-            $this->setRelation('generalField', $genField);
-            return $genField;
-        };
-
-
         return match ($key) {
-            'name' => $genFieldFunction()->name,
-            'type' => $genFieldFunction()->type,
-            'options' => array_merge(parent::__get($key) ?? [], $genFieldFunction()->overwrite_options ?? []),
-            'overwritten_options' => array_keys($genFieldFunction()->overwrite_options ?? []),
-            'identifier' => $genFieldFunction()->identifier,
-            'generalField' => $genFieldFunction(),
+            'name' => $this->generalField->name,
+            'type' => $this->generalField->type,
+            'options' => array_merge(parent::__get($key) ?? [], $this->generalField->overwrite_options ?? []),
+            'overwritten_options' => array_keys($this->generalField->overwrite_options ?? []),
+            'identifier' => $this->generalField->identifier,
             default => parent::__get($key),
         };
+    }
+
+    public function identifier(): string
+    {
+        return $this->__get('identifier');
     }
 
     public function isGeneralField(): bool
     {
         return !empty($this->general_field_id);
+    }
+
+    public function generalField(): BelongsTo
+    {
+        return $this->belongsTo(GeneralField::class);
     }
 
     public function customForm(): BelongsTo
@@ -191,19 +157,6 @@ class CustomField extends ACustomField implements NestingObject
     public function customOptions(): BelongsToMany
     {
         return $this->belongsToMany(CustomOption::class, 'option_custom_field');
-    }
-
-
-    //Template
-
-    public function isInheritFromGeneralField(): bool
-    {
-        return !is_null($this->general_field_id);
-    }
-
-    public function generalField(): BelongsTo
-    {
-        return $this->belongsTo(GeneralField::class);
     }
 
     public function answers(): HasMany

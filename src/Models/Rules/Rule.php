@@ -4,8 +4,6 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Models\Rules;
 
 use Closure;
 use Ffhs\FilamentPackageFfhsCustomForms\Facades\CustomForms;
-use Ffhs\FilamentPackageFfhsCustomForms\Helping\Caching\CachedModel;
-use Ffhs\FilamentPackageFfhsCustomForms\Helping\Caching\HasCacheModel;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
@@ -28,15 +26,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Rule whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-class Rule extends Model implements CachedModel
+class Rule extends Model
 {
-    use HasCacheModel;
-
-    protected array $cachedRelations = [
-        'ruleTriggers',
-        'ruleEvents',
-    ];
-
     protected $fillable = [
         'is_or_mode',
     ];

@@ -3,14 +3,10 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\Models\Rules;
 
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EventType;
-use Ffhs\FilamentPackageFfhsCustomForms\Helping\Caching\CachedModel;
-use Ffhs\FilamentPackageFfhsCustomForms\Helping\Caching\HasCacheModel;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- *
- *
  * @property int $id
  * @property int $order
  * @property string $type
@@ -32,15 +28,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|RuleEvent whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-class RuleEvent extends Model implements CachedModel
+class RuleEvent extends Model
 {
-    use HasCacheModel;
-
-
-    protected array $cachedRelations = [
-        'rule',
-    ];
-
     protected $fillable = [
         'rule_id',
         'order',
@@ -59,6 +48,7 @@ class RuleEvent extends Model implements CachedModel
 
     public function getType(): EventType
     {
-        return collect(config('ffhs_custom_forms.rule.event'))->firstWhere(fn ($type) =>$type::identifier() == $this->type)::make();
+        $ruleEvents = config('ffhs_custom_forms.rule.event');
+        return collect($ruleEvents)->firstWhere(fn($type) => $type::identifier() === $this->type)::make();
     }
 }
