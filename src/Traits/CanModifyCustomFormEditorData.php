@@ -27,7 +27,7 @@ trait CanModifyCustomFormEditorData
         return $nestedList->getData();
     }
 
-    protected function getUsedGeneralFieldIds(array $customFields): array
+    protected function getUsedGeneralFieldIds(array $customFields, CustomForm $form): array
     {
         //GeneralFieldIds From GeneralFields
         $generalFields = array_filter($customFields, fn($fieldData) => !empty($fieldData['general_field_id']));
@@ -36,8 +36,14 @@ trait CanModifyCustomFormEditorData
         //GeneralFieldIds From Templates
         $templateData = array_filter($customFields, fn($fieldData) => !empty($fieldData['template_id']));
         $templateIds = array_map(fn($used) => $used['template_id'], $templateData);
+
         foreach ($templateIds as $templateId) {
-            $genFields = CustomForm::cached($templateId)?->ownedGeneralFields->pluck('id')->toArray();
+            $genFields = $form->getFormConfiguration()
+                ->getAvailableTemplates()
+                ->get($templateId)
+                ->ownedGeneralFields
+                ->pluck('id')
+                ->toArray();
             $generalFieldId = [
                 ...$generalFieldId,
                 ...$genFields,

@@ -167,7 +167,7 @@ class EditTemplate extends EditCustomForm
     protected function getGeneralFieldsOverwritten($livewire): Builder
     { //ToDo Optimize Cache
         $customFields = array_values($livewire->getCachedForms())[0]->getRawState()['custom_fields'];
-        $usedGeneralIDs = $this->getUsedGeneralFieldIds($customFields);
+        $usedGeneralIDs = $this->getUsedGeneralFieldIds($customFields, $livewire->getRecord());
 
         $templateFieldsQuery = CustomField::query()
             ->where('template_id', $this->record->id);
@@ -208,7 +208,7 @@ class EditTemplate extends EditCustomForm
 
         return CustomField::query()
             ->whereIn('custom_form_id', $otherTemplatesQuery->select('template_id'))
-            ->whereIn('general_field_id', $this->getUsedGeneralFieldIds($customFields));
+            ->whereIn('general_field_id', $this->getUsedGeneralFieldIds($customFields, $livewire->getRecord()));
     }
 
     protected function collideMessageDescription($livewire): HtmlString

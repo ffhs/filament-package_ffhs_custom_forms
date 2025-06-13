@@ -65,7 +65,7 @@ class CustomOptionTypeOption extends TypeOption
         foreach ($data as $optionData) {
             if (!array_key_exists('id', $optionData)) {
                 if (empty($optionData['identifier'])) {
-                    $optionData = array_merge($optionData, ['identifier' => uniqid()]);
+                    $optionData['identifier'] = uniqid();
                 }
                 $toCreate[] = $optionData;
                 continue;

@@ -83,15 +83,15 @@ class FieldDragDropEditor extends DragDropComponent
         return CustomForms::getFieldTypeFromRawDate($itemState)->fieldEditorExtraComponent($itemState);
     }
 
-    protected function getFieldIcons(array $itemState): ?string
+    protected function getFieldIcons(array $itemState, $record): ?string
     {
-        return CustomForms::getFieldTypeFromRawDate($itemState)->getEditorFieldIcon($itemState);
+        return CustomForms::getFieldTypeFromRawDate($itemState)->getEditorFieldIcon($itemState, $record);
     }
 
-    protected function getFieldLabel(array $itemState): ?string
+    protected function getFieldLabel(array $itemState, $record): ?string
     {
-        $title = CustomForms::getFieldTypeFromRawDate($itemState)->getEditorFieldTitle($itemState);
-        $badge = CustomForms::getFieldTypeFromRawDate($itemState)->getEditorFieldBadge($itemState);
+        $title = CustomForms::getFieldTypeFromRawDate($itemState)->getEditorFieldTitle($itemState, $record);
+        $badge = CustomForms::getFieldTypeFromRawDate($itemState)->getEditorFieldBadge($itemState, $record);
 
         if (is_null($badge)) {
             return $title;

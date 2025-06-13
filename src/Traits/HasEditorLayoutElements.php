@@ -6,6 +6,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormEditor\Type
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormEditor\TypeActions\Default\DefaultCustomFieldDeleteAction;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormEditor\TypeActions\Default\DefaultCustomFieldEditTypeOptionsAction;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Filament\Support\Colors\Color;
 
 trait HasEditorLayoutElements
@@ -24,19 +25,18 @@ trait HasEditorLayoutElements
         return view('filament-package_ffhs_custom_forms::badge', ['text' => $text, 'color' => $color]);
     }
 
-    public function getEditorFieldTitle(array $rawData): string
+    public function getEditorFieldTitle(array $rawData, CustomForm $form): string
     {
-        $customField = app(CustomField::class)->fill($rawData);
+        $customField = $this->getEditorCustomFieldFromData($rawData, $form);
         if (!$customField->isGeneralField()) {
             return $this->getTranslatedName();
         }
-
         return $customField->name;
     }
 
-    public function getEditorFieldIcon(array $rawData): string
+    public function getEditorFieldIcon(array $rawData, CustomForm $form): string
     {
-        $customField = app(CustomField::class)->fill($rawData);
+        $customField = $this->getEditorCustomFieldFromData($rawData, $form);
         if (!$customField->isGeneralField()) {
             return $this->icon();
         }
@@ -61,6 +61,21 @@ trait HasEditorLayoutElements
     public function hasEditorNameElement(array $fielData): bool
     {
         return empty($fielData['general_field_id']);
+    }
+
+    protected function getEditorCustomFieldFromData(array $rawData, CustomForm $form): CustomField
+    {
+        $customField = app(CustomField::class)->fill($rawData);
+        if (!$customField->isGeneralField()) {
+            return $customField;
+        }
+
+        $generalField = $form->getFormConfiguration()
+            ->getAvailableGeneralFields()
+            ->get($customField->general_field_id);
+
+        $customField->setRelation('generalField', $generalField);
+        return $customField;
     }
 
     protected function getEditorFieldBadgeText(array $rawData): ?string

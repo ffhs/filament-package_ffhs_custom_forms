@@ -54,9 +54,13 @@ final class TemplateFieldType extends CustomFieldType
         ];
     }
 
-    public function getEditorFieldTitle(array $fieldData): string
+    public function getEditorFieldTitle(array $fieldData, CustomForm $form): string
     {
-        return CustomForm::cached($fieldData['template_id'])->short_title; //ToDo Improve
+        return $form
+            ->getFormConfiguration()
+            ->getAvailableTemplates()
+            ->get($fieldData['template_id'])
+            ->short_title;
     }
 
 

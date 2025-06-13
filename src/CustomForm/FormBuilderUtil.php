@@ -239,7 +239,11 @@ class FormBuilderUtil
 
     private static function prepareOptionData(array $field, array &$fieldData, array $defaultOptions): void
     {
-        $fieldData['options'] = array_merge($defaultOptions, $field['options'] ?? []);
+        $options = $field['options'] ?? [];
+        $fieldData['options'] = [
+            ...$defaultOptions,
+            ...$options
+        ];
     }
 
     private static function prepareCustomOptions(array $field, array &$fieldData): void

@@ -15,9 +15,9 @@ final class TemplateFieldAdder extends FormEditorFieldAdder
 {
     use CanModifyCustomFormEditorData;
 
-    public function isTemplateDisabled($value): bool
+    public function isTemplateDisabled($value, $record): bool
     {
-        if ($this->useTemplateUsedGeneralFields($value)) {
+        if ($this->useTemplateUsedGeneralFields($value, $record)) {
             return true;
         }
 
@@ -30,9 +30,9 @@ final class TemplateFieldAdder extends FormEditorFieldAdder
         return in_array($value, $usedTemplateIds, false);
     }
 
-    public function useTemplateUsedGeneralFields(int $templateId): bool
+    public function useTemplateUsedGeneralFields(int $templateId, $form): bool
     {
-        $existingIds = $this->getUsedGeneralFieldIds($this->getState()['custom_fields']);
+        $existingIds = $this->getUsedGeneralFieldIds($this->getState()['custom_fields'], $form);
 
         if (empty($existingIds)) {
             return false;

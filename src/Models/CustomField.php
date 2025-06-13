@@ -127,7 +127,7 @@ class CustomField extends ACustomField implements NestingObject
         return match ($key) {
             'name' => $this->generalField->name,
             'type' => $this->generalField->type,
-            'options' => array_merge(parent::__get($key) ?? [], $this->generalField->overwrite_options ?? []),
+            'options' => $this->getOptionsWithOverwritten(),
             'overwritten_options' => array_keys($this->generalField->overwrite_options ?? []),
             'identifier' => $this->generalField->identifier,
             default => parent::__get($key),
@@ -175,5 +175,15 @@ class CustomField extends ACustomField implements NestingObject
     public function template(): BelongsTo
     {
         return $this->belongsTo(CustomForm::class, 'template_id');
+    }
+
+    public function getOptionsWithOverwritten(): array
+    {
+        $ownOptions = parent::__get('options') ?? [];
+        $overwrittenOptions = $this->generalField->overwrite_options ?? [];
+        return [
+            ... $ownOptions,
+            ... $overwrittenOptions,
+        ];
     }
 }

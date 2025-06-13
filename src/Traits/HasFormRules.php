@@ -28,13 +28,9 @@ trait HasFormRules
             return parent::__get('ownedRules');
         }
 
-        if ($this->relationLoaded('rules')) {
-            $ownedRules = parent::__get('rules')->where('formRule.custom_form_id', $this->id);
-            $this->setRelation('ownedRules', $ownedRules);
-            return $ownedRules;
-        }
-
-        return parent::__get('rules');
+        $ownedRules = $this->rules->where('formRule.custom_form_id', $this->id);
+        $this->setRelation('ownedRules', $ownedRules);
+        return $ownedRules;
     }
 
     public function rules(): \Illuminate\Support\Collection

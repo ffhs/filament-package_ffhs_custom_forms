@@ -91,13 +91,8 @@ trait HasCustomFields
             return parent::__get('ownedFields');
         }
 
-        if ($this->relationLoaded('customFields')) {
-            $ownedFields = parent::__get('customFields')->where('custom_form_id', $this->id);
-            $this->setRelation('customFields', $ownedFields);
-            return $ownedFields;
-        }
-
-        return parent::__get('ownedFields');
+        $this->customFields();
+        return $this->getRelation('ownedFields');
     }
 
     public function ownedGeneralFields(): BelongsToMany

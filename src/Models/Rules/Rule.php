@@ -40,11 +40,8 @@ class Rule extends Model
     public function handle(array $arguments, mixed $target): mixed
     {
         $triggers = $this->getTriggersCallback($target, $arguments);
-
         $events = $this->ruleEvents;
-        if ($events == null) {
-            $events = $this->ruleEvents()->get();
-        }
+        
         $events = $events->sortBy('order');
         foreach ($events as $event) {
             /**@var RuleEvent $event */
@@ -61,11 +58,7 @@ class Rule extends Model
         return function ($extraArguments = []) use ($target, $arguments) {
             $argumentsFinal = array_merge($arguments, $extraArguments);
 
-            $triggers = $this->ruleTriggers;
-            if ($triggers == null) {
-                $triggers = $this->ruleTriggers()->get();
-            }
-            $triggers = $triggers->sortBy('order');
+            $triggers = $this->ruleTriggers->sortBy('order');
 
             foreach ($triggers as $trigger) {
                 /**@var RuleTrigger $trigger */
@@ -74,14 +67,15 @@ class Rule extends Model
                     $triggered = !$triggered;
                 }
 
+                //OR
                 if ($this->is_or_mode && $triggered) {
                     return true;
-                } //OR
-                else {
-                    if (!$this->is_or_mode && !$triggered) {
-                        return false;
-                    }
-                } //AND
+                }
+
+                //AND Wenn nicht oder und nicht getriggert dann falsch
+                if (!$this->is_or_mode && !$triggered) {
+                    return false;
+                }
             }
 
             return !$this->is_or_mode;

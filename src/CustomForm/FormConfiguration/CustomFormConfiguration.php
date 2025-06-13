@@ -78,12 +78,15 @@ abstract class CustomFormConfiguration
     public function getAvailableTemplates(): Collection
     {
         return once(function () {
-            return CustomForm::query()
-                ->with('customFields')
+            $forms = CustomForm::query()
+                ->with('ownedFields', 'ownedGeneralFields')
                 ->whereNotNull('template_identifier')
                 ->where('custom_form_identifier', $this::identifier())
                 ->get()
                 ->keyBy('id');
+            $forms->each(fn(CustomForm $form) => $form->setRelation('customFields', $form->ownedFields));
+            $forms->each(fn(CustomForm $form) => $form->setRelation('generalFields', $form->ownedGeneralFields));
+            return $forms;
         });
     }
 
@@ -97,7 +100,8 @@ abstract class CustomFormConfiguration
             return GeneralField::query()
                 ->with('generalFieldForms')
                 ->whereIn('id', $generalFieldFormQuery)
-                ->get();
+                ->get()
+                ->keyBy('id');
         });
     }
 }
