@@ -1,21 +1,20 @@
 <?php
 
-namespace Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\FormConverter\FormImporter\Traids;
+namespace Ffhs\FilamentPackageFfhsCustomForms\Traits;
 
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\Rule;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\RuleEvent;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\RuleTrigger;
 
-trait ImportRuleInformation
+trait CanImportRuleInformation
 {
     public function importRule(array $rawDataRule, CustomForm $customForm): void
     {
         $rules = [];
         foreach ($rawDataRule as $rule) {
-            $rule = new Rule([
-                'is_or_mode' => $rule['is_or_mode'] ?? false,
-            ]);
+            $isOrMode = $rule['is_or_mode'] ?? false;
+            $rule = new Rule(['is_or_mode' => $isOrMode]);
             $rules[] = $rule;
         }
 
@@ -28,8 +27,6 @@ trait ImportRuleInformation
         }
     }
 
-    // @codeCoverageIgnoreStart
-
     public function importRuleElements(Rule $rule, array $rawRuleData): void
     {
         $events = $this->mapRuleElements($rawRuleData['events'] ?? [], RuleEvent::class);
@@ -38,8 +35,6 @@ trait ImportRuleInformation
         $rule->ruleEvents()->saveMany($events);
         $rule->ruleTriggers()->saveMany($triggers);
     }
-
-    // @codeCoverageIgnoreEnd
 
     private function mapRuleElements(array $elements, string $class): array
     {
@@ -52,5 +47,4 @@ trait ImportRuleInformation
             ]);
         }, $elements);
     }
-
 }

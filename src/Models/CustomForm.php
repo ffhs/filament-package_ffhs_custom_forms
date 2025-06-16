@@ -40,6 +40,7 @@ use Spatie\Translatable\HasTranslations;
  * @property-read int|null $rules_count
  * @property-read mixed $translations
  * @property bool|\Illuminate\Database\Eloquent\Collection|mixed $ownedGeneralFields
+ * @property bool|\Illuminate\Support\Collection $ownedFields
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomForm newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomForm newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomForm query()

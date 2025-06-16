@@ -29,7 +29,7 @@ trait CanLoadFormAnswer
     ): array {
         $loadedData = [];
         $customForm = $answerer->customForm;
-        $customFields = $customForm->customFields()->keyBy('id');
+        $customFields = $customForm->customFields->keyBy('id');
         $templateTypeFields = $customFields->whereNotNull('template_id')->keyBy('template_id');
         $formRules = $customForm->rules;
 

@@ -1,13 +1,13 @@
 <?php
 
-namespace Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\FormConverter\FormImporter\Traids;
+namespace Ffhs\FilamentPackageFfhsCustomForms\Traits;
 
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomOption;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 
-trait ImportFieldInformation
+trait CanImportFieldInformation
 {
     public function importFields(
         array $rawFields,
@@ -60,11 +60,10 @@ trait ImportFieldInformation
                 $subFields = $rawField['fields'];
                 $subFieldData = $this->importFieldDatas($subFields, $customForm, $templateMap, $generalFieldMap,
                     $fieldCounter);
-                $fieldsToCreate = array_merge($fieldsToCreate, $subFieldData);
+                $fieldsToCreate = [...$fieldsToCreate, ...$subFieldData];
                 $field['layout_end_position'] = $fieldCounter;
                 unset($rawField['fields']);
             }
-
 
             if (array_key_exists('template', $rawField)) {
                 $template = $rawField['template'];
@@ -86,14 +85,11 @@ trait ImportFieldInformation
                 $field['customOptions'] = $customOptions;
             }
 
-            $field = array_merge($rawField, $field);
-
+            $field = [...$rawField, ...$field];
 
             $fieldsToCreate[] = $field;
-
         }
 
         return $fieldsToCreate;
     }
-
 }

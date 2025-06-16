@@ -39,25 +39,31 @@ final class GeneralFieldAdder extends FormEditorFieldAdder
         });
     }
 
-    public function isGeneralDisabled($value): bool
+    public function isGeneralDisabled($value, CustomForm $record): bool
     {
-        $notAllowed = once(function () {
+        $notAllowed = once(function () use ($record) {
             $fields = $this->getState()['custom_fields'];
 
             $usedGeneralFieldIds = collect($fields)
                 ->pluck('general_field_id');
 
+            if ($record->isTemplate()) {
+                return $usedGeneralFieldIds;
+            }
+
             $usedTemplates = collect($fields)
                 ->pluck('template_id');
 
-            $usedGeneralFieldIdsFormTemplates = CustomForm::query()
-                ->whereIn('id', $usedTemplates)
-                ->with('generalFields')
-                ->select('id')
-                ->get()
-                ->pluck('generalFields')
+            $usedTemplates = $record
+                ->getFormConfiguration()
+                ->getAvailableTemplates()
+                ->whereIn('id', $usedTemplates);
+
+            $usedGeneralFieldIdsFormTemplates = $usedTemplate
+                ->map(fn(CustomForm $template) => $template->ownedFields)
                 ->flatten(1)
-                ->pluck('id');
+                ->whereNotNull('general_field_id')
+                ->pluck('general_field_id');
 
             return $usedGeneralFieldIds->merge($usedGeneralFieldIdsFormTemplates);
         });

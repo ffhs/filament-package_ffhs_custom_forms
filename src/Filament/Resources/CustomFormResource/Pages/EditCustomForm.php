@@ -72,6 +72,7 @@ class EditCustomForm extends EditRecord
     {
         /**@var CustomForm $customForm */
         $customForm = $this->getRecord();
+        $customForm->load('ownedRules', 'ownedRules.ruleTriggers', 'ownedRules.ruleEvents');
         $this->form->fill([
             'custom_form' => $this->loadCustomFormEditorData($customForm)
         ]);

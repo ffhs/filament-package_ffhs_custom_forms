@@ -1,15 +1,14 @@
 <?php
 
-namespace Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\FormConverter\SchemaExporter\Traids;
+namespace Ffhs\FilamentPackageFfhsCustomForms\Traits;
 
 use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\Rule;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\RuleEvent;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\RuleTrigger;
 use Illuminate\Support\Collection;
 
-trait ExportRuleInformation
+trait CanExportRuleInformation
 {
-
     public function exportRuleInformation(Collection $rules): array
     {
         return $rules->map(function (Rule $rule) {
@@ -41,5 +40,4 @@ trait ExportRuleInformation
             ];
         })->toArray();
     }
-
 }

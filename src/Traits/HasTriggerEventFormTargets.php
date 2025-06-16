@@ -11,6 +11,7 @@ trait HasTriggerEventFormTargets
 {
     use HasAllFieldDataFromFormData;
     use HasFieldsMapToSelectOptions;
+    use CanLoadFieldRelationFromForm;
 
     protected array|null $cachedAllFieldsData = null;
 
@@ -38,11 +39,13 @@ trait HasTriggerEventFormTargets
             ->live();
     }
 
-
-    public function getTargetOptions($get, $record): array
+    public function getTargetOptions(Get $get, ?CustomForm $record): array
     {
         $fields = collect($this->getAllFieldsData($get, $record))
-            ->map(fn($fieldData) => (new CustomField())->fill($fieldData));
+            ->map(function ($fieldData) use ($record) {
+                $customField = new CustomField($fieldData);
+                return $this->loadFieldRelationsFromForm($customField, $record);
+            });
         return $this->getSelectOptionsFromFields($fields);
     }
 
@@ -66,5 +69,4 @@ trait HasTriggerEventFormTargets
 
         return $fields[$identifier] ?? null;
     }
-
 }

@@ -1,6 +1,6 @@
 <?php
 
-use Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\FormConverter\FormImporter\FormSchemaImporter;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormConverter\FormSchemaImporter;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Tests\Feature\CustomForms\FormConverter\FormConverterCase;
 use Workbench\App\FFHs\TestCustomFormConfiguration;

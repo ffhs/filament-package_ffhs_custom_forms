@@ -1,14 +1,17 @@
 <?php
 
-namespace Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\FormConverter\FormImporter\Traids;
+namespace Ffhs\FilamentPackageFfhsCustomForms\Traits;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormConfiguration\CustomFormConfiguration;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 
-trait ImportCustomForm
+trait CanImportCustomForm
 {
-    public function importCustomForm(array $rawForm, array $formInformation, CustomFormConfiguration $configuration)
-    {
+    public function importCustomForm(
+        array $rawForm,
+        array $formInformation,
+        CustomFormConfiguration $configuration
+    ): CustomForm {
         $formInformation = array_merge($rawForm['form'] ?? [], $formInformation);
         $formInformation['custom_form_identifier'] = $configuration::identifier();
         return CustomForm::create($formInformation);

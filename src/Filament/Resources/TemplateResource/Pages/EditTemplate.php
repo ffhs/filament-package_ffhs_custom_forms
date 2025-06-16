@@ -20,6 +20,8 @@ class EditTemplate extends EditCustomForm
 {
     use CanModifyCustomFormEditorData;
 
+    //ToDo Check function
+
     protected static string $resource = TemplateResource::class;
 
     public static function canAccess(array $parameters = []): bool

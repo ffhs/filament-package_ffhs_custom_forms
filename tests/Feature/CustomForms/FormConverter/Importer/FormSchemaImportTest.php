@@ -1,8 +1,8 @@
 <?php
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\Types\TextType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormConverter\FormSchemaImporter;
 use Ffhs\FilamentPackageFfhsCustomForms\Exceptions\FormImportException;
-use Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\FormConverter\FormImporter\FormSchemaImporter;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Ffhs\FilamentPackageFfhsCustomForms\Tests\Feature\CustomForms\FormConverter\FormConverterCase;

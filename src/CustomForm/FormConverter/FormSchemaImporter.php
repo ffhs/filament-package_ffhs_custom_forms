@@ -1,22 +1,22 @@
 <?php
 
-namespace Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\FormConverter\FormImporter;
+namespace Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormConverter;
 
 use Error;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormConfiguration\CustomFormConfiguration;
 use Ffhs\FilamentPackageFfhsCustomForms\Exceptions\FormImportException;
-use Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\FormConverter\FormImporter\Traids\ImportCustomForm;
-use Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\FormConverter\FormImporter\Traids\ImportFieldInformation;
-use Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\FormConverter\FormImporter\Traids\ImportRuleInformation;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
+use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanImportCustomForm;
+use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanImportFieldInformation;
+use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanImportRuleInformation;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasStaticMake;
 use Illuminate\Support\Facades\DB;
 
 class FormSchemaImporter
 {
-    use ImportFieldInformation;
-    use ImportCustomForm;
-    use ImportRuleInformation;
+    use CanImportFieldInformation;
+    use CanImportCustomForm;
+    use CanImportRuleInformation;
     use HasStaticMake;
 
     public function import(
@@ -26,7 +26,6 @@ class FormSchemaImporter
         array $templateMap = [],
         array $generalFieldMap = []
     ): CustomForm {
-
         //ToDo Check if the identifiers of the fields exist
 
         DB::beginTransaction();
@@ -34,14 +33,11 @@ class FormSchemaImporter
         try {
             $fieldInformations = $rawForm['fields'] ?? [];
             $ruleInformations = $rawForm['rules'] ?? [];
-            unset($rawForm['fields']);
-            unset($rawForm['rules']);
-
+            unset($rawForm['fields'], $rawForm['rules']);
 
             $customForm = $this->importCustomForm($rawForm, $formInformation, $configuration);
 
             $this->importFields($fieldInformations, $customForm, $templateMap, $generalFieldMap);
-
             $this->importRule($ruleInformations, $customForm);
 
             DB::commit();
@@ -67,12 +63,9 @@ class FormSchemaImporter
         try {
             $fieldInformations = $rawForm['fields'] ?? [];
             $ruleInformations = $rawForm['rules'] ?? [];
-            unset($rawForm['fields']);
-            unset($rawForm['rules']);
-
+            unset($rawForm['fields'], $rawForm['rules']);
 
             $this->importFields($fieldInformations, $customForm, $templateMap, $generalFieldMap);
-
             $this->importRule($ruleInformations, $customForm);
 
             DB::commit();
@@ -82,5 +75,4 @@ class FormSchemaImporter
             throw new FormImportException($exception);
         }
     }
-
 }
