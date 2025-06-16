@@ -2,6 +2,7 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Models;
 
+use Ffhs\FilamentPackageFfhsCustomForms\Facades\CustomForms;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\Rule;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -29,12 +30,16 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class FormRule extends Model
 {
-
     protected $fillable = [
         'order',
         'custom_form_id',
         'rule_id',
     ];
+
+    public static function type__(string $translate): string
+    {
+        return CustomForms::__('form_rules.' . $translate);
+    }
 
     public function rule(): BelongsTo
     {

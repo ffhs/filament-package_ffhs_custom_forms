@@ -1,0 +1,92 @@
+<?php
+
+namespace Ffhs\FilamentPackageFfhsCustomForms\Traits;
+
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\FormRule;
+use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\Component;
+use Filament\Forms\Components\Group;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Get;
+use Illuminate\Support\Collection;
+
+trait HasOptionCheck
+{
+    use CanLoadFieldRelationFromForm;
+
+    protected function checkOption(mixed $targetValue, array $data): bool
+    {
+        if (empty($data)) {
+            return false;
+        }
+
+        $includeNull = $data['selected_include_null'] ?? false;
+        $options = $data['selected_options'] ?? [];
+
+        if ($includeNull && empty($targetValue)) {
+            return true;
+        }
+
+        if (empty($options)) {
+            return false;
+        }
+
+        //Custom Option Types like Select
+        if (is_array($targetValue)) {
+            return sizeof(array_intersect($targetValue, $options)) > 0;
+        }
+        return !is_null($targetValue) && in_array($targetValue, $options, false);
+    }
+
+    protected function getOptionTypeGroup(): Component
+    {
+        return Group::make([
+            Checkbox::make('selected_include_null')
+                ->label(FormRule::type__('value_equals_rule_trigger.options.selected_include_null')),
+            Select::make('selected_options')
+                ->label(FormRule::type__('value_equals_rule_trigger.options.selected_options'))
+                ->options(fn($get, $record) => once(fn() => $this->getOptionTypeGroupOptions($get, $record)))
+                ->columnSpanFull()
+                ->multiple(),
+        ]);
+    }
+
+    protected function getOptionTypeGroupOptions(Get $get, CustomForm $record): array|Collection
+    {
+        $finalField = $this->getTargetFieldData($get, $record);
+        if (is_null($finalField)) {
+            return [];
+        }
+
+        if (array_key_exists('general_field_id', $finalField) && !is_null($finalField['general_field_id'])) {
+            //GeneralFields
+            $customField = new CustomField($finalField);
+            $customField = $this->loadFieldRelationsFromForm($customField, $record);
+            $genField = $customField->generalField;
+
+            if (!array_key_exists('options', $finalField)) {
+                return [];
+            }
+            if (!array_key_exists('customOptions', $finalField['options'])) {
+                return [];
+            }
+            $options = collect($finalField['options']['customOptions']);
+
+            return $genField->customOptions
+                ->whereIn('id', $options)
+                ->pluck('name', 'identifier')
+                ->toArray();
+        }
+
+        if (!array_key_exists('options', $finalField)) {
+            return [];
+        }
+        if (!array_key_exists('customOptions', $finalField['options'])) {
+            return [];
+        }
+        $options = collect($finalField['options']['customOptions']);
+        return $options->pluck('name.' . $record->getLocale(), 'identifier');
+    }
+}

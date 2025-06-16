@@ -5,26 +5,24 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Trigger;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\CustomOption\CustomOptionType;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\FormRule;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\RuleTrigger;
+use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasBoolCheck;
+use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasNumberCheck;
+use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasOptionCheck;
+use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasTextCheck;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasTriggerEventFormTargets;
-use Filament\Forms\Components\Actions\Action;
-use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Component;
-use Filament\Forms\Components\Group;
-use Filament\Forms\Components\Hidden;
-use Filament\Forms\Components\Placeholder;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TagsInput;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\ToggleButtons;
-use Filament\Support\Colors\Color;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Blade;
-use Illuminate\Support\HtmlString;
+use Filament\Forms\Get;
 
 class ValueEqualsRuleTrigger extends FormRuleTriggerType
 {
     use HasTriggerEventFormTargets;
+    use HasNumberCheck;
+    use HasBoolCheck;
+    use HasTextCheck;
+    use HasOptionCheck;
 
     public static function identifier(): string
     {
@@ -44,7 +42,7 @@ class ValueEqualsRuleTrigger extends FormRuleTriggerType
 
     public function isTrigger(array $arguments, mixed &$target, RuleTrigger $rule): bool
     {
-        if (!key_exists('state', $arguments)) {
+        if (!array_key_exists('state', $arguments)) {
             return false;
         }
 
@@ -58,9 +56,9 @@ class ValueEqualsRuleTrigger extends FormRuleTriggerType
             return false;
         }
 
-        $targetFieldIdentifyer = $rule->data['target'];
+        $targetFieldIdentifier = $rule->data['target'];
         $state = $arguments['state'];
-        $targetValue = $state[$targetFieldIdentifyer] ?? null;
+        $targetValue = $state[$targetFieldIdentifier] ?? null;
         $type = $rule->data['type'];
 
         return match ($type) {
@@ -75,7 +73,7 @@ class ValueEqualsRuleTrigger extends FormRuleTriggerType
 
     public function getDisplayName(): string
     {
-        return 'Bestimmter Wert'; //ToDo Tra
+        return FormRule::type__('value_equals_rule_trigger.label');
     }
 
     public function getFormSchema(): array
@@ -87,298 +85,32 @@ class ValueEqualsRuleTrigger extends FormRuleTriggerType
                 ->afterStateUpdated(fn($set) => $set('type', null)),
             ToggleButtons::make('type')
                 ->options(fn() => [
-                    'number' => 'Nummer',
-                    'text' => 'Text',
-                    'boolean' => 'Boolean',
-                    'null' => 'Leer',
-                    'option' => 'Optionen',
+                    'number' => FormRule::type__('value_equals_rule_trigger.number.label'),
+                    'text' => FormRule::type__('value_equals_rule_trigger.text.label'),
+                    'boolean' => FormRule::type__('value_equals_rule_trigger.bool.label'),
+                    'null' => FormRule::type__('value_equals_rule_trigger.null.label'),
+                    'option' => FormRule::type__('value_equals_rule_trigger.options.label'),
                 ])
-                ->disableOptionWhen(function ($value, $get) { //make Better
-                    if ($value != 'option') {
-                        return false;
-                    }
-                    $target = $get('target');
-                    $formState = $get('../../../../../custom_fields') ?? [];
-                    $customField = [];
-                    foreach ($formState as $field) {
-                        $customField = new CustomField();
-                        $customField->fill($field);
-                        if ($customField->identifier() != $target) {
-                            $customField = null;
-                        } else {
-                            break;
-                        }
-                    }
-
-
-                    if (empty($customField)) {
-                        return true;
-                    }
-                    return !($customField->getType() instanceof CustomOptionType);
-                })
-                ->afterStateUpdated(function ($get, $set, $old) {
-                    if ($old == 'option') {
-                        $set('selected_options', []);
-                    }
-
-                    switch ($get('type')) {
-                        case'text':
-                            $set('values', []);
-                            break;
-                        case'option':
-                            $set('selected_options', []);
-                            break;
-                    }
-                })
+                ->afterStateUpdated($this->doAfterStateUpdate(...))
+                ->disableOptionWhen($this->isOptionsDisabled(...))
                 ->nullable(false)
                 ->hiddenLabel()
                 ->required()
                 ->grouped()
                 ->live(),
             $this->getTextTypeGroup()
-                ->visible(fn($get) => $get('type') == 'text')
+                ->visible(fn($get) => $get('type') === 'text')
                 ->live(),
             $this->getNumberTypeGroup()
-                ->visible(fn($get) => $get('type') == 'number')
+                ->visible(fn($get) => $get('type') === 'number')
                 ->live(),
             $this->getBooleanTypeGroup()
-                ->visible(fn($get) => $get('type') == 'boolean')
+                ->visible(fn($get) => $get('type') === 'boolean')
                 ->live(),
             $this->getOptionTypeGroup()
-                ->visible(fn($get) => $get('type') == 'option')
+                ->visible(fn($get) => $get('type') === 'option')
                 ->live(),
         ];
-    }
-
-    protected function checkNumber(mixed $targetValue, array $data): bool
-    {
-        $value = floatval($targetValue);
-        if ($data['exactly_number']) {
-            return $data['number'] == $value;
-        }
-
-        if (!empty($data['greater_than'])) {
-            if ($data['greater_equals'] && !($value >= $data['greater_than'])) {
-                return false;
-            }
-            if (!$data['greater_equals'] && !($value > $data['greater_than'])) {
-                return false;
-            }
-        }
-
-        if (!empty($data['smaller_than'])) {
-            if ($data['smaller_equals'] && !($value <= $data['smaller_than'])) {
-                return false;
-            }
-            if (!$data['smaller_equals'] && !($value < $data['smaller_than'])) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    protected function checkText(mixed $targetValue, array $data): bool
-    {
-        if (!is_string($targetValue)) {
-            return false;
-        }
-        if (empty($data['values'])) {
-            return false;
-        }
-
-        foreach ($data['values'] as $value) {
-            if (fnmatch($value, $targetValue)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    protected function checkBoolean(mixed $targetValue, array $data): bool
-    {
-        if (is_null($targetValue)) {
-            return false;
-        }
-
-        if (!empty($data['boolean'])) {
-            $boolean = $data['boolean'];
-        } else {
-            $boolean = false;
-        }
-
-        if (!is_bool($boolean)) {
-            $boolean = (bool)$boolean;
-        }
-
-        if (!is_bool($targetValue)) {
-            $targetValue = (bool)$targetValue;
-        }
-
-        return $targetValue === $boolean;
-    }
-
-    protected function checkOption(mixed $targetValue, array $data): bool
-    {
-        if (empty($data)) {
-            return false;
-        }
-
-        $includeNull = $data['selected_include_null'] ?? false;
-        if ($includeNull && empty($targetValue)) {
-            return true;
-        }
-
-        $options = $data['selected_options'] ?? [];
-        if (empty($options)) {
-            return false;
-        }
-
-        //Custom Option Types like Select
-        if (is_array($targetValue)) {
-            return sizeof(array_intersect($targetValue, $options)) > 0;
-        }
-        return !is_null($targetValue) && in_array($targetValue, $options, false);
-    }
-
-    protected function getTextTypeGroup(): Component
-    {
-        return Group::make([
-            TagsInput::make('values')
-                ->reorderable(false)
-                ->columnSpanFull()
-                ->label(''),
-        ]);
-    }
-
-    protected function getNumberTypeGroup(): Component
-    {
-        return Group::make([
-
-            Checkbox::make('exactly_number')
-                ->label('Genaue Nummer')
-                ->columnSpanFull()
-                ->live(),
-
-            TextInput::make('number')
-                ->prefixIcon('carbon-character-whole-number')
-                ->visible(fn($get) => $get('exactly_number'))
-                ->label('Nummer')
-                ->required()
-                ->numeric(),
-
-            Group::make()
-                ->hidden(fn($get) => $get('exactly_number'))
-                ->columns(5)
-                ->columnSpanFull()
-                ->schema([
-
-                    Hidden::make('greater_equals')
-                        ->live(),
-                    Hidden::make('smaller_equals')
-                        ->live(),
-
-                    TextInput::make('greater_than')
-                        ->label('Grösser als') //ToDo Translate
-                        ->suffixAction(
-                            Action::make('greater_equals_action')
-                                ->action(fn($set, $get) => $set('greater_equals', !($get('greater_equals') ?? false)))
-                                ->color(Color::hex('#000000'))
-                                ->icon(
-                                    fn($get) => $get('greater_equals') ? 'tabler-math-equal-lower' : 'tabler-math-lower'
-                                )
-                        )
-                        ->columnStart(1)
-                        ->columnSpan(2)
-                        ->numeric(),
-                    Placeholder::make('')
-                        ->content(
-                            fn() => new HtmlString(
-                                Blade::render(
-                                    '<div class="flex flex-col items-center justify-center"><br><x-bi-input-cursor style="height: auto; width: 40px"/></div>'
-                                )
-                            )
-                        ) //ToDo Translate
-                        ->label(' '),
-                    TextInput::make('smaller_than')
-                        ->prefixAction(
-                            Action::make('smaller_than_action')
-                                ->action(fn($set, $get) => $set('smaller_equals', !($get('smaller_equals') ?? false)))
-                                ->color(Color::hex('#000000'))
-                                ->icon(
-                                    fn($get) => $get(
-                                        'smaller_equals'
-                                    ) ? 'tabler-math-equal-greater' : 'tabler-math-greater'
-                                )
-                        )
-                        ->label('Kleiner als') //ToDo Translate
-                        ->columnStart(4)
-                        ->columnSpan(2)
-                        ->numeric(),
-                ]),
-            Placeholder::make('')
-                ->content(fn() => 'Feld leer lassen, damit keine Abfrage ausgeführt wird') //ToDo Translate
-                ->columnSpanFull()
-                ->label(''),
-        ]);
-    }
-
-    protected function getBooleanTypeGroup(): Component
-    {
-        return Group::make([
-            Checkbox::make('boolean')
-                ->label('Auslössen wenn der Wert Ja ist') //ToDo Translate
-                ->columnSpanFull(),
-        ]);
-    }
-
-    protected function getOptionTypeGroup(): Component
-    {
-        return Group::make([
-            Checkbox::make('selected_include_null')
-                ->label('Null inklusive'), //ToDo Tranlsate
-
-            Select::make('selected_options')
-                ->columnSpanFull()
-                ->multiple()
-                ->options($this->getOptionTypeGroupOptions(...)),
-        ]);
-    }
-
-    protected function getOptionTypeGroupOptions($get, CustomForm $record): array|Collection
-    {
-        $finalField = $this->getTargetFieldData($get, $record);
-        if (is_null($finalField)) {
-            return [];
-        }
-
-        if (array_key_exists('general_field_id', $finalField) && !is_null($finalField['general_field_id'])) {
-            //GeneralFields
-            $genField = (new CustomField())->fill($finalField)->generalField;
-
-            if (!array_key_exists('options', $finalField)) {
-                return [];
-            }
-            if (!array_key_exists('customOptions', $finalField['options'])) {
-                return [];
-            }
-            $options = collect($finalField['options']['customOptions']);
-
-            return $genField->customOptions
-                ->whereIn('id', $options)
-                ->pluck('name', 'identifier')
-                ->toArray();
-        }
-
-        if (!array_key_exists('options', $finalField)) {
-            return [];
-        }
-        if (!array_key_exists('customOptions', $finalField['options'])) {
-            return [];
-        }
-        $options = collect($finalField['options']['customOptions']);
-        return $options->pluck('name.' . $record->getLocale(), 'identifier');
     }
 
     private function checkNull(mixed $targetValue): bool
@@ -389,9 +121,53 @@ class ValueEqualsRuleTrigger extends FormRuleTriggerType
         if (is_bool($targetValue)) {
             return false;
         }
-        if ($targetValue == '0') {
+        if ($targetValue === '0') {
             return false;
         }
         return empty($targetValue);
+    }
+
+    private function isOptionsDisabled($value, Get $get, CustomForm $record): bool
+    {
+        if ($value !== 'option') {
+            return false;
+        }
+        //ToDo may better way
+        return once(function () use ($get, $record) {
+            $target = $get('target');
+            $formState = $get('../../../../../custom_fields') ?? [];
+            $customField = [];
+            foreach ($formState as $field) {
+                $customField = new CustomField($field);
+                $customField = $this->loadFieldRelationsFromForm($customField, $record);
+
+                if ($customField->identifier() === $target) {
+                    break;
+                }
+
+                $customField = null;
+            }
+
+            if (empty($customField)) {
+                return true;
+            }
+            return !($customField->getType() instanceof CustomOptionType);
+        });
+    }
+
+    private function doAfterStateUpdate($get, $set, $old): void
+    {
+        if ($old === 'option') {
+            $set('selected_options', []);
+        }
+
+        switch ($get('type')) {
+            case'text':
+                $set('values', []);
+                break;
+            case'option':
+                $set('selected_options', []);
+                break;
+        }
     }
 }
