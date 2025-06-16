@@ -26,7 +26,7 @@ abstract class  IsPropertyOverwriteEvent extends FormRuleEventType
         Component &$component,
         RuleEvent $rule
     ): Component {
-        if (!in_array($arguments['identifier'], $rule->data['targets'])) {
+        if (!in_array($arguments['identifier'], $rule->data['targets'], false)) {
             return $component;
         }
         return $this->prepareComponent($component, $triggers);

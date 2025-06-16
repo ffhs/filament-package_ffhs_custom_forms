@@ -16,7 +16,7 @@ trait CanCloneCustomForm
     public function cloneField(array $fieldData, CustomForm $targetForm, bool $useSameIdentifier = true): array
     {
         //Mutate Field Data's
-        $field = CustomField::cached($fieldData['id']);
+        $field = CustomField::query()->firstWhere('id', $fieldData['id']);
 
         //Load OptionData now, because it needs the field id
 

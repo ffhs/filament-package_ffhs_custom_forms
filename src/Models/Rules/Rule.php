@@ -41,7 +41,7 @@ class Rule extends Model
     {
         $triggers = $this->getTriggersCallback($target, $arguments);
         $events = $this->ruleEvents;
-        
+
         $events = $events->sortBy('order');
         foreach ($events as $event) {
             /**@var RuleEvent $event */

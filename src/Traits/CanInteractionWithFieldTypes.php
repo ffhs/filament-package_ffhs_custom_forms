@@ -32,7 +32,7 @@ trait CanInteractionWithFieldTypes
         }
 
         if (!empty($data['general_field_id'])) {
-            return GeneralField::cached($data['general_field_id'])->getType();
+            return GeneralField::query()->firstWhere('id', $data['general_field_id'])->getType();
         }
 
         if (empty($data['type'])) {

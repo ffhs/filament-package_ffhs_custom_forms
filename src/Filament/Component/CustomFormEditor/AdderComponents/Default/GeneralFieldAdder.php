@@ -81,8 +81,10 @@ final class GeneralFieldAdder extends FormEditorFieldAdder
     protected function getExpandAction($option): Action
     {
         return Action::make('addGeneral')
-            ->action(function ($component, $arguments, $livewire) use ($option) {
-                $generalField = GeneralField::cached($option);
+            ->action(function ($component, $arguments, $livewire, CustomForm $record) use ($option) {
+                $generalField = $record->getFormConfiguration()
+                    ->getAvailableGeneralFields()
+                    ->firstWhere('id', $option);
 
                 $field = [
                     'general_field_id' => $option,

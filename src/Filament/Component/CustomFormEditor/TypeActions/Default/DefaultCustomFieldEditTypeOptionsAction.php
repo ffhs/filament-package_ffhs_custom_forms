@@ -7,7 +7,6 @@ use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormEditor\Type
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormEditor\TypeActions\FieldTypeAction;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanModifyCustomFormEditorData;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Set;
@@ -37,12 +36,19 @@ class DefaultCustomFieldEditTypeOptionsAction extends FieldTypeAction
             return $state;
         }); //ToDo Try with editor in modal
         $this->modalHeading(function (array $fieldData, CustomForm $record) {
-            $modalHeading = CustomField::__('actions.edit_options.modal_heading');
-            $name = empty($fieldData['general_field_id'])
-                ? ($fieldData['name'][$record->getLocale()] ?? '')
-                : ('G. ' . GeneralField::cached($fieldData['general_field_id'])->name); //ToDo Try to do it maybe without cache
+            return once(function () use ($fieldData, $record) {
+                $genFieldName = static fn() => $record->getFormConfiguration()
+                    ->getAvailableGeneralFields()
+                    ->firstWhere('id', $fieldData['general_field_id'])
+                    ->name;
 
-            return trans($modalHeading, ['name' => $name]);
+                $modalHeading = CustomField::__('actions.edit_options.modal_heading');
+                $name = empty($fieldData['general_field_id'])
+                    ? ($fieldData['name'][$record->getLocale()] ?? '')
+                    : ('G. ' . $genFieldName());
+
+                return trans($modalHeading, ['name' => $name]);
+            });
         });
 
         $this->icon('carbon-settings-edit');
