@@ -3,6 +3,7 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormConfiguration;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldType;
+use Ffhs\FilamentPackageFfhsCustomForms\Facades\CustomForms;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralFieldForm;
@@ -86,6 +87,8 @@ abstract class CustomFormConfiguration
                 ->keyBy('id');
             $forms->each(fn(CustomForm $form) => $form->setRelation('customFields', $form->ownedFields));
             $forms->each(fn(CustomForm $form) => $form->setRelation('generalFields', $form->ownedGeneralFields));
+
+            CustomForms::cacheForm($forms);
             return $forms;
         });
     }

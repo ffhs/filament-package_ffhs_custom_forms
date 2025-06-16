@@ -71,7 +71,7 @@ class ChangeOptionsEvent extends FormRuleEventType
 
     public function getCustomOptionsOptions($get, CustomForm $record)
     {
-        $field = $this->getTargetFieldData($get);
+        $field = $this->getTargetFieldData($get, $record);
 
         if (empty($field)) {
             return [];
@@ -81,7 +81,7 @@ class ChangeOptionsEvent extends FormRuleEventType
             $customField = new CustomField();
             $customField->fill($field);
             $genOptions = $customField->generalField->customOptions;
-            $selectedOptions = $this->getTargetFieldData($get)['options']['customOptions'] ?? [];
+            $selectedOptions = $this->getTargetFieldData($get, $record)['options']['customOptions'] ?? [];
             $genOptions = $genOptions->whereIn('id', $selectedOptions);
             return $genOptions->pluck('name', 'identifier');
         }
@@ -149,17 +149,35 @@ class ChangeOptionsEvent extends FormRuleEventType
     }
 
 
-    protected function getTargetOptions($get, $record): array
+    protected function getTargetOptions($get, ?CustomForm $record): array
     {
         $output = [];
-        collect($this->getAllFieldsData($get))
-            ->map(fn($field) => (new CustomField())->fill($field))
+        collect($this->getAllFieldsData($get, $record))
+            ->map(function ($field) use ($record) {
+                $customField = new CustomField($field);
+                if ($customField->isGeneralField()) {
+                    $genField = $record
+                        ->getFormConfiguration()
+                        ->getAvailableGeneralFields()
+                        ->get($customField->general_field_id);
+
+                    $customField->setRelation('generalField', $genField);
+                }
+                if ($customField->custom_form_id === $record->id) {
+                    $customField->setRelation('customForm', $record);
+                } else {
+                    $template = $record
+                        ->getFormConfiguration()
+                        ->getAvailableTemplates()
+                        ->get($customField->custom_form_id);
+                    $customField->setRelation('customForm', $template);
+                }
+
+                return $customField;
+            })
             ->filter(fn(CustomField $field) => $field->getType() instanceof CustomOptionType)
             ->each(function (CustomField $field) use ($record, &$output) {
                 $title = $field->customForm?->short_title;
-                if (empty($title)) {
-                    $title = $record?->short_title;
-                }
                 if (empty($title)) {
                     $title = '?';
                 }

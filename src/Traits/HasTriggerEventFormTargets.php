@@ -3,6 +3,7 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\Traits;
 
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Get;
 
@@ -40,28 +41,28 @@ trait HasTriggerEventFormTargets
 
     public function getTargetOptions($get, $record): array
     {
-        $fields = collect($this->getAllFieldsData($get))
+        $fields = collect($this->getAllFieldsData($get, $record))
             ->map(fn($fieldData) => (new CustomField())->fill($fieldData));
         return $this->getSelectOptionsFromFields($fields);
     }
 
-    public function getAllFieldsData(Get $get): array
+    public function getAllFieldsData(Get $get, CustomForm $customForm): array
     {
         if (!is_null($this->cachedAllFieldsData)) {
             return $this->cachedAllFieldsData;
         }
         $fields = $get('../../../../../custom_fields') ?? [];
-        return $this->cachedAllFieldsData = $this->getFieldDataFromFormData($fields);
+        return $this->cachedAllFieldsData = $this->getFieldDataFromFormData($fields, $customForm);
     }
 
-    public function getTargetFieldData(Get $get): array|null
+    public function getTargetFieldData(Get $get, $customForm): array|null
     {
         $identifier = $get('target');
         if (is_null($identifier)) {
             return null;
         }
 
-        $fields = $this->getAllFieldsData($get);
+        $fields = $this->getAllFieldsData($get, $customForm);
 
         return $fields[$identifier] ?? null;
     }

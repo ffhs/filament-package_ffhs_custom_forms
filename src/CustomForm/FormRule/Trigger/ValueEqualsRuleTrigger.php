@@ -199,15 +199,24 @@ class ValueEqualsRuleTrigger extends FormRuleTriggerType
     protected function checkBoolean(mixed $targetValue, array $data): bool
     {
         if (is_null($targetValue)) {
-            $targetValue = false;
+            return false;
         }
+
         if (!empty($data['boolean'])) {
             $boolean = $data['boolean'];
         } else {
             $boolean = false;
         }
 
-        return $targetValue == $boolean;
+        if (!is_bool($boolean)) {
+            $boolean = (bool)$boolean;
+        }
+
+        if (!is_bool($targetValue)) {
+            $targetValue = (bool)$targetValue;
+        }
+
+        return $targetValue === $boolean;
     }
 
     protected function checkOption(mixed $targetValue, array $data): bool
@@ -339,11 +348,10 @@ class ValueEqualsRuleTrigger extends FormRuleTriggerType
 
     protected function getOptionTypeGroupOptions($get, CustomForm $record): array|Collection
     {
-        $finalField = $this->getTargetFieldData($get);
+        $finalField = $this->getTargetFieldData($get, $record);
         if (is_null($finalField)) {
             return [];
         }
-
 
         if (array_key_exists('general_field_id', $finalField) && !is_null($finalField['general_field_id'])) {
             //GeneralFields
@@ -372,114 +380,6 @@ class ValueEqualsRuleTrigger extends FormRuleTriggerType
         $options = collect($finalField['options']['customOptions']);
         return $options->pluck('name.' . $record->getLocale(), 'identifier');
     }
-
-
-    /*
-    public function getDisplayName(array $ruleData, Repeater $component, Get $get): string {
-        $componentState = $component->getState();
-
-        $valueState = array_values($componentState);
-        $ruleKeyPosition = array_search($ruleData, $valueState);
-        $ruleKey = array_keys($componentState)[$ruleKeyPosition];
-
-        $getPrefix = 'rules.'.$ruleKey.'.anchor_data.';
-        $targetFieldData = self::getSelectedFieldData($get,$component, $getPrefix);
-
-        if(is_null($targetFieldData)) return 'can't find field'; //ToDo translate
-
-        $targetFieldType= self::getFieldType($targetFieldData);
-
-        if($targetFieldType instanceof CustomOptionType)
-            return $this->getCustomOptionDisplayName($ruleData, $targetFieldData);
-
-
-        switch ($ruleData['anchor_data']['field_type']){
-            case 'text':
-                return $this->getTextDisplayName($ruleData, $targetFieldData);
-            case 'numeric':
-                return $this->getNumericDisplayName($ruleData, $targetFieldData);;
-            case 'boolean':
-                return $this->getBooleanDisplayName($ruleData, $targetFieldData);
-            default:
-                return parent::getDisplayName($ruleData, $component, $get);
-        }
-    }
-
-    private function getNumericDisplayName($ruleData, $targetFieldData): string {
-        $targetFieldName = $this->getFieldName($targetFieldData);
-
-        $numericData = $ruleData['anchor_data']['numeric'];
-        if($numericData['exactly_number']) return $targetFieldName.' = ' . $numericData['number'];
-
-        $output = '';
-
-        $greaterThan = $numericData['greater_than'];
-        if(!empty($greaterThan)){
-            $output .= $greaterThan;
-            if($numericData['greater_equals']) $output .= ' <= ';
-            else $output .= ' < ';
-        }
-
-        $output .= $targetFieldName;
-
-        $smallerThan = $numericData['smaller_than'];
-        if(!empty($smallerThan)){
-            if($numericData['smaller_equals']) $output .= ' >= ';
-            else $output .= ' > ';
-            $output .= $smallerThan;
-        }
-
-        return $output;
-    }
-
-    private function getBooleanDisplayName($ruleData, $targetFieldData): string {
-        $targetFieldName = $this->getFieldName($targetFieldData);
-        if($ruleData['anchor_data']['boolean']) return $targetFieldName.' wahr ist';
-        return $targetFieldName.' unwahr ist';
-    }
-
-    private function getTextDisplayName($ruleData, $targetFieldData): string {
-        $targetFieldName = $this->getFieldName($targetFieldData);
-
-        $cleanedValues = [];
-        foreach ($ruleData['anchor_data']['values'] as $value) $cleanedValues[] = '''.$value.''';
-
-        if (sizeof($cleanedValues) == 1)
-            return $targetFieldName.' entspricht '.array_values($cleanedValues)[0];
-        return $targetFieldName.' entspricht ['.implode(', ', $cleanedValues).']';
-    }
-
-    private function getCustomOptionDisplayName($ruleData, $targetFieldData): string {
-        $targetFieldName = $this->getFieldName($targetFieldData);
-
-        $selectedOptions = $ruleData['anchor_data']['selected_options'];
-        $localisation = Lang::locale();
-        $selectedOptionsName = [];
-
-        if(empty($targetFieldData['general_field_id'])){
-            foreach ($targetFieldData['options']['customOptions'] as $optionData) {
-                $identifier = $optionData['identifier'];
-                if (!in_array($identifier, $selectedOptions)) continue;
-                $selectedOptionsName[$identifier] = $optionData['name'][$localisation];
-            }
-        }
-        else{
-                    /**@var GeneralField $genField*/ /*
-        $genField =  GeneralField::cached($targetFieldData['general_field_id']);
-            //GeneralField's
-        foreach ($genField->customOptions as $option) {
-        $identifier = $option->identifier;
-        if (!in_array($identifier, $selectedOptions)) continue;
-        $selectedOptionsName[$identifier] = $option->name;
-        }
-        }
-
-
-        if (sizeof($selectedOptionsName) == 1)
-            return $targetFieldName.' ist '.array_values($selectedOptionsName)[0];
-        return $targetFieldName.' in ['.implode(', ', $selectedOptionsName).']';
-        }
-             */
 
     private function checkNull(mixed $targetValue): bool
     {

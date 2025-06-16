@@ -70,8 +70,10 @@ class EditCustomForm extends EditRecord
 
     protected function fillForm(): void
     {
+        /**@var CustomForm $customForm */
+        $customForm = $this->getRecord();
         $this->form->fill([
-            'custom_form' => $this->loadCustomFormEditorData($this->getRecord())
+            'custom_form' => $this->loadCustomFormEditorData($customForm)
         ]);
     }
 
