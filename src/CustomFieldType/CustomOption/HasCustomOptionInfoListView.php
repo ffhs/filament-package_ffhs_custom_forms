@@ -19,7 +19,7 @@ trait HasCustomOptionInfoListView
     ): Component {
         $textEntry = TextEntry::make($this->getIdentifyKey($record));
         $answer = $this->getAnswer($record);
-        $stateList = collect();
+        $stateList = [];
 
         if (empty($answer)) {
             $answer = '';
@@ -39,7 +39,7 @@ trait HasCustomOptionInfoListView
             ->columnSpanFull()
             ->inlineLabel()
             ->state($this->getAnswer($record))
-            ->formatStateUsing(fn($state) => $stateList->toArray()[$state] ?? '')
+            ->formatStateUsing(fn($state) => $stateList[$state] ?? '')
             ->badge();
 
         return $textEntry;
