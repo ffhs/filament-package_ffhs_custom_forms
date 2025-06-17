@@ -16,7 +16,7 @@ trait CanLoadFormAnswer
     {
         foreach ($formRules as $rule) {
             /**@var Rule $rule */
-            $fieldData = $rule->handle(['action' => 'load_answerer', 'custom_field_answerer' => $answerer], $fieldData);
+            $fieldData = $rule->handle(['action' => 'load_answer', 'custom_field_answerer' => $answerer], $fieldData);
         }
 
         return $fieldData;

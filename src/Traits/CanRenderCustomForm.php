@@ -90,10 +90,7 @@ trait CanRenderCustomForm
         $allComponents = [];
         //This Function allows to register the rendered components to $allComponents for the rules
         $registerRenderedComponents = static function (array $components) use (&$allComponents) {
-            $allComponents = [
-                ...$allComponents,
-                ...$components
-            ];
+            $allComponents += $components;
         };
         $defaultParameters = [
             'viewMode' => $viewMode,
@@ -137,6 +134,7 @@ trait CanRenderCustomForm
 
             //render Field
             $renderedComponent = $displayer($viewMode, $customField, $parameters);
+
             $allComponents[$customField->identifier] = $renderedComponent;
             $customFormSchema[] = $renderedComponent;
         }
@@ -157,6 +155,7 @@ trait CanRenderCustomForm
         CustomForm $customForm,
         Collection &$customFields,
     ): void {
+
         $rules
             ->map(fn(Rule $rule) => $rule->ruleTriggers)
             ->flatten(1)
@@ -171,11 +170,14 @@ trait CanRenderCustomForm
             ->mapWithKeys(fn(CustomField $field) => [$field->identifier => $field]);
 
 
-        $rules->each(function (Rule $rule) use ($customForm, $customFields, &$allComponents) {
-            $allComponents = $rule->handle(
-                ['action' => 'after_render', 'custom_fields' => $customFields],
-                $allComponents
-            );
+        $rules->each(function (Rule $rule) use ($customFields, &$allComponents) {
+
+            $data = ['action' => 'after_render', 'custom_fields' => $customFields];
+            $allComponents = $rule->handle($data, $allComponents);
+//            dump('----------------------------------------------------------------');
+//            dump($allComponents);
+//            dump($data);
+//            dump('----------------------------------------------------------------');
         });
     }
 }

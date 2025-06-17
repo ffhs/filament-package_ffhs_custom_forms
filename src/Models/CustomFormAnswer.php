@@ -3,6 +3,7 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\Models;
 
 use Ffhs\FilamentPackageFfhsCustomForms\Facades\CustomForms;
+use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanLoadFormAnswer;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -31,6 +32,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class CustomFormAnswer extends Model
 {
+    use CanLoadFormAnswer;
+
     protected $fillable = [
         'custom_form_id',
         'short_title',
@@ -50,4 +53,21 @@ class CustomFormAnswer extends Model
     {
         return $this->hasMany(CustomFieldAnswer::class);
     }
+
+    public function loadedData(): array
+    {
+        if ($this->relationLoaded('fieldData')) {
+            return $this->getRelation('fieldData');
+        }
+        $fieldData = $this->loadCustomAnswerData($this);
+        $this->setRelation('fieldData', $fieldData);
+        return $fieldData;
+    }
+
+    public function reloadData(): void
+    {
+        $fieldData = $this->loadCustomAnswerData($this);
+        $this->setRelation('fieldData', $fieldData);
+    }
+
 }

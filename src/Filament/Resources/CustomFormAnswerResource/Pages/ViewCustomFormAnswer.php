@@ -7,7 +7,6 @@ use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormAnswerResou
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
-use Filament\Infolists\Components\Section;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ViewRecord;
 use Illuminate\Contracts\Support\Htmlable;
@@ -27,12 +26,9 @@ class ViewCustomFormAnswer extends ViewRecord
     {
         return $infolist
             ->schema([
-                Section::make()
-                    ->schema([
-                        EmbeddedAnswerInfolist::make()
-                            ->autoViewMode()
-                            ->columnSpanFull()
-                    ])
+                EmbeddedAnswerInfolist::make()
+                    ->autoViewMode()
+                    ->columnSpanFull()
             ]);
     }
 

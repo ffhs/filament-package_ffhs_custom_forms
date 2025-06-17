@@ -17,7 +17,6 @@ abstract class FormRuleEventType implements EventType
 {
     use IsType;
 
-
     public static function getConfigTypeList(): string
     {
         return 'rule.event';
@@ -25,27 +24,23 @@ abstract class FormRuleEventType implements EventType
 
     public function handle(Closure $triggers, array $arguments, mixed &$target, RuleEvent $rule): mixed
     {
-
-
         switch ($arguments['action']) {
             case 'before_render':
-                return $this->supHandlerRun($this->handleBeforeRender(...), $triggers, $arguments, $target, $rule);;
+                return $this->handlerBeforeRun($triggers, $arguments, $target, $rule);;
             //case 'mutate_parameters': return $this->handleParameterMutation($triggers, $arguments, $target, $rule);
             case 'after_render':
                 if (is_array($target) && (array_values($target)[0] ?? '') instanceof Component) {
-                    $answare = $this->supHandlerRun($this->handleAfterRenderForm(...), $triggers, $arguments, $target,
-                        $rule);
+                    $handler = $this->handleAfterRenderForm(...);
                 } else {
-                    $answare = $this->supHandlerRun($this->handleAfterRenderInfolist(...), $triggers, $arguments,
-                        $target, $rule);
+                    $handler = $this->handleAfterRenderInfolist(...);
                 }
-                return $answare;
 
-            case 'load_answerer':
+                return $this->subHandlerRun($handler, $triggers, $arguments, $target, $rule);
+
+            case 'load_answer':
                 return $this->handleAnswerLoadMutation($triggers, $arguments, $target, $rule);
-            case 'save_answerer':
+            case 'save_answer':
                 return $this->handleAnswerSaveMutation($triggers, $arguments, $target, $rule);
-
 
             default:
                 return null;
@@ -96,34 +91,36 @@ abstract class FormRuleEventType implements EventType
         return $data;
     }
 
-    private function supHandlerRun(
-        Closure $supFunction,
-        Closure $triggers,
-        array $arguments,
-        array|Collection &$target,
-        RuleEvent $rule
-    ): mixed {
-        if ($target instanceof Collection) {
-            return $target->map(function (CustomField $item) use ($rule, $triggers, $supFunction) {
-                if ($item instanceof CustomField) {
-                    $identifier = $item;
-                }
-                $modifiedTrigger = function (array $extraOptions = []) use ($identifier, $item, $triggers) {
-                    return $triggers(array_merge(['target_field_identifier' => $identifier], $extraOptions));
-                };
-                $arguments['identifier'] = $identifier;
-                return $supFunction($modifiedTrigger, $arguments, $item, $rule);
-            });
-        }
-
-        foreach ($target as $identifier => $item) {
-            /**@var CustomField|Component|\Filament\Infolists\Components\Component $item */
-
-            $modifiedTrigger = function (array $extraOptions = []) use ($identifier, $item, $triggers) {
+    private function handlerBeforeRun(Closure $triggers, array $arguments, Collection $target, RuleEvent $rule): mixed
+    {
+        return $target->map(function (CustomField $item) use ($rule, $triggers) {
+            if ($item instanceof CustomField) {
+                $identifier = $item;
+            }
+            $modifiedTrigger = function (array $extraOptions = []) use ($identifier, $triggers) {
                 return $triggers(array_merge(['target_field_identifier' => $identifier], $extraOptions));
             };
             $arguments['identifier'] = $identifier;
-            $target[$identifier] = $supFunction($modifiedTrigger, $arguments, $item, $rule);
+            return $this->handleBeforeRender($modifiedTrigger, $arguments, $item, $rule);
+        });
+    }
+
+    private function subHandlerRun(
+        Closure $subFunction,
+        Closure $triggers,
+        array $arguments,
+        array &$target,
+        RuleEvent $rule
+    ): mixed {
+
+        foreach ($target as $identifier => $item) {
+            /**@var CustomField|Component|\Filament\Infolists\Components\Component $item */
+            //dump($identifier, $item);
+            $modifiedTrigger = function (array $extraOptions = []) use ($identifier, $triggers) {
+                return $triggers(array_merge(['target_field_identifier' => $identifier], $extraOptions));
+            };
+            $arguments['identifier'] = $identifier;
+            $target[$identifier] = $subFunction($modifiedTrigger, $arguments, $item, $rule);
         }
 
         return $target;

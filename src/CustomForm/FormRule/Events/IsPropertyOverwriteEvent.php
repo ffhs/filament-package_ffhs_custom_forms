@@ -2,6 +2,7 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Events;
 
+use Barryvdh\Debugbar\Facades\Debugbar;
 use Closure;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\RuleEvent;
@@ -10,7 +11,6 @@ use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasRuleEventPluginTranslate;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasTriggerEventFormTargets;
 use Filament\Forms\Components\Component;
 use Filament\Infolists\Components\Component as InfolistComponent;
-use Illuminate\Support\Facades\Cache;
 use ReflectionClass;
 
 abstract class  IsPropertyOverwriteEvent extends FormRuleEventType
@@ -26,6 +26,12 @@ abstract class  IsPropertyOverwriteEvent extends FormRuleEventType
         Component &$component,
         RuleEvent $rule
     ): Component {
+//        if (in_array('6851338985ec1', $rule->data['targets'])) {
+//            dump($component->getLabel(), $arguments['identifier'], $rule->data['targets'][0]);
+//            dump('......................');
+//        }
+//        dump($rule->data['targets']);
+//        dump('.................');
         if (!in_array($arguments['identifier'], $rule->data['targets'], false)) {
             return $component;
         }
@@ -51,7 +57,7 @@ abstract class  IsPropertyOverwriteEvent extends FormRuleEventType
         }
         $customFieldId = $getCustomField->identifier;
 
-        $inTargets = in_array($customFieldId, $rule->data['targets']);
+        $inTargets = in_array($customFieldId, $rule->data['targets'], false);
         return $inTargets
             ? $this->prepareComponent($component, $triggers)
             : $component;
@@ -62,47 +68,50 @@ abstract class  IsPropertyOverwriteEvent extends FormRuleEventType
         return [$this->getTargetsSelect()];
     }
 
+    /**
+     * @throws \ReflectionException
+     */
     protected function prepareComponent(Component|InfolistComponent $component, $triggers): Component|InfolistComponent
     {
         $reflection = new ReflectionClass($component);
         $property = $reflection->getProperty($this->property());
-        $property->setAccessible(true);
         $oldProperty = $property->getValue($component);
 
-
         if ($component instanceof Component) {
-            $hiddenFunction = function (Component $component) use ($oldProperty, $triggers) {
-                $triggered = $triggers(['state' => $component->getGetCallback()('.')]);
-                if ($triggered != $this->dominatingSide()) {
-                    $triggered = $component->evaluate($oldProperty);
-                }
-                // if($hidden && !is_null($set)) $set($customField->identifier, null);
-                return $triggered;
-            };
+            $propertyFunction = $this->getPropertyFormFunction($oldProperty, $triggers);
         } else {
-            $hiddenFunction = function (InfolistComponent $component, CustomFormAnswer $record) use (
-                $oldProperty,
-                $triggers
-            ) {
-                $state = Cache::remember(
-                    $record->id . 'custom_form_answer_state_load_infolist',
-                    2,
-                    fn() => $this->loadCustomAnswerData($record)
-                );
-                $triggered = $triggers(['state' => $state]);
-                if ($triggered != $this->dominatingSide()) {
-                    $triggered = $component->evaluate($oldProperty);
-                }
-                // if($hidden && !is_null($set)) $set($customField->identifier, null);
-                return $triggered;
-            };
+            $propertyFunction = $this->getPropertyInfolistFunction($oldProperty, $triggers);
         }
 
-        $property->setValue($component, $hiddenFunction);
+        $property->setValue($component, $propertyFunction);
         return $component;
     }
 
-    protected abstract function property(): string;
+    protected function getPropertyFormFunction(mixed $oldProperty, $triggers): Closure
+    {
+        return fn(Component $component) => once(function () use ($component, $oldProperty, $triggers) {
+            $triggered = $triggers(['state' => $component->getGetCallback()('.')]);
+            Debugbar::info($component->getLabel(), $triggered);
+            if ($triggered !== $this->dominatingSide()) {
+                $triggered = $component->evaluate($oldProperty);
+            }
+            return $triggered;
+        });
+    }
 
-    protected abstract function dominatingSide(): bool;
+    protected function getPropertyInfolistFunction(mixed $oldProperty, $triggers): Closure
+    {
+        return function (InfolistComponent $component, CustomFormAnswer $record) use ($oldProperty, $triggers) {
+            $state = $record->loadedData();
+            $triggered = $triggers(['state' => $state]);
+            if ($triggered !== $this->dominatingSide()) {
+                $triggered = $component->evaluate($oldProperty);
+            }
+            return $triggered;
+        };
+    }
+
+    abstract protected function property(): string;
+
+    abstract protected function dominatingSide(): bool;
 }

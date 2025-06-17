@@ -241,7 +241,7 @@ trait CanSaveFormAnswer
         foreach ($formRules as $rule) {
             /**@var Rule $rule */
             $fieldAnswererData = $rule->handle(
-                ['action' => 'save_answerer', 'custom_field_answer' => $customFieldAnswer],
+                ['action' => 'save_answer', 'custom_field_answer' => $customFieldAnswer],
                 $fieldAnswererData
             );
         }
