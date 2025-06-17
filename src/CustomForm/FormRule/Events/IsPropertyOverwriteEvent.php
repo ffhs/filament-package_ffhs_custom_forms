@@ -3,10 +3,10 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Events;
 
 use Closure;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Translations\HasRuleEventPluginTranslate;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\RuleEvent;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanLoadFormAnswer;
+use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasRuleEventPluginTranslate;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasTriggerEventFormTargets;
 use Filament\Forms\Components\Component;
 use Filament\Infolists\Components\Component as InfolistComponent;
