@@ -4,7 +4,6 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Traits;
 
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\FormRule;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Group;
@@ -44,9 +43,9 @@ trait HasOptionCheck
     {
         return Group::make([
             Checkbox::make('selected_include_null')
-                ->label(FormRule::type__('value_equals_rule_trigger.options.selected_include_null')),
+                ->label(static::__('options.selected_include_null')),
             Select::make('selected_options')
-                ->label(FormRule::type__('value_equals_rule_trigger.options.selected_options'))
+                ->label(static::__('options.selected_options'))
                 ->options(fn($get, $record) => once(fn() => $this->getOptionTypeGroupOptions($get, $record)))
                 ->columnSpanFull()
                 ->multiple(),

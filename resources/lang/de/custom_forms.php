@@ -36,22 +36,6 @@ return [
             'identifier' => 'Dieser Schlüssel wird benötigt um die Daten zu exportieren',
             'is_general_field_active' => 'Falls dies deaktiviert wird, werden alle generellen Felder deaktiviert, welches auf diesem Feld basieren.',
         ],
-
-        'rules' => [
-            'event' => [
-                'hidden_event' => 'Feld verstecken',
-                'visible_event' => 'Feld anzeigen',
-                'disabled_event' => 'Feld deaktivieren',
-                'required_event' => 'Feld benötigen',
-
-                'change_options_rule' => 'Feld Optionen ändern',
-            ],
-            'trigger' => [
-                'value_equals_anchor' => 'Bestimmter Wert',
-                'infolist_view' => 'Wenn Infolist ist',
-                'always' => 'Immer Aktive',
-            ],
-        ],
     ],
 
     'form' => [

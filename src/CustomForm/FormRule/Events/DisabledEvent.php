@@ -18,5 +18,4 @@ class DisabledEvent extends IsPropertyOverwriteEvent
     {
         return false;
     }
-
 }

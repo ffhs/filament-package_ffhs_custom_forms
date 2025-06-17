@@ -24,7 +24,7 @@ trait HasTriggerEventFormTargets
             ->lazy()
             ->hidden(function ($set, $get) {
                 //Fields with an array doesn't generate properly
-                if ($get('targets') == null) {
+                if (is_null($get('targets'))) {
                     $set('targets', []);
                 }
             })

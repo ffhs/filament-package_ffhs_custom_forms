@@ -5,11 +5,11 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Trigger;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\CustomOption\CustomOptionType;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\FormRule;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\RuleTrigger;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasBoolCheck;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasNumberCheck;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasOptionCheck;
+use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasRuleTriggerPluginTranslate;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasTextCheck;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasTriggerEventFormTargets;
 use Filament\Forms\Components\Component;
@@ -18,6 +18,7 @@ use Filament\Forms\Get;
 
 class ValueEqualsRuleTrigger extends FormRuleTriggerType
 {
+    use HasRuleTriggerPluginTranslate;
     use HasTriggerEventFormTargets;
     use HasNumberCheck;
     use HasBoolCheck;
@@ -71,11 +72,6 @@ class ValueEqualsRuleTrigger extends FormRuleTriggerType
         };
     }
 
-    public function getDisplayName(): string
-    {
-        return FormRule::type__('value_equals_rule_trigger.label');
-    }
-
     public function getFormSchema(): array
     {
         return [
@@ -85,11 +81,11 @@ class ValueEqualsRuleTrigger extends FormRuleTriggerType
                 ->afterStateUpdated(fn($set) => $set('type', null)),
             ToggleButtons::make('type')
                 ->options(fn() => [
-                    'number' => FormRule::type__('value_equals_rule_trigger.number.label'),
-                    'text' => FormRule::type__('value_equals_rule_trigger.text.label'),
-                    'boolean' => FormRule::type__('value_equals_rule_trigger.bool.label'),
-                    'null' => FormRule::type__('value_equals_rule_trigger.null.label'),
-                    'option' => FormRule::type__('value_equals_rule_trigger.options.label'),
+                    'number' => static::__('number.label'),
+                    'text' => static::__('text.label'),
+                    'boolean' => static::__('bool.label'),
+                    'null' => static::__('null.label'),
+                    'option' => static::__('options.label'),
                 ])
                 ->afterStateUpdated($this->doAfterStateUpdate(...))
                 ->disableOptionWhen($this->isOptionsDisabled(...))

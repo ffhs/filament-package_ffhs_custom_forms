@@ -2,7 +2,6 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Traits;
 
-use Ffhs\FilamentPackageFfhsCustomForms\Models\FormRule;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Group;
@@ -36,7 +35,7 @@ trait HasBoolCheck
     {
         return Group::make([
             Checkbox::make('boolean')
-                ->label(FormRule::type__('value_equals_rule_trigger.bool.trigger_on_true'))
+                ->label(static::__('bool.trigger_on_true'))
                 ->columnSpanFull(),
         ]);
     }

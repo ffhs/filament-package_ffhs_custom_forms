@@ -2,7 +2,6 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Traits;
 
-use Ffhs\FilamentPackageFfhsCustomForms\Models\FormRule;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Component;
@@ -74,12 +73,12 @@ trait HasNumberCheck
         return Group::make([
 
             Checkbox::make('exactly_number')
-                ->label(FormRule::type__('value_equals_rule_trigger.number.exactly_number'))
+                ->label(static::__('number.exactly_number'))
                 ->columnSpanFull()
                 ->live(),
 
             TextInput::make('number')
-                ->label(FormRule::type__('value_equals_rule_trigger.number.number'))
+                ->label(static::__('number.number'))
                 ->prefixIcon('carbon-character-whole-number')
                 ->visible(fn($get) => $get('exactly_number'))
                 ->required()
@@ -93,7 +92,7 @@ trait HasNumberCheck
                     Hidden::make('greater_equals'),
                     Hidden::make('smaller_equals'),
                     TextInput::make('greater_than')
-                        ->label(FormRule::type__('value_equals_rule_trigger.number.greater_than'))
+                        ->label(static::__('number.greater_than'))
                         ->suffixAction($this->getEqualBiggerSmallerAction(true))
                         ->columnStart(1)
                         ->columnSpan(2)
@@ -108,14 +107,14 @@ trait HasNumberCheck
                         )
                         ->label(' '),
                     TextInput::make('smaller_than')
-                        ->label(FormRule::type__('value_equals_rule_trigger.number.smaller_than'))
+                        ->label(static::__('number.smaller_than'))
                         ->prefixAction($this->getEqualBiggerSmallerAction(false))
                         ->columnStart(4)
                         ->columnSpan(2)
                         ->numeric(),
                 ]),
             Placeholder::make('')
-                ->content(fn() => FormRule::type__('value_equals_rule_trigger.number.greater_smaller_info_on_empty'))
+                ->content(fn() => static::__('number.greater_smaller_info_on_empty'))
                 ->columnSpanFull()
                 ->label(''),
         ]);
