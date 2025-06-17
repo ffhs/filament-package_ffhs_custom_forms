@@ -2,7 +2,7 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Traits;
 
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\TempCustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Component;
@@ -61,9 +61,8 @@ trait HasOptionCheck
 
         if (array_key_exists('general_field_id', $finalField) && !is_null($finalField['general_field_id'])) {
             //GeneralFields
-            $customField = new CustomField($finalField);
-            $customField = $this->loadFieldRelationsFromForm($customField, $record);
-            $genField = $customField->generalField;
+            $tempField = new TempCustomField($finalField, $record);
+            $genField = $tempField->generalField;
 
             if (!array_key_exists('options', $finalField)) {
                 return [];

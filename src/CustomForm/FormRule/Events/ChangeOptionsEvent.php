@@ -79,7 +79,7 @@ class ChangeOptionsEvent extends FormRuleEventType
         if (!empty($field['general_field_id'])) {
             $customField = new CustomField();
             $customField->fill($field);
-            $genOptions = $customField->generalField->customOptions;
+            $genOptions = $customField->generalField->customOptions; //toDo TempField
             $selectedOptions = $this->getTargetFieldData($get, $record)['options']['customOptions'] ?? [];
             $genOptions = $genOptions->whereIn('id', $selectedOptions);
             return $genOptions->pluck('name', 'identifier');
@@ -122,7 +122,7 @@ class ChangeOptionsEvent extends FormRuleEventType
 
             /**@var array|Collection $array */
             $options = $options
-                ->filter(fn($key, $option) => in_array($key, $rule->data['selected_options'], false))
+                ->filter(fn($option, $key) => in_array($key, $rule->data['selected_options'], true))
                 ->toArray();
 
             //Check to replace the current value

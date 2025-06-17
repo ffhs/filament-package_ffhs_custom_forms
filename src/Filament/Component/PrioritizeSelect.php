@@ -69,6 +69,51 @@ class PrioritizeSelect extends Field
         return $minItems > $optionAmounts ? $optionAmounts : $minItems;
     }
 
+    public function getPreKey(): string
+    {
+        return $this->evaluate($this->preKey);
+    }
+
+    public function getMinItems(): ?int
+    {
+        $optionAmounts = sizeof($this->getOptions());
+        $minItems = $this->parentGetMinItems() ?? 0;
+        return $minItems > $optionAmounts ? $optionAmounts : $minItems;
+    }
+
+    public function isDynamic(): bool
+    {
+        return $this->evaluate($this->dynamic);
+    }
+
+    public function getPrirotizedLabel(int $selectId): string
+    {
+        $labels = $this->evaluate($this->prioritizedLabels, ['selectId' => $selectId]);
+
+        if (is_array($labels)) {
+            return $labels[$selectId] ?? '';
+        }
+
+        return $labels ?? '';
+    }
+
+    public function mutateSelect(Select $select, int $selectId): Select
+    {
+        return $this->evaluate($this->mutateSelectUsing, ['selectId' => $selectId, 'select' => $select]);
+    }
+
+    public function mutateSelectUsing(Closure $mutateSelectUsing): static
+    {
+        $this->mutateSelectUsing = $mutateSelectUsing;
+        return $this;
+    }
+
+    public function prioritizedLabels(array|Closure|string $prioritizedLabels): static
+    {
+        $this->prioritizedLabels = $prioritizedLabels;
+        return $this;
+    }
+
     protected function getSingleSelect(int $selectId): Select
     {
         $id = $this->getPreKey() . $selectId;
@@ -83,33 +128,29 @@ class PrioritizeSelect extends Field
         return $this->configureDynamicSelectVisibility($select, $selectId);
     }
 
-    public function getPreKey(): string
-    {
-        return $this->evaluate($this->preKey);
-    }
-
     protected function configureSingleSelectRequired(Select $select, int $selectId): Select
     {
         return $select->required(function () use ($selectId) {
-            if (!$this->isRequired()) return true;
-            if ($this->getMinItems() === 0) return true;
+            if (!$this->isRequired()) {
+                return true;
+            }
+            if ($this->getMinItems() === 0) {
+                return true;
+            }
             return $this->getMinItems() > $selectId;
         });
-    }
-
-    public function getMinItems(): ?int
-    {
-        $optionAmounts = sizeof($this->getOptions());
-        $minItems = $this->parentGetMinItems() ?? 0;
-        return $minItems > $optionAmounts ? $optionAmounts : $minItems;
     }
 
     protected function configureSingleSelectDisableOptionWhen(Select $select, int $selectId): Select
     {
         return $select->disableOptionWhen(function ($get, $value) use ($selectId): bool {
             for ($i = 0; $i < $this->getMaxItems(); $i++) {
-                if ($i === $selectId) continue;
-                if ($get($this->getPreKey() . $i) === $value) return true;
+                if ($i === $selectId) {
+                    continue;
+                }
+                if ($get($this->getPreKey() . $i) === $value) {
+                    return true;
+                }
             }
             return false;
         });
@@ -118,33 +159,23 @@ class PrioritizeSelect extends Field
     protected function configureDynamicSelectReset(Select $select, int $selectId): Select
     {
         return $select->afterStateUpdated(function ($set, $state) use ($selectId) {
-            if ($this->getMinItems() - 1 > $selectId) return;
-            if (!$this->isDynamic() || $state != null) return;
+            if ($this->getMinItems() - 1 > $selectId) {
+                return;
+            }
+            if (!$this->isDynamic() || $state != null) {
+                return;
+            }
             for ($i = $selectId; $i < $this->getMaxItems(); $i++) {
-                if ($this->getMinItems() <= $i) $set($this->getPreKey() . $i, null);
+                if ($this->getMinItems() <= $i) {
+                    $set($this->getPreKey() . $i, null);
+                }
             }
         });
-    }
-
-    public function isDynamic(): bool
-    {
-        return $this->evaluate($this->dynamic);
     }
 
     protected function configureLabel(Select $select, int $selectId): Select
     {
         return $select->label($this->getPrirotizedLabel($selectId));
-    }
-
-    public function getPrirotizedLabel(int $selectId): string
-    {
-        $labels = $this->evaluate($this->prioritizedLabels, ['selectId' => $selectId]);
-
-        if (is_array($labels)) {
-            return $labels[$selectId] ?? '';
-        }
-
-        return $labels ?? '';
     }
 
     protected function configureDynamicSelectVisibility(Select $select, int $selectId): Select
@@ -157,28 +188,11 @@ class PrioritizeSelect extends Field
         });
     }
 
-    public function mutateSelect(Select $select, int $selectId): Select
-    {
-        return $this->evaluate($this->mutateSelectUsing, ['selectId' => $selectId, 'select' => $select]);
-    }
-
     protected function setUp(): void
     {
         parent::setUp();
         $this->mutateSelectUsing(fn(Select $select) => $select);
         $this->prioritizedLabels(fn($selectId) => $selectId + 1 . '. selection');
-    }
-
-    public function mutateSelectUsing(Closure $mutateSelectUsing): static
-    {
-        $this->mutateSelectUsing = $mutateSelectUsing;
-        return $this;
-    }
-
-    public function prioritizedLabels(array|Closure|string $prioritizedLabels): static
-    {
-        $this->prioritizedLabels = $prioritizedLabels;
-        return $this;
     }
 
 

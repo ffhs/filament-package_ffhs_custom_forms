@@ -62,15 +62,6 @@ abstract class CustomFormConfiguration
         return $this->defaultViewMode();
     }
 
-//    public static function editorValidations(CustomForm $form): array
-//    {
-//        //If it's a template, it hasn't to be checked
-//        if ($form->is_template) {
-//            return [];
-//        }
-//        return config('ffhs_custom_forms.custom_form_editor_validations');
-//    } ToDo may reimplement?
-
     public function displayCreateMode(): string
     {
         return $this->defaultViewMode();
@@ -97,6 +88,7 @@ abstract class CustomFormConfiguration
     {
         return once(function () {
             $generalFieldFormQuery = GeneralFieldForm::query()
+                ->with('customOptions')
                 ->select('general_field_id')
                 ->where('custom_form_identifier', $this::identifier());
 
