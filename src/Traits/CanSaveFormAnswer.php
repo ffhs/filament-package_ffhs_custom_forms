@@ -15,10 +15,9 @@ use Spatie\Activitylog\Models\Activity;
 
 trait CanSaveFormAnswer
 {
-    public function saveFormAnswer(CustomFormAnswer $formAnswer, Form $form, array $data, string $pathRaw = ''): void
+    public function saveFormAnswer(CustomFormAnswer $formAnswer, Form $form, array $data, string $path = ''): void
     {
         $customForm = $formAnswer->customForm;
-        $path = 'data.' . $pathRaw;
 
         // Mapping and combining custom fields
         $customFieldsIdentify = $customForm

@@ -59,7 +59,7 @@ final class GeneralFieldAdder extends FormEditorFieldAdder
                 ->getAvailableTemplates()
                 ->whereIn('id', $usedTemplates);
 
-            $usedGeneralFieldIdsFormTemplates = $usedTemplate
+            $usedGeneralFieldIdsFormTemplates = $usedTemplates
                 ->map(fn(CustomForm $template) => $template->ownedFields)
                 ->flatten(1)
                 ->whereNotNull('general_field_id')

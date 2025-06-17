@@ -224,34 +224,34 @@ class FileUploadType extends CustomFieldType
         return empty($fieldAnswererData['saved']['files']);
     }
 
-    public function prepareSaveFieldData(CustomFieldAnswer $answer, mixed $data): array
-    {
-        $data = $data ?? ['files' => []];
+//    public function prepareSaveFieldData(CustomFieldAnswer $answer, mixed $data): array
+//    {
+//        $data = $data ?? ['files' => []];
+//
+//        if (is_string($data['files'] ?? null)) {
+//            $data['files'] = [uniqid('', true) => $data['files']];
+//        }
+//
+//        foreach ($data['files'] ?? [] as $key => $file) {
+//            if (is_array($file)) {
+//                unset($data['files'][$key]);
+//            }
+//        }
+//
+//        return $this->prepareToSaveAnswerData($answer, $data);
+//    }
 
-        if (is_string($data['files'] ?? null)) {
-            $data['files'] = [uniqid('', true) => $data['files']];
-        }
-
-        foreach ($data['files'] ?? [] as $key => $file) {
-            if (is_array($file)) {
-                unset($data['files'][$key]);
-            }
-        }
-
-        return $this->prepareToSaveAnswerData($answer, $data);
-    }
-
-    public function prepareLoadFieldData(CustomFieldAnswer $answer, array $data): mixed
-    {
-        $data = $this->prepareLoadAnswerData($answer, $data);
-        $data = $data ?? ['files' => []];
-
-        foreach ($data['files'] ?? [] as $key => $file) {
-            if (is_array($file)) {
-                unset($data['files'][$key]);
-            }
-        }
-
-        return $data;
-    }
+//    public function prepareLoadFieldData(CustomFieldAnswer $answer, array $data): mixed
+//    {
+//        $data = $this->prepareLoadAnswerData($answer, $data);
+//        $data = $data ?? ['files' => []];
+//
+//        foreach ($data['files'] ?? [] as $key => $file) {
+//            if (is_array($file)) {
+//                unset($data['files'][$key]);
+//            }
+//        }
+//
+//        return $data;
+//    }
 }

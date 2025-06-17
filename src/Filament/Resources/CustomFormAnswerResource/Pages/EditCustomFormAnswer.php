@@ -12,6 +12,7 @@ use Filament\Actions\ViewAction;
 use Filament\Forms\Form;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Database\Eloquent\Model;
 
 class EditCustomFormAnswer extends EditRecord
 {
@@ -30,7 +31,7 @@ class EditCustomFormAnswer extends EditRecord
     {
         return $form
             ->schema([
-                EmbeddedCustomForm::make('form_answerer')
+                EmbeddedCustomForm::make('form_answer')
                     ->autoViewMode()
                     ->columnSpanFull(),
             ]);
@@ -61,17 +62,15 @@ class EditCustomFormAnswer extends EditRecord
         $customFormAnswer = $this->form->getRecord();
 
         //Load data's from fields
-        return ['form_answerer' => array_merge($data, $this->loadCustomAnswerData($customFormAnswer))];
+        return ['form_answer' => array_merge($data, $this->loadCustomAnswerData($customFormAnswer))];
     }
 
-    protected function mutateFormDataBeforeSave(array $data): array
+    protected function handleRecordUpdate(Model $record, array $data): Model
     {
         /**@var CustomFormAnswer $customFormAnswer */
         $customFormAnswer = $this->form->getRecord();
-        $this->saveFormAnswer($customFormAnswer, $this->form, $data['form_answerer'], 'form_answerer');
+        $this->saveFormAnswer($customFormAnswer, $this->form, $data['form_answer'], 'data.form_answer');
 
-        return [];
+        return $customFormAnswer->refresh();
     }
-
-
 }

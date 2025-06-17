@@ -100,12 +100,7 @@ class EmbeddedCustomForm extends Field implements CanEntangleWithSingularRelatio
             return;
         }
 
-        $this->saveFormAnswer(
-            $customFormAnswer,
-            $form,
-            $state,
-            $component->getStatePath()
-        );
+        $this->saveFormAnswer($customFormAnswer, $form, $state, $component->getStatePath());
     }
 
     protected function setUp(): void
