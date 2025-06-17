@@ -22,7 +22,6 @@ class IsInfolistTrigger extends FormRuleTriggerType
         return [];
     }
 
-
     public function isTrigger(array $arguments, mixed &$target, RuleTrigger $rule): bool
     {
         return (array_values($target)[0] ?? null) instanceof InfoComponent;

@@ -9,7 +9,6 @@ use Ffhs\FilamentPackageFfhsCustomForms\Traits\IsType;
 use Filament\Forms\Components\Component;
 use Filament\Infolists\Components\Component as InfolistComponent;
 
-
 abstract class FormRuleTriggerType implements TriggerType
 {
     use IsType;

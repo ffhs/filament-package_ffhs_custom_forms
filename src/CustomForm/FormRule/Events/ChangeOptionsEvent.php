@@ -36,7 +36,7 @@ class ChangeOptionsEvent extends FormRuleEventType
                 ->multiple()
                 ->hidden(function ($set, $get) {
                     //Fields with an array doesn't generate properly
-                    if ($get('selected_options') == null) {
+                    if (is_null($get('selected_options'))) {
                         $set('selected_options', []);
                     }
                 })
@@ -54,17 +54,16 @@ class ChangeOptionsEvent extends FormRuleEventType
         if ($identifier !== ($rule->data['target'] ?? '')) {
             return $component;
         }
-        if (!in_array(HasOptions::class, class_uses_recursive($component::class))) {
+        if (!in_array(HasOptions::class, class_uses_recursive($component::class), true)) {
             return $component;
         }
-
+        /** @var HasOptions|Component $component */
         $reflection = new ReflectionClass($component);
         $property = $reflection->getProperty('options');
         $property->setAccessible(true);
         $optionsOld = $property->getValue($component);
 
-        //ToDo Refactor and maybie simplify
-        $component->options($this->getModifiedOptions($identifier, $triggers, $optionsOld, $component, $rule));
+        $component->options($this->getModifiedOptionsClosure($identifier, $triggers, $optionsOld, $component, $rule));
 
         return $component;
     }
@@ -105,20 +104,14 @@ class ChangeOptionsEvent extends FormRuleEventType
      * @param RuleEvent $rule
      * @return Closure
      */
-    public function getModifiedOptions(
+    public function getModifiedOptionsClosure(
         mixed $identifier,
         Closure $triggers,
         mixed $optionsOld,
         Component $component,
         RuleEvent $rule
     ): Closure {
-        return static function ($get, $set) use (
-            $identifier,
-            $triggers,
-            $optionsOld,
-            $component,
-            $rule
-        ) {
+        return static function ($get, $set) use ($identifier, $triggers, $optionsOld, $component, $rule) {
             /**@var array|Collection $options */
             $triggered = $triggers(['state' => $get('.')]);
             $options = $component->evaluate($optionsOld);
@@ -151,6 +144,10 @@ class ChangeOptionsEvent extends FormRuleEventType
 
     protected function getTargetOptions($get, ?CustomForm $record): array
     {
+        if (is_null($record)) {
+            return [];
+        }
+
         $output = [];
         collect($this->getAllFieldsData($get, $record))
             ->map(function ($field) use ($record) {

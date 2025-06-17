@@ -239,6 +239,31 @@ class FormBuilderUtil
         return $events;
     }
 
+
+    protected static function prepareGeneralFieldCustomOptions(
+        \Illuminate\Database\Eloquent\Collection $generalFields,
+        array &$fieldData,
+        $customOptions
+    ): void {
+        $generalField = $generalFields->get($fieldData['general_field_id']);;
+        $allOptions = $generalField->customOptions;
+
+        $fieldData['customOptions'] = [];
+
+        foreach ($customOptions as $customOption) {
+            $optionId = $allOptions->where('id', $customOption)->first()?->id;
+            if (is_null($optionId)) {
+                $optionId = $allOptions->where('identifier', $customOption)->first()?->id;
+            }
+            if (is_null($optionId)) {
+                $optionId = $allOptions->where('name', $customOption)->first()?->id;
+            }
+            if (!is_null($optionId)) {
+                $fieldData['customOptions'][] = $optionId;
+            }
+        }
+    }
+
     private static function prepareOptionData(array $field, array &$fieldData, array $defaultOptions): void
     {
         $options = $field['options'] ?? [];
@@ -254,28 +279,13 @@ class FormBuilderUtil
             return;
         }
 
-        $generalFields = $form->getFormConfiguration()
+        $generalFields = $form
+            ->getFormConfiguration()
             ->getAvailableGeneralFields();
 
         //General Field
         if (array_key_exists('general_field_id', $fieldData)) {
-            $generalField = $generalFields->get($fieldData['general_field_id']);;
-            $allOptions = $generalField->customOptions;
-
-            $fieldData['customOptions'] = [];
-
-            foreach ($field['customOptions'] as $customOption) {
-                $optionId = $allOptions->where('id', $customOption)->first()?->id;
-                if (is_null($optionId)) {
-                    $optionId = $allOptions->where('identifier', $customOption)->first()?->id;
-                }
-                if (is_null($optionId)) {
-                    $optionId = $allOptions->where('name', $customOption)->first()?->id;
-                }
-                if (!is_null($optionId)) {
-                    $fieldData['customOptions'][] = $optionId;
-                }
-            }
+            self::prepareGeneralFieldCustomOptions($generalFields, $fieldData, $field['customOptions']);
             return;
         }
 

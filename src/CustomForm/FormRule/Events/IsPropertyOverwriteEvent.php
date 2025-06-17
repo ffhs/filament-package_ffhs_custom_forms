@@ -2,7 +2,6 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Events;
 
-use Barryvdh\Debugbar\Facades\Debugbar;
 use Closure;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\RuleEvent;
@@ -26,12 +25,6 @@ abstract class  IsPropertyOverwriteEvent extends FormRuleEventType
         Component &$component,
         RuleEvent $rule
     ): Component {
-//        if (in_array('6851338985ec1', $rule->data['targets'])) {
-//            dump($component->getLabel(), $arguments['identifier'], $rule->data['targets'][0]);
-//            dump('......................');
-//        }
-//        dump($rule->data['targets']);
-//        dump('.................');
         if (!in_array($arguments['identifier'], $rule->data['targets'], false)) {
             return $component;
         }
@@ -91,7 +84,6 @@ abstract class  IsPropertyOverwriteEvent extends FormRuleEventType
     {
         return fn(Component $component) => once(function () use ($component, $oldProperty, $triggers) {
             $triggered = $triggers(['state' => $component->getGetCallback()('.')]);
-            Debugbar::info($component->getLabel(), $triggered);
             if ($triggered !== $this->dominatingSide()) {
                 $triggered = $component->evaluate($oldProperty);
             }

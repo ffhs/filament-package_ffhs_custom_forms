@@ -18,6 +18,4 @@ class RequiredEvent extends IsPropertyOverwriteEvent
     {
         return false;
     }
-
-
 }

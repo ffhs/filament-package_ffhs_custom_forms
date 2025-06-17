@@ -55,8 +55,7 @@ abstract class FormRuleEventType implements EventType
     public function getCustomField($arguments): ?CustomField
     {
         $identifier = $arguments['identifier'];
-        $fields = $arguments['custom_fields']->get($identifier);
-        return $fields;
+        return $arguments['custom_fields']->get($identifier);
     }
 
     public function handleBeforeRender(

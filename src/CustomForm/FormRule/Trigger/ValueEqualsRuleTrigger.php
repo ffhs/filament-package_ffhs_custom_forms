@@ -128,13 +128,12 @@ class ValueEqualsRuleTrigger extends FormRuleTriggerType
         if ($value !== 'option') {
             return false;
         }
-        //ToDo may better way
         return once(function () use ($get, $record) {
             $target = $get('target');
             $formState = $get('../../../../../custom_fields') ?? [];
             $customField = [];
             foreach ($formState as $field) {
-                $customField = new CustomField($field);
+                $customField = new CustomField($field); //ToDo maby Simple Field
                 $customField = $this->loadFieldRelationsFromForm($customField, $record);
 
                 if ($customField->identifier() === $target) {
