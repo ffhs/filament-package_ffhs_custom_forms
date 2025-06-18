@@ -135,8 +135,9 @@ trait CanMapFields
 
     public function getExistingPaths(
         CustomField|CustomFieldAnswer $record,
-        CustomFormAnswer $customFormAnswer = null
-    ): Collection { //ToDo Slow
+        CustomFormAnswer $customFormAnswer
+    ): Collection {
+        //ToDo Slow
         if ($record instanceof CustomFieldAnswer) {
             $customFormAnswer = $record->customFormAnswer;
             $record = $record->customField;

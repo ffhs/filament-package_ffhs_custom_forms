@@ -37,7 +37,7 @@ trait HasTypeOptions
      */
     final public function getFlattenExtraTypeOptions(): array
     {
-        return $this->getFlattenTypeOptions($this->extraTypeOptions());
+        return once(fn() => $this->getFlattenTypeOptions($this->extraTypeOptions()));
     }
 
     final public function getDefaultGeneralOptionValues(): array
