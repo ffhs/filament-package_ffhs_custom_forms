@@ -3,7 +3,10 @@
 
 return [
     'general_field' => [
-        'label' => 'Generelles Feld',
+        'label' => [
+            'single' => 'Generelles Feld',
+            'multiple' => 'Generelle Felder',
+        ],
         'attributes' => [
             'name' => [
                 'label' => 'Name',
@@ -27,11 +30,11 @@ return [
             ],
             'overwrite_options' => [
                 'label' => 'Einstellungen zum Überschreiben',
-                'message_on_create' => 'Erstellen Sie das Generaelle Feld, um die Einstelungen zu überschreiben',
+                'message_on_create' => 'Erstellen Sie das generelle Feld, um die Einstellungen zu überschreiben',
             ],
             'options' => [
                 'label' => 'Einstellungen',
-                'message_on_create' => 'Erstellen Sie das Generaelle Feld, um die Einstelungen zu verwalten',
+                'message_on_create' => 'Erstellen Sie das generelle Feld, um die Einstellungen zu verwalten',
             ],
         ],
         'pages' => [
@@ -45,6 +48,12 @@ return [
                 'title' => 'Generelles Feld',
             ],
         ],
+
+        'navigation' => [
+            'group' => 'Formulare',
+            'parent' => 'Formulare',
+        ],
+
         //Relations
         'form_connections' => [
             'label' => 'Verknüpfte Formulartypen',
@@ -77,10 +86,14 @@ return [
             ],
             'edit_options' => [
                 'modal_heading' => ':name - Feld bearbeiten'
+            ],
+            'dissolve' => [
+                'label' => 'Auflösen',
+                'tooltip' => '',
+                'heading' => 'Möchten sie wirklich das Template \':name\' auflösen?'
             ]
         ]
     ],
-
     'custom_option' => [
         'label' => [
             'single' => 'Auswahlmöglichkeit',
@@ -99,19 +112,25 @@ return [
             'helper_text' => '',
         ],
     ],
-
     'rule' => [
         'label' => [
             'single' => 'Regel',
             'multiple' => 'Regeln',
         ],
     ],
-
     'custom_form' => [
         'label' => [
             'single' => 'Formular',
             'multiple' => 'Formulare',
             'template' => 'Template',
+            'templates' => 'Templates'
+        ],
+
+        'navigation' => [
+            'group' => 'Formulare',
+            'parent' => '',
+            'group-template' => 'Formulare',
+            'parent-template' => 'Formulare',
         ],
 
         'attributes' => [
@@ -129,7 +148,6 @@ return [
             'list' => [
                 'title' => 'Formulare',
             ],
-
             'create_template' => [
                 'title' => 'Template erstellen',
             ],
@@ -139,12 +157,26 @@ return [
             'list_template' => [
                 'title' => 'Templates',
             ],
+
+            'type_adder' => [
+                'label' => 'Spezifische Felder',
+                'new_field_name' => 'Neues Feld'
+            ],
+            'general_field_adder' => [
+                'label' => 'Generelle felder',
+            ]
         ],
 
     ],
 
     'custom_form_answer' => [
         'label' => [
+            'single' => 'Formularantwort',
+            'multiple' => 'Formularantworten',
+        ],
+        'navigation' => [
+            'group' => 'Formulare',
+            'parent' => 'Formulare',
         ],
         'pages' => [
             'create' => [

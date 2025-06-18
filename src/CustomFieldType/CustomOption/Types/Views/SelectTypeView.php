@@ -51,8 +51,6 @@ class SelectTypeView implements FieldTypeView
         foreach ($validationMessagesRaw as $message) {
             $validationMessages[$message['select_id'] ?? ''][$message['rule'] ?? ''] = $message['message'] ?? '';
         }
-
-
         return $select
             ->minItems($this->getOptionParameter($record, 'min_select'))
             ->maxItems($this->getOptionParameter($record, 'max_select'))
@@ -64,7 +62,6 @@ class SelectTypeView implements FieldTypeView
                     if (array_key_exists($selectId, $labels)) {
                         $label = $labels[$selectId]['label'] ?? '';
                     }
-
 
                     return $select
                         ->validationMessages($validationMessages[$selectId] ?? [])

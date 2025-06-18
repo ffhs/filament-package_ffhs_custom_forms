@@ -74,7 +74,7 @@ final class CustomFieldTypeAdder extends FormEditorFieldAdder
             'options' => $type->getDefaultTypeOptionValues(),
             'is_active' => true,
             'name' => [
-                app()->getLocale() => CustomForms::__('custom_form_editor.field_adder.type_adder.new_field_name')
+                app()->getLocale() => CustomForm::__('pages.type_adder.new_field_name')
             ]
         ];
     }
@@ -83,7 +83,7 @@ final class CustomFieldTypeAdder extends FormEditorFieldAdder
     {
         parent::setUp();
         $this->live();
-        $this->label(CustomForms::__('custom_form_editor.field_adder.type_adder.label'));
+        $this->label(CustomForm::__('pages.type_adder.label'));
         $this->schema($this->setUpSchema(...));
     }
 }

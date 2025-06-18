@@ -34,7 +34,7 @@ class DefaultCustomFieldEditTypeOptionsAction extends FieldTypeAction
             $state = $form->getRawState();
             unset($state['key']);
             return $state;
-        }); //ToDo Try with editor in modal
+        });
         $this->modalHeading(function (array $fieldData, CustomForm $record) {
             return once(function () use ($fieldData, $record) {
                 $genFieldName = static fn() => $record->getFormConfiguration()

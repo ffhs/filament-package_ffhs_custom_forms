@@ -3,8 +3,8 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\DragDrop;
 
 use Closure;
-use Ffhs\FilamentPackageFfhsCustomForms\Helping\FlattedNested\NestedFlattenList;
-use Ffhs\FilamentPackageFfhsCustomForms\Helping\FlattedNested\NestedListElement;
+use Ffhs\FilamentPackageFfhsCustomForms\FlattedNestedList\NestedFlattenList;
+use Ffhs\FilamentPackageFfhsCustomForms\FlattedNestedList\NestedListElement;
 
 trait HasNestedFlattenList //ToDo if not flatten order and stuff
 {
@@ -24,9 +24,10 @@ trait HasNestedFlattenList //ToDo if not flatten order and stuff
         return $this;
     }
 
-    public function getStructure(): array {
+    public function getStructure(): array
+    {
 
-        if($this->isFlatten()) {
+        if ($this->isFlatten()) {
             $list = NestedFlattenList::make($this->getState(), $this->getNestedFlattenListType());
             return $list->getStructure(true);
         }
@@ -34,22 +35,28 @@ trait HasNestedFlattenList //ToDo if not flatten order and stuff
         $orderBy = $this->getOrderAttribute();
         $state = $this->getState();
 
-        if(is_null($orderBy)) return $state;
+        if (is_null($orderBy)) {
+            return $state;
+        }
 
         return collect($state)->sortBy($orderBy)->toArray();
     }
 
     public function isFlatten(): bool
     {
-        $flatten  = $this->evaluate($this->flatten);
-        if(is_null($flatten)) return false;
+        $flatten = $this->evaluate($this->flatten);
+        if (is_null($flatten)) {
+            return false;
+        }
         return $flatten;
     }
 
     public function getNestedFlattenListType(): string
     {
-        $type  = $this->evaluate($this->nestedFlattenListType);
-        if(is_null($type)) return NestedListElement::class;
+        $type = $this->evaluate($this->nestedFlattenListType);
+        if (is_null($type)) {
+            return NestedListElement::class;
+        }
         return $type;
     }
 
@@ -96,7 +103,6 @@ trait HasNestedFlattenList //ToDo if not flatten order and stuff
     {
         return $this->evaluate($this->flattenViewLabel, $this->getItemInjection($key));
     }
-
 
 
 }

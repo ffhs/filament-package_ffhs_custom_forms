@@ -2,7 +2,6 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources;
 
-use Ffhs\FilamentPackageFfhsCustomForms\Facades\CustomForms;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormAnswerResource\Pages\CreateCustomFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormAnswerResource\Pages\EditCustomFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormAnswerResource\Pages\ListCustomFormAnswer;
@@ -31,17 +30,28 @@ class CustomFormAnswerResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return CustomForms::__('custom_forms.navigation.group.forms');
-    }
-
-    public static function getNavigationLabel(): string
-    {
-        return CustomForms::__('custom_forms.navigation.custom_form_answer');
+        return CustomFormAnswer::__('navigation.group');
     }
 
     public static function getNavigationParentItem(): ?string
     {
-        return CustomForms::__('custom_forms.navigation.forms');
+        $title = CustomFormAnswer::__('navigation.parent');
+        return empty($title) ? null : $title;
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return CustomFormAnswer::__('label.multiple');
+    }
+
+    public static function getTitleCasePluralModelLabel(): string
+    {
+        return CustomFormAnswer::__('label.multiple');
+    }
+
+    public static function getTitleCaseModelLabel(): string
+    {
+        return CustomFormAnswer::__('label.single');
     }
 
     public static function canAccess(): bool

@@ -1,4 +1,5 @@
 <?php
+// DE
 
 return [
     'events' => [

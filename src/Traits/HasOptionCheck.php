@@ -61,7 +61,7 @@ trait HasOptionCheck
 
         if (array_key_exists('general_field_id', $finalField) && !is_null($finalField['general_field_id'])) {
             //GeneralFields
-            $tempField = new TempCustomField($finalField, $record);
+            $tempField = new TempCustomField($record, $finalField);
             $genField = $tempField->generalField;
 
             if (!array_key_exists('options', $finalField)) {

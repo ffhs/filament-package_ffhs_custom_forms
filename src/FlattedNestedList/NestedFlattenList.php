@@ -1,15 +1,13 @@
 <?php
 
-namespace Ffhs\FilamentPackageFfhsCustomForms\Helping\FlattedNested;
+namespace Ffhs\FilamentPackageFfhsCustomForms\FlattedNestedList;
 
 use Exception;
 use Illuminate\Support\Collection;
 
 class NestedFlattenList
 {
-
     protected Collection $data;
-
     protected ?string $fixedType = null;
 
     public function __construct(array|Collection $items = [], ?string $type = null)
@@ -126,8 +124,6 @@ class NestedFlattenList
                 $this->data->add($newElement);
             }
         }
-
-        //dd( collect($this->data)->sortBy($poseAttribute)->toArray());
     }
 
     public function removeFromPosition(int $pos): void
@@ -195,7 +191,7 @@ class NestedFlattenList
             $field = $result->first();
             $originalKey = $result->keys()->first();
 
-            if ($field == null) {
+            if (is_null($field)) {
                 continue;
             } //ToDo make a warning that the array is Damaged
 

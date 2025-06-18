@@ -8,8 +8,8 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\CustomOption\Types\Views
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasCustomTypePackageTranslation;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Groups\LayoutWithColumnsOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Groups\ValidationTypeOptionGroup;
-use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\FastTypeOption;
-use Filament\Forms\Components\TextInput;
+use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\MaxSelectOption;
+use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\MinSelectOption;
 
 class CheckboxListType extends CustomOptionType
 {
@@ -38,43 +38,10 @@ class CheckboxListType extends CustomOptionType
             LayoutWithColumnsOptionGroup::make(),
             ValidationTypeOptionGroup::make()
                 ->mergeTypeOptions([
-                    'min_items' => FastTypeOption::makeFast( //ToDO Make CUstom Options? WIth repeater?
-                        null,
-                        TextInput::make('min_items')
-                            ->hidden(fn($get) => !$get('several'))
-                            ->label(
-                                __('filament-package_ffhs_custom_forms::custom_forms.fields.type_options.min_select')
-                            )
-                            ->columnStart(1)
-                            ->helperText(
-                                __(
-                                    'filament-package_ffhs_custom_forms::custom_forms.fields.type_options.min_select_helper'
-                                )
-                            )
-                            ->minValue(0)
-                            ->step(1)
-                            ->numeric(),
-                    ),
-                    'max_items' => FastTypeOption::makeFast(
-                        null,
-                        TextInput::make('max_items')
-                            ->hidden(fn($get) => !$get('several'))
-                            ->label(
-                                __('filament-package_ffhs_custom_forms::custom_forms.fields.type_options.max_select')
-                            )
-                            ->helperText(
-                                __(
-                                    'filament-package_ffhs_custom_forms::custom_forms.fields.type_options.max_select_helper'
-                                )
-                            )
-                            ->minValue(0)
-                            ->step(1)
-                            ->numeric(),
-                    ),
+                    'min_items' => MinSelectOption::make(),
+                    'max_items' => MaxSelectOption::make(),
                 ]),
             CustomOptionGroup::make(),
         ];
     }
-
-
 }

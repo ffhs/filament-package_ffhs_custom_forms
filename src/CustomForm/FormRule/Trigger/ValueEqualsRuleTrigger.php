@@ -3,7 +3,7 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Trigger;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\CustomOption\CustomOptionType;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\TempCustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\RuleTrigger;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasBoolCheck;
@@ -131,21 +131,24 @@ class ValueEqualsRuleTrigger extends FormRuleTriggerType
         return once(function () use ($get, $record) {
             $target = $get('target');
             $formState = $get('../../../../../custom_fields') ?? [];
-            $customField = [];
+            $found = false;
             foreach ($formState as $field) {
-                $customField = new CustomField($field); //ToDo maby Simple Field
-                $customField = $this->loadFieldRelationsFromForm($customField, $record);
-
-                if ($customField->identifier() === $target) {
-                    break;
+                $identifier = $field['identifier'] ?? '';
+                if (!empty($field['general_field_id'])) {
+                    $customField = new  TempCustomField($record, $field);
+                    $identifier = $customField->identifier();
                 }
 
-                $customField = null;
+                if ($identifier === $target) {
+                    $found = true;
+                    break;
+                }
             }
 
-            if (empty($customField)) {
+            if (!$found) {
                 return true;
             }
+            $customField = new TempCustomField($record, $field);
             return !($customField->getType() instanceof CustomOptionType);
         });
     }

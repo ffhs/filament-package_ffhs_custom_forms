@@ -4,6 +4,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Events;
 
 use Closure;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\CustomOption\CustomOptionType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\TempCustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\RuleEvent;
@@ -77,9 +78,9 @@ class ChangeOptionsEvent extends FormRuleEventType
         }
 
         if (!empty($field['general_field_id'])) {
-            $customField = new CustomField();
-            $customField->fill($field);
-            $genOptions = $customField->generalField->customOptions; //toDo TempField
+            $customField = new TempCustomField($record, $field);
+            $genOptions = $customField->getGeneralField()->customOptions;
+
             $selectedOptions = $this->getTargetFieldData($get, $record)['options']['customOptions'] ?? [];
             $genOptions = $genOptions->whereIn('id', $selectedOptions);
             return $genOptions->pluck('name', 'identifier');

@@ -3,12 +3,10 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources;
 
 
-use Ffhs\FilamentPackageFfhsCustomForms\Facades\CustomForms;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\TemplateResource\Pages\CreateTemplate;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\TemplateResource\Pages\EditTemplate;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\TemplateResource\Pages\ListTemplate;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
-use Filament\Forms\Form;
 use Filament\Resources\Concerns\Translatable;
 use Filament\Resources\Resource;
 use Filament\Tables\Table;
@@ -20,24 +18,25 @@ class TemplateResource extends Resource
 
     protected static ?string $model = CustomForm::class;
 
-    public static function getNavigationGroup(): ?string
-    {
-        return CustomForms::__('custom_forms.navigation.group.forms');
-    }
-
-    public static function getNavigationParentItem(): ?string
-    {
-        return CustomForms::__('custom_forms.navigation.forms');
-    }
-
     public static function getNavigationLabel(): string
     {
-        return CustomForms::__('custom_forms.navigation.templates');
+        return CustomForm::__('label.templates');
     }
 
     public static function getTitleCasePluralModelLabel(): string
     {
-        return CustomForms::__('custom_forms.navigation.templates');
+        return CustomForm::__('label.templates');
+    }
+
+    public static function getNavigationGroup(): ?string
+    {
+        return CustomForm::__('navigation.group-template');
+    }
+
+    public static function getNavigationParentItem(): ?string
+    {
+        $title = CustomForm::__('navigation.parent-template');
+        return empty($title) ? null : $title;
     }
 
     public static function getTitleCaseModelLabel(): string
@@ -51,19 +50,9 @@ class TemplateResource extends Resource
             ->whereNotNull('template_identifier');
     }
 
-    public static function form(Form $form): Form
-    {
-        return $form;
-    }
-
     public static function table(Table $table): Table
     {
         return CustomFormResource::table($table);
-    }
-
-    public static function getRelations(): array
-    {
-        return [];
     }
 
     public static function canAccess(): bool

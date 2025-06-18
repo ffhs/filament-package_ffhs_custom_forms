@@ -1,4 +1,5 @@
 <?php
+//DE
 
 return [
     'text' => ['label' => 'Text'],
@@ -30,5 +31,6 @@ return [
     'space' => ['label' => 'Absatz'],
     'file_upload' => ['label' => 'Dokumente'],
     'repeater' => ['label' => 'Repeater'],
-    'date_range' => ['label' => 'Bereich']
+    'date_range' => ['label' => 'Bereich'],
+    'template' => ['label' => 'Template',],
 ];

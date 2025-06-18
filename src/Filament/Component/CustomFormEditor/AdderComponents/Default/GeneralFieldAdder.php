@@ -73,7 +73,7 @@ final class GeneralFieldAdder extends FormEditorFieldAdder
 
     protected function setUp(): void
     {
-        $this->label(CustomForms::__('custom_form_editor.field_adder.general_field_adder.label'));
+        $this->label(CustomForm::__('pages.general_field_adder.label'));
         $this->schema([
             DragDropExpandActions::make()
                 ->dragDropGroup(fn(Get $get) => 'custom_fields-' . $get('custom_form_identifier'))

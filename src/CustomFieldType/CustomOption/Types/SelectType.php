@@ -9,9 +9,12 @@ use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasCustomTypePackageTranslation;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Groups\LayoutOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Groups\ValidationTypeOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\FastTypeOption;
+use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\MaxSelectOption;
+use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\MinSelectOption;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\ValidationMessageOption;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\TypeOption;
 use Filament\Forms\Components\Component;
+use Filament\Forms\Components\Field;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -86,31 +89,20 @@ class SelectType extends CustomOptionType
                                 ->label(TypeOption::__('dynamic_prioritized.label'))
                                 ->helperText(TypeOption::__('dynamic_prioritized.helper_text'))
                         ),
-                        'min_select' => FastTypeOption::makeFast(
-                            1,
-                            TextInput::make('min_select') //ToDo Replace With min_items
-                            ->helperText(TypeOption::__('min_select.helper_text'))
-                                ->label(TypeOption::__('min_select.label'))
-                                ->required(fn($get) => $get('prioritized'))
-                                ->whenTruthy('several')
-                                ->columnStart(1)
-                                ->minValue(0)
-                                ->step(1)
-                                ->required()
-                                ->numeric(),
-                        ),
-                        'max_select' => FastTypeOption::makeFast(
-                            1,
-                            TextInput::make('max_select')
-                                ->helperText(TypeOption::__('max_select.helper_text'))
-                                ->label(TypeOption::__('max_select.label'))
-                                ->required(fn($get) => $get('prioritized'))
-                                ->whenTruthy('several')
-                                ->minValue(0)
-                                ->step(1)
-                                ->required()
-                                ->numeric(),
-                        ),
+                        'min_select' => MinSelectOption::make()
+                            ->modifyOptionComponent(function (Field $component) {
+                                return $component
+                                    ->required(fn($get) => $get('prioritized'))
+                                    ->whenTruthy('several')
+                                    ->columnStart(1);
+                            }),
+
+                        'max_select' => MaxSelectOption::make()
+                            ->modifyOptionComponent(function (Field $component) {
+                                return $component
+                                    ->required(fn($get) => $get('prioritized'))
+                                    ->whenTruthy('several');
+                            }),
                         'validation_messages' => ValidationMessageOption::make()
                             ->modifyOptionComponent(
                                 fn(Component $component) => $component->hidden(fn(Get $get) => $get('prioritized'))

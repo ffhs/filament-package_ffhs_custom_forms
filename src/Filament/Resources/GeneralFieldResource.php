@@ -37,29 +37,30 @@ class GeneralFieldResource extends Resource
         return parent::canAccess() && static::can('filamentResource');
     }
 
-    public static function getNavigationGroup(): ?string
-    {
-        return __('filament-package_ffhs_custom_forms::custom_forms.navigation.group.forms');
-    }
-
     public static function getNavigationLabel(): string
     {
-        return __('filament-package_ffhs_custom_forms::custom_forms.navigation.general_fields');
-    }
-
-    public static function getNavigationParentItem(): ?string
-    {
-        return __('filament-package_ffhs_custom_forms::custom_forms.navigation.forms');
+        return GeneralField::__('label.single');
     }
 
     public static function getTitleCasePluralModelLabel(): string
     {
-        return __('filament-package_ffhs_custom_forms::custom_forms.navigation.general_fields');
+        return GeneralField::__('label.multiple');
+    }
+
+    public static function getNavigationGroup(): ?string
+    {
+        return GeneralField::__('navigation.group');
+    }
+
+    public static function getNavigationParentItem(): ?string
+    {
+        $title = GeneralField::__('navigation.parent');
+        return empty($title) ? null : $title;
     }
 
     public static function getTitleCaseModelLabel(): string
     {
-        return __('filament-package_ffhs_custom_forms::custom_forms.fields.general_field');
+        return GeneralField::__('label.multiple');
     }
 
     public static function getEloquentQuery(): Builder

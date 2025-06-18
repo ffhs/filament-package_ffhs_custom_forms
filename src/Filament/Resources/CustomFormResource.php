@@ -18,11 +18,6 @@ class CustomFormResource extends Resource
     protected static ?string $model = CustomForm::class;
     protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-check';
 
-    public static function getNavigationGroup(): ?string
-    {
-        return CustomForms::__('custom_forms.navigation.group.forms');
-    }
-
     public static function getNavigationLabel(): string
     {
         return CustomForms::__('custom_forms.navigation.forms');
@@ -36,6 +31,17 @@ class CustomFormResource extends Resource
     public static function getTitleCaseModelLabel(): string
     {
         return CustomForm::__('label.single');
+    }
+
+    public static function getNavigationGroup(): ?string
+    {
+        return CustomForm::__('navigation.group');
+    }
+
+    public static function getNavigationParentItem(): ?string
+    {
+        $title = CustomForm::__('navigation.parent');
+        return empty($title) ? null : $title;
     }
 
     public static function canAccess(): bool

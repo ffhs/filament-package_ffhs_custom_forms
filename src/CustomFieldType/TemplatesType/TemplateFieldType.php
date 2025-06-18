@@ -11,11 +11,14 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
+use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasCustomTypePackageTranslation;
 use Filament\Support\Colors\Color;
 use Illuminate\Support\Collection;
 
 final class TemplateFieldType extends CustomFieldType
 {
+    use HasCustomTypePackageTranslation;
+
     public static function identifier(): string
     {
         return 'template';
@@ -44,7 +47,6 @@ final class TemplateFieldType extends CustomFieldType
         return $data;
     }
 
-
     public function getEditorActions(string $key, array $fieldState): array
     {
         return [
@@ -62,7 +64,6 @@ final class TemplateFieldType extends CustomFieldType
             ->get($fieldData['template_id'])
             ->short_title;
     }
-
 
     public function hasEditorNameElement(array $fielData): bool
     {
