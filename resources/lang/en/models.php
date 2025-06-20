@@ -8,6 +8,10 @@ return [
             'multiple' => 'General Fields',
         ],
         'attributes' => [
+            'form_connections' => [
+                'label' => 'Forms',
+                'helper_text' => '',
+            ],
             'name' => [
                 'label' => 'Name',
                 'helper_text' => '',
@@ -18,15 +22,15 @@ return [
             ],
             'type' => [
                 'label' => 'Field Type',
-                'helper_text' => 'The field type. Note: This cannot be changed after creation.',
+                'helper_text' => 'The type of the field. Note: This cannot be changed after creation.',
             ],
             'identifier' => [
                 'label' => 'Identifier Key',
-                'helper_text' => 'This key is needed for data export.',
+                'helper_text' => 'This key is required to export the data.',
             ],
             'is_active' => [
                 'label' => 'Active',
-                'helper_text' => 'If disabled, all general fields based on this one will also be disabled.',
+                'helper_text' => 'If deactivated, all general fields based on this field will also be deactivated.',
             ],
             'overwrite_options' => [
                 'label' => 'Overwrite Settings',
@@ -52,7 +56,7 @@ return [
             'group' => 'Forms',
             'parent' => 'Forms',
         ],
-
+        // Relations
         'form_connections' => [
             'label' => 'Linked Form Types',
         ],
@@ -60,7 +64,10 @@ return [
 
     'general_field_form' => [
         'attributes' => [
-            'custom_form_identifier_name' => 'Form Type',
+            'custom_form_identifier_name' => [
+                'label' => 'Form Type',
+                'helper_text' => '',
+            ],
             'export' => 'Exported',
             'is_required' => 'Required',
         ],
@@ -136,7 +143,9 @@ return [
         ],
         'attributes' => [
             'short_title' => 'Name',
-            'custom_form_identifier' => 'Form Type'
+            'custom_form_identifier' => 'Form Type',
+            'template_identifier' => 'Template ID',
+            'owned_fields_amount' => 'Field Count'
         ],
         'pages' => [
             'create' => [

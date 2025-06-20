@@ -17,7 +17,6 @@ use Illuminate\Database\Eloquent\Builder;
 
 class ListCustomForm extends ListRecords
 {
-    protected const langPrefix = 'filament-package_ffhs_custom_forms::custom_forms.form.';
     protected static string $resource = CustomFormResource::class;
 
     public function getTitle(): string|Htmlable
@@ -57,23 +56,21 @@ class ListCustomForm extends ListRecords
             ])
             ->columns([
                 TextColumn::make('id'),
-                TextColumn::make('template_identifier') //ToDo
-                ->visible($this instanceof ListTemplate)
-                    ->label('Template Id')
+                TextColumn::make('template_identifier')
+                    ->visible($this instanceof ListTemplate)
+                    ->label(CustomForm::__('attributes.template_identifier'))
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('short_title')
-                    ->label(__(self::langPrefix . 'short_title'))
+                    ->label(CustomForm::__('attributes.short_title'))
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('custom_form_identifier')
-                    ->label(__(self::langPrefix . 'custom_form_identifier.display_name'))
+                    ->label(CustomForm::__('attributes.custom_form_identifier'))
                     ->state(fn(CustomForm $record) => ($record->dynamicFormConfiguration())::displayName())
                     ->sortable(),
                 TextColumn::make('owned_fields_count')
-                    ->label(__(self::langPrefix . 'owned_fields_amount')),
-                //TextColumn::make('custom_fields_count')
-                //    ->label(__(self::langPrefix . 'custom_fields_amount'))
+                    ->label(CustomForm::__('attributes.owned_fields_amount'))
             ])
             ->defaultSort('short_title')
             ->paginated([50])

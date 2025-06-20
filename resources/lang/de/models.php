@@ -8,6 +8,10 @@ return [
             'multiple' => 'Generelle Felder',
         ],
         'attributes' => [
+            'form_connections' => [
+                'label' => 'Formulare',
+                'helper_text' => '',
+            ],
             'name' => [
                 'label' => 'Name',
                 'helper_text' => '',
@@ -61,7 +65,10 @@ return [
     ],
     'general_field_form' => [
         'attributes' => [
-            'custom_form_identifier_name' => 'Formularart',
+            'custom_form_identifier_name' => [
+                'label' => 'Formularart',
+                'helper_text' => '',
+            ],
             'export' => 'Wird exportiert',
             'is_required' => 'Wird benötigt',
         ],
@@ -135,7 +142,9 @@ return [
 
         'attributes' => [
             'short_title' => 'Name',
-            'custom_form_identifier' => 'Formularart'
+            'custom_form_identifier' => 'Formularart',
+            'template_identifier' => 'Template Id',
+            'owned_fields_amount' => 'Anzahl Felder'
         ],
 
         'pages' => [

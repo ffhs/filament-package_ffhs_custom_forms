@@ -28,7 +28,8 @@ class GeneralFieldFormRelationManager extends RelationManager
         return $form
             ->schema([
                 Select::make('custom_form_identifier')
-                    ->label(GeneralFieldForm::__('attributes.custom_form_identifier'))
+                    ->label(GeneralFieldForm::__('attributes.custom_form_identifier_name.label'))
+                    ->helperText(GeneralFieldForm::__('attributes.custom_form_identifier_name.helper_text'))
                     ->required()
                     ->options(function ($livewire) {
                         $generalField = $livewire->getOwnerRecord();
@@ -61,7 +62,7 @@ class GeneralFieldFormRelationManager extends RelationManager
             ->columns([
                 TextColumn::make('id'),
                 TextColumn::make('custom_form_identifier_name')
-                    ->label(GeneralFieldForm::__('attributes.custom_form_identifier'))
+                    ->label(GeneralFieldForm::__('attributes.custom_form_identifier_name.label'))
                     ->state(fn(GeneralFieldForm $record) => ($record->dynamicFormConfiguration())::displayName()),
                 CheckboxColumn::make('is_required')
                     ->label(GeneralFieldForm::__('attributes.is_required')),

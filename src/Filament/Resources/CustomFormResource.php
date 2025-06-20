@@ -2,7 +2,6 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources;
 
-use Ffhs\FilamentPackageFfhsCustomForms\Facades\CustomForms;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormResource\Pages\CreateCustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormResource\Pages\EditCustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormResource\Pages\ListCustomForm;
@@ -20,7 +19,7 @@ class CustomFormResource extends Resource
 
     public static function getNavigationLabel(): string
     {
-        return CustomForms::__('custom_forms.navigation.forms');
+        return CustomForm::__('label.multiple');
     }
 
     public static function getTitleCasePluralModelLabel(): string

@@ -92,7 +92,7 @@ class GeneralFieldResource extends Resource
                     ),
 
                 ToggleColumn::make('is_active')
-                    ->label(GeneralField::__('is_active.label')),
+                    ->label(GeneralField::__('attributes.is_active.label')),
             ])
             ->filters([])
             ->actions([
