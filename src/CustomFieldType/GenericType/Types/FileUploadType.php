@@ -169,11 +169,6 @@ class FileUploadType extends CustomFieldType
     public function checkFileComponentTempData(FileUpload $filesComponent, Component $component): void
     {
         try {
-            /**@var FileUpload $filesComponent */
-            // $filesComponent = $this->viewModes()['default']::prepareFileUploadComponent($filesComponent, $customField);
-
-            // Check if the file mimetype matches one of the accepted file types
-
             $acceptedFileTypes = $filesComponent->getAcceptedFileTypes();
             $canSave = true;
 
@@ -193,7 +188,7 @@ class FileUploadType extends CustomFieldType
             }
 
             if ($canSave) {
-                $state = array_filter($filesComponent->getState() ?? [], fn($file) => !is_null($file));
+                $state = array_filter($filesComponent->getState() ?? [], static fn($file) => !empty($file));
                 $filesComponent->state($state);
                 $filesComponent->saveUploadedFiles();
             } else {
@@ -224,34 +219,29 @@ class FileUploadType extends CustomFieldType
         return empty($fieldAnswererData['saved']['files']);
     }
 
-//    public function prepareSaveFieldData(CustomFieldAnswer $answer, mixed $data): array
-//    {
-//        $data = $data ?? ['files' => []];
-//
-//        if (is_string($data['files'] ?? null)) {
-//            $data['files'] = [uniqid('', true) => $data['files']];
-//        }
-//
-//        foreach ($data['files'] ?? [] as $key => $file) {
-//            if (is_array($file)) {
-//                unset($data['files'][$key]);
-//            }
-//        }
-//
-//        return $this->prepareToSaveAnswerData($answer, $data);
-//    }
+    public function prepareToSaveAnswerData(CustomFieldAnswer $answer, mixed $data): array
+    {
+        foreach ($data['files'] as $key => $file) {
+            if (is_array($file)) {
+                unset($data['files'][$key]);
+            }
+        }
+        return $this->prepareToSaveAnswerData($answer, $data);
+    }
 
-//    public function prepareLoadFieldData(CustomFieldAnswer $answer, array $data): mixed
-//    {
-//        $data = $this->prepareLoadAnswerData($answer, $data);
-//        $data = $data ?? ['files' => []];
-//
-//        foreach ($data['files'] ?? [] as $key => $file) {
-//            if (is_array($file)) {
-//                unset($data['files'][$key]);
-//            }
-//        }
-//
-//        return $data;
-//    }
+    public function prepareLoadAnswerData(CustomFieldAnswer $answer, ?array $data): mixed
+    {
+        if (is_null($data)) {
+            return null;
+        }
+
+        $data = parent::prepareLoadAnswerData($answer, $data);
+        foreach ($data['files'] as $key => $file) {
+            if (is_array($file)) {
+                unset($data['files'][$key]);
+            }
+        }
+
+        return $data;
+    }
 }

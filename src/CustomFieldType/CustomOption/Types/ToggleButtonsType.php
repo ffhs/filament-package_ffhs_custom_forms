@@ -33,10 +33,9 @@ class ToggleButtonsType extends CustomOptionType
         ];
     }
 
-
-    public function prepareSaveFieldData(CustomFieldAnswer $answer, mixed $data): ?array
-    { //ToDo Rename and in Template
-        if ($data == '0') {
+    public function prepareToSaveAnswerData(CustomFieldAnswer $answer, mixed $data): ?array
+    {
+        if ($data === '0') {
             $data = false;
         }
         return parent::prepareToSaveAnswerData($answer, $data);
