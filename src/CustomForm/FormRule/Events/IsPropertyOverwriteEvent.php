@@ -10,7 +10,6 @@ use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasRuleEventPluginTranslate;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasTriggerEventFormTargets;
 use Filament\Forms\Components\Component;
 use Filament\Infolists\Components\Component as InfolistComponent;
-use ReflectionClass;
 
 abstract class  IsPropertyOverwriteEvent extends FormRuleEventType
 {
@@ -60,15 +59,12 @@ abstract class  IsPropertyOverwriteEvent extends FormRuleEventType
     {
         return [$this->getTargetsSelect()];
     }
-
-    /**
-     * @throws \ReflectionException
-     */
+    
     protected function prepareComponent(Component|InfolistComponent $component, $triggers): Component|InfolistComponent
     {
-        $reflection = new ReflectionClass($component);
-        $property = $reflection->getProperty($this->property());
-        $oldProperty = $property->getValue($component);
+        $property = $this->property();
+        //Access the protected Property from the object $component, $this is than $component
+        $oldProperty = (fn() => $this->$property)->call($component);
 
         if ($component instanceof Component) {
             $propertyFunction = $this->getPropertyFormFunction($oldProperty, $triggers);
@@ -76,7 +72,8 @@ abstract class  IsPropertyOverwriteEvent extends FormRuleEventType
             $propertyFunction = $this->getPropertyInfolistFunction($oldProperty, $triggers);
         }
 
-        $property->setValue($component, $propertyFunction);
+        //Set the protected Property from the object $component, $this is than $component
+        (fn() => $this->$property = $propertyFunction)->call($component);
         return $component;
     }
 

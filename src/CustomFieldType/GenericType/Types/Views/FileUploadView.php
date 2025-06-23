@@ -18,6 +18,7 @@ use Filament\Infolists\Components\ImageEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Components\View;
 use Filament\Support\Enums\Alignment;
+use Illuminate\Support\Facades\Request;
 use Illuminate\Support\HtmlString;
 
 class FileUploadView implements FieldTypeView
@@ -38,9 +39,11 @@ class FileUploadView implements FieldTypeView
         /** @var FileUpload $component */
         $component = $this->modifyFormComponent($component, $record);
         $component
+            ->deleteUploadedFileUsing(fn(FileUpload $component) => $component->callAfterStateUpdated())
             ->multiple(fn($state) => $this->getOptionParameter($record, 'multiple'))
             ->acceptedFileTypes($this->getOptionParameter($record, 'allowed_type'))
-            ->appendFiles();
+            ->appendFiles()
+            ->live();
 
 
         if ($this->getOptionParameter($record, 'image')) {
@@ -165,7 +168,7 @@ class FileUploadView implements FieldTypeView
     {
         return Action::make($path . '-' . $this->getIdentifyKey($record) . '-action-view')
             ->action(function ($livewire) use ($path, $urlPrefix) {
-                $url = FileUploadView . phpRequest::root() . $urlPrefix . '/' . $path;
+                $url = Request::root() . $urlPrefix . "/" . $path;
                 $livewire->js('window.open(\'' . $url . '\', \'_blank\');');
             })
             ->icon('bi-folder-symlink')
@@ -233,6 +236,4 @@ class FileUploadView implements FieldTypeView
             Grid::make()->schema($fileComponents)->columns(),
         ]);
     }
-
-
 }
