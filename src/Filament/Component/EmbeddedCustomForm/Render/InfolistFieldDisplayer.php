@@ -45,6 +45,9 @@ class InfolistFieldDisplayer implements FieldDisplayer
             $answer->path = $this->path;
         }
 
+        $answer->setRelation('customField', $customField);
+        $answer->setRelation('customFormAnswer', $this->formAnswer);
+
         $answer->setRelation('customForm', $customField->customForm);
         return $customField->getType()
             ->getInfolistComponent($answer, $viewMode, $parameter);
