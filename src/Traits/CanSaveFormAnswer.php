@@ -8,6 +8,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\Rule;
 use Filament\Forms\Components\Field;
 use Filament\Forms\Form;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Spatie\Activitylog\Facades\LogBatch;
@@ -15,7 +16,7 @@ use Spatie\Activitylog\Models\Activity;
 
 trait CanSaveFormAnswer
 {
-    public function saveFormAnswer(CustomFormAnswer $formAnswer, Form $form, array $data, string $path = ''): void
+    public function saveFormAnswer(CustomFormAnswer $formAnswer, Form $form, string $path = ''): void
     {
         $customForm = $formAnswer->customForm;
 
@@ -28,6 +29,9 @@ trait CanSaveFormAnswer
 
         //Update form data after modifying components
         $this->prepareFormComponents($customFieldsIdentify, $form, $path);
+
+        $pathState = substr($path, strlen($form->getStatePath()) + 1);
+        $data = Arr::get($form->getRawState(), $pathState);
 
         // Mapping and combining field answers
         $preparedData = $this->splittingFormComponents($data, $customFieldsIdentify);
@@ -125,6 +129,7 @@ trait CanSaveFormAnswer
             $customFieldAnswer->answer = $fieldAnswererData;
             $customFieldAnswer->setRelation('customField', $customField);
             $answersToHandle->add($customFieldAnswer);
+
         }
         $handledPaths = $handledPaths->filter(fn($path) => !is_null($path));
         $answersToHandle = $answersToHandle->groupBy(fn(CustomFieldAnswer $answer) => $answer->exists);

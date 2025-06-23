@@ -2,7 +2,6 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\Types;
 
-use Exception;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\Types\Views\FileUploadView;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
@@ -14,14 +13,13 @@ use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\FastTypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\ReorderableTypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\TypeOption;
 use Filament\Forms\Components\Component;
-use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
-use PHPUnit\Event\RuntimeException;
+use RuntimeException;
 
 class FileUploadType extends CustomFieldType
 {
@@ -146,34 +144,9 @@ class FileUploadType extends CustomFieldType
         Form $form,
         Collection $flattenFormComponents
     ): void {
-        $componentKey = $customField->identifier . '.files';
-        $filesComponents = $flattenFormComponents->filter(function (Component $component) use ($componentKey) {
-            if (is_null($component->getKey())) {
-                return false;
-            }
-
-            return str_contains($component->getKey(), $componentKey);
-        });
-
-        foreach ($filesComponents as $filesComponent) {
-            $this->checkFileComponentTempData($filesComponent, $component);
-        }
-    }
-
-    /**
-     * @param FileUpload $filesComponent
-     * @param Component $component
-     *
-     * @return void
-     */
-    public function checkFileComponentTempData(FileUpload $filesComponent, Component $component): void
-    {
         try {
-            $acceptedFileTypes = $filesComponent->getAcceptedFileTypes();
-            $canSave = true;
-
-
-            foreach (Arr::wrap($filesComponent->getState()) as $key => $file) {
+            $acceptedFileTypes = $component->getAcceptedFileTypes();
+            foreach (Arr::wrap($component->getState()) as $key => $file) {
                 if (!$file instanceof TemporaryUploadedFile) {
                     continue;
                 }
@@ -181,23 +154,17 @@ class FileUploadType extends CustomFieldType
                 $mimeType = $file->getMimeType();
 
                 // Do not save if even one of the submitted files mimetype does not match the accepted file types
-                if (!in_array($mimeType, $acceptedFileTypes, false)) {
-                    $canSave = false;
-                    $file->delete();
+                if (!in_array($mimeType, $acceptedFileTypes, true)) {
+                    $component->deleteUploadedFile($key);
                 }
             }
+            $state = array_filter($component->getState() ?? [], static fn($file) => !empty($file));
+            $component->state($state);
+            $component->saveUploadedFiles();
 
-            if ($canSave) {
-                $state = array_filter($filesComponent->getState() ?? [], static fn($file) => !empty($file));
-                $filesComponent->state($state);
-                $filesComponent->saveUploadedFiles();
-            } else {
-                $component->state([]);
-            }
-        } catch (Exception|RuntimeException $exception) {
-            foreach (Arr::wrap($filesComponent->getState()) as $file) {
-                /** @var TemporaryUploadedFile $file */
-                if ($file->exists()) {
+        } catch (RuntimeException $exception) {
+            foreach (Arr::wrap($component->getState()) as $file) {
+                if ($file instanceof TemporaryUploadedFile && $file->exists()) {
                     $file->delete();
                 }
             }
@@ -226,7 +193,7 @@ class FileUploadType extends CustomFieldType
                 unset($data['files'][$key]);
             }
         }
-        return $this->prepareToSaveAnswerData($answer, $data);
+        return parent::prepareToSaveAnswerData($answer, $data);
     }
 
     public function prepareLoadAnswerData(CustomFieldAnswer $answer, ?array $data): mixed

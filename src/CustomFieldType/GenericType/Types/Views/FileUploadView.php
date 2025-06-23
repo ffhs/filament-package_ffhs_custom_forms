@@ -35,8 +35,8 @@ class FileUploadView implements FieldTypeView
 
     public function prepareFileUploadComponent(FileUpload $component, CustomField $record): FileUpload
     {
-        $component = $this->modifyFormComponent($component, $record);
         /** @var FileUpload $component */
+        $component = $this->modifyFormComponent($component, $record);
         $component
             ->multiple(fn($state) => $this->getOptionParameter($record, 'multiple'))
             ->acceptedFileTypes($this->getOptionParameter($record, 'allowed_type'))

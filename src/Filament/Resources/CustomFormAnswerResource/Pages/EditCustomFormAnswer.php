@@ -69,7 +69,7 @@ class EditCustomFormAnswer extends EditRecord
     {
         /**@var CustomFormAnswer $customFormAnswer */
         $customFormAnswer = $this->form->getRecord();
-        $this->saveFormAnswer($customFormAnswer, $this->form, $data['form_answer'], 'data.form_answer');
+        $this->saveFormAnswer($customFormAnswer, $this->form, 'data.form_answer');
 
         return $customFormAnswer->refresh();
     }

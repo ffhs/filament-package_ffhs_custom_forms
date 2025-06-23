@@ -94,13 +94,12 @@ class EmbeddedCustomForm extends Field implements CanEntangleWithSingularRelatio
         }
 
         $form = $component->getFilamentForm($component, $livewire);
-        $state = $component->getState();
 
         if (is_null($form)) {
             return;
         }
 
-        $this->saveFormAnswer($customFormAnswer, $form, $state, $component->getStatePath());
+        $this->saveFormAnswer($customFormAnswer, $form, $component->getStatePath());
     }
 
     protected function setUp(): void
@@ -150,7 +149,7 @@ class EmbeddedCustomForm extends Field implements CanEntangleWithSingularRelatio
 
         $form = $component->getFilamentForm($component, $livewire);
         $data = $component->mutateRelationshipDataBeforeSave($state);
-        $this->saveFormAnswer($customFormAnswer, $form, $data, $component->getStatePath());
+        $this->saveFormAnswer($customFormAnswer, $form, $component->getStatePath());
 
         $customFormAnswer->fill($data)->save();
     }
