@@ -66,7 +66,6 @@ class RepeaterLayoutTypeView implements FieldTypeView
             $repeater->addActionLabel($addActionLabel);
         }
 
-
         return $repeater;
     }
 
@@ -85,8 +84,9 @@ class RepeaterLayoutTypeView implements FieldTypeView
 
         $loadedAnswers = $this->loadCustomAnswerData(
             $record->customFormAnswer,
-            $record->customField->form_position,
+            0,
             $record->customField->layout_end_position,
+            $record->customField->customForm
         );
         $loadedAnswers = $loadedAnswers[$record->customField->identifier ?? ''] ?? [];
 

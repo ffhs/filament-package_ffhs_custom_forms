@@ -23,18 +23,19 @@ trait CanLoadFormAnswer
     }
 
     public function loadCustomAnswerData(
-        CustomFormAnswer $answerer,
+        CustomFormAnswer $answer,
         int|null $begin = null,
-        int|null $end = null
+        int|null $end = null,
+        CustomForm $customForm = null,
     ): array {
         $loadedData = [];
-        $customForm = $answerer->customForm;
+        $customForm = $customForm ?? $answer->customForm;
         $customFields = $customForm->customFields->keyBy('id');
         $templateTypeFields = $customFields->whereNotNull('template_id')->keyBy('template_id');
         $formRules = $customForm->rules;
 
         /**@var CustomFieldAnswer $fieldAnswer */
-        foreach ($answerer->customFieldAnswers as $fieldAnswer) {
+        foreach ($answer->customFieldAnswers as $fieldAnswer) {
             /**@var CustomField $customField */
             $customField = $customFields->get($fieldAnswer->custom_field_id);
             $isFieldInRange = $this->isFieldInRange($customField, $customForm, $templateTypeFields, $begin, $end);
@@ -44,7 +45,7 @@ trait CanLoadFormAnswer
             }
 
             $fieldData = $customField->getType()?->prepareLoadAnswerData($fieldAnswer, $fieldAnswer->answer);
-            $fieldData = $this->modifyFieldDataFormRules($answerer, $fieldData, $formRules); //10ms
+            $fieldData = $this->modifyFieldDataFormRules($answer, $fieldData, $formRules); //10ms
             $dataIdentifier = $this->getDataIdentifier($fieldAnswer, $customField);
 
             $loadedData[$dataIdentifier] = $fieldData;

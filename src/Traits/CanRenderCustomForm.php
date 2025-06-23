@@ -34,11 +34,10 @@ trait CanRenderCustomForm
     {
         $form = $formAnswer->customForm;
         $customFields = $form->getOwnedFields();
-        $fieldAnswers = $formAnswer->customFieldAnswers;
 
 
-        $render = InfolistFieldDisplayer::make($formAnswer, $fieldAnswers);
-        $renderOutput = $this->renderCustomForm($viewMode, $render, $form, $customFields);;
+        $render = InfolistFieldDisplayer::make($formAnswer);
+        $renderOutput = $this->renderCustomForm($viewMode, $render, $form, $customFields);
 
         //ToDo Maby add default con to FormConfiguration
         return [

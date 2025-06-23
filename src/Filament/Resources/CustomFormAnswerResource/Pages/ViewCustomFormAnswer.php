@@ -5,6 +5,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormAnswe
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\EmbeddedCustomForm\EmbeddedAnswerInfolist;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormAnswerResource;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
+use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanLoadFormAnswer;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
 use Filament\Infolists\Infolist;
@@ -13,6 +14,8 @@ use Illuminate\Contracts\Support\Htmlable;
 
 class ViewCustomFormAnswer extends ViewRecord
 {
+    use CanLoadFormAnswer;
+
     protected static string $resource = CustomFormAnswerResource::class;
     protected static ?string $title = 'Formular Anschauen'; //ToDo Translate
 
