@@ -9,7 +9,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Facade;
 
 /**
- * @method static CustomFieldType getFieldTypeFromRawDate($param)
+ * @method static CustomFieldType getFieldTypeFromRawDate($param, CustomForm $customForm)
  * @method static CustomFormConfiguration getFormConfiguration($custom_form_identifier)
  * @method static array getFormConfigurations()
  * @method static null|CustomForm getCustomFormFromId(int $id)

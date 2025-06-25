@@ -40,21 +40,21 @@ class FieldDragDropEditor extends DragDropComponent
         return [
             TextInput::make('name.' . $record->getLocale())
                 ->label('')
-                ->visible(function ($get) {
-                    $type = CustomForms::getFieldTypeFromRawDate($get('.'));
+                ->visible(function ($get, $record) {
+                    $type = CustomForms::getFieldTypeFromRawDate($get('.'), $record);
                     return !is_null($type) && $type->hasEditorNameElement($get('.'));
                 })
         ];
     }
 
-    protected function getFieldGridSize(array $itemState): int
+    protected function getFieldGridSize(array $itemState, CustomForm $record): int
     {
         $size = $itemState['options']['column_span'] ?? null;
         $maxSize = 12;
         if (!empty($size)) {
             return min($size, $maxSize);
         }
-        $type = CustomForms::getFieldTypeFromRawDate($itemState);
+        $type = CustomForms::getFieldTypeFromRawDate($itemState, $record);
         return $type->isFullSizeField() ? $maxSize : 1;
     }
 
@@ -64,34 +64,37 @@ class FieldDragDropEditor extends DragDropComponent
         return $newLineOption ? 1 : null;
     }
 
-    protected function getFieldFlattenGrid(array $itemState): ?int
+    protected function getFieldFlattenGrid(array $itemState, CustomForm $record): ?int
     {
         if (empty($itemState)) {
             return $this->getGridSize();
         }
-        return CustomForms::getFieldTypeFromRawDate($itemState)->getColumns($itemState);
+        return CustomForms::getFieldTypeFromRawDate($itemState, $record)
+            ->getColumns($itemState);
     }
 
-    protected function getFieldFlattenViewHidden(array $itemState): bool
+    protected function getFieldFlattenViewHidden(array $itemState, CustomForm $record): bool
     {
-        $type = CustomForms::getFieldTypeFromRawDate($itemState);
+        $type = CustomForms::getFieldTypeFromRawDate($itemState, $record);
         return is_null($type->fieldEditorExtraComponent($itemState));
     }
 
-    protected function getFieldFlattenView(array $itemState): ?string
+    protected function getFieldFlattenView(array $itemState, CustomForm $record): ?string
     {
-        return CustomForms::getFieldTypeFromRawDate($itemState)->fieldEditorExtraComponent($itemState);
+        return CustomForms::getFieldTypeFromRawDate($itemState, $record)
+            ->fieldEditorExtraComponent($itemState);
     }
 
     protected function getFieldIcons(array $itemState, $record): ?string
     {
-        return CustomForms::getFieldTypeFromRawDate($itemState)->getEditorFieldIcon($itemState, $record);
+        return CustomForms::getFieldTypeFromRawDate($itemState, $record)
+            ->getEditorFieldIcon($itemState, $record);
     }
 
     protected function getFieldLabel(array $itemState, $record): ?string
     {
-        $title = CustomForms::getFieldTypeFromRawDate($itemState)->getEditorFieldTitle($itemState, $record);
-        $badge = CustomForms::getFieldTypeFromRawDate($itemState)->getEditorFieldBadge($itemState, $record);
+        $title = CustomForms::getFieldTypeFromRawDate($itemState, $record)->getEditorFieldTitle($itemState, $record);
+        $badge = CustomForms::getFieldTypeFromRawDate($itemState, $record)->getEditorFieldBadge($itemState, $record);
 
         if (is_null($badge)) {
             return $title;
@@ -100,8 +103,8 @@ class FieldDragDropEditor extends DragDropComponent
         return '<div class="flex">' . $badge . '<p>' . $title . '</p> </div>';
     }
 
-    protected function getFieldActions(array $itemState, $item): array
+    protected function getFieldActions(array $itemState, $item, $record): array
     {
-        return CustomForms::getFieldTypeFromRawDate($itemState)->getEditorActions($item, $itemState);
+        return CustomForms::getFieldTypeFromRawDate($itemState, $record)->getEditorActions($item, $itemState);
     }
 }

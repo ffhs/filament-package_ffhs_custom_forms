@@ -8,7 +8,6 @@ use Ffhs\FilamentPackageFfhsCustomForms\Facades\CustomForms;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Placeholder;
-use Filament\Forms\Get;
 use Filament\Resources\Pages\EditRecord;
 
 abstract class FormEditorFieldAdder extends Component
@@ -28,8 +27,12 @@ abstract class FormEditorFieldAdder extends Component
     }
 
 
-    public static function addNewField($component, array $arguments, EditRecord $livewire, array $fieldData): void
-    {
+    public static function addNewField(
+        Component $component,
+        array $arguments,
+        EditRecord $livewire,
+        array $fieldData
+    ): void {
         //Check if arguments exist
         if (empty($arguments['position'])) {
             return;
@@ -48,7 +51,7 @@ abstract class FormEditorFieldAdder extends Component
 
         $posEndArgument = CustomField::getEndContainerPositionAttribute();
         $posArgument = CustomField::getPositionAttribute();
-        $type = CustomForms::getFieldTypeFromRawDate($fieldData);
+        $type = CustomForms::getFieldTypeFromRawDate($fieldData, $component->getRecord());
 
         $fieldData[$posArgument] = $position;
         if ($type instanceof CustomLayoutType) {

@@ -5,6 +5,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Traits;
 use Ffhs\FilamentPackageFfhsCustomForms\Facades\CustomForms;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Illuminate\Support\Collection;
 
 trait CanSaveCustomFormEditorFields
@@ -21,7 +22,15 @@ trait CanSaveCustomFormEditorFields
         CustomField::insert($fieldsToCreateData);
 
         $savedFields = $form->ownedFields()->get();
-        $rawData = $rawData->keyBy('identifier');
+        $generalFields = $form->getFormConfiguration()->getAvailableGeneralFields();
+        $rawData = $rawData->mapWithKeys(function (array $fieldData) use ($generalFields) {
+            if (!isset($fieldData['general_field_id'])) {
+                return [$fieldData['identifier'] => $fieldData];
+            }
+            /**@var null|GeneralField $genField */
+            $genField = $generalFields->firstWhere('id', $fieldData['general_field_id']);
+            return [$genField?->identifier => $fieldData];
+        });
 
         //Run after Save
         $savedFields
@@ -83,7 +92,7 @@ trait CanSaveCustomFormEditorFields
                 $customField = app(CustomField::class);
             }
 
-            $type = CustomForms::getFieldTypeFromRawDate($field);
+            $type = CustomForms::getFieldTypeFromRawDate($field, $form);
             $mutatedFieldData = $type->getMutateCustomFieldDataOnSave($customField, $field);
 
             $customField->fill($mutatedFieldData);

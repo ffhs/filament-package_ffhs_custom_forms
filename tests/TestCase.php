@@ -23,11 +23,6 @@ abstract class TestCase extends Orchestra
     protected $enablesPackageDiscoveries = true;
     protected $seeder = DatabaseSeeder::class;
 
-    public function testTest()
-    {
-        dd('hallo');
-    }
-
     protected function getEnvironmentSetUp($app)
     {
         $app['config']->set('ffhs_custom_forms.forms', [TestCustomFormConfiguration::class]);

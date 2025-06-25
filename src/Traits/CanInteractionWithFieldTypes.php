@@ -6,7 +6,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldT
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\TemplatesType\TemplateFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\Exceptions\FieldDataHasNoOrWrongCustomFieldTypeException;
 use Ffhs\FilamentPackageFfhsCustomForms\Exceptions\FieldHasNoOrWrongCustomFieldTypeException;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 
 trait CanInteractionWithFieldTypes
 {
@@ -14,7 +14,7 @@ trait CanInteractionWithFieldTypes
      * @throws FieldHasNoOrWrongCustomFieldTypeException
      * @throws FieldDataHasNoOrWrongCustomFieldTypeException
      */
-    public function getFieldTypeFromRawDate(array &$data): CustomFieldType
+    public function getFieldTypeFromRawDate(array &$data, CustomForm $customForm): CustomFieldType
     {
         if (empty($data)) {
             throw new FieldDataHasNoOrWrongCustomFieldTypeException($data);
@@ -32,7 +32,10 @@ trait CanInteractionWithFieldTypes
         }
 
         if (!empty($data['general_field_id'])) {
-            return GeneralField::query()->firstWhere('id', $data['general_field_id'])->getType();
+            $customForm->getFormConfiguration()
+                ->getAvailableGeneralFields()
+                ->firstWhere('id', $data['general_field_id'])
+                ->getType();
         }
 
         if (empty($data['type'])) {

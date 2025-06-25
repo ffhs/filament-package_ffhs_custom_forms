@@ -47,7 +47,6 @@ class CustomOptionTypeOption extends TypeOption
     public function afterSaveField(mixed &$data, string $key, CustomField $field): void
     {
         if ($field->isGeneralField()) {
-            dd($data);
             $field->customOptions()->sync($data);
             return;
         }
