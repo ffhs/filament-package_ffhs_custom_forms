@@ -95,6 +95,7 @@ trait CanRenderCustomForm
             'viewMode' => $viewMode,
             'registerComponents' => $registerRenderedComponents,
             'displayer' => $displayer,
+            'child_render' => fn() => []
         ];
 
 
@@ -114,19 +115,16 @@ trait CanRenderCustomForm
                     ->where('form_position', '>', $customField->form_position)
                     ->where('form_position', '<=', $customField->layout_end_position);
 
-                $parameters = [
-                    ...$parameters,
-                    'child_fields' => $fieldRenderData,
-                    //Render Schema Input
-                    'child_render' => ChildFieldRender::make(
-                        $viewMode,
-                        $displayer,
-                        $customForm,
-                        $customFields,
-                        $registerRenderedComponents,
-                        $formPosition
-                    )
-                ];
+                $parameters['child_fields'] = $fieldRenderData;
+                $parameters['child_render'] = ChildFieldRender::make(
+                    $viewMode,
+                    $displayer,
+                    $customForm,
+                    $customFields,
+                    $registerRenderedComponents,
+                    $formPosition
+                );
+
                 //Skip fields where in the sub renderer Index
                 $formPosition += $fieldRenderData->count();
             }
@@ -168,15 +166,9 @@ trait CanRenderCustomForm
             ->customFields
             ->mapWithKeys(fn(CustomField $field) => [$field->identifier => $field]);
 
-
         $rules->each(function (Rule $rule) use ($customFields, &$allComponents) {
-
             $data = ['action' => 'after_render', 'custom_fields' => $customFields];
             $allComponents = $rule->handle($data, $allComponents);
-//            dump('----------------------------------------------------------------');
-//            dump($allComponents);
-//            dump($data);
-//            dump('----------------------------------------------------------------');
         });
     }
 }
