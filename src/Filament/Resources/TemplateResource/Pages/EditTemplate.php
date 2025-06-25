@@ -13,6 +13,7 @@ use Filament\Support\Enums\MaxWidth;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\HtmlString;
 
 class EditTemplate extends EditCustomForm
@@ -211,7 +212,7 @@ class EditTemplate extends EditCustomForm
     {
         $generalFields = GeneralField::query()
             ->where('id', $this->getTemplateGeneralFieldCollisionQuery()->select('general_field_id'))
-            ->get()->pluck('name_de'); //ToDo Translate
+            ->get()->pluck('name_' . App::currentLocale());
 
         $templates = CustomForm::query()
             ->where('id', $this->getTemplateGeneralFieldCollisionQuery()->select('custom_form_id'))
@@ -222,8 +223,8 @@ class EditTemplate extends EditCustomForm
 
         return
             new HtmlString(
-                'Es existieren Formulare, mit mehren Importierten Templates,
-            diese Templates haben überschneidende generelle Felder. Entfernen sie die überschneidende
+                'Es existieren Formulare, mit mehreren importierten Templates,
+            diese Templates haben überschneidende generelle Felder. Entfernen Sie die überschneidende
             generelle Felder oder lösen sie das Template in den anderen Formularen auf.
             <ul>
                 <li><p ' . $styleClasses . '>

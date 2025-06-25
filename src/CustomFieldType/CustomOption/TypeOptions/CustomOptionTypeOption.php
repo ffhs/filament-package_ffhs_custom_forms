@@ -17,8 +17,6 @@ class CustomOptionTypeOption extends TypeOption
 {
     use HasOptionNoComponentModification;
 
-    //toDo Change
-
     public function getDefaultValue(): array
     {
         return [];
