@@ -3,6 +3,7 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options;
 
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasAllFieldDataFromFormData;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasFieldsMapToSelectOptions;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasOptionNoComponentModification;
@@ -30,10 +31,10 @@ class RelatedFieldOption extends TypeOption
             ->options($this->getOptions(...));
     }
 
-    protected function getOptions($livewire): array|Collection
+    protected function getOptions($livewire, CustomForm $record): array|Collection
     {
         $get = $livewire->getMountedFormComponentActionComponent(0)->getGetCallback();
-        $fields = collect($this->getFieldDataFromFormData($get('../custom_fields')))
+        $fields = collect($this->getFieldDataFromFormData($get('../custom_fields'), $record))
             ->map(fn(array $field) => (new CustomField())->fill($field));
 
         return $this->getSelectOptionsFromFields($fields);

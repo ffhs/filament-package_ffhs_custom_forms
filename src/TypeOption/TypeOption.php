@@ -62,7 +62,6 @@ abstract class TypeOption
             : $this->modifyDefault;
     }
 
-
     //ToDo for GeneralField
     public function mutateOnFieldSave(mixed $data, string $key, CustomField $field): mixed
     {

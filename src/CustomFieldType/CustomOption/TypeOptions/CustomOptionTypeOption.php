@@ -29,11 +29,13 @@ class CustomOptionTypeOption extends TypeOption
         return Group::make()
             ->columnSpanFull()
             ->schema(function ($get) use ($name) {
-                if (is_null($get('../general_field_id'))) {
-                    return [$this->getCustomOptionsRepeater($name)];
-                } else {
-                    return [$this->getCustomOptionsSelector($name)];
-                }
+                return once(function () use ($name, $get) {
+                    if (is_null($get('../general_field_id'))) {
+                        return [$this->getCustomOptionsRepeater($name)];
+                    } else {
+                        return [$this->getCustomOptionsSelector($name)];
+                    }
+                });
             });
     }
 
@@ -42,20 +44,17 @@ class CustomOptionTypeOption extends TypeOption
         return null;
     }
 
-    public function getCachedOptionEditSaveKey(CustomField $field): string
-    {
-        return 'custom_field-custom_options-' . $field->identifier . '-user_' . auth()->id();
-    }
-
     public function afterSaveField(mixed &$data, string $key, CustomField $field): void
     {
         if ($field->isGeneralField()) {
+            dd($data);
             $field->customOptions()->sync($data);
             return;
         }
 
         $ids = [];
         $toCreate = [];
+        $data = $data ?? [];
         foreach ($data as $optionData) {
             if (!isset($optionData['id'])) {
                 if (empty($optionData['identifier'])) {
@@ -132,6 +131,11 @@ class CustomOptionTypeOption extends TypeOption
             ->expandAllAction(fn($action) => $action->hidden())
             ->itemLabel(fn($state, $record) => $state['name'][$record->getLocale()])
             ->label(CustomOption::__('label.multiple'))
+            ->hidden(function ($get, $set) use ($name) {
+                if (is_null($get($name))) {
+                    $set($name, []);
+                }
+            })
             ->columnSpanFull()
             ->collapsible()
             ->collapsed()

@@ -59,8 +59,6 @@ class DefaultCustomFieldEditTypeOptionsAction extends FieldTypeAction
             $extraOptions = $fieldType?->extraTypeOptions() ?? [];
             return sizeof($extraOptions) > 0;
         });
-        $this->form([
-            EditTypeOptionModal::make()
-        ]);
+        $this->form(fn() => once(fn() => [EditTypeOptionModal::make()]));
     }
 }

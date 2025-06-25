@@ -3,6 +3,7 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\Traits;
 
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
+use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\TypeOption;
 
 trait HasEditFieldCallbacks
 {
@@ -39,6 +40,7 @@ trait HasEditFieldCallbacks
     public function doBeforeDeleteField(CustomField $field): void
     {
         foreach ($this->getFlattenExtraTypeOptions() as $key => $option) {
+            /**@var TypeOption $option */
             $option->beforeDeleteField($key, $field);
         }
 

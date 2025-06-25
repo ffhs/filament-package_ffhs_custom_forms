@@ -9,7 +9,7 @@ trait HasTypeOptions
 {
     final public function getGeneralTypeOptionComponents(): array
     {
-        return $this->getOptionsComponents($this->generalTypeOptions());
+        return once(fn() => $this->getOptionsComponents($this->generalTypeOptions()));
     }
 
     public function generalTypeOptions(): array
@@ -19,7 +19,7 @@ trait HasTypeOptions
 
     final public function getExtraTypeOptionComponents(): array
     {
-        return $this->getOptionsComponents($this->extraTypeOptions());
+        return once(fn() => $this->getOptionsComponents($this->extraTypeOptions()));
     }
 
     public function extraTypeOptions(): array

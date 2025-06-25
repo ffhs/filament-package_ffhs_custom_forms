@@ -38,18 +38,20 @@ class TypeOptionGroup
 
     public function getModifyOptionComponent(): Section
     {
-        $data = [];
-        foreach ($this->getTypeOptions() as $key => $extraTypeOption) {
-            /**@var TypeOption $extraTypeOption */
-            $data[] = $extraTypeOption->getModifyOptionComponent($key);
-        }
-        return Section::make($this->getName())
-            ->icon($this->getIcon())
-            ->collapsible()
-            ->collapsed()
-            ->columnSpanFull()
-            ->columns()
-            ->schema($data);
+        return once(function () {
+            $data = [];
+            foreach ($this->getTypeOptions() as $key => $extraTypeOption) {
+                /**@var TypeOption $extraTypeOption */
+                $data[] = $extraTypeOption->getModifyOptionComponent($key);
+            }
+            return Section::make($this->getName())
+                ->icon($this->getIcon())
+                ->collapsible()
+                ->collapsed()
+                ->columnSpanFull()
+                ->columns()
+                ->schema($data);
+        });
     }
 
     public function getTypeOptions(): ?array
