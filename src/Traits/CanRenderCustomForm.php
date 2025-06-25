@@ -120,7 +120,7 @@ trait CanRenderCustomForm
                     $viewMode,
                     $displayer,
                     $customForm,
-                    $customFields,
+                    $fieldRenderData,
                     $registerRenderedComponents,
                     $formPosition
                 );
