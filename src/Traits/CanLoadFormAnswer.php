@@ -26,7 +26,7 @@ trait CanLoadFormAnswer
         CustomFormAnswer $answer,
         int|null $begin = null,
         int|null $end = null,
-        CustomForm $customForm = null,
+        ?CustomForm $customForm = null,
     ): array {
         $loadedData = [];
         $customForm = $customForm ?? $answer->customForm;

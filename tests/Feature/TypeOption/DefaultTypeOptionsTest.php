@@ -146,7 +146,7 @@ $prepareFunction = static function (string $optionClass, array $exclude = []) us
     return $canUseTypes;
 };
 
-test('name of the TypeOption settings component must be corect', function ($optionClass) {
+test('name of the TypeOption settings component must be correct', function ($optionClass) {
     $name = 'NamedXyZ';
     $component = $optionClass::make()->getModifyOptionComponent($name);
     expect($component)
@@ -197,7 +197,7 @@ describe('test default type options effect', function () use ($allTypes, $prepar
     })
         ->with($allTypes);
 
-    test('ColumnsOption test colum mutation', function ($customFieldTypeClass, array $extraOptions = []) {
+    test('ColumnsOption test colum_span mutation', function ($customFieldTypeClass, array $extraOptions = []) {
         $customOption = ColumnsOption::make();
         $customFieldType = $customFieldTypeClass::make();
         if (!$this->schuldTest($customOption, $customFieldType)) {

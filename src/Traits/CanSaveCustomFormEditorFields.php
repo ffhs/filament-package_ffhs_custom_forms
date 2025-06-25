@@ -13,10 +13,12 @@ trait CanSaveCustomFormEditorFields
         array $fieldsToCreateData,
         array $fieldsToSaveData,
         array $usedIds,
-        CustomForm $form
+        CustomForm $form,
+        array $rawData
     ): void {
         $fieldsToSave = collect($fieldsToSaveData)->keyBy('id');
         $fieldsToCreate = collect($fieldsToCreateData)->keyBy('identifier');
+        $rawDataCollection = collect($rawData)->keyBy('identifier');
 
         //Create and Updating
         CustomField::upsert($fieldsToSaveData, ['id']);
@@ -26,10 +28,10 @@ trait CanSaveCustomFormEditorFields
 
         //Run after Save
         $savedFields
-            ->whereIn('id', $fieldsToSave->keys())
-            ->each(function (CustomField $field) use ($fieldsToSave): void {
-//                $data = $fieldsToSave->get($field->id) ?? [];
-                $field->getType()->doAfterSaveField($field, $field->attributesToArray());
+            ->whereIn('id', $usedIds)
+            ->each(function (CustomField $field) use ($rawDataCollection): void {
+                $data = $rawDataCollection->get($field->identifier) ?? [];
+                $field->getType()->doAfterSaveField($field, $data);
             });
 
         //Run after Create
@@ -41,9 +43,9 @@ trait CanSaveCustomFormEditorFields
             });
     }
 
-    protected function saveFields($custom_fields, CustomForm $form): void
+    protected function saveFields(array $rawData, CustomForm $form): void
     {
-        $rawFields = $custom_fields;
+        $rawFields = $rawData;
         $oldFields = $form->getOwnedFields();
 
         [$fieldsToSaveData, $fieldsToCreate, $usedIds] = $this->prepareFields($rawFields, $oldFields, $form);
@@ -55,8 +57,9 @@ trait CanSaveCustomFormEditorFields
         $fieldsToCreate = $this->cleanUpCustomFieldData($fieldsToCreate);
         $fieldsToSaveData = $this->cleanUpCustomFieldData($fieldsToSaveData);
 
+
         //Create and Updating
-        $this->updatingCustomFields($fieldsToCreate, $fieldsToSaveData, $usedIds, $form);
+        $this->updatingCustomFields($fieldsToCreate, $fieldsToSaveData, $usedIds, $form, $rawData);
     }
 
     private function prepareFields(mixed $rawFields, Collection $oldFields, CustomForm $form): array

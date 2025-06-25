@@ -12,7 +12,6 @@ use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Illuminate\Support\Facades\Cache;
 
 class CustomOptionTypeOption extends TypeOption
 {
@@ -38,9 +37,8 @@ class CustomOptionTypeOption extends TypeOption
             });
     }
 
-    public function mutateOnFieldSave(mixed $data, string $key, CustomField $field): null
+    public function mutateOnFieldSave(mixed $data, string $key, CustomField $field): mixed
     {
-        Cache::set($this->getCachedOptionEditSaveKey($field), $data, 10);
         return null;
     }
 
@@ -56,14 +54,10 @@ class CustomOptionTypeOption extends TypeOption
             return;
         }
 
-        $data = Cache::get($this->getCachedOptionEditSaveKey($field));
         $ids = [];
         $toCreate = [];
-        if (is_null($data)) {
-            $data = [];
-        }
         foreach ($data as $optionData) {
-            if (!array_key_exists('id', $optionData)) {
+            if (!isset($optionData['id'])) {
                 if (empty($optionData['identifier'])) {
                     $optionData['identifier'] = uniqid();
                 }
@@ -136,7 +130,7 @@ class CustomOptionTypeOption extends TypeOption
         return Repeater::make($name)
             ->collapseAllAction(fn($action) => $action->hidden())
             ->expandAllAction(fn($action) => $action->hidden())
-            ->itemLabel(fn($state, $record) => $state['name'][$record->getLocale()]) //ToDo Translate
+            ->itemLabel(fn($state, $record) => $state['name'][$record->getLocale()])
             ->label(CustomOption::__('label.multiple'))
             ->columnSpanFull()
             ->collapsible()

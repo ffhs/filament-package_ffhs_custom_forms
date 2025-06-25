@@ -88,16 +88,10 @@ describe('repeater options', function () {
         expect(true)->toBeTrue();
     });
 
-    test('order option', function () {
-    })->todo();
-    test('min_amount option', function () {
-    })->todo();
-    test('max_amount option', function () {
-    })->todo();
-    test('default_amount option', function () {
-    })->todo();
-    test('render contend', function () {
-    })->todo();
-    test('render infolist', function () {
-    })->todo();
+    test('order option')->todo();
+    test('min_amount option')->todo();
+    test('max_amount option')->todo();
+    test('default_amount option')->todo();
+    test('render contend')->todo();
+    test('render infolist')->todo();
 });
