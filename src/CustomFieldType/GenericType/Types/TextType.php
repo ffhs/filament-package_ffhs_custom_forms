@@ -55,13 +55,13 @@ class TextType extends CustomFieldType
                     Group::make()
                         ->statePath('suggestions')
                         ->columnSpanFull()
-                        ->schema(fn($record) => [
+                        ->schema(fn($record) => once(fn() => [
                             Repeater::make($record->getLocale()) //ToDo may make simple repeater
                             ->helperText(TypeOption::__('suggestions.helper_text'))
                                 ->addActionLabel(TypeOption::__('suggestions.add_label'))
                                 ->schema([TextInput::make('value')->label('')])
                                 ->label(''),
-                        ])
+                        ]))
                 ),
             ]),
         ];

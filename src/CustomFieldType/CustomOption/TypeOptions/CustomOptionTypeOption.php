@@ -70,7 +70,6 @@ class CustomOptionTypeOption extends TypeOption
 
     public function mutateOnFieldLoad(mixed $data, string $key, CustomField $field): mixed
     {
-        //if(!is_null($value) &&!isEmpty($value))return $value;
         if ($field->isGeneralField()) {
             return $field->customOptions->pluck('id')->toArray();
         }
@@ -146,7 +145,7 @@ class CustomOptionTypeOption extends TypeOption
                 }
                 $set($name, $state);
             })
-            ->schema(fn($record) => [
+            ->schema(fn($record) => once(fn() => [
                 TextInput::make('name.' . $record->getLocale())
                     ->label(CustomOption::__('name.label'))
                     ->helperText(CustomOption::__('identifier.helper_text'))
@@ -155,7 +154,7 @@ class CustomOptionTypeOption extends TypeOption
                     ->label(CustomOption::__('identifier.label'))
                     ->helperText(CustomOption::__('identifier.helper_text'))
                     ->required(),
-            ]);
+            ]));
     }
 }
 

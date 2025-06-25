@@ -89,7 +89,7 @@ class RuleEditor extends Group
 
                 Group::make()
                     ->statePath('data')
-                    ->schema(function ($get) {
+                    ->schema(fn($get) => once(function () use ($get) {
                         if (empty($get('type'))) {
                             return [];
                         }
@@ -101,7 +101,7 @@ class RuleEditor extends Group
                         }
                         /**@var EventType $trigger */
                         return $trigger->getFormSchema();
-                    })
+                    }))
                     ->live()
             ]);
     }
@@ -235,7 +235,7 @@ class RuleEditor extends Group
 
                 Group::make()
                     ->statePath('data')
-                    ->schema(function ($get) {
+                    ->schema(fn($get) => once(function () use ($get) {
                         if (empty($get('type'))) {
                             return [];
                         }
@@ -247,7 +247,7 @@ class RuleEditor extends Group
                         }
                         /**@var TriggerType $trigger */
                         return $trigger->getFormSchema();
-                    })
+                    }))
             ]);
     }
 
