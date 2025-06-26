@@ -82,4 +82,8 @@ div[ffhs_drag\:hower_over][x-data] fieldset.drag-drop__hover-effect,
 }
 
 
+.drag-drop--element__ghost_effect {
+    @apply bg-blue-100 dark:bg-sky-950;
+    opacity: 0.4;
+}
 
