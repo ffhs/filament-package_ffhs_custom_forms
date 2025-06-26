@@ -36,7 +36,7 @@ final class CustomFieldTypeAdder extends FormEditorFieldAdder
 
             $actions[] =
                 DragDropAction::make('add_' . $type::identifier() . '_action')
-                    ->extraAttributes(['style' => 'width: 7rem; height: 100%;'])
+                    ->extraAttributes(['style' => 'width: 6.5rem; height: 100%;'])
                     ->label(self::getCustomFieldAddActionLabel($type))
                     ->tooltip($type->getTranslatedName())
                     ->outlined()

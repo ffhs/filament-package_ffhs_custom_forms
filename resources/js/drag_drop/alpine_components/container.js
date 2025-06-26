@@ -14,7 +14,6 @@ export default function dragDropContainer(group) {
                 dragClass: 'drag-drop--element__drag',
                 group: group,
                 animation: 150,
-                swapThreshold: 0.5,
                 forceFallback: true,
                 handle: '.drag_drop_handle',
                 onEnd: onEndClosure(group)
