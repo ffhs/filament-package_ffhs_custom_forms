@@ -20,7 +20,7 @@
 
     if(empty($name) && empty($getItemIcon($key))) $label = null;
     else $label = new HtmlString(
-                "<span class='flex' style=' cursor: grab;'>" .
+                "<span class='flex drag_drop_handle' style=' cursor: grab;'>" .
                 (is_null($icon)? "" : $icon ."<span style='padding-left: 10px;'>" ).
                 $name .
                 (is_null($icon)? "" : "</span>" ).

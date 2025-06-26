@@ -79,50 +79,70 @@ function updatePositions(state, container, group, parentData) {
   else if (parentData.orderAttribute !== null) updatePositionsOrder(state, container, group, parentData);
 }
 
-// resources/js/drag_drop/alpine_components/container.js
-function dragDropContainer(group) {
+// resources/js/drag_drop/alpine_components/action_group.js
+function dragDropActionGroup(group) {
   return {
     group,
-    container: true,
-    element: null,
     parent: false,
+    element: null,
+    container: false,
     init() {
       Sortable.create(this.$el, {
-        ghostClass: "drag-drop--element__ghost_effect",
-        dragClass: "drag-drop--element__drag",
-        group,
+        filter: ".disabled-drag_drop",
+        ghostClass: "drag-drop--action__ghost_effect",
+        dragClass: "drag-drop--action__drag",
         animation: 150,
-        swapThreshold: 0.5,
         forceFallback: true,
-        handle: ".drag_drop_handle",
-        onEnd: onEndClosure(group)
+        swapThreshold: 0.65,
+        sort: false,
+        group: {
+          name: group,
+          pull: "clone",
+          put: false
+        },
+        onEnd: getOnEndCallback(group)
       });
     }
   };
 }
-function onEndClosure(group) {
+function getOnEndCallback(group) {
   return function(evt) {
-    let formParent = getParent(evt.from);
-    let toParent = getParent(evt.to);
-    let sameContainer = toParent === formParent;
-    let toParentData = getAlpineData(toParent);
-    let stateTo = toParentData.wire.get(toParentData.statePath, "");
-    if (!stateTo || Array.isArray(stateTo)) stateTo = {};
-    if (toParent.getAttribute("disabled")) return;
-    if (formParent.getAttribute("disabled")) return;
-    if (!sameContainer) {
-      let formParentData = getAlpineData(formParent);
-      let stateFrom = formParentData.wire.get(formParentData.statePath, "");
-      if (!stateFrom || Array.isArray(stateFrom)) stateFrom = {};
-      updatePositions(stateFrom, formParent, group, formParentData);
-      formParentData.wire.set(formParentData.statePath, stateFrom, false);
+    if (evt.pullMode !== "clone") {
+      return;
     }
-    updatePositions(stateTo, toParent, group, toParentData);
-    let isLive = !sameContainer || toParentData.isLive;
-    toParentData.wire.set(toParentData.statePath, stateTo, isLive);
+    const clonedElement = evt.item;
+    let action = clonedElement.getAttribute("ffhs_drag:action");
+    let targetParent = getParent(clonedElement);
+    let targetParentData = getAlpineData(targetParent);
+    let $wire = targetParentData.wire;
+    let targetState = $wire.get(targetParentData.statePath, "");
+    if (Array.isArray(targetState)) targetState = {};
+    let temporaryKey = generateElementKey();
+    let temporaryChild = document.createElement("div");
+    clonedElement.replaceWith(temporaryChild);
+    temporaryChild.setAttribute("x-data", `typeof dragDropElement === 'undefined'? {}: dragDropElement('${group}','${temporaryKey}')`);
+    temporaryChild.setAttribute("ffhs_drag:component", null);
+    temporaryChild.classList.add("hidden");
+    Alpine.initTree(temporaryChild);
+    let cloneState = JSON.parse(JSON.stringify(targetState));
+    updatePositions(cloneState, targetParent, group, targetParentData);
+    let metaData = {
+      targetPath: targetParentData.statePath,
+      flatten: targetParentData.flatten,
+      stateWithTempField: cloneState,
+      temporaryKey,
+      state: JSON.parse(JSON.stringify(targetState))
+    };
+    if (targetParent.getAttribute("disabled")) return;
+    let toActionPath = action.split("'")[1];
+    let toDoAction = action.split("'")[3];
+    $wire.mountFormComponentAction(toActionPath, toDoAction, metaData);
   };
 }
+function generateElementKey() {
+  let keySplit = crypto.randomUUID().split("-");
+  return keySplit[0] + keySplit[1];
+}
 export {
-  dragDropContainer as default,
-  onEndClosure
+  dragDropActionGroup as default
 };

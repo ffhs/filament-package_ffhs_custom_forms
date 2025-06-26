@@ -27,6 +27,7 @@
         x-data="{ expended: false }"
     >
 
+
         <button class="expand-action--expand-action"
                 type="button" @click="expended = !expended">
             {{--            ToDo Translate--}}
@@ -38,7 +39,14 @@
             </span>
         </button>
 
-        <span class="" x-show="expended" x-cloak>
+        <span
+            class=""
+            x-show="expended" x-cloak
+            ax-load
+            ax-load-src="{{FilamentAsset::getAlpineComponentSrc("action_group", "ffhs/filament-package_ffhs_drag-drop")}}"
+            x-ignore
+            x-data="dragDropActionGroup(@js($getDragDropGroup(), ))"
+        >
 
 
         @foreach($getOptions() as $id => $label)
@@ -52,15 +60,11 @@
                     @if($isOptionDisabled($id, $label))
                         disabled
                     aria-disabled="true"
+                    class="expand-action--action disabled-drag_drop"
                     @else
-                        draggable="true"
-                    ax-load
-                    ax-load-src="{{FilamentAsset::getAlpineComponentSrc("action", "ffhs/filament-package_ffhs_drag-drop")}}"
-                    x-ignore
-                    x-data="dragDropAction(@js($getDragDropGroup()), @js($mountAction))"
-                    ffhs_drag:component
-                    @endif
+                        ffhs_drag:action="{{$mountAction}}"
                     class="expand-action--action"
+                    @endif
                 >
                     <span>{{$label}}</span>
                 </span>

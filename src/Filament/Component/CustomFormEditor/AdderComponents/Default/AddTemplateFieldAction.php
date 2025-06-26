@@ -113,6 +113,6 @@ class  AddTemplateFieldAction extends Action
 
     private function hasExistingFields(array $customFields, int $templateId): bool
     {
-        return !empty($this->getOverlappedIdentifier($customFields, $templateId));
+        return !empty($this->getOverlappedIdentifier($customFields, $templateId, $this->getComponent()->getRecord()));
     }
 }

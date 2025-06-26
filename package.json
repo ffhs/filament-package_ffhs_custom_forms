@@ -11,7 +11,7 @@
         "purge": "",
         "dev": "npm-run-all --parallel dev:*",
         "build": "npm-run-all build:*",
-        "watch": "watch 'npm run build && cd ../../../ && php artisan filament:assets' ./resources"
+        "watch": "watch 'npm run build && cd ../../../ && ./vendor/bin/sail artisan filament:assets' ./resources"
     },
     "author": "",
     "license": "ISC",

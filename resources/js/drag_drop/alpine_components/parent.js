@@ -8,7 +8,7 @@ export default function dragDropParent(
     dragDropEndPosAttribute,
     orderAttribute,
     flatten
-){
+) {
     return {
         group: group,
         statePath: statePath,
@@ -29,8 +29,7 @@ export default function dragDropParent(
         container: false,
 
         init() {
-           // setupScroll(this.$el)
-        }
 
+        }
     }
 }

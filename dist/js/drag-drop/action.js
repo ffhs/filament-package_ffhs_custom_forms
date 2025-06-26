@@ -1,7 +1,3 @@
-// resources/js/drag_drop/draging.js
-function setupDraggable(element) {
-}
-
 // resources/js/drag_drop/alpine_components/action.js
 function dragDropAction(group, action) {
   return {
@@ -12,7 +8,6 @@ function dragDropAction(group, action) {
     element: null,
     container: false,
     init() {
-      setupDraggable(this.$el);
     }
   };
 }
