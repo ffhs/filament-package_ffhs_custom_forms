@@ -115,6 +115,4 @@ class  AddTemplateFieldAction extends Action
     {
         return !empty($this->getOverlappedIdentifier($customFields, $templateId));
     }
-
-
 }

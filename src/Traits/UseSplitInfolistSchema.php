@@ -10,7 +10,6 @@ trait UseSplitInfolistSchema
     use UseSplitCustomForm;
     use CanRenderSplitCustomForm;
 
-
     public function getCustomFormSchema(): array
     {
         if ($this->isUseLayoutTypeSplit()) {
@@ -69,5 +68,4 @@ trait UseSplitInfolistSchema
         $displayer = InfolistFieldDisplayer::make($formAnswer);
         return $this->renderLayoutTypeSplit($layoutType, $customForm, $displayer, $viewMode);
     }
-
 }

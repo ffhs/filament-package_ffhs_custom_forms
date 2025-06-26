@@ -13,6 +13,4 @@ class FieldDataHasNoOrWrongCustomFieldTypeException extends \RuntimeException
         }
         parent::__construct($message);
     }
-
-
 }

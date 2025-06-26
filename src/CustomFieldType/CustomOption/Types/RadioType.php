@@ -34,7 +34,6 @@ class RadioType extends CustomOptionType
         ];
     }
 
-
     public function icon(): string
     {
         return 'carbon-radio-button-checked';

@@ -9,7 +9,6 @@ use Filament\Infolists\Components\Component as InfolistComponent;
 
 class ReorderableTypeOption extends TypeOption
 {
-
     public function getDefaultValue(): mixed
     {
         return false;

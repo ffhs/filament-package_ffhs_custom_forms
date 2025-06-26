@@ -143,6 +143,4 @@ class SelectType extends CustomOptionType
                 CustomOptionGroup::make(),
             ];
     }
-
-
 }

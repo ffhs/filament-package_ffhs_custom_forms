@@ -17,7 +17,6 @@ abstract class  IsPropertyOverwriteEvent extends FormRuleEventType
     use HasTriggerEventFormTargets;
     use CanLoadFormAnswer;
 
-
     public function handleAfterRenderForm(
         Closure $triggers,
         array $arguments,
@@ -59,7 +58,7 @@ abstract class  IsPropertyOverwriteEvent extends FormRuleEventType
     {
         return [$this->getTargetsSelect()];
     }
-    
+
     protected function prepareComponent(Component|InfolistComponent $component, $triggers): Component|InfolistComponent
     {
         $property = $this->property();

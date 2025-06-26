@@ -26,7 +26,6 @@ abstract class FormEditorFieldAdder extends Component
         return $static;
     }
 
-
     public static function addNewField(
         Component $component,
         array $arguments,

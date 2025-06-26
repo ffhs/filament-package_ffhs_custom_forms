@@ -65,7 +65,6 @@ class CustomFormEditor extends Field implements CanEntangleWithSingularRelations
         $this->setupRelationships();
     }
 
-
     protected function setupRelationships(): void
     {
         $this->mutateRelationshipDataBeforeFillUsing(function () {

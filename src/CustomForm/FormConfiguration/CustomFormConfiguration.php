@@ -23,12 +23,10 @@ abstract class CustomFormConfiguration
         return CustomFieldType::getSelectableFieldTypes();
     }
 
-
     public static function ruleTypes(): array
     {
         return config('ffhs_custom_forms.field_rule_types');
     }
-
 
     public static function anchorRuleTypes(): array
     {

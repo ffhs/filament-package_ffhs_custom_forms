@@ -27,7 +27,6 @@ use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class CustomFormSchemaImportAction extends Action
 {
-
     private Closure|CustomForm|null $existingForm = null;
 
     public static function make(?string $name = 'import_custom_form'): static

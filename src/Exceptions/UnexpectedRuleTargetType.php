@@ -17,6 +17,4 @@ class UnexpectedRuleTargetType extends \Exception
             . ' in ' . $class
             , $code, $previous);
     }
-
-
 }

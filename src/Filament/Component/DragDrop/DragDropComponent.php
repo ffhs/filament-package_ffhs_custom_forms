@@ -2,7 +2,6 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\DragDrop;
 
-
 use Closure;
 use Filament\Forms\Components\Field;
 use Filament\Forms\Concerns\HasStateBindingModifiers;
@@ -34,8 +33,6 @@ class DragDropComponent extends Field
 
     public function getChildComponentContainers(bool $withHidden = false): array
     {
-        // dd($this->getLivewire()->getForm('form')->getFlatComponents());
-
         $containers = [];
 
         foreach ($this->getState() ?? [] as $key => $element) {

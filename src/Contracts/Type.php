@@ -5,6 +5,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Contracts;
 interface Type
 {
     public static function identifier(): string;
+
     public static function make(): static;
 
     public static function getTypeFromIdentifier(string $identifier): ?static;
@@ -12,5 +13,4 @@ interface Type
     public static function getTypeClassFromIdentifier(string $identifier): ?string;
 
     public static function getAllTypes(): ?array;
-
 }

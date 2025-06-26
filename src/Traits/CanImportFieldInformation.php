@@ -38,7 +38,6 @@ trait CanImportFieldInformation
                 $field->customOptions()->saveMany($options);
             }
         }
-
     }
 
     public function importFieldDatas(
@@ -73,13 +72,13 @@ trait CanImportFieldInformation
 
             if (array_key_exists('general_field', $rawField)) {
                 $generalField = $rawField['general_field'];
-                $field['general_field_id'] = $generalFieldMap[$generalField] ?? $generalField; //ToDo to test
+                $field['general_field_id'] = $generalFieldMap[$generalField] ?? $generalField;
                 unset($rawField['general_field']);
             }
 
             if (array_key_exists('customOptions', $rawField)) {
                 $customOptions = array_map(
-                    fn($item) => new CustomOption($item),
+                    static fn($item) => new CustomOption($item),
                     $rawField['customOptions']
                 );
                 $field['customOptions'] = $customOptions;

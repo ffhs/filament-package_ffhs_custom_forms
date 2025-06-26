@@ -38,5 +38,4 @@ abstract class FormRuleTriggerType implements TriggerType
     {
         return $data;
     }
-
 }

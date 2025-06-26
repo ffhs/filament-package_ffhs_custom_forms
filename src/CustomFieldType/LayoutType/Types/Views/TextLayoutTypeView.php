@@ -52,6 +52,4 @@ class TextLayoutTypeView implements FieldTypeView
             ->columnSpanFull()
             ->inlineLabel();
     }
-
-
 }

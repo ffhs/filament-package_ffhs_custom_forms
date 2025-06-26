@@ -30,7 +30,6 @@ class DateType extends CustomFieldType
         return 'bi-calendar3';
     }
 
-
     public function extraTypeOptions(): array
     {
         return [

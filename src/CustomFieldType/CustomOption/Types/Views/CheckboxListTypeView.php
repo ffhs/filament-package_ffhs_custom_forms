@@ -25,6 +25,4 @@ class CheckboxListTypeView implements FieldTypeView
             ->maxItems($this->getOptionParameter($record, 'max_items'))
             ->minItems($this->getOptionParameter($record, 'min_items'));
     }
-
-
 }

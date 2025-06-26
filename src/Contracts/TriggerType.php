@@ -11,5 +11,4 @@ interface TriggerType extends Type
     public function getDisplayName(): string;
 
     public function getFormSchema(): array;
-
 }

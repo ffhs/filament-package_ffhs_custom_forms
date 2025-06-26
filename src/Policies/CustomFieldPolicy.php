@@ -34,5 +34,4 @@ class CustomFieldPolicy
     {
         return (new CustomFormPolicy())->delete($user, $customField->customForm);
     }
-
 }

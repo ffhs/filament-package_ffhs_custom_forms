@@ -9,7 +9,6 @@ use Filament\Infolists\Components\Component as InfolistComponent;
 
 class InLineLabelOption extends TypeOption
 {
-
     public function getDefaultValue(): bool
     {
         return false;

@@ -15,7 +15,6 @@ use Filament\Support\Colors\Color;
 
 final class GeneralFieldAdder extends FormEditorFieldAdder
 {
-
     public function getCustomFormConfiguration(): CustomFormConfiguration
     {
         return CustomForms::getFormConfiguration($this->getGetCallback()('custom_form_identifier'));

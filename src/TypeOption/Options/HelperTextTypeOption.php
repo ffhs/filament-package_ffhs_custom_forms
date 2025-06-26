@@ -18,7 +18,6 @@ class HelperTextTypeOption extends TypeOption
     public function getComponent(string $name): Component
     {
         return TextInput::make($name)
-            //RichTextEditor::make($name) //ToDo maby change back?
             ->label(TypeOption::__('helper_text.label'))
             ->helperText(TypeOption::__('helper_text.helper_text'))
             ->grow(false)
