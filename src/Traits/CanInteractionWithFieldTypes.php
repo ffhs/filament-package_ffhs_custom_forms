@@ -32,7 +32,7 @@ trait CanInteractionWithFieldTypes
         }
 
         if (!empty($data['general_field_id'])) {
-            $customForm->getFormConfiguration()
+            return $customForm->getFormConfiguration()
                 ->getAvailableGeneralFields()
                 ->firstWhere('id', $data['general_field_id'])
                 ->getType();
