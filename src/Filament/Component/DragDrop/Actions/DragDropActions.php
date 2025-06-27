@@ -14,14 +14,14 @@ class DragDropActions extends Actions
     use HasAlignment;
     use HasVerticalAlignment;
 
-
     public function actions(array $actions): static
     {
         $this->childComponents(function () use ($actions) {
             $group = $this->getDragDropGroup();
-            return array_map(static function (DragDropAction $action) use ($group): Component {
-                return $action->toFormComponent()->dragDropGroup($group);
-            }, $actions);
+
+            return array_map(static fn(DragDropAction $action): Component => $action
+                ->toFormComponent()
+                ->dragDropGroup($group), $actions);
         });
 
         return $this;

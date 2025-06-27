@@ -15,21 +15,15 @@ export default function dragDropParent(
         stateKey: stateKey,
         wire: $wire,
         isLive: isLive,
-
         dragDropPosAttribute: dragDropPosAttribute,
         dragDropEndPosAttribute: dragDropEndPosAttribute,
-
         orderAttribute: orderAttribute,
         flatten: flatten,
-
-
         parent: true,
         element: null,
         drag: false,
         container: false,
-
         init() {
-
         }
     }
 }

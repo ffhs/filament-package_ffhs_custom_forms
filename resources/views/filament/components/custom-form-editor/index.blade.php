@@ -2,7 +2,5 @@
     :component="$getFieldWrapperView()"
     :field="$field"
 >
-
     {{ $getChildComponentContainer() }}
-
 </x-dynamic-component>

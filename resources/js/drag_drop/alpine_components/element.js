@@ -5,7 +5,6 @@ export default function dragDropElement(group, element) {
         parent: false,
         container: false,
         init() {
-
         }
     }
 }

@@ -1,5 +1,5 @@
-import {getAlpineData, getParent} from "../get_values.js";
-import {updatePositions} from "../move_elements.js";
+import {getAlpineData, getParent} from '../get_values.js';
+import {updatePositions} from '../move_elements.js';
 
 export default function dragDropActionGroup(group) {
     return {
@@ -32,21 +32,22 @@ function getOnEndCallback(group) {
         if (evt.pullMode !== 'clone') {
             return;
         }
+
         const clonedElement = evt.item;
         let action = clonedElement.getAttribute('ffhs_drag:action')
         let targetParent = getParent(clonedElement)
-
         let targetParentData = getAlpineData(targetParent)
         let $wire = targetParentData.wire
-
         let targetState = $wire.get(targetParentData.statePath, '')
-        if (Array.isArray(targetState)) targetState = {}
+
+        if (Array.isArray(targetState)) {
+            targetState = {}
+        }
+
         let temporaryKey = generateElementKey();
-
-
         let temporaryChild = document.createElement('div');
-        clonedElement.replaceWith(temporaryChild)
 
+        clonedElement.replaceWith(temporaryChild)
         temporaryChild.setAttribute('x-data', `typeof dragDropElement === 'undefined'? {}: dragDropElement('${group}','${temporaryKey}')`)
         temporaryChild.setAttribute('ffhs_drag:component', null)
         temporaryChild.classList.add('hidden')
@@ -64,15 +65,19 @@ function getOnEndCallback(group) {
             state: JSON.parse(JSON.stringify(targetState))
         };
 
-        if (targetParent.getAttribute('disabled')) return;
+        if (targetParent.getAttribute('disabled')) {
+            return;
+        }
 
         let toActionPath = action.split("'")[1]
         let toDoAction = action.split("'")[3]
+
         $wire.mountFormComponentAction(toActionPath, toDoAction, metaData);
     }
 }
 
 function generateElementKey() {
     let keySplit = crypto.randomUUID().split('-');
+
     return keySplit[0] + keySplit[1];
 }

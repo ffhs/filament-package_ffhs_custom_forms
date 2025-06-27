@@ -13,7 +13,6 @@
     @apply select-none;
 }
 
-
 /*Expand Action*/
 .expand-action--group {
     @apply gap-2 bg-white dark:bg-gray-800;
@@ -33,19 +32,16 @@
     transition: background 0.3s, height 1s ease;
 }
 
-
 .expand-action--expand-action {
     min-height: 2.5rem !important;
     @apply font-semibold transition duration-75 w-full text-sm;
 }
-
 
 .expand-action--expand-action,
 .expand-action--action {
     @apply hover:bg-[--expand-drag-drop-action--color-200] hover:rounded-lg;
     @apply dark:hover:bg-[--expand-drag-drop-action--color-900];
 }
-
 
 .expand-action--action {
     min-height: 2.5rem !important;
@@ -58,7 +54,7 @@
     @apply hover:bg-[--expand-drag-drop-action--color-200]
     dark:hover:bg-[--expand-drag-drop-action--color-900];
 }
- 
+
 .expand-action--action[disabled] {
     @apply bg-[--expand-drag-drop-action--color-50]
     dark:bg-[--expand-drag-drop-action--color-950];

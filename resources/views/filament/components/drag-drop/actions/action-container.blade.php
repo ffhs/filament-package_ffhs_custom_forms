@@ -14,5 +14,4 @@
             {{ $action }}
         @endif
     @endforeach
-
 </span>

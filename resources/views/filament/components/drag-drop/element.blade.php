@@ -13,58 +13,54 @@
     /**@var Closure $getItemGridStart*/
 
     $icon = $getItemIcon($key);
-    if(!empty($icon)) $icon = Blade::render('<x-'.$icon . " style='width: 20px;' />");
+
+    if (!empty($icon)) {
+        $icon = Blade::render('<x-'.$icon . ' style="width: 20px;" />');
+    }
 
     $name = $getItemLabel($key);
 
-
-    if(empty($name) && empty($getItemIcon($key))) $label = null;
-    else $label = new HtmlString(
-                "<span class='flex drag_drop_handle' style=' cursor: grab;'>" .
-                (is_null($icon)? "" : $icon ."<span style='padding-left: 10px;'>" ).
-                $name .
-                (is_null($icon)? "" : "</span>" ).
-                "</span>"
-            );
+    if (empty($name) && empty($getItemIcon($key))) {
+        $label = null;
+    } else {
+        $label = new HtmlString(
+            '<span class="flex drag_drop_handle" style=" cursor: grab;">' .
+            (is_null($icon) ? '' : $icon . '<span style="padding-left: 10px;">').
+            $name .
+            (is_null($icon) ? '' : '</span>').
+            '</span>'
+        );
+    }
 
     $gridColumn = $getItemGridStart($key);
-    $gridColumn = $gridColumn . ($gridColumn ?" /": "");
-
-
+    $gridColumn .= ($gridColumn ? ' /': '');
 @endphp
-
 
 <div
     style="
         touch-action: pan-y;
         grid-column: {{$gridColumn}} span min(var(--cols-parent), {{$getItemGridSize($key)}});
      "
-
-    wire:key="{{$getStatePath() . "." . $key}}"
-
+    wire:key="{{ $getStatePath() . '.' . $key }}"
     ax-load
-    ax-load-src="{{FilamentAsset::getAlpineComponentSrc("element", "ffhs/filament-package_ffhs_drag-drop")}}"
+    ax-load-src="{{ FilamentAsset::getAlpineComponentSrc('element', 'ffhs/filament-package_ffhs_drag-drop') }}"
     x-ignore
     x-data="dragDropElement(@js($getDragDropGroup()), @js($key))"
     ffhs_drag:component
 >
-
     <x-filament::fieldset
         :label="$label"
         class="drag-drop__hover-effect"
         :attributes="prepare_inherited_attributes(new ComponentAttributeBag())"
     >
-
         <div class="drag-drop-list__element__action-container">
-            {{$getItemActionContainer($key)}}
+            {{ $getItemActionContainer($key) }}
         </div>
 
-        {{$getItemContainer($key)}}
+        {{ $getItemContainer($key) }}
 
         @if($isFlatten() && !$isFlattenViewHidden($key))
             @include($getFlattenView($key))
         @endif
-
     </x-filament::fieldset>
-
 </div>

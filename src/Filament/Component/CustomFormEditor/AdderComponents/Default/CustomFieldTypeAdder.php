@@ -31,19 +31,18 @@ final class CustomFieldTypeAdder extends FormEditorFieldAdder
     public function setUpSchema(): array
     {
         $actions = [];
-        foreach ($this->getTypes() as $type) {
-            /**@var CustomFieldType $type */
 
-            $actions[] =
-                DragDropAction::make('add_' . $type::identifier() . '_action')
-                    ->extraAttributes(['style' => 'width: 7rem; height: 100%;'])
-                    ->label(self::getCustomFieldAddActionLabel($type))
-                    ->tooltip($type->getTranslatedName())
-                    ->outlined()
-                    ->action(function ($arguments, $component, EditRecord $livewire) use ($type) {
-                        $field = $this->getNewFieldData($type);
-                        $this::addNewField($component, $arguments, $livewire, $field);
-                    });
+        foreach ($this->getTypes() as $type) {
+            /** @var CustomFieldType $type */
+            $actions[] = DragDropAction::make('add_' . $type::identifier() . '_action')
+                ->extraAttributes(['style' => 'width: 7rem; height: 100%;'])
+                ->label(self::getCustomFieldAddActionLabel($type))
+                ->tooltip($type->getTranslatedName())
+                ->outlined()
+                ->action(function ($arguments, $component, EditRecord $livewire) use ($type) {
+                    $field = $this->getNewFieldData($type);
+                    $this::addNewField($component, $arguments, $livewire, $field);
+                });
         }
 
         return [
@@ -56,13 +55,17 @@ final class CustomFieldTypeAdder extends FormEditorFieldAdder
     {
         /**@var CustomForm|null $customForm */
         $formIdentifier = $this->getGetCallback()('custom_form_identifier');
+
         if (is_null($formIdentifier)) {
             return [];
         }
 
         $formConfiguration = CustomForms::getFormConfiguration($formIdentifier);
         $fieldTypes = $formConfiguration::formFieldTypes();
-        return collect($fieldTypes)->map(fn($class) => app($class))->toArray();
+
+        return collect($fieldTypes)
+            ->map(fn($class) => app($class))
+            ->toArray();
     }
 
     protected function getNewFieldData(CustomFieldType $type): array
@@ -81,8 +84,10 @@ final class CustomFieldTypeAdder extends FormEditorFieldAdder
     protected function setUp(): void
     {
         parent::setUp();
-        $this->live();
-        $this->label(CustomForm::__('pages.type_adder.label'));
-        $this->schema($this->setUpSchema(...));
+
+        $this
+            ->live()
+            ->label(CustomForm::__('pages.type_adder.label'))
+            ->schema($this->setUpSchema(...));
     }
 }

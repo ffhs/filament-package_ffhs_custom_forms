@@ -1,5 +1,5 @@
-import {getAlpineData, getParent} from "../get_values.js";
-import {updatePositions} from "../move_elements.js";
+import {getAlpineData, getParent} from '../get_values.js';
+import {updatePositions} from '../move_elements.js';
 
 export default function dragDropContainer(group) {
     return {
@@ -7,7 +7,6 @@ export default function dragDropContainer(group) {
         container: true,
         element: null,
         parent: false,
-
         init() {
             Sortable.create(this.$el, {
                 ghostClass: 'drag-drop--element__ghost_effect',
@@ -27,19 +26,24 @@ export function onEndClosure(group) {
         let formParent = getParent(evt.from)
         let toParent = getParent(evt.to)
         let sameContainer = toParent === formParent;
-
         let toParentData = getAlpineData(toParent)
-
         let stateTo = toParentData.wire.get(toParentData.statePath, '')
-        if (!stateTo || Array.isArray(stateTo)) stateTo = {}
 
-        if (toParent.getAttribute("disabled")) return;
-        if (formParent.getAttribute("disabled")) return;
+        if (!stateTo || Array.isArray(stateTo)) {
+            stateTo = {}
+        }
+
+        if (toParent.getAttribute('disabled') || formParent.getAttribute('disabled')) {
+            return;
+        }
 
         if (!sameContainer) {
             let formParentData = getAlpineData(formParent)
             let stateFrom = formParentData.wire.get(formParentData.statePath, '')
-            if (!stateFrom || Array.isArray(stateFrom)) stateFrom = {}
+
+            if (!stateFrom || Array.isArray(stateFrom)) {
+                stateFrom = {}
+            }
 
             updatePositions(stateFrom, formParent, group, formParentData)
             formParentData.wire.set(formParentData.statePath, stateFrom, false)

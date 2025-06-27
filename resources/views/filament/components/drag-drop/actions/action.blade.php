@@ -1,4 +1,6 @@
 @php
+    use function Filament\Support\prepare_inherited_attributes;
+
     $isDisabled = $action->isDisabled();
     $url = $action->getUrl();
 @endphp
@@ -22,11 +24,10 @@
     {{--    :wire:target="$action->getLivewireTarget()"--}}
     {{--    :x-on:click="$action->getAlpineClickHandler()"--}}
     :attributes="
-        \Filament\Support\prepare_inherited_attributes($attributes)
+        prepare_inherited_attributes($attributes)
             ->merge($action->getExtraAttributes(), escape: false)
             ->class(['fi-ac-action'])
     "
-
     :badge="$getBadge()"
     :badge-color="$getBadgeColor()"
     :icon-position="$getIconPosition()"

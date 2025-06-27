@@ -1,8 +1,8 @@
 <div style="
     @if(is_null($color))
-    --c-50:var(--primary-50);
-    --c-400:var(--primary-400);
-    --c-600:var(--primary-600);
+        --c-50:var(--primary-50);
+        --c-400:var(--primary-400);
+        --c-600:var(--primary-600);
     @else
         {{ '--c-50:' . $color[50] . ';--c-400:' . $color[400] . ';--c-600:' . $color[600] . ';' }}
     @endif
