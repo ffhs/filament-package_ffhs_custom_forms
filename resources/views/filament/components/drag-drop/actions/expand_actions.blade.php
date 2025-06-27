@@ -47,8 +47,8 @@
         >
         @foreach($getOptions() as $id => $label)
                 @php
-                    $actionPath = $getActionsPath() . '.' . $getName() . '-' . $id . 'Action\',\'' . $getName() . '-' . $id;
-                    $mountAction = 'mountFormComponentAction("' . $actionPath . '")';
+                    $actionPath = $getActionsPath() . '.' . $getName() . '-' . $id . "Action','" . $getName() . '-' . $id;
+                    $mountAction = "mountFormComponentAction('" . $actionPath . "')";
                 @endphp
 
                 <span
