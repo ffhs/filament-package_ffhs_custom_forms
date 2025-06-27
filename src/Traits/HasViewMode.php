@@ -18,6 +18,7 @@ trait HasViewMode
     public function viewMode(string|Closure $viewMode = 'default'): static
     {
         $this->viewMode = $viewMode;
+
         return $this;
     }
 
@@ -29,10 +30,16 @@ trait HasViewMode
             }
 
             if ($customFormAnswer->customFieldAnswers->count() === 0) {
-                return $customForm->getFormConfiguration()->displayEditMode();
+                return $customForm
+                    ->getFormConfiguration()
+                    ->displayEditMode();
             }
-            return $customForm->getFormConfiguration()->displayCreateMode();
+
+            return $customForm
+                ->getFormConfiguration()
+                ->displayCreateMode();
         };
+
         return $this;
     }
 }

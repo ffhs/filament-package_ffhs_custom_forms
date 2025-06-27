@@ -11,6 +11,7 @@ use Filament\Forms\Form;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use JsonException;
 use Spatie\Activitylog\Facades\LogBatch;
 use Spatie\Activitylog\Models\Activity;
 
@@ -23,9 +24,7 @@ trait CanSaveFormAnswer
         // Mapping and combining custom fields
         $customFieldsIdentify = $customForm
             ->customFields
-            ->mapWithKeys(function (CustomField $customField) {
-                return [$customField->identifier => $customField];
-            });
+            ->mapWithKeys(fn(CustomField $customField) => [$customField->identifier => $customField]);
 
         //Update form data after modifying components
         $this->prepareFormComponents($customFieldsIdentify, $form, $path);
@@ -41,6 +40,9 @@ trait CanSaveFormAnswer
         });
     }
 
+    /**
+     * @throws JsonException
+     */
     protected function getFieldAttributesToSave(CustomFieldAnswer $answer): array
     {
         $attributes = $answer->attributesToArray();
@@ -50,6 +52,7 @@ trait CanSaveFormAnswer
                 $attributes[$key] = json_encode($attributes[$key], JSON_THROW_ON_ERROR);
             }
         }
+
         return $attributes;
     }
 
@@ -61,11 +64,13 @@ trait CanSaveFormAnswer
         foreach ($formData as $identifyKey => $customFieldAnswererRawData) {
             /**@var CustomField $customField */
             $customField = $customFieldsIdentify->get($identifyKey);
+
             if (is_null($customField)) {
                 continue;
             }
 
             $type = $customField->getType();
+
             if (!$type->hasSplitFields()) {
                 $dateSplit[$identifyKey] = $customFieldAnswererRawData;
                 continue;
@@ -73,11 +78,13 @@ trait CanSaveFormAnswer
 
             foreach ($customFieldAnswererRawData as $subPath => $subData) {
                 $getSplitData = $this->splittingFormComponents($subData, $customFieldsIdentify);
+
                 foreach ($getSplitData as $subKey => $subValue) {
                     $dateSplit[$subKey . '.' . $subPath] = $subValue;
                 }
             }
         }
+
         return $dateSplit;
     }
 
@@ -88,7 +95,9 @@ trait CanSaveFormAnswer
     ): void {
         LogBatch::startBatch();
         $existingFieldAnswers = $this->getExistingFieldAnswers($formAnswer);
-        $formRules = $formAnswer->customForm->rules;
+        $formRules = $formAnswer
+            ->customForm
+            ->rules;
         $answersToHandle = collect();
         $handledCustomIds = collect();
         $handledPaths = collect();
@@ -98,6 +107,7 @@ trait CanSaveFormAnswer
             $explodedIdentifierPath = explode('.', $identifierPath);
             $identifier = $explodedIdentifierPath[0];
             $path = null;
+
             if (sizeof($explodedIdentifierPath) !== 1) {
                 $path = implode('.', array_slice(explode('.', $identifierPath), 1));
                 $handledPaths->add($path);
@@ -105,6 +115,7 @@ trait CanSaveFormAnswer
 
             /**@var $customField CustomField */
             $customField = $customFields->get($identifier);
+
             if (is_null($customField)) {
                 continue;
             }
@@ -114,6 +125,7 @@ trait CanSaveFormAnswer
 
             /**@var ?CustomFieldAnswer $customFieldAnswer */
             $customFieldAnswer = $existingFieldAnswers->get($identifierPath);
+
             if (is_null($customFieldAnswer)) {
                 $customFieldAnswer = new CustomFieldAnswer([
                     'custom_field_id' => $customField->id,
@@ -129,22 +141,24 @@ trait CanSaveFormAnswer
             $customFieldAnswer->answer = $fieldAnswererData;
             $customFieldAnswer->setRelation('customField', $customField);
             $answersToHandle->add($customFieldAnswer);
-
         }
+
         $handledPaths = $handledPaths->filter(fn($path) => !is_null($path));
         $answersToHandle = $answersToHandle->groupBy(fn(CustomFieldAnswer $answer) => $answer->exists);
-
         $answersToCreate = $answersToHandle->get(false, collect())
-            ->filter(function (CustomFieldAnswer $answer) {
-                return !$answer->customField->getType()->isEmptyAnswer($answer, $answer->answer);
-            });
-
+            ->filter(fn(CustomFieldAnswer $answer) => !$answer
+                ->customField
+                ->getType()
+                ->isEmptyAnswer($answer, $answer->answer)
+            );
         $answersToDelete = $answersToHandle->get(true, collect())
-            ->filter(function (CustomFieldAnswer $answer) {
-                return $answer->customField->getType()->isEmptyAnswer($answer, $answer->answer);
-            });
-
-        $answersToSave = $answersToHandle->get(true, collect())
+            ->filter(fn(CustomFieldAnswer $answer) => $answer
+                ->customField
+                ->getType()
+                ->isEmptyAnswer($answer, $answer->answer)
+            );
+        $answersToSave = $answersToHandle
+            ->get(true, collect())
             ->whereNotIn('id', $answersToDelete->pluck('id'))
             ->filter(fn(CustomFieldAnswer $answer) => $answer->isDirty());
 
@@ -182,7 +196,8 @@ trait CanSaveFormAnswer
                 ->whereIn('custom_field_id', $handledCustomIds)
                 ->whereNotNull('path')
                 ->whereNotIn('path', $handledPaths)
-            )->delete();
+            )
+            ->delete();
     }
 
     private function handleSaveFields(Collection $toSave): void
@@ -190,19 +205,25 @@ trait CanSaveFormAnswer
         if ($toSave->isEmpty()) {
             return;
         }
+
         $now = now()->toDateTimeString();
         $answerDataToSave = $toSave
             ->map(function (CustomFieldAnswer $answer) use ($now) {
                 $attributes = $this->getFieldAttributesToSave($answer);
-
                 $attributes['updated_at'] = $now;
 
                 unset($attributes['created_at']);
+
                 return $attributes;
             })
             ->toArray();
 
-        CustomFieldAnswer::upsert($answerDataToSave, ['id'], (app(CustomFieldAnswer::class))->getFillable());
+        CustomFieldAnswer::upsert(
+            $answerDataToSave,
+            ['id'],
+            (app(CustomFieldAnswer::class))
+                ->getFillable()
+        );
     }
 
     private function handleCreateFields(Collection $toCreate): void
@@ -210,11 +231,11 @@ trait CanSaveFormAnswer
         if ($toCreate->isEmpty()) {
             return;
         }
+
         $now = now()->toDateTimeString();
         $answerDataToSave = $toCreate
             ->map(function (CustomFieldAnswer $answer) use ($now) {
                 $attributes = $this->getFieldAttributesToSave($answer);
-
                 $attributes['updated_at'] = $now;
                 $attributes['created_at'] = $now;
 
@@ -234,6 +255,7 @@ trait CanSaveFormAnswer
             ->get()
             ->mapWithKeys(function (CustomFieldAnswer $answer) {
                 $path = $answer->customField->identifier . (is_null($answer->path) ? '' : '.' . $answer->path);
+
                 return [$path => $answer];
             });
     }
@@ -250,6 +272,7 @@ trait CanSaveFormAnswer
                 $fieldAnswererData
             );
         }
+
         return $fieldAnswererData;
     }
 
@@ -260,13 +283,14 @@ trait CanSaveFormAnswer
             ->filter(fn(Field $component, string $key) => str_starts_with($key, $path));
 
         foreach ($customFieldsKeyByIdentifier as $identifier => $customField) {
-            $fieldComponents = $components->filter(function (Field $component, string $key) use ($identifier) {
-                return str_contains($key, $identifier);
-            });
+            $fieldComponents = $components
+                ->filter(fn(Field $component, string $key) => str_contains($key, $identifier));
+
             foreach ($fieldComponents as $fieldComponent) {
                 /**@var CustomField $customField */
-                $customField->getType()->updateAnswerFormComponentOnSave($fieldComponent, $customField, $form,
-                    $components);
+                $customField
+                    ->getType()
+                    ->updateAnswerFormComponentOnSave($fieldComponent, $customField, $form, $components);
             }
         }
     }

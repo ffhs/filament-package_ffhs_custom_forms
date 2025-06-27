@@ -14,10 +14,10 @@ trait HasBoolCheck
             return false;
         }
 
-        if (!empty($data['boolean'])) {
-            $boolean = $data['boolean'];
-        } else {
+        if (empty($data['boolean'])) {
             $boolean = false;
+        } else {
+            $boolean = $data['boolean'];
         }
 
         if (!is_bool($boolean)) {

@@ -2,23 +2,30 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Traits;
 
+use Exception;
 use Ffhs\FilamentPackageFfhsCustomForms\FlattedNestedList\NestedFlattenList;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 
 trait CanModifyCustomFormEditorData
 {
+    /**
+     * @throws Exception
+     */
     protected function removeFieldFromEditorData(string $toRemoveKey, array $fields): array
     {
         //Delete Structure
         $toDelete = $fields[$toRemoveKey];
 
         $nestedList = NestedFlattenList::make($fields, CustomField::class);
-
         $nestedList->removeFromPosition($toDelete['form_position']);
+
         return $nestedList->getData();
     }
 
+    /**
+     * @throws Exception
+     */
     protected function addMultipleFieldsToEditorData(array $toAddFields, int $position, array $fields): array
     {
         $nestedList = NestedFlattenList::make($fields, CustomField::class);
@@ -38,7 +45,8 @@ trait CanModifyCustomFormEditorData
         $templateIds = array_map(fn($used) => $used['template_id'], $templateData);
 
         foreach ($templateIds as $templateId) {
-            $genFields = $form->getFormConfiguration()
+            $genFields = $form
+                ->getFormConfiguration()
                 ->getAvailableTemplates()
                 ->get($templateId)
                 ->ownedGeneralFields

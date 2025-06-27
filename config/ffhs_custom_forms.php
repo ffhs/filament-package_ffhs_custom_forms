@@ -40,18 +40,17 @@ use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormEditor\Adde
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormEditor\AdderComponents\Default\TemplateFieldAdder;
 
 return [
-
     'cache_duration' => 1,
     'save_stopper_time' => 1,
     'default_column_count' => 4,
 
-    "rule" => [
-        "trigger" => [
+    'rule' => [
+        'trigger' => [
             IsInfolistTrigger::class,
             ValueEqualsRuleTrigger::class,
             AlwaysRuleTrigger::class,
         ],
-        "event" => [
+        'event' => [
             HideEvent::class,
             VisibleEvent::class,
             DisabledEvent::class,
@@ -60,15 +59,11 @@ return [
         ],
     ],
 
-
-    "forms" => [
-
+    'forms' => [
     ],
 
     'view_modes' => [
-
     ],
-
 
     'editor' => [
         'field_adders' => [
@@ -78,8 +73,7 @@ return [
         ],
     ],
 
-
-    "custom_field_types" => [
+    'custom_field_types' => [
         TemplateFieldType::class,
 
         TextType::class,
@@ -94,7 +88,6 @@ return [
 
         TagsType::class,
         KeyValueType::class,
-
 
         ColorPickerType::class,
         IconSelectType::class,
@@ -120,7 +113,7 @@ return [
         //WizardStepCustomEggType::class,
     ],
 
-    "selectable_field_types" => [
+    'selectable_field_types' => [
         CheckboxType::class,
         TextType::class,
         EmailType::class,
@@ -133,7 +126,6 @@ return [
 
         TagsType::class,
         KeyValueType::class,
-
 
         ColorPickerType::class,
         IconSelectType::class,
@@ -157,7 +149,7 @@ return [
         // WizardCustomNestType::class,
     ],
 
-    "selectable_general_field_types" => [
+    'selectable_general_field_types' => [
         CheckboxType::class,
         TextType::class,
         EmailType::class,
@@ -170,7 +162,6 @@ return [
         TagsType::class,
         KeyValueType::class,
 
-
         ColorPickerType::class,
         IconSelectType::class,
 
@@ -180,29 +171,26 @@ return [
         ToggleButtonsType::class,
     ],
 
-
-    "type_settings" => [
-        "download_file" => [
-            "save_path" => "/custom-form-plugin/custom-fields/specified-data",
-            "disk" => "local",
+    'type_settings' => [
+        'download_file' => [
+            'save_path' => '/custom-form-plugin/custom-fields/specified-data',
+            'disk' => 'local',
         ],
         'image_layout' => [
-            "save_path" => "/custom-form-plugin/images",
-            "disk" => "public",
+            'save_path' => '/custom-form-plugin/images',
+            'disk' => 'public',
         ],
         'file_upload' => [
             'files' => [
-                "url_prefix" => null, // Null means default path
-                "save_path" => "/custom-form-plugin/custom-fields/uploaded",
-                "disk" => "local",
+                'url_prefix' => null, // Null means default path
+                'save_path' => '/custom-form-plugin/custom-fields/uploaded',
+                'disk' => 'local',
             ],
             'images' => [
-                "url_prefix" => null, // Null means default path
-                "save_path" => "/custom-form-plugin/uploaded-images",
-                "disk" => "public",
+                'url_prefix' => null, // Null means default path
+                'save_path' => '/custom-form-plugin/uploaded-images',
+                'disk' => 'public',
             ]
         ]
     ],
-
-
 ];

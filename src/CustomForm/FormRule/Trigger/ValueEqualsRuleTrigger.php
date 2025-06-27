@@ -12,9 +12,10 @@ use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasOptionCheck;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasRuleTriggerPluginTranslate;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasTextCheck;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasTriggerEventFormTargets;
-use Filament\Forms\Components\Component;
+use Filament\Forms\Components\Component as FormsComponent;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Forms\Get;
+use Filament\Infolists\Components\Component as InfolistsComponent;
 
 class ValueEqualsRuleTrigger extends FormRuleTriggerType
 {
@@ -31,10 +32,10 @@ class ValueEqualsRuleTrigger extends FormRuleTriggerType
     }
 
     public function prepareComponent(
-        Component|\Filament\Infolists\Components\Component $component,
+        FormsComponent|InfolistsComponent $component,
         RuleTrigger $trigger
-    ): Component|\Filament\Infolists\Components\Component {
-        if ($component instanceof Component) {
+    ): FormsComponent|InfolistsComponent {
+        if ($component instanceof FormsComponent) {
             return $component->live();
         }
 
@@ -47,13 +48,9 @@ class ValueEqualsRuleTrigger extends FormRuleTriggerType
             return false;
         }
 
-        if (empty($rule->data)) {
-            return false;
-        }
-        if (empty($rule->data['target'])) {
-            return false;
-        }
-        if (empty($rule->data['type'])) {
+        if (empty($rule->data)
+            || empty($rule->data['target'])
+            || empty($rule->data['type'])) {
             return false;
         }
 
@@ -75,7 +72,8 @@ class ValueEqualsRuleTrigger extends FormRuleTriggerType
     public function getFormSchema(): array
     {
         return [
-            $this->getTargetSelect()
+            $this
+                ->getTargetSelect()
                 ->live()
                 ->label('Feld')//ToDo Translate
                 ->afterStateUpdated(fn($set) => $set('type', null)),
@@ -114,12 +112,10 @@ class ValueEqualsRuleTrigger extends FormRuleTriggerType
         if (is_null($targetValue)) {
             return true;
         }
-        if (is_bool($targetValue)) {
+        if (is_bool($targetValue) || $targetValue === '0') {
             return false;
         }
-        if ($targetValue === '0') {
-            return false;
-        }
+
         return empty($targetValue);
     }
 
@@ -128,28 +124,27 @@ class ValueEqualsRuleTrigger extends FormRuleTriggerType
         if ($value !== 'option') {
             return false;
         }
+
         return once(function () use ($get, $record) {
             $target = $get('target');
             $formState = $get('../../../../../custom_fields') ?? [];
-            $found = false;
+
             foreach ($formState as $field) {
                 $identifier = $field['identifier'] ?? '';
+
                 if (!empty($field['general_field_id'])) {
-                    $customField = new  TempCustomField($record, $field);
+                    $customField = new TempCustomField($record, $field);
                     $identifier = $customField->identifier();
                 }
 
                 if ($identifier === $target) {
-                    $found = true;
-                    break;
+                    $customField = new TempCustomField($record, $field);
+
+                    return !($customField->getType() instanceof CustomOptionType);
                 }
             }
 
-            if (!$found) {
-                return true;
-            }
-            $customField = new TempCustomField($record, $field);
-            return !($customField->getType() instanceof CustomOptionType);
+            return true;
         });
     }
 
@@ -159,13 +154,12 @@ class ValueEqualsRuleTrigger extends FormRuleTriggerType
             $set('selected_options', []);
         }
 
-        switch ($get('type')) {
-            case'text':
-                $set('values', []);
-                break;
-            case'option':
-                $set('selected_options', []);
-                break;
+        $type = $get('type');
+
+        if ($type === 'text') {
+            $set('values', []);
+        } elseif ($type === 'option') {
+            $set('selected_options', []);
         }
     }
 }

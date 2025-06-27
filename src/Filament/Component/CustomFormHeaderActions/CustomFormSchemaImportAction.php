@@ -23,6 +23,7 @@ use Filament\Forms\Components\Toggle;
 use Filament\Forms\Get;
 use Filament\Notifications\Notification;
 use Filament\Support\Enums\MaxWidth;
+use JsonException;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class CustomFormSchemaImportAction extends Action
@@ -37,12 +38,15 @@ class CustomFormSchemaImportAction extends Action
     public function existingForm(Closure|CustomForm|null $existingForm): static
     {
         $this->existingForm = $existingForm;
+
         return $this;
     }
 
+    /**
+     * @throws FormImportException|JsonException
+     */
     public function callImportAction($data): void
     {
-
         $importer = FormSchemaImporter::make();
 
         $file = $data['form_file'];
@@ -69,9 +73,10 @@ class CustomFormSchemaImportAction extends Action
         foreach ($generalFieldMapRaw as $generalFieldMapped) {
             $generalFieldMap[$generalFieldMapped['general_field_identifier']] = $generalFieldMapped['general_field_id'];
         }
+
         try {
-            /**@var TemporaryUploadedFile $file */
             $form = $this->getExistingForm();
+
             if ($form) {
                 $type = $form->is_template
                     ? CustomForm::__('label.template')
@@ -253,13 +258,16 @@ class CustomFormSchemaImportAction extends Action
         );
     }
 
+    /**
+     * @throws JsonException
+     */
     protected function getUploadedInfos(?TemporaryUploadedFile $file): array
     {
         if (is_null($file)) {
             return [];
         }
 
-        return json_decode(json: $file->getContent(), associative: true);
+        return json_decode($file->getContent(), true, 512, JSON_THROW_ON_ERROR);
     }
 
     protected function getDynamicFormConfiguration(
@@ -314,13 +322,16 @@ class CustomFormSchemaImportAction extends Action
             $existingTemplates = CustomForm::query()
                 ->whereNotNull('template_identifier')
                 ->whereIn('template_identifier', $usedTemplateIdentifiers)
-                ->pluck('id', 'template_identifier')->toArray();
+                ->pluck('id', 'template_identifier')
+                ->toArray();
 
-            $templateMap = $usedTemplateIdentifiers->map(fn($templateIdentifier) => [
-                'template_identifier_disabled' => $templateIdentifier,
-                'template_identifier' => $templateIdentifier,
-                'template_id' => $existingTemplates[$templateIdentifier] ?? null
-            ])->toArray();
+            $templateMap = $usedTemplateIdentifiers
+                ->map(fn($templateIdentifier) => [
+                    'template_identifier_disabled' => $templateIdentifier,
+                    'template_identifier' => $templateIdentifier,
+                    'template_id' => $existingTemplates[$templateIdentifier] ?? null
+                ])
+                ->toArray();
 
             $set('template_map', $templateMap);
 
@@ -330,13 +341,16 @@ class CustomFormSchemaImportAction extends Action
                 ->pluck('general_field_id');
             $existingGenFields = GeneralField::query()
                 ->whereIn('identifier', $usedGeneralFieldIdentifiers)
-                ->pluck('id', 'identifier')->toArray();
+                ->pluck('id', 'identifier')
+                ->toArray();
 
-            $generalFieldMap = $usedGeneralFieldIdentifiers->map(fn($generalFieldIdentifier) => [
-                'general_field_identifier_disabled' => $generalFieldIdentifier,
-                'general_field_identifier' => $generalFieldIdentifier,
-                'general_field_id' => $existingGenFields[$generalFieldIdentifier] ?? null
-            ])->toArray();
+            $generalFieldMap = $usedGeneralFieldIdentifiers
+                ->map(fn($generalFieldIdentifier) => [
+                    'general_field_identifier_disabled' => $generalFieldIdentifier,
+                    'general_field_identifier' => $generalFieldIdentifier,
+                    'general_field_id' => $existingGenFields[$generalFieldIdentifier] ?? null
+                ])
+                ->toArray();
 
             $set('general_field_map', $generalFieldMap);
         } catch (Error $exception) {
@@ -352,12 +366,12 @@ class CustomFormSchemaImportAction extends Action
     {
         parent::setUp();
 
-        $this->action($this->callImportAction(...));
-        $this->label('Import Formular/Template'); //ToDo Translate
-
-        $this->form($this->getFormSchema(...));
-        $this->fillForm(['general_field_map' => [], 'template_map' => []]);
-        $this->modalWidth(MaxWidth::ScreenTwoExtraLarge);
+        $this
+            ->action($this->callImportAction(...))
+            ->label('Import Formular/Template') //ToDo Translate
+            ->form($this->getFormSchema(...))
+            ->fillForm(['general_field_map' => [], 'template_map' => []])
+            ->modalWidth(MaxWidth::ScreenTwoExtraLarge);
     }
 
     protected function getTemplateOptions($get): array
@@ -383,7 +397,9 @@ class CustomFormSchemaImportAction extends Action
                     )
                     ->select('general_field_id')
             )
-            ->pluck('name', 'id')->toArray();
+            ->pluck('name', 'id')
+            ->toArray();
+
         return array_map(fn($option) => $option ?? '', $options);
     }
 }

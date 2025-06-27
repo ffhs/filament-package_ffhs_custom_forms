@@ -11,33 +11,33 @@ trait CanExportRuleInformation
 {
     public function exportRuleInformation(Collection $rules): array
     {
-        return $rules->map(function (Rule $rule) {
-            return [
+        return $rules
+            ->map(fn(Rule $rule) => [
                 'is_or_mode' => $rule->is_or_mode,
                 'triggers' => $this->exportTriggers($rule->ruleTriggers),
                 'events' => $this->exportEvents($rule->ruleEvents),
-            ];
-        })->toArray();
+            ])
+            ->toArray();
     }
 
     private function exportTriggers(Collection $triggers): array
     {
-        return $triggers->map(function (RuleTrigger $trigger) {
-            return [
+        return $triggers
+            ->map(fn(RuleTrigger $trigger) => [
                 'is_inverted' => $trigger->is_inverted,
                 'type' => $trigger->type,
                 'data' => $trigger->data,
-            ];
-        })->toArray();
+            ])
+            ->toArray();
     }
 
     private function exportEvents(Collection $events): array
     {
-        return $events->map(function (RuleEvent $event) {
-            return [
+        return $events
+            ->map(fn(RuleEvent $event) => [
                 'type' => $event->type,
                 'data' => $event->data,
-            ];
-        })->toArray();
+            ])
+            ->toArray();
     }
 }

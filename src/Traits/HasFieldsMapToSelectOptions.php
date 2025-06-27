@@ -10,12 +10,15 @@ trait HasFieldsMapToSelectOptions
     protected function getSelectOptionsFromFields(Collection $customFields): array
     {
         $options = [];
+
         foreach ($customFields as $field) {
             /**@var CustomField $field */
             $title = '';
+
             if ($field->relationLoaded('customForm')) {
                 $title = $field?->customForm?->short_title;
             }
+
             if (empty($title)) {
                 $title = '?';
             }

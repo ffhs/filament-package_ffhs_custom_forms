@@ -16,12 +16,14 @@ trait HasFieldSplit
     public function useFieldSplit(bool|Closure $useFieldSplit = true): static
     {
         $this->useFieldSplit = $useFieldSplit;
+
         return $this;
     }
 
     public function fieldSplit(CustomField|Closure|null $fieldSplit): static
     {
         $this->fieldSplit = $fieldSplit;
+
         return $this;
     }
 
@@ -33,12 +35,11 @@ trait HasFieldSplit
     public function loadFieldTypeSplitAnswerData(CustomFormAnswer $answer): array
     {
         $field = $this->getFieldSplit();
-        if (is_null($field)) {
+
+        if (is_null($field) || $field->form_position === $field->layout_end_position) {
             return [];
         }
-        if ($field->form_position === $field->layout_end_position) {
-            return [];
-        }
+
         $beginPos = $field->form_position + 1;
         $endPos = $field->layout_end_position;
 

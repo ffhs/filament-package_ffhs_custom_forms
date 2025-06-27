@@ -101,7 +101,7 @@ return [
     ],
     'alpine_mask' => [
         'label' => 'Mask',
-        'helper_text' => 'Quick help: "a" for letters, "9" for numbers, "*" for any character. (Alpine Mask)',
+        'helper_text' => 'Quick help: \'a\' for letters, \'9\' for numbers, \'*\' for any character. (Alpine Mask)',
     ],
     'action_Label' => [
         'label' => 'Action Label',
@@ -178,11 +178,11 @@ return [
     ],
     'min_select' => [
         'label' => 'Minimum Selection',
-        'helper_text' => 'Applies only if "Required" is active',
+        'helper_text' => 'Applies only if \'Required\' is active',
     ],
     'max_select' => [
         'label' => 'Maximum Selection',
-        'helper_text' => 'Use "0" for no limit',
+        'helper_text' => 'Use \'0\' for no limit',
     ],
     'auto_size' => [
         'label' => 'Auto Size',

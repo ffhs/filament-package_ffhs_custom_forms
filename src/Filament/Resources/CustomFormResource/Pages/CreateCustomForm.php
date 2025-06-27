@@ -21,13 +21,12 @@ class CreateCustomForm extends CreateRecord
 
     public function form(Form $form): Form
     {
-        return $form
-            ->schema([
-                TextInput::make('short_title')
-                    ->label(CustomForm::__('attributes.short_title'))
-                    ->required(),
-                CustomFormTypeSelector::make()
-                    ->required()
-            ]);
+        return $form->schema([
+            TextInput::make('short_title')
+                ->label(CustomForm::__('attributes.short_title'))
+                ->required(),
+            CustomFormTypeSelector::make()
+                ->required()
+        ]);
     }
 }

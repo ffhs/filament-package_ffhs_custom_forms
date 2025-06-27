@@ -16,13 +16,15 @@ trait CanCloneCustomForm
     public function cloneField(array $fieldData, CustomForm $targetForm, bool $useSameIdentifier = true): array
     {
         //Mutate Field Data's
-        $field = CustomField::query()->firstWhere('id', $fieldData['id']);
+        $field = CustomField::query()
+            ->firstWhere('id', $fieldData['id']);
 
         //Load OptionData now, because it needs the field id
 
-        $fieldData = $field->getType()->mutateOnCloneField($fieldData, $field);
+        $fieldData = $field
+            ->getType()
+            ->mutateOnCloneField($fieldData, $field);
         $fieldData = $this->mutateOptionData($fieldData, $field);
-
         $fieldData = $this->unsetAttributesForClone($fieldData);
         $fieldData['custom_form_id'] = $targetForm->id;
 
@@ -37,21 +39,25 @@ trait CanCloneCustomForm
 
         foreach ($typeOptions as $optionKey => $typeOption) {
             /**@var TypeOption $typeOption */
-            $optionData[$optionKey] = $typeOption->mutateOnFieldClone($optionData[$optionKey], $optionKey, $original);
+            $optionData[$optionKey] = $typeOption
+                ->mutateOnFieldClone($optionData[$optionKey], $optionKey, $original);
         }
 
         $fieldData['options'] = $optionData;
+
         return $fieldData;
     }
 
     protected function cloneRule(array $ruleData, CustomForm $targetForm): array
     {
         $ruleData = $this->unsetAttributesForClone($ruleData);
+
         unset($ruleData['pivot']);
 
-        $ruleData['events'] = $this->cloneRuleComponents($ruleData['events'], $targetForm, FormRuleEventType::class);
-        $ruleData['triggers'] = $this->cloneRuleComponents($ruleData['triggers'], $targetForm,
-            FormRuleTriggerType::class);
+        $ruleData['events'] = $this
+            ->cloneRuleComponents($ruleData['events'], $targetForm, FormRuleEventType::class);
+        $ruleData['triggers'] = $this
+            ->cloneRuleComponents($ruleData['triggers'], $targetForm, FormRuleTriggerType::class);
 
         return $ruleData;
     }
@@ -81,6 +87,7 @@ trait CanCloneCustomForm
     private function unsetAttributesForClone(array $data): array
     {
         unset($data['id'], $data['created_at'], $data['deleted_at'], $data['updated_at']);
+
         return $data;
     }
 }

@@ -11,6 +11,9 @@ trait CanSaveCustomFormEditorData
     use CanSaveCustomFormEditorFields;
     use CanSaveCustomFormEditorRules;
 
+    /**
+     * @throws Throwable
+     */
     public function saveCustomFormEditorData(array $rawState, CustomForm $form): void
     {
         try {
@@ -20,11 +23,10 @@ trait CanSaveCustomFormEditorData
             $this->savingRules($rawState['rules'], $form);
 
             DB::commit();
-
         } catch (Throwable $exception) {
             DB::rollBack();
+
             throw $exception;
         }
-
     }
 }

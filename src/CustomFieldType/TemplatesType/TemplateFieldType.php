@@ -44,10 +44,11 @@ final class TemplateFieldType extends CustomFieldType
     public function mutateCustomFieldDataOnSave(CustomField $field, array $data): array
     {
         unset($data['options']);
+
         return $data;
     }
 
-    public function getEditorActions(string $key, array $fieldState): array
+    public function getEditorActions(string $key, array $rawData): array
     {
         return [
             DefaultCustomFieldDeleteAction::make('delete-field-' . $key),
@@ -56,12 +57,12 @@ final class TemplateFieldType extends CustomFieldType
         ];
     }
 
-    public function getEditorFieldTitle(array $fieldData, CustomForm $form): string
+    public function getEditorFieldTitle(array $rawData, CustomForm $form): string
     {
         return $form
             ->getFormConfiguration()
             ->getAvailableTemplates()
-            ->get($fieldData['template_id'])
+            ->get($rawData['template_id'])
             ->short_title;
     }
 
@@ -73,47 +74,60 @@ final class TemplateFieldType extends CustomFieldType
     //ToDo check if it works
     public function afterDeleteField(CustomField $field): void
     {
-        $templateFields = $field->template->customFields;
-        $formFields = $field->customForm->customFields;
-        $field->customForm->customFormAnswers->each(function (CustomFormAnswer $formAnswer) use (
-            $formFields,
-            $field,
-            $templateFields
-        ) {
-            $formAnswer->customFieldAnswers
+        $templateFields = $field
+            ->template
+            ->customFields;
+        $formFields = $field
+            ->customForm
+            ->customFields;
+        $field
+            ->customForm
+            ->customFormAnswers
+            ->each(fn(CustomFormAnswer $formAnswer) => $formAnswer
+                ->customFieldAnswers
                 ->whereIn('custom_field_id', $templateFields->pluck('id'))
-                ->each($this->getFieldTransferClosure($formFields, $templateFields));
-        });
+                ->each($this->getFieldTransferClosure($formFields, $templateFields))
+            );
     }
 
     //ToDo check if it works
     public function afterSaveField(CustomField $field, array $data): void
     {
-        $templateFields = $field->template->customFields;
-        $formFields = $field->customForm->customFields;
+        $templateFields = $field
+            ->template
+            ->customFields;
+        $formFields = $field
+            ->customForm
+            ->customFields;
 
-        $field->customForm->customFormAnswers->each(function (CustomFormAnswer $formAnswer) use (
-            $formFields,
-            $field,
-            $templateFields
-        ) {
-            $templateIdentifiers = $templateFields->pluck('identifier');
-            $formFieldIds = $formFields->whereIn('identifier', $templateIdentifiers)->pluck('id');
-            $formAnswer->customFieldAnswers
-                ->whereIn('custom_field_id', $formFieldIds)
-                ->each($this->getFieldTransferClosure($templateFields, $formFields));
-        });
+        $field
+            ->customForm
+            ->customFormAnswers
+            ->each(function (CustomFormAnswer $formAnswer) use (
+                $formFields,
+                $field,
+                $templateFields
+            ) {
+                $templateIdentifiers = $templateFields->pluck('identifier');
+                $formFieldIds = $formFields
+                    ->whereIn('identifier', $templateIdentifiers)
+                    ->pluck('id');
+                $formAnswer
+                    ->customFieldAnswers
+                    ->whereIn('custom_field_id', $formFieldIds)
+                    ->each($this->getFieldTransferClosure($templateFields, $formFields));
+            });
     }
 
     protected function getFieldTransferClosure(Collection $newFields, Collection $originalFields): Closure
     {
         return static function (CustomFieldAnswer $fieldAnswer) use ($newFields, $originalFields): void {
             /**@var CustomField $oldField */
-            $oldField = $originalFields->where('id', $fieldAnswer->custom_field_id)->first();
+            $oldField = $originalFields->firstWhere('id', $fieldAnswer->custom_field_id);
+
             if (is_null($oldField)) {
                 return;
             }
-
 
             $identifier = $oldField->identifier;
             $newField = $newFields
@@ -123,6 +137,7 @@ final class TemplateFieldType extends CustomFieldType
             if (is_null($newField)) {
                 return;
             }
+
             $fieldAnswer->custom_field_id = $newField->id;
             $fieldAnswer->save();
         };

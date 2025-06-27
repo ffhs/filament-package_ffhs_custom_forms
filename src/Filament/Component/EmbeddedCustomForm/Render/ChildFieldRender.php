@@ -2,6 +2,7 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\EmbeddedCustomForm\Render;
 
+use Closure;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\FieldDisplayer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanRenderCustomForm;
@@ -16,7 +17,7 @@ class ChildFieldRender
         protected FieldDisplayer $displayer,
         protected CustomForm $customForm,
         protected Collection $customFields,
-        protected \Closure $registerRenderedComponents,
+        protected Closure $registerRenderedComponents,
         protected int $positionOffset
     ) {
     }
@@ -26,7 +27,7 @@ class ChildFieldRender
         FieldDisplayer $displayer,
         CustomForm $customForm,
         Collection $customFields,
-        \Closure $registerRenderedComponents,
+        Closure $registerRenderedComponents,
         int $positionOffset
     ): static {
         return app(static::class, [
@@ -49,6 +50,7 @@ class ChildFieldRender
             $this->positionOffset
         );
         ($this->registerRenderedComponents)($renderOutput[1]);
+
         return $renderOutput[0];
     }
 }

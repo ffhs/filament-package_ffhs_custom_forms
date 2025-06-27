@@ -3,7 +3,9 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\FlattedNestedList;
 
 use Exception;
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\NestingObject;
 use Illuminate\Support\Collection;
+use RuntimeException;
 
 class NestedFlattenList
 {
@@ -33,15 +35,21 @@ class NestedFlattenList
         return $this->loadStructure($this->data, $useKey);
     }
 
+    /**
+     * @throws Exception
+     */
     public function getPositionAttribute(): string
     {
         if (!$this->getType()) {
             return '';
         }
-        return $this->getType()::getPositionAttribute();
 
+        return $this->getType()::getPositionAttribute();
     }
 
+    /**
+     * @throws Exception
+     */
     public function getType(): string
     {
         if (!is_null($this->fixedType)) {
@@ -55,20 +63,27 @@ class NestedFlattenList
         }
 
         if (!($first instanceof NestingObject)) {
-            throw new Exception('the objects must been instance of NestingObject');
+            throw new RuntimeException('the objects must been instance of NestingObject');
         }
 
         return $first::class;
     }
 
+    /**
+     * @throws Exception
+     */
     public function getEndContainerPositionAttribute(): string
     {
         if (!$this->getType()) {
             return '';
         }
+
         return $this->getType()::getEndContainerPositionAttribute();
     }
 
+    /**
+     * @throws Exception
+     */
     public function addOnPosition(int $pos, NestingObject|array $data, ?string $key): void
     {
         $poseAttribute = $this->getPositionAttribute();
@@ -83,21 +98,30 @@ class NestedFlattenList
             if (!empty($element[$endPosAttribute]) && $element[$endPosAttribute] >= $pos) {
                 $element[$endPosAttribute] += 1;
             }
-            $this->data->put($elementKey, $element);
+
+            $this
+                ->data
+                ->put($elementKey, $element);
         }
 
         if (is_null($key)) {
-            $this->data->add($data);
+            $this
+                ->data
+                ->add($data);
         } else {
-            $this->data->put($key, $data);
+            $this
+                ->data
+                ->put($key, $data);
         }
     }
 
+    /**
+     * @throws Exception
+     */
     public function addManyOnPosition(int $startPos, array $elementsToAdd, bool $withKeys = false): void
     {
         $poseAttribute = $this->getPositionAttribute();
         $endPosAttribute = $this->getEndContainerPositionAttribute();
-
         $amountToAdd = count($elementsToAdd);
 
         //Rearrange
@@ -108,7 +132,10 @@ class NestedFlattenList
             if ($item[$endPosAttribute] >= $startPos) {
                 $item[$endPosAttribute] += $amountToAdd;
             }
-            $this->data->put($itemKey, $item);
+
+            $this
+                ->data
+                ->put($itemKey, $item);
         }
 
         foreach ($elementsToAdd as $key => $newElement) {
@@ -119,20 +146,25 @@ class NestedFlattenList
             }
 
             if ($withKeys) {
-                $this->data->put($key, $newElement);
+                $this
+                    ->data
+                    ->put($key, $newElement);
             } else {
-                $this->data->add($newElement);
+                $this
+                    ->data
+                    ->add($newElement);
             }
         }
     }
 
+    /**
+     * @throws Exception
+     */
     public function removeFromPosition(int $pos): void
     {
         $poseAttribute = $this->getPositionAttribute();
         $endPosAttribute = $this->getEndContainerPositionAttribute();
-
         $toRemove = $this->data->where($poseAttribute, $pos)->first();
-
 
         //Delete Sub Elements
 
@@ -146,7 +178,9 @@ class NestedFlattenList
         }
 
         foreach ($keysToDelete as $key) {
-            $this->data->forget($key);
+            $this
+                ->data
+                ->forget($key);
         }
 
         $amountDeletedFields = count($keysToDelete);
@@ -159,19 +193,25 @@ class NestedFlattenList
             if (!empty($item[$endPosAttribute]) && $item[$endPosAttribute] >= $pos) {
                 $item[$endPosAttribute] -= $amountDeletedFields;
             }
-            $this->data->put($key, $item);
-        }
 
+            $this
+                ->data
+                ->put($key, $item);
+        }
     }
 
     public function getData(): array
     {
-        return $this->data->toArray();
+        return $this
+            ->data
+            ->toArray();
     }
 
+    /**
+     * @throws Exception
+     */
     protected function loadStructure(Collection $objects, bool $useKey): array
     {
-
         if ($objects->count() === 0) {
             return [];
         }
@@ -186,10 +226,11 @@ class NestedFlattenList
         $structure = [];
 
         for ($i = $start; $i <= $end; $i++) {
-
             $result = $objects->where($poseAttribute, $i);
             $field = $result->first();
-            $originalKey = $result->keys()->first();
+            $originalKey = $result
+                ->keys()
+                ->first();
 
             if (is_null($field)) {
                 continue;
@@ -197,6 +238,7 @@ class NestedFlattenList
 
             //GetKey
             $key = null;
+
             if ($useKey) {
                 $key = $originalKey;
             }
@@ -214,7 +256,6 @@ class NestedFlattenList
                 ->where($poseAttribute, '<=', $field[$endPosAttribute]);
 
             $i = $field[$endPosAttribute];
-
             $structure[$key] = static::loadStructure($subFields, $useKey);
         }
 

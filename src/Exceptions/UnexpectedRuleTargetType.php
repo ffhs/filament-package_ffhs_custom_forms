@@ -2,7 +2,10 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Exceptions;
 
-class UnexpectedRuleTargetType extends \Exception
+use Exception;
+use Throwable;
+
+class UnexpectedRuleTargetType extends Exception
 {
     public function __construct(
         array $allowedTypes,
@@ -12,9 +15,10 @@ class UnexpectedRuleTargetType extends \Exception
         ?Throwable $previous = null
     ) {
         parent::__construct(
-            'Only allowed [' . implode(',', $allowedTypes) . '] as target but get '
-            . $actualType
-            . ' in ' . $class
-            , $code, $previous);
+            'Only allowed [' . implode(',', $allowedTypes)
+            . '] as target but get ' . $actualType . ' in ' . $class,
+            $code,
+            $previous
+        );
     }
 }

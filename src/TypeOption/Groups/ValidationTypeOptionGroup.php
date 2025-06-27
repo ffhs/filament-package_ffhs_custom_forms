@@ -22,6 +22,7 @@ class ValidationTypeOptionGroup extends TypeOptionGroup
                 'required' => RequiredOption::make(),
             ];
         }
+
         return parent::make(TypeOption::__('validation-group.label'), $typeOptions, $icon);
     }
 }

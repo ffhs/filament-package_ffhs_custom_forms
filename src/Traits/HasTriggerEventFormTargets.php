@@ -44,8 +44,10 @@ trait HasTriggerEventFormTargets
         $fields = collect($this->getAllFieldsData($get, $record))
             ->map(function ($fieldData) use ($record) {
                 $customField = new CustomField($fieldData);
+
                 return $this->loadFieldRelationsFromForm($customField, $record);
             });
+
         return $this->getSelectOptionsFromFields($fields);
     }
 
@@ -54,13 +56,16 @@ trait HasTriggerEventFormTargets
         if (!is_null($this->cachedAllFieldsData)) {
             return $this->cachedAllFieldsData;
         }
+
         $fields = $get('../../../../../custom_fields') ?? [];
+
         return $this->cachedAllFieldsData = $this->getFieldDataFromFormData($fields, $customForm);
     }
 
     public function getTargetFieldData(Get $get, $customForm): array|null
     {
         $identifier = $get('target');
+
         if (is_null($identifier)) {
             return null;
         }

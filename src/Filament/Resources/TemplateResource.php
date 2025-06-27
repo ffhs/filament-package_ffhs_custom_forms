@@ -36,6 +36,7 @@ class TemplateResource extends Resource
     public static function getNavigationParentItem(): ?string
     {
         $title = CustomForm::__('navigation.parent-template');
+
         return empty($title) ? null : $title;
     }
 

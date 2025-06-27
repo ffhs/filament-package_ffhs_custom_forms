@@ -33,12 +33,14 @@ abstract class TypeOption
     public function modifyOptionComponent(Closure $closure): static
     {
         $this->modifyComponentCloser = $closure;
+
         return $this;
     }
 
     public function modifyDefault(mixed $closure): static
     {
         $this->modifyDefault = $closure;
+
         return $this;
     }
 
@@ -47,17 +49,19 @@ abstract class TypeOption
         if (is_null($this->modifyComponentCloser)) {
             return $this->getComponent($name);
         }
+
         return ($this->modifyComponentCloser)($this->getComponent($name));
     }
 
     public function getModifyDefault(): mixed
     {
         $default = $this->getDefaultValue();
+
         if (is_null($this->modifyDefault)) {
             return $default;
         }
-        $isClosure = $this->modifyDefault instanceof Closure;
-        return $isClosure
+
+        return $this->modifyDefault instanceof Closure
             ? ($this->modifyDefault)($default)
             : $this->modifyDefault;
     }

@@ -16,6 +16,7 @@ class ImaginaryTypeOption extends TypeOption
     public function default(mixed $value): static
     {
         $this->defaultValue = $value;
+
         return $this;
     }
 
@@ -26,6 +27,7 @@ class ImaginaryTypeOption extends TypeOption
 
     public function getComponent(string $name): Component
     {
-        return Hidden::make($name)->disabled();
+        return Hidden::make($name)
+            ->disabled();
     }
 }

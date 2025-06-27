@@ -2,7 +2,8 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Exceptions;
 
-class FormImportException extends \Exception
-{
+use Exception;
 
+class FormImportException extends Exception
+{
 }

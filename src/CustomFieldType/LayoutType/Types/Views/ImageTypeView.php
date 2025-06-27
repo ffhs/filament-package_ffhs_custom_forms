@@ -7,8 +7,9 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldT
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasDefaultViewComponent;
+use Filament\Forms\Components\Component as FormsComponent;
 use Filament\Forms\Components\Placeholder;
-use Filament\Infolists\Components\Component;
+use Filament\Infolists\Components\Component as InfolistsComponent;
 use Filament\Infolists\Components\Group;
 use Filament\Infolists\Components\ImageEntry;
 use Filament\Infolists\Infolist;
@@ -22,13 +23,18 @@ class ImageTypeView implements FieldTypeView
         CustomFieldType $type,
         CustomField $record,
         array $parameter = []
-    ): \Filament\Forms\Components\Component {
+    ): FormsComponent {
         /**@var $placeholder Placeholder */
         $placeholder = $this->makeComponent(Placeholder::class, $record);
+
         return $placeholder
             ->content(
                 new HtmlString(
-                    app(Infolist::class)->columns(1)->schema([$this->getImageEntry($record)])->record($record)->render()
+                    app(Infolist::class)
+                        ->columns(1)
+                        ->schema([$this->getImageEntry($record)])
+                        ->record($record)
+                        ->render()
                 )
             )
             ->label('');
@@ -38,9 +44,10 @@ class ImageTypeView implements FieldTypeView
         CustomFieldType $type,
         CustomFieldAnswer $record,
         array $parameter = []
-    ): Component {
+    ): InfolistsComponent {
         if (!$this->getOptionParameter($record, 'show_in_view')) {
-            return Group::make()->hidden();
+            return Group::make()
+                ->hidden();
         }
 
         return $this->getImageEntry($record->customField);

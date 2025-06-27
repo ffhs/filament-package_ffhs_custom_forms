@@ -36,11 +36,11 @@ trait UseSplitInfolistSchema
     {
         $beginPos = $this->getPoseSpiltStart();
         $endPos = $this->getPoseSpiltEnd();
-
         $formAnswer = $this->getCustomFormAnswer();
         $viewMode = $this->getViewMode();
         $customForm = $formAnswer->customForm;
         $displayer = InfolistFieldDisplayer::make($formAnswer);
+
         return $this->renderPose($beginPos, $endPos, $customForm, $displayer, $viewMode);
     }
 
@@ -48,14 +48,16 @@ trait UseSplitInfolistSchema
     protected function getSplitFieldInfolistSchema(): array
     {
         $customField = $this->getFieldSplit();
+
         if (is_null($customField)) {
             return [];
         }
+
         $formAnswer = $this->getCustomFormAnswer();
         $viewMode = $this->getViewMode();
-
         $customForm = $formAnswer->customForm;
         $displayer = InfolistFieldDisplayer::make($formAnswer);
+
         return $this->renderField($customField, $customForm, $displayer, $viewMode);
     }
 
@@ -66,6 +68,7 @@ trait UseSplitInfolistSchema
         $viewMode = $this->getViewMode();
         $customForm = $formAnswer->customForm;
         $displayer = InfolistFieldDisplayer::make($formAnswer);
+
         return $this->renderLayoutTypeSplit($layoutType, $customForm, $displayer, $viewMode);
     }
 }

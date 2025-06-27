@@ -17,6 +17,7 @@ trait HasLayoutSplit
     public function useLayoutTypeSplit(bool|Closure $useLayoutTypeSplit = true): static
     {
         $this->useLayoutTypeSplit = $useLayoutTypeSplit;
+
         return $this;
     }
 
@@ -24,6 +25,7 @@ trait HasLayoutSplit
     {
         $this->useLayoutTypeSplit(!is_null($layoutTypeSplit));
         $this->layoutTypeSplit = $layoutTypeSplit;
+
         return $this;
     }
 
@@ -39,14 +41,13 @@ trait HasLayoutSplit
 
     public function loadLayoutTypeSplitAnswerData(CustomFormAnswer $answer): array
     {
-        $layoutField = $answer->customForm->customFields
+        $layoutField = $answer
+            ->customForm
+            ->customFields
             ->filter(fn(CustomField $field) => $field->type === $this->getLayoutTypeSplit()::identifier())
             ->first();
 
-        if (is_null($layoutField)) {
-            return [];
-        }
-        if ($layoutField->form_position === $layoutField->layout_end_position) {
+        if (is_null($layoutField) || $layoutField->form_position === $layoutField->layout_end_position) {
             return [];
         }
 

@@ -78,6 +78,7 @@ abstract class CustomFormConfiguration
             $forms->each(fn(CustomForm $form) => $form->setRelation('generalFields', $form->ownedGeneralFields));
 
             CustomForms::cacheForm($forms);
+
             return $forms;
         });
     }

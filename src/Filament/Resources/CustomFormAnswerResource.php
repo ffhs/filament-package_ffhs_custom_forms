@@ -36,6 +36,7 @@ class CustomFormAnswerResource extends Resource
     public static function getNavigationParentItem(): ?string
     {
         $title = CustomFormAnswer::__('navigation.parent');
+
         return empty($title) ? null : $title;
     }
 
@@ -73,8 +74,9 @@ class CustomFormAnswerResource extends Resource
                     ),
                 TextColumn::make('customForm.custom_form_identifier')
                     ->label(CustomForm::__('attributes.custom_form_identifier'))
-                    ->state(
-                        fn(CustomFormAnswer $record) => $record->customForm->dynamicFormConfiguration()::displayName()
+                    ->state(fn(CustomFormAnswer $record) => $record
+                        ->customForm
+                        ->dynamicFormConfiguration()::displayName()
                     ),
             ])
             ->filters([])

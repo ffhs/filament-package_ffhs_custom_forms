@@ -59,7 +59,9 @@ class CustomFieldAnswer extends Model
 
     public function customForm(): BelongsTo
     {
-        return $this->customFormAnswer->customForm();
+        return $this
+            ->customFormAnswer
+            ->customForm();
     }
 
     public function customField(): BelongsTo

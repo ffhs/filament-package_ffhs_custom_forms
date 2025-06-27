@@ -2,7 +2,8 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Exceptions;
 
-class NonItemKeyOnTypeActionException extends \RuntimeException
-{
+use RuntimeException;
 
+class NonItemKeyOnTypeActionException extends RuntimeException
+{
 }

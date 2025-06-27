@@ -41,15 +41,19 @@ class Rule extends Model
     {
         $triggers = $this->getTriggersCallback($target, $arguments);
         $events = $this->ruleEvents;
-
         $events = $events->sortBy('order');
+
         foreach ($events as $event) {
             /**@var RuleEvent $event */
-            $targetResult = $event->getType()->handle($triggers, $arguments, $target, $event);
+            $targetResult = $event
+                ->getType()
+                ->handle($triggers, $arguments, $target, $event);
+
             if (!is_null($targetResult)) {
                 $target = $targetResult;
             }
         }
+
         return $target;
     }
 
@@ -57,12 +61,14 @@ class Rule extends Model
     {
         return function ($extraArguments = []) use ($target, $arguments) {
             $argumentsFinal = array_merge($arguments, $extraArguments);
-
             $triggers = $this->ruleTriggers->sortBy('order');
 
             foreach ($triggers as $trigger) {
                 /**@var RuleTrigger $trigger */
-                $triggered = $trigger->getType()->isTrigger($argumentsFinal, $target, $trigger);
+                $triggered = $trigger
+                    ->getType()
+                    ->isTrigger($argumentsFinal, $target, $trigger);
+
                 if ($trigger->is_inverted) {
                     $triggered = !$triggered;
                 }

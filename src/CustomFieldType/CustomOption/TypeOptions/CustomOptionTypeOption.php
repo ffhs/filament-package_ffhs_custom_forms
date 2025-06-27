@@ -26,15 +26,14 @@ class CustomOptionTypeOption extends TypeOption
     {
         return Group::make()
             ->columnSpanFull()
-            ->schema(function ($get) use ($name) {
-                return once(function () use ($name, $get) {
-                    if (is_null($get('../general_field_id'))) {
-                        return [$this->getCustomOptionsRepeater($name)];
-                    } else {
-                        return [$this->getCustomOptionsSelector($name)];
-                    }
-                });
-            });
+            ->schema(fn($get) => once(function () use ($name, $get) {
+                if (is_null($get('../general_field_id'))) {
+                    return [$this->getCustomOptionsRepeater($name)];
+                }
+
+                return [$this->getCustomOptionsSelector($name)];
+            })
+            );
     }
 
     public function mutateOnFieldSave(mixed $data, string $key, CustomField $field): mixed
@@ -45,37 +44,59 @@ class CustomOptionTypeOption extends TypeOption
     public function afterSaveField(mixed &$data, string $key, CustomField $field): void
     {
         if ($field->isGeneralField()) {
-            $field->customOptions()->sync($data);
+            $field
+                ->customOptions()
+                ->sync($data);
+
             return;
         }
 
         $ids = [];
         $toCreate = [];
         $data = $data ?? [];
+
         foreach ($data as $optionData) {
             if (!isset($optionData['id'])) {
                 if (empty($optionData['identifier'])) {
                     $optionData['identifier'] = uniqid();
                 }
+
                 $toCreate[] = $optionData;
+
                 continue;
             }
+
             $ids[] = $optionData['id'];
-            $field->customOptions->where('id', $optionData['id'])->first()?->update($optionData);
+            $field
+                ->customOptions
+                ->firstWhere('id', $optionData['id'])
+                ?->update($optionData);
         }
 
-        $field->customOptions()->whereNotIn('custom_options.id', $ids)->delete();
-        $field->customOptions()->createMany($toCreate);
+        $field
+            ->customOptions()
+            ->whereNotIn('custom_options.id', $ids)
+            ->delete();
+        $field
+            ->customOptions()
+            ->createMany($toCreate);
     }
 
     public function mutateOnFieldLoad(mixed $data, string $key, CustomField $field): mixed
     {
         if ($field->isGeneralField()) {
-            return $field->customOptions->pluck('id')->toArray();
+            return $field
+                ->customOptions
+                ->pluck('id')
+                ->toArray();
         }
-        $field->customOptions->each(function (CustomOption $option) use (&$value) {
-            $value['record-' . $option->id] = $option->toArray();
-        });
+
+        $field
+            ->customOptions
+            ->each(function (CustomOption $option) use (&$value) {
+                $value['record-' . $option->id] = $option->toArray();
+            });
+
         return $value;
     }
 
@@ -84,7 +105,9 @@ class CustomOptionTypeOption extends TypeOption
         if ($original->isGeneralField()) {
             return parent::mutateOnFieldClone($data, $key, $original);
         }
+
         $options = [];
+
         foreach ($original->customOptions as $customOption) {
             /**@var CustomOption $customOption */
             $customOptionData = $customOption->toArray();
@@ -97,6 +120,7 @@ class CustomOptionTypeOption extends TypeOption
             );
             $options[uniqid()] = $customOptionData;
         }
+
         return parent::mutateOnFieldClone($options, $key, $original);
     }
 
@@ -112,12 +136,14 @@ class CustomOptionTypeOption extends TypeOption
             ->helperText(CustomOption::__('possible_options.helper_text'))
             ->columnSpanFull()
             ->multiple()
-            ->options(function ($get) {
-                return once(function () use ($get) {
-                    $generalField = GeneralField::firstWhere('id', $get('../general_field_id'));
-                    return $generalField->customOptions->pluck('name', 'id')->toArray();
-                });
-            });
+            ->options(fn($get) => once(function () use ($get) {
+                $generalField = GeneralField::firstWhere('id', $get('../general_field_id'));
+
+                return $generalField
+                    ?->customOptions
+                    ->pluck('name', 'id')
+                    ->toArray();
+            }));
     }
 
     private function getCustomOptionsRepeater($name): Repeater
@@ -157,4 +183,3 @@ class CustomOptionTypeOption extends TypeOption
             ]));
     }
 }
-

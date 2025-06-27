@@ -71,6 +71,7 @@ trait HasCustomFields
 
         CustomForms::cacheForm($templates);
         CustomForms::cacheForm($this);
+
         return $customFields;
     }
 
@@ -97,6 +98,7 @@ trait HasCustomFields
         $customFields = $this->customFields();
         $ownedFields = $customFields->where('custom_form_id', $this->id);
         $this->setRelation('ownedFields', $ownedFields);
+
         return $ownedFields;
     }
 
@@ -107,11 +109,13 @@ trait HasCustomFields
 
     public function generalFields(): BelongsToMany
     {
-        $generalFields = $this->customFields()
+        $generalFields = $this
+            ->customFields()
             ->select('general_field_id')
             ->whereNotNull('general_field_id');
 
-        return $this->belongsToMany(GeneralField::class, 'custom_fields', 'custom_form_id', 'general_field_id')
+        return $this
+            ->belongsToMany(GeneralField::class, 'custom_fields', 'custom_form_id', 'general_field_id')
             ->orWhereIn('id', $generalFields);
     }
 }

@@ -24,11 +24,14 @@ trait HasCustomOptionInfoListView
         if (empty($answer)) {
             $answer = '';
         } elseif (is_array($answer)) {
-            $stateList = $this->getAllCustomOptions($record)
+            $stateList = $this
+                ->getAllCustomOptions($record)
                 ->filter(fn($value, $id) => in_array($id, $answer, false))
                 ->toArray();
         } else {
-            $stateList = $this->getAllCustomOptions($record)->firstWhere(fn($value, $id) => $id == $answer);
+            $stateList = $this
+                ->getAllCustomOptions($record)
+                ->firstWhere(fn($value, $id) => $id == $answer);
             $stateList = [$answer => $stateList];
             $textEntry->color('info');
         }

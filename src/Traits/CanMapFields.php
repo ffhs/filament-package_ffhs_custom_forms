@@ -15,6 +15,7 @@ trait CanMapFields
         if ($record instanceof CustomFieldAnswer) {
             $record = $record->customField;
         }
+
         return $record->identifier;
     }
 
@@ -23,6 +24,7 @@ trait CanMapFields
         if ($record instanceof CustomFieldAnswer) {
             $record = $record->customField;
         }
+
         $label = $record->name;
         $label = is_null($label) ? '' : $label;
 
@@ -37,11 +39,14 @@ trait CanMapFields
         if ($record instanceof CustomFieldAnswer) {
             $record = $record->customField;
         }
+
         if (is_null($record->options)) {
             $record->options = [];
         }
+
         if (array_key_exists($option, $record->options)) {
             $return = $record->options[$option];
+
             if (!is_null($return)) {
                 return $return;
             }
@@ -51,14 +56,22 @@ trait CanMapFields
             }
         }
 
-        $generalOptions = $record->getType()->getDefaultGeneralOptionValues();
+        $generalOptions = $record
+            ->getType()
+            ->getDefaultGeneralOptionValues();
+
         if (array_key_exists($option, $generalOptions)) {
             return $generalOptions[$option];
         }
-        $fieldOptions = $record->getType()->getDefaultTypeOptionValues();
+
+        $fieldOptions = $record
+            ->getType()
+            ->getDefaultTypeOptionValues();
+
         if (array_key_exists($option, $fieldOptions)) {
             return $fieldOptions[$option];
         }
+
         return $canBeNull ? null : 0;
     }
 
@@ -67,27 +80,30 @@ trait CanMapFields
         if ($record instanceof CustomFieldAnswer) {
             $record = $record->customField;
         }
-        if (!is_null($record->getType()->getFlattenExtraTypeOptions()[$option] ?? null)) {
-            return true;
-        }
-        if (!is_null($record->getType()->getFlattenGeneralTypeOptions()[$option] ?? null)) {
-            return true;
-        }
-        return false;
+
+        return !is_null($record->getType()->getFlattenExtraTypeOptions()[$option] ?? null)
+            || !is_null($record->getType()->getFlattenGeneralTypeOptions()[$option] ?? null);
     }
 
     public function getAnswer(CustomFieldAnswer $answer)
     {
         $rawAnswerer = $answer->answer;
+
         if (is_null($rawAnswerer)) {
             return null;
         }
-        return $answer->customField->getType()->prepareLoadAnswerData($answer, $rawAnswerer);
+
+        return $answer
+            ->customField
+            ->getType()
+            ->prepareLoadAnswerData($answer, $rawAnswerer);
     }
 
     public function getAvailableCustomOptions(CustomField $record): Collection
     {
-        return $record->customOptions->pluck('name', 'identifier');
+        return $record
+            ->customOptions
+            ->pluck('name', 'identifier');
     }
 
     public function getAllCustomOptions(CustomField|CustomFieldAnswer $record): Collection
@@ -95,11 +111,15 @@ trait CanMapFields
         if ($record instanceof CustomFieldAnswer) {
             $record = $record->customField;
         }
+
         if ($record->isGeneralField()) {
-            $options = $record->generalField->customOptions;
+            $options = $record
+                ->generalField
+                ->customOptions;
         } else {
             $options = $record->customOptions;
         }
+
         return $options->pluck('name', 'identifier');
     }
 
@@ -108,7 +128,10 @@ trait CanMapFields
         if ($record instanceof CustomFieldAnswer) {
             $record = $record->customField;
         }
-        return $record->getType()->getConfigAttribute($attribute);
+
+        return $record
+            ->getType()
+            ->getConfigAttribute($attribute);
     }
 
     /**
@@ -119,17 +142,20 @@ trait CanMapFields
         if ($record instanceof CustomFieldAnswer) {
             $record = $record->customField;
         }
-        $fields = $record->customForm->customFields;
+
+        $fields = $record
+            ->customForm
+            ->customFields;
         $parentSplitField = $fields
             ->firstWhere(function (CustomField $field) use ($record) {
-                if ($field->form_position >= $record->form_position) {
+                if ($field->form_position >= $record->form_position
+                    || $field->layout_end_position < $record->form_position) {
                     return false;
                 }
-                if ($field->layout_end_position < $record->form_position) {
-                    return false;
-                }
+
                 return $field->getType() instanceof CustomSplitType;
             });
+
         return !is_null($parentSplitField);
     }
 
@@ -143,16 +169,21 @@ trait CanMapFields
             $record = $record->customField;
         }
 
-        $splitGroup = $this->getParentSplitGroups($record)
-            ->sortByDesc('form_position')->first();
+        $splitGroup = $this
+            ->getParentSplitGroups($record)
+            ->sortByDesc('form_position')
+            ->first();
 
         $fieldsInGroup = $this->getFieldsInLayout($splitGroup);
 
-        $answersWithPath = $customFormAnswer->customFieldAnswers
+        $answersWithPath = $customFormAnswer
+            ->customFieldAnswers
             ->whereIn('custom_field_id', $fieldsInGroup->pluck('id'))
             ->whereNotNull('path');
 
-        return $answersWithPath->keyBy('path')->keys();
+        return $answersWithPath
+            ->keyBy('path')
+            ->keys();
     }
 
     public function getParentSplitGroups(CustomField|CustomFieldAnswer $record): Collection
@@ -160,13 +191,15 @@ trait CanMapFields
         if ($record instanceof CustomFieldAnswer) {
             $record = $record->customField;
         }
-        $fields = $record->customForm->customFields;
+
+        $fields = $record
+            ->customForm
+            ->customFields;
+
         return $fields
             ->where('form_position', '<', $record->form_position)
             ->where('layout_end_position', '>=', $record->form_position)
-            ->filter(function (CustomField $field) use ($record) {
-                return $field->getType() instanceof CustomSplitType;
-            });
+            ->filter(fn(CustomField $field) => $field->getType() instanceof CustomSplitType);
     }
 
     public function getFieldsInLayout(CustomField|CustomFieldAnswer $record): Collection
@@ -174,15 +207,13 @@ trait CanMapFields
         if ($record instanceof CustomFieldAnswer) {
             $record = $record->customField;
         }
-        return $record->customForm->customFields
+
+        return $record
+            ->customForm
+            ->customFields
             ->filter(function (CustomField $field) use ($record) {
-                if ($field->form_position > $record->layout_end_position) {
-                    return false;
-                }
-                if ($field->form_position <= $record->form_position) {
-                    return false;
-                }
-                return true;
+                return !($field->form_position > $record->layout_end_position
+                    || $field->form_position <= $record->form_position);
             });
     }
 }

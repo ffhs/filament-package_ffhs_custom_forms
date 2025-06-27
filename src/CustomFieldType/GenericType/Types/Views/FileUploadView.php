@@ -7,10 +7,11 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldT
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasDefaultViewComponent;
-use Filament\Forms\Components\Component;
+use Filament\Forms\Components\Component as FormsComponent;
 use Filament\Forms\Components\FileUpload;
 use Filament\Infolists\Components\Actions;
 use Filament\Infolists\Components\Actions\Action;
+use Filament\Infolists\Components\Component as InfolistsComponent;
 use Filament\Infolists\Components\Fieldset;
 use Filament\Infolists\Components\Grid;
 use Filament\Infolists\Components\Group;
@@ -29,8 +30,9 @@ class FileUploadView implements FieldTypeView
         CustomFieldType $type,
         CustomField $record,
         array $parameter = []
-    ): Component {
+    ): FormsComponent {
         $fileUpload = FileUpload::make($this->getIdentifyKey($record) . '.files');
+
         return $this->prepareFileUploadComponent($fileUpload, $record);
     }
 
@@ -67,6 +69,7 @@ class FileUploadView implements FieldTypeView
         if ($this->getOptionParameter($record, 'grid_layout')) {
             $component = $component->panelLayout('grid');
         }
+
         return $component;
     }
 
@@ -75,22 +78,19 @@ class FileUploadView implements FieldTypeView
         CustomFieldType $type,
         CustomFieldAnswer $record,
         array $parameter = []
-    ): \Filament\Infolists\Components\Component {
+    ): InfolistsComponent {
         $answer = $this->getAnswer($record);
 
         if (is_null($answer) || !isset($answer['file_names'])) {
             $names = [];
             $files = [];
+        } elseif ($this->getOptionParameter($record, 'preserve_filenames')) {
+            $names = $answer['file_names'];
+            $files = array_values($answer['files']);
         } else {
-            if ($this->getOptionParameter($record, 'preserve_filenames')) {
-                $names = $answer['file_names'];
-                $files = array_values($answer['files']);
-            } else {
-                $names = $answer;
-                $files = array_values($answer['files']);
-            }
+            $names = $answer;
+            $files = array_values($answer['files']);
         }
-
 
         //disk
         $image = $this->getOptionParameter($record, 'image');
@@ -99,17 +99,17 @@ class FileUploadView implements FieldTypeView
         } else {
             $disk = $this->getTypeConfigAttribute($record, 'files.disk');
         }
+
         $diskRoot = config('filesystems.disks.' . $disk . '.root');
 
-
-        if ($this->getOptionParameter($record, 'image') && $this->getOptionParameter(
-                $record,
-                'show_images_in_view'
-            )) {
+        if ($this->getOptionParameter($record, 'image')
+            && $this->getOptionParameter($record, 'show_images_in_view')) {
             return $this->getInfolistImageComponent($files, $diskRoot, $record, $names);
         }
 
-        return $this->getInfoListFiles($files, $diskRoot, $record, $names)->columnSpanFull();
+        return $this
+            ->getInfoListFiles($files, $diskRoot, $record, $names)
+            ->columnSpanFull();
     }
 
 
@@ -120,12 +120,13 @@ class FileUploadView implements FieldTypeView
         mixed $names
     ): Group {
         $groups = [];
+
         foreach ($files as $path) {
             if (!is_array($names)) {
                 $names = [$path => $names];
             }
-            $urlPrefix = $this->getTypeConfigAttribute($record, 'images.url_prefix') ?? $diskRoot;
 
+            $urlPrefix = $this->getTypeConfigAttribute($record, 'images.url_prefix') ?? $diskRoot;
             $groups[] = Fieldset::make($names[$path])
                 ->schema([
                     ImageEntry::make($path)
@@ -136,7 +137,9 @@ class FileUploadView implements FieldTypeView
                     Actions::make([
                         $this->getDownloadInfolistAction($record, $path, $diskRoot . '/' . $path, $names[$path]),
                         $this->getRedirectInfolistAction($record, $path, $urlPrefix),
-                    ])->alignment(Alignment::Center)->visible($this->getOptionParameter($record, 'downloadable')),
+                    ])
+                        ->alignment(Alignment::Center)
+                        ->visible($this->getOptionParameter($record, 'downloadable')),
                 ])
                 ->columnSpan(1)
                 ->columns(1)
@@ -146,8 +149,12 @@ class FileUploadView implements FieldTypeView
 
         return Group::make([
             $this->getTextEntryLabel($record),
-            Grid::make()->schema($groups)->columns(5),
-        ])->columnSpanFull()->columns(1);
+            Grid::make()
+                ->schema($groups)
+                ->columns(5),
+        ])
+            ->columnSpanFull()
+            ->columns(1);
     }
 
     public function getDownloadInfolistAction(
@@ -168,7 +175,7 @@ class FileUploadView implements FieldTypeView
     {
         return Action::make($path . '-' . $this->getIdentifyKey($record) . '-action-view')
             ->action(function ($livewire) use ($path, $urlPrefix) {
-                $url = Request::root() . $urlPrefix . "/" . $path;
+                $url = Request::root() . $urlPrefix . '/' . $path;
                 $livewire->js('window.open(\'' . $url . '\', \'_blank\');');
             })
             ->icon('bi-folder-symlink')
@@ -203,9 +210,7 @@ class FileUploadView implements FieldTypeView
         $downloadable = $this->getOptionParameter($record, 'downloadable');
         $openInNewTab = $this->getOptionParameter($record, 'open_in_new_tab');
         $urlPrefix = $this->getTypeConfigAttribute($record, 'files.url_prefix') ?? $diskRoot;
-
         $fileComponents = [];
-
 
         foreach ($files as $path) {
             if (!is_array($names)) {
@@ -215,7 +220,6 @@ class FileUploadView implements FieldTypeView
             $absolutePath = $diskRoot . '/' . $path;
             $actions = [];
 
-
             if ($downloadable) {
                 $actions[] = $this->getDownloadInfolistAction($path, $record, $absolutePath, $names[$path]);
             }
@@ -223,7 +227,6 @@ class FileUploadView implements FieldTypeView
             if ($openInNewTab) {
                 $actions[] = $this->getRedirectInfolistAction($record, $path, $urlPrefix);
             }
-
 
             $fileComponents[] =
                 View::make('filament-package_ffhs_custom_forms::filament.components.file-upload-display')
@@ -233,7 +236,9 @@ class FileUploadView implements FieldTypeView
 
         return Group::make([
             $this->getTextEntryLabel($record),
-            Grid::make()->schema($fileComponents)->columns(),
+            Grid::make()
+                ->schema($fileComponents)
+                ->columns(),
         ]);
     }
 }

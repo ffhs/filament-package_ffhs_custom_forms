@@ -22,7 +22,7 @@ return [
             ],
             'type' => [
                 'label' => 'Field Type',
-                'helper_text' => 'The type of the field. Note: This cannot be changed after creation.',
+                'helper_text' => 'The type of the field. Note: This can not be changed after creation.',
             ],
             'identifier' => [
                 'label' => 'Identifier Key',

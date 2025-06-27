@@ -7,7 +7,7 @@ return [
         'helper_text' => '',
         'add_label' => 'Validierungsnachricht erstellen',
         'rule' => [
-            'label' => 'Validation Regel',
+            'label' => 'Validierungsregel',
             'helper_text' => 'Dieser Identifikator legt fest, für welche Validierungsregel die entsprechende Fehlermeldung angezeigt werden soll.',
         ],
         'message' => [
@@ -104,10 +104,9 @@ return [
         'helper_text' => 'Schnellhilfe: \'a\' für Buchstaben, \'9\' für Zahlen \'*\' für alle Zeichen. (Alpine Maske)',
     ],
     'action_Label' => [
-        'label' => 'Aktions Label',
+        'label' => 'Aktionslabel',
         'helper_text' => '',
     ],
-
 
     //FastTypeOption
     'color_type' => [
@@ -123,7 +122,7 @@ return [
         'helper_text' => '',
     ],
     'show_images_in_view' => [
-        'label' => 'Bilder anzeigen in der Ansicht',
+        'label' => 'Bilder in der Ansicht anzeigen',
         'helper_text' => '',
     ],
     'downloadable' => [
@@ -143,11 +142,11 @@ return [
         'helper_text' => '',
     ],
     'open_in_new_tab' => [
-        'label' => 'Files werden in einem neuen Tab geöffnet',
+        'label' => 'Dokumente werden in einem neuen Tab geöffnet',
         'helper_text' => '',
     ],
     'allowed_file_types' => [
-        'label' => 'Erlaubte File Typen',
+        'label' => 'Erlaubte Dokumenttypen',
         'helper_text' => '',
     ],
     'editable_keys' => [
@@ -165,7 +164,7 @@ return [
 
     'prioritized' => [
         'label' => 'Priorisiert',
-        'helper_text' => 'Der User kann, seine Auswahl priorizieren',
+        'helper_text' => 'Der User kann, seine Auswahl priorisieren',
     ],
     'dynamic_prioritized' => [
         'label' => 'Dynamisch priorisiert',
@@ -207,7 +206,7 @@ return [
         'helper_text' => '',
     ],
     'title_size' => [
-        'label' => 'Title Grösse',
+        'label' => 'Titel Grösse',
         'helper_text' => '',
     ],
     'text' => [
@@ -236,11 +235,11 @@ return [
         'helper_text' => '',
         'add_label' => 'Validierungsnachricht erstellen',
         'rule' => [
-            'label' => 'Validation Regel',
+            'label' => 'Validierungsregel',
             'helper_text' => 'Dieser Identifikator legt fest, für welche Validierungsregel die entsprechende Fehlermeldung angezeigt werden soll.',
         ],
         'select_id' => [
-            'label' => 'Prioritized ',
+            'label' => 'Priorisiert ',
             'helper_text' => '0 ist das Erste',
         ],
         'message' => [
@@ -250,6 +249,6 @@ return [
     ],
 
     //Groups
-    'layout-group' => ['label' => 'Layout',],
-    'validation-group' => ['label' => 'Validation',],
+    'layout-group' => ['label' => 'Layout'],
+    'validation-group' => ['label' => 'Validation'],
 ];

@@ -20,42 +20,44 @@ class PrioritizeSelect extends Field
     protected bool|Closure $dynamic = false;
     protected Closure $mutateSelectUsing;
     protected string|Closure $preKey = 'prioritized_';
-
     protected array|Closure|string $prioritizedLabels;
 
     public function minItems(int|Closure|null $count): static
     {
         $this->required();
         $this->minItems = $count;
+
         return $this;
     }
 
     public function maxItems(int|Closure|null $count): static
     {
         $this->maxItems = $count;
+
         return $this;
     }
 
     public function dynamic(Closure|bool $dynamic = true): static
     {
         $this->dynamic = $dynamic;
+
         return $this;
     }
 
     public function preKey(Closure|string $preKey = 'prioritized_'): static
     {
         $this->preKey = $preKey;
+
         return $this;
     }
 
     public function getChildComponents(): array
     {
         $maxSelect = $this->getMaxItems();
-
         $selects = [];
+
         for ($selectId = 0; $selectId < $maxSelect; $selectId++) {
             $select = $this->getSingleSelect($selectId);
-
             $selects[] = $this->mutateSelect($select, $selectId);
         }
 
@@ -66,6 +68,7 @@ class PrioritizeSelect extends Field
     {
         $optionAmounts = sizeof($this->getOptions());
         $minItems = $this->parentGetMaxItems() ?? 0;
+
         return $minItems > $optionAmounts ? $optionAmounts : $minItems;
     }
 
@@ -78,6 +81,7 @@ class PrioritizeSelect extends Field
     {
         $optionAmounts = sizeof($this->getOptions());
         $minItems = $this->parentGetMinItems() ?? 0;
+
         return $minItems > $optionAmounts ? $optionAmounts : $minItems;
     }
 
@@ -105,23 +109,24 @@ class PrioritizeSelect extends Field
     public function mutateSelectUsing(Closure $mutateSelectUsing): static
     {
         $this->mutateSelectUsing = $mutateSelectUsing;
+
         return $this;
     }
 
     public function prioritizedLabels(array|Closure|string $prioritizedLabels): static
     {
         $this->prioritizedLabels = $prioritizedLabels;
+
         return $this;
     }
 
     protected function getSingleSelect(int $selectId): Select
     {
         $id = $this->getPreKey() . $selectId;
-        $select = Select::make($id)->options($this->options);
 
+        $select = Select::make($id)->options($this->options);
         $select = $this->configureSingleSelectRequired($select, $selectId);
         $select = $this->configureSingleSelectDisableOptionWhen($select, $selectId);
-
         $select = $this->configureDynamicSelectReset($select, $selectId);
         $select = $this->configureLabel($select, $selectId);
 
@@ -131,12 +136,10 @@ class PrioritizeSelect extends Field
     protected function configureSingleSelectRequired(Select $select, int $selectId): Select
     {
         return $select->required(function () use ($selectId) {
-            if (!$this->isRequired()) {
+            if (!$this->isRequired() || $this->getMinItems() === 0) {
                 return true;
             }
-            if ($this->getMinItems() === 0) {
-                return true;
-            }
+
             return $this->getMinItems() > $selectId;
         });
     }
@@ -148,10 +151,12 @@ class PrioritizeSelect extends Field
                 if ($i === $selectId) {
                     continue;
                 }
+
                 if ($get($this->getPreKey() . $i) === $value) {
                     return true;
                 }
             }
+
             return false;
         });
     }
@@ -159,12 +164,12 @@ class PrioritizeSelect extends Field
     protected function configureDynamicSelectReset(Select $select, int $selectId): Select
     {
         return $select->afterStateUpdated(function ($set, $state) use ($selectId) {
-            if ($this->getMinItems() - 1 > $selectId) {
+            if (!is_null($state)
+                || $this->getMinItems() - 1 > $selectId
+                || !$this->isDynamic()) {
                 return;
             }
-            if (!$this->isDynamic() || $state != null) {
-                return;
-            }
+
             for ($i = $selectId; $i < $this->getMaxItems(); $i++) {
                 if ($this->getMinItems() <= $i) {
                     $set($this->getPreKey() . $i, null);
@@ -181,9 +186,10 @@ class PrioritizeSelect extends Field
     protected function configureDynamicSelectVisibility(Select $select, int $selectId): Select
     {
         return $select->visible(function ($get) use ($selectId) {
-            if ($this->getMinItems() > $selectId || $selectId == 0 || !$this->isDynamic()) {
+            if ($selectId === 0 || $this->getMinItems() > $selectId || !$this->isDynamic()) {
                 return true;
             }
+
             return $get($this->getPreKey() . $selectId - 1);
         });
     }
@@ -191,9 +197,9 @@ class PrioritizeSelect extends Field
     protected function setUp(): void
     {
         parent::setUp();
-        $this->mutateSelectUsing(fn(Select $select) => $select);
-        $this->prioritizedLabels(fn($selectId) => $selectId + 1 . '. selection');
+
+        $this
+            ->mutateSelectUsing(fn(Select $select) => $select)
+            ->prioritizedLabels(fn($selectId) => $selectId + 1 . '. selection');
     }
-
-
 }

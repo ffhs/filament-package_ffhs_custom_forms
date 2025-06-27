@@ -19,25 +19,25 @@ class DefaultCustomFieldEditTypeOptionsAction extends FieldTypeAction
     {
         parent::setUp();
 
-        $this->iconButton();
+        $this
+            ->iconButton()
+            ->closeModalByClickingAway(false)
+            ->action(function (Set $set, array $data, string $fieldKey) {
+                $set($fieldKey, $data);
+            })
+            ->fillForm(fn(array $fieldData) => $fieldData)
+            ->mutateFormDataUsing(function (Action $action) {
+                $forms = array_values($action->getLivewire()->getCachedForms());
+                $form = $forms[sizeof($forms) - 1];
+                $state = $form->getRawState();
 
-        $this->closeModalByClickingAway(false);
+                unset($state['key']);
 
-        $this->action(function (Set $set, array $data, string $fieldKey) {
-            $set($fieldKey, $data);
-        });
-        $this->fillForm(fn(array $fieldData) => $fieldData);
-
-        $this->mutateFormDataUsing(function (Action $action) {
-            $forms = array_values($action->getLivewire()->getCachedForms());
-            $form = $forms[sizeof($forms) - 1];
-            $state = $form->getRawState();
-            unset($state['key']);
-            return $state;
-        });
-        $this->modalHeading(function (array $fieldData, CustomForm $record) {
-            return once(function () use ($fieldData, $record) {
-                $genFieldName = static fn() => $record->getFormConfiguration()
+                return $state;
+            })
+            ->modalHeading(fn(array $fieldData, CustomForm $record) => once(function () use ($fieldData, $record) {
+                $genFieldName = static fn() => $record
+                    ->getFormConfiguration()
                     ->getAvailableGeneralFields()
                     ->firstWhere('id', $fieldData['general_field_id'])
                     ->name;
@@ -48,17 +48,14 @@ class DefaultCustomFieldEditTypeOptionsAction extends FieldTypeAction
                     : ('G. ' . $genFieldName());
 
                 return trans($modalHeading, ['name' => $name]);
-            });
-        });
+            }))
+            ->icon('carbon-settings-edit')
+            ->closeModalByClickingAway(false)
+            ->visible(function (?CustomFieldType $fieldType): bool {
+                $extraOptions = $fieldType?->extraTypeOptions() ?? [];
 
-        $this->icon('carbon-settings-edit');
-
-        $this->closeModalByClickingAway(false);
-        //Hidde if it hasn't any options
-        $this->visible(function (?CustomFieldType $fieldType): bool {
-            $extraOptions = $fieldType?->extraTypeOptions() ?? [];
-            return sizeof($extraOptions) > 0;
-        });
-        $this->form(fn() => once(fn() => [EditTypeOptionModal::make()]));
+                return sizeof($extraOptions) > 0;
+            })
+            ->form(fn() => once(fn() => [EditTypeOptionModal::make()]));
     }
 }

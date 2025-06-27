@@ -14,11 +14,16 @@ trait HasCachedForms
         if (!isset($this->customForms)) {
             $this->customForms = collect();
         }
+
         if ($form = $this->customForms->get($id)) {
             return $form;
         }
-        $form = CustomForm::where('id', $id)->first();
-        $this->customForms->put($id, $form);
+
+        $form = CustomForm::firstWhere('id', $id);
+        $this
+            ->customForms
+            ->put($id, $form);
+
         return $form;
     }
 
@@ -29,11 +34,16 @@ trait HasCachedForms
         }
 
         if ($customForm instanceof CustomForm) {
-            $this->customForms->put($customForm->id, $customForm);
+            $this
+                ->customForms
+                ->put($customForm->id, $customForm);
+
             return;
         }
 
         $customForms = $customForm->keyBy('id');
-        $this->customForms = $this->customForms->merge($customForms);
+        $this->customForms = $this
+            ->customForms
+            ->merge($customForms);
     }
 }

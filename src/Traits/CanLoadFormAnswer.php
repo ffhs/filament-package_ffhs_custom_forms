@@ -30,8 +30,12 @@ trait CanLoadFormAnswer
     ): array {
         $loadedData = [];
         $customForm = $customForm ?? $answer->customForm;
-        $customFields = $customForm->customFields->keyBy('id');
-        $templateTypeFields = $customFields->whereNotNull('template_id')->keyBy('template_id');
+        $customFields = $customForm
+            ->customFields
+            ->keyBy('id');
+        $templateTypeFields = $customFields
+            ->whereNotNull('template_id')
+            ->keyBy('template_id');
         $formRules = $customForm->rules;
 
         /**@var CustomFieldAnswer $fieldAnswer */
@@ -44,10 +48,11 @@ trait CanLoadFormAnswer
                 continue;
             }
 
-            $fieldData = $customField->getType()?->prepareLoadAnswerData($fieldAnswer, $fieldAnswer->answer);
+            $fieldData = $customField
+                ->getType()
+                ?->prepareLoadAnswerData($fieldAnswer, $fieldAnswer->answer);
             $fieldData = $this->modifyFieldDataFormRules($answer, $fieldData, $formRules); //10ms
             $dataIdentifier = $this->getDataIdentifier($fieldAnswer, $customField);
-
             $loadedData[$dataIdentifier] = $fieldData;
         }
 
@@ -55,10 +60,7 @@ trait CanLoadFormAnswer
             ->sortBy('form_position')
             ->keyBy(fn(CustomField $item) => $item->identifier);
 
-
-        $loadedData = $this->resolveComplexPaths($loadedData, $customFields);
-
-        return $loadedData;
+        return $this->resolveComplexPaths($loadedData, $customFields);
     }
 
     public function resolveComplexPaths(array $loadedData, Collection $customFields): array
@@ -132,12 +134,14 @@ trait CanLoadFormAnswer
     {
         $dataIdentifier = $customField->identifier;
         $dataIdentifier .= is_null($fieldAnswer->path) ? '' : '.' . $fieldAnswer->path;
+
         return $dataIdentifier;
     }
 
     private function getNearestParentField(CustomField $childField, Collection $formFields): ?CustomField
     {
         $nearestParent = [];
+
         foreach ($formFields as $field) {
             if ($childField->custom_form_id !== $field->custom_form_id) {
                 continue;
@@ -145,12 +149,10 @@ trait CanLoadFormAnswer
             if ($field->form_position >= $childField->form_position) {
                 break;
             }
-            if ($field->layout_end_position < $childField->form_position) {
+            if ($field->layout_end_position < $childField->form_position || !$field->getType()?->hasSplitFields()) {
                 continue;
             }
-            if (!$field->getType()?->hasSplitFields()) {
-                continue;
-            }
+
             $nearestParent = $field;
         }
 

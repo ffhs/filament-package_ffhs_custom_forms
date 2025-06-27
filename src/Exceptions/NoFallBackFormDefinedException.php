@@ -2,8 +2,8 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Exceptions;
 
-class NoFallBackFormDefinedException extends \RuntimeException
+use RuntimeException;
+
+class NoFallBackFormDefinedException extends RuntimeException
 {
-
-
 }

@@ -84,7 +84,6 @@ class CustomForm extends Model
             'ownedFields' => $this->getOwnedFields(),
             'customFields' => $this->customFields(),
             'rules' => $this->rules(),
-
             default => parent::__get($key),
         };
     }

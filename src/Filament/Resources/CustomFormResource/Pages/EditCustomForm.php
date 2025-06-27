@@ -17,6 +17,8 @@ use Filament\Resources\Pages\EditRecord\Concerns\Translatable;
 use Filament\Support\Enums\MaxWidth;
 use Filament\Support\Facades\FilamentView;
 use Illuminate\Contracts\Support\Htmlable;
+use Throwable;
+
 use function Filament\Support\is_app_url;
 
 class EditCustomForm extends EditRecord
@@ -35,7 +37,10 @@ class EditCustomForm extends EditRecord
 
     public function getTitle(): string|Htmlable
     {
-        $attributes = $this->getRecord()->attributesToArray();
+        $attributes = $this
+            ->getRecord()
+            ->attributesToArray();
+
         return trans(CustomForm::__('pages.edit.title'), $attributes);
     }
 
@@ -52,19 +57,23 @@ class EditCustomForm extends EditRecord
         ]);
     }
 
+    /**
+     * @throws Throwable
+     */
     public function save(bool $shouldRedirect = true, bool $shouldSendSavedNotification = true): void
     {
         $this->authorizeAccess();
         $this->saveCustomFormEditorData($this->data['custom_form'], $this->getRecord());
-
         $this->rememberData();
 
         if ($shouldSendSavedNotification) {
-            $this->getSavedNotification()?->send();
+            $this
+                ->getSavedNotification()
+                ?->send();
         }
 
         if ($shouldRedirect && ($redirectUrl = $this->getRedirectUrl())) {
-            $this->redirect($redirectUrl, navigate: FilamentView::hasSpaMode() && is_app_url($redirectUrl));
+            $this->redirect($redirectUrl, FilamentView::hasSpaMode() && is_app_url($redirectUrl));
         }
     }
 
@@ -73,9 +82,12 @@ class EditCustomForm extends EditRecord
         /**@var CustomForm $customForm */
         $customForm = $this->getRecord();
         $customForm->load('ownedRules', 'ownedRules.ruleTriggers', 'ownedRules.ruleEvents');
-        $this->form->fill([
-            'custom_form' => $this->loadCustomFormEditorData($customForm)
-        ]);
+
+        $this
+            ->form
+            ->fill([
+                'custom_form' => $this->loadCustomFormEditorData($customForm)
+            ]);
     }
 
     protected function getHeaderActions(): array
@@ -84,7 +96,8 @@ class EditCustomForm extends EditRecord
             CustomFormSchemaExportAction::make(),
             CustomFormSchemaImportAction::make()
                 ->existingForm(fn(CustomForm $record) => $record)
-                ->disabled(fn(CustomForm $record) => $record->ownedFields->count() > 0 || $record->rules->count() > 0
+                ->disabled(fn(CustomForm $record) => $record->ownedFields->count() > 0
+                    || $record->rules->count() > 0
                 )
                 ->action(function (CustomFormSchemaImportAction $action, $data) {
                     $action->callImportAction($data);

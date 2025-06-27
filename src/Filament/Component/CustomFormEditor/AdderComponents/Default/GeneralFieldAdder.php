@@ -26,13 +26,16 @@ final class GeneralFieldAdder extends FormEditorFieldAdder
             $formIdentifier = $this->getGetCallback()('custom_form_identifier');
             $customFormConfiguration = $this->getCustomFormConfiguration();
 
-            return $customFormConfiguration->getAvailableGeneralFields()
+            return $customFormConfiguration
+                ->getAvailableGeneralFields()
                 ->mapWithKeys(function (GeneralField $generalField) use ($formIdentifier) {
                     //Mark Required GeneralFields
                     /**@var GeneralFieldForm $generalFieldForm */
-                    $generalFieldForm = $generalField->generalFieldForms
+                    $generalFieldForm = $generalField
+                        ->generalFieldForms
                         ->firstWhere('custom_form_identifier', $formIdentifier);
                     $name = ($generalFieldForm->is_required ? '* ' : '') . $generalField->name;
+
                     return [$generalField->id => $name];
                 });
         });
@@ -42,7 +45,6 @@ final class GeneralFieldAdder extends FormEditorFieldAdder
     {
         $notAllowed = once(function () use ($record) {
             $fields = $this->getState()['custom_fields'];
-
             $usedGeneralFieldIds = collect($fields)
                 ->pluck('general_field_id');
 
@@ -52,12 +54,10 @@ final class GeneralFieldAdder extends FormEditorFieldAdder
 
             $usedTemplates = collect($fields)
                 ->pluck('template_id');
-
             $usedTemplates = $record
                 ->getFormConfiguration()
                 ->getAvailableTemplates()
                 ->whereIn('id', $usedTemplates);
-
             $usedGeneralFieldIdsFormTemplates = $usedTemplates
                 ->map(fn(CustomForm $template) => $template->ownedFields)
                 ->flatten(1)
@@ -72,22 +72,24 @@ final class GeneralFieldAdder extends FormEditorFieldAdder
 
     protected function setUp(): void
     {
-        $this->label(CustomForm::__('pages.general_field_adder.label'));
-        $this->schema([
-            DragDropExpandActions::make()
-                ->dragDropGroup(fn(Get $get) => 'custom_fields-' . $get('custom_form_identifier'))
-                ->options($this->getGeneralFieldSelectOptions(...))
-                ->disableOptionWhen($this->isGeneralDisabled(...))
-                ->color(Color::Blue)
-                ->action($this->getExpandAction(...))
-        ]);
+        $this
+            ->label(CustomForm::__('pages.general_field_adder.label'))
+            ->schema([
+                DragDropExpandActions::make()
+                    ->dragDropGroup(fn(Get $get) => 'custom_fields-' . $get('custom_form_identifier'))
+                    ->options($this->getGeneralFieldSelectOptions(...))
+                    ->disableOptionWhen($this->isGeneralDisabled(...))
+                    ->color(Color::Blue)
+                    ->action($this->getExpandAction(...))
+            ]);
     }
 
     protected function getExpandAction($option): Action
     {
         return Action::make('addGeneral')
             ->action(function ($component, $arguments, $livewire, CustomForm $record) use ($option) {
-                $generalField = $record->getFormConfiguration()
+                $generalField = $record
+                    ->getFormConfiguration()
                     ->getAvailableGeneralFields()
                     ->firstWhere('id', $option);
 

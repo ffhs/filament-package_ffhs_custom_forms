@@ -23,18 +23,20 @@ class EditCustomFormAnswer extends EditRecord
 
     public function getTitle(): string|Htmlable
     {
-        $attributes = $this->getRecord()->attributesToArray();
+        $attributes = $this
+            ->getRecord()
+            ->attributesToArray();
+
         return trans(CustomFormAnswer::__('pages.edit.title'), $attributes);
     }
 
     public function form(Form $form): Form
     {
-        return $form
-            ->schema([
-                EmbeddedCustomForm::make('form_answer')
-                    ->autoViewMode()
-                    ->columnSpanFull(),
-            ]);
+        return $form->schema([
+            EmbeddedCustomForm::make('form_answer')
+                ->autoViewMode()
+                ->columnSpanFull(),
+        ]);
     }
 
     public function mount(int|string $record): void
@@ -59,7 +61,9 @@ class EditCustomFormAnswer extends EditRecord
         }
 
         /**@var CustomFormAnswer $customFormAnswer */
-        $customFormAnswer = $this->form->getRecord();
+        $customFormAnswer = $this
+            ->form
+            ->getRecord();
 
         //Load data's from fields
         return ['form_answer' => array_merge($data, $this->loadCustomAnswerData($customFormAnswer))];
@@ -68,7 +72,10 @@ class EditCustomFormAnswer extends EditRecord
     protected function handleRecordUpdate(Model $record, array $data): Model
     {
         /**@var CustomFormAnswer $customFormAnswer */
-        $customFormAnswer = $this->form->getRecord();
+        $customFormAnswer = $this
+            ->form
+            ->getRecord();
+
         $this->saveFormAnswer($customFormAnswer, $this->form, 'data.form_answer');
 
         return $customFormAnswer->refresh();

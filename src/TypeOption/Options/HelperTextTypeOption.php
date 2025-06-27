@@ -3,9 +3,9 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options;
 
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\TypeOption;
-use Filament\Forms\Components\Component;
+use Filament\Forms\Components\Component as FormsComponent;
 use Filament\Forms\Components\TextInput;
-use Filament\Infolists\Components\Component as InfolistComponent;
+use Filament\Infolists\Components\Component as InfolistsComponent;
 use Illuminate\Support\HtmlString;
 
 class HelperTextTypeOption extends TypeOption
@@ -15,7 +15,7 @@ class HelperTextTypeOption extends TypeOption
         return null;
     }
 
-    public function getComponent(string $name): Component
+    public function getComponent(string $name): FormsComponent
     {
         return TextInput::make($name)
             ->label(TypeOption::__('helper_text.label'))
@@ -26,7 +26,7 @@ class HelperTextTypeOption extends TypeOption
             ->live();
     }
 
-    public function modifyFormComponent(Component $component, mixed $value): Component
+    public function modifyFormComponent(FormsComponent $component, mixed $value): FormsComponent
     {
         if (!empty($value)) {
             $text = str($value)->sanitizeHtml();
@@ -37,7 +37,7 @@ class HelperTextTypeOption extends TypeOption
         return $component;
     }
 
-    public function modifyInfolistComponent(InfolistComponent $component, mixed $value): InfolistComponent
+    public function modifyInfolistComponent(InfolistsComponent $component, mixed $value): InfolistsComponent
     {
         return $component;
     }

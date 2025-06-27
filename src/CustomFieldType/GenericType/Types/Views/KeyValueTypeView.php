@@ -7,8 +7,9 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldT
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasDefaultViewComponent;
-use Filament\Forms\Components\Component;
+use Filament\Forms\Components\Component as FormsComponent;
 use Filament\Forms\Components\KeyValue;
+use Filament\Infolists\Components\Component as InfolistsComponent;
 use Filament\Infolists\Components\KeyValueEntry;
 
 class KeyValueTypeView implements FieldTypeView
@@ -19,8 +20,9 @@ class KeyValueTypeView implements FieldTypeView
         CustomFieldType $type,
         CustomField $record,
         array $parameter = []
-    ): Component {
-        return $this->makeComponent(KeyValue::class, $record)
+    ): FormsComponent {
+        return $this
+            ->makeComponent(KeyValue::class, $record)
             ->editableKeys($this->getOptionParameter($record, 'editableKeys'))
             ->editableValues($this->getOptionParameter($record, 'editableValues'));
     }
@@ -29,11 +31,12 @@ class KeyValueTypeView implements FieldTypeView
         CustomFieldType $type,
         CustomFieldAnswer $record,
         array $parameter = []
-    ): \Filament\Infolists\Components\Component {
+    ): InfolistsComponent {
         $answerer = $this->getAnswer($record);
         $answerer = empty($answerer) ? '' : $answerer;
 
-        return $this->makeComponent(KeyValueEntry::class, $record)
+        return $this
+            ->makeComponent(KeyValueEntry::class, $record)
             ->state($answerer);
     }
 }

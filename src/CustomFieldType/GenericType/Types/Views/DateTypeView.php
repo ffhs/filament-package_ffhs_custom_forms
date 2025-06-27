@@ -19,7 +19,8 @@ class DateTypeView implements FieldTypeView
         CustomField $record,
         array $parameter = []
     ): DatePicker {
-        return $this->makeComponent(DatePicker::class, $record)
+        return $this
+            ->makeComponent(DatePicker::class, $record)
             ->format($this->getOptionParameter($record, 'format'));
     }
 
@@ -28,7 +29,8 @@ class DateTypeView implements FieldTypeView
         CustomFieldAnswer $record,
         array $parameter = []
     ): TextEntry {
-        return $this->makeComponent(TextEntry::class, $record)
+        return $this
+            ->makeComponent(TextEntry::class, $record)
             ->dateTime($this->getOptionParameter($record, 'format'));
     }
 }

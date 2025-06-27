@@ -23,6 +23,7 @@ class DragDropComponent extends Field
     public function deepColor(int $deepColor): static
     {
         $this->deepColor = $deepColor;
+
         return $this;
     }
 
@@ -46,29 +47,29 @@ class DragDropComponent extends Field
     public function nestedFlattenListType(null|Closure|string $nestedFlattenList): static
     {
         $this->nestedFlattenListType = $nestedFlattenList;
+
         return $this;
     }
 
     public function getState(): mixed
     {
         $state = parent::getState();
+
         if (is_null($state)) {
             return [];
         }
+
         return $state;
     }
 
     protected function setUp(): void
     {
-        $this->itemLabel(fn($item) => $item);
-        $this->dragDropGroup(uniqid());
-
-        $this->flattenViewHidden(fn(
-            $item,
-            $state
-        ) => empty($state[$item][$this->getNestedFlattenListType()::getEndContainerPositionAttribute()])
-        );
-
+        $this
+            ->itemLabel(fn($item) => $item)
+            ->dragDropGroup(uniqid())
+            ->flattenViewHidden(fn($item, $state) => empty(
+            $state[$item][$this->getNestedFlattenListType()::getEndContainerPositionAttribute()]
+            ));
     }
 
     protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
@@ -77,7 +78,6 @@ class DragDropComponent extends Field
             'dragDropGroup' => [$this->getDragDropGroup()],
             default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
         };
-
     }
 
     protected function getItemInjection($key): array

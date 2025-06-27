@@ -2,9 +2,9 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Exceptions;
 
-use Mockery\Exception\RuntimeException;
+
+use RuntimeException;
 
 class FieldTypeHasNoDefaultViewModeException extends RuntimeException
 {
-
 }

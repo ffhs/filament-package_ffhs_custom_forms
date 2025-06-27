@@ -3,9 +3,9 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options;
 
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\TypeOption;
-use Filament\Forms\Components\Component;
+use Filament\Forms\Components\Component as FormsComponent;
 use Filament\Forms\Components\Toggle;
-use Filament\Infolists\Components\Component as InfolistComponent;
+use Filament\Infolists\Components\Component as InfolistsComponent;
 
 //toDo add Option to more FieldTypes
 class ShowInViewOption extends TypeOption
@@ -15,7 +15,7 @@ class ShowInViewOption extends TypeOption
         return true;
     }
 
-    public function getComponent(string $name): Component
+    public function getComponent(string $name): FormsComponent
     {
         return Toggle::make($name)
             ->label(TypeOption::__('show_in_view.label'))
@@ -23,12 +23,12 @@ class ShowInViewOption extends TypeOption
             ->live();
     }
 
-    public function modifyFormComponent(Component $component, mixed $value): Component
+    public function modifyFormComponent(FormsComponent $component, mixed $value): FormsComponent
     {
         return $component;
     }
 
-    public function modifyInfolistComponent(InfolistComponent $component, mixed $value): InfolistComponent
+    public function modifyInfolistComponent(InfolistsComponent $component, mixed $value): InfolistsComponent
     {
         return $component->visible($value);
     }

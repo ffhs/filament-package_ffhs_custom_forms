@@ -59,8 +59,10 @@ class CustomFormAnswer extends Model
         if ($this->relationLoaded('fieldData')) {
             return $this->getRelation('fieldData');
         }
+
         $fieldData = $this->loadCustomAnswerData($this);
         $this->setRelation('fieldData', $fieldData);
+
         return $fieldData;
     }
 
@@ -69,5 +71,4 @@ class CustomFormAnswer extends Model
         $fieldData = $this->loadCustomAnswerData($this);
         $this->setRelation('fieldData', $fieldData);
     }
-
 }

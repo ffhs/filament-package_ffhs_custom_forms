@@ -32,7 +32,10 @@ class EditTemplate extends EditCustomForm
 
     public function getTitle(): string|Htmlable
     {
-        $attributes = $this->getRecord()->attributesToArray();
+        $attributes = $this
+            ->getRecord()
+            ->attributesToArray();
+
         return trans(CustomForm::__('pages.edit_template.title'), $attributes);
     }
 
@@ -46,9 +49,12 @@ class EditTemplate extends EditCustomForm
          */
 
         /**@var CustomForm $template */
-        $template = CustomForm::query()->where('id', $this->record->id)->first();
+        $template = CustomForm::query()
+            ->firstWhere('id', $this->record->id);
 
-        $templateGeneralFieldQuery = $template->customFieldsQuery()->whereNotNull('general_field_id');
+        $templateGeneralFieldQuery = $template
+            ->customFieldsQuery()
+            ->whereNotNull('general_field_id');
         $toDeleteGenFieldQuery = CustomField::query()
             ->whereIn(
                 'general_field_id',
@@ -71,7 +77,9 @@ class EditTemplate extends EditCustomForm
             return;
         }
 
-        $newGeneralFields = $templateGeneralFieldQuery->select(['general_field_id', 'id'])->get();
+        $newGeneralFields = $templateGeneralFieldQuery
+            ->select(['general_field_id', 'id'])
+            ->get();
 
         foreach ($toDeleteGenFields as $generalField) {
             /**@var CustomField $generalField */
@@ -87,7 +95,8 @@ class EditTemplate extends EditCustomForm
         $toDeleteGenFieldQuery->delete();
 
         //Reorder
-        $toReorderForm = CustomForm::query()->whereIn('id', $toDeleteGenFieldQuery->select('custom_form_id'));
+        $toReorderForm = CustomForm::query()
+            ->whereIn('id', $toDeleteGenFieldQuery->select('custom_form_id'));
 
         foreach ($toReorderForm as $form) { //toDo Optimize
             /**@var CustomForm $form */
@@ -111,8 +120,9 @@ class EditTemplate extends EditCustomForm
      */
     public function getRawCustomFields(): array
     {
-        return once(fn(
-        ) => array_values($this->getCachedForms())[0]->getRawState()['custom_form']['custom_fields'] ?? []);
+        return once(
+            fn() => array_values($this->getCachedForms())[0]->getRawState()['custom_form']['custom_fields'] ?? []
+        );
     }
 
     protected function getSaveFormAction(): Action
@@ -160,7 +170,9 @@ class EditTemplate extends EditCustomForm
 
     protected function showSaveConfirmation(): bool
     {
-        return $this->cachedGeneralFieldsOverwritten()->count() > 0;
+        return $this
+                ->cachedGeneralFieldsOverwritten()
+                ->count() > 0;
     }
 
     protected function cachedGeneralFieldsOverwritten(): Collection
@@ -212,7 +224,8 @@ class EditTemplate extends EditCustomForm
     {
         $generalFields = GeneralField::query()
             ->where('id', $this->getTemplateGeneralFieldCollisionQuery()->select('general_field_id'))
-            ->get()->pluck('name_' . App::currentLocale());
+            ->get()
+            ->pluck('name_' . App::currentLocale());
 
         $templates = CustomForm::query()
             ->where('id', $this->getTemplateGeneralFieldCollisionQuery()->select('custom_form_id'))
@@ -248,18 +261,20 @@ class EditTemplate extends EditCustomForm
             $collidedTemplates[$field->custom_form_id] = $field->custom_form_id;
         });
 
-        $collideTemplatesUsedFields = CustomField::query()->whereIn('template_id', $collidedTemplates);
+        $collideTemplatesUsedFields = CustomField::query()
+            ->whereIn('template_id', $collidedTemplates);
         $collidedFormsIds = CustomField::query()
             ->whereIn('custom_form_id', $collideTemplatesUsedFields->select('custom_form_id'))
             ->where('template_id', $this->record->id)
             ->select('custom_form_id');
 
-        return CustomForm::query()->whereIn('id', $collidedFormsIds);
+        return CustomForm::query()
+            ->whereIn('id', $collidedFormsIds);
     }
 
     protected function saveConfirmationDescription(): HtmlString
     {
-        $styleClasses = "class='fi-modal-description text-sm text-gray-500 dark:text-gray-400 mt-2'";
+        $styleClasses = 'class="fi-modal-description text-sm text-gray-500 dark:text-gray-400 mt-2"';
         $generalFields = GeneralField::query()
             ->whereIn('id', $this->cachedGeneralFieldsOverwritten()->select('general_field_id'))
             ->select('name_de')
@@ -290,7 +305,9 @@ class EditTemplate extends EditCustomForm
 
     protected function collideMessageHeading(): string
     {
-        $collidedForms = $this->getCollidedFormQuery()->get();
+        $collidedForms = $this
+            ->getCollidedFormQuery()
+            ->get();
 
         return 'Es gibt Kollisionen mit den generellen Felder und anderen Templates ('
             . $collidedForms->count() . ') '; //ToDo Translate
@@ -298,11 +315,14 @@ class EditTemplate extends EditCustomForm
 
     protected function saveConfirmationHeading(): string
     {
-        $count = $this->cachedGeneralFieldsOverwritten()->count();
+        $count = $this
+            ->cachedGeneralFieldsOverwritten()
+            ->count();
 
         if ($count === 1) {
             return 'Achtung es wird ein Feld in dem anderen Formular gelöscht!';
         }
+
         return 'Achtung es werden ' . $count . ' Felder in den anderen Formularen gelöscht!'; //ToDo Translate
     }
 }

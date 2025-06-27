@@ -3,8 +3,8 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options;
 
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\TypeOption;
-use Filament\Forms\Components\Component;
-use Filament\Infolists\Components\Component as InfolistComponent;
+use Filament\Forms\Components\Component as FormsComponent;
+use Filament\Infolists\Components\Component as InfolistsComponent;
 use Guava\FilamentIconPicker\Forms\IconPicker;
 
 class IconOption extends TypeOption
@@ -14,7 +14,7 @@ class IconOption extends TypeOption
         return '';
     }
 
-    public function getComponent(string $name): Component
+    public function getComponent(string $name): FormsComponent
     {
         return IconPicker::make($name)
             ->label(TypeOption::__('icon.label'))
@@ -24,15 +24,16 @@ class IconOption extends TypeOption
             ->live();
     }
 
-    public function modifyFormComponent(Component $component, mixed $value): Component
+    public function modifyFormComponent(FormsComponent $component, mixed $value): FormsComponent
     {
         if (empty($value)) {
             return $component;
         }
+
         return $component->icon($value);
     }
 
-    public function modifyInfolistComponent(InfolistComponent $component, mixed $value): InfolistComponent
+    public function modifyInfolistComponent(InfolistsComponent $component, mixed $value): InfolistsComponent
     {
         return $component;
     }

@@ -23,6 +23,7 @@ abstract class FormEditorFieldAdder extends Component
     {
         $static = app(static::class);
         $static->configure();
+
         return $static;
     }
 
@@ -33,16 +34,16 @@ abstract class FormEditorFieldAdder extends Component
         array $fieldData
     ): void {
         //Check if arguments exist
-        if (is_null($arguments['stateWithTempField'])) {
-            return;
-        }
-        if (empty($arguments['temporaryKey'])) {
+        if (empty($arguments['position'])
+            || is_null($arguments['stateWithField'])
+            || empty($arguments['temporaryKey'])) {
             return;
         }
 
+
+        $position = $arguments['position'];
         $temporaryKey = $arguments['temporaryKey'];
-        $state = $arguments['stateWithTempField'];
-        $position = $state[$temporaryKey]['form_position'];
+        $state = $arguments['stateWithField'];
         $path = $component->getStatePath() . '.custom_fields';
 
         $posEndArgument = CustomField::getEndContainerPositionAttribute();
@@ -50,6 +51,7 @@ abstract class FormEditorFieldAdder extends Component
         $type = CustomForms::getFieldTypeFromRawDate($fieldData, $component->getRecord());
 
         $fieldData[$posArgument] = $position;
+
         if ($type instanceof CustomLayoutType) {
             $fieldData[$posEndArgument] = $position;
         }

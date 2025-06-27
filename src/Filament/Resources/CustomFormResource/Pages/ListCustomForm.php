@@ -27,7 +27,6 @@ class ListCustomForm extends ListRecords
     public function getTabs(): array
     {
         $query = static::$resource::getEloquentQuery();
-
         $tabs = [
             'all' => Tab::make('All')
                 ->badge($query->clone()->count()),
@@ -74,15 +73,14 @@ class ListCustomForm extends ListRecords
             ])
             ->defaultSort('short_title')
             ->paginated([50])
-            ->modifyQueryUsing(fn(Builder $query) => $query
-                ->withCount(['ownedFields'])
-            );
+            ->modifyQueryUsing(fn(Builder $query) => $query->withCount(['ownedFields']));
     }
 
     protected function getHeaderActions(): array
     {
         return [
-            CustomFormSchemaImportAction::make()->link(),
+            CustomFormSchemaImportAction::make()
+                ->link(),
             CreateAction::make(),
         ];
     }

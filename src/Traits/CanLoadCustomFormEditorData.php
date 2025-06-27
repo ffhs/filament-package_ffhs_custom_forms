@@ -39,10 +39,12 @@ trait CanLoadCustomFormEditorData
     protected function loadEditorFields(Collection $fields): array
     {
         $data = [];
+
         foreach ($fields as $field) {
             $key = $this->getFieldEditorKey($field);
             $data[$key] = $this->loadEditorField($field);
         }
+
         return $data;
     }
 
@@ -62,6 +64,7 @@ trait CanLoadCustomFormEditorData
     protected function loadEditorRules(CustomForm $form): array
     {
         $rules = [];
+
         foreach ($form->ownedRules as $rule) {
             /**@var Rule $rule */
             $rawRule = $rule->toArray();
@@ -69,6 +72,7 @@ trait CanLoadCustomFormEditorData
             $rawRule['triggers'] = $rule->ruleTriggers->toArray();
             $rules[] = $rawRule;
         }
+
         return $rules;
     }
 }

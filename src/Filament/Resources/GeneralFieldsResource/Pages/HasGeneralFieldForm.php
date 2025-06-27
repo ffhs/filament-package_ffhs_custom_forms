@@ -26,6 +26,7 @@ trait HasGeneralFieldForm
         if (is_null($record)) {
             return [];
         }
+
         $type = $record->getType();
 
         return collect($type->getFlattenExtraTypeOptions())
@@ -34,6 +35,7 @@ trait HasGeneralFieldForm
             ->mapWithKeys(function (TypeOption $value, string $key) {
                 try {
                     $label = $value->getModifyOptionComponent($key)->getLabel() ?? $key;
+
                     return [$key => $label];
                 } catch (Error) {
                     //When label need record or livewire component
@@ -46,17 +48,18 @@ trait HasGeneralFieldForm
     public function getOverwrittenOptionDynamicSchema(): array
     {
         $record = $this->getRecord();
+
         if (is_null($record)) {
             return [];
         }
+
         $type = $record->getType();
-
         $components = $type->getExtraTypeOptionComponents();
-
         $isOverwritten = function ($component, $get) {
             $key = $component->getStatePath(false);
             $values = $get('../overwrite_option_keys') ?? [];
-            return in_array($key, $values);
+
+            return in_array($key, $values, false);
         };
 
         foreach ($components as $item) {
@@ -97,7 +100,6 @@ trait HasGeneralFieldForm
                         ->columnSpan(1)
                         ->required()
                         ->live(),
-
                     IconPicker::make('icon')
                         ->required()
                         ->helperText($this->helperText(...))
@@ -117,7 +119,7 @@ trait HasGeneralFieldForm
             ]);
     }
 
-    protected function helperText(Component $component)
+    protected function helperText(Component $component): string
     {
         return GeneralField::__('attributes.' . $component->getStatePath(false) . '.helper_text');
     }
@@ -130,8 +132,8 @@ trait HasGeneralFieldForm
     protected function getAllCustomFieldTypeOptions(): Collection
     {
         $types = CustomFieldType::getSelectableGeneralFieldTypes();
-        return collect($types)
-            ->map(fn($type) => ($type)::make()->getTranslatedName());
+
+        return collect($types)->map(fn($type) => ($type)::make()->getTranslatedName());
     }
 
     protected function getOverwriteTypeOptions(): Component
@@ -141,11 +143,9 @@ trait HasGeneralFieldForm
             ->columns(1)
             ->hidden($this->hasFieldTypeOptions(...))
             ->schema([
-
                 Placeholder::make('message')
                     ->label(GeneralField::__('attributes.overwrite_options.message_on_create'))
                     ->hiddenOn('edit'),
-
                 Select::make('overwrite_option_keys')
                     ->options($this->getPossibleTypeOptions($this->getRecord()))
                     ->label('')
@@ -155,7 +155,6 @@ trait HasGeneralFieldForm
                     ->required()
                     ->multiple()
                     ->live(),
-
                 Group::make()
                     ->hiddenOn('create')
                     ->statePath('overwrite_options')
@@ -168,20 +167,22 @@ trait HasGeneralFieldForm
         if (is_null($record)) {
             return false;
         }
-        $type = $record->getType();
 
+        $type = $record->getType();
         $array = $type->getFlattenExtraTypeOptions();
 
         return empty($array);
     }
 
-
     protected function getGeneralFieldTypeOptions(): Fieldset
     {
         /**@var CustomFieldType|null $type */
-        $type = $this->getRecord()?->getType();
+        $type = $this
+            ->getRecord()
+            ?->getType();
         $schema = [];
         $visable = true;
+
         if (!is_null($type)) {
             $schema = $type->getGeneralTypeOptionComponents();
             $visable = count($type->generalTypeOptions()) > 0;
