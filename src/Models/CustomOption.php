@@ -2,16 +2,14 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Models;
 
-use Ffhs\FilamentPackageFfhsCustomForms\Helping\Caching\CachedModel;
-use Ffhs\FilamentPackageFfhsCustomForms\Helping\Caching\HasCacheModel;
-use Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\HasFormIdentifier;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasCustomFormModelTranslations;
+use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasFormIdentifier;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Translatable\HasTranslations;
 
 /**
- * 
+ *
  *
  * @property int $id
  * @property array<array-key, mixed> $name
@@ -36,30 +34,28 @@ use Spatie\Translatable\HasTranslations;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomOption whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-class CustomOption extends Model implements CachedModel
+class CustomOption extends Model
 {
     use HasFormIdentifier;
     use HasTranslations;
-    use HasCacheModel;
     use HasFactory;
     use HasCustomFormModelTranslations;
 
     protected static string $translationName = 'custom_option';
-    public $translatable = ['name'];
+    public array $translatable = ['name'];
     protected $fillable = [
         'name',
         'identifier',
         'icon',
     ];
 
-
-    protected static function booted()
+    protected static function booted(): void
     {
         parent::booted();
         self::creating(function (CustomOption $customOption) {
-            if (is_null($customOption->identifier)) $customOption->identifier = uniqid();
+            if (is_null($customOption->identifier)) {
+                $customOption->identifier = uniqid();
+            }
         });
     }
-
-
 }

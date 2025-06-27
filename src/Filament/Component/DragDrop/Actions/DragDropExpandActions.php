@@ -2,9 +2,8 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\DragDrop\Actions;
 
-
 use Closure;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\OLDRepeaterFieldAction\Actions\NewEggActionComponent;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\OLDRepeaterFieldAction\Actions\NewEggActionComponent;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\DragDrop\HasDragGroup;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
@@ -48,7 +47,7 @@ class DragDropExpandActions extends Component implements CanDisableOptions
             if (is_null($this->name)) {
                 $this->name = $action->getName();
             }
-            $actions[] = $action->name($this->name . "-" . $option);
+            $actions[] = $action->name($this->name . '-' . $option);
         }
 
         return Actions::make($actions);
@@ -82,14 +81,5 @@ class DragDropExpandActions extends Component implements CanDisableOptions
         $this->color(Color::Amber);
         $this->childComponents(fn() => [$this->getRawActions()]);
     }
-
-
-    /* abstract function getDisabledColor(): string;
-
-     abstract function getAdderId():string;
-
-     abstract function getBorderColor(): string;
-     abstract function getHoverColor(): string;*/
-
 
 }

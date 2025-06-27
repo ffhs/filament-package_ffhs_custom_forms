@@ -2,9 +2,8 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Models;
 
-use Ffhs\FilamentPackageFfhsCustomForms\Helping\Caching\CachedModel;
-use Ffhs\FilamentPackageFfhsCustomForms\Helping\Caching\HasCacheModel;
-use Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\HasFormIdentifier;
+use Ffhs\FilamentPackageFfhsCustomForms\Facades\CustomForms;
+use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasFormIdentifier;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -12,7 +11,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 
 /**
- * 
+ *
  *
  * @property int $id
  * @property int $general_field_id
@@ -35,13 +34,11 @@ use Illuminate\Support\Facades\Cache;
  * @method static Builder<static>|GeneralFieldForm whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-class GeneralFieldForm extends Model implements CachedModel
+class GeneralFieldForm extends Model
 {
-    use HasCacheModel;
-
     use HasFormIdentifier;
 
-    protected $table = "general_field_form";
+    protected $table = 'general_field_form';
     protected $fillable = [
         'general_field_id',
         'custom_form_identifier',
@@ -49,31 +46,34 @@ class GeneralFieldForm extends Model implements CachedModel
         'export',
     ];
 
-    protected array $cachedRelations = [
-        "generalField",
-    ];
+    public static function __(...$args): string
+    {
+        return CustomForms::__('models.general_field_form.' . implode('.', $args));
+    }
 
-    public function generalField(): BelongsTo {
+    public static function getFromFormIdentifier($formIdentifier): Collection
+    {
+        return Cache::remember(
+            'general_filed_form-from-identifier_' . $formIdentifier,
+            5,
+            fn() => GeneralFieldForm::query()
+                ->where('custom_form_identifier', $formIdentifier)
+                ->get()
+        );
+    }
+
+    public static function getGeneralFieldQuery(string $identifier): Builder
+    {
+        return GeneralField::query()->whereIn(
+            'id',
+            GeneralFieldForm::query()
+                ->select('general_field_id')
+                ->where('custom_form_identifier', $identifier)
+        );
+    }
+
+    public function generalField(): BelongsTo
+    {
         return $this->belongsTo(GeneralField::class);
     }
-
-    public static function getFromFormIdentifier($formIdentifier): Collection {
-        return Cache::remember("general_filed_form-from-identifier_".$formIdentifier, 5,
-            fn() => GeneralFieldForm::query()
-                ->where("custom_form_identifier", $formIdentifier)
-                ->get()
-
-        );
-    }
-
-
-    public static function getGeneralFieldQuery(string $identifier): Builder {
-        return GeneralField::query()->whereIn("id",
-            GeneralFieldForm::query()
-                ->select("general_field_id")
-                ->where("custom_form_identifier",$identifier)
-        );
-    }
-
-
 }

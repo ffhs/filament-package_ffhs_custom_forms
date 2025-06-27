@@ -2,28 +2,35 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Traits;
 
-use Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\EditHelper\EditCustomFormLoadHelper;
+use Ffhs\FilamentPackageFfhsCustomForms\Facades\CustomForms;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 
 trait HasAllFieldDataFromFormData
 {
+    use CanLoadCustomFormEditorData;
+    use CanLoadFieldRelationFromForm;
 
-    protected function getFieldDataFromFormData(array $fields): array
+    protected function getFieldDataFromFormData(array $fields, CustomForm $customForm): array
     {
         //Get the templated FormComponents
         $fieldsFromTemplate = collect($fields)
-            ->whereNotNull("template_id")
-            ->flatMap(fn($templateData) => CustomForm::cached($templateData["template_id"])->customFields)
-            ->mapWithKeys(fn(CustomField $customField) => [
-                $customField->identifier() => EditCustomFormLoadHelper::loadField($customField)
-            ]);
+            ->whereNotNull('template_id')
+            ->flatMap(fn($templateData) => CustomForms::getCustomFormFromId($templateData['template_id'])->customFields)
+            ->mapWithKeys(function (CustomField $customField) use ($customForm) {
+                $customField = $this->loadFieldRelationsFromForm($customField, $customForm);
 
-        $fields = collect($fields)->mapWithKeys(fn(array $field) => [
-            (new CustomField())->fill($field)->identifier() => $field
-        ])->merge($fieldsFromTemplate);
+                return [$customField->identifier() => $this->loadEditorField($customField)];
+            });
 
-        return $fields->toArray();
+        return collect($fields)
+            ->mapWithKeys(function (array $field) use ($customForm) {
+                $customField = app(CustomField::class)->fill($field);
+                $customField = $this->loadFieldRelationsFromForm($customField, $customForm);
+
+                return [$customField->identifier() => $field];
+            })
+            ->merge($fieldsFromTemplate)
+            ->toArray();
     }
-
 }

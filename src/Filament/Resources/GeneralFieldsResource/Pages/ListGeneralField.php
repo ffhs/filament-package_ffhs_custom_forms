@@ -10,12 +10,18 @@ use Filament\Actions\LocaleSwitcher;
 use Filament\Resources\Components\Tab;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Resources\Pages\ListRecords\Concerns\Translatable;
+use Illuminate\Contracts\Support\Htmlable;
 
 class ListGeneralField extends ListRecords
 {
     use Translatable;
 
     protected static string $resource = GeneralFieldResource::class;
+
+    public function getTitle(): string|Htmlable
+    {
+        return GeneralField::__('pages.list.title');
+    }
 
     public function getTabs(): array
     {

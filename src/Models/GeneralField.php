@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
- * 
+ *
  *
  * @property int $id
  * @property int|null $is_active
@@ -66,17 +66,10 @@ class GeneralField extends ACustomField
         'icon',
     ];
 
-
     protected $casts = [
         'extra_options' => 'array',
         'overwrite_options' => 'array',
         'options' => 'array',
-    ];
-
-    protected array $cachedRelations = [
-        'customFields',
-        'generalFieldForms',
-        'customOptions',
     ];
 
     public function customFields(): HasMany

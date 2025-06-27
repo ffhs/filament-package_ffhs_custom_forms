@@ -7,12 +7,12 @@ class HideEvent extends IsPropertyOverwriteEvent
 {
     public static function identifier(): string
     {
-        return "hidden_event";
+        return 'hidden_event';
     }
 
     protected function property(): string
     {
-        return "isHidden";
+        return 'isHidden';
     }
 
     protected function dominatingSide(): bool

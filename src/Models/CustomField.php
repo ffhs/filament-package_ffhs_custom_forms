@@ -2,8 +2,8 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Models;
 
-use Ffhs\FilamentPackageFfhsCustomForms\Helping\FlattedNested\NestingObject;
-use Ffhs\FilamentPackageFfhsCustomForms\Helping\Identifiers\Identifier;
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\NestingObject;
+use Ffhs\FilamentPackageFfhsCustomForms\Facades\CustomForms;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -36,6 +36,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property-read string $position
  * @property-read \Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm|null $template
  * @property-read mixed $translations
+ * @property string[] $overwritten_options
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomField newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomField newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomField query()
@@ -58,11 +59,11 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomField whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-class CustomField extends ACustomField implements NestingObject, Identifier
+class CustomField extends ACustomField implements NestingObject
 {
     use HasFactory;
 
-    protected $table = "custom_fields";
+    protected $table = 'custom_fields';
 
     protected $fillable = [
         'name',
@@ -78,15 +79,7 @@ class CustomField extends ACustomField implements NestingObject, Identifier
     ];
 
     protected $casts = [
-        "options" => "array",
-    ];
-
-
-    protected array $cachedRelations = [
-        'customOptions',
-        "customForm",
-        "generalField",
-        "template",
+        'options' => 'array',
     ];
 
     public static function getPositionAttribute(): string
@@ -99,35 +92,28 @@ class CustomField extends ACustomField implements NestingObject, Identifier
         return 'layout_end_position';
     }
 
+    public static function __(...$args): string
+    {
+        return CustomForms::__('models.custom_field.' . implode('.', $args));
+    }
 
     //Custom Form
-
     protected static function booted(): void
     {
         parent::booted();
-        self::creating(function (CustomField $field) {#
+        self::creating(static function (CustomField $field) {
             //Set identifier key to on other
             if (empty($field->identifier()) && !$field->isGeneralField()) {
                 $field->identifier = uniqid();
             }
+
             return $field;
         });
     }
 
-
-    //Options
-
-    public function identifier(): string
-    {
-        return $this->__get("identifier");
-    }
-
-
-    //GeneralField
-
     public function __get($key)
     {
-        if ($key === "general_field_id") {
+        if ($key === 'general_field_id') {
             return parent::__get($key);
         }
 
@@ -135,43 +121,33 @@ class CustomField extends ACustomField implements NestingObject, Identifier
             if ('overwritten_options' === $key) {
                 return [];
             }
+
             return parent::__get($key);
         }
 
-
-        //PERFORMANCE!!!!
-        $genFieldFunction = function (): GeneralField {
-            if (!$this->exists) {
-                return parent::__get("generalField");
-            }
-            $genField = GeneralField::getModelCache()?->where("id", $this->general_field_id)->first();
-            if (!is_null($genField)) {
-                return $genField;
-            }
-
-            $generalFieldIds = $this->customForm->customFields->whereNotNull('general_field_id')->pluck(
-                "general_field_id"
-            );
-            $generalFields = GeneralField::query()->whereIn("id", $generalFieldIds)->get();
-            GeneralField::addToModelCache($generalFields);
-            return GeneralField::cached($this->general_field_id);
-        };
-
-
         return match ($key) {
-            'name' => $genFieldFunction()->name,
-            'type' => $genFieldFunction()->type,
-            'options' => array_merge(parent::__get($key) ?? [], $genFieldFunction()->overwrite_options ?? []),
-            'overwritten_options' => array_keys($genFieldFunction()->overwrite_options ?? []),
-            'identifier' => $genFieldFunction()->identifier,
-            'generalField' => $genFieldFunction(),
+            'name' => $this->generalField->name,
+            'type' => $this->generalField->type,
+            'options' => $this->getOptionsWithOverwritten(),
+            'overwritten_options' => array_keys($this->generalField->overwrite_options ?? []),
+            'identifier' => $this->generalField->identifier,
             default => parent::__get($key),
         };
+    }
+
+    public function identifier(): string
+    {
+        return $this->__get('identifier');
     }
 
     public function isGeneralField(): bool
     {
         return !empty($this->general_field_id);
+    }
+
+    public function generalField(): BelongsTo
+    {
+        return $this->belongsTo(GeneralField::class);
     }
 
     public function customForm(): BelongsTo
@@ -181,20 +157,7 @@ class CustomField extends ACustomField implements NestingObject, Identifier
 
     public function customOptions(): BelongsToMany
     {
-        return $this->belongsToMany(CustomOption::class, "option_custom_field");
-    }
-
-
-    //Template
-
-    public function isInheritFromGeneralField(): bool
-    {
-        return !is_null($this->general_field_id);
-    }
-
-    public function generalField(): BelongsTo
-    {
-        return $this->belongsTo(GeneralField::class);
+        return $this->belongsToMany(CustomOption::class, 'option_custom_field');
     }
 
     public function answers(): HasMany
@@ -207,11 +170,23 @@ class CustomField extends ACustomField implements NestingObject, Identifier
         if (!isset($this->template_id)) {
             return false;
         }
+
         return !empty($this->template_id);
     }
 
     public function template(): BelongsTo
     {
-        return $this->belongsTo(CustomForm::class, "template_id");
+        return $this->belongsTo(CustomForm::class, 'template_id');
+    }
+
+    public function getOptionsWithOverwritten(): array
+    {
+        $ownOptions = parent::__get('options') ?? [];
+        $overwrittenOptions = $this->generalField->overwrite_options ?? [];
+
+        return [
+            ... $ownOptions,
+            ... $overwrittenOptions,
+        ];
     }
 }
