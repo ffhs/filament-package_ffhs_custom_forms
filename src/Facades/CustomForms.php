@@ -14,7 +14,6 @@ use Illuminate\Support\Facades\Facade;
  * @method static array getFormConfigurations()
  * @method static null|CustomForm getCustomFormFromId(int $id)
  * @method static void cacheForm(CustomForm|Collection $customForm)
- *
  */
 class CustomForms extends Facade
 {
@@ -28,9 +27,8 @@ class CustomForms extends Facade
         return config('ffhs_custom_forms.' . $string);
     }
 
-    protected static function getFacadeAccessor()
+    protected static function getFacadeAccessor(): string
     {
         return \Ffhs\FilamentPackageFfhsCustomForms\CustomForms::class;
     }
 }
-

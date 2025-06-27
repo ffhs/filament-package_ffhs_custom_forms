@@ -21,6 +21,7 @@ trait HasNumberCheck
         $attribute = $prefix . '_equals';
         $icon1 = $greater ? 'tabler-math-equal-lower' : 'tabler-math-equal-greater';
         $icon2 = $greater ? 'tabler-math-lower' : 'tabler-math-greater';
+
         return Action::make($attribute . '_action')
             ->action(fn($set, $get) => $set($attribute, !($get($attribute) ?? false)))
             ->color(Color::hex('#000000'))
@@ -48,42 +49,33 @@ trait HasNumberCheck
 
     protected function checkSmallerThan(float $value, array $data): bool
     {
-        if ($data['smaller_equals'] && !($value <= $data['smaller_than'])) {
-            return false;
-        }
-        if (!$data['smaller_equals'] && !($value < $data['smaller_than'])) {
-            return false;
-        }
-        return true;
+        $inclusive = $data['smaller_equals'];
+        $threshold = $data['smaller_than'];
+
+        return $inclusive ? $value <= $threshold : $value < $threshold;
     }
 
     protected function checkGreaterThan(float $value, array $data): bool
     {
-        if ($data['greater_equals'] && !($value >= $data['greater_than'])) {
-            return false;
-        }
-        if (!$data['greater_equals'] && !($value > $data['greater_than'])) {
-            return false;
-        }
-        return true;
+        $threshold = $data['greater_than'];
+        $inclusive = $data['greater_equals'];
+
+        return $inclusive ? $value >= $threshold : $value > $threshold;
     }
 
     protected function getNumberTypeGroup(): Component
     {
         return Group::make([
-
             Checkbox::make('exactly_number')
                 ->label(static::__('number.exactly_number'))
                 ->columnSpanFull()
                 ->live(),
-
             TextInput::make('number')
                 ->label(static::__('number.number'))
                 ->prefixIcon('carbon-character-whole-number')
                 ->visible(fn($get) => $get('exactly_number'))
                 ->required()
                 ->numeric(),
-
             Group::make()
                 ->hidden(fn($get) => $get('exactly_number'))
                 ->columns(5)
@@ -98,13 +90,11 @@ trait HasNumberCheck
                         ->columnSpan(2)
                         ->numeric(),
                     Placeholder::make('')
-                        ->content(
-                            fn() => new HtmlString(
-                                Blade::render(
-                                    '<div class="flex flex-col items-center justify-center"><br><x-bi-input-cursor style="height: auto; width: 40px"/></div>'
-                                )
+                        ->content(fn() => new HtmlString(
+                            Blade::render(
+                                '<div class="flex flex-col items-center justify-center"><br><x-bi-input-cursor style="height: auto; width: 40px"/></div>'
                             )
-                        )
+                        ))
                         ->label(' '),
                     TextInput::make('smaller_than')
                         ->label(static::__('number.smaller_than'))

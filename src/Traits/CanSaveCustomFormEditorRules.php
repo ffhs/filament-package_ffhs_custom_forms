@@ -15,17 +15,24 @@ trait CanSaveCustomFormEditorRules
         $usedRuleIds = collect($rawRules)->pluck('id');
 
         if (!$usedRuleIds->isEmpty()) {
-            $form->ownedRules()->whereNotIn('rules.id', $usedRuleIds)->delete();
+            $form
+                ->ownedRules()
+                ->whereNotIn('rules.id', $usedRuleIds)
+                ->delete();
         }
 
         $rules = $this->saveRuleComponents($rawRules, $form);
 
-        $form->ownedRules()->sync($rules->pluck('id'));
+        $form
+            ->ownedRules()
+            ->sync($rules->pluck('id'));
     }
 
     private function saveRuleComponents(array $rawRules, CustomForm $form): Collection
     {
-        $existingRules = $form->ownedRules->keyBy('id');
+        $existingRules = $form
+            ->ownedRules
+            ->keyBy('id');
         $rules = collect();
 
         $ruleEventsToDelete = [];
@@ -54,12 +61,16 @@ trait CanSaveCustomFormEditorRules
             $triggers = $existingTriggers[$rule->id] ?? collect();
             $triggers = $triggers->keyBy('id');
             $rawTriggers = $rawRule['triggers'] ?? [];
-            $usedTriggerIds = collect($rawTriggers)->pluck('id')->toArray();
+            $usedTriggerIds = collect($rawTriggers)
+                ->pluck('id')
+                ->toArray();
 
             $events = $existingEvents[$rule->id] ?? collect();
             $events = $events->keyBy('id');
             $rawEvents = $rawRule['events'] ?? [];
-            $usedEventIds = collect($rawEvents)->pluck('id')->toArray();
+            $usedEventIds = collect($rawEvents)
+                ->pluck('id')
+                ->toArray();
 
             $ruleTriggersToDelete = [
                 ...$ruleTriggersToDelete,
@@ -74,8 +85,8 @@ trait CanSaveCustomFormEditorRules
                     ->pluck('id')
             ];
 
-            [$updatedTriggers, $createdTriggers] = $this->updateRuleComponent($rawTriggers, $triggers, $rule,
-                app(RuleTrigger::class));
+            [$updatedTriggers, $createdTriggers] = $this
+                ->updateRuleComponent($rawTriggers, $triggers, $rule, app(RuleTrigger::class));
             $ruleTriggersToCreate = [
                 ...$ruleTriggersToCreate,
                 ...$createdTriggers
@@ -85,8 +96,8 @@ trait CanSaveCustomFormEditorRules
                 ...$updatedTriggers
             ];
 
-            [$updatedEvents, $createdEvents] = $this->updateRuleComponent($rawEvents, $events, $rule,
-                app(RuleTrigger::class));
+            [$updatedEvents, $createdEvents] = $this
+                ->updateRuleComponent($rawEvents, $events, $rule, app(RuleTrigger::class));
             $ruleEventsToCreate = [
                 ...$ruleEventsToCreate,
                 ...$createdEvents
@@ -99,8 +110,12 @@ trait CanSaveCustomFormEditorRules
             $rules->add($rule);
         }
 
-        RuleTrigger::query()->whereIn('id', $ruleTriggersToDelete)->delete();
-        RuleEvent::query()->whereIn('id', $ruleEventsToDelete)->delete();
+        RuleTrigger::query()
+            ->whereIn('id', $ruleTriggersToDelete)
+            ->delete();
+        RuleEvent::query()
+            ->whereIn('id', $ruleEventsToDelete)
+            ->delete();
 
         RuleTrigger::insert($ruleTriggersToCreate);
         RuleEvent::insert($ruleEventsToUpdate);
@@ -132,10 +147,8 @@ trait CanSaveCustomFormEditorRules
         $createdComponents = [];
 
         foreach ($rawComponents as $rawComponent) {
-
             /**@var RuleTrigger|RuleEvent $ruleComponent */
             $ruleComponent = $this->resolveRule($rawComponent, $existingComponents, $type::class);
-
 
             $ruleComponent->fill($rawComponent);
             $ruleComponent->rule_id = $rule->id;
@@ -154,7 +167,6 @@ trait CanSaveCustomFormEditorRules
                     'created_at' => now(),
                 ];
             }
-
         }
 
         return [$updatedComponent, $createdComponents];

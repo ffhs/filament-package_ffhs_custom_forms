@@ -3,6 +3,7 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormConverter;
 
 use Error;
+use Exception;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormConfiguration\CustomFormConfiguration;
 use Ffhs\FilamentPackageFfhsCustomForms\Exceptions\FormImportException;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
@@ -19,6 +20,9 @@ class FormSchemaImporter
     use CanImportRuleInformation;
     use HasStaticMake;
 
+    /**
+     * @throws FormImportException
+     */
     public function import(
         array $rawForm,
         CustomFormConfiguration $configuration,
@@ -27,7 +31,6 @@ class FormSchemaImporter
         array $generalFieldMap = []
     ): CustomForm {
         //ToDo Check if the identifiers of the fields exist
-
         DB::beginTransaction();
 
         try {
@@ -41,23 +44,26 @@ class FormSchemaImporter
             $this->importRule($ruleInformations, $customForm);
 
             DB::commit();
+
             return $customForm;
-        } catch (Error|\Exception $exception) {
+        } catch (Error|Exception $exception) {
             DB::rollBack();
+
             throw new FormImportException($exception);
         }
     }
 
 
+    /**
+     * @throws FormImportException
+     */
     public function importWithExistingForm(
         array $rawForm,
         CustomForm $customForm,
         array $templateMap = [],
         array $generalFieldMap = []
     ): CustomForm {
-
         //ToDo Check if the identifiers of the fields exist
-
         DB::beginTransaction();
 
         try {
@@ -69,9 +75,11 @@ class FormSchemaImporter
             $this->importRule($ruleInformations, $customForm);
 
             DB::commit();
+
             return $customForm;
-        } catch (Error|\Exception $exception) {
+        } catch (Error|Exception $exception) {
             DB::rollBack();
+
             throw new FormImportException($exception);
         }
     }

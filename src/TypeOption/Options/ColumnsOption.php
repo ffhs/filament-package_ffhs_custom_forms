@@ -3,9 +3,9 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options;
 
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\TypeOption;
-use Filament\Forms\Components\Component;
+use Filament\Forms\Components\Component as FormsComponent;
 use Filament\Forms\Components\TextInput;
-use Filament\Infolists\Components\Component as InfolistComponent;
+use Filament\Infolists\Components\Component as InfolistsComponent;
 
 class ColumnsOption extends TypeOption
 {
@@ -14,7 +14,7 @@ class ColumnsOption extends TypeOption
         return 2;
     }
 
-    public function getComponent(string $name): Component
+    public function getComponent(string $name): FormsComponent
     {
         return TextInput::make($name)
             ->label(TypeOption::__('columns.label'))
@@ -26,12 +26,12 @@ class ColumnsOption extends TypeOption
             ->integer();
     }
 
-    public function modifyFormComponent(Component $component, mixed $value): Component
+    public function modifyFormComponent(FormsComponent $component, mixed $value): FormsComponent
     {
         return $component->columns($value);
     }
 
-    public function modifyInfolistComponent(InfolistComponent $component, mixed $value): InfolistComponent
+    public function modifyInfolistComponent(InfolistsComponent $component, mixed $value): InfolistsComponent
     {
         return $component; //ToDo May Improve
     }

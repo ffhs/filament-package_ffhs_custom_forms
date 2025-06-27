@@ -44,103 +44,98 @@ class SelectType extends CustomOptionType
 
     public function extraTypeOptions(): array
     {
-        return
-            [
-                LayoutOptionGroup::make()
-                    ->addTypeOptions(
-                        'prioritized_labels',
-                        FastTypeOption::makeFast(
-                            [],
-                            Repeater::make('prioritized_labels')
-                                ->label(TypeOption::__('prioritized_labels.label'))
-                                ->schema([
-                                    TextInput::make('label')
-                                        ->label(''),
-                                ])
-                                ->whenTruthy('prioritized')
-                                ->addActionLabel('prioritized_labels.add_label')
-                                ->columnSpanFull()
-                                ->reorderable()
-                        )
-                    ),
-                ValidationTypeOptionGroup::make()
-                    ->removeTypeOption('validation_messages')
-                    ->mergeTypeOptions([
-                        'several' => FastTypeOption::makeFast(
-                            false,
-                            Toggle::make('several') //ToDo Put it in own option
+        return [
+            LayoutOptionGroup::make()
+                ->addTypeOptions(
+                    'prioritized_labels',
+                    FastTypeOption::makeFast(
+                        [],
+                        Repeater::make('prioritized_labels')
+                            ->label(TypeOption::__('prioritized_labels.label'))
+                            ->schema([
+                                TextInput::make('label')
+                                    ->label(''),
+                            ])
+                            ->whenTruthy('prioritized')
+                            ->addActionLabel('prioritized_labels.add_label')
+                            ->columnSpanFull()
+                            ->reorderable()
+                    )
+                ),
+            ValidationTypeOptionGroup::make()
+                ->removeTypeOption('validation_messages')
+                ->mergeTypeOptions([
+                    'several' => FastTypeOption::makeFast(
+                        false,
+                        Toggle::make('several')
                             ->label(TypeOption::__('several.label'))
-                                ->helperText(TypeOption::__('several.helper_text'))
-                                ->columnSpanFull()
-                                ->live()
+                            ->helperText(TypeOption::__('several.helper_text'))
+                            ->columnSpanFull()
+                            ->live()
+                    ),
+                    'prioritized' => FastTypeOption::makeFast(
+                        false,
+                        Toggle::make('prioritized')
+                            ->whenTruthy('several')
+                            ->label(TypeOption::__('prioritized.label'))
+                            ->helperText(TypeOption::__('prioritized.helper_text'))
+                            ->live()
+                    ),
+                    'dynamic_prioritized' => FastTypeOption::makeFast(
+                        false,
+                        Toggle::make('dynamic_prioritized')
+                            ->whenTruthy('prioritized')
+                            ->label(TypeOption::__('dynamic_prioritized.label'))
+                            ->helperText(TypeOption::__('dynamic_prioritized.helper_text'))
+                    ),
+                    'min_select' => MinSelectOption::make()
+                        ->modifyOptionComponent(fn(Field $component) => $component
+                            ->required(fn($get) => $get('prioritized'))
+                            ->whenTruthy('several')
+                            ->columnStart(1)
                         ),
-                        'prioritized' => FastTypeOption::makeFast(
-                            false,
-                            Toggle::make('prioritized')
-                                ->whenTruthy('several')
-                                ->label(TypeOption::__('prioritized.label'))
-                                ->helperText(TypeOption::__('prioritized.helper_text'))
-                                ->live()
+                    'max_select' => MaxSelectOption::make()
+                        ->modifyOptionComponent(fn(Field $component) => $component
+                            ->required(fn($get) => $get('prioritized'))
+                            ->whenTruthy('several')
                         ),
-                        'dynamic_prioritized' => FastTypeOption::makeFast(
-                            false,
-                            Toggle::make('dynamic_prioritized')
-                                ->whenTruthy('prioritized')
-                                ->label(TypeOption::__('dynamic_prioritized.label'))
-                                ->helperText(TypeOption::__('dynamic_prioritized.helper_text'))
+                    'validation_messages' => ValidationMessageOption::make()
+                        ->modifyOptionComponent(
+                            fn(Component $component) => $component->hidden(fn(Get $get) => $get('prioritized'))
                         ),
-                        'min_select' => MinSelectOption::make()
-                            ->modifyOptionComponent(function (Field $component) {
-                                return $component
-                                    ->required(fn($get) => $get('prioritized'))
-                                    ->whenTruthy('several')
-                                    ->columnStart(1);
-                            }),
-
-                        'max_select' => MaxSelectOption::make()
-                            ->modifyOptionComponent(function (Field $component) {
-                                return $component
-                                    ->required(fn($get) => $get('prioritized'))
-                                    ->whenTruthy('several');
-                            }),
-                        'validation_messages' => ValidationMessageOption::make()
-                            ->modifyOptionComponent(
-                                fn(Component $component) => $component->hidden(fn(Get $get) => $get('prioritized'))
-                            ),
-
-                        'validation_messages_prioritized' => FastTypeOption::makeFast([],
-                            Repeater::make('validation_messages_prioritized')
-                                ->label(TypeOption::__('validation_messages_prioritized.label'))
-                                ->helperText(TypeOption::__('validation_messages_prioritized.helper_text'))
-                                ->schema([
-                                    TextInput::make('select_id')
-                                        ->label(TypeOption::__('validation_messages_prioritized.select_id.label'))
-                                        ->helperText(
-                                            TypeOption::__('validation_messages_prioritized.select_id.helper_text')
-                                        )
-                                        ->numeric()
-                                        ->required()
-                                        ->minValue(0)
-                                        ->integer()
-                                        ->step(1),
-                                    TextInput::make('rule')
-                                        ->label(TypeOption::__('validation_messages_prioritized.rule.label'))
-                                        ->helperText(TypeOption::__('validation_messages_prioritized.rule.helper_text'))
-                                        ->required(),
-                                    TextInput::make('message')
-                                        ->label(TypeOption::__('validation_messages_prioritized.message.label'))
-                                        ->helperText(
-                                            TypeOption::__('validation_messages_prioritized.message.helper_text')
-                                        )
-                                        ->nullable()
-                                        ->columnSpan(2),
-                                ])
-                                ->addActionLabel(TypeOption::__('validation_messages_prioritized.add_label'))
-                                ->collapsible(false)
-                                ->columns(3)
-                                ->columnSpanFull()),
-                    ]),
-                CustomOptionGroup::make(),
-            ];
+                    'validation_messages_prioritized' => FastTypeOption::makeFast([],
+                        Repeater::make('validation_messages_prioritized')
+                            ->label(TypeOption::__('validation_messages_prioritized.label'))
+                            ->helperText(TypeOption::__('validation_messages_prioritized.helper_text'))
+                            ->schema([
+                                TextInput::make('select_id')
+                                    ->label(TypeOption::__('validation_messages_prioritized.select_id.label'))
+                                    ->helperText(
+                                        TypeOption::__('validation_messages_prioritized.select_id.helper_text')
+                                    )
+                                    ->numeric()
+                                    ->required()
+                                    ->minValue(0)
+                                    ->integer()
+                                    ->step(1),
+                                TextInput::make('rule')
+                                    ->label(TypeOption::__('validation_messages_prioritized.rule.label'))
+                                    ->helperText(TypeOption::__('validation_messages_prioritized.rule.helper_text'))
+                                    ->required(),
+                                TextInput::make('message')
+                                    ->label(TypeOption::__('validation_messages_prioritized.message.label'))
+                                    ->helperText(
+                                        TypeOption::__('validation_messages_prioritized.message.helper_text')
+                                    )
+                                    ->nullable()
+                                    ->columnSpan(2),
+                            ])
+                            ->addActionLabel(TypeOption::__('validation_messages_prioritized.add_label'))
+                            ->collapsible(false)
+                            ->columns(3)
+                            ->columnSpanFull()),
+                ]),
+            CustomOptionGroup::make(),
+        ];
     }
 }

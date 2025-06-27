@@ -33,7 +33,9 @@ class RelatedFieldOption extends TypeOption
 
     protected function getOptions($livewire, CustomForm $record): array|Collection
     {
-        $get = $livewire->getMountedFormComponentActionComponent(0)->getGetCallback();
+        $get = $livewire
+            ->getMountedFormComponentActionComponent(0)
+            ->getGetCallback();
         $fields = collect($this->getFieldDataFromFormData($get('../custom_fields'), $record))
             ->map(fn(array $field) => (new CustomField())->fill($field));
 

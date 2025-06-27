@@ -16,7 +16,6 @@ use Filament\Support\Colors\Color;
 
 class RuleEditor extends Group
 {
-
     protected array|Closure|null $triggers;
     protected Closure|array|null $events;
 
@@ -25,18 +24,22 @@ class RuleEditor extends Group
     public function triggers(array|Closure|null $triggers): static
     {
         $this->triggers = $triggers;
+
         return $this;
     }
 
     public function events(array|Closure|null $events): static
     {
         $this->events = $events;
+
         return $this;
     }
 
     public function getTrigger($type): TriggerType
     {
-        return collect($this->getTriggers())->filter(fn(TriggerType $event) => $event::identifier() === $type)->first();
+        return collect($this->getTriggers())
+            ->filter(fn(TriggerType $event) => $event::identifier() === $type)
+            ->first();
     }
 
     /**
@@ -55,6 +58,7 @@ class RuleEditor extends Group
         }
 
         $finalTypes = [];
+
         foreach ($types as $typeClass) {
             $finalTypes[] = $typeClass::make();
         }
@@ -70,8 +74,10 @@ class RuleEditor extends Group
             ->dragDropGroup(fn() => uniqid())
             ->deepColor(1)
             ->orderAttribute('order')
-            ->itemLabel(fn($itemState
-            ) => empty($itemState['type']) ? '' : $this->getEvent($itemState['type'])->getDisplayName())
+            ->itemLabel(fn($itemState) => empty($itemState['type']) ? '' : $this
+                ->getEvent($itemState['type'])
+                ->getDisplayName()
+            )
             ->itemActions(fn() => [
                 $this->getRemoveAction(),
             ])
@@ -93,12 +99,15 @@ class RuleEditor extends Group
                         if (empty($get('type'))) {
                             return [];
                         }
+
                         $trigger = collect($this->getEvents())
                             ->filter(fn(EventType $event) => $event::identifier() === $get('type'))
                             ->first();
+
                         if (is_null($trigger)) {
                             return [];
                         }
+
                         /**@var EventType $trigger */
                         return $trigger->getFormSchema();
                     }))
@@ -108,7 +117,9 @@ class RuleEditor extends Group
 
     public function getEvent($type): EventType
     {
-        return collect($this->getEvents())->filter(fn(EventType $event) => $event::identifier() === $type)->first();
+        return collect($this->getEvents())
+            ->filter(fn(EventType $event) => $event::identifier() === $type)
+            ->first();
     }
 
     public function getEvents(): array
@@ -124,6 +135,7 @@ class RuleEditor extends Group
         }
 
         $finalTypes = [];
+
         foreach ($types as $typeClass) {
             $finalTypes[] = $typeClass::make();
         }
@@ -135,57 +147,54 @@ class RuleEditor extends Group
     {
         parent::setUp();
 
-        $this->triggers(config('ffhs_custom_forms.rule.trigger'));
-        $this->events(config('ffhs_custom_forms.rule.event'));
+        $this
+            ->triggers(config('ffhs_custom_forms.rule.trigger'))
+            ->events(config('ffhs_custom_forms.rule.event'))
+            ->schema([
+                Action::make('AddRule')
+                    ->icon('carbon-rule')
+                    ->label('Regel Hinzufügen')  //ToDo translate
+                    ->action(function ($set, $get) {
+                        $rules = $get('rules');
+                        $rules[uniqid()] = [
+                            'is_oder_mode' => false,
+                        ];
+                        $set('rules', $rules);
+                    })
+                    ->toFormComponent(),
+                DragDropComponent::make('rules')
+                    ->label('')
+                    ->itemIcons('carbon-rule')
+                    ->itemLabel(function ($item, $state) {
+                        $triggers = sizeof($state[$item]['triggers'] ?? []);
+                        $event = sizeof($state[$item]['events'] ?? []);
 
-        $this->schema([
-            Action::make('AddRule')
-                ->icon('carbon-rule')
-                ->label('Regel Hinzufügen')  //ToDo translate
-                ->action(function ($set, $get) {
-                    $rules = $get('rules');
-                    $rules[uniqid()] = [
-                        'is_oder_mode' => false,
-                    ];
-                    $set('rules', $rules);
-                })
-                ->toFormComponent(),
-            DragDropComponent::make('rules')
-                ->label('')
-                ->itemIcons('carbon-rule')
-                ->itemLabel(function ($item, $state) {
-
-                    $triggers = sizeof($state[$item]['triggers'] ?? []);
-                    $event = sizeof($state[$item]['events'] ?? []);
-
-                    return 'Regel (' . $triggers . 'T : ' . $event . 'E)'; //ToDo Translate
-                })
-                ->dragDropGroup('rules')
-                ->columns(['2xl' => 3, 'md' => 2])
-                ->gridSize(1)
-                ->itemActions(fn() => [
-                    $this->getRemoveAction(),
-                    $this->getEventAddAction(),
-                    $this->getTriggerAddAction(),
-                ])
-                ->schema([
-
-                    ToggleButtons::make('is_or_mode')
-                        ->inline()
-                        ->label('')
-                        ->required()
-                        ->markAsRequired(false)
-                        ->grouped()
-                        ->boolean('Oder', 'Und')
-                        ->colors(Color::Gray)
-                        ->icons([]),
-
-                    $this->getTriggerDropComponent()
-                        ->columnStart(1),
-                    $this->getEventDropComponent(),
-                ])
-        ]);
-
+                        return 'Regel (' . $triggers . 'T : ' . $event . 'E)'; //ToDo Translate
+                    })
+                    ->dragDropGroup('rules')
+                    ->columns(['2xl' => 3, 'md' => 2])
+                    ->gridSize(1)
+                    ->itemActions(fn() => [
+                        $this->getRemoveAction(),
+                        $this->getEventAddAction(),
+                        $this->getTriggerAddAction(),
+                    ])
+                    ->schema([
+                        ToggleButtons::make('is_or_mode')
+                            ->inline()
+                            ->label('')
+                            ->required()
+                            ->markAsRequired(false)
+                            ->grouped()
+                            ->boolean('Oder', 'Und')
+                            ->colors(Color::Gray)
+                            ->icons([]),
+                        $this
+                            ->getTriggerDropComponent()
+                            ->columnStart(1),
+                        $this->getEventDropComponent(),
+                    ])
+            ]);
     }
 
     protected function getEventAddAction(): Action
@@ -197,9 +206,7 @@ class RuleEditor extends Group
             ->link();
     }
 
-
     //Events
-
     protected function getTriggerAddAction(): Action
     {
         return Action::make('addTrigger')
@@ -221,8 +228,10 @@ class RuleEditor extends Group
                 $this->getRemoveAction(),
                 $this->getTriggerInvertAction()
             ])
-            ->itemLabel(fn($itemState
-            ) => empty($itemState['type']) ? '' : $this->getTrigger($itemState['type'])->getDisplayName())
+            ->itemLabel(fn($itemState) => empty($itemState['type']) ? '' : $this
+                ->getTrigger($itemState['type'])
+                ->getDisplayName()
+            )
             ->schema([
                 Select::make('type')
                     ->afterStateUpdated(fn($set) => $set('data', []))
@@ -232,19 +241,21 @@ class RuleEditor extends Group
                     ->label('')
                     ->required()
                     ->live(),
-
                 Group::make()
                     ->statePath('data')
                     ->schema(fn($get) => once(function () use ($get) {
                         if (empty($get('type'))) {
                             return [];
                         }
+
                         $trigger = collect($this->getTriggers())
                             ->filter(fn(TriggerType $trigger) => $trigger::identifier() === $get('type'))
                             ->first();
+
                         if (is_null($trigger)) {
                             return [];
                         }
+
                         /**@var TriggerType $trigger */
                         return $trigger->getFormSchema();
                     }))
@@ -261,9 +272,9 @@ class RuleEditor extends Group
             ->icon(function ($get, $arguments) {
                 if ($get($arguments['item'] . '.is_inverted')) {
                     return 'carbon-warning-alt-inverted-filled';
-                } else {
-                    return 'tabler-triangle-inverted';
                 }
+
+                return 'tabler-triangle-inverted';
             });
     }
 
@@ -282,12 +293,13 @@ class RuleEditor extends Group
     {
         $path = $arguments['item'] . '.triggers';
         $triggers = $get($path);
+
         if (is_null($triggers)) {
             $triggers = [];
         }
+
         $triggers[uniqid()] = ['order' => 1, 'is_inverted' => false];
         $set($path, $triggers);
-
 
         Notification::make()
             ->title('Auslöser hinzugefügt') //toDo Translate
@@ -306,9 +318,11 @@ class RuleEditor extends Group
     {
         $path = $arguments['item'] . '.events';
         $events = $get($path);
+
         if (is_null($events)) {
             $events = [];
         }
+
         $events[uniqid()] = ['order' => 1];
         $set($path, $events);
 
@@ -324,7 +338,8 @@ class RuleEditor extends Group
             ->map(fn(EventType $events) => [
                 'identifier' => $events::identifier(),
                 'label' => $events->getDisplayName(),
-            ])->pluck('label', 'identifier')
+            ])
+            ->pluck('label', 'identifier')
             ->toArray();
     }
 
@@ -347,6 +362,4 @@ class RuleEditor extends Group
                 $set($path, $state);
             });
     }
-
-
 }

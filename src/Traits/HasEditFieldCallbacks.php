@@ -10,12 +10,14 @@ trait HasEditFieldCallbacks
     final public function getMutateCustomFieldDataOnSave(CustomField $field, array $data): array
     {
         $this->mutateOptions($data, $field, 'mutateOnFieldSave');
+
         return $this->mutateCustomFieldDataOnSave($field, $data);
     }
 
     final public function getMutateCustomFieldDataOnLoad(CustomField $field, array $data): array
     {
         $this->mutateOptions($data, $field, 'mutateOnFieldLoad');
+
         return $this->mutateCustomFieldDataOnLoad($field, $data);
     }
 
@@ -52,6 +54,7 @@ trait HasEditFieldCallbacks
         foreach ($this->getFlattenExtraTypeOptions() as $key => $option) {
             $option->afterDeleteField($key, $field);
         }
+
         $this->afterDeleteField($field);
     }
 
@@ -99,17 +102,21 @@ trait HasEditFieldCallbacks
             if (!array_key_exists($key, $options)) {
                 continue;
             }
+
             $options[$key] = $option->$method($options[$key], $key, $field);
         }
+
         $data['options'] = $options;
     }
 
     private function doForOptions(array &$data, CustomField $field, string $method): void
     {
         $options = $data['options'] ?? [];
+
         foreach ($this->getFlattenExtraTypeOptions() as $key => $option) {
             $option->$method($options[$key], $key, $field);
         }
+
         $data['options'] = $options;
     }
 }

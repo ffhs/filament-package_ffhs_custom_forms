@@ -9,6 +9,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasDefaultViewComponent;
 use Filament\Forms\Components\Placeholder;
 use Filament\Infolists\Components\Component;
+use Filament\Infolists\Components\Group;
 use Filament\Infolists\Components\TextEntry;
 use Illuminate\Support\HtmlString;
 
@@ -25,6 +26,7 @@ class TitleTypeView implements FieldTypeView
 
         /**@var $placeholder Placeholder */
         $placeholder = $this->makeComponent(Placeholder::class, $record);
+
         return $placeholder
             ->content(new HtmlString($title))
             ->label('');
@@ -36,7 +38,8 @@ class TitleTypeView implements FieldTypeView
         array $parameter = []
     ): Component {
         if (!$this->getOptionParameter($record, 'show_in_view')) {
-            return \Filament\Infolists\Components\Group::make()->hidden();
+            return Group::make()
+                ->hidden();
         }
 
         $title = $this->getTitle($record);
@@ -67,7 +70,9 @@ class TitleTypeView implements FieldTypeView
         } else {
             $textClass = 'class="text-xs"';
         }
+
         $titleText = $this->getLabelName($record);
+
         return '<h' . $titleSize . ' ' . $textClass . '>' . $titleText . ' </h' . $titleSize . '> ';
     }
 }

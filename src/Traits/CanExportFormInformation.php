@@ -8,7 +8,6 @@ trait CanExportFormInformation
 {
     public function exportFormInformation(CustomForm $form): array
     {
-
         $formInformation = [
             'short_title' => $form->short_title
         ];

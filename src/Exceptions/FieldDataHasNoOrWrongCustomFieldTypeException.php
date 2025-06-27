@@ -2,7 +2,9 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Exceptions;
 
-class FieldDataHasNoOrWrongCustomFieldTypeException extends \RuntimeException
+use RuntimeException;
+
+class FieldDataHasNoOrWrongCustomFieldTypeException extends RuntimeException
 {
     public function __construct(string|array $message)
     {
@@ -11,6 +13,7 @@ class FieldDataHasNoOrWrongCustomFieldTypeException extends \RuntimeException
             $message = $message['name'][app()->getLocale()] ?? 'undefined';
             $message .= empty($rawType) ? ' has no custom field type' : ' has an invalid custom field type: ' . $rawType;
         }
+
         parent::__construct($message);
     }
 }

@@ -21,11 +21,11 @@ final class TemplateFieldAdder extends FormEditorFieldAdder
             return true;
         }
 
-        $usedTemplateIds =
-            once(function () {
-                $templates = array_filter($this->getState()['custom_fields'], fn($da) => !empty($da['template_id']));
-                return array_map(fn($template) => $template['template_id'], $templates);
-            });
+        $usedTemplateIds = once(function () {
+            $templates = array_filter($this->getState()['custom_fields'], fn($da) => !empty($da['template_id']));
+
+            return array_map(fn($template) => $template['template_id'], $templates);
+        });
 
         return in_array($value, $usedTemplateIds, false);
     }
@@ -40,12 +40,14 @@ final class TemplateFieldAdder extends FormEditorFieldAdder
 
         $configuration = $this->getCustomFormConfiguration();
         /** @var CustomForm $template */
-        $template = $configuration->getAvailableTemplates()->get($templateId);
-        $templateGenIds = $template->customFields
+        $template = $configuration
+            ->getAvailableTemplates()
+            ->get($templateId);
+        $templateGenIds = $template
+            ->customFields
             ->whereNotNull('general_field_id')
             ->pluck('general_field_id')
             ->toArray();
-
         $commonValues = array_intersect($templateGenIds, $existingIds);
 
         return !empty($commonValues);
@@ -58,24 +60,25 @@ final class TemplateFieldAdder extends FormEditorFieldAdder
 
     protected function getUsableTemplates(): array
     {
-        return once(function () {
-            return $this->getCustomFormConfiguration()->getAvailableTemplates()
-                ->pluck('short_title', 'id')
-                ->toArray();
-        });
+        return once(fn() => $this
+            ->getCustomFormConfiguration()
+            ->getAvailableTemplates()
+            ->pluck('short_title', 'id')
+            ->toArray());
     }
 
     protected function setUp(): void
     {
-        $this->hidden(fn($state) => $state['is_template']);
-        $this->label(__('filament-package_ffhs_custom_forms::custom_forms.navigation.templates'));
-        $this->schema([
-            DragDropExpandActions::make()
-                ->dragDropGroup(fn(Get $get) => 'custom_fields-' . $get('custom_form_identifier'))
-                ->options($this->getUsableTemplates(...))
-                ->disableOptionWhen($this->isTemplateDisabled(...))
-                ->color(Color::Green)
-                ->action(fn($option) => AddTemplateFieldAction::make('addTemplate')->option($option))
-        ]);
+        $this
+            ->hidden(fn($state) => $state['is_template'])
+            ->label(__('filament-package_ffhs_custom_forms::custom_forms.navigation.templates'))
+            ->schema([
+                DragDropExpandActions::make()
+                    ->dragDropGroup(fn(Get $get) => 'custom_fields-' . $get('custom_form_identifier'))
+                    ->options($this->getUsableTemplates(...))
+                    ->disableOptionWhen($this->isTemplateDisabled(...))
+                    ->color(Color::Green)
+                    ->action(fn($option) => AddTemplateFieldAction::make('addTemplate')->option($option))
+            ]);
     }
 }

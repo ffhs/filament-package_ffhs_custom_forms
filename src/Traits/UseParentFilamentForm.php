@@ -12,7 +12,7 @@ trait UseParentFilamentForm
     {
         $statePath = $component->getStatePath();
         $firstPath = explode('.', $statePath)[0];
-        return collect($livewire->getCachedForms())
-            ->firstWhere(fn(Form $form) => $form->getStatePath() === $firstPath);
+
+        return collect($livewire->getCachedForms())->firstWhere(fn(Form $form) => $form->getStatePath() === $firstPath);
     }
 }

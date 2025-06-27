@@ -3,9 +3,9 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options;
 
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\TypeOption;
-use Filament\Forms\Components\Component;
+use Filament\Forms\Components\Component as FormsComponent;
 use Filament\Forms\Components\TextInput;
-use Filament\Infolists\Components\Component as InfolistComponent;
+use Filament\Infolists\Components\Component as InfolistsComponent;
 
 class MaxValueOption extends TypeOption
 {
@@ -14,23 +14,22 @@ class MaxValueOption extends TypeOption
         return 100;
     }
 
-    public function getComponent(string $name): Component
+    public function getComponent(string $name): FormsComponent
     {
-        return
-            TextInput::make($name)
-                ->label(TypeOption::__('max_value.label'))
-                ->helperText(TypeOption::__('max_value.helper_text'))
-                ->step(1)
-                ->required()
-                ->integer();
+        return TextInput::make($name)
+            ->label(TypeOption::__('max_value.label'))
+            ->helperText(TypeOption::__('max_value.helper_text'))
+            ->step(1)
+            ->required()
+            ->integer();
     }
 
-    public function modifyFormComponent(Component $component, mixed $value): Component
+    public function modifyFormComponent(FormsComponent $component, mixed $value): FormsComponent
     {
         return $component->maxValue($value);
     }
 
-    public function modifyInfolistComponent(InfolistComponent $component, mixed $value): InfolistComponent
+    public function modifyInfolistComponent(InfolistsComponent $component, mixed $value): InfolistsComponent
     {
         return $component;
     }

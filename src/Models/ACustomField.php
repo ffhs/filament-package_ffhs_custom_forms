@@ -22,7 +22,7 @@ abstract class ACustomField extends Model
     use HasFactory;
     use HasTranslations;
 
-    public $translatable = ['name'];
+    public array $translatable = ['name'];
 
     /**
      * @throws FieldHasNoOrWrongCustomFieldTypeException
@@ -34,9 +34,11 @@ abstract class ACustomField extends Model
         }
 
         $typeClass = $this->getTypeClass();
+
         if (is_null($typeClass)) {
             throw new FieldHasNoOrWrongCustomFieldTypeException($this->type);
         }
+
         return $this->getTypeClass()::make();
     }
 
@@ -45,10 +47,13 @@ abstract class ACustomField extends Model
         if ($this instanceof CustomField && $this->isTemplate()) {
             return TemplateFieldType::class;
         }
+
         $typeName = $this->type;
+
         if (is_null($typeName)) {
             return null;
         }
+
         return CustomFieldType::getTypeClassFromIdentifier($typeName);
     }
 }

@@ -34,16 +34,17 @@ class EmbeddedCustomForm extends Field implements CanEntangleWithSingularRelatio
 
     public function getChildComponents(): array
     {
-        return once(function () {
-            return $this->getFormSchema($this);
-        });
+        return once(fn() => $this->getFormSchema($this));
     }
 
     public function fillFromRelationship(): void
     {
         $data = $this->loadAnswerData($this);
         $data = $this->mutateRelationshipDataBeforeFill($data);
-        $this->getChildComponentContainer()->fill($data, andCallHydrationHooks: false, andFillStateWithNull: false);
+
+        $this
+            ->getChildComponentContainer()
+            ->fill($data, andCallHydrationHooks: false, andFillStateWithNull: false);
     }
 
     public function getCustomFormAnswer(): null|Model|CustomFormAnswer
@@ -51,7 +52,9 @@ class EmbeddedCustomForm extends Field implements CanEntangleWithSingularRelatio
         if (is_null($this->getRelationshipName())) {
             return $this->getRecord();
         }
+
         $customFormAnswer = $this->getCachedExistingRecord();
+
         if (!is_null($customFormAnswer)) {
             return $customFormAnswer;
         }
@@ -59,6 +62,7 @@ class EmbeddedCustomForm extends Field implements CanEntangleWithSingularRelatio
         return once(function () {
             //ToDo Test
             $customFormFallback = $this->getFallbackCustomForm();
+
             if (is_null($customFormFallback)) {
                 return null;
             }
@@ -78,18 +82,22 @@ class EmbeddedCustomForm extends Field implements CanEntangleWithSingularRelatio
 
     public function getCustomForm(): ?CustomForm
     {
-        return $this->getCustomFormAnswer()?->customForm;
+        return $this
+            ->getCustomFormAnswer()
+            ?->customForm;
     }
 
     public function runAutoSave(EmbeddedCustomForm $component, HasForms $livewire, array $state): void
     {
         $customFormAnswer = $component->getCustomFormAnswer();
+
         if (is_null($customFormAnswer) || !$component->isAutoSaving()) {
             return;
         }
 
         if ($component->getRelationshipName()) {
             $component->saveCustomFormAnswerRelation($component, $livewire, $state);
+
             return;
         }
 
@@ -104,21 +112,20 @@ class EmbeddedCustomForm extends Field implements CanEntangleWithSingularRelatio
 
     protected function setUp(): void
     {
-        $this->autoViewMode();
-        $this->label('');
-        $this->columns(1);
-
-        //AutoSave
-        $this->live(condition: $this->isAutoSaving(...));
-        $this->afterStateUpdated($this->runAutoSave(...));
-
-        //RelationSave
-        $this->saveRelationshipsUsing(function (EmbeddedCustomForm $component, HasForms $livewire) {
-            $data = $component
-                ->getChildComponentContainer()
-                ->getState(shouldCallHooksBefore: false);
-            $this->saveCustomFormAnswerRelation($component, $livewire, $data);
-        });
+        $this
+            ->autoViewMode()
+            ->label('')
+            ->columns(1)
+            //AutoSave
+            ->live(condition: $this->isAutoSaving(...))
+            ->afterStateUpdated($this->runAutoSave(...))
+            //RelationSave
+            ->saveRelationshipsUsing(function (EmbeddedCustomForm $component, HasForms $livewire) {
+                $data = $component
+                    ->getChildComponentContainer()
+                    ->getState(shouldCallHooksBefore: false);
+                $this->saveCustomFormAnswerRelation($component, $livewire, $data);
+            });
     }
 
     protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
@@ -141,16 +148,21 @@ class EmbeddedCustomForm extends Field implements CanEntangleWithSingularRelatio
 
         if (!$customFormAnswer) {
             $customFormAnswer = $this->getCustomFormAnswer();
+
             if (is_null($customFormAnswer)) {
                 return;
             }
+
             $customFormAnswer->save();
         }
 
         $form = $component->getFilamentForm($component, $livewire);
         $data = $component->mutateRelationshipDataBeforeSave($state);
+
         $this->saveFormAnswer($customFormAnswer, $form, $component->getStatePath());
 
-        $customFormAnswer->fill($data)->save();
+        $customFormAnswer
+            ->fill($data)
+            ->save();
     }
 }

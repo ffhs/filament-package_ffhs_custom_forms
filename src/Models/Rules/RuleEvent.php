@@ -49,6 +49,7 @@ class RuleEvent extends Model
     public function getType(): EventType
     {
         $ruleEvents = config('ffhs_custom_forms.rule.event');
+
         return collect($ruleEvents)->firstWhere(fn($type) => $type::identifier() === $this->type)::make();
     }
 }

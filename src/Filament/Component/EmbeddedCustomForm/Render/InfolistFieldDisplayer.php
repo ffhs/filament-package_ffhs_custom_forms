@@ -17,13 +17,16 @@ class InfolistFieldDisplayer implements FieldDisplayer
         protected CustomFormAnswer $formAnswer,
         protected ?string $path = null
     ) {
-        $this->fieldAnswers = $formAnswer->customFieldAnswers;
-        $this->fieldAnswers = $this->fieldAnswers->filter(function ($item) use ($path) {
-            if (is_null($item['path']) || is_null($path)) {
-                return is_null($item['path']) && is_null($path);
-            }
-            return str_contains($item['path'], $path);
-        })->keyBy('custom_field_id');
+        $this->fieldAnswers = $formAnswer
+            ->customFieldAnswers
+            ->filter(function ($item) use ($path) {
+                if (is_null($item['path']) || is_null($path)) {
+                    return is_null($item['path']) && is_null($path);
+                }
+
+                return str_contains($item['path'], $path);
+            })
+            ->keyBy('custom_field_id');
     }
 
     public static function make(
@@ -36,7 +39,10 @@ class InfolistFieldDisplayer implements FieldDisplayer
     public function __invoke(string $viewMode, CustomField $customField, array $parameter): Component
     {
         /** @var CustomFormAnswer $answer */
-        $answer = $this->fieldAnswers->get($customField->id);
+        $answer = $this
+            ->fieldAnswers
+            ->get($customField->id);
+
         if (is_null($answer)) {
             $answer = new CustomFieldAnswer();
             $answer->answer = null;
@@ -47,9 +53,10 @@ class InfolistFieldDisplayer implements FieldDisplayer
 
         $answer->setRelation('customField', $customField);
         $answer->setRelation('customFormAnswer', $this->formAnswer);
-
         $answer->setRelation('customForm', $customField->customForm);
-        return $customField->getType()
+
+        return $customField
+            ->getType()
             ->getInfolistComponent($answer, $viewMode, $parameter);
     }
 }

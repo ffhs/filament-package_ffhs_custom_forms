@@ -27,12 +27,14 @@ class TypeOptionGroup
         foreach ($typeOptions as $key => $typeOption) {
             $this->addTypeOptions($key, $typeOption);
         }
+
         return $this;
     }
 
     public function addTypeOptions($key, TypeOption $typeOption): static
     {
         $this->typeOptions[$key] = $typeOption;
+
         return $this;
     }
 
@@ -40,10 +42,12 @@ class TypeOptionGroup
     {
         return once(function () {
             $data = [];
+
             foreach ($this->getTypeOptions() as $key => $extraTypeOption) {
                 /**@var TypeOption $extraTypeOption */
                 $data[] = $extraTypeOption->getModifyOptionComponent($key);
             }
+
             return Section::make($this->getName())
                 ->icon($this->getIcon())
                 ->collapsible()
@@ -62,6 +66,7 @@ class TypeOptionGroup
     public function setTypeOptions(array $typeOptions): static
     {
         $this->typeOptions = $typeOptions;
+
         return $this;
     }
 
@@ -73,6 +78,7 @@ class TypeOptionGroup
     public function setName(string $name): TypeOptionGroup
     {
         $this->name = $name;
+
         return $this;
     }
 
@@ -84,12 +90,14 @@ class TypeOptionGroup
     public function setIcon(?string $icon): TypeOptionGroup
     {
         $this->icon = $icon;
+
         return $this;
     }
 
     public function removeTypeOption(string $key): static
     {
         unset($this->typeOptions[$key]);
+
         return $this;
     }
 }

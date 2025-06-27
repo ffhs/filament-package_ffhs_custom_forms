@@ -21,18 +21,20 @@ class ViewCustomFormAnswer extends ViewRecord
 
     public function getTitle(): string|Htmlable
     {
-        $attributes = $this->getRecord()->attributesToArray();
+        $attributes = $this
+            ->getRecord()
+            ->attributesToArray();
+
         return trans(CustomFormAnswer::__('pages.view.title'), $attributes);
     }
 
     public function infolist(Infolist $infolist): Infolist
     {
-        return $infolist
-            ->schema([
-                EmbeddedAnswerInfolist::make()
-                    ->autoViewMode()
-                    ->columnSpanFull()
-            ]);
+        return $infolist->schema([
+            EmbeddedAnswerInfolist::make()
+                ->autoViewMode()
+                ->columnSpanFull()
+        ]);
     }
 
     protected function getHeaderActions(): array

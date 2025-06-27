@@ -22,11 +22,11 @@ trait CanExportFieldInformation
     public function exportFields(array $structure, Collection &$customFields): array
     {
         $exportedFields = [];
+
         foreach ($structure as $customFieldIdentifier => $subStructure) {
             /**@var CustomField $field */
             $field = $customFields->get($customFieldIdentifier);
             $rawFieldData = $field->toArray();
-
             $fieldData = [];
 
             if (!empty($rawFieldData['options'])) {
@@ -45,13 +45,14 @@ trait CanExportFieldInformation
 
                 //Options
                 if ($field->customOptions->isNotEmpty()) {
-
-                    $fieldData['customOptions'] = $field->customOptions->map(function (CustomOption $option) {
-                        $optionData = $option->toArray();
-                        $optionData['name'] = $option->translations['name'];
-                        return $optionData;
-                    })->toArray();
-
+                    $fieldData['customOptions'] = $field
+                        ->customOptions
+                        ->map(function (CustomOption $option) {
+                            $optionData = $option->toArray();
+                            $optionData['name'] = $option->translations['name'];
+                            return $optionData;
+                        })
+                        ->toArray();
                 }
             }
 

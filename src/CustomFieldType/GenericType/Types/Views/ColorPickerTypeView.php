@@ -8,7 +8,9 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasDefaultViewComponent;
 use Filament\Forms\Components\ColorPicker;
+use Filament\Forms\Components\Component as FormsComponent;
 use Filament\Infolists\Components\ColorEntry;
+use Filament\Infolists\Components\Component as InfolistsComponent;
 
 class ColorPickerTypeView implements FieldTypeView
 {
@@ -18,9 +20,8 @@ class ColorPickerTypeView implements FieldTypeView
         CustomFieldType $type,
         CustomField $record,
         array $parameter = []
-    ): \Filament\Forms\Components\Component {
+    ): FormsComponent {
         $picker = $this->makeComponent(ColorPicker::class, $record);
-
         $colorType = $this->getOptionParameter($record, 'color_type');
         $picker = $picker->$colorType();
 
@@ -31,8 +32,7 @@ class ColorPickerTypeView implements FieldTypeView
         CustomFieldType $type,
         CustomFieldAnswer $record,
         array $parameter = []
-    ): \Filament\Infolists\Components\Component {
-        /**@var ColorEntry $colorEntry */
+    ): InfolistsComponent {
         return $this->makeComponent(ColorEntry::class, $record);
     }
 }

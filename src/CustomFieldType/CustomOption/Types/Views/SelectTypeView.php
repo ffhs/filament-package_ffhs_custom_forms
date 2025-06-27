@@ -9,8 +9,9 @@ use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\PrioritizeSelect;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasDefaultViewComponent;
-use Filament\Forms\Components\Component;
+use Filament\Forms\Components\Component as FormsComponent;
 use Filament\Forms\Components\Select;
+use Filament\Infolists\Components\Component as InfolistsComponent;
 use Filament\Infolists\Components\TextEntry;
 
 class SelectTypeView implements FieldTypeView
@@ -24,7 +25,7 @@ class SelectTypeView implements FieldTypeView
         CustomFieldType $type,
         CustomField $record,
         array $parameter = []
-    ): Component {
+    ): FormsComponent {
         $several = $this->getOptionParameter($record, 'several');
         $prioritized = $this->getOptionParameter($record, 'prioritized');
 
@@ -38,7 +39,7 @@ class SelectTypeView implements FieldTypeView
     public function getPrioritizedSelect(
         CustomField $record,
         array $parameter
-    ): Component|\Filament\Infolists\Components\Component {
+    ): FormsComponent|InfolistsComponent {
         /**@var PrioritizeSelect $select */
         $select = $this->makeComponent(PrioritizeSelect::class, $record);
 
@@ -51,6 +52,7 @@ class SelectTypeView implements FieldTypeView
         foreach ($validationMessagesRaw as $message) {
             $validationMessages[$message['select_id'] ?? ''][$message['rule'] ?? ''] = $message['message'] ?? '';
         }
+
         return $select
             ->minItems($this->getOptionParameter($record, 'min_select'))
             ->maxItems($this->getOptionParameter($record, 'max_select'))
@@ -59,6 +61,7 @@ class SelectTypeView implements FieldTypeView
             ->mutateSelectUsing(
                 function (Select $select, $selectId) use ($validationMessages, $labels, $selectLabelTranslation) {
                     $label = $selectId + 1 . '. ' . $selectLabelTranslation;
+
                     if (array_key_exists($selectId, $labels)) {
                         $label = $labels[$selectId]['label'] ?? '';
                     }
@@ -80,11 +83,15 @@ class SelectTypeView implements FieldTypeView
 
         if ($this->getOptionParameter($record, 'several')) {
             $maxItems = $this->getOptionParameter($record, 'max_select');
-            $select = $select->multiple()->minItems($minItems);
+            $select = $select
+                ->multiple()
+                ->minItems($minItems);
+
             if ($maxItems > 0) {
                 $select->maxItems($maxItems);
             }
         }
+
         return $select;
     }
 
@@ -92,7 +99,7 @@ class SelectTypeView implements FieldTypeView
         CustomFieldType $type,
         CustomFieldAnswer $record,
         array $parameter = []
-    ): \Filament\Infolists\Components\Component {
+    ): InfolistsComponent {
         $several = $this->getOptionParameter($record, 'several');
         $prioritized = $this->getOptionParameter($record, 'prioritized');
 
@@ -103,17 +110,20 @@ class SelectTypeView implements FieldTypeView
         /**@var TextEntry $textEntry */
         $textEntry = $this->makeComponent(TextEntry::class, $record);
         $answer = $this->getAnswer($record) ?? [];
-        $stateList = $this->getAllCustomOptions($record)
+        $stateList = $this
+            ->getAllCustomOptions($record)
             ->filter(fn($value, $id) => in_array($id, $answer, false));
 
-        $cleanedAnswers = [];
         if (!is_array($answer)) {
             $answer = [];
         }
+
+        $cleanedAnswers = [];
         foreach ($answer as $key => $value) {
             if (is_null($value) || !str_contains($key, 'prioritized_')) {
                 continue;
             }
+
             $selectId = str_replace('prioritized_', '', $key);
 
             $name = $stateList->toArray()[$value] ?? '';

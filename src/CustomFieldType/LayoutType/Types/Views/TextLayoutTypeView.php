@@ -26,6 +26,7 @@ class TextLayoutTypeView implements FieldTypeView
 
         /**@var $placeholder Placeholder */
         $placeholder = $this->makeComponent(Placeholder::class, $record);
+
         return $placeholder
             ->content(new HtmlString($text))
             ->label('');
@@ -37,7 +38,8 @@ class TextLayoutTypeView implements FieldTypeView
         array $parameter = []
     ): Component {
         if (!$this->getOptionParameter($record, 'show_in_view')) {
-            return Group::make()->hidden();
+            return Group::make()
+                ->hidden();
         }
 
         $label = $this->getOptionParameter($record, 'show_label') ? $this->getLabelName($record) : '';

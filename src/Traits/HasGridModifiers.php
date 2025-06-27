@@ -12,9 +12,11 @@ trait HasGridModifiers
     public function getColumns($itemState): int|null
     {
         $columns = $itemState['options']['columns'] ?? null;
+
         if (!empty($columns)) {
             return $columns;
         }
+
         return $this->getStaticColumns();
     }
 

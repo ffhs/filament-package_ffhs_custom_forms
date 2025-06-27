@@ -29,8 +29,11 @@ trait HasFormRules
         }
 
         if ($this->relationLoaded('rules')) {
-            $ownedRules = $this->rules->where('formRule.custom_form_id', $this->id);
+            $ownedRules = $this
+                ->rules
+                ->where('formRule.custom_form_id', $this->id);
             $this->setRelation('ownedRules', $ownedRules);
+
             return $ownedRules;
         }
 
@@ -43,8 +46,11 @@ trait HasFormRules
             return $this->getRelation('rules');
         }
 
-        $rules = $this->getRulesQuery()->get();
+        $rules = $this
+            ->getRulesQuery()
+            ->get();
         $this->setRelation('rules', $rules);
+
         return $rules;
     }
 
@@ -53,7 +59,6 @@ trait HasFormRules
         $templateIdQueries = CustomField::query()
             ->select('template_id')
             ->where('custom_form_id', $this->id);
-
         $formRulesQuery = FormRule::query()
             ->where('custom_form_id', $this->id)
             ->orWhereIn('custom_form_id', $templateIdQueries)

@@ -12,7 +12,8 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\Rule;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\RuleTrigger;
-use Filament\Infolists\Components\Group;
+use Filament\Forms\Components\Group as FormsGroup;
+use Filament\Infolists\Components\Group as InfolistsGroup;
 use Illuminate\Support\Collection;
 
 trait CanRenderCustomForm
@@ -26,7 +27,7 @@ trait CanRenderCustomForm
 
         //ToDo Maby add default con to FormConfiguration
         return [
-            \Filament\Forms\Components\Group::make($renderOutput[0])->columns(config('ffhs_custom_forms.default_column_count')),
+            FormsGroup::make($renderOutput[0])->columns(config('ffhs_custom_forms.default_column_count')),
         ];
     }
 
@@ -35,13 +36,13 @@ trait CanRenderCustomForm
         $form = $formAnswer->customForm;
         $customFields = $form->getOwnedFields();
 
-
         $render = InfolistFieldDisplayer::make($formAnswer);
         $renderOutput = $this->renderCustomForm($viewMode, $render, $form, $customFields);
 
         //ToDo Maby add default con to FormConfiguration
         return [
-            Group::make($renderOutput[0])->columns(config('ffhs_custom_forms.default_column_count')),
+            InfolistsGroup::make($renderOutput[0])
+                ->columns(config('ffhs_custom_forms.default_column_count')),
         ];
     }
 
@@ -98,8 +99,11 @@ trait CanRenderCustomForm
             'child_render' => fn() => []
         ];
 
-
-        for ($formPosition = $positionOffset + 1; $formPosition <= $customFields->count() + $positionOffset; $formPosition++) {
+        for (
+            $formPosition = $positionOffset + 1;
+            $formPosition <= $customFields->count() + $positionOffset;
+            $formPosition++
+        ) {
             /** @var CustomField $customField */
             $customField = $customFields->get($formPosition);
             $parameters = $defaultParameters;
@@ -152,7 +156,6 @@ trait CanRenderCustomForm
         CustomForm $customForm,
         Collection &$customFields,
     ): void {
-
         $rules
             ->map(fn(Rule $rule) => $rule->ruleTriggers)
             ->flatten(1)

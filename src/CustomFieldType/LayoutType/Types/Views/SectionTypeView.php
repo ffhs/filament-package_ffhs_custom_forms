@@ -7,9 +7,12 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldT
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasDefaultViewComponent;
-use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Component as FormsComponent;
+use Filament\Forms\Components\Section as FormsSection;
+use Filament\Infolists\Components\Component as InfolistsComponent;
 use Filament\Infolists\Components\Fieldset;
 use Filament\Infolists\Components\Group;
+use Filament\Infolists\Components\Section as InfolistsSection;
 
 class SectionTypeView implements FieldTypeView
 {
@@ -19,10 +22,11 @@ class SectionTypeView implements FieldTypeView
         CustomFieldType $type,
         CustomField $record,
         array $parameter = []
-    ): \Filament\Forms\Components\Component {
-        $section = Section::make($this->getLabelName($record));
+    ): FormsComponent {
+        $section = FormsSection::make($this->getLabelName($record));
         $section = $this->modifyFormComponent($section, $record);
-        /**@var $section Section */
+
+        /**@var $section FormsSection */
         return $section
             ->aside($this->getOptionParameter($record, 'aside'))
             ->schema($parameter['child_render']());
@@ -32,11 +36,13 @@ class SectionTypeView implements FieldTypeView
         CustomFieldType $type,
         CustomFieldAnswer $record,
         array $parameter = []
-    ): \Filament\Infolists\Components\Component {
+    ): InfolistsComponent {
         $schema = $parameter['child_render']();
 
         if (!$this->getOptionParameter($record, 'show_in_view')) {
-            return Group::make($schema)->columnStart(1)->columnSpanFull();
+            return Group::make($schema)
+                ->columnStart(1)
+                ->columnSpanFull();
         }
 
         if ($this->getOptionParameter($record, 'show_as_fieldset')) {
@@ -46,7 +52,7 @@ class SectionTypeView implements FieldTypeView
                 ->columnSpanFull();
         }
 
-        return \Filament\Infolists\Components\Section::make($this->getLabelName($record))
+        return InfolistsSection::make($this->getLabelName($record))
             ->schema($schema)
             ->columnStart(1)
             ->columnSpanFull();

@@ -33,18 +33,22 @@ abstract class CustomFieldType implements Type
     final public static function getSelectableGeneralFieldTypes(): array
     {
         $output = [];
+
         foreach (config('ffhs_custom_forms.selectable_general_field_types') as $typeClass) {
             $output[$typeClass::identifier()] = $typeClass;
         }
+
         return $output;
     }
 
     final public static function getSelectableFieldTypes(): array
     {
         $output = [];
+
         foreach (config('ffhs_custom_forms.selectable_field_types') as $typeClass) {
             $output[$typeClass::identifier()] = $typeClass;
         }
+
         return $output;
     }
 

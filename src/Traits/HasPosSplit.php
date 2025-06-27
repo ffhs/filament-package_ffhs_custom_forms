@@ -16,18 +16,21 @@ trait HasPosSplit
     public function usePoseSplit(bool|Closure $usePosSplit = true): static
     {
         $this->usePoseSplit = $usePosSplit;
+
         return $this;
     }
 
     public function poseSplitStart(int|Closure|null $poseSplitStart): static
     {
         $this->poseSplitStart = $poseSplitStart;
+
         return $this;
     }
 
     public function poseSplitEnd(int|Closure|null $poseSplitEnd): static
     {
         $this->poseSplitEnd = $poseSplitEnd;
+
         return $this;
     }
 
@@ -40,6 +43,7 @@ trait HasPosSplit
     {
         $beginPos = $this->getPoseSpiltStart();
         $endPos = $this->getPoseSpiltEnd();
+
         return $this->loadCustomAnswerData($answer, $beginPos, $endPos);
     }
 
@@ -48,6 +52,7 @@ trait HasPosSplit
         if (!$this->isUseFieldSplit()) {
             return null;
         }
+
         return $this->evaluate($this->poseSplitStart);
     }
 
@@ -56,6 +61,7 @@ trait HasPosSplit
         if (!$this->isUseFieldSplit()) {
             return null;
         }
+
         return $this->evaluate($this->poseSplitEnd);
     }
 }

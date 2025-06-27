@@ -55,6 +55,7 @@ class GeneralFieldResource extends Resource
     public static function getNavigationParentItem(): ?string
     {
         $title = GeneralField::__('navigation.parent');
+
         return empty($title) ? null : $title;
     }
 
@@ -90,7 +91,6 @@ class GeneralFieldResource extends Resource
                         ->map(fn($generalFieldForm) => $generalFieldForm->dynamicFormConfiguration())
                         ->map(fn(CustomFormConfiguration $class) => ($class)::displayName())
                     ),
-
                 ToggleColumn::make('is_active')
                     ->label(GeneralField::__('attributes.is_active.label')),
             ])
@@ -99,10 +99,8 @@ class GeneralFieldResource extends Resource
                 EditAction::make(),
                 DeleteAction::make(),
             ])
-            ->bulkActions([
-            ]);
+            ->bulkActions([]);
     }
-
 
     public static function getRelations(): array
     {

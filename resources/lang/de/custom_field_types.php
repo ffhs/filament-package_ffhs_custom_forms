@@ -4,7 +4,7 @@
 return [
     'text' => ['label' => 'Text'],
     'group' => ['label' => 'Gruppe'],
-    'email' => ['label' => 'Email'],
+    'email' => ['label' => 'E-Mail'],
     'number' => ['label' => 'Nummer'],
     'select' => ['label' => 'Auswahl'],
     'checkbox' => ['label' => 'Kästchen'],
@@ -32,5 +32,5 @@ return [
     'file_upload' => ['label' => 'Dokumente'],
     'repeater' => ['label' => 'Repeater'],
     'date_range' => ['label' => 'Bereich'],
-    'template' => ['label' => 'Template',],
+    'template' => ['label' => 'Template'],
 ];

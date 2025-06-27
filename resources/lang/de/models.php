@@ -83,8 +83,8 @@ return [
         ],
         'attributes' => [
             'is_active' => [
-                'active' => 'Aktive',
-                'not_active' => 'Nicht aktiv',
+                'active' => 'Aktiv',
+                'not_active' => 'Inaktiv',
             ]
         ],
         'actions' => [
@@ -97,7 +97,7 @@ return [
             'dissolve' => [
                 'label' => 'Auflösen',
                 'tooltip' => '',
-                'heading' => 'Möchten sie wirklich das Template \':name\' auflösen?'
+                'heading' => 'Möchten Sie wirklich das Template \':name\' auflösen?'
             ]
         ]
     ],
@@ -172,10 +172,9 @@ return [
                 'new_field_name' => 'Neues Feld'
             ],
             'general_field_adder' => [
-                'label' => 'Generelle felder',
+                'label' => 'Generelle Felder',
             ]
         ],
-
     ],
 
     'custom_form_answer' => [

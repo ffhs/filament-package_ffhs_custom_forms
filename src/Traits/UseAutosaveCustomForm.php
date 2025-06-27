@@ -11,6 +11,7 @@ trait UseAutosaveCustomForm
     public function autoSave(bool|Closure $isAutoSaving = true): static
     {
         $this->isAutoSaving = $isAutoSaving;
+
         return $this;
     }
 
@@ -18,5 +19,4 @@ trait UseAutosaveCustomForm
     {
         return $this->evaluate($this->isAutoSaving);
     }
-
 }

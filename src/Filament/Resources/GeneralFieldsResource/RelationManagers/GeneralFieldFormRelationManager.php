@@ -25,35 +25,34 @@ class GeneralFieldFormRelationManager extends RelationManager
 
     public function form(Form $form): Form
     {
-        return $form
-            ->schema([
-                Select::make('custom_form_identifier')
-                    ->label(GeneralFieldForm::__('attributes.custom_form_identifier_name.label'))
-                    ->helperText(GeneralFieldForm::__('attributes.custom_form_identifier_name.helper_text'))
-                    ->required()
-                    ->options(function ($livewire) {
-                        $generalField = $livewire->getOwnerRecord();
-                        $selectedIdentifiers = $generalField
-                            ->generalFieldForms
-                            ->map(fn(GeneralFieldForm $fieldForm) => $fieldForm->custom_form_identifier);
+        return $form->schema([
+            Select::make('custom_form_identifier')
+                ->label(GeneralFieldForm::__('attributes.custom_form_identifier_name.label'))
+                ->helperText(GeneralFieldForm::__('attributes.custom_form_identifier_name.helper_text'))
+                ->required()
+                ->options(function ($livewire) {
+                    $generalField = $livewire->getOwnerRecord();
+                    $selectedIdentifiers = $generalField
+                        ->generalFieldForms
+                        ->map(fn(GeneralFieldForm $fieldForm) => $fieldForm->custom_form_identifier);
 
-                        return collect(CustomForms::getFormConfigurations())
-                            ->filter(function (CustomFormConfiguration $configuration) use ($selectedIdentifiers) {
-                                return $selectedIdentifiers->contains($configuration);
-                            })
-                            ->mapWithKeys(fn(CustomFormConfiguration $configuration) => [
-                                $configuration::identifier() => $configuration::displayName()
-                            ]);
-                    }),
-                Group::make([
-                    Toggle::make('is_required')
-                        ->label(GeneralFieldForm::__('attributes.is_required'))
-                        ->default(true),
-                    Toggle::make('export')
-                        ->label(GeneralFieldForm::__('attributes.export'))
-                        ->default(false),
-                ])
-            ]);
+                    return collect(CustomForms::getFormConfigurations())
+                        ->filter(
+                            fn(CustomFormConfiguration $configuration) => $selectedIdentifiers->contains($configuration)
+                        )
+                        ->mapWithKeys(fn(CustomFormConfiguration $configuration) => [
+                            $configuration::identifier() => $configuration::displayName()
+                        ]);
+                }),
+            Group::make([
+                Toggle::make('is_required')
+                    ->label(GeneralFieldForm::__('attributes.is_required'))
+                    ->default(true),
+                Toggle::make('export')
+                    ->label(GeneralFieldForm::__('attributes.export'))
+                    ->default(false),
+            ])
+        ]);
     }
 
     public function table(Table $table): Table

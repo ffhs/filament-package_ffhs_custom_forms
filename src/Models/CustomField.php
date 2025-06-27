@@ -101,11 +101,12 @@ class CustomField extends ACustomField implements NestingObject
     protected static function booted(): void
     {
         parent::booted();
-        self::creating(static function (CustomField $field) {#
+        self::creating(static function (CustomField $field) {
             //Set identifier key to on other
             if (empty($field->identifier()) && !$field->isGeneralField()) {
                 $field->identifier = uniqid();
             }
+
             return $field;
         });
     }
@@ -120,6 +121,7 @@ class CustomField extends ACustomField implements NestingObject
             if ('overwritten_options' === $key) {
                 return [];
             }
+
             return parent::__get($key);
         }
 
@@ -168,6 +170,7 @@ class CustomField extends ACustomField implements NestingObject
         if (!isset($this->template_id)) {
             return false;
         }
+
         return !empty($this->template_id);
     }
 
@@ -180,6 +183,7 @@ class CustomField extends ACustomField implements NestingObject
     {
         $ownOptions = parent::__get('options') ?? [];
         $overwrittenOptions = $this->generalField->overwrite_options ?? [];
+
         return [
             ... $ownOptions,
             ... $overwrittenOptions,

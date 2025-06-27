@@ -9,7 +9,8 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\RuleEvent;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\IsType;
-use Filament\Forms\Components\Component;
+use Filament\Forms\Components\Component as FormsComponent;
+use Filament\Infolists\Components\Component as InfolistsComponent;
 use Illuminate\Support\Collection;
 
 
@@ -26,22 +27,20 @@ abstract class FormRuleEventType implements EventType
     {
         switch ($arguments['action']) {
             case 'before_render':
-                return $this->handlerBeforeRun($triggers, $arguments, $target, $rule);;
+                return $this->handlerBeforeRun($triggers, $arguments, $target, $rule);
             //case 'mutate_parameters': return $this->handleParameterMutation($triggers, $arguments, $target, $rule);
             case 'after_render':
-                if (is_array($target) && (array_values($target)[0] ?? '') instanceof Component) {
+                if (is_array($target) && (array_values($target)[0] ?? '') instanceof FormsComponent) {
                     $handler = $this->handleAfterRenderForm(...);
                 } else {
                     $handler = $this->handleAfterRenderInfolist(...);
                 }
 
                 return $this->subHandlerRun($handler, $triggers, $arguments, $target, $rule);
-
             case 'load_answer':
                 return $this->handleAnswerLoadMutation($triggers, $arguments, $target, $rule);
             case 'save_answer':
                 return $this->handleAnswerSaveMutation($triggers, $arguments, $target, $rule);
-
             default:
                 return null;
         }
@@ -55,6 +54,7 @@ abstract class FormRuleEventType implements EventType
     public function getCustomField($arguments): ?CustomField
     {
         $identifier = $arguments['identifier'];
+
         return $arguments['custom_fields']->get($identifier);
     }
 
@@ -70,18 +70,18 @@ abstract class FormRuleEventType implements EventType
     public function handleAfterRenderForm(
         Closure $triggers,
         array $arguments,
-        Component &$component,
+        FormsComponent &$component,
         RuleEvent $rule
-    ): Component {
+    ): FormsComponent {
         return $component;
     }
 
     public function handleAfterRenderInfolist(
         Closure $triggers,
         array $arguments,
-        \Filament\Infolists\Components\Component &$component,
+        InfolistsComponent &$component,
         RuleEvent $rule
-    ): \Filament\Infolists\Components\Component {
+    ): InfolistsComponent {
         return $component;
     }
 
@@ -96,10 +96,12 @@ abstract class FormRuleEventType implements EventType
             if ($item instanceof CustomField) {
                 $identifier = $item;
             }
-            $modifiedTrigger = function (array $extraOptions = []) use ($identifier, $triggers) {
-                return $triggers(array_merge(['target_field_identifier' => $identifier], $extraOptions));
-            };
+
+            $modifiedTrigger = fn(array $extraOptions = []) => $triggers(
+                array_merge(['target_field_identifier' => $identifier], $extraOptions)
+            );
             $arguments['identifier'] = $identifier;
+
             return $this->handleBeforeRender($modifiedTrigger, $arguments, $item, $rule);
         });
     }
@@ -111,13 +113,12 @@ abstract class FormRuleEventType implements EventType
         array &$target,
         RuleEvent $rule
     ): mixed {
-
         foreach ($target as $identifier => $item) {
-            /**@var CustomField|Component|\Filament\Infolists\Components\Component $item */
+            /**@var CustomField|FormsComponent|InfolistsComponent $item */
             //dump($identifier, $item);
-            $modifiedTrigger = function (array $extraOptions = []) use ($identifier, $triggers) {
-                return $triggers(array_merge(['target_field_identifier' => $identifier], $extraOptions));
-            };
+            $modifiedTrigger = fn(array $extraOptions = []) => $triggers(
+                array_merge(['target_field_identifier' => $identifier], $extraOptions)
+            );
             $arguments['identifier'] = $identifier;
             $target[$identifier] = $subFunction($modifiedTrigger, $arguments, $item, $rule);
         }
@@ -142,5 +143,4 @@ abstract class FormRuleEventType implements EventType
     ): mixed {
         return $target;
     }
-
 }

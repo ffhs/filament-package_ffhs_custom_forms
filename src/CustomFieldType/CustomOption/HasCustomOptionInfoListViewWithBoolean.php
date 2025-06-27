@@ -18,7 +18,6 @@ trait HasCustomOptionInfoListViewWithBoolean
         CustomFieldAnswer $record,
         array $parameter = []
     ): Component {
-
         if (!$this->getOptionParameter($record, 'boolean')) {
             return $this->getBasicInfolistComponent($type, $record, $parameter);
         }

@@ -15,7 +15,9 @@ class CustomFormTypeSelector extends Select
     protected function setUp(): void
     {
         parent::setUp();
-        $this->label(CustomForm::__('attributes.custom_form_identifier'))
+
+        $this
+            ->label(CustomForm::__('attributes.custom_form_identifier'))
             ->options($this->getTypeOptions());
     }
 
@@ -23,6 +25,7 @@ class CustomFormTypeSelector extends Select
     {
         $keys = array_map(fn($config) => $config::identifier(), config('ffhs_custom_forms.forms'));
         $values = array_map(fn($config) => $config::displayName(), config('ffhs_custom_forms.forms'));
+
         return array_combine($keys, $values);
     }
 }

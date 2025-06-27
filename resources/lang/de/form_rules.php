@@ -38,6 +38,6 @@ return [
             ],
         ],
         'infolist_view' => ['label' => 'Wenn Infolist ist'],
-        'always' => ['label' => 'Immer Aktive'],
+        'always' => ['label' => 'Immer Aktiv'],
     ],
 ];

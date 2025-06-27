@@ -21,7 +21,6 @@ class CreateCustomFormAnswer extends CreateRecord
         return CustomFormAnswer::__('pages.create.title');
     }
 
-
     public function form(Form $form): Form
     {
         return $form->schema([

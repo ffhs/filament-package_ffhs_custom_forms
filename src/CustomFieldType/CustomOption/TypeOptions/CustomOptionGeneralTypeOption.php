@@ -40,7 +40,8 @@ class CustomOptionGeneralTypeOption extends TypeOption
                     }
                 }
                 $set($name, $state);
-            })->schema(fn($record) => once(fn() => [
+            })
+            ->schema(fn($record) => once(fn() => [
                 TextInput::make('name')
                     ->label(CustomOption::__('name.label'))
                     ->helperText(CustomOption::__('identifier.helper_text'))

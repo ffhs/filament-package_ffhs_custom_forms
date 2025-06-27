@@ -18,6 +18,7 @@ class CheckboxTypeView implements FieldTypeView
     {
         /**@var $checkbox Checkbox */
         $checkbox = $this->makeComponent(Checkbox::class, $record);
+
         return $checkbox;
     }
 

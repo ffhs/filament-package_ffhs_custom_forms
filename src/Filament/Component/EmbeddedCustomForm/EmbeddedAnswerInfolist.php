@@ -24,6 +24,7 @@ class EmbeddedAnswerInfolist extends Component
         $static = app(static::class, ['viewMode' => $viewMode]);
         $static->configure();
         $static->customFormAnswer(fn($record) => $record);
+
         return $static;
     }
 
@@ -36,6 +37,7 @@ class EmbeddedAnswerInfolist extends Component
     public function customFormAnswer(CustomFormAnswer|Closure $answer): static
     {
         $this->answer = $answer;
+
         return $this;
     }
 
@@ -52,10 +54,12 @@ class EmbeddedAnswerInfolist extends Component
     protected function setUp(): void
     {
         parent::setUp();
-        $this->columns(1);
-        $this->schema(fn() => once(fn() => $this->getCustomFormSchema()));
-        $this->label('');
-        $this->autoViewMode();
+
+        $this
+            ->columns(1)
+            ->schema(fn() => once(fn() => $this->getCustomFormSchema()))
+            ->label('')
+            ->autoViewMode();
     }
 
     protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array

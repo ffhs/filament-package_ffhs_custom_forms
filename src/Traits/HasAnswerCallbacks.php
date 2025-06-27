@@ -28,6 +28,7 @@ trait HasAnswerCallbacks
         if (is_null($data)) {
             return null;
         }
+
         return ['saved' => $data];
     }
 
@@ -36,17 +37,15 @@ trait HasAnswerCallbacks
         if (is_null($data) || !array_key_exists('saved', $data) || is_null($data['saved'])) {
             return null;
         }
+
         return $data['saved'];
     }
 
     public function isEmptyAnswer(CustomFieldAnswer $customFieldAnswer, ?array $fieldAnswererData): bool
     {
-        if (empty($fieldAnswererData)) {
-            return true;
-        }
-        if (empty($fieldAnswererData['saved'] ?? []) && sizeof($fieldAnswererData) === 1 && !is_bool($fieldAnswererData['saved'])) {
-            return true;
-        }
-        return false;
+        return empty($fieldAnswererData)
+            || (empty($fieldAnswererData['saved'] ?? [])
+                && sizeof($fieldAnswererData) === 1
+                && !is_bool($fieldAnswererData['saved']));
     }
 }

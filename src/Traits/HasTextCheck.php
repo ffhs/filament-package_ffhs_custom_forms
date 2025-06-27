@@ -10,10 +10,7 @@ trait HasTextCheck
 {
     protected function checkText(mixed $targetValue, array $data): bool
     {
-        if (!is_string($targetValue)) {
-            return false;
-        }
-        if (empty($data['values'])) {
+        if (!is_string($targetValue) || empty($data['values'])) {
             return false;
         }
 

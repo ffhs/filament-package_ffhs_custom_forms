@@ -12,10 +12,11 @@ class FieldAdders extends Fieldset
     {
         parent::setUp();
 
-        $this->columnStart(1);
-        $this->columnSpan(1);
-        $this->columns(1);
-        $this->schema($this->getAdders(...));
+        $this
+            ->columnStart(1)
+            ->columnSpan(1)
+            ->columns(1)
+            ->schema($this->getAdders(...));
     }
 
     protected function getAdders(?CustomForm $record): array
@@ -23,10 +24,9 @@ class FieldAdders extends Fieldset
         if (is_null($record)) {
             return [];
         }
-        return once(static function () use ($record) {
-            return collect($record->getFormConfiguration()::editorFieldAdder())
-                ->map(fn(string|CustomFieldTypeAdder $class) => $class::make())
-                ->toArray();
-        });
+
+        return once(static fn() => collect($record->getFormConfiguration()::editorFieldAdder())
+            ->map(fn(string|CustomFieldTypeAdder $class) => $class::make())
+            ->toArray());
     }
 }

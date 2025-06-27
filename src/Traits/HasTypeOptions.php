@@ -53,6 +53,7 @@ trait HasTypeOptions
     public function getFlattenTypeOptions(array $typeOptions): array
     {
         $options = [];
+
         foreach ($typeOptions as $key => $extraTypeOption) {
             if ($extraTypeOption instanceof TypeOptionGroup) {
                 $options = [
@@ -61,9 +62,11 @@ trait HasTypeOptions
                 ];
                 continue;
             }
+
             /**@var TypeOption $extraTypeOption */
             $options[$key] = $extraTypeOption;
         }
+
         return $options;
     }
 
@@ -72,12 +75,15 @@ trait HasTypeOptions
         if (empty($options)) {
             return [];
         }
+
         $components = [];
+
         foreach ($options as $key => $option) {
             /**@var TypeOption|TypeOptionGroup $option */
             $component = $option->getModifyOptionComponent($key);
             $components[] = $component;
         }
+
         return $components;
     }
 

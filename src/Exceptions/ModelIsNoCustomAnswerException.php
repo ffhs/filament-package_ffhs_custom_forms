@@ -2,7 +2,8 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Exceptions;
 
-class ModelIsNoCustomAnswerException extends \RuntimeException
-{
+use RuntimeException;
 
+class ModelIsNoCustomAnswerException extends RuntimeException
+{
 }

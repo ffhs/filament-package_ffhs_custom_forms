@@ -22,6 +22,7 @@ class EditTypeOptionModal extends Component
     protected function setUp(): void
     {
         parent::setUp();
+
         $this->schema($this->getTypeOptionSchema(...));
     }
 
@@ -33,7 +34,9 @@ class EditTypeOptionModal extends Component
             $field->fill($state);
 
             $disabledOption = $field->overwritten_options;
-            $components = $field->getType()->getExtraTypeOptionComponents();
+            $components = $field
+                ->getType()
+                ->getExtraTypeOptionComponents();
 
             foreach ($components as $item) {
                 $items = ($item instanceof Field) ? [$item] : $item->getChildComponents();

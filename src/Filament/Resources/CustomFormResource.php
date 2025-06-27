@@ -40,6 +40,7 @@ class CustomFormResource extends Resource
     public static function getNavigationParentItem(): ?string
     {
         $title = CustomForm::__('navigation.parent');
+
         return empty($title) ? null : $title;
     }
 

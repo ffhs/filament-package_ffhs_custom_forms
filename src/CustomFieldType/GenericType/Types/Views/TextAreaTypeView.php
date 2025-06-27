@@ -17,7 +17,8 @@ class TextAreaTypeView implements FieldTypeView
 
     public function getFormComponent(CustomFieldType $type, CustomField $record, array $parameter = []): Textarea
     {
-        return $this->makeComponent(Textarea::class, $record)
+        return $this
+            ->makeComponent(Textarea::class, $record)
             ->autosize($this->getOptionParameter($record, 'auto_size'));
     }
 

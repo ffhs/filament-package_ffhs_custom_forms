@@ -19,6 +19,7 @@ trait HasAllFieldDataFromFormData
             ->flatMap(fn($templateData) => CustomForms::getCustomFormFromId($templateData['template_id'])->customFields)
             ->mapWithKeys(function (CustomField $customField) use ($customForm) {
                 $customField = $this->loadFieldRelationsFromForm($customField, $customForm);
+
                 return [$customField->identifier() => $this->loadEditorField($customField)];
             });
 
@@ -26,6 +27,7 @@ trait HasAllFieldDataFromFormData
             ->mapWithKeys(function (array $field) use ($customForm) {
                 $customField = app(CustomField::class)->fill($field);
                 $customField = $this->loadFieldRelationsFromForm($customField, $customForm);
+
                 return [$customField->identifier() => $field];
             })
             ->merge($fieldsFromTemplate)

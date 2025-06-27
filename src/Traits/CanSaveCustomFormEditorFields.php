@@ -21,14 +21,21 @@ trait CanSaveCustomFormEditorFields
         CustomField::upsert($fieldsToSaveData, ['id']);
         CustomField::insert($fieldsToCreateData);
 
-        $savedFields = $form->ownedFields()->get();
-        $generalFields = $form->getFormConfiguration()->getAvailableGeneralFields();
+        $savedFields = $form
+            ->ownedFields()
+            ->get();
+        $generalFields = $form
+            ->getFormConfiguration()
+            ->getAvailableGeneralFields();
+
         $rawData = $rawData->mapWithKeys(function (array $fieldData) use ($generalFields) {
             if (!isset($fieldData['general_field_id'])) {
                 return [$fieldData['identifier'] => $fieldData];
             }
+
             /**@var null|GeneralField $genField */
             $genField = $generalFields->firstWhere('id', $fieldData['general_field_id']);
+
             return [$genField?->identifier => $fieldData];
         });
 
@@ -37,7 +44,9 @@ trait CanSaveCustomFormEditorFields
             ->whereIn('id', $usedIds)
             ->each(function (CustomField $field) use ($rawData): void {
                 $data = $rawData->get($field->identifier, []);
-                $field->getType()->doAfterSaveField($field, $data);
+                $field
+                    ->getType()
+                    ->doAfterSaveField($field, $data);
             });
 
         //Run after Create
@@ -45,7 +54,9 @@ trait CanSaveCustomFormEditorFields
             ->whereNotIn('id', $usedIds)
             ->each(function (CustomField $field) use ($rawData): void {
                 $data = $rawData->get($field->identifier, []);
-                $field->getType()->doAfterCreateField($field, $data);
+                $field
+                    ->getType()
+                    ->doAfterCreateField($field, $data);
             });
     }
 
@@ -63,7 +74,6 @@ trait CanSaveCustomFormEditorFields
         $fieldsToCreate = $this->cleanUpCustomFieldData($fieldsToCreate);
         $fieldsToSaveData = $this->cleanUpCustomFieldData($fieldsToSaveData);
 
-
         //Create and Updating
         $this->updatingCustomFields($fieldsToCreate, $fieldsToSaveData, $usedIds, $form, $rawFields);
     }
@@ -73,9 +83,7 @@ trait CanSaveCustomFormEditorFields
         $oldFields = $oldFields->keyBy('id');
         $fieldsToSaveData = [];
         $fieldsToCreate = [];
-
         $usedIds = [];
-
         $now = now();
 
         //Prepare Save and Create Data
@@ -85,6 +93,7 @@ trait CanSaveCustomFormEditorFields
             if (!empty($field['id'])) {
                 $usedIds[] = $field['id'];
                 $customField = $oldFields->get($field['id']) ?? app(CustomField::class);
+
                 if (!$customField->id) {
                     unset($field['id']);
                 }

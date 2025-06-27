@@ -2,15 +2,16 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options;
 
+use Error;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\TypeOption;
 use Filament\Forms\ComponentContainer;
-use Filament\Forms\Components\Component;
+use Filament\Forms\Components\Component as FormsComponent;
 use Filament\Forms\Components\Field;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Get;
-use Filament\Infolists\Components\Component as InfolistComponent;
+use Filament\Infolists\Components\Component as InfolistsComponent;
 use Filament\Resources\Pages\EditRecord;
 
 class ValidationMessageOption extends TypeOption
@@ -20,7 +21,7 @@ class ValidationMessageOption extends TypeOption
         return [];
     }
 
-    public function getComponent(string $name): Component
+    public function getComponent(string $name): FormsComponent
     {
         return Repeater::make($name)
             ->label(TypeOption::__('validation_messages.label'))
@@ -44,18 +45,18 @@ class ValidationMessageOption extends TypeOption
             ->columnSpanFull();
     }
 
-    public function modifyFormComponent(Component|Field $component, mixed $value): Component
+    public function modifyFormComponent(FormsComponent|Field $component, mixed $value): FormsComponent
     {
         if (!is_array($value)) {
             $value = [];
         }
-        $value = collect($value)->mapWithKeys(function ($information) {
-            return [$information['rule'] => $information['message']];
-        });
+
+        $value = collect($value)->mapWithKeys(fn($information) => [$information['rule'] => $information['message']]);
+
         return $component->validationMessages($value->toArray());
     }
 
-    public function modifyInfolistComponent(InfolistComponent $component, mixed $value): InfolistComponent
+    public function modifyInfolistComponent(InfolistsComponent $component, mixed $value): InfolistsComponent
     {
         return $component;
     }
@@ -65,13 +66,9 @@ class ValidationMessageOption extends TypeOption
         try {
             $temporaryField = new CustomField();
             $temporaryField->fill($get('../../../'));
-            $rules = $temporaryField->getType()
-                ->getFormComponent(
-                    $temporaryField,
-                    $temporaryField->customForm,
-                    'default',
-                    ['renderer' => fn() => []]
-                )
+            $rules = $temporaryField
+                ->getType()
+                ->getFormComponent($temporaryField, $temporaryField->customForm, 'default', ['renderer' => fn() => []])
                 ->container(ComponentContainer::make(new EditRecord()))
                 ->getValidationRules();
 
@@ -80,7 +77,7 @@ class ValidationMessageOption extends TypeOption
                 ->unique()
                 ->filter(fn($preparedValue) => !in_array($preparedValue, ['nullable', 'array', null,], false))
                 ->toArray();
-        } catch (\Error $error) {
+        } catch (Error $error) {
             return [];
         }
     }

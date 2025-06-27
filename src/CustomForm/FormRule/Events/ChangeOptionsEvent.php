@@ -52,12 +52,14 @@ class ChangeOptionsEvent extends FormRuleEventType
         RuleEvent $rule
     ): Component {
         $identifier = $arguments['identifier'];
+
         if ($identifier !== ($rule->data['target'] ?? '')) {
             return $component;
         }
         if (!in_array(HasOptions::class, class_uses_recursive($component::class), true)) {
             return $component;
         }
+
         /** @var HasOptions|Component $component */
         $reflection = new ReflectionClass($component);
         $property = $reflection->getProperty('options');
@@ -79,10 +81,13 @@ class ChangeOptionsEvent extends FormRuleEventType
 
         if (!empty($field['general_field_id'])) {
             $customField = new TempCustomField($record, $field);
-            $genOptions = $customField->getGeneralField()->customOptions;
+            $genOptions = $customField
+                ->getGeneralField()
+                ->customOptions;
 
             $selectedOptions = $this->getTargetFieldData($get, $record)['options']['customOptions'] ?? [];
             $genOptions = $genOptions->whereIn('id', $selectedOptions);
+
             return $genOptions->pluck('name', 'identifier');
         }
 
@@ -92,9 +97,11 @@ class ChangeOptionsEvent extends FormRuleEventType
         if (!array_key_exists('customOptions', $field['options'])) {
             $field['options']['customOptions'] = [];
         }
+
         $options = $field['options']['customOptions'];
 
-        return collect($options)->pluck('name.' . $record->getLocale(), 'identifier');
+        return collect($options)
+            ->pluck('name.' . $record->getLocale(), 'identifier');
     }
 
     /**
@@ -113,10 +120,11 @@ class ChangeOptionsEvent extends FormRuleEventType
         RuleEvent $rule
     ): Closure {
         return static function ($get, $set) use ($identifier, $triggers, $optionsOld, $component, $rule) {
-            /**@var array|Collection $options */
             $triggered = $triggers(['state' => $get('.')]);
+            /**@var array|Collection $options */
             $options = $component->evaluate($optionsOld);
             $options = is_array($options) ? collect($options) : $options;
+
             if (!$triggered) {
                 return $options;
             }
@@ -128,9 +136,11 @@ class ChangeOptionsEvent extends FormRuleEventType
 
             //Check to replace the current value
             $currentValue = $get($identifier);
+
             if (is_array($currentValue)) {
                 //If Multiple
                 $diff = array_intersect($currentValue, array_keys($options));
+
                 if (sizeof($diff) !== sizeof($currentValue)) {
                     $set($identifier, $diff);
                 }
@@ -142,7 +152,6 @@ class ChangeOptionsEvent extends FormRuleEventType
         };
     }
 
-
     protected function getTargetOptions($get, ?CustomForm $record): array
     {
         if (is_null($record)) {
@@ -153,14 +162,15 @@ class ChangeOptionsEvent extends FormRuleEventType
         collect($this->getAllFieldsData($get, $record))
             ->map(function ($field) use ($record) {
                 $customField = new CustomField($field);
+
                 if ($customField->isGeneralField()) {
                     $genField = $record
                         ->getFormConfiguration()
                         ->getAvailableGeneralFields()
                         ->get($customField->general_field_id);
-
                     $customField->setRelation('generalField', $genField);
                 }
+
                 if ($customField->custom_form_id === $record->id) {
                     $customField->setRelation('customForm', $record);
                 } else {
@@ -176,6 +186,7 @@ class ChangeOptionsEvent extends FormRuleEventType
             ->filter(fn(CustomField $field) => $field->getType() instanceof CustomOptionType)
             ->each(function (CustomField $field) use ($record, &$output) {
                 $title = $field->customForm?->short_title;
+
                 if (empty($title)) {
                     $title = '?';
                 }

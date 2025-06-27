@@ -52,8 +52,7 @@ trait HasDefaultViewComponent
             }
         }
 
-        return $component
-            ->label($this->getLabelName($record));
+        return $component->label($this->getLabelName($record));
     }
 
     protected function modifyInfolistComponent(

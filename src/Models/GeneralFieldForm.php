@@ -53,17 +53,19 @@ class GeneralFieldForm extends Model
 
     public static function getFromFormIdentifier($formIdentifier): Collection
     {
-        return Cache::remember('general_filed_form-from-identifier_' . $formIdentifier, 5,
+        return Cache::remember(
+            'general_filed_form-from-identifier_' . $formIdentifier,
+            5,
             fn() => GeneralFieldForm::query()
                 ->where('custom_form_identifier', $formIdentifier)
                 ->get()
-
         );
     }
 
     public static function getGeneralFieldQuery(string $identifier): Builder
     {
-        return GeneralField::query()->whereIn('id',
+        return GeneralField::query()->whereIn(
+            'id',
             GeneralFieldForm::query()
                 ->select('general_field_id')
                 ->where('custom_form_identifier', $identifier)

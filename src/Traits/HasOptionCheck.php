@@ -36,6 +36,7 @@ trait HasOptionCheck
         if (is_array($targetValue)) {
             return sizeof(array_intersect($targetValue, $options)) > 0;
         }
+
         return !is_null($targetValue) && in_array($targetValue, $options, false);
     }
 
@@ -55,6 +56,7 @@ trait HasOptionCheck
     protected function getOptionTypeGroupOptions(Get $get, CustomForm $record): array|Collection
     {
         $finalField = $this->getTargetFieldData($get, $record);
+
         if (is_null($finalField)) {
             return [];
         }
@@ -64,12 +66,11 @@ trait HasOptionCheck
             $tempField = new TempCustomField($record, $finalField);
             $genField = $tempField->generalField;
 
-            if (!array_key_exists('options', $finalField)) {
+            if (!array_key_exists('options', $finalField)
+                || !array_key_exists('customOptions', $finalField['options'])) {
                 return [];
             }
-            if (!array_key_exists('customOptions', $finalField['options'])) {
-                return [];
-            }
+
             $options = collect($finalField['options']['customOptions']);
 
             return $genField->customOptions
@@ -78,13 +79,13 @@ trait HasOptionCheck
                 ->toArray();
         }
 
-        if (!array_key_exists('options', $finalField)) {
+        if (!array_key_exists('options', $finalField)
+            || !array_key_exists('customOptions', $finalField['options'])) {
             return [];
         }
-        if (!array_key_exists('customOptions', $finalField['options'])) {
-            return [];
-        }
+
         $options = collect($finalField['options']['customOptions']);
+
         return $options->pluck('name.' . $record->getLocale(), 'identifier');
     }
 }

@@ -2,7 +2,8 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Exceptions;
 
-class FormConfigurationNotDefinedException extends \RuntimeException
-{
+use RuntimeException;
 
+class FormConfigurationNotDefinedException extends RuntimeException
+{
 }

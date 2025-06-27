@@ -46,7 +46,6 @@ class RuleTrigger extends Model
         'data' => 'array',
     ];
 
-
     public function rule(): BelongsTo
     {
         return $this->belongsTo(Rule::class);
@@ -55,6 +54,7 @@ class RuleTrigger extends Model
     public function getType(): TriggerType
     {
         $configTriggers = config('ffhs_custom_forms.rule.trigger');
+
         return collect($configTriggers)->firstWhere(fn($type) => $type::identifier() === $this->type)::make();
     }
 }

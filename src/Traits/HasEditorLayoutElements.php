@@ -28,15 +28,18 @@ trait HasEditorLayoutElements
     public function getEditorFieldTitle(array $rawData, CustomForm $form): string
     {
         $customField = $this->getEditorCustomFieldFromData($rawData, $form);
+
         if (!$customField->isGeneralField()) {
             return $this->getTranslatedName();
         }
+
         return $customField->name;
     }
 
     public function getEditorFieldIcon(array $rawData, CustomForm $form): string
     {
         $customField = $this->getEditorCustomFieldFromData($rawData, $form);
+
         if (!$customField->isGeneralField()) {
             return $this->icon();
         }
@@ -66,21 +69,24 @@ trait HasEditorLayoutElements
     protected function getEditorCustomFieldFromData(array $rawData, CustomForm $form): CustomField
     {
         $customField = app(CustomField::class)->fill($rawData);
+
         if (!$customField->isGeneralField()) {
             return $customField;
         }
 
-        $generalField = $form->getFormConfiguration()
+        $generalField = $form
+            ->getFormConfiguration()
             ->getAvailableGeneralFields()
             ->get($customField->general_field_id);
-
         $customField->setRelation('generalField', $generalField);
+
         return $customField;
     }
 
     protected function getEditorFieldBadgeText(array $rawData): ?string
     {
         $customField = app(CustomField::class)->fill($rawData);
+
         return $customField->isGeneralField() ? 'Gen' : null;
     }
 

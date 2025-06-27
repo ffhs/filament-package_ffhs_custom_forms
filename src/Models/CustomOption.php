@@ -42,14 +42,14 @@ class CustomOption extends Model
     use HasCustomFormModelTranslations;
 
     protected static string $translationName = 'custom_option';
-    public $translatable = ['name'];
+    public array $translatable = ['name'];
     protected $fillable = [
         'name',
         'identifier',
         'icon',
     ];
 
-    protected static function booted()
+    protected static function booted(): void
     {
         parent::booted();
         self::creating(function (CustomOption $customOption) {

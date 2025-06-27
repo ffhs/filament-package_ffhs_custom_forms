@@ -95,14 +95,15 @@ class FileUploadType extends CustomFieldType
                                 if ($state) {
                                     return;
                                 }
+
                                 $set('reorderable', false);
                             })
                             ->live()
                     ),
                     'reorderable' => ReorderableTypeOption::make()
-                        ->modifyOptionComponent(function (Toggle $component) {
-                            return $component->hidden(fn($get) => !$get('multiple'));
-                        }),
+                        ->modifyOptionComponent(
+                            fn(Toggle $component) => $component->hidden(fn($get) => !$get('multiple'))
+                        ),
                     'preserve_filenames' => FastTypeOption::makeFast(
                         true,
                         Toggle::make('preserve_filenames')
@@ -129,7 +130,6 @@ class FileUploadType extends CustomFieldType
                             ->helperText(TypeOption::__('allowed_file_types.helper_text'))
                     ),
                 ]),
-
         ];
     }
 
@@ -146,6 +146,7 @@ class FileUploadType extends CustomFieldType
     ): void {
         try {
             $acceptedFileTypes = $component->getAcceptedFileTypes();
+
             foreach (Arr::wrap($component->getState()) as $key => $file) {
                 if (!$file instanceof TemporaryUploadedFile) {
                     continue;
@@ -158,10 +159,10 @@ class FileUploadType extends CustomFieldType
                     $component->deleteUploadedFile($key);
                 }
             }
+
             $state = array_filter($component->getState() ?? [], static fn($file) => !empty($file));
             $component->state($state);
             $component->saveUploadedFiles();
-
         } catch (RuntimeException $exception) {
             foreach (Arr::wrap($component->getState()) as $file) {
                 if ($file instanceof TemporaryUploadedFile && $file->exists()) {
@@ -183,6 +184,7 @@ class FileUploadType extends CustomFieldType
         if (parent::isEmptyAnswer($customFieldAnswer, $fieldAnswererData)) {
             return true;
         }
+
         return empty($fieldAnswererData['saved']['files']);
     }
 
@@ -193,6 +195,7 @@ class FileUploadType extends CustomFieldType
                 unset($data['files'][$key]);
             }
         }
+
         return parent::prepareToSaveAnswerData($answer, $data);
     }
 
@@ -203,6 +206,7 @@ class FileUploadType extends CustomFieldType
         }
 
         $data = parent::prepareLoadAnswerData($answer, $data);
+
         foreach ($data['files'] as $key => $file) {
             if (is_array($file)) {
                 unset($data['files'][$key]);

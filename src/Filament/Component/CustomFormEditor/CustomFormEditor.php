@@ -28,7 +28,6 @@ class CustomFormEditor extends Field implements CanEntangleWithSingularRelations
             ->columns(6)
             ->schema([
                 FieldAdders::make(),
-
                 FieldDragDropEditor::make('custom_fields')
                     ->label('')
                     ->columnStart(2)
@@ -49,36 +48,38 @@ class CustomFormEditor extends Field implements CanEntangleWithSingularRelations
     protected function setUp(): void
     {
         parent::setUp();
-        $this->columnSpanFull();
-        $this->columns(1);
 
-        $this->schema([
-            Tabs::make()
-                ->extraAttributes(['class' => 'overflow-y-auto scroll-smooth'])
-                ->columnSpanFull()
-                ->tabs([
-                    $this->getFormTab(),
-                    $this->getRuleTab()
-                ]),
-        ]);
-
-        $this->setupRelationships();
+        $this
+            ->columnSpanFull()
+            ->columns(1)
+            ->schema([
+                Tabs::make()
+                    ->extraAttributes(['class' => 'overflow-y-auto scroll-smooth'])
+                    ->columnSpanFull()
+                    ->tabs([
+                        $this->getFormTab(),
+                        $this->getRuleTab()
+                    ]),
+            ])
+            ->setupRelationships();
     }
 
     protected function setupRelationships(): void
     {
-        $this->mutateRelationshipDataBeforeFillUsing(function () {
-            $customForm = $this->getCachedExistingRecord();
-            if (is_null($customForm)) {
-                $customForm = new CustomForm();
-            }
-            return $this->loadCustomFormEditorData($customForm);
-        });
+        $this
+            ->mutateRelationshipDataBeforeFillUsing(function () {
+                $customForm = $this->getCachedExistingRecord();
 
-        $this->saveRelationshipsUsing(function ($state, CustomFormEditor $component) {
-            /**@var CustomForm $customForm */
-            $customForm = $component->getCachedExistingRecord();
-            $this->saveCustomFormEditorData($state, $customForm);
-        });
+                if (is_null($customForm)) {
+                    $customForm = new CustomForm();
+                }
+
+                return $this->loadCustomFormEditorData($customForm);
+            })
+            ->saveRelationshipsUsing(function ($state, CustomFormEditor $component) {
+                /**@var CustomForm $customForm */
+                $customForm = $component->getCachedExistingRecord();
+                $this->saveCustomFormEditorData($state, $customForm);
+            });
     }
 }

@@ -4,13 +4,14 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\TemplatesType;
 
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\FieldTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldType;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\Render\CustomFormRender;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanRenderCustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasStaticMake;
-use Filament\Forms\Components\Component;
-use Filament\Forms\Components\Group;
+use Filament\Forms\Components\Component as FormsComponent;
+use Filament\Forms\Components\Group as FormsGroup;
+use Filament\Infolists\Components\Component as InfolistsComponent;
+use Filament\Infolists\Components\Group as InfolistsGroup;
 
 class TemplateTypeView implements FieldTypeView
 {
@@ -21,11 +22,10 @@ class TemplateTypeView implements FieldTypeView
         TemplateFieldType|CustomFieldType $type,
         CustomField $record,
         array $parameter = []
-    ): Component {
-
+    ): FormsComponent {
         $schema = $this->renderTemplate($record, $parameter);
 
-        return Group::make($schema)
+        return FormsGroup::make($schema)
             ->columns(config('ffhs_custom_forms.default_column_count'))
             ->columnSpanFull();
     }
@@ -34,11 +34,10 @@ class TemplateTypeView implements FieldTypeView
         TemplateFieldType|CustomFieldType $type,
         CustomFieldAnswer $record,
         array $parameter = []
-    ): \Filament\Infolists\Components\Component {
-
+    ): InfolistsComponent {
         $schema = $this->renderTemplate($record, $parameter);
 
-        return \Filament\Infolists\Components\Group::make($schema)
+        return InfolistsGroup::make($schema)
             ->columnSpanFull();
     }
 
