@@ -5,7 +5,7 @@ esbuild.build({
         './resources/js/drag_drop/alpine_components/parent.js',
         './resources/js/drag_drop/alpine_components/element.js',
         './resources/js/drag_drop/alpine_components/container.js',
-        './resources/js/drag_drop/alpine_components/action.js'
+        './resources/js/drag_drop/alpine_components/action_group.js',
     ],
     outdir: './dist/js/drag-drop',
 

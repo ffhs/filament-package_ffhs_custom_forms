@@ -14,7 +14,9 @@ class DragDropAction extends Action
     use HasAlignment;
     use HasVerticalAlignment;
 
-    public function toFormComponent(): ActionContainer
+    protected string $view = 'filament-package_ffhs_custom_forms::filament.components.drag-drop.actions.action';
+
+    public function toFormComponent(): ActionContainer|DragDropActionContainer
     {
         $component = DragDropActionContainer::make($this);
 

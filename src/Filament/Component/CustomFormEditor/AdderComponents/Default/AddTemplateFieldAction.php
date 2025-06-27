@@ -19,7 +19,6 @@ class  AddTemplateFieldAction extends Action
             'is_active' => true,
             'identifier' => uniqid(),
         ];
-
         FormEditorFieldAdder::addNewField($component, $arguments, $livewire, $field);
 
         $customFields = $get($component->getStatePath(true) . '.custom_fields', true);
@@ -51,10 +50,9 @@ class  AddTemplateFieldAction extends Action
         $this
             ->closeModalByClickingAway(false)
             ->label(fn() => __('filament-package_ffhs_custom_forms::custom_forms.functions.add'))
-            ->requiresConfirmation(fn($arguments, $state) => $this->hasExistingFields(
-                $state('custom_fields'),
-                $this->getOption()
-            ))
+            ->requiresConfirmation(
+                fn($arguments, $state) => $this->hasExistingFields($state('custom_fields'), $this->getOption())
+            )
             ->modalHeading(function ($state) {
                 if (!$this->hasExistingFields($state, $this->getOption())) {
                     return '';
@@ -110,9 +108,7 @@ class  AddTemplateFieldAction extends Action
         foreach ($get($prefix . 'custom_fields') as $key => $customField) {
             if (!empty($customField['custom_fields'])) {
                 $subPrefix = $prefix . 'custom_fields.' . $key . '.';
-
                 $this->deletingExistingFields($get, $set, $overlappedIdentifier, $subPrefix);
-
                 $newFieldData = $get($prefix . 'custom_fields.' . $key);
                 $newFieldData['identifier'] = uniqid();
                 $toSet[$key] = $newFieldData;
