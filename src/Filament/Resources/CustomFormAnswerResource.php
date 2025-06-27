@@ -6,8 +6,8 @@ use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormAnswerResou
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormAnswerResource\Pages\EditCustomFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormAnswerResource\Pages\ListCustomFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormAnswerResource\Pages\ViewCustomFormAnswer;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteAction;
@@ -16,6 +16,7 @@ use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 
 class CustomFormAnswerResource extends Resource
 {
@@ -29,27 +30,34 @@ class CustomFormAnswerResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return __('filament-package_ffhs_custom_forms::custom_forms.navigation.group.forms');
-    }
-
-    public static function getNavigationLabel(): string
-    {
-        return __('filament-package_ffhs_custom_forms::custom_forms.navigation.custom_form_answer');
+        return CustomFormAnswer::__('navigation.group');
     }
 
     public static function getNavigationParentItem(): ?string
     {
-        return __('filament-package_ffhs_custom_forms::custom_forms.navigation.forms');
+        $title = CustomFormAnswer::__('navigation.parent');
+
+        return empty($title) ? null : $title;
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return CustomFormAnswer::__('label.multiple');
+    }
+
+    public static function getTitleCasePluralModelLabel(): string
+    {
+        return CustomFormAnswer::__('label.multiple');
+    }
+
+    public static function getTitleCaseModelLabel(): string
+    {
+        return CustomFormAnswer::__('label.single');
     }
 
     public static function canAccess(): bool
     {
         return parent::canAccess() && static::can('showResource');
-    }
-
-    public static function form(Form $form): Form
-    {
-        return $form;
     }
 
     public static function table(Table $table): Table
@@ -59,13 +67,16 @@ class CustomFormAnswerResource extends Resource
             ->columns([
                 TextColumn::make('id'),
                 TextColumn::make('short_title')
-                    ->label('Name'), //ToDo Translate
+                    ->label(CustomFormAnswer::__('attributes.short_title')),
                 TextColumn::make('customForm.short_title')
-                    ->label('Formular Name'), //ToDo Translate,
+                    ->label(
+                        CustomForm::__('label.single') . ' ' . CustomForm::__('attributes.short_title')
+                    ),
                 TextColumn::make('customForm.custom_form_identifier')
-                    ->label('Formular Art') //ToDo Translate,
-                    ->state(
-                        fn(CustomFormAnswer $record) => ($record->customForm->dynamicFormConfiguration())::displayName()
+                    ->label(CustomForm::__('attributes.custom_form_identifier'))
+                    ->state(fn(CustomFormAnswer $record) => $record
+                        ->customForm
+                        ->dynamicFormConfiguration()::displayName()
                     ),
             ])
             ->filters([])
@@ -94,5 +105,13 @@ class CustomFormAnswerResource extends Resource
             'edit' => EditCustomFormAnswer::route('/{record}/edit'),
             'view' => ViewCustomFormAnswer::route('/{record}')
         ];
+    }
+
+    public static function resolveRecordRouteBinding(int|string $key): ?Model
+    {
+        return app(static::getModel())
+            ->resolveRouteBindingQuery(static::getEloquentQuery(), $key, static::getRecordRouteKeyName())
+            ->with(['customForm', 'customFieldAnswers'])
+            ->first();
     }
 }

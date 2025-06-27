@@ -10,7 +10,7 @@ use Filament\Support\Enums\Alignment;
 
 trait HasItemLabel
 {
-    protected string|Closure|null $itemLabel = "";
+    protected string|Closure|null $itemLabel = '';
 
     public function getItemLabel($itemKey): string|Closure|null
     {

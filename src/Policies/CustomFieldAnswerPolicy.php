@@ -6,7 +6,6 @@ use App\Models\User;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
-
 class CustomFieldAnswerPolicy
 {
     use HandlesAuthorization;
@@ -35,6 +34,4 @@ class CustomFieldAnswerPolicy
     {
         return (new CustomFormAnswerPolicy())->update($user, $customFieldAnswer->customFormAnswer);
     }
-
-
 }

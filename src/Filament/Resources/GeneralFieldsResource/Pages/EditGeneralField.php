@@ -3,11 +3,13 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\GeneralFieldsResource\Pages;
 
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\GeneralFieldResource;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\LocaleSwitcher;
 use Filament\Forms\Form;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Resources\Pages\EditRecord\Concerns\Translatable;
+use Illuminate\Contracts\Support\Htmlable;
 
 class EditGeneralField extends EditRecord
 {
@@ -15,6 +17,11 @@ class EditGeneralField extends EditRecord
     use HasGeneralFieldForm;
 
     protected static string $resource = GeneralFieldResource::class;
+
+    public function getTitle(): string|Htmlable
+    {
+        return trans(GeneralField::__('pages.edit.title'), ['name' => $this->getRecord()->name]);
+    }
 
     public function form(Form $form): Form
     {

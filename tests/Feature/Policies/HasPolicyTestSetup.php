@@ -3,11 +3,11 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\Tests\Feature\Policies;
 
 use App\Models\User;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Types\TextType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\Types\TextType;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Spatie\Permission\Models\Role;
-use Workbench\App\FFHs\TestDynamicFormConfiguration;
+use Workbench\App\FFHs\TestCustomFormConfiguration;
 
 trait HasPolicyTestSetup
 {
@@ -41,7 +41,7 @@ trait HasPolicyTestSetup
 
         $this->customForm = new CustomForm([
             'short_title' => 'testForm',
-            'custom_form_identifier' => TestDynamicFormConfiguration::identifier()
+            'custom_form_identifier' => TestCustomFormConfiguration::identifier()
         ]);
 
         $this->customForm->save();

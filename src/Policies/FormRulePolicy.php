@@ -17,7 +17,7 @@ class FormRulePolicy
 
     public function viewAny(User $user): bool
     {
-        return (new FormRulePolicy())->viewAny($user);
+        return true;
     }
 
     public function create(User $user): bool

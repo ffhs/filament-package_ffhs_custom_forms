@@ -41,6 +41,4 @@ class GeneralFieldPolicy
     {
         return $user->can(CustomFormPermissionName::MANAGE_GENERAL_FIELDS);
     }
-
-
 }

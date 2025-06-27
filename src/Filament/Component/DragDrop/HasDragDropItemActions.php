@@ -33,7 +33,7 @@ trait HasDragDropItemActions
     protected function generateItemActions(string $key): ComponentContainer {
         $actions = $this->getItemActions($key);
 
-        $components = array_map(fn(Action $action) => $action->mergeArguments(["item" => $key]), $actions);
+        $components = array_map(fn(Action $action) => $action->mergeArguments(['item' => $key]), $actions);
 
         return ComponentContainer::make($this->getLivewire())
             ->getClone()

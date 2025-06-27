@@ -17,35 +17,42 @@ class CustomFormResource extends Resource
     protected static ?string $model = CustomForm::class;
     protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-check';
 
-    public static function getNavigationGroup(): ?string
-    {
-        return __('filament-package_ffhs_custom_forms::custom_forms.navigation.group.forms');
-    }
-
     public static function getNavigationLabel(): string
     {
-        return __('filament-package_ffhs_custom_forms::custom_forms.navigation.forms');
+        return CustomForm::__('label.multiple');
     }
 
     public static function getTitleCasePluralModelLabel(): string
     {
-        return __('filament-package_ffhs_custom_forms::custom_forms.navigation.forms');
+        return CustomForm::__('label.multiple');
     }
 
     public static function getTitleCaseModelLabel(): string
     {
-        return __('filament-package_ffhs_custom_forms::custom_forms.form.custom_form');
+        return CustomForm::__('label.single');
+    }
+
+    public static function getNavigationGroup(): ?string
+    {
+        return CustomForm::__('navigation.group');
+    }
+
+    public static function getNavigationParentItem(): ?string
+    {
+        $title = CustomForm::__('navigation.parent');
+
+        return empty($title) ? null : $title;
+    }
+
+    public static function canAccess(): bool
+    {
+        return parent::canAccess() && static::can('showResource');
     }
 
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()
             ->whereNull('template_identifier');
-    }
-
-    public static function canAccess(): bool
-    {
-        return parent::canAccess() && static::can('showResource');
     }
 
     public static function getPages(): array

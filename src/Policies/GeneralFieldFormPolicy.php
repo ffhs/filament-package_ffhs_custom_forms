@@ -34,5 +34,4 @@ class GeneralFieldFormPolicy
     {
         return (new GeneralFieldPolicy())->update($user, $generalFieldForm->generalField);
     }
-
 }

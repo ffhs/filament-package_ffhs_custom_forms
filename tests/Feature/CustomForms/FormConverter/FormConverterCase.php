@@ -2,9 +2,9 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Tests\Feature\CustomForms\FormConverter;
 
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomOption\Types\SelectType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Types\TextType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\LayoutType\Types\SectionType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\CustomOption\Types\SelectType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\Types\TextType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\LayoutType\Types\SectionType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Events\HideEvent;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Events\VisibleEvent;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Trigger\ValueEqualsRuleTrigger;
@@ -40,7 +40,6 @@ trait FormConverterCase
     public array $exportedFlattenFieldInformation;
 
 
-
     /**
      * @return void
      */
@@ -59,7 +58,8 @@ trait FormConverterCase
         ]);
         $this->testGeneral = new GeneralField([
             'id' => 1,
-            'name' => ['de' => 'test generales Feld', 'en' => 'test general field'],//['de' => 'test generales Feld', 'en' => 'test general field'],
+            'name' => ['de' => 'test generales Feld', 'en' => 'test general field'],
+            //['de' => 'test generales Feld', 'en' => 'test general field'],
             'identifier' => 'test_general',
             'type' => TextType::identifier(),
             'icon' => 'test-icon',
@@ -200,14 +200,14 @@ trait FormConverterCase
                         'name' => ['de' => 'Feld 3', 'end' => 'field 3'],
                         'options' => ['required' => true],
                         'customOptions' => [
-                          [
-                              'identifier' => 'option_1',
-                              'name' => ['en' => 'Option 1', 'de' => 'Option 1'],
-                          ],
-                          [
+                            [
+                                'identifier' => 'option_1',
+                                'name' => ['en' => 'Option 1', 'de' => 'Option 1'],
+                            ],
+                            [
                                 'identifier' => 'option_2',
                                 'name' => ['en' => 'Option 2', 'de' => 'Option 2'],
-                           ]
+                            ]
                         ],
                         'type' => SelectType::identifier(),
                     ]

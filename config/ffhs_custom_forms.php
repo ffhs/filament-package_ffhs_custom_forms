@@ -1,32 +1,32 @@
 <?php
 
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomOption\Types\CheckboxListType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomOption\Types\RadioType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomOption\Types\SelectType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\CustomOption\Types\ToggleButtonsType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Types\CheckboxType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Types\ColorPickerType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Types\DateRangeType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Types\DateTimeType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Types\DateType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Types\EmailType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Types\FileUploadType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Types\IconSelectType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Types\KeyValueType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Types\NumberType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Types\TagsType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Types\TextAreaType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\Types\TextType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\LayoutType\Types\DownloadType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\LayoutType\Types\FieldsetType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\LayoutType\Types\GroupType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\LayoutType\Types\ImageLayoutType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\LayoutType\Types\SectionType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\LayoutType\Types\SpaceType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\LayoutType\Types\TextLayoutType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\LayoutType\Types\TitleType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\SplittedType\Types\RepeaterLayoutType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\TemplatesType\TemplateFieldType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\CustomOption\Types\CheckboxListType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\CustomOption\Types\RadioType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\CustomOption\Types\SelectType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\CustomOption\Types\ToggleButtonsType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\Types\CheckboxType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\Types\ColorPickerType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\Types\DateRangeType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\Types\DateTimeType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\Types\DateType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\Types\EmailType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\Types\FileUploadType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\Types\IconSelectType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\Types\KeyValueType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\Types\NumberType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\Types\TagsType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\Types\TextAreaType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\Types\TextType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\LayoutType\Types\DownloadType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\LayoutType\Types\FieldsetType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\LayoutType\Types\GroupType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\LayoutType\Types\ImageLayoutType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\LayoutType\Types\SectionType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\LayoutType\Types\SpaceType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\LayoutType\Types\TextLayoutType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\LayoutType\Types\TitleType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\SplittedType\Types\RepeaterLayoutType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\TemplatesType\TemplateFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Events\ChangeOptionsEvent;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Events\DisabledEvent;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Events\HideEvent;
@@ -35,23 +35,22 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Events\VisibleEvent;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Trigger\AlwaysRuleTrigger;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Trigger\IsInfolistTrigger;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Trigger\ValueEqualsRuleTrigger;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\FormEditor\AdderComponents\default\CustomFieldTypeAdder;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\FormEditor\AdderComponents\default\GeneralFieldAdder;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomForm\FormEditor\AdderComponents\default\TemplateFieldAdder;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormEditor\AdderComponents\Default\CustomFieldTypeAdder;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormEditor\AdderComponents\Default\GeneralFieldAdder;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormEditor\AdderComponents\Default\TemplateFieldAdder;
 
 return [
-
-    'cache_duration'=> 1,
-    'save_stopper_time'=> 1,
+    'cache_duration' => 1,
+    'save_stopper_time' => 1,
     'default_column_count' => 4,
 
-    "rule"=>[
-        "trigger" =>[
+    'rule' => [
+        'trigger' => [
             IsInfolistTrigger::class,
             ValueEqualsRuleTrigger::class,
             AlwaysRuleTrigger::class,
         ],
-        "event"=>[
+        'event' => [
             HideEvent::class,
             VisibleEvent::class,
             DisabledEvent::class,
@@ -60,16 +59,11 @@ return [
         ],
     ],
 
-
-
-    "forms"=>[
-
+    'forms' => [
     ],
 
     'view_modes' => [
-
     ],
-
 
     'editor' => [
         'field_adders' => [
@@ -79,10 +73,7 @@ return [
         ],
     ],
 
-
-
-
-    "custom_field_types" => [
+    'custom_field_types' => [
         TemplateFieldType::class,
 
         TextType::class,
@@ -97,7 +88,6 @@ return [
 
         TagsType::class,
         KeyValueType::class,
-
 
         ColorPickerType::class,
         IconSelectType::class,
@@ -123,7 +113,7 @@ return [
         //WizardStepCustomEggType::class,
     ],
 
-    "selectable_field_types" => [
+    'selectable_field_types' => [
         CheckboxType::class,
         TextType::class,
         EmailType::class,
@@ -136,7 +126,6 @@ return [
 
         TagsType::class,
         KeyValueType::class,
-
 
         ColorPickerType::class,
         IconSelectType::class,
@@ -160,7 +149,7 @@ return [
         // WizardCustomNestType::class,
     ],
 
-    "selectable_general_field_types"=>[
+    'selectable_general_field_types' => [
         CheckboxType::class,
         TextType::class,
         EmailType::class,
@@ -173,7 +162,6 @@ return [
         TagsType::class,
         KeyValueType::class,
 
-
         ColorPickerType::class,
         IconSelectType::class,
 
@@ -183,29 +171,26 @@ return [
         ToggleButtonsType::class,
     ],
 
-
-    "type_settings"=>[
-        "download_file" => [
-            "save_path" => "/custom-form-plugin/custom-fields/specified-data",
-            "disk" => "local",
+    'type_settings' => [
+        'download_file' => [
+            'save_path' => '/custom-form-plugin/custom-fields/specified-data',
+            'disk' => 'local',
         ],
         'image_layout' => [
-            "save_path" => "/custom-form-plugin/images",
-            "disk" => "public",
+            'save_path' => '/custom-form-plugin/images',
+            'disk' => 'public',
         ],
         'file_upload' => [
             'files' => [
-                "url_prefix" => null, // Null means default path
-                "save_path" => "/custom-form-plugin/custom-fields/uploaded",
-                "disk" => "local",
+                'url_prefix' => null, // Null means default path
+                'save_path' => '/custom-form-plugin/custom-fields/uploaded',
+                'disk' => 'local',
             ],
-           'images' => [
-               "url_prefix" => null, // Null means default path
-               "save_path" => "/custom-form-plugin/uploaded-images",
-               "disk" => "public",
-           ]
+            'images' => [
+                'url_prefix' => null, // Null means default path
+                'save_path' => '/custom-form-plugin/uploaded-images',
+                'disk' => 'public',
+            ]
         ]
     ],
-
-
 ];

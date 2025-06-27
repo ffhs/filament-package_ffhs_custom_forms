@@ -1,12 +1,12 @@
 <?php
 
-use Ffhs\FilamentPackageFfhsCustomForms\Helping\CustomForm\FormConverter\FormImporter\FormSchemaImporter;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormConverter\FormSchemaImporter;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\Rule;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\RuleEvent;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\RuleTrigger;
 use Ffhs\FilamentPackageFfhsCustomForms\Tests\Feature\CustomForms\FormConverter\FormConverterCase;
-use Workbench\App\FFHs\TestDynamicFormConfiguration;
+use Workbench\App\FFHs\TestCustomFormConfiguration;
 
 uses(FormConverterCase::class);
 
@@ -20,7 +20,7 @@ beforeEach(function () {
 test('Import triggers and events', function () {
 
     $importer = FormSchemaImporter::make();
-    foreach ($this->exportedRuleInformation as $ruleData){
+    foreach ($this->exportedRuleInformation as $ruleData) {
         $rule = Rule::create(['is_or_mode' => false]);
         $importer->importRuleElements($rule, $ruleData);
 
@@ -39,9 +39,9 @@ test('Import triggers and events', function () {
 
 test('Import form rule\'s', function () {
     $importer = FormSchemaImporter::make();
-    /**@var CustomForm $customForm*/
-    $customForm = CustomForm::create(['custom_form_identifier' => TestDynamicFormConfiguration::identifier()]);
-    $importer->importRule($this->exportedRuleInformation,$customForm);
+    /**@var CustomForm $customForm */
+    $customForm = CustomForm::create(['custom_form_identifier' => TestCustomFormConfiguration::identifier()]);
+    $importer->importRule($this->exportedRuleInformation, $customForm);
 
     $createdRules = $customForm->ownedRules;
 

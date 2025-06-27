@@ -12,30 +12,24 @@ class DragDropActionContainer extends Actions\ActionContainer
 
     public function toHtml(): string
     {
-        $html =  parent::toHtml();
-
+        $html = parent::toHtml();
 
         //Remove Action
         $action = explode('wire:click="', $html)[1];
-        $action = explode('"',  $action)[0];
+        $action = explode('"', $action)[0];
         $action = html_entity_decode($action);
         $action = str_replace("'", "\'", $action);
-
-
 
         //ToDo make blade
         $toReplace = "
 
         <div
         ax-load
-        ax-load-src=\"".FilamentAsset::getAlpineComponentSrc("action", "ffhs/filament-package_ffhs_drag-drop")."\"
+        ax-load-src=\"" . FilamentAsset::getAlpineComponentSrc("action", "ffhs/filament-package_ffhs_drag-drop") . "\"
         x-ignore
-        x-data=\"dragDropAction('". $this->getDragDropGroup() ."', '$action')\"
+        x-data=\"dragDropAction('" . $this->getDragDropGroup() . "', '$action')\"
         ffhs_drag:component
         ";
-
-
-
 
         //Replace Button
         //ToDo make Blade
@@ -52,19 +46,7 @@ class DragDropActionContainer extends Actions\ActionContainer
 
         $html = str_replace('<span x-init="" draggable="true"', '<span class="hidden xl:block"', $html);
 
-       // $html = str_replace('x-data="{}"', '', $html);
-//
-//
-
-        /*
-         *
-         */
-
-
-        // $html = str_replace('wire:loading.delay.default="" ', '', $html);
-        //fi-btn
         return $html;
     }
-
 
 }

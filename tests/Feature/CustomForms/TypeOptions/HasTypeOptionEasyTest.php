@@ -4,15 +4,18 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Tests\Feature\CustomForms\TypeOpti
 
 use App\Models\User;
 use Closure;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\CustomFieldType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldType;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\EmbeddedCustomForm\Render\ChildFieldRender;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\EmbeddedCustomForm\Render\FormFieldDisplayer;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormAnswerResource\Pages\EditCustomFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
+use Filament\Forms\Components\Placeholder;
 use Illuminate\Support\Facades\Artisan;
-use Workbench\App\FFHs\TestDynamicFormConfiguration;
+use Mockery;
+use Workbench\App\FFHs\TestCustomFormConfiguration;
 use Workbench\App\Models\UserSuperAdmin;
-
 use function Pest\Livewire\livewire;
 
 trait HasTypeOptionEasyTest
@@ -34,7 +37,7 @@ trait HasTypeOptionEasyTest
         /**@var CustomForm $customForm */
         $this->customForm = CustomForm::create([
             'short_title' => 'My custom form title',
-            'custom_form_identifier' => TestDynamicFormConfiguration::identifier(),
+            'custom_form_identifier' => TestCustomFormConfiguration::identifier(),
         ]);
 
         $this->formAnswer = CustomFormAnswer::create([
@@ -45,7 +48,9 @@ trait HasTypeOptionEasyTest
 
     public function typeOptionTestAfterEach(): void
     {
-        if (!is_null($this->customField)) $this->customField->delete();
+        if (!is_null($this->customField)) {
+            $this->customField->delete();
+        }
         $this->customForm->refresh();
         $this->formAnswer->refresh();
     }
@@ -85,7 +90,6 @@ trait HasTypeOptionEasyTest
         $checkOptionFunction($livewire);
     }
 
-
     public function componentTestField(
         string $customFieldIdentifier,
         array $extraOptions,
@@ -93,6 +97,24 @@ trait HasTypeOptionEasyTest
         Closure $checkNoOptionFunction,
         Closure $checkOptionFunction
     ): void {
+        $displayerMock = Mockery::mock(FormFieldDisplayer::class);
+        $displayerMock->shouldReceive('__invoke')
+            ->zeroOrMoreTimes()
+            ->andReturn(Placeholder::make('test'));
+
+        $childRenderMock = Mockery::mock(ChildFieldRender::class);
+        $childRenderMock->shouldReceive('__invoke')
+            ->zeroOrMoreTimes()
+            ->andReturn([]);
+
+        $parameters = [
+            'viewMode' => 'default',
+            'registerComponents' => fn(array $components) => null,
+            'displayer' => $displayerMock,
+            'child_render' => $childRenderMock,
+            'child_fields' => collect()
+        ];
+
         $type = CustomFieldType::getTypeFromIdentifier($customFieldIdentifier);
         $this->customField = CustomField::create([
             'name' => ['en' => 'test_field'],
@@ -105,12 +127,7 @@ trait HasTypeOptionEasyTest
         ]);
         $this->customForm->refresh();
 
-        $component = $type->getFormComponent(
-            $this->customField,
-            $this->customForm,
-            'default',
-            ['renderer' => fn() => []]
-        );
+        $component = $type->getFormComponent($this->customField, parameter: $parameters);
         $checkNoOptionFunction($component);
 
         $this->customField->update(['options' => array_merge($extraOptions, $updateOptions)]);
@@ -119,13 +136,7 @@ trait HasTypeOptionEasyTest
         $this->customForm->refresh();
         $this->formAnswer->refresh();
 
-        $component = $type->getFormComponent(
-            $this->customField,
-            $this->customForm,
-            'default',
-            ['renderer' => fn() => []]
-        );
+        $component = $type->getFormComponent($this->customField, parameter: $parameters);
         $checkOptionFunction($component);
     }
-
 }

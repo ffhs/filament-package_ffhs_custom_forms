@@ -1,14 +1,13 @@
 <?php
 
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\SplittedType\Types\RepeaterLayoutType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\SplittedType\Types\RepeaterLayoutType;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormAnswerResource\Pages\EditCustomFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
 use Illuminate\Support\Facades\Cache;
-use Workbench\App\FFHs\TestDynamicFormConfiguration;
+use Workbench\App\FFHs\TestCustomFormConfiguration;
 use Workbench\App\Models\UserSuperAdmin;
-
 use function Pest\Livewire\livewire;
 
 beforeEach(function () {
@@ -22,7 +21,7 @@ beforeEach(function () {
     /**@var CustomForm $customForm */
     $this->customForm = CustomForm::create([
         'short_title' => 'My custom form title',
-        'custom_form_identifier' => TestDynamicFormConfiguration::identifier(),
+        'custom_form_identifier' => TestCustomFormConfiguration::identifier(),
     ]);
 
     $this->customField = CustomField::create([
@@ -89,16 +88,10 @@ describe('repeater options', function () {
         expect(true)->toBeTrue();
     });
 
-    test('order option', function () {
-    })->todo();
-    test('min_amount option', function () {
-    })->todo();
-    test('max_amount option', function () {
-    })->todo();
-    test('default_amount option', function () {
-    })->todo();
-    test('render contend', function () {
-    })->todo();
-    test('render infolist', function () {
-    })->todo();
+    test('order option')->todo();
+    test('min_amount option')->todo();
+    test('max_amount option')->todo();
+    test('default_amount option')->todo();
+    test('render contend')->todo();
+    test('render infolist')->todo();
 });

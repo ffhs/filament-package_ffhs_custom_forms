@@ -2,12 +2,12 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Trigger;
 
-use Ffhs\FilamentPackageFfhsCustomForms\Helping\Rules\Trigger\TriggerType;
-use Ffhs\FilamentPackageFfhsCustomForms\Helping\Types\IsType;
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\TriggerType;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\RuleTrigger;
-use Filament\Forms\Components\Component;
-use Filament\Infolists\Components\Component as InfolistComponent;
+use Ffhs\FilamentPackageFfhsCustomForms\Traits\IsType;
+use Filament\Forms\Components\Component as FormsComponent;
+use Filament\Infolists\Components\Component as InfolistsComponent;
 
 abstract class FormRuleTriggerType implements TriggerType
 {
@@ -15,8 +15,9 @@ abstract class FormRuleTriggerType implements TriggerType
 
     public static function getConfigTypeList(): string
     {
-        return "rule.trigger";
+        return 'rule.trigger';
     }
+
     public function prepareComponents(array &$components, RuleTrigger $trigger): array
     {
         foreach ($components as $fieldIdentifier => $component) {
@@ -25,13 +26,16 @@ abstract class FormRuleTriggerType implements TriggerType
 
         return $components;
     }
-    public function prepareComponent(Component|InfolistComponent $component, RuleTrigger $trigger): Component|InfolistComponent
-    {
+
+    public function prepareComponent(
+        FormsComponent|InfolistsComponent $component,
+        RuleTrigger $trigger
+    ): FormsComponent|InfolistsComponent {
         return $component;
     }
 
-    public function mutateDataOnClone(array $data, CustomForm $target):array{
+    public function mutateDataOnClone(array $data, CustomForm $target): array
+    {
         return $data;
     }
-
 }

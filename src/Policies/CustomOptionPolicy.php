@@ -38,5 +38,4 @@ class CustomOptionPolicy
         return $user->can(CustomFormPermissionName::MANAGE_CUSTOM_FORMS)
             || $user->can(CustomFormPermissionName::MANAGE_TEMPLATES);
     }
-
 }
