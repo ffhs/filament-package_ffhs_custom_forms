@@ -113,8 +113,6 @@ class CustomFormsServiceProvider extends PackageServiceProvider
                 ->loadedOnRequest(),
             AlpineComponent::make('container', __DIR__ . '/../dist/js/drag-drop/container.js')
                 ->loadedOnRequest(),
-            AlpineComponent::make('action', __DIR__ . '/../dist/js/drag-drop/action.js')
-                ->loadedOnRequest(),
             AlpineComponent::make('action_group', __DIR__ . '/../dist/js/drag-drop/action_group.js')
                 ->loadedOnRequest(),
             Css::make('stylesheet', __DIR__ . '/../dist/css/drag_drop.css')

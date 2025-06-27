@@ -2,7 +2,6 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Traits;
 
-use Exception;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\TemplatesType\TemplateFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\Exceptions\FieldDataHasNoOrWrongCustomFieldTypeException;
@@ -20,11 +19,10 @@ trait CanInteractionWithFieldTypes
         if (empty($data)) {
             throw new FieldDataHasNoOrWrongCustomFieldTypeException($data);
         }
-
         if (!empty($data['cachedFieldType'])) {
             try {
                 return $data['cachedFieldType']::make();
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
             }
         }
 
@@ -34,8 +32,7 @@ trait CanInteractionWithFieldTypes
         }
 
         if (!empty($data['general_field_id'])) {
-            return $customForm
-                ->getFormConfiguration()
+            return $customForm->getFormConfiguration()
                 ->getAvailableGeneralFields()
                 ->firstWhere('id', $data['general_field_id'])
                 ->getType();
