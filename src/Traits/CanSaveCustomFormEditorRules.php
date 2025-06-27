@@ -118,7 +118,7 @@ trait CanSaveCustomFormEditorRules
             ->delete();
 
         RuleTrigger::insert($ruleTriggersToCreate);
-        RuleEvent::insert($ruleEventsToUpdate);
+        RuleEvent::insert($ruleEventsToCreate);
         RuleTrigger::upsert($ruleTriggersToUpdate, ['id']);
         RuleEvent::upsert($ruleEventsToUpdate, ['id']);
 
