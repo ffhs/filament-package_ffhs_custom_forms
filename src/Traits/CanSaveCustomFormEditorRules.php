@@ -97,7 +97,7 @@ trait CanSaveCustomFormEditorRules
             ];
 
             [$updatedEvents, $createdEvents] = $this
-                ->updateRuleComponent($rawEvents, $events, $rule, app(RuleTrigger::class));
+                ->updateRuleComponent($rawEvents, $events, $rule, app(RuleEvent::class));
             $ruleEventsToCreate = [
                 ...$ruleEventsToCreate,
                 ...$createdEvents
@@ -118,7 +118,7 @@ trait CanSaveCustomFormEditorRules
             ->delete();
 
         RuleTrigger::insert($ruleTriggersToCreate);
-        RuleEvent::insert($ruleEventsToUpdate);
+        RuleEvent::insert($ruleEventsToCreate);
         RuleTrigger::upsert($ruleTriggersToUpdate, ['id']);
         RuleEvent::upsert($ruleEventsToUpdate, ['id']);
 
