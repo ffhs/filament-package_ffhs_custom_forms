@@ -41,6 +41,9 @@ class CustomFormEditor extends Field implements CanEntangleWithSingularRelations
             ->icon('carbon-rule-draft')
             ->schema([
                 RuleEditor::make()
+                    ->triggers(fn(?CustomForm $record) => $record?->getFormConfiguration()::getRuleTriggerTypes() ?? [])
+                    ->events(fn(?CustomForm $record) => $record?->getFormConfiguration()::getRuleEventTypes() ?? [])
+                    ->events(config('ffhs_custom_forms.rule.event'))
                     ->columnSpanFull()
             ]);
     }

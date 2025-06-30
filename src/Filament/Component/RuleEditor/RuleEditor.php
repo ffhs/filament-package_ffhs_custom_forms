@@ -19,8 +19,6 @@ class RuleEditor extends Group
     protected array|Closure|null $triggers;
     protected Closure|array|null $events;
 
-    //  ToDo check if fill bug if fixable with    $component->getChildComponentContainer($newUuid ?? array_key_last($items))->fill();
-
     public function triggers(array|Closure|null $triggers): static
     {
         $this->triggers = $triggers;
@@ -148,8 +146,6 @@ class RuleEditor extends Group
         parent::setUp();
 
         $this
-            ->triggers(config('ffhs_custom_forms.rule.trigger'))
-            ->events(config('ffhs_custom_forms.rule.event'))
             ->schema([
                 Action::make('AddRule')
                     ->icon('carbon-rule')
