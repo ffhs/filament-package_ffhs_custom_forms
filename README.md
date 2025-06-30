@@ -1,6 +1,6 @@
 # CustomForms Overview
 
-This plugin enables users to **create, fill out, and manage forms** within Filament.  
+This plugin enables users to **create, fill out, and manage nested forms** within Filament.  
 It provides a wide range of **customizable form fields** and supports rules for the forms behavior.
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/:vendor_slug/:package_slug.svg?style=flat-square)](https://packagist.org/packages/ffhs/filament-package_ffhs_custom_forms)
@@ -8,7 +8,7 @@ It provides a wide range of **customizable form fields** and supports rules for 
 
 ## Featureslist:
 
-- ✅ **Multiple Form Types**: Bind forms to different use cases through customizable form types.
+- ✅ **Multiple Form Types**: Bind forms to different use cases (e.g. entities) through customizable form types.
 - 🧩 **General Fields**: Define required general fields or exportable values that apply across form types.
 - 🛠 **Configurable Field Types**: Includes various fields like Repeaters with interfaces to add additional inputs
   dynamically.
@@ -88,10 +88,6 @@ For example:
 ### 3. Creating a Form Configuration
 
 To define a new form, extend the `CustomFormConfiguration` class:
-
-php
-
-KopierenBearbeiten
 
 ```php
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomForm\FormConfiguration\CustomFormConfiguration;  
@@ -499,7 +495,7 @@ triggers that can be combined using AND or OR logic and can execute multiple eve
 
 #### Create own Trigger
 
-1. Create an MyTrigger classe
+1. Create an MyTrigger class
 
 ```php
 // MyTrigger.php
@@ -711,6 +707,9 @@ EmbeddedAnswerInfolist::make('custom_form_answer')
 ### Fill Form
 
 ![](images/fill_form_1.png)
+---
+
+### View Form
 
 ---
 
