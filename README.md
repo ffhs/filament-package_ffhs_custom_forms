@@ -589,7 +589,107 @@ class MyEvent extends FormRuleEventType
 ],  
 ```  
 
-  
+---
+
+### Embed Custom Forms in Other Places
+
+You can embed custom forms or their answers in various parts of your application using specialized components. Below are
+examples of usage patterns and customization options.
+
+#### Editor
+
+Embed the form editor in your layout using `CustomFormEditor`:
+
+```php
+CustomFormEditor::make('custom_forms')
+	->relationship('customForm')
+```
+
+#### Form Answer Edit
+
+Embed a form for editing its answer using `EmbeddedCustomForm`.
+**Basic usage:**
+
+```php
+EmbeddedCustomForm::make('custom_form_answer')
+	->relationship('customFormAnswer')
+```
+
+With automatic saving:
+
+```php
+EmbeddedCustomForm::make('custom_form_answer')
+	->relationship('customFormAnswer')
+	->autoSave()
+```
+
+Split layout by section type:
+
+```php
+EmbeddedCustomForm::make('custom_form_answer')
+	->relationship('customFormAnswer')
+	->useLayoutTypeSplit()
+	->layoutTypeSplit(SectionType::make())
+```
+
+Split layout by specific fields:
+
+```php
+EmbeddedCustomForm::make('custom_form_answer')
+	->relationship('customFormAnswer')
+	->useFieldSplit()
+	->fieldSplit(CustomField....)
+```
+
+Split layout by pose (e.g. question number range):
+
+```php
+EmbeddedCustomForm::make('custom_form_answer')
+	->relationship('customFormAnswer')
+	->usePoseSplit()
+	->poseSplitStart(5)
+	->poseSplitEnd(10)
+```
+
+#### Form Answer Infolist
+
+Embed a form for editing its answer using `EmbeddedCustomForm`.
+
+**Basic usage:**
+
+```php
+EmbeddedAnswerInfolist::make('custom_form_answer')
+	->relationship('customFormAnswer')
+```
+
+Split layout by section type:
+
+```php
+EmbeddedAnswerInfolist::make('custom_form_answer')
+	->relationship('customFormAnswer')
+	->useLayoutTypeSplit()
+	->layoutTypeSplit(SectionType::make())
+```
+
+Split layout by specific fields:
+
+```php
+EmbeddedAnswerInfolist::make('custom_form_answer')
+	->relationship('customFormAnswer')
+	->useFieldSplit()
+	->fieldSplit(CustomField....)
+```
+
+Split layout by pose (e.g. question number range):
+
+```php
+EmbeddedAnswerInfolist::make('custom_form_answer')
+	->relationship('customFormAnswer')
+	->usePoseSplit()
+	->poseSplitStart(5)
+	->poseSplitEnd(10)
+```
+
 ---
 
 ## Images
