@@ -1,223 +1,274 @@
-# CustomForms Description
+onent->columnStart(1)),    
+'min_length' => MinLengthOption::make(),  
+];  
+}
 
-This plugin enables your users to create, fill out, and manage forms in Filament.
-It provides a variety of customizable form fields and allows you to adjust the form behavior using validation rules.
-The fields can be freely tailored and extended to fit your needs.
+```
+- Each key represents the **option name**.
+- The value is an instance of a `TypeOption`, usually created via `::make()`.
+- You can customize how the option behaves using methods like `modifyDefault()` or `modifyOptionComponent()`.
 
-## Features
-
-### Form Configurations
-
-Multi-purpose templates: Create distinct configurations for different use cases (e.g., registrations, surveys,
-payments).
-
-Extensible rules: Context-specific logic (e.g., hide payment fields in surveys).
-
-### Dynamic Fields
-
-Drag & Drop builder: Intuitive form layout editing.
-
-Repeater fields: Support for repeatable field groups.
-
-Predefined field types:
-
+#### Creating a Custom Type Option
+To create your own option, extend the `TypeOption` class:
 ```php
-// Input Fields
-TextType::class, EmailType::class, NumberType::class, TextAreaType::class,
-DateTimeType::class, DateType::class, DateRangeType::class, FileUploadType::class,
-
-// Choice Fields
-SelectType::class, RadioType::class, CheckboxListType::class, ToggleButtonsType::class,
-
-// Special Fields
-TagsType::class, KeyValueType::class, ColorPickerType::class, IconSelectType::class,
-
-// Layout Components
-SectionType::class, FieldsetType::class, GroupType::class, TitleType::class,
-TextLayoutType::class, DownloadType::class, ImageLayoutType::class, SpaceType::class
+class MyTypeOption extends TypeOption  
+{  
+  
+    public function getDefaultValue(): mixed  
+    {  
+        return null;  
+    }  
+  
+    public function getComponent(string $name): Component  
+    {  
+        return Toggle::make($name)  
+            ->label('MyTypeOption')  
+            ->columnSpanFull()  
+            ->live();  
+    }  
+    
+	public function modifyFormComponent(FormsComponent $component, mixed $value): FormsComponent  
+	{  
+	    return $component->modify(...);  
+	}  
+	  
+	public function modifyInfolistComponent(InfolistComponent $component, mixed $value): InfolistComponent  
+	{  
+	    return $component->modify(...);  
+	}
+}
 ```
 
-### Rules & Triggers
+#### Other Optional Function
 
-Conditional logic:
+| Method                         | Purpose                                                                         |
+|--------------------------------|---------------------------------------------------------------------------------|
+| `mutateOnFieldSave()`          | Modify data **before it's saved** to the field                                  |
+| `mutateOnFieldLoad()`          | Modify data **when it's loaded**                                                |
+| `beforeSaveField()`            | Hook before the field is saved (via reference)                                  |
+| `afterSaveField()`             | Hook after the field is saved (via reference)                                   |
+| `afterCreateField()`           | Triggered right after the field is created                                      |
+| `beforeDeleteField()`          | Hook before the field is deleted                                                |
+| `afterDeleteField()`           | Hook after the field is deleted                                                 |
+| `mutateOnFieldClone()`         | Modify option data when cloning the field                                       |
+| `canBeOverwrittenByNonField()` | Whether this option can be overwritten globally or externally (default: `true`) |
+
+#### Use FastTypeOption
+
+**FastTypeOption** allows you to quickly add custom options directly in your `FieldType` and react to them in your
+`FieldTypeView`.
 
 ```php
-'event' => [
-    HideEvent::class,
-    VisibleEvent::class,
-    DisabledEvent::class,
-    RequiredEvent::class,
-    ChangeOptionsEvent::class, 
-],
+//MyType.php
+public function extraTypeOptions(): array  
+{  
+    return [  
+       'my_option' => FastTypeOption::makeFast(  
+		    default: false,  
+		    Toggle::make('my_option')
+		)
+    ];  
+}
+```
+
+```php
+//MyTypeView.php
+$myOption = $this->getOptionParameter($record, 'my_option');
+
+/** @var TextInput $input */  
+$input = $this->makeComponent(TextInput::class, $record);
+
+if($myOption){
+	$input->modify(...);
+}
+
+return $input
+```
+
+### OptionsGroups
+
+Option groups help organize multiple related type options into logical collections, making your field configuration
+cleaner and easier to manage.
+
+In the Image are options marked red and the Option groups are maked Red.
+![](images/options_and_groups.png)
+
+#### Example to use Option Groups
+
+```php
+//MyType.php
+public function extraTypeOptions(): array  
+{  
+    return [  
+       TypeOptionGroup::make('MyGroup', [  
+		    'alpine_mask' => AlpineMaskOption::make(),  
+			'max_length' => MaxLengthOption::make(),  
+			'min_length' => MinLengthOption::make(),
+		]),
+		ValidationTypeOptionGroup::make(),  
+	    LayoutOptionGroup::make()
+		    ->mergeTypeOptions([  
+			    'my_option' => MyTypeOption::make(),  
+			])
+			->removeTypeOption('...'),
+    ];  
+}
+```
+
+---
+
+### Rules Events & Triggers
+
+Rules can be divided into events and triggers. Triggers cause events to be executed. A rule can consist of multiple
+triggers that can be combined using AND or OR logic and can execute multiple events.
+
+#### Predefined Events
+
+- `HideEvent`
+- `VisibleEvent`
+- `DisabledEvent`
+- `RequiredEvent`
+- `ChangeOptionsEvent`
+
+#### Predefined Triggers
+
+- `IsInfolistTrigger`
+- `ValueEqualsRuleTrigger`
+- `AlwaysRuleTrigger`
+
+#### Create own Trigger
+
+1. Create an MyTrigger classe
+
+```php
+// MyTrigger.php
+class MyTrigger extends FormRuleTriggerType  
+{  
+	use HasTriggerEventFormTargets; // <= Adds an CustomField Select
+	
+    public static function identifier(): string  
+    {  
+        return 'my_trigger';  
+    }  
+  
+    public function getDisplayName(): string  
+    {  
+        return 'My Trigger';  
+    }  
+  
+    public function isTrigger(array $arguments, mixed &$target, RuleTrigger $rule): bool  
+    {  
+      return ...;
+    }  
+  
+    public function getFormSchema(): array  
+    {  
+        return [  
+            Toggle::make('option for my trigger'),
+            this->getTargetSelect() // <= Adds an CustomField Select
+        ];  
+    }  
+}
+```
+
+2. Add your trigger class in the config file:
+
+```php  
+// config/ffhs_custom_forms.php
 'trigger' => [
-    IsInfolistTrigger::class,
-    ValueEqualsRuleTrigger::class,
-    AlwaysRuleTrigger::class,
-]
+	MyTrigger::class
+	...
+]  
+```  
+
+#### Create own Event
+
+1. Create an MyTrigger classe
+
+```php
+// MyTrigger.php
+class MyEvent extends FormRuleEventType  
+{  
+	use HasTriggerEventFormTargets; // <= Adds an CustomField Select
+	
+    public static function identifier(): string  
+    {  
+        return 'my_event';  
+    }  
+  
+    public function getDisplayName(): string  
+    {  
+        return 'My Event';  
+    }  
+  
+    public function getFormSchema(): array  
+    {  
+        return [  
+            Toggle::make('option for my trigger'),
+            this->getTargetSelect() // <= Adds an CustomField Select
+        ];  
+    }  
+
+	    // Implement one or more handler functions below depending on your use case:
+    // - handleAnswerLoadMutation
+    // - handleAnswerSaveMutation
+    // - handleBeforeRender
+    // - handleAfterRenderForm
+    // - handleAfterRenderInfolist
+}
 ```
 
-Extensible system: Add custom events/triggers.
+2. Add your event class in the config file:
 
-### Templates & Uniqueness
+```php  
+// config/ffhs_custom_forms.php
+'event' => [
+	MyEvent::class
+	...
+],  
+```  
 
-Reusable templates: Deploy forms across multiple projects.
-
-Mandatory fields: Enforce unique or required fields per configuration.
-
-### View Modes
-
-Context-aware styling: Change field appearance (e.g., blue text fields for specific workflows).
-
-Layout presets: Optimize forms for different use cases (e.g., mobile vs. admin views).
+  
+---
 
 ## Images
 
 ### Editor
 
-![Editor](.\images\editor.png)
-![Editor](.\images\field_options.png)
+![](images/editor_1.png)
 
-### Fill CustomForm
+![](images/editor_2.png)
 
-![Fill 1](.\images\edit_1.png)
-
-![Fill 2](.\images\edit_2.png)
+---
 
 ### Templates
 
-![Template Editor](.\images\template_editor.png)
+![](images/templates_1.png)
 
-### Rules
+---
 
-![Template Rules](.\images\template_editor_rules.png)
+### Fill Form
 
-### Rules
+![](images/fill_form_1.png)
 
-![General Fields](.\images\general_fields.png)
+---
 
-## Installation
+### Rule Editor
 
-You can install the package via composer:
+![](images/rules_1.png)
 
-```bash
-composer require ffhs/filament-package_ffhs_custom_forms
-```
+---
 
-<br>
+### General Fields
 
-You can publish and run the migrations with:
-
-```bash
-php artisan vendor:publish --tag=":filament-package_ffhs_custom_forms-migrations"
-php artisan migrate
-```
-
-<br>
-
-You can publish the config file with:
-
-```bash
-php artisan vendor:publish --tag=":filament-package_ffhs_custom_forms-config"
-```
-
-<br>
-
-You can add the resources to your panel with in your PanelProvider:
-
-```php
-->plugins([
-    CustomFormPlugin::make(),
-])
-```
-
-<br>
-
-The CustomForm plugins needs [Icon Picker Plugin](https://filamentphp.com/plugins/guava-icon-picker)
-You can publish the config file with:
-
-```bash
-php artisan vendor:publish --tag="filament-icon-picker-config"
-```
-
-<br>
-
-You can add to the IconPicker config
-
-```php
-return [  
-	'sets' => null,  
-	'columns' => 3,  
-	'layout' => \Guava\FilamentIconPicker\Layout::FLOATING,  
-	'cache' => [  
-	    'enabled' => true,  
-	    'duration' => '7 days',  
-	],
-]
-``` 
-
-<br>
-<br>
-
-Optionally, you can publish the views using
-
-```bash
-php artisan vendor:publish --tag=":filament-package_ffhs_custom_forms-views"
-```
+![](images/general_fields_1.png)
 
 ## Testing
 
-```bash
-composer test
-```
-
-## Usage
-
-A CustomForm consists of:
-CustomFormConfiguration – The blueprint defining form behavior, fields, and rules.
-CustomFields – Dynamic fields rendered in the form.
-
-Multiple form configurations can be created, each serving different purposes. For example, one configuration might be
-designed for registration forms with specific dependencies where only certain rules apply, while another type could be
-intended for surveys.
-
-### Creating a Form Configuration
-
-To create a new form, you must first define a Form Configuration by extending the CustomFormConfiguration class.
-
-```php
-use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomForm\FormConfiguration\CustomFormConfiguration
-class SimpleForm extends CustomFormConfiguration
-{
-    public static function identifier(): string
-    {
-        return 'simple_form';
-    }
-
-    public static function displayName(): string
-    {
-        return __(...);
-    }
-}
-```
-
-Key Features:
-
-- `identifier()`  links saved forms to their config version.
-- `displayName()`  appears in Filament’s form dropdown.
-
-### Registering a Form Configuration
-
-Newly created configurations must be registered in the ffhs_custom_forms config file:
-
-```php
-// config/ffhs_custom_forms.php
-'forms' => [
-    SimpleForm::class,
-],
-```
-
-Key Notes:
-
-- Add each configuration class to the forms array.
-- Reload the config after change.
-
+```bash  
+composer install
+./vendor/bin/testbench vendor:publish --tag="filament-package_ffhs_custom_forms-migrations"  
+./vendor/bin/testbench workbench:build
+./vendor/bin/pest test  
+```  
+  
