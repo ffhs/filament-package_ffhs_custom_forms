@@ -79,5 +79,17 @@
         ],
         "minimum-stability": "dev",
         "prefer-stable": true
-    }
+    },
+    "authors": [
+        {
+            "name": "Kromer Luc",
+            "email": "luc.kromer@ffhs.ch",
+            "role": "Developer"
+        },
+        {
+            "name": "Jean-Luc Bittel",
+            "email": "jean-luc.bittel@ffhs.ch",
+            "role": "Developer"
+        }
+    ]
 }

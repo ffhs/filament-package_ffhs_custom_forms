@@ -20,6 +20,7 @@ It provides a wide range of **customizable form fields** and supports rules for 
 - 👁️ **Multiple View Modes**: Switch rendering styles based on where the form is displayed.
 - 🔧 **Extensible Architecture**: Everything is designed to be customizable—add your own fields, rules, and templates as
   needed.
+- ⬇️ **Import/Export**: >ou can import and export custom forms from the ui.
 
 ## Installation
 
