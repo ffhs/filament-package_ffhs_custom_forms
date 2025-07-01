@@ -6,7 +6,7 @@ It provides a wide range of **customizable form fields** and supports rules for 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/:vendor_slug/:package_slug.svg?style=flat-square)](https://packagist.org/packages/ffhs/filament-package_ffhs_custom_forms)
 [![Total Downloads](https://img.shields.io/packagist/dt/:vendor_slug/:package_slug.svg?style=flat-square)](https://packagist.org/packages/ffhs/filament-package_ffhs_custom_forms)
 
-## Featureslist:
+## Features:
 
 - ✅ **Multiple Form Types**: Bind forms to different use cases (e.g. entities) through customizable form types.
 - 🧩 **General Fields**: Define required general fields or exportable values that apply across form types.
@@ -21,6 +21,45 @@ It provides a wide range of **customizable form fields** and supports rules for 
 - 🔧 **Extensible Architecture**: Everything is designed to be customizable—add your own fields, rules, and templates as
   needed.
 - ⬇️ **Import/Export**: >ou can import and export custom forms from the ui.
+
+---
+
+## Screenshoots
+
+### Editor
+
+![](images/editor_1.png)
+
+![](images/editor_2.png)
+
+---
+
+### Templates
+
+![](images/templates_1.png)
+
+---
+
+### Fill Form
+
+![](images/fill_form_1.png)
+---
+
+### View Form
+
+---
+
+### Rule Editor
+
+![](images/rules_1.png)
+
+---
+
+### General Fields
+
+![](images/general_fields_1.png)
+
+---
 
 ## Installation
 
@@ -689,41 +728,6 @@ EmbeddedAnswerInfolist::make('custom_form_answer')
 
 ---
 
-## Images
-
-### Editor
-
-![](images/editor_1.png)
-
-![](images/editor_2.png)
-
----
-
-### Templates
-
-![](images/templates_1.png)
-
----
-
-### Fill Form
-
-![](images/fill_form_1.png)
----
-
-### View Form
-
----
-
-### Rule Editor
-
-![](images/rules_1.png)
-
----
-
-### General Fields
-
-![](images/general_fields_1.png)
-
 ## Testing
 
 ```bash  
@@ -731,5 +735,12 @@ composer install
 ./vendor/bin/testbench vendor:publish --tag="filament-package_ffhs_custom_forms-migrations"  
 ./vendor/bin/testbench workbench:build
 ./vendor/bin/pest test  
-```  
-  
+```
+
+## Changelog
+
+Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed recently.
+
+## License
+
+The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
