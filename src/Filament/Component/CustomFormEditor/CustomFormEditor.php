@@ -2,6 +2,7 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormEditor;
 
+use Closure;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\RuleEditor\RuleEditor;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\Rule;
@@ -15,7 +16,9 @@ use Filament\Forms\Components\Tabs\Tab;
 
 class CustomFormEditor extends Field implements CanEntangleWithSingularRelationships
 {
-    use EntanglesStateWithSingularRelationship;
+    use EntanglesStateWithSingularRelationship {
+        EntanglesStateWithSingularRelationship::relationship as traitRelationship;
+    }
     use CanSaveCustomFormEditorData;
     use CanLoadCustomFormEditorData;
 
@@ -45,28 +48,11 @@ class CustomFormEditor extends Field implements CanEntangleWithSingularRelations
             ]);
     }
 
-    protected function setUp(): void
+    public function relationship(string $name, bool|Closure $condition = true): static
     {
-        parent::setUp();
+        $static = $this->traitRelationship($name, $condition);
 
-        $this
-            ->columnSpanFull()
-            ->columns(1)
-            ->schema([
-                Tabs::make()
-                    ->extraAttributes(['class' => 'overflow-y-auto scroll-smooth'])
-                    ->columnSpanFull()
-                    ->tabs([
-                        $this->getFormTab(),
-                        $this->getRuleTab()
-                    ]),
-            ])
-            ->setupRelationships();
-    }
-
-    protected function setupRelationships(): void
-    {
-        $this
+        return $static
             ->mutateRelationshipDataBeforeFillUsing(function () {
                 $customForm = $this->getCachedExistingRecord();
 
@@ -82,4 +68,24 @@ class CustomFormEditor extends Field implements CanEntangleWithSingularRelations
                 $this->saveCustomFormEditorData($state, $customForm);
             });
     }
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this
+            ->columnSpanFull()
+            ->columns(1)
+            ->schema([
+                Tabs::make()
+                    ->extraAttributes(['class' => 'overflow-y-auto scroll-smooth'])
+                    ->columnSpanFull()
+                    ->tabs([
+                        $this->getFormTab(),
+                        $this->getRuleTab()
+                    ]),
+            ]);
+    }
+
+
 }
