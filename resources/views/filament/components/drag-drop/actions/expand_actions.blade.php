@@ -30,7 +30,7 @@
     >
         <button class="expand-action--expand-action"
                 type="button" @click="expended = !expended">
-            {{--            ToDo Translate--}}
+
             <span x-show="!expended" x-cloak>
                 {{ CustomForms::__('drag_and_drop.actions.expand_action.open') }}
             </span>
