@@ -26,6 +26,7 @@
     <div
         class="expand-action--group fi-btn fi-fo-component-ctn"
         x-data="{ expended: false }"
+        wire:ignore
     >
         <button class="expand-action--expand-action"
                 type="button" @click="expended = !expended">
