@@ -487,7 +487,7 @@ return $input
 Option groups help organize multiple related type options into logical collections, making your field configuration
 cleaner and easier to manage.
 
-In the Image are options marked red and the Option groups are maked Red.
+In the Image are options marked red and the Option groups are maked as blue.
 ![](images/options_and_groups.png)
 
 #### Example to use Option Groups
