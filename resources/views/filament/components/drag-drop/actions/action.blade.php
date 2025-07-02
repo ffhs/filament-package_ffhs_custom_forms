@@ -20,9 +20,6 @@
     :target="($url && $action->shouldOpenUrlInNewTab()) ? '_blank' : null"
     :tooltip="$action->getTooltip()"
     :type="$action->canSubmitForm() ? 'submit' : 'button'"
-    {{--    :wire:click="$action->getLivewireClickHandler()"--}}
-    {{--    :wire:target="$action->getLivewireTarget()"--}}
-    {{--    :x-on:click="$action->getAlpineClickHandler()"--}}
     :attributes="
         prepare_inherited_attributes($attributes)
             ->merge($action->getExtraAttributes(), escape: false)

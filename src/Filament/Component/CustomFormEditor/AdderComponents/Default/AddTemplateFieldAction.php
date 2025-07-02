@@ -102,7 +102,6 @@ class  AddTemplateFieldAction extends Action
 
     private function deletingExistingFields(Get $get, $set, array $overlappedIdentifier, string $prefix = ''): void
     {
-        //TODO MAKE FOR NEW SYSTEM
         $toSet = [];
 
         foreach ($get($prefix . 'custom_fields') as $key => $customField) {

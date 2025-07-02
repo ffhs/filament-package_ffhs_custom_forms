@@ -1,3 +1,5 @@
+@config '../../tailwind.config.js';
+
 .drag-drop__hover-effect {
     transition: background 0.3s;
 }
@@ -68,4 +70,8 @@
 .drag-drop--action__ghost_effect {
     @apply rounded-xl border border-gray-200 p-6 dark:border-white/10 drag-drop__hover-effect;
     opacity: 0.5;
+}
+
+.field_adder_action {
+    @apply w-8 2xl:w-20;
 }
