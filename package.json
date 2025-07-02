@@ -6,12 +6,13 @@
     "scripts": {
         "dev:styles": "npx tailwindcss -i ./resources/css/drag_drop.css -o ./dist/css/drag_drop.css --postcss --watch",
         "dev:scripts": "node bin/build.js --dev",
+        "dev:update": "watch 'cd ../../../ && ./vendor/bin/sail artisan filament:assets' ./",
         "build:styles": "npx tailwindcss -i resources/css/drag_drop.css -o ./dist/css/drag_drop.css --postcss --minify && npm run purge",
         "build:scripts": "node bin/build.js",
         "purge": "",
         "dev": "npm-run-all --parallel dev:*",
         "build": "npm-run-all build:*",
-        "watch": "watch 'npm run build && cd ../../../ && php artisan filament:assets' ./resources"
+        "watch": "watch 'npm run build && ../../../vendor/bin/sail artisan filament:assets' ./resources"
     },
     "author": "",
     "license": "ISC",

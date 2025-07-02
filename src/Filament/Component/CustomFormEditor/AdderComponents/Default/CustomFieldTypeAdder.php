@@ -17,12 +17,10 @@ final class CustomFieldTypeAdder extends FormEditorFieldAdder
 {
     private static function getCustomFieldAddActionLabel(CustomFieldType $type): HtmlString
     {
-//        return new HtmlString(htmlspecialchars($type->getTranslatedName()));
-
         $html =
             '<div class="flex flex-col items-center justify-center">' .
             Blade::render('<x-' . $type->icon() . ' class="w-6 h-6" />') .
-            '<span style="margin-top: 2px;  text-align: center;"> ' . htmlspecialchars($type->getTranslatedName()) .
+            '<span style="margin-top: 2px;  text-align: center;" class="hidden 2xl:block"> ' . htmlspecialchars($type->getTranslatedName()) .
             '</span> </div>';
 
         return new HtmlString($html);
@@ -35,7 +33,7 @@ final class CustomFieldTypeAdder extends FormEditorFieldAdder
         foreach ($this->getTypes() as $type) {
             /** @var CustomFieldType $type */
             $actions[] = DragDropAction::make('add_' . $type::identifier() . '_action')
-                ->extraAttributes(['style' => 'width: 7rem; height: 100%;'])
+                ->extraAttributes(['class' => 'field_adder_action'])
                 ->label(self::getCustomFieldAddActionLabel($type))
                 ->tooltip($type->getTranslatedName())
                 ->outlined()
@@ -88,6 +86,7 @@ final class CustomFieldTypeAdder extends FormEditorFieldAdder
         $this
             ->live()
             ->label(CustomForm::__('pages.type_adder.label'))
+            ->extraAttributes(['class' => 'justify-center items-center'])
             ->schema($this->setUpSchema(...));
     }
 }

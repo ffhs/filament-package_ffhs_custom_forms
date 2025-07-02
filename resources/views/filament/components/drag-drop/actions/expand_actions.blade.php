@@ -26,10 +26,11 @@
     <div
         class="expand-action--group fi-btn fi-fo-component-ctn"
         x-data="{ expended: false }"
+        wire:ignore
     >
         <button class="expand-action--expand-action"
                 type="button" @click="expended = !expended">
-            {{--            ToDo Translate--}}
+
             <span x-show="!expended" x-cloak>
                 {{ CustomForms::__('drag_and_drop.actions.expand_action.open') }}
             </span>

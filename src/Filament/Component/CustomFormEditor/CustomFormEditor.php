@@ -28,13 +28,19 @@ class CustomFormEditor extends Field implements CanEntangleWithSingularRelations
     {
         return Tab::make(CustomForm::__('label.single'))
             ->icon('carbon-data-format')
-            ->columns(6)
+            ->columns([
+                'xl' => 5,
+                '2xl' => 6
+            ])
             ->schema([
                 FieldAdders::make(),
                 FieldDragDropEditor::make('custom_fields')
                     ->label('')
                     ->columnStart(2)
-                    ->columnSpan(5),
+                    ->columnSpan([
+                        'xl' => 4,
+                        '2xl' => 5
+                    ]),
             ]);
     }
 
