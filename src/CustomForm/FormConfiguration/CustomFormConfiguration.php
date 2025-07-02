@@ -23,14 +23,14 @@ abstract class CustomFormConfiguration
         return CustomFieldType::getSelectableFieldTypes();
     }
 
-    public static function ruleTypes(): array
+    public static function getRuleTriggerTypes(): array
     {
-        return config('ffhs_custom_forms.field_rule_types');
+        return config('ffhs_custom_forms.rule.trigger');
     }
 
-    public static function anchorRuleTypes(): array
+    public static function getRuleEventTypes(): array
     {
-        return config('ffhs_custom_forms.field_rule_anchor_types');
+        return config('ffhs_custom_forms.rule.event');
     }
 
     public static function editorFieldAdder(): array
@@ -65,7 +65,7 @@ abstract class CustomFormConfiguration
         return $this->defaultViewMode();
     }
 
-    public function getAvailableTemplates(): Collection
+    final public function getAvailableTemplates(): Collection
     {
         return once(function () {
             $forms = CustomForm::query()
@@ -83,7 +83,7 @@ abstract class CustomFormConfiguration
         });
     }
 
-    public function getAvailableGeneralFields(): Collection
+    final public function getAvailableGeneralFields(): Collection
     {
         return once(function () {
             $generalFieldFormQuery = GeneralFieldForm::query()

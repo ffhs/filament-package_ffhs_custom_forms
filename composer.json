@@ -1,5 +1,5 @@
 {
-    "version": "0.3.0",
+    "version": "1.0.0",
     "name": "ffhs/filament-package_ffhs_custom_forms",
     "description": "Custom forms for Fernfachhochschule Schweiz (FFHS)",
     "keywords": [
@@ -79,5 +79,17 @@
         ],
         "minimum-stability": "dev",
         "prefer-stable": true
-    }
+    },
+    "authors": [
+        {
+            "name": "Kromer Luc",
+            "email": "luc.kromer@ffhs.ch",
+            "role": "Developer"
+        },
+        {
+            "name": "Jean-Luc Bittel",
+            "email": "jean-luc.bittel@ffhs.ch",
+            "role": "Developer"
+        }
+    ]
 }

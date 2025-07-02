@@ -114,6 +114,11 @@ trait CanSaveCustomFormEditorRules
             $rules->add($rule);
         }
 
+        $form
+            ->ownedRules()
+            ->whereNotIn('id', $usedRuleIds)
+            ->delete();
+
         RuleTrigger::query()
             ->whereIn('id', $ruleTriggersToDelete)
             ->delete();
