@@ -125,27 +125,25 @@ class ValueEqualsRuleTrigger extends FormRuleTriggerType
             return false;
         }
 
-        return once(function () use ($get, $record) {
-            $target = $get('target');
-            $formState = $get('../../../../../custom_fields') ?? [];
+        $target = $get('target');
+        $formState = $get('../../../../../custom_fields') ?? [];
 
-            foreach ($formState as $field) {
-                $identifier = $field['identifier'] ?? '';
+        foreach ($formState as $field) {
+            $identifier = $field['identifier'] ?? '';
 
-                if (!empty($field['general_field_id'])) {
-                    $customField = new TempCustomField($record, $field);
-                    $identifier = $customField->identifier();
-                }
-
-                if ($identifier === $target) {
-                    $customField = new TempCustomField($record, $field);
-
-                    return !($customField->getType() instanceof CustomOptionType);
-                }
+            if (!empty($field['general_field_id'])) {
+                $customField = new TempCustomField($record, $field);
+                $identifier = $customField->identifier();
             }
 
-            return true;
-        });
+            if ($identifier === $target) {
+                $customField = new TempCustomField($record, $field);
+
+                return !($customField->getType() instanceof CustomOptionType);
+            }
+        }
+
+        return true;
     }
 
     private function doAfterStateUpdate($get, $set, $old): void
