@@ -1,7 +1,7 @@
 # CustomForms Overview
 
-This plugin enables users to **create, fill out, and manage nested forms** within Filament.  
-It provides a wide range of **customizable form fields** and supports rules for the forms behavior.
+This plugin enables you to **create and manage nested forms** within FilamentPHP.  
+It provides a wide range of **customizable form fields** and supports behavioral rules and templates.
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/:vendor_slug/:package_slug.svg?style=flat-square)](https://packagist.org/packages/ffhs/filament-package_ffhs_custom_forms)
 [![Total Downloads](https://img.shields.io/packagist/dt/:vendor_slug/:package_slug.svg?style=flat-square)](https://packagist.org/packages/ffhs/filament-package_ffhs_custom_forms)
@@ -9,22 +9,20 @@ It provides a wide range of **customizable form fields** and supports rules for 
 ## Features:
 
 - ✅ **Multiple Form Types**: Bind forms to different use cases (e.g. entities) through customizable form types.
-- 🧩 **General Fields**: Define required general fields or exportable values that apply across form types.
-- 🛠 **Configurable Field Types**: Includes various fields like Repeaters with interfaces to add additional inputs
-  dynamically.
-- 🤏drag & drop form builder
+- 🧩 **General Fields**: Define general fields for exports and reusability across form types.
+- 🛠 **Configurable Field Types**: Includes various fields like Repeaters to add additional inputs dynamically.
+- 🤏 **drag & drop** Use an intuitive form builder.
 - 🔁 **Reactive Rules**: Set up rules that react to answers by changing field visibility or modifying selectable options.
 - 🌟 **Prioritized Select Field**: Use enhanced select fields with prioritized or sorted options.
-- 📄 **Template Snippets**: Create reusable form templates to streamline development.
-- 🧱 **Custom Components**: Easily embed custom forms into your application using Filament components.
-- 👁️ **Multiple View Modes**: Switch rendering styles based on where the form is displayed.
-- 🔧 **Extensible Architecture**: Everything is designed to be customizable—add your own fields, rules, and templates as
-  needed.
-- ⬇️ **Import/Export**: >ou can import and export custom forms from the ui.
+- 📄 **Template Snippets**: Create reusable form templates to maximize reusability.
+- 🧱 **Custom Components**: Easily embed CustomForms into your application using Filament components.
+- 👁️ **Multiple View Modes**: Switch rendering styles based on where the form is used.
+- 🔧 **Extensible Architecture**: Everything is designed to be customizable — add your own fields, rules, and templates.
+- ⬇️ **Import/Export**: You can import and export custom forms directly from the UI..
 
 ---
 
-## Screenshoots
+## Screenshots
 
 ### Editor
 
@@ -63,26 +61,26 @@ It provides a wide range of **customizable form fields** and supports rules for 
 
 ## Installation
 
-You can install the package via composer:
+Install the package via composer:
 
 ```bash
 composer require ffhs/filament-package_ffhs_custom_forms
 ```
 
-You can publish and run the migrations with:
+Publish and run the migrations:
 
 ```bash
 php artisan vendor:publish --tag="filament-package_ffhs_custom_forms-migrations"
 php artisan migrate
 ```
 
-You can publish the config file with:
+Publish the config file with:
 
 ```bash
 php artisan vendor:publish --tag="filament-package_ffhs_custom_forms-config"
 ```
 
-The CustomForm plugins needs [Icon Picker Plugin](https://filamentphp.com/plugins/guava-icon-picker)  You can publish
+The CustomForm plugin needs [Icon Picker Plugin](https://filamentphp.com/plugins/guava-icon-picker)  You can publish
 the config file with:
 
 ```bash  
@@ -99,10 +97,10 @@ php artisan vendor:publish --tag="filament-package_ffhs_custom_forms-views"
 
 ### 1. Register the Plugin
 
-Add the plugin to your Filament panel provider:
+Add the plugin to your PanelProvider:
 
 ```php
-// App/Providers/Filament/__PanelProvider 
+// App/Providers/Filament/xxPanelProvider 
 
 ->plugins([CustomFormPlugin::make()])
 ```
@@ -111,21 +109,22 @@ Add the plugin to your Filament panel provider:
 
 ### 2. Overview
 
-A **Custom Form** is composed of two main parts:
+A **CustomForm** is composed of two main parts:
 
-- **CustomFormConfiguration** – The blueprint that defines the form’s behavior, fields, and validation rules.
+- **CustomFormConfiguration** – The blueprint that defines the forms behavior, fields, and validation rules.
 
 - **CustomFields** – Dynamic fields rendered within the form.
 
-You can define multiple form configurations to serve different purposes.  
+
+---
+
+### 3. CustomFormConfiguration
+
+Define multiple form configurations to serve different purposes.  
 For example:
 
 - A registration form with specific dependencies and validations.
 - A survey form with its own layout and logic.
-
----
-
-### 3. Creating a Form Configuration
 
 To define a new form, extend the `CustomFormConfiguration` class:
 
@@ -152,26 +151,24 @@ class SimpleForm extends CustomFormConfiguration {
 
 ---
 
-### 4. Registering Form Configurations
-
 After creating a new configuration, register it in the `ffhs_custom_forms` config file:
 
 ```php
 // config/ffhs_custom_forms.php 
-'forms' => [     SimpleForm::class, ],`
+'forms' => [ SimpleForm::class, ],`
 ```
 
 **Notes:**
 
 - Add each configuration class to the `forms` array.
-- Run `php artisan config:clear` or reload the configuration cache after making changes.
+- Run `php artisan config:clear`.
 
-## Features  explaned
+## Features explained
 
 ### ✅ Form Configurations (FormTypes)
 
-You can create different **FormTypes**, each with its own set of available **FieldTypes** and required **GeneralFields
-**. This allows you to customize forms for different application scenarios.
+You can create different **FormTypes**, each with its own set of available **FieldTypes** and required **GeneralFields**. 
+This allows you to customize forms for different application scenarios.
 
 For example, you might have custom forms for requests and custom forms for applications. Now you can create two
 different FormTypes:
@@ -185,7 +182,7 @@ This makes the form system flexible and reusable across various use cases.
 CustomFormConfiguration.php
 ```
 
-#### Other Function to Overwrite
+#### Other functions to overwrite
 
 | Method Signature                                       | Description                                                                                                                                                                                                                                        |
 |--------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -208,7 +205,7 @@ A **CustomField** consists of:
 
 - A **FieldType** – Defines the type and logic of the field (e.g. `TextType`, `SelectType`, etc.).
 - A set of **Options** – Configuration values such as placeholder text, min/max values, selectable choices, etc.
-- A **FieldTypeView** – Wich can change on an diferent ViewMode
+- A **FieldTypeView** – Which can change on a different ViewMode
 
 #### Predefined Field Types
 
@@ -239,18 +236,18 @@ A **CustomField** consists of:
 
 #### 📐 Layout Components
 
-- `SectionType::class
-- `FieldsetType::class
-- `GroupType::class
-- `TitleType::class
-- `TextLayoutType::class
-- `DownloadType::class
-- `ImageLayoutType::class
+- `SectionType::class`
+- `FieldsetType::class`
+- `GroupType::class`
+- `TitleType::class`
+- `TextLayoutType::class`
+- `DownloadType::class`
+- `ImageLayoutType::class`
 - `SpaceType::class`
 
-#### Add an own CustomField
+#### Create your own CustomFieldType
 
-You can create your own reusable field type by implementing a **CustomFieldType** and a matching **View Component**.
+Create your own reusable field type by implementing a **CustomFieldType** and a matching **ViewComponent**.
 
 1. Define the Field Type Class
 
@@ -288,11 +285,11 @@ class MyType extends CustomFieldType
 // config/ffhs_custom_forms.php
 'custom_field_types' => [  
     MyType::class,
-    ...
+    [..]
 ]
 ```
 
-3. Define the Field Type View
+3. Define the FieldTypeView
 
 ```php
 class MyTypeView implements FieldTypeView  
@@ -342,22 +339,22 @@ editing, rendering, saving, and cloning.
 
 ---
 
-### Type Options
+### TypeOptions
 
-the Type options are options components wich can add to an fieldtype to modify the components.
-The Type Options can automaticle apply some effects if the
+The TypeOptions are options components which can add to a field-type to modify the components.
+The TypeOptions can automatically apply some effects if the
 `return $input = $this->makeComponent(TextInput::class, $record);` is used in the TypeView.
 
-#### Prefefined Type Option Classes
+#### Predefined Type Option Classes
 
-These classes define configurable type options used in custom form fields.
+These classes define configurable TypeOptions used in CustomFormFields.
 
 1. `ActionLabelTypeOption.php`
 2. `AlpineMaskOption.php`
 3. `BooleanOption.php`
 4. `ColumnsOption.php`
 5. `ColumnSpanOption.php`
-6. `DateFormatOption.php
+6. `DateFormatOption.php`
 7. `HelperTextTypeOption.php`
 8. `IconOption.php`
 9. `ImaginaryTypeOption.php`
@@ -381,20 +378,20 @@ These classes define configurable type options used in custom form fields.
 27. `ValidationAttributeOption.php`
 28. `ValidationMessageOption.php`
 
-#### Using Type Options in a Custom Field Type
+#### Using TypeOptions in a CustomFieldType
 
 You can add **extra type options** to your custom field by overriding `extraTypeOptions()` or `generalTypeOptions()`:
 
 ```php
-//MyType.php
+// MyType.php
 public function extraTypeOptions(): array  
 {  
     return [  
        'alpine_mask' => AlpineMaskOption::make()
 	       ->modifyDefault(fn($oldDefault) => '...'),  
-        'max_length' => MaxLengthOption::make()
+       'max_length' => MaxLengthOption::make()
 	       ->modifyOptionComponent(fn($component) => $component->columnStart(1)),    
-        'min_length' => MinLengthOption::make(),  
+       'min_length' => MinLengthOption::make(),  
     ];  
 }
 ```
@@ -403,7 +400,7 @@ public function extraTypeOptions(): array
 - The value is an instance of a `TypeOption`, usually created via `::make()`.
 - You can customize how the option behaves using methods like `modifyDefault()` or `modifyOptionComponent()`.
 
-#### Creating a Custom Type Option
+#### Creating a custom TypeOption
 
 To create your own option, extend the `TypeOption` class:
 
@@ -436,7 +433,7 @@ class MyTypeOption extends TypeOption
 }
 ```
 
-#### Other Optional Function
+#### Other optional functions
 
 | Method                         | Purpose                                                                         |
 |--------------------------------|---------------------------------------------------------------------------------|
@@ -469,7 +466,7 @@ public function extraTypeOptions(): array
 ```
 
 ```php
-//MyTypeView.php
+// MyTypeView.php
 $myOption = $this->getOptionParameter($record, 'my_option');
 
 /** @var TextInput $input */  
@@ -484,20 +481,20 @@ return $input
 
 ### OptionsGroups
 
-Option groups help organize multiple related type options into logical collections, making your field configuration
-cleaner and easier to manage.
+OptionsGroups help organize multiple related TypeOptions into logical collections, 
+making your field configuration cleaner and easier to manage.
 
-In the Image are options marked red and the Option groups are maked as blue.
+In the image TypeOptions are marked red and the OptionGroups are marked blue.
 ![](images/options_and_groups.png)
 
-#### Example to use Option Groups
+#### How to use OptionGroups?
 
 ```php
 //MyType.php
 public function extraTypeOptions(): array  
 {  
     return [  
-       TypeOptionGroup::make('MyGroup', [  
+        TypeOptionGroup::make('MyGroup', [  
 		    'alpine_mask' => AlpineMaskOption::make(),  
 			'max_length' => MaxLengthOption::make(),  
 			'min_length' => MinLengthOption::make(),
@@ -514,10 +511,10 @@ public function extraTypeOptions(): array
 
 ---
 
-### Rules Events & Triggers
+### Rules: Events and Triggers
 
 Rules can be divided into events and triggers. Triggers cause events to be executed. A rule can consist of multiple
-triggers that can be combined using AND or OR logic and can execute multiple events.
+triggers that can be combined using 'AND' or 'OR' logic and can execute multiple events.
 
 #### Predefined Events
 
@@ -580,7 +577,7 @@ class MyTrigger extends FormRuleTriggerType
 
 #### Create own Event
 
-1. Create an MyTrigger classe
+1. Create an MyEvent class
 
 ```php
 // MyTrigger.php
@@ -606,7 +603,7 @@ class MyEvent extends FormRuleEventType
         ];  
     }  
 
-	    // Implement one or more handler functions below depending on your use case:
+	// Implement one or more handler functions below depending on your use case:
     // - handleAnswerLoadMutation
     // - handleAnswerSaveMutation
     // - handleBeforeRender
@@ -627,9 +624,9 @@ class MyEvent extends FormRuleEventType
 
 ---
 
-### Embed Custom Forms in Other Places
+### Embed CustomForms
 
-You can embed custom forms or their answers in various parts of your application using specialized components. Below are
+You can embed CustomForms or their answers in various parts of your application using specialized components. Below are
 examples of usage patterns and customization options.
 
 #### Editor
@@ -662,6 +659,8 @@ EmbeddedCustomForm::make('custom_form_answer')
 Split layout by section type:
 
 ```php
+use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\LayoutType\Types;
+
 EmbeddedCustomForm::make('custom_form_answer')
 	->relationship('customFormAnswer')
 	->useLayoutTypeSplit()
@@ -687,9 +686,9 @@ EmbeddedCustomForm::make('custom_form_answer')
 	->poseSplitEnd(10)
 ```
 
-#### Form Answer Infolist
+#### View answer on an infolist
 
-Embed a form for editing its answer using `EmbeddedCustomForm`.
+Embed a view for its answer using `EmbeddedCustomForm`.
 
 **Basic usage:**
 
@@ -740,6 +739,12 @@ composer install
 ## Changelog
 
 Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed recently.
+
+
+## Postcards
+
+We highly appreciate you sending us a postcard. 
+You'll find our address on our [page](https://www.ffhs.ch/).
 
 ## License
 
