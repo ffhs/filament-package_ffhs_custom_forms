@@ -100,6 +100,10 @@ class TempCustomField
             return TemplateFieldType::make();
         }
 
+        if ($this->data['general_field_id']) {
+            return $this->getGeneralField()->getType();
+        }
+
         $typeName = $this->data['type'];
 
         return CustomFieldType::getTypeClassFromIdentifier($typeName)::make();
