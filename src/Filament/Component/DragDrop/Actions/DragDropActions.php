@@ -4,7 +4,6 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\DragDrop\Action
 
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\DragDrop\HasDragGroup;
 use Filament\Forms\Components\Actions;
-use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Component;
 use Filament\Support\Concerns\HasAlignment;
 use Filament\Support\Concerns\HasVerticalAlignment;
@@ -17,12 +16,14 @@ class DragDropActions extends Actions
 
     public function actions(array $actions): static
     {
-        $this->childComponents(fn()=> array_map(
-            fn (Action $action): Component => DragDropActionContainer::make($action)->dragDropGroup($this->getDragDropGroup()),
-            $actions,
-        ));
+        $this->childComponents(function () use ($actions) {
+            $group = $this->getDragDropGroup();
+
+            return array_map(static fn(DragDropAction $action): Component => $action
+                ->toFormComponent()
+                ->dragDropGroup($group), $actions);
+        });
 
         return $this;
     }
-
 }

@@ -2,16 +2,14 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Models;
 
-use Ffhs\FilamentPackageFfhsCustomForms\Helping\Caching\CachedModel;
-use Ffhs\FilamentPackageFfhsCustomForms\Helping\Caching\HasCacheModel;
+use Ffhs\FilamentPackageFfhsCustomForms\Facades\CustomForms;
+use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanLoadFormAnswer;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Cache;
 
 /**
- * 
+ *
  *
  * @property int $id
  * @property int $custom_form_id
@@ -32,40 +30,45 @@ use Illuminate\Support\Facades\Cache;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomFormAnswer whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-class CustomFormAnswer extends Model implements CachedModel
+class CustomFormAnswer extends Model
 {
-    use HasCacheModel;
-
+    use CanLoadFormAnswer;
 
     protected $fillable = [
-            'custom_form_id',
-            'short_title',
+        'custom_form_id',
+        'short_title',
     ];
 
-    protected  array $cachedRelations = [
-        "customFieldAnswers",
-        "customForm"
-    ];
+    public static function __(string ...$args): string
+    {
+        return CustomForms::__('models.custom_form_answer.' . implode('.', $args));
+    }
 
-    public function customForm(): BelongsTo {
+    public function customForm(): BelongsTo
+    {
         return $this->belongsTo(CustomForm::class);
     }
 
-    public function cachedCustomFieldAnswers (): mixed {
-        return Cache::remember($this->getCacheKeyForAttribute("customFieldAnswers"), self::getCacheDuration(),
-            function(){
-                $answers = $this->customFieldAnswers()
-                    ->with("customField")
-                    ->get();
-                $this->customForm->customFields;
-
-                return $answers;
-               // return new RelationCachedInformations(CustomFieldAnswer::class, $answers->pluck("id")->toArray());
-            }
-        );
+    public function customFieldAnswers(): HasMany
+    {
+        return $this->hasMany(CustomFieldAnswer::class);
     }
 
-    public function customFieldAnswers (): HasMany {
-        return $this->hasMany(CustomFieldAnswer::class);
+    public function loadedData(): array
+    {
+        if ($this->relationLoaded('fieldData')) {
+            return $this->getRelation('fieldData');
+        }
+
+        $fieldData = $this->loadCustomAnswerData($this);
+        $this->setRelation('fieldData', $fieldData);
+
+        return $fieldData;
+    }
+
+    public function reloadData(): void
+    {
+        $fieldData = $this->loadCustomAnswerData($this);
+        $this->setRelation('fieldData', $fieldData);
     }
 }

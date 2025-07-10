@@ -1,0 +1,128 @@
+<?php
+
+namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormEditor\AdderComponents\Default;
+
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormEditor\AdderComponents\FormEditorFieldAdder;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
+use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Get;
+
+class  AddTemplateFieldAction extends Action
+{
+    protected $option;
+
+    public function createField(array $arguments, $set, $component, $get, $livewire, CustomForm $record): void
+    {
+        $templateId = $this->getOption();
+        $field = [
+            'template_id' => $templateId,
+            'is_active' => true,
+            'identifier' => uniqid(),
+        ];
+        FormEditorFieldAdder::addNewField($component, $arguments, $livewire, $field);
+
+        $customFields = $get($component->getStatePath(true) . '.custom_fields', true);
+        $identifiers = $this->getOverlappedIdentifier($customFields, $templateId, $record);
+
+        if (sizeof($identifiers) === 0) {
+            return;
+        }
+
+        $this->deletingExistingFields($get, $set, $identifiers);
+    }
+
+    public function getOption()
+    {
+        return $this->evaluate($this->option);
+    }
+
+    public function option($option): static
+    {
+        $this->option = $option;
+
+        return $this;
+    }
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this
+            ->closeModalByClickingAway(false)
+            ->label(fn() => __('filament-package_ffhs_custom_forms::custom_forms.functions.add'))
+            ->requiresConfirmation(
+                fn($arguments, $state) => $this->hasExistingFields($state('custom_fields'), $this->getOption())
+            )
+            ->modalHeading(function ($state) {
+                if (!$this->hasExistingFields($state, $this->getOption())) {
+                    return '';
+                }
+
+                return __(
+                    'filament-package_ffhs_custom_forms::custom_forms.form.compiler.template_has_existing_fields'
+                );
+            })
+            ->modalDescription(function ($arguments, $state) {
+                if (!$this->hasExistingFields($state, $this->getOption())) {
+                    return '';
+                }
+
+                return __(
+                    'filament-package_ffhs_custom_forms::custom_forms.form.compiler.template_has_existing_fields_description'
+                );
+            })
+            ->action($this->createField(...));
+    }
+
+    private function getOverlappedIdentifier(array $customFields, int $templateId, CustomForm $form): array
+    {
+        //Fields with the same identify key
+        $usedFieldIdentifier = [];
+        $customFields = array_filter($customFields, fn($field) => !empty($customFields['identifier']));
+        $customFieldWithIdentifyKey = array_combine(
+            array_map(fn($field) => $field['identifier'], $customFields),
+            $customFields
+        );
+
+        foreach ($customFieldWithIdentifyKey as $customField) {
+            $usedFieldIdentifier[] = $customField['identifier'];
+        }
+
+        $template = $form
+            ->getFormConfiguration()
+            ->getAvailableTemplates()
+            ->firstWhere('id', $templateId);
+
+        return $template
+            ->customFields
+            ->whereIn('identifier', $usedFieldIdentifier)
+            ->pluck('identifier')
+            ->toArray();
+    }
+
+    private function deletingExistingFields(Get $get, $set, array $overlappedIdentifier, string $prefix = ''): void
+    {
+        $toSet = [];
+
+        foreach ($get($prefix . 'custom_fields') as $key => $customField) {
+            if (!empty($customField['custom_fields'])) {
+                $subPrefix = $prefix . 'custom_fields.' . $key . '.';
+                $this->deletingExistingFields($get, $set, $overlappedIdentifier, $subPrefix);
+                $newFieldData = $get($prefix . 'custom_fields.' . $key);
+                $newFieldData['identifier'] = uniqid();
+                $toSet[$key] = $newFieldData;
+            } elseif (empty($customField['identifier'])) {
+                $toSet[$key] = $customField;
+            } elseif (!in_array($customField['identifier'], $overlappedIdentifier, false)) {
+                $toSet[$key] = $customField;
+            }
+        }
+
+        $set($prefix . 'custom_fields', $toSet);
+    }
+
+    private function hasExistingFields(array $customFields, int $templateId): bool
+    {
+        return !empty($this->getOverlappedIdentifier($customFields, $templateId, $this->getComponent()->getRecord()));
+    }
+}

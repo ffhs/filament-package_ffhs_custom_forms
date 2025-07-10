@@ -2,11 +2,9 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Models;
 
-use Barryvdh\Debugbar\Facades\Debugbar;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\GenericType\CustomFieldType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomField\CustomFieldType\TemplatesType\TemplateFieldType;
-use Ffhs\FilamentPackageFfhsCustomForms\Helping\Caching\CachedModel;
-use Ffhs\FilamentPackageFfhsCustomForms\Helping\Caching\HasCacheModel;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\TemplatesType\TemplateFieldType;
+use Ffhs\FilamentPackageFfhsCustomForms\Exceptions\FieldHasNoOrWrongCustomFieldTypeException;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Translatable\HasTranslations;
@@ -19,28 +17,43 @@ use Spatie\Translatable\HasTranslations;
  *
  * @property String|null $type
  */
-abstract class ACustomField extends Model implements CachedModel
+abstract class ACustomField extends Model
 {
     use HasFactory;
     use HasTranslations;
-    use HasCacheModel;
 
-    public $translatable = ['name'];
+    public array $translatable = ['name'];
 
+    /**
+     * @throws FieldHasNoOrWrongCustomFieldTypeException
+     */
+    public function getType(): CustomFieldType
+    {
+        if ($this instanceof CustomField && $this->isTemplate()) {
+            return new TemplateFieldType();
+        }
 
-    public function getTypeClass():?string{
-        if($this instanceof CustomField && $this->isTemplate()) return TemplateFieldType::class;
-        $typeName = $this->type;
-        if(is_null($typeName)) return null;
-        return CustomFieldType::getTypeClassFromIdentifier($typeName);
-    }
-
-    public function getType():?CustomFieldType{
-        //ToDo add error witch say that the type doesn't exist if its empty
-        if($this instanceof CustomField && $this->isTemplate()) return new TemplateFieldType();
         $typeClass = $this->getTypeClass();
-        if(is_null($typeClass)) return null;
+
+        if (is_null($typeClass)) {
+            throw new FieldHasNoOrWrongCustomFieldTypeException($this->type);
+        }
+
         return $this->getTypeClass()::make();
     }
 
+    public function getTypeClass(): ?string
+    {
+        if ($this instanceof CustomField && $this->isTemplate()) {
+            return TemplateFieldType::class;
+        }
+
+        $typeName = $this->type;
+
+        if (is_null($typeName)) {
+            return null;
+        }
+
+        return CustomFieldType::getTypeClassFromIdentifier($typeName);
+    }
 }

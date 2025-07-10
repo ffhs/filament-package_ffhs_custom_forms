@@ -2,8 +2,6 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Models;
 
-use Ffhs\FilamentPackageFfhsCustomForms\Helping\Caching\CachedModel;
-use Ffhs\FilamentPackageFfhsCustomForms\Helping\Caching\HasCacheModel;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Spatie\Activitylog\LogOptions;
@@ -37,12 +35,9 @@ use Spatie\Activitylog\Traits\LogsActivity;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomFieldAnswer whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-class CustomFieldAnswer extends Model implements CachedModel
+class CustomFieldAnswer extends Model
 {
-    use HasCacheModel;
     use LogsActivity;
-
-    //private array $data = [];
 
     protected $fillable = [
         'custom_form_answer_id',
@@ -56,13 +51,6 @@ class CustomFieldAnswer extends Model implements CachedModel
         'answer' => 'array',
     ];
 
-
-    protected array $cachedRelations = [
-        'customForm',
-        "customField",
-        "customFormAnswer",
-    ];
-
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
@@ -71,12 +59,9 @@ class CustomFieldAnswer extends Model implements CachedModel
 
     public function customForm(): BelongsTo
     {
-        return $this->customFormAnswer->customForm();
-    }
-
-    public function cachedCustomForm(): CustomForm
-    {
-        return $this->customField->customForm;
+        return $this
+            ->customFormAnswer
+            ->customForm();
     }
 
     public function customField(): BelongsTo
@@ -88,5 +73,4 @@ class CustomFieldAnswer extends Model implements CachedModel
     {
         return $this->belongsTo(CustomFormAnswer::class);
     }
-
 }

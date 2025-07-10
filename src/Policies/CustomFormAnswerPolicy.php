@@ -41,6 +41,4 @@ class CustomFormAnswerPolicy
     {
         return $user->can(CustomFormPermissionName::FILAMENT_RESOURCE_CUSTOM_FORM_ANSWERS) ?? false;
     }
-
-
 }

@@ -4,48 +4,45 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Events;
 
 use Closure;
-use Ffhs\FilamentPackageFfhsCustomForms\Helping\Rules\Event\EventType;
-use Ffhs\FilamentPackageFfhsCustomForms\Helping\Types\IsType;
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EventType;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\RuleEvent;
-use Filament\Forms\Components\Component;
+use Ffhs\FilamentPackageFfhsCustomForms\Traits\IsType;
+use Filament\Forms\Components\Component as FormsComponent;
+use Filament\Infolists\Components\Component as InfolistsComponent;
 use Illuminate\Support\Collection;
 
 
 abstract class FormRuleEventType implements EventType
 {
-     use IsType;
+    use IsType;
 
-
-     public static function getConfigTypeList(): string
-     {
-        return "rule.event";
-     }
+    public static function getConfigTypeList(): string
+    {
+        return 'rule.event';
+    }
 
     public function handle(Closure $triggers, array $arguments, mixed &$target, RuleEvent $rule): mixed
     {
-
-
-        switch ($arguments["action"]) {
-            case "before_render":
-                return $this->supHandlerRun($this->handleBeforeRender(...), $triggers, $arguments, $target, $rule);
-               ;
-            //case "mutate_parameters": return $this->handleParameterMutation($triggers, $arguments, $target, $rule);
-            case "after_render":
-                if(is_array($target) && (array_values($target)[0]??"") instanceof Component) {
-                    $answare = $this->supHandlerRun($this->handleAfterRenderForm(...), $triggers, $arguments, $target, $rule);
+        switch ($arguments['action']) {
+            case 'before_render':
+                return $this->handlerBeforeRun($triggers, $arguments, $target, $rule);
+            //case 'mutate_parameters': return $this->handleParameterMutation($triggers, $arguments, $target, $rule);
+            case 'after_render':
+                if (is_array($target) && (array_values($target)[0] ?? '') instanceof FormsComponent) {
+                    $handler = $this->handleAfterRenderForm(...);
+                } else {
+                    $handler = $this->handleAfterRenderInfolist(...);
                 }
-                else{
-                    $answare = $this->supHandlerRun($this->handleAfterRenderInfolist(...), $triggers, $arguments, $target, $rule);
-                }
-                return $answare;
 
-            case "load_answerer": return $this->handleAnswerLoadMutation($triggers, $arguments, $target, $rule);
-            case "save_answerer": return $this->handleAnswerSaveMutation($triggers, $arguments, $target, $rule);
-
-
-            default: return null;
+                return $this->subHandlerRun($handler, $triggers, $arguments, $target, $rule);
+            case 'load_answer':
+                return $this->handleAnswerLoadMutation($triggers, $arguments, $target, $rule);
+            case 'save_answer':
+                return $this->handleAnswerSaveMutation($triggers, $arguments, $target, $rule);
+            default:
+                return null;
         }
     }
 
@@ -54,65 +51,96 @@ abstract class FormRuleEventType implements EventType
 //        return $parameters;
 //    }
 
-    private function supHandlerRun(Closure $supFunction, Closure $triggers, array $arguments, array|Collection &$target, RuleEvent $rule): mixed
-    {
-        if($target instanceof Collection){
-            return $target->map(function (CustomField $item) use ($rule, $triggers, $supFunction) {
-                if($item instanceof CustomField) $identifier = $item;
-                $modifiedTrigger = function (array $extraOptions = []) use ($identifier, $item, $triggers) {
-                    return $triggers(array_merge(["target_field_identifier" => $identifier], $extraOptions ));
-                };
-                $arguments["identifier"] = $identifier;
-                return $supFunction($modifiedTrigger, $arguments, $item, $rule);
-            });
-        }
-
-        foreach ($target as $identifier => $item){
-            /**@var CustomField|Component|\Filament\Infolists\Components\Component $item*/
-
-            $modifiedTrigger = function (array $extraOptions = []) use ($identifier, $item, $triggers) {
-                return $triggers(array_merge(["target_field_identifier" => $identifier], $extraOptions ));
-            };
-            $arguments["identifier"] = $identifier;
-            $target[$identifier]  = $supFunction($modifiedTrigger, $arguments, $item, $rule);
-        }
-
-        return $target;
-    }
-
-    private function handleAnswerLoadMutation(Closure $triggers, array $arguments, mixed &$target, RuleEvent $rule): mixed    {
-        return $target;
-    }
-
-    private function handleAnswerSaveMutation(Closure $triggers, array $arguments, mixed &$target, RuleEvent $rule): mixed
-    {
-        return $target;
-    }
-
     public function getCustomField($arguments): ?CustomField
     {
-        $identifier = $arguments["identifier"];
-        $fields = $arguments["custom_fields"][$identifier] ?? null;
-        return  $fields;
+        $identifier = $arguments['identifier'];
+
+        return $arguments['custom_fields']->get($identifier);
     }
 
-    public function handleBeforeRender(Closure $triggers, array $arguments, CustomField &$target, RuleEvent $rule): CustomField
-    {
+    public function handleBeforeRender(
+        Closure $triggers,
+        array $arguments,
+        CustomField &$target,
+        RuleEvent $rule
+    ): CustomField {
         return $target;
     }
 
-    public function handleAfterRenderForm(Closure $triggers, array $arguments, Component &$component, RuleEvent $rule): Component
-    {
+    public function handleAfterRenderForm(
+        Closure $triggers,
+        array $arguments,
+        FormsComponent &$component,
+        RuleEvent $rule
+    ): FormsComponent {
         return $component;
     }
 
-    public function handleAfterRenderInfolist(Closure $triggers, array $arguments, \Filament\Infolists\Components\Component &$component, RuleEvent $rule): \Filament\Infolists\Components\Component
-    {
+    public function handleAfterRenderInfolist(
+        Closure $triggers,
+        array $arguments,
+        InfolistsComponent &$component,
+        RuleEvent $rule
+    ): InfolistsComponent {
         return $component;
     }
 
-    public function mutateDataOnClone(array $data, CustomForm $target):array{
-         return $data;
+    public function mutateDataOnClone(array $data, CustomForm $target): array
+    {
+        return $data;
     }
 
+    private function handlerBeforeRun(Closure $triggers, array $arguments, Collection $target, RuleEvent $rule): mixed
+    {
+        return $target->map(function (CustomField $item) use ($rule, $triggers) {
+            if ($item instanceof CustomField) {
+                $identifier = $item;
+            }
+
+            $modifiedTrigger = fn(array $extraOptions = []) => $triggers(
+                array_merge(['target_field_identifier' => $identifier], $extraOptions)
+            );
+            $arguments['identifier'] = $identifier;
+
+            return $this->handleBeforeRender($modifiedTrigger, $arguments, $item, $rule);
+        });
+    }
+
+    private function subHandlerRun(
+        Closure $subFunction,
+        Closure $triggers,
+        array $arguments,
+        array &$target,
+        RuleEvent $rule
+    ): mixed {
+        foreach ($target as $identifier => $item) {
+            /**@var CustomField|FormsComponent|InfolistsComponent $item */
+            //dump($identifier, $item);
+            $modifiedTrigger = fn(array $extraOptions = []) => $triggers(
+                array_merge(['target_field_identifier' => $identifier], $extraOptions)
+            );
+            $arguments['identifier'] = $identifier;
+            $target[$identifier] = $subFunction($modifiedTrigger, $arguments, $item, $rule);
+        }
+
+        return $target;
+    }
+
+    private function handleAnswerLoadMutation(
+        Closure $triggers,
+        array $arguments,
+        mixed &$target,
+        RuleEvent $rule
+    ): mixed {
+        return $target;
+    }
+
+    private function handleAnswerSaveMutation(
+        Closure $triggers,
+        array $arguments,
+        mixed &$target,
+        RuleEvent $rule
+    ): mixed {
+        return $target;
+    }
 }
