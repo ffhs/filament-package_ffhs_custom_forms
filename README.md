@@ -3,8 +3,8 @@
 This plugin enables you to **create and manage nested forms** within FilamentPHP.  
 It provides a wide range of **customizable form fields** and supports behavioral rules and templates.
 
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/:vendor_slug/:package_slug.svg?style=flat-square)](https://packagist.org/packages/ffhs/filament-package_ffhs_custom_forms)
-[![Total Downloads](https://img.shields.io/packagist/dt/:vendor_slug/:package_slug.svg?style=flat-square)](https://packagist.org/packages/ffhs/filament-package_ffhs_custom_forms)
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/ffhs/filament-package_ffhs_custom_forms.svg?style=flat-square)](https://packagist.org/packages/ffhs/filament-package_ffhs_custom_forms)
+[![Total Downloads](https://img.shields.io/packagist/dt/ffhs/filament-package_ffhs_custom_forms.svg?style=flat-square)](https://packagist.org/packages/ffhs/filament-package_ffhs_custom_forms)
 
 ## Features:
 
