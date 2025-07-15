@@ -48,7 +48,14 @@ function getOnEndCallback(group) {
         let temporaryChild = document.createElement('div');
 
         clonedElement.replaceWith(temporaryChild)
-        temporaryChild.setAttribute('x-data', `typeof dragDropElement === 'undefined'? {}: dragDropElement('${group}','${temporaryKey}')`)
+
+        temporaryChild.setAttribute('x-data', `
+                {
+                    group: '${group}',
+                    element: '${temporaryKey}',
+                    parent: false,
+                    container: false,
+                }`)
         temporaryChild.setAttribute('ffhs_drag:component', null)
         temporaryChild.classList.add('hidden')
         Alpine.initTree(temporaryChild);
