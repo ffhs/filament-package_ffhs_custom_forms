@@ -59,7 +59,7 @@ use Spatie\Translatable\HasTranslations;
  */
 class CustomForm extends Model
 {
-    use HasTranslations;
+    //use HasTranslations;
     use HasFormIdentifier;
     use HasFactory;
     use HasFormRules;

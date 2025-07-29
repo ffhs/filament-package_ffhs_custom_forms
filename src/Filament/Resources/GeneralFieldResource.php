@@ -23,12 +23,12 @@ use Illuminate\Database\Eloquent\Builder;
 
 class GeneralFieldResource extends Resource
 {
-    use Translatable;
+//    use Translatable;
     use HasGeneralFieldForm;
 
     public const langPrefix = 'filament-package_ffhs_custom_forms::models.general_field.';
     protected static ?string $model = GeneralField::class;
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string|null|\BackedEnum $navigationIcon = 'heroicon-o-rectangle-stack';
     protected static ?string $recordTitleAttribute = 'name';
 
 

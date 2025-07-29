@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\Builder;
 
 class TemplateResource extends Resource
 {
-    use Translatable;
+//    use Translatable;
 
     protected static ?string $model = CustomForm::class;
 

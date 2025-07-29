@@ -37,7 +37,8 @@ use Spatie\Translatable\HasTranslations;
 class CustomOption extends Model
 {
     use HasFormIdentifier;
-    use HasTranslations;
+
+    //use HasTranslations;
     use HasFactory;
     use HasCustomFormModelTranslations;
 

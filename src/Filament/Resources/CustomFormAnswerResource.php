@@ -2,6 +2,7 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources;
 
+use Closure;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormAnswerResource\Pages\CreateCustomFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormAnswerResource\Pages\EditCustomFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormAnswerResource\Pages\ListCustomFormAnswer;
@@ -21,7 +22,7 @@ use Illuminate\Database\Eloquent\Model;
 class CustomFormAnswerResource extends Resource
 {
     protected static ?string $model = CustomFormAnswer::class;
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string|null|\BackedEnum $navigationIcon = 'heroicon-o-rectangle-stack';
 
     public static function getRecordTitleAttribute(): ?string
     {
@@ -107,10 +108,17 @@ class CustomFormAnswerResource extends Resource
         ];
     }
 
-    public static function resolveRecordRouteBinding(int|string $key): ?Model
+
+    public static function resolveRecordRouteBinding(string|int $key, ?Closure $modifyQuery = null): ?Model
     {
+        $query = static::getRecordRouteBindingEloquentQuery();
+
+        if ($modifyQuery) {
+            $query = $modifyQuery($query) ?? $query;
+        }
+
         return app(static::getModel())
-            ->resolveRouteBindingQuery(static::getEloquentQuery(), $key, static::getRecordRouteKeyName())
+            ->resolveRouteBindingQuery($query, $key, static::getRecordRouteKeyName())
             ->with(['customForm', 'customFieldAnswers'])
             ->first();
     }

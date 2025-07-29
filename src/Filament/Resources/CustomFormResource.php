@@ -6,16 +6,15 @@ use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormResource\Pa
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormResource\Pages\EditCustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormResource\Pages\ListCustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
-use Filament\Resources\Concerns\Translatable;
 use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Builder;
 
 class CustomFormResource extends Resource
 {
-    use Translatable;
+//    use Translatable;
 
     protected static ?string $model = CustomForm::class;
-    protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-check';
+    protected static string|null|\BackedEnum $navigationIcon = 'heroicon-o-clipboard-document-check';
 
     public static function getNavigationLabel(): string
     {

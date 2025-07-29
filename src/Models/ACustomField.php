@@ -20,7 +20,8 @@ use Spatie\Translatable\HasTranslations;
 abstract class ACustomField extends Model
 {
     use HasFactory;
-    use HasTranslations;
+
+    //use HasTranslations;
 
     public array $translatable = ['name'];
 

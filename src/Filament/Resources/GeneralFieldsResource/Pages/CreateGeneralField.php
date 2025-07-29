@@ -4,15 +4,13 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\GeneralFieldsRe
 
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\GeneralFieldResource;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
-use Filament\Actions\LocaleSwitcher;
-use Filament\Forms\Form;
 use Filament\Resources\Pages\CreateRecord;
-use Filament\Resources\Pages\CreateRecord\Concerns\Translatable;
+use Filament\Schemas\Schema;
 use Illuminate\Contracts\Support\Htmlable;
 
 class CreateGeneralField extends CreateRecord
 {
-    use Translatable;
+    //use Translatable;;
     use HasGeneralFieldForm;
 
     protected static string $resource = GeneralFieldResource::class;
@@ -22,9 +20,9 @@ class CreateGeneralField extends CreateRecord
         return GeneralField::__('pages.create.title');
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return parent::form($form)
+        return parent::form($schema)
             ->schema([
                 $this->getGeneralFieldBasicSettings(),
                 $this->getOverwriteTypeOptions(),

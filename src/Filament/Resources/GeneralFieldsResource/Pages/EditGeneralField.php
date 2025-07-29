@@ -9,11 +9,12 @@ use Filament\Actions\LocaleSwitcher;
 use Filament\Forms\Form;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Resources\Pages\EditRecord\Concerns\Translatable;
+use Filament\Schemas\Schema;
 use Illuminate\Contracts\Support\Htmlable;
 
 class EditGeneralField extends EditRecord
 {
-    use Translatable;
+    //use Translatable;;
     use HasGeneralFieldForm;
 
     protected static string $resource = GeneralFieldResource::class;
@@ -23,9 +24,9 @@ class EditGeneralField extends EditRecord
         return trans(GeneralField::__('pages.edit.title'), ['name' => $this->getRecord()->name]);
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return parent::form($form)
+        return parent::form($schema)
             ->schema([
                 $this->getGeneralFieldBasicSettings(),
                 $this->getOverwriteTypeOptions(),

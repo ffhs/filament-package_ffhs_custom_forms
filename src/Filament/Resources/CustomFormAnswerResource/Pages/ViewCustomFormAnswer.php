@@ -10,6 +10,7 @@ use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ViewRecord;
+use Filament\Schemas\Schema;
 use Illuminate\Contracts\Support\Htmlable;
 
 class ViewCustomFormAnswer extends ViewRecord
@@ -28,9 +29,9 @@ class ViewCustomFormAnswer extends ViewRecord
         return trans(CustomFormAnswer::__('pages.view.title'), $attributes);
     }
 
-    public function infolist(Infolist $infolist): Infolist
+    public function infolist(Schema $schema): Schema
     {
-        return $infolist->schema([
+        return $schema->schema([
             EmbeddedAnswerInfolist::make()
                 ->autoViewMode()
                 ->columnSpanFull()

@@ -8,6 +8,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Illuminate\Contracts\Support\Htmlable;
 
 class CreateTemplate extends CreateCustomForm
@@ -19,9 +20,9 @@ class CreateTemplate extends CreateCustomForm
         return CustomForm::__('pages.create_template.title');
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
+        return $schema
             ->schema([
                 TextInput::make('template_identifier')
                     ->label('Template Id')

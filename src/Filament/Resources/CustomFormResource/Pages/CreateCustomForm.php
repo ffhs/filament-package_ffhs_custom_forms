@@ -6,8 +6,8 @@ use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormTypeSelecto
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormResource;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Resources\Pages\CreateRecord;
+use Filament\Schemas\Schema;
 use Illuminate\Contracts\Support\Htmlable;
 
 class CreateCustomForm extends CreateRecord
@@ -19,9 +19,9 @@ class CreateCustomForm extends CreateRecord
         return CustomForm::__('pages.create.title');
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form->schema([
+        return $schema->components([
             TextInput::make('short_title')
                 ->label(CustomForm::__('attributes.short_title'))
                 ->required(),

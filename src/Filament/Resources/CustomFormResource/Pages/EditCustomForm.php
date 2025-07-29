@@ -10,20 +10,17 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanLoadCustomFormEditorData;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanSaveCustomFormEditorData;
 use Filament\Actions\DeleteAction;
-use Filament\Actions\LocaleSwitcher;
-use Filament\Forms\Form;
 use Filament\Resources\Pages\EditRecord;
-use Filament\Resources\Pages\EditRecord\Concerns\Translatable;
-use Filament\Support\Enums\MaxWidth;
+use Filament\Schemas\Schema;
+use Filament\Support\Enums\Width;
 use Filament\Support\Facades\FilamentView;
 use Illuminate\Contracts\Support\Htmlable;
 use Throwable;
-
 use function Filament\Support\is_app_url;
 
 class EditCustomForm extends EditRecord
 {
-    use Translatable;
+    //use Translatable;;
     use CanSaveCustomFormEditorData;
     use CanLoadCustomFormEditorData;
 
@@ -44,14 +41,14 @@ class EditCustomForm extends EditRecord
         return trans(CustomForm::__('pages.edit.title'), $attributes);
     }
 
-    public function getMaxContentWidth(): MaxWidth|string|null
+    public function getMaxContentWidth(): string|null|Width
     {
-        return MaxWidth::Full;
+        return Width::Full;
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form->schema([
+        return $schema->components([
             CustomFormEditor::make('custom_form')
                 ->label('')
         ]);

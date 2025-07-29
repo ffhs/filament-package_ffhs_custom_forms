@@ -9,6 +9,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Pages\CreateRecord;
+use Filament\Schemas\Schema;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -21,9 +22,9 @@ class CreateCustomFormAnswer extends CreateRecord
         return CustomFormAnswer::__('pages.create.title');
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form->schema([
+        return $schema->schema([
             TextInput::make('short_title')
                 ->label(CustomFormAnswer::__('attributes.short_title')),
             Select::make('custom_form_id')

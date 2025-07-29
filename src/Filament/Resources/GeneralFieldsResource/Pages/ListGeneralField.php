@@ -14,7 +14,7 @@ use Illuminate\Contracts\Support\Htmlable;
 
 class ListGeneralField extends ListRecords
 {
-    use Translatable;
+    //use Translatable;;
 
     protected static string $resource = GeneralFieldResource::class;
 

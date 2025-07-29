@@ -5,15 +5,10 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\GeneralFieldsRe
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormConfiguration\CustomFormConfiguration;
 use Ffhs\FilamentPackageFfhsCustomForms\Facades\CustomForms;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralFieldForm;
-use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\CreateAction;
-use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Actions\DeleteBulkAction;
+use Filament\Schemas\Schema;
 use Filament\Tables\Columns\CheckboxColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -23,9 +18,9 @@ class GeneralFieldFormRelationManager extends RelationManager
 {
     protected static string $relationship = 'generalFieldForms';
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form->schema([
+        return $schema->schema([
             Select::make('custom_form_identifier')
                 ->label(GeneralFieldForm::__('attributes.custom_form_identifier_name.label'))
                 ->helperText(GeneralFieldForm::__('attributes.custom_form_identifier_name.helper_text'))
