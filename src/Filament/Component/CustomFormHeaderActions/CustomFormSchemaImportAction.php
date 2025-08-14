@@ -14,15 +14,15 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralFieldForm;
 use Filament\Actions\Action;
 use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Get;
 use Filament\Notifications\Notification;
-use Filament\Support\Enums\MaxWidth;
+use Filament\Schemas\Components\Group;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Support\Enums\Width;
 use JsonException;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
@@ -369,9 +369,9 @@ class CustomFormSchemaImportAction extends Action
         $this
             ->action($this->callImportAction(...))
             ->label('Import Formular/Template') //ToDo Translate
-            ->form($this->getFormSchema(...))
+            ->schema($this->getFormSchema(...))
             ->fillForm(['general_field_map' => [], 'template_map' => []])
-            ->modalWidth(MaxWidth::ScreenTwoExtraLarge);
+            ->modalWidth(Width::ScreenTwoExtraLarge);
     }
 
     protected function getTemplateOptions($get): array
