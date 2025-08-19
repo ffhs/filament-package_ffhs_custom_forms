@@ -38,7 +38,7 @@
     },
     "require-dev": {
         "pestphp/pest": "^3.0.0",
-        "orchestra/testbench": "^9.0.0",
+        "orchestra/testbench": "^10.4.0",
         "pestphp/pest-plugin-laravel": "^3.0.0",
         "pestphp/pest-plugin-livewire": "^3.0.0"
     },
