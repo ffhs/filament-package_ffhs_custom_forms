@@ -7,9 +7,9 @@ use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormResource;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\TemplateResource\Pages\ListTemplate;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Filament\Actions\CreateAction;
-use Filament\Resources\Components\Tab;
+use Filament\Actions\EditAction;
 use Filament\Resources\Pages\ListRecords;
-use Filament\Tables\Actions\EditAction;
+use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Contracts\Support\Htmlable;
@@ -50,7 +50,7 @@ class ListCustomForm extends ListRecords
     public function table(Table $table): Table
     {
         return parent::table($table)
-            ->actions([
+            ->recordActions([
                 EditAction::make(),
             ])
             ->columns([

@@ -18,11 +18,11 @@
         "php": "^8.2",
         "filament/filament": "^4.0",
         "filament/notifications": "^4.0",
-        "laravel/framework": "^11.0",
+        "laravel/framework": "^11|^12.0",
         "laravel/prompts": "^0.3",
         "spatie/laravel-activitylog": "^4.7",
         "spatie/laravel-permission": "^6.4",
-        "davidhsianturi/blade-bootstrap-icons": "^1.4",
+        "davidhsianturi/blade-bootstrap-icons": "^1.4|^2.1.0",
         "codeat3/blade-carbon-icons": "^2.18.2",
         "secondnetwork/blade-tabler-icons": "^3.26"
     },
@@ -38,7 +38,7 @@
     },
     "require-dev": {
         "pestphp/pest": "^3.0.0",
-        "orchestra/testbench": "^9.0.0",
+        "orchestra/testbench": "^9.0.0|^10.0.0",
         "pestphp/pest-plugin-laravel": "^3.0.0",
         "pestphp/pest-plugin-livewire": "^3.0.0"
     },
