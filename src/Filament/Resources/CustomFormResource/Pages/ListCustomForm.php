@@ -2,6 +2,8 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormResource\Pages;
 
+use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormConfiguration\CustomFormConfiguration;
+use Ffhs\FilamentPackageFfhsCustomForms\Facades\CustomForms;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormHeaderActions\CustomFormSchemaImportAction;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormResource;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\TemplateResource\Pages\ListTemplate;
@@ -32,11 +34,12 @@ class ListCustomForm extends ListRecords
                 ->badge($query->clone()->count()),
         ];
 
-        foreach (config('ffhs_custom_forms.forms') as $formClass) {
-            $tabs[$formClass::identifier()] =
-                Tab::make($formClass::displayName())
-                    ->badge($query->where('custom_form_identifier', $formClass::identifier())->count())
-                    ->modifyQueryUsing(fn($query) => $this->prepareTabQuery($formClass::identifier(), $query));
+        foreach (CustomForms::getFormConfigurations() as $identifier => $formConfiguration) {
+            /**@var CustomFormConfiguration $formConfiguration */
+            $tabs[$identifier] =
+                Tab::make($formConfiguration::displayName())
+                    ->badge($query->where('custom_form_identifier', $identifier)->count())
+                    ->modifyQueryUsing(fn($query) => $this->prepareTabQuery($identifier, $query));
         }
 
         return $tabs;

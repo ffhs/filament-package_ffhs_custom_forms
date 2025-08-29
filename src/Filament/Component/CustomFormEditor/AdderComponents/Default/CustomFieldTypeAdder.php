@@ -59,7 +59,7 @@ final class CustomFieldTypeAdder extends FormEditorFieldAdder
         }
 
         $formConfiguration = CustomForms::getFormConfiguration($formIdentifier);
-        $fieldTypes = $formConfiguration::formFieldTypes();
+        $fieldTypes = $formConfiguration::getSelectableFieldTypes();
 
         return collect($fieldTypes)
             ->map(fn($class) => app($class))

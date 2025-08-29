@@ -4,7 +4,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\DragDrop;
 
 use Closure;
 use Filament\Forms\Components\Field;
-use Filament\Forms\Concerns\HasStateBindingModifiers;
+use Filament\Schemas\Concerns\HasStateBindingModifiers;
 
 class DragDropComponent extends Field
 {

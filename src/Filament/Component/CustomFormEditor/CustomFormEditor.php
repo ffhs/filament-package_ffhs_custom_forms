@@ -8,11 +8,13 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\Rule;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanLoadCustomFormEditorData;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanSaveCustomFormEditorData;
-use Filament\Forms\Components\Concerns\EntanglesStateWithSingularRelationship;
-use Filament\Forms\Components\Contracts\CanEntangleWithSingularRelationships;
 use Filament\Forms\Components\Field;
-use Filament\Forms\Components\Tabs;
-use Filament\Forms\Components\Tabs\Tab;
+use Filament\Schemas\Components\Concerns\EntanglesStateWithSingularRelationship;
+use Filament\Schemas\Components\Contracts\CanEntangleWithSingularRelationships;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
+
+;
 
 class CustomFormEditor extends Field implements CanEntangleWithSingularRelationships
 {

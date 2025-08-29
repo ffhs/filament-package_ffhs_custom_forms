@@ -47,7 +47,6 @@ class CustomFormsServiceProvider extends PackageServiceProvider
         Rule::class => RulePolicy::class,
         RuleEvent::class => RuleEventPolicy::class,
         RuleTrigger::class => RuleTriggerPolicy::class,
-
     ];
 
     public function configurePackage(Package $package): void
