@@ -11,4 +11,9 @@ class CustomForms
     use CanInteractionWithFieldTypes;
     use CanInteractWithCustomFormConfiguration;
     use HasCachedForms;
+
+    public function config($key, mixed $default = null)
+    {
+        return config("ffhs_custom_forms.{$key}", $default);
+    }
 }

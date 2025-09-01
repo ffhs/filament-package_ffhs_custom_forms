@@ -2,7 +2,6 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormConfiguration;
 
-use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\Facades\CustomForms;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
@@ -18,9 +17,15 @@ abstract class CustomFormConfiguration
         return app(static::class);
     }
 
-    public static function formFieldTypes(): array
+    public static function getSelectableFieldTypes(): array
     {
-        return CustomFieldType::getSelectableFieldTypes();
+        return static::config('selectable_fields');
+    }
+
+    public static function config(string $config, $default = null)
+    {
+        return CustomForms::config('form_configurations.' . static::class, $config) ??
+            CustomForms::config('default_form_configuration.' . static::class, $config, $default);
     }
 
     public static function getRuleTriggerTypes(): array
@@ -33,9 +38,9 @@ abstract class CustomFormConfiguration
         return config('ffhs_custom_forms.rule.event');
     }
 
-    public static function editorFieldAdder(): array
+    public static function getEditorFieldAdder(): array
     {
-        return config('ffhs_custom_forms.editor.field_adders');
+        return static::config('field_adders');
     }
 
     public static function overwriteViewModes(): array

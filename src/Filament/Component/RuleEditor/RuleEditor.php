@@ -6,11 +6,11 @@ use Closure;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EventType;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\TriggerType;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\DragDrop\DragDropComponent;
-use Filament\Forms\Components\Actions\Action;
-use Filament\Forms\Components\Group;
+use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Notifications\Notification;
+use Filament\Schemas\Components\Group;
 use Filament\Support\Colors\Color;
 
 
@@ -156,8 +156,7 @@ class RuleEditor extends Group
                             'is_oder_mode' => false,
                         ];
                         $set('rules', $rules);
-                    })
-                    ->toFormComponent(),
+                    }),
                 DragDropComponent::make('rules')
                     ->label('')
                     ->itemIcons('carbon-rule')

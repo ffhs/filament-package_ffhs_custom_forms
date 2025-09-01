@@ -4,7 +4,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormEdito
 
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormEditor\AdderComponents\Default\CustomFieldTypeAdder;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
-use Filament\Forms\Components\Fieldset;
+use Filament\Schemas\Components\Fieldset;
 
 class FieldAdders extends Fieldset
 {
@@ -25,7 +25,7 @@ class FieldAdders extends Fieldset
             return [];
         }
 
-        return once(static fn() => collect($record->getFormConfiguration()::editorFieldAdder())
+        return once(static fn() => collect($record->getFormConfiguration()::getEditorFieldAdder())
             ->map(fn(string|CustomFieldTypeAdder $class) => $class::make())
             ->toArray());
     }
