@@ -34,10 +34,11 @@ class EditField extends Component
 
         return array_merge(
             [
-                TextInput::make('name'),
+                TextInput::make('name.' . app()->getLocale()) //ToDo Translate
+                ->label('Name'), //ToDo Translate
                 FieldActions::make($type->getEditorActions($this->getFormConfiguration(), $state))->alignEnd(),
             ],
-//            $this->getFieldType($state)->getOuterOptions($this->getFormConfiguration(), $state), ToDo Maby add
+//            $this->getFieldType($state)->getOuterOptions($this->getFormConfiguration(), $state), ToDo May add
             $type->getFieldDataExtraComponents($this->getFormConfiguration(), $state)
         );
     }

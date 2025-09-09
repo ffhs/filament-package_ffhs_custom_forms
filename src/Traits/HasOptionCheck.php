@@ -5,7 +5,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Traits;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\TempCustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Filament\Forms\Components\Checkbox;
-use Filament\Forms\Components\Component;
+use Filament\Support\Components\Component;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Get;

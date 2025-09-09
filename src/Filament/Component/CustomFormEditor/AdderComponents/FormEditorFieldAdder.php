@@ -6,7 +6,7 @@ use Closure;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\LayoutType\CustomLayoutType;
 use Ffhs\FilamentPackageFfhsCustomForms\Facades\CustomForms;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
-use Filament\Forms\Components\Component;
+use Filament\Support\Components\Component;
 use Filament\Forms\Components\Placeholder;
 use Filament\Resources\Pages\EditRecord;
 

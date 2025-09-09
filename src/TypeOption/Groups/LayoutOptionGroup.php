@@ -8,7 +8,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\InLineLabelOption;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\NewLineOption;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\TypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\TypeOptionGroup;
-use Filament\Forms\Components\Component;
+use Filament\Support\Components\Component;
 
 class LayoutOptionGroup extends TypeOptionGroup
 {

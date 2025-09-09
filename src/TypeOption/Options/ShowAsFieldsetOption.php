@@ -3,9 +3,8 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options;
 
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\TypeOption;
-use Filament\Forms\Components\Component as FormsComponent;
 use Filament\Forms\Components\Toggle;
-use Filament\Infolists\Components\Component as InfolistsComponent;
+use Filament\Support\Components\Component;
 
 class ShowAsFieldsetOption extends TypeOption
 {
@@ -15,7 +14,7 @@ class ShowAsFieldsetOption extends TypeOption
         return false;
     }
 
-    public function getComponent(string $name): FormsComponent
+    public function getComponent(string $name): Component
     {
         return Toggle::make($name)
             ->columnSpanFull()
@@ -24,12 +23,15 @@ class ShowAsFieldsetOption extends TypeOption
             ->disabled(fn($get) => !$get('show_label'));
     }
 
-    public function modifyFormComponent(FormsComponent $component, mixed $value): FormsComponent
-    {
+    public
+    function modifyFormComponent(
+        Component $component,
+        mixed $value
+    ): Component {
         return $component;
     }
 
-    public function modifyInfolistComponent(InfolistsComponent $component, mixed $value): InfolistsComponent
+    public function modifyInfolistComponent(Component $component, mixed $value): Component
     {
         return $component;
     }

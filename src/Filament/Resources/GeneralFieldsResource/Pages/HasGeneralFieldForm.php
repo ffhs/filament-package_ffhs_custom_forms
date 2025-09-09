@@ -6,16 +6,16 @@ use Error;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\TypeOption;
-use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Field;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Placeholder;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Pages\EditRecord;
+use Filament\Schemas\Components\Section;
+use Filament\Support\Components\Component;
 use Guava\FilamentIconPicker\Forms\IconPicker;
 use Illuminate\Support\Collection;
 

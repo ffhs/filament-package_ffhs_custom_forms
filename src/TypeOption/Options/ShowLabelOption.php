@@ -3,9 +3,8 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options;
 
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\TypeOption;
-use Filament\Forms\Components\Component as FormsComponent;
 use Filament\Forms\Components\Toggle;
-use Filament\Infolists\Components\Component as InfolistsComponent;
+use Filament\Support\Components\Component;
 
 //toDo add Option to more FieldTypes
 class ShowLabelOption extends TypeOption
@@ -15,15 +14,18 @@ class ShowLabelOption extends TypeOption
         return true;
     }
 
-    public function getComponent(string $name): FormsComponent
+    public function getComponent(string $name): Component
     {
         return Toggle::make($name)
             ->label(TypeOption::__('show_label.label'))
             ->helperText(TypeOption::__('show_label.helper_text'));
     }
 
-    public function modifyFormComponent(FormsComponent $component, mixed $value): FormsComponent
-    {
+    public
+    function modifyFormComponent(
+        Component $component,
+        mixed $value
+    ): Component {
         if ($value) {
             return $component->label('');
         }
@@ -31,7 +33,7 @@ class ShowLabelOption extends TypeOption
         return $component;
     }
 
-    public function modifyInfolistComponent(InfolistsComponent $component, mixed $value): InfolistsComponent
+    public function modifyInfolistComponent(Component $component, mixed $value): Component
     {
         return $component;
     }

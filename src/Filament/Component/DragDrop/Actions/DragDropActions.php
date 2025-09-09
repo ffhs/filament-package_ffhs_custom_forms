@@ -4,7 +4,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\DragDrop\Action
 
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\DragDrop\HasDragGroup;
 use Filament\Forms\Components\Actions;
-use Filament\Forms\Components\Component;
+use Filament\Support\Components\Component;
 use Filament\Support\Concerns\HasAlignment;
 use Filament\Support\Concerns\HasVerticalAlignment;
 

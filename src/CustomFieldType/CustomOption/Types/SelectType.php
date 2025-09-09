@@ -13,7 +13,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\MaxSelectOption;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\MinSelectOption;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\ValidationMessageOption;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\TypeOption;
-use Filament\Forms\Components\Component;
+use Filament\Support\Components\Component;
 use Filament\Forms\Components\Field;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\TextInput;

@@ -5,14 +5,11 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options;
 use Error;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\TypeOption;
-use Filament\Forms\ComponentContainer;
-use Filament\Forms\Components\Component as FormsComponent;
 use Filament\Forms\Components\Field;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Get;
-use Filament\Infolists\Components\Component as InfolistsComponent;
 use Filament\Resources\Pages\EditRecord;
+use Filament\Support\Components\Component;
 
 class ValidationMessageOption extends TypeOption
 {
@@ -21,7 +18,7 @@ class ValidationMessageOption extends TypeOption
         return [];
     }
 
-    public function getComponent(string $name): FormsComponent
+    public function getComponent(string $name): Component
     {
         return Repeater::make($name)
             ->label(TypeOption::__('validation_messages.label'))
@@ -45,8 +42,11 @@ class ValidationMessageOption extends TypeOption
             ->columnSpanFull();
     }
 
-    public function modifyFormComponent(FormsComponent|Field $component, mixed $value): FormsComponent
-    {
+    public
+    function modifyFormComponent(
+        Component|Field $component,
+        mixed $value
+    ): Component {
         if (!is_array($value)) {
             $value = [];
         }
@@ -56,7 +56,7 @@ class ValidationMessageOption extends TypeOption
         return $component->validationMessages($value->toArray());
     }
 
-    public function modifyInfolistComponent(InfolistsComponent $component, mixed $value): InfolistsComponent
+    public function modifyInfolistComponent(Component $component, mixed $value): Component
     {
         return $component;
     }

@@ -20,7 +20,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\LayoutType\Types\TitleTy
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\SplittedType\Types\RepeaterLayoutType;
 use Ffhs\FilamentPackageFfhsCustomForms\Tests\Feature\CustomForms\TypeOptions\HasTypeOptionEasyTest;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\HelperTextTypeOption;
-use Filament\Forms\Components\Component;
+use Filament\Support\Components\Component;
 use Filament\Forms\Components\Concerns\HasHelperText;
 use Illuminate\Support\HtmlString;
 use Livewire\Features\SupportTesting\Testable;

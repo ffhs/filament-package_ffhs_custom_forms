@@ -25,7 +25,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\LayoutType\Types\TitleTy
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\SplittedType\Types\RepeaterLayoutType;
 use Ffhs\FilamentPackageFfhsCustomForms\Tests\Feature\CustomForms\TypeOptions\HasTypeOptionEasyTest;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\ColumnSpanOption;
-use Filament\Forms\Components\Component;
+use Filament\Support\Components\Component;
 
 
 uses(HasTypeOptionEasyTest::class);

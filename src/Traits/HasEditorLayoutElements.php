@@ -3,7 +3,9 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\Traits;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormConfiguration\CustomFormConfiguration;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\FormEditor\TypeActions\DefaultCustomFieldDeleteAction;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\FormEditor\TypeActions\DefaultCustomActivationAction;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\FormEditor\TypeActions\DefaultFieldDeleteAction;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\FormEditor\TypeActions\DefaultFieldEditOptionsAction;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Filament\Support\Colors\Color;
@@ -51,13 +53,16 @@ trait HasEditorLayoutElements
         return [];
     }
 
-    public function getEditorActions(CustomFormConfiguration $formConfiguration, array $rawData): array
+    public function getEditorActions(CustomFormConfiguration $formConfiguration, array $state): array
     {
         return [
-            DefaultCustomFieldDeleteAction::make('delete-field')
+            DefaultFieldDeleteAction::make('delete-field')
                 ->formConfiguration($formConfiguration),
-//            DefaultCustomFieldEditTypeOptionsAction::make('edit-field-' . $key),
-//            DefaultCustomActivationAction::make('active-' . $key)->visible($this->canBeDeactivate()),
+            DefaultFieldEditOptionsAction::make('edit-options')
+                ->formConfiguration($formConfiguration),
+            DefaultCustomActivationAction::make('toggle_active')
+                ->visible($this->canBeDeactivate())
+                ->formConfiguration($formConfiguration),
         ];
     }
 

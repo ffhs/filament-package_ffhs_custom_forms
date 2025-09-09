@@ -5,7 +5,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\EmbeddedCustomF
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\FieldDisplayer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
-use Filament\Forms\Components\Component;
+use Filament\Support\Components\Component;
 
 class FormFieldDisplayer implements FieldDisplayer
 {

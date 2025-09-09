@@ -4,8 +4,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\TypeOption;
 
 use Closure;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
-use Filament\Forms\Components\Component;
-use Filament\Infolists\Components\Component as InfolistComponent;
+use Filament\Support\Components\Component;
 
 abstract class TypeOption
 {
@@ -24,7 +23,7 @@ abstract class TypeOption
 
     abstract public function modifyFormComponent(Component $component, mixed $value): Component;
 
-    abstract public function modifyInfolistComponent(InfolistComponent $component, mixed $value): InfolistComponent;
+    abstract public function modifyInfolistComponent(Component $component, mixed $value): Component;
 
     abstract public function getComponent(string $name): Component;
 

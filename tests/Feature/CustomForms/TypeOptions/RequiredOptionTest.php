@@ -18,7 +18,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\Types\TextAr
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\Types\TextType;
 use Ffhs\FilamentPackageFfhsCustomForms\Tests\Feature\CustomForms\TypeOptions\HasTypeOptionEasyTest;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\RequiredOption;
-use Filament\Forms\Components\Component;
+use Filament\Support\Components\Component;
 use Filament\Forms\Components\Concerns\HasHelperText;
 
 

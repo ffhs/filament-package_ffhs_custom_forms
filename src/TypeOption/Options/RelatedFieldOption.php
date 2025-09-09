@@ -8,8 +8,8 @@ use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasAllFieldDataFromFormData;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasFieldsMapToSelectOptions;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasOptionNoComponentModification;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\TypeOption;
-use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Select;
+use Filament\Support\Components\Component;
 use Illuminate\Support\Collection;
 
 class RelatedFieldOption extends TypeOption

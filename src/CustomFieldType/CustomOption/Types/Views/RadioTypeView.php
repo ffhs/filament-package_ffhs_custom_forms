@@ -7,7 +7,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\CustomOption\HasCustomOp
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasDefaultViewComponent;
-use Filament\Forms\Components\Component;
+use Filament\Support\Components\Component;
 use Filament\Forms\Components\Radio;
 
 class RadioTypeView implements FieldTypeView

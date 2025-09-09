@@ -2,7 +2,7 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Traits;
 
-use Filament\Forms\Components\Component;
+use Filament\Support\Components\Component;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
 

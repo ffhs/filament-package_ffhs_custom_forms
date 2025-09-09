@@ -14,7 +14,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\BooleanOption;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\FastTypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\InlineOption;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\TypeOption;
-use Filament\Forms\Components\Component;
+use Filament\Support\Components\Component;
 use Filament\Forms\Components\Toggle;
 
 class ToggleButtonsType extends CustomOptionType

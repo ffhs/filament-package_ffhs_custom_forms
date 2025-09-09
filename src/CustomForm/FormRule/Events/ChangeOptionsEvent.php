@@ -11,7 +11,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\RuleEvent;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanMapFields;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasRuleEventPluginTranslate;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasTriggerEventFormTargets;
-use Filament\Forms\Components\Component;
+use Filament\Support\Components\Component;
 use Filament\Forms\Components\Concerns\HasOptions;
 use Filament\Forms\Components\Select;
 use Illuminate\Support\Collection;

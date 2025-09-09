@@ -6,7 +6,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\GeneralFieldsResource
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomOption;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasOptionNoComponentModification;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\TypeOption;
-use Filament\Forms\Components\Component;
+use Filament\Support\Components\Component;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\TextInput;
 

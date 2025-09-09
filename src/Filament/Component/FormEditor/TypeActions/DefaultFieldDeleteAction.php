@@ -6,7 +6,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldT
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Filament\Support\Icons\Heroicon;
 
-class DefaultCustomFieldDeleteAction extends FieldTypeAction
+class DefaultFieldDeleteAction extends FieldTypeAction
 {
     protected function setUp(): void
     {

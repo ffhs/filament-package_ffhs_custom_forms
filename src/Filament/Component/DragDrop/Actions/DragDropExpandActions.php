@@ -7,7 +7,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\OLDRepeaterField
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\DragDrop\HasDragGroup;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
-use Filament\Forms\Components\Component;
+use Filament\Support\Components\Component;
 use Filament\Forms\Components\Concerns\CanDisableOptions as HasDisableOptions;
 use Filament\Forms\Components\Concerns\HasOptions;
 use Filament\Forms\Components\Contracts\CanDisableOptions;

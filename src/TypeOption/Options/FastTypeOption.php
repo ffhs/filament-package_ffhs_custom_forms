@@ -4,7 +4,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options;
 
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasOptionNoComponentModification;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\TypeOption;
-use Filament\Forms\Components\Component;
+use Filament\Support\Components\Component;
 
 class FastTypeOption extends TypeOption
 {

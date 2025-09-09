@@ -19,7 +19,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\Types\TextTy
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\SplittedType\Types\RepeaterLayoutType;
 use Ffhs\FilamentPackageFfhsCustomForms\Tests\Feature\CustomForms\TypeOptions\HasTypeOptionEasyTest;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\ValidationAttributeOption;
-use Filament\Forms\Components\Component;
+use Filament\Support\Components\Component;
 use Livewire\Features\SupportTesting\Testable;
 
 

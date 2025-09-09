@@ -55,7 +55,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\ShowInViewOption;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\ShowLabelOption;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\ValidationAttributeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\ValidationMessageOption;
-use Filament\Forms\Components\Component;
+use Filament\Support\Components\Component;
 
 uses(HasTypeOptionTestHelper::class);
 

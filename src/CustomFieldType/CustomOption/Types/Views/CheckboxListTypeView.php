@@ -8,7 +8,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldT
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasDefaultViewComponent;
 use Filament\Forms\Components\CheckboxList;
-use Filament\Forms\Components\Component;
+use Filament\Support\Components\Component;
 
 class CheckboxListTypeView implements FieldTypeView
 {

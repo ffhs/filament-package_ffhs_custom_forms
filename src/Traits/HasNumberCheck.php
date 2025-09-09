@@ -4,7 +4,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Traits;
 
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Checkbox;
-use Filament\Forms\Components\Component;
+use Filament\Support\Components\Component;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Placeholder;
