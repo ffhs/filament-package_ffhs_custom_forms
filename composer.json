@@ -17,6 +17,7 @@
     "require": {
         "php": "^8.2",
         "filament/filament": "^4.0",
+        "ffhs/filament-package_ffhs_utils": "~0.1.0",
         "filament/notifications": "^4.0",
         "laravel/framework": "^11|^12.0",
         "laravel/prompts": "^0.3",
