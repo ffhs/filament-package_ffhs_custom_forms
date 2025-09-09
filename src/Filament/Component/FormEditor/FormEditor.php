@@ -3,6 +3,7 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\FormEditor;
 
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\FormEditorSideComponent;
+use Ffhs\FilamentPackageFfhsCustomForms\Facades\CustomForms;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\FormEditor\Field\EditFieldsGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasFormConfiguration;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasFormGroupName;
@@ -41,8 +42,24 @@ class FormEditor extends Field
                 ->columns(1)
                 ->schema($this->getSideComponents(...)),
             EditFieldsGroup::make('custom_fields')
+                ->childComponentSizeUsing($this->getFieldGridSize(...))
                 ->columnSpan(4)
                 ->formConfiguration($this->getFormConfiguration(...))
         ]);
+    }
+
+    protected function getFieldGridSize(array $state, string $value): int
+    {
+        $itemState = $state[$value] ?? [];
+        $size = $itemState['options']['column_span'] ?? null;
+        $maxSize = 12;
+
+        if (!empty($size)) {
+            return min($size, $maxSize);
+        }
+
+        $type = CustomForms::getFieldTypeFromRawDate($itemState, $this->getFormConfiguration());
+
+        return $type->isFullSizeField() ? $maxSize : 1;
     }
 }
