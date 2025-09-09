@@ -17,7 +17,7 @@ class EditFieldsGroup extends DragDropGroup
     {
         parent::setUp();
         $this
-            ->columns(fn() => $this->getFormConfiguration()->getColumns())
+            ->childComponentSizeUsing($this->getFieldGridSize(...))
             ->group($this->getGroupName(...))
             ->hiddenLabel()
             ->itemLabel(function ($item) {
@@ -29,5 +29,20 @@ class EditFieldsGroup extends DragDropGroup
             ]);
     }
 
+
+    protected function getFieldGridSize(array $state, string $value): int
+    {
+        $itemState = $state[$value] ?? [];
+        $size = $itemState['options']['column_span'] ?? null;
+        $maxSize = 12;
+
+        if (!empty($size)) {
+            return min($size, $maxSize);
+        }
+
+        $type = CustomForms::getFieldTypeFromRawDate($itemState, $this->getFormConfiguration());
+
+        return $type->isFullSizeField() ? $maxSize : 1;
+    }
 
 }

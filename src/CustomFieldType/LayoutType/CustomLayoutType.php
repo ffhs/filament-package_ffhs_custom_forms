@@ -13,6 +13,7 @@ abstract class CustomLayoutType extends CustomFieldType
         return [
             EditFieldsGroup::make('custom_fields')
                 ->formConfiguration($configuration)
+                ->columns($state['options']['columns'] ?? $configuration->getColumns())
                 ->columnSpanFull()
         ];
     }
