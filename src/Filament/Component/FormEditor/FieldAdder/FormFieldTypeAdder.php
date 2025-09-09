@@ -3,16 +3,25 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\FormEditor\FieldAdder;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormConfiguration\CustomFormConfiguration;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
+use Filament\Support\Components\Component;
 
 class FormFieldTypeAdder extends FormFieldAdder
 {
+    public static function getSiteComponent(CustomFormConfiguration $configuration): Component
+    {
+        return self::make('add_type_node')
+            ->formConfiguration($configuration);
+    }
+
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->options($this->getTypeOptions(...))
-            ->columns(3)
+        $this->columns(3)
+            ->options($this->getTypeOptions(...))
+            ->label(CustomForm::__('pages.type_adder.label'))
             ->optionIcons($this->getTypeOptionIcons(...))
             ->action($this->onAdd(...));
     }
@@ -49,5 +58,4 @@ class FormFieldTypeAdder extends FormFieldAdder
             ]
         ]);
     }
-
 }

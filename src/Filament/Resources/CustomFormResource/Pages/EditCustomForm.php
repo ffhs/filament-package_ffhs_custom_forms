@@ -9,9 +9,13 @@ use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormResource;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanLoadCustomFormEditorData;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanSaveCustomFormEditorData;
+use Filament\Actions\Exceptions\ActionNotResolvableException;
 use Filament\Resources\Pages\EditRecord;
+use Filament\Schemas\Components\Contracts\ExposesStateToActionData;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\Width;
+use Filament\Support\Exceptions\Cancel;
+use Filament\Support\Exceptions\Halt;
 use Filament\Support\Facades\FilamentView;
 use Illuminate\Contracts\Support\Htmlable;
 use Throwable;
@@ -76,6 +80,83 @@ class EditCustomForm extends EditRecord
         }
     }
 
+    public function mountAction(string $name, array $arguments = [], array $context = []): mixed
+    {
+        $this->mountedActions[] = [
+            'name' => $name,
+            'arguments' => $arguments,
+            'context' => $context,
+        ];
+
+        try {
+            $action = $this->getMountedAction();
+        } catch (ActionNotResolvableException $exception) {
+            $action = null;
+        }
+
+        if (!$action) {
+            $this->unmountAction(canCancelParentActions: false);
+
+            return null;
+        }
+
+        if ($action->isDisabled()) {
+            $this->unmountAction(canCancelParentActions: false);
+
+            return null;
+        }
+
+        if (($actionComponent = $action->getSchemaComponent()) instanceof ExposesStateToActionData) {
+            foreach ($actionComponent->getChildSchemas() as $actionComponentChildSchema) {
+                $actionComponentChildSchema->validate();
+            }
+        }
+
+        try {
+            if (
+                $action->hasAuthorizationNotification() &&
+                ($response = $action->getAuthorizationResponseWithMessage())->denied()
+            ) {
+                $action->sendUnauthorizedNotification($response);
+
+                throw new Cancel;
+            }
+
+            $hasSchema = $this->mountedActionHasSchema(mountedAction: $action);
+
+            if ($hasSchema) {
+                $action->callBeforeFormFilled();
+            }
+
+            $schema = $this->getMountedActionSchema(mountedAction: $action);
+
+            $action->mount([
+                'form' => $schema,
+                'schema' => $schema,
+            ]);
+
+            if ($hasSchema) {
+                $action->callAfterFormFilled();
+            }
+        } catch (Halt $exception) {
+            return null;
+        } catch (Cancel $exception) {
+            $this->unmountAction(canCancelParentActions: false);
+
+            return null;
+        }
+
+        if (!$this->mountedActionShouldOpenModal(mountedAction: $action)) {
+            return $this->callMountedAction();
+        }
+
+        $this->syncActionModals();
+
+        $this->resetErrorBag();
+
+        return null;
+    }
+
     protected function fillForm(): void
     {
         /**@var CustomForm $customForm */
@@ -106,4 +187,6 @@ class EditCustomForm extends EditRecord
 //            DeleteAction::make(),
         ];
     }
+
+
 }

@@ -123,4 +123,9 @@ abstract class CustomFormConfiguration
     {
         return $this::config('column_count', 4);
     }
+
+    public function getSideComponentModifiers()
+    {
+        return $this::config('editor.side_components', []);
+    }
 }

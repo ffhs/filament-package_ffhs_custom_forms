@@ -3,13 +3,16 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\FormEditor\FieldAdder;
 
 use Ffhs\FfhsUtils\Filament\DragDrop\DragDropSelectAction;
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\FormEditorSideComponent;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasFormConfiguration;
+use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasFormGroupName;
 use Filament\Forms\Components\Concerns\CanGenerateUuids;
 
-abstract class FormFieldAdder extends DragDropSelectAction
+abstract class FormFieldAdder extends DragDropSelectAction implements FormEditorSideComponent
 {
     use HasFormConfiguration;
     use CanGenerateUuids;
+    use HasFormGroupName;
 
     public function addNewField(
         array $fieldData
@@ -36,6 +39,7 @@ abstract class FormFieldAdder extends DragDropSelectAction
     protected function setUp(): void
     {
         parent::setUp();
+        $this->dragGroup($this->getGroupName(...));
     }
 
 }

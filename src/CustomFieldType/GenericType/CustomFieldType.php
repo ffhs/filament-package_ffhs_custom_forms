@@ -3,6 +3,7 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType;
 
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\Type;
+use Ffhs\FilamentPackageFfhsCustomForms\Facades\CustomForms;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasAnswerCallbacks;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasConfigAttribute;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasEditFieldCallbacks;
@@ -24,6 +25,27 @@ abstract class CustomFieldType implements Type
     use HasFieldSplitting;
     use HasEditorLayoutElements;
     use HasAnswerCallbacks;
+
+    final public static function getTypeListConfig(): array
+    {
+        $path = static::getConfigTypeList();
+        $formConfig = CustomForms::config('form_configurations', []);
+        $types = CustomForms::config('default_form_configuration.selectable_field_types', []);
+        $genFields = CustomForms::config('selectable_general_field_types', []);
+        $extraTypes = CustomForms::config('extra_custom_field_types', []);
+
+        $formConfigTypes = collect($formConfig)
+            ->map(function ($item) {
+                return $item['selectable_field_types'] ?? null;
+            })
+            ->filter(fn($item) => !is_null($item))
+            ->flatten(1)
+            ->toArray();
+
+        $allTypes = array_merge($types + $genFields + $extraTypes + $formConfigTypes);
+
+        return array_unique($allTypes);
+    }
 
     final public static function getConfigTypeList(): string
     {

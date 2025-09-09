@@ -2,17 +2,33 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\FormEditor;
 
-use Ffhs\FfhsUtils\Filament\DragDrop\DragDropGroup;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\FormEditor\FieldAdder\FormFieldTypeAdder;
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\FormEditorSideComponent;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\FormEditor\Field\EditFieldsGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasFormConfiguration;
+use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasFormGroupName;
 use Filament\Forms\Components\Field;
 use Filament\Schemas\Components\Fieldset;
 
 class FormEditor extends Field
 {
     use HasFormConfiguration;
+    use HasFormGroupName;
 
     protected string $view = 'filament-package_ffhs_custom_forms::filament.components.form-editor.index';
+
+    public function getSideComponents(): array
+    {
+        $components = [];
+        $classes = $this->getFormConfiguration()->getSideComponentModifiers();
+        $formConfiguration = $this->getFormConfiguration();
+
+        foreach ($classes as $class) {
+            /**@var FormEditorSideComponent $class */
+            $components[] = $class::getSiteComponent($formConfiguration);
+        }
+
+        return $components;
+    }
 
     protected function setUp(): void
     {
@@ -23,14 +39,10 @@ class FormEditor extends Field
             Fieldset::make()
                 ->columnSpan(1)
                 ->columns(1)
-                ->schema([
-                    FormFieldTypeAdder::make('add')
-                        ->formConfiguration($this->getFormConfiguration(...))
-                ]),
-            DragDropGroup::make('custom_fields')
-                ->columns(fn() => $this->getFormConfiguration()->getColumns())
+                ->schema($this->getSideComponents(...)),
+            EditFieldsGroup::make('custom_fields')
                 ->columnSpan(4)
-                ->hiddenLabel()
+                ->formConfiguration($this->getFormConfiguration(...))
         ]);
     }
 }

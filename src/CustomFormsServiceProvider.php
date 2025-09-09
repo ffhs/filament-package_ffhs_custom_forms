@@ -24,7 +24,6 @@ use Ffhs\FilamentPackageFfhsCustomForms\Policies\GeneralFieldPolicy;
 use Ffhs\FilamentPackageFfhsCustomForms\Policies\Rule\RuleEventPolicy;
 use Ffhs\FilamentPackageFfhsCustomForms\Policies\Rule\RulePolicy;
 use Ffhs\FilamentPackageFfhsCustomForms\Policies\Rule\RuleTriggerPolicy;
-use Filament\Support\Assets\AlpineComponent;
 use Filament\Support\Assets\Css;
 use Filament\Support\Facades\FilamentAsset;
 use Illuminate\Support\Facades\Artisan;
@@ -106,16 +105,15 @@ class CustomFormsServiceProvider extends PackageServiceProvider
     {
         // Drag and Drop Components
         FilamentAsset::register([
-            AlpineComponent::make('parent', __DIR__ . '/../dist/js/drag-drop/parent.js')
-                ->loadedOnRequest(),
-            AlpineComponent::make('element', __DIR__ . '/../dist/js/drag-drop/element.js')
-                ->loadedOnRequest(),
-            AlpineComponent::make('container', __DIR__ . '/../dist/js/drag-drop/container.js')
-                ->loadedOnRequest(),
-            AlpineComponent::make('action_group', __DIR__ . '/../dist/js/drag-drop/action_group.js')
-                ->loadedOnRequest(),
-            Css::make('stylesheet', __DIR__ . '/../dist/css/drag_drop.css')
-                ->loadedOnRequest(),
+//            AlpineComponent::make('parent', __DIR__ . '/../dist/js/drag-drop/parent.js')
+//                ->loadedOnRequest(),
+//            AlpineComponent::make('element', __DIR__ . '/../dist/js/drag-drop/element.js')
+//                ->loadedOnRequest(),
+//            AlpineComponent::make('container', __DIR__ . '/../dist/js/drag-drop/container.js')
+//                ->loadedOnRequest(),
+//            AlpineComponent::make('action_group', __DIR__ . '/../dist/js/drag-drop/action_group.js')
+//                ->loadedOnRequest(),
+            Css::make('custom_forms', __DIR__ . '/../dist/css/custom_forms.css')->loadedOnRequest(),
         ], 'ffhs/filament-package_ffhs_drag-drop');
     }
 

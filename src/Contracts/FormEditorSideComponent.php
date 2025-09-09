@@ -3,12 +3,9 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\Contracts;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormConfiguration\CustomFormConfiguration;
-use Filament\Schemas\Components\Component;
+use Filament\Support\Components\Component;
 
 interface FormEditorSideComponent
 {
-    public static function make(): static;
-
-    public static function siteComponent(CustomFormConfiguration $configuration): Component;
-
+    public static function getSiteComponent(CustomFormConfiguration $configuration): Component;
 }
