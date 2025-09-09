@@ -2,6 +2,7 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormConfiguration;
 
+use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\Facades\CustomForms;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
@@ -17,15 +18,10 @@ abstract class CustomFormConfiguration
         return app(static::class);
     }
 
-    public static function getSelectableFieldTypes(): array
-    {
-        return static::config('selectable_fields');
-    }
-
     public static function config(string $config, $default = null)
     {
-        return CustomForms::config('form_configurations.' . static::class, $config) ??
-            CustomForms::config('default_form_configuration.' . static::class, $config, $default);
+        return CustomForms::config('form_configurations.' . static::class . '.' . $config, $default) ??
+            CustomForms::config('default_form_configuration.' . $config, $default);
     }
 
     public static function getRuleTriggerTypes(): array
@@ -49,6 +45,25 @@ abstract class CustomFormConfiguration
     }
 
     abstract public static function identifier(): string;
+
+    public function getSelectableFieldTypeClasses(): array
+    {
+        return static::config('selectable_field_types');
+    }
+
+    public function getSelectableFieldTypes(): array
+    {
+        return once(function () {
+            $classes = $this->getSelectableFieldTypeClasses();
+            $types = [];
+            foreach ($classes as $class) {
+                /**@var CustomFieldType $class */
+                $types[$class::identifier()] = $class::make();
+            }
+            return $types;
+        });
+
+    }
 
     public function displayViewMode(): string
     {
@@ -102,5 +117,10 @@ abstract class CustomFormConfiguration
                 ->get()
                 ->keyBy('id');
         });
+    }
+
+    public function getColumns()
+    {
+        return $this::config('column_count', 4);
     }
 }

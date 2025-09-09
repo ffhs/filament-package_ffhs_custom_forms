@@ -2,14 +2,13 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormResource\Pages;
 
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormEditor\CustomFormEditor;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormHeaderActions\CustomFormSchemaExportAction;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormHeaderActions\CustomFormSchemaImportAction;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\FormEditor\FormEditor;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormResource;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanLoadCustomFormEditorData;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanSaveCustomFormEditorData;
-use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\Width;
@@ -49,8 +48,11 @@ class EditCustomForm extends EditRecord
     public function form(Schema $schema): Schema
     {
         return $schema->components([
-            CustomFormEditor::make('custom_form')
-                ->label('')
+//            CustomFormEditor::make('custom_form')
+//                ->label('')
+            FormEditor::make('custom_form')
+                ->formConfiguration(fn(CustomForm $record) => $record->getFormConfiguration())
+                ->hiddenLabel()
         ]);
     }
 
@@ -100,8 +102,8 @@ class EditCustomForm extends EditRecord
                     $action->callImportAction($data);
                     $action->redirect('edit');
                 }),
-            LocaleSwitcher::make(),
-            DeleteAction::make(),
+//            LocaleSwitcher::make(),
+//            DeleteAction::make(),
         ];
     }
 }
