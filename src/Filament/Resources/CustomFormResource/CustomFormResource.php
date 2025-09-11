@@ -1,12 +1,14 @@
 <?php
 
-namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources;
+namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormResource;
 
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormResource\Pages\CreateCustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormResource\Pages\EditCustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormResource\Pages\ListCustomForm;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormResource\Schemas\CustomFormSchema;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Builder;
 
 class CustomFormResource extends Resource
@@ -46,6 +48,11 @@ class CustomFormResource extends Resource
     public static function canAccess(): bool
     {
         return parent::canAccess() && static::can('showResource');
+    }
+
+    public static function form(Schema $schema): Schema
+    {
+        return CustomFormSchema::configure($schema, false);
     }
 
     public static function getEloquentQuery(): Builder

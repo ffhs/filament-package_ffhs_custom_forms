@@ -3,13 +3,13 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\TemplateResource\Pages;
 
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormResource\Pages\EditCustomForm;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\TemplateResource;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\TemplateResource\TemplateResource;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanModifyCustomFormEditorData;
 use Filament\Actions\Action;
-use Filament\Support\Enums\MaxWidth;
+use Filament\Support\Enums\Width;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
@@ -21,13 +21,12 @@ class EditTemplate extends EditCustomForm
     use CanModifyCustomFormEditorData;
 
     //ToDo Check function
-
     protected static string $resource = TemplateResource::class;
 
     public static function canAccess(array $parameters = []): bool
     {
         return static::$resource::canAccess()
-            && static::$resource::can('manageTemplates');
+            && static::$resource::can('manageTemplates'); //ToDo improve
     }
 
     public function getTitle(): string|Htmlable
@@ -39,7 +38,7 @@ class EditTemplate extends EditCustomForm
         return trans(CustomForm::__('pages.edit_template.title'), $attributes);
     }
 
-    public function save(bool $shouldRedirect = true, bool $shouldSendSavedNotification = true): void
+    public function save(bool $shouldRedirect = true, bool $shouldSendSavedNotification = true): void //ToDo improve
     {
         parent::save($shouldRedirect, $shouldSendSavedNotification);
 
@@ -133,7 +132,7 @@ class EditTemplate extends EditCustomForm
             ->requiresConfirmation(
                 fn() => $this->showSaveConfirmation() || $this->showCollideMessage()
             )
-            ->modalWidth(MaxWidth::ExtraLarge)
+            ->modalWidth(Width::ExtraLarge)
             ->modalSubmitAction(function ($action) {
                 if ($this->showCollideMessage()) {
                     $action->hidden();

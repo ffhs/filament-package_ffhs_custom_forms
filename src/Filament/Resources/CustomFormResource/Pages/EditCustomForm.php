@@ -4,13 +4,11 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormResou
 
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormHeaderActions\CustomFormSchemaExportAction;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormHeaderActions\CustomFormSchemaImportAction;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\FormEditor\FormEditor;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormResource;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormResource\CustomFormResource;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanLoadCustomFormEditorData;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanSaveCustomFormEditorData;
 use Filament\Resources\Pages\EditRecord;
-use Filament\Schemas\Schema;
 use Filament\Support\Enums\Width;
 use Filament\Support\Facades\FilamentView;
 use Illuminate\Contracts\Support\Htmlable;
@@ -43,15 +41,6 @@ class EditCustomForm extends EditRecord
     public function getMaxContentWidth(): string|null|Width
     {
         return Width::Full;
-    }
-
-    public function form(Schema $schema): Schema
-    {
-        return $schema->components([
-            FormEditor::make('custom_form')
-                ->formConfiguration(fn(CustomForm $record) => $record->getFormConfiguration())
-                ->hiddenLabel()
-        ]);
     }
 
     /**

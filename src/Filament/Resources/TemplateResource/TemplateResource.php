@@ -1,14 +1,15 @@
 <?php
 
-namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources;
+namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\TemplateResource;
 
-
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormResource\CustomFormResource;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormResource\Schemas\CustomFormSchema;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\TemplateResource\Pages\CreateTemplate;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\TemplateResource\Pages\EditTemplate;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\TemplateResource\Pages\ListTemplate;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
-use Filament\Resources\Concerns\Translatable;
 use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -49,6 +50,11 @@ class TemplateResource extends Resource
     {
         return parent::getEloquentQuery()
             ->whereNotNull('template_identifier');
+    }
+
+    public static function form(Schema $schema): Schema
+    {
+        return CustomFormSchema::configure($schema, true);
     }
 
     public static function table(Table $table): Table

@@ -2,10 +2,10 @@
 
 
 use Ffhs\FilamentPackageFfhsCustomForms\Enums\CustomFormPermissionName;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormResource;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormResource\CustomFormResource;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormResource\Pages\EditCustomForm;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\TemplateResource;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\TemplateResource\Pages\EditTemplate;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\TemplateResource\TemplateResource;
 use Ffhs\FilamentPackageFfhsCustomForms\Tests\Feature\Policies\HasPolicyTestSetup;
 use Spatie\Permission\Models\Permission;
 

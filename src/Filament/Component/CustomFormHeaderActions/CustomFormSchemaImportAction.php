@@ -8,7 +8,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormConverter\FormSchemaImpor
 use Ffhs\FilamentPackageFfhsCustomForms\Exceptions\FormImportException;
 use Ffhs\FilamentPackageFfhsCustomForms\Facades\CustomForms;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormTypeSelector;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormResource;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormResource\CustomFormResource;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralFieldForm;

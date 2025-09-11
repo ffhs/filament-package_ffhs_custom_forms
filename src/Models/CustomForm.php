@@ -11,7 +11,6 @@ use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasFormRules;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Spatie\Translatable\HasTranslations;
 
 /**
  *
@@ -71,7 +70,7 @@ class CustomForm extends Model
         'short_title',
     ];
 
-    public static function __(...$args): string
+    public static function __(...$args): mixed
     {
         return CustomForms::__('models.custom_form.' . implode('.', $args));
     }

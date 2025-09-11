@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Facade;
  */
 class CustomForms extends Facade
 {
-    public static function __(...$args): string
+    public static function __(...$args): mixed
     {
         return __('filament-package_ffhs_custom_forms::' . implode('.', $args));
     }
