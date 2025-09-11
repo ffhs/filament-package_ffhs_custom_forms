@@ -37,9 +37,9 @@ trait HasEditorLayoutElements
         return $customField->name;
     }
 
-    public function getEditorFieldIcon(array $rawData, CustomForm $form): string
+    public function getEditorFieldIcon(array $rawData, CustomFormConfiguration $configuration): string
     {
-        $customField = $this->getEditorCustomFieldFromData($rawData, $form);
+        $customField = $this->getEditorCustomFieldFromData($rawData, $configuration);
 
         if (!$customField->isGeneralField()) {
             return $this->icon();
@@ -71,7 +71,7 @@ trait HasEditorLayoutElements
         return empty($fielData['general_field_id']);
     }
 
-    protected function getEditorCustomFieldFromData(array $rawData, CustomForm $form): CustomField
+    protected function getEditorCustomFieldFromData(array $rawData, CustomFormConfiguration $configuration): CustomField
     {
         $customField = app(CustomField::class)->fill($rawData);
 
@@ -79,8 +79,7 @@ trait HasEditorLayoutElements
             return $customField;
         }
 
-        $generalField = $form
-            ->getFormConfiguration()
+        $generalField = $configuration
             ->getAvailableGeneralFields()
             ->get($customField->general_field_id);
         $customField->setRelation('generalField', $generalField);
