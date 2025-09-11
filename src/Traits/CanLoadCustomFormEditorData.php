@@ -26,6 +26,11 @@ trait CanLoadCustomFormEditorData
     {
         $fieldData = $field->attributesToArray();
         $fieldData['options'] = $field->options;
+        try {
+            $fieldData['name'] = json_decode($field->name, true, 512, JSON_THROW_ON_ERROR);
+        } catch (\Throwable $e) {
+            $fieldData['name'] = null;
+        }
 
         unset($fieldData['updated_at'], $fieldData['created_at']);
 

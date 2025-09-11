@@ -8,6 +8,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\TemplatesType\TemplateFi
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormConfiguration\CustomFormConfiguration;
 use Ffhs\FilamentPackageFfhsCustomForms\Exceptions\FieldDataHasNoOrWrongCustomFieldTypeException;
 use Ffhs\FilamentPackageFfhsCustomForms\Exceptions\FieldHasNoOrWrongCustomFieldTypeException;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 
 trait CanInteractionWithFieldTypes
 {
@@ -15,10 +16,16 @@ trait CanInteractionWithFieldTypes
      * @throws FieldHasNoOrWrongCustomFieldTypeException
      * @throws FieldDataHasNoOrWrongCustomFieldTypeException
      */
-    public function getFieldTypeFromRawDate(array &$data, CustomFormConfiguration $configuration): CustomFieldType
-    {
+    public function getFieldTypeFromRawDate(
+        array &$data,
+        CustomForm|CustomFormConfiguration $configuration
+    ): CustomFieldType {
         if (empty($data)) {
             throw new FieldDataHasNoOrWrongCustomFieldTypeException($data);
+        }
+
+        if ($configuration instanceof CustomForm) {
+            $configuration = $configuration->getFormConfiguration();
         }
 
         if (!empty($data['cachedFieldType'])) {

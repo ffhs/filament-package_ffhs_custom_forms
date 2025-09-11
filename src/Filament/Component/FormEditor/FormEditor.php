@@ -4,6 +4,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\FormEditor;
 
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\FormEditorSideComponent;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\FormEditor\Field\EditFieldsGroup;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\FormEditor\StateCasts\CustomFieldStateCast;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasFormConfiguration;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasFormGroupName;
 use Filament\Forms\Components\Field;
@@ -30,6 +31,14 @@ class FormEditor extends Field
         return $components;
     }
 
+    public function getDefaultStateCasts(): array
+    {
+        $casts = parent::getDefaultStateCasts();
+        $casts[] = new CustomFieldStateCast();
+
+        return $casts;
+    }
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -43,7 +52,9 @@ class FormEditor extends Field
             EditFieldsGroup::make('custom_fields')
                 ->columns(fn() => $this->getFormConfiguration()->getColumns())
                 ->formConfiguration($this->getFormConfiguration(...))
-                ->columnSpan(4)
+                ->columnSpan(4),
         ]);
     }
+
+
 }

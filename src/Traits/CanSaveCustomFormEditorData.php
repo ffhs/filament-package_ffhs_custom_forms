@@ -20,7 +20,7 @@ trait CanSaveCustomFormEditorData
             DB::beginTransaction();
 
             $this->saveFields($rawState['custom_fields'], $form);
-            $this->savingRules($rawState['rules'], $form);
+//            $this->savingRules($rawState['rules'], $form); ToDo Reimplement
 
             DB::commit();
         } catch (Throwable $exception) {
