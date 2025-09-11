@@ -13,11 +13,13 @@ class EditFieldsGroup extends DragDropGroup
     use HasFormConfiguration;
     use HasFormGroupName;
 
+
     protected function setUp(): void
     {
         parent::setUp();
         $this
             ->childComponentSizeUsing($this->getFieldGridSize(...))
+            ->itemColumn($this->getFieldItemColumn(...))
             ->group($this->getGroupName(...))
             ->hiddenLabel()
             ->itemLabel(function ($item) {
@@ -29,10 +31,8 @@ class EditFieldsGroup extends DragDropGroup
             ]);
     }
 
-
-    protected function getFieldGridSize(array $state, string $value): int
+    protected function getFieldGridSize(array $itemState, string $value): int
     {
-        $itemState = $state[$value] ?? [];
         $size = $itemState['options']['column_span'] ?? null;
         $maxSize = 12;
 
@@ -45,4 +45,9 @@ class EditFieldsGroup extends DragDropGroup
         return $type->isFullSizeField() ? $maxSize : 1;
     }
 
+    protected function getFieldItemColumn($key, $itemState): ?int
+    {
+        $newLine = $itemState['options']['new_line'] ?? null;
+        return $newLine ? 1 : null;
+    }
 }
