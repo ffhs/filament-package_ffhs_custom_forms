@@ -9,7 +9,6 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanModifyCustomFormEditorData;
 use Filament\Actions\Action;
-use Filament\Support\Enums\Width;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
@@ -18,9 +17,9 @@ use Illuminate\Support\HtmlString;
 
 class EditTemplate extends EditCustomForm
 {
+    //ToDo Check function
     use CanModifyCustomFormEditorData;
 
-    //ToDo Check function
     protected static string $resource = TemplateResource::class;
 
     public static function canAccess(array $parameters = []): bool
@@ -43,128 +42,119 @@ class EditTemplate extends EditCustomForm
         parent::save($shouldRedirect, $shouldSendSavedNotification);
 
         /*
+         * ToDo Fix
          * Delete GeneralFields in Forms
          * Where one of the Template used GeneralField is used and move the answerers on this field.
          */
 
-        /**@var CustomForm $template */
-        $template = CustomForm::query()
-            ->firstWhere('id', $this->record->id);
-
-        $templateGeneralFieldQuery = $template
-            ->customFieldsQuery()
-            ->whereNotNull('general_field_id');
-        $toDeleteGenFieldQuery = CustomField::query()
-            ->whereIn(
-                'general_field_id',
-                $templateGeneralFieldQuery
-                    ->clone()
-                    ->select('general_field_id')
-            )
-            ->whereIn(
-                'custom_form_id',
-                CustomField::query()
-                    ->where('template_id', $template->id)
-                    ->select('custom_form_id')
-            );
-
-        $toDeleteGenFields = $toDeleteGenFieldQuery
-            ->clone()
-            ->get();
-
-        if ($toDeleteGenFields->count() === 0) {
-            return;
-        }
-
-        $newGeneralFields = $templateGeneralFieldQuery
-            ->select(['general_field_id', 'id'])
-            ->get();
-
-        foreach ($toDeleteGenFields as $generalField) {
-            /**@var CustomField $generalField */
-            $newGeneralField = $newGeneralFields
-                ->where('general_field_id', $generalField->general_field_id)
-                ->first();
-
-            $generalField
-                ->answers()
-                ->update(['custom_field_id' => $newGeneralField->id]);
-        }
-
-        $toDeleteGenFieldQuery->delete();
-
-        //Reorder
-        $toReorderForm = CustomForm::query()
-            ->whereIn('id', $toDeleteGenFieldQuery->select('custom_form_id'));
-
-        foreach ($toReorderForm as $form) { //toDo Optimize
-            /**@var CustomForm $form */
-            $fields = $form->customFields;
-            $position = 0;
-
-            foreach ($fields as $field) {
-                /**@var CustomField $field */
-                $position++;
-                $field->layout_end_position = $position;
-
-                if ($field->isDirty()) {
-                    $field->save();
-                }
-            }
-        }
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getRawCustomFields(): array
-    {
-        return once(
-            fn() => array_values($this->getCachedForms())[0]->getRawState()['custom_form']['custom_fields'] ?? []
-        );
+//        /**@var CustomForm $template */
+//        $template = CustomForm::query()
+//            ->firstWhere('id', $this->record->id);
+//
+//        $templateGeneralFieldQuery = $template
+//            ->customFieldsQuery()
+//            ->whereNotNull('general_field_id');
+//        $toDeleteGenFieldQuery = CustomField::query()
+//            ->whereIn(
+//                'general_field_id',
+//                $templateGeneralFieldQuery
+//                    ->clone()
+//                    ->select('general_field_id')
+//            )
+//            ->whereIn(
+//                'custom_form_id',
+//                CustomField::query()
+//                    ->where('template_id', $template->id)
+//                    ->select('custom_form_id')
+//            );
+//
+//        $toDeleteGenFields = $toDeleteGenFieldQuery
+//            ->clone()
+//            ->get();
+//
+//        if ($toDeleteGenFields->count() === 0) {
+//            return;
+//        }
+//
+//        $newGeneralFields = $templateGeneralFieldQuery
+//            ->select(['general_field_id', 'id'])
+//            ->get();
+//
+//        foreach ($toDeleteGenFields as $generalField) {
+//            /**@var CustomField $generalField */
+//            $newGeneralField = $newGeneralFields
+//                ->where('general_field_id', $generalField->general_field_id)
+//                ->first();
+//
+//            $generalField
+//                ->answers()
+//                ->update(['custom_field_id' => $newGeneralField->id]);
+//        }
+//
+//        $toDeleteGenFieldQuery->delete();
+//
+//        //Reorder
+//        $toReorderForm = CustomForm::query()
+//            ->whereIn('id', $toDeleteGenFieldQuery->select('custom_form_id'));
+//
+//        foreach ($toReorderForm as $form) { //toDo Optimize
+//            /**@var CustomForm $form */
+//            $fields = $form->customFields;
+//            $position = 0;
+//
+//            foreach ($fields as $field) {
+//                /**@var CustomField $field */
+//                $position++;
+//                $field->layout_end_position = $position;
+//
+//                if ($field->isDirty()) {
+//                    $field->save();
+//                }
+//            }
+//        }
     }
 
     protected function getSaveFormAction(): Action
     {
         return parent::getSaveFormAction()
             ->action(fn() => $this->save())
-            ->submit(null)
-            ->requiresConfirmation(
-                fn() => $this->showSaveConfirmation() || $this->showCollideMessage()
-            )
-            ->modalWidth(Width::ExtraLarge)
-            ->modalSubmitAction(function ($action) {
-                if ($this->showCollideMessage()) {
-                    $action->hidden();
-                }
-
-                return $action;
-            })
-            ->modalSubmitActionLabel(fn() => ($this->showSaveConfirmation() ?
-                __('filament-panels::resources/pages/edit-record.form.actions.save.label') :
-                null))
-            ->modalDescription(function () {
-                if ($this->showCollideMessage()) {
-                    return $this->collideMessageDescription();
-                }
-
-                if ($this->showSaveConfirmation()) {
-                    return $this->saveConfirmationDescription();
-                }
-
-                return null;
-            })
-            ->modalHeading(function () {
-                if ($this->showCollideMessage()) {
-                    return $this->collideMessageHeading();
-                }
-
-                if ($this->showSaveConfirmation()) {
-                    return $this->saveConfirmationHeading();
-                }
-
-                return null;
-            });
+            ->submit(null);
+//            ->requiresConfirmation( ToDo Fix
+//                fn() => $this->showSaveConfirmation() || $this->showCollideMessage()
+//            )
+//            ->modalWidth(Width::ExtraLarge)
+//            ->modalSubmitAction(function ($action) {
+//                if ($this->showCollideMessage()) {
+//                    $action->hidden();
+//                }
+//
+//                return $action;
+//            })
+//            ->modalSubmitActionLabel(fn() => ($this->showSaveConfirmation() ?
+//                __('filament-panels::resources/pages/edit-record.form.actions.save.label') :
+//                null))
+//            ->modalDescription(function () {
+//                if ($this->showCollideMessage()) {
+//                    return $this->collideMessageDescription();
+//                }
+//
+//                if ($this->showSaveConfirmation()) {
+//                    return $this->saveConfirmationDescription();
+//                }
+//
+//                return null;
+//            })
+//            ->modalHeading(function () {
+//                if ($this->showCollideMessage()) {
+//                    return $this->collideMessageHeading();
+//                }
+//
+//                if ($this->showSaveConfirmation()) {
+//                    return $this->saveConfirmationHeading();
+//                }
+//
+//                return null;
+//            });
     }
 
     protected function showSaveConfirmation(): bool
@@ -181,7 +171,7 @@ class EditTemplate extends EditCustomForm
 
     protected function getGeneralFieldsOverwrittenQuery(): Builder
     {
-        $customFields = $this->getRawCustomFields();
+        $customFields = $this->form->getState()['custom_form']['custom_fields'] ?? [];
         $usedGeneralIDs = $this->getUsedGeneralFieldIds($customFields, $this->getRecord());
 
         $templateFieldsQuery = CustomField::query()
@@ -204,7 +194,7 @@ class EditTemplate extends EditCustomForm
 
     protected function getTemplateGeneralFieldCollisionQuery(): Builder
     {
-        $customFields = $this->getRawCustomFields();
+        $customFields = $this->form->getState()['custom_form']['custom_fields'] ?? [];;
 
         $templateFieldsQuery = CustomField::query()
             ->where('template_id', $this->record->id);
