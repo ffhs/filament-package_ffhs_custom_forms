@@ -4,12 +4,11 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\TemplatesType;
 
 use Closure;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldType;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormEditor\TypeActions\Default\DefaultCustomActivationAction;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormEditor\TypeActions\Default\DefaultCustomFieldDeleteAction;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormEditor\TypeActions\Default\DefaultTemplateDissolveAction;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormConfiguration\CustomFormConfiguration;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\FormEditor\TypeActions\DefaultCustomActivationAction;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\FormEditor\TypeActions\DefaultFieldDeleteAction;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasCustomTypePackageTranslation;
 use Filament\Support\Colors\Color;
@@ -48,21 +47,25 @@ final class TemplateFieldType extends CustomFieldType
         return $data;
     }
 
-    public function getEditorActions(string $key, array $rawData): array
+    public function getEditorActions(CustomFormConfiguration $formConfiguration, array $state): array
     {
-        return [
-            DefaultCustomFieldDeleteAction::make('delete-field-' . $key),
-            DefaultTemplateDissolveAction::make('dissolve-template-' . $key),
-            DefaultCustomActivationAction::make('active-' . $key)->visible($this->canBeDeactivate()),
-        ];
+        return array(
+            DefaultFieldDeleteAction::make('delete-field')
+                ->formConfiguration($formConfiguration),
+//            DefaultTemplateDissolveAction::make('dissolve-template-' . $key), ToDo Reimplement
+
+            DefaultCustomActivationAction::make('toggle_active')
+                ->visible($this->canBeDeactivate())
+                ->formConfiguration($formConfiguration),
+        );
     }
 
-    public function getEditorFieldTitle(array $rawData, CustomForm $form): string
+
+    public function getEditorFieldTitle(array $fieldState, CustomFormConfiguration $configuration): string
     {
-        return $form
-            ->getFormConfiguration()
+        return $configuration
             ->getAvailableTemplates()
-            ->get($rawData['template_id'])
+            ->get($fieldState['template_id'])
             ->short_title;
     }
 

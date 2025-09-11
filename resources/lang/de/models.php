@@ -180,6 +180,9 @@ return [
                 'label' => 'Spezifische Felder',
                 'new_field_name' => 'Neues Feld'
             ],
+            'template_adder' => [
+                'label' => 'Templates',
+            ],
             'general_field_adder' => [
                 'label' => 'Generelle Felder',
             ]

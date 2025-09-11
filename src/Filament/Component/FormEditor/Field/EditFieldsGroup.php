@@ -7,6 +7,7 @@ use Ffhs\FfhsUtils\Filament\DragDrop\DragDropGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\Facades\CustomForms;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasFormConfiguration;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasFormGroupName;
+use Illuminate\Support\HtmlString;
 
 class EditFieldsGroup extends DragDropGroup
 {
@@ -29,18 +30,17 @@ class EditFieldsGroup extends DragDropGroup
             ]);
     }
 
-    protected function getFieldGridSize(array $itemState): int
+    protected function getFieldGridSize(array $itemState, $get): int|string
     {
-        $size = $itemState['options']['column_span'] ?? null;
-        $maxSize = 12;
-
-        if (!empty($size)) {
-            return min($size, $maxSize);
+        $type = CustomForms::getFieldTypeFromRawDate($itemState, $this->getFormConfiguration());
+        if ($type->isFullSizeField()) {
+            return 'full';
         }
 
-        $type = CustomForms::getFieldTypeFromRawDate($itemState, $this->getFormConfiguration());
+        $size = $itemState['options']['column_span'] ?? null;
+        $maxSize = $get('../options/column') ?? $this->getFormConfiguration()->getColumns() ?? 12;
 
-        return $type->isFullSizeField() ? $maxSize : 1;
+        return empty($size) ? 1 : min($size, $maxSize);
     }
 
     protected function getFieldItemColumn($itemState): ?int
@@ -51,7 +51,13 @@ class EditFieldsGroup extends DragDropGroup
 
     protected function getFieldLabel($itemState): string
     {
-        return CustomForms::getFieldTypeFromRawDate($itemState, $this->getFormConfiguration())->getTranslatedName();
+        $type = CustomForms::getFieldTypeFromRawDate($itemState, $this->getFormConfiguration());
+        $name = $type->getEditorFieldTitle($itemState, $this->getFormConfiguration());
+        $name = htmlspecialchars($name);
+        $badge = $type->getEditorFieldBadge($itemState, $this->getFormConfiguration());
+
+        $label = $badge . $name;
+        return new HtmlString($label);
     }
 
     protected function getFieldIcon($itemState): string

@@ -7,28 +7,28 @@ use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\FormEditor\TypeAction
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\FormEditor\TypeActions\DefaultFieldDeleteAction;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\FormEditor\TypeActions\DefaultFieldEditOptionsAction;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Filament\Support\Colors\Color;
 
 trait HasEditorLayoutElements
 {
     abstract public function icon(): string;
 
-    public function getEditorFieldBadge(array $rawData): ?string
+    public function getEditorFieldBadge(array $fieldState, CustomFormConfiguration $configuration): ?string
     {
-        $text = $this->getEditorFieldBadgeText($rawData);
-        $color = $this->getEditorFieldBadgeColor($rawData);
+        $text = $this->getEditorFieldBadgeText($fieldState);
+        $color = $this->getEditorFieldBadgeColor($fieldState);
 
         if (is_null($color) || is_null($text)) {
             return null;
         }
 
-        return view('filament-package_ffhs_custom_forms::badge', ['text' => $text, 'color' => $color]);
+        return view('filament-package_ffhs_custom_forms::filament.components.form-editor.badge',
+            ['text' => $text, 'color' => $color]);
     }
 
-    public function getEditorFieldTitle(array $rawData, CustomForm $form): string
+    public function getEditorFieldTitle(array $fieldState, CustomFormConfiguration $configuration): string
     {
-        $customField = $this->getEditorCustomFieldFromData($rawData, $form);
+        $customField = $this->getEditorCustomFieldFromData($fieldState, $configuration);
 
         if (!$customField->isGeneralField()) {
             return $this->getTranslatedName();
@@ -87,14 +87,14 @@ trait HasEditorLayoutElements
         return $customField;
     }
 
-    protected function getEditorFieldBadgeText(array $rawData): ?string
+    protected function getEditorFieldBadgeText(array $fielData): ?string
     {
-        $customField = app(CustomField::class)->fill($rawData);
+        $customField = app(CustomField::class)->fill($fielData);
 
         return $customField->isGeneralField() ? 'Gen' : null;
     }
 
-    protected function getEditorFieldBadgeColor(array $rawData): ?array
+    protected function getEditorFieldBadgeColor(array $fielData): ?array
     {
         return Color::rgb('rgb(43, 164, 204)');
     }
