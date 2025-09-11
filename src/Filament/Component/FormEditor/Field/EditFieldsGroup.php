@@ -7,7 +7,6 @@ use Ffhs\FfhsUtils\Filament\DragDrop\DragDropGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\Facades\CustomForms;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasFormConfiguration;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasFormGroupName;
-use Filament\Actions\Action;
 
 class EditFieldsGroup extends DragDropGroup
 {
@@ -21,17 +20,16 @@ class EditFieldsGroup extends DragDropGroup
             ->itemSize($this->getFieldGridSize(...))
             ->itemColumn($this->getFieldItemColumn(...))
             ->group($this->getGroupName(...))
-            ->hiddenLabel()
+            ->itemIcons($this->getFieldIcon(...))
             ->itemLabel($this->getFieldLabel(...))
+            ->hiddenLabel()
             ->schema([
                 EditField::make()
-                    ->formConfiguration($this->getFormConfiguration(...)),
-                Action::make('testAction')
-                    ->action(fn() => dd($this->getState()))
+                    ->formConfiguration($this->getFormConfiguration(...))
             ]);
     }
 
-    protected function getFieldGridSize(array $itemState, string $value, int $position = 1): int
+    protected function getFieldGridSize(array $itemState): int
     {
         $size = $itemState['options']['column_span'] ?? null;
         $maxSize = 12;
@@ -45,7 +43,7 @@ class EditFieldsGroup extends DragDropGroup
         return $type->isFullSizeField() ? $maxSize : 1;
     }
 
-    protected function getFieldItemColumn($key, $itemState): ?int
+    protected function getFieldItemColumn($itemState): ?int
     {
         $newLine = $itemState['options']['new_line'] ?? null;
         return $newLine ? 1 : null;
@@ -56,4 +54,9 @@ class EditFieldsGroup extends DragDropGroup
         return CustomForms::getFieldTypeFromRawDate($itemState, $this->getFormConfiguration())->getTranslatedName();
     }
 
+    protected function getFieldIcon($itemState): string
+    {
+        return CustomForms::getFieldTypeFromRawDate($itemState,
+            $this->getFormConfiguration())->getEditorFieldIcon($itemState, $this->getFormConfiguration());
+    }
 }
