@@ -5,8 +5,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Traits;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\FieldMapper;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
-use Filament\Forms\Components\Component as FormsComponent;
-use Filament\Infolists\Components\Component as InfolistsComponent;
+use Filament\Support\Components\Component;
 
 trait HasDefaultViewComponent
 {
@@ -17,10 +16,10 @@ trait HasDefaultViewComponent
         string $class,
         CustomField|CustomFieldAnswer $record,
         array $ignoredOptions = []
-    ): InfolistsComponent|FormsComponent {
+    ): Component {
         $component = $class::make($this->getIdentifyKey($record));
 
-        if ($component instanceof FormsComponent) {
+        if ($component instanceof Component) {
             return $this->modifyFormComponent($component, $record, $ignoredOptions);
         }
 
@@ -28,10 +27,10 @@ trait HasDefaultViewComponent
     }
 
     protected function modifyFormComponent(
-        FormsComponent $component,
+        Component $component,
         CustomField $record,
         array $ignoredOptions = []
-    ): FormsComponent {
+    ): Component {
         foreach ($record->getType()->getFlattenExtraTypeOptions() as $key => $typeOption) {
             if (in_array($key, $ignoredOptions, true)) {
                 continue;
@@ -56,10 +55,10 @@ trait HasDefaultViewComponent
     }
 
     protected function modifyInfolistComponent(
-        InfolistsComponent $component,
+        Component $component,
         CustomFieldAnswer $record,
         array $ignoredOptions = []
-    ): InfolistsComponent {
+    ): Component {
         return $component
             ->columnStart($this->getOptionParameter($record, 'new_line'))
             ->label($this->getLabelName($record))

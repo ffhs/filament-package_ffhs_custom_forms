@@ -5,8 +5,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Contracts;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
-use Filament\Forms\Components\Component as FormsComponent;
-use Filament\Infolists\Components\Component as InfolistsComponent;
+use Filament\Support\Components\Component;
 
 interface FieldTypeView
 {
@@ -16,11 +15,11 @@ interface FieldTypeView
         CustomFieldType $type,
         CustomField $record,
         array $parameter = []
-    ): FormsComponent;
+    ): Component;
 
     public function getInfolistComponent(
         CustomFieldType $type,
         CustomFieldAnswer $record,
         array $parameter = []
-    ): InfolistsComponent;
+    ): Component;
 }
