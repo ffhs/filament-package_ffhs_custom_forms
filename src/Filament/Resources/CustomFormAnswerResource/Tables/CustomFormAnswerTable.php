@@ -3,6 +3,7 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormAnswerResource\Tables;
 
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormAnswerResource\CustomFormAnswerResource;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
 use Filament\Actions\BulkActionGroup;
@@ -18,7 +19,7 @@ class CustomFormAnswerTable
     public static function configure(Table $table): table
     {
         return $table
-            ->recordUrl(fn($record) => static::getUrl('edit', [$record]))
+            ->recordUrl(fn($record) => CustomFormAnswerResource::getUrl('edit', [$record]))
             ->columns([
                 TextColumn::make('id'),
                 TextColumn::make('short_title')

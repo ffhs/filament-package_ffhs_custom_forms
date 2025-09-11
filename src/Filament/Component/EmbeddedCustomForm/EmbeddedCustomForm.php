@@ -2,27 +2,32 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\EmbeddedCustomForm;
 
+use Closure;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormConfiguration\CustomFormConfiguration;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanLoadFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanSaveFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasFallbackCustomForm;
+use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasFormConfiguration;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasViewMode;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\UseAutosaveCustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\UseParentFilamentForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\UseSplitCustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\UseSplitFormSchema;
-use Filament\Forms\Components\Concerns\EntanglesStateWithSingularRelationship;
-use Filament\Forms\Components\Contracts\CanEntangleWithSingularRelationships;
 use Filament\Forms\Components\Field;
 use Filament\Forms\Contracts\HasForms;
+use Filament\Schemas\Components\Concerns\EntanglesStateWithSingularRelationship;
+use Filament\Schemas\Components\Contracts\CanEntangleWithSingularRelationships;
 use Illuminate\Database\Eloquent\Model;
 
 class EmbeddedCustomForm extends Field implements CanEntangleWithSingularRelationships
 {
     protected string $view = 'filament-package_ffhs_custom_forms::filament.components.embedded-custom-form';
 
-    use EntanglesStateWithSingularRelationship;
+    use EntanglesStateWithSingularRelationship {
+        EntanglesStateWithSingularRelationship::relationship as parentRelationship;
+    }
     use UseSplitCustomForm;
     use UseAutosaveCustomForm;
     use CanLoadFormAnswer;
@@ -31,11 +36,10 @@ class EmbeddedCustomForm extends Field implements CanEntangleWithSingularRelatio
     use HasViewMode;
     use UseParentFilamentForm;
     use UseSplitFormSchema;
-
-    public function getChildComponents(): array
-    {
-        return once(fn() => $this->getFormSchema($this));
+    use HasFormConfiguration {
+        HasFormConfiguration::getFormConfiguration as getFormConfigurationFromParent;
     }
+
 
     public function fillFromRelationship(): void
     {
@@ -43,8 +47,8 @@ class EmbeddedCustomForm extends Field implements CanEntangleWithSingularRelatio
         $data = $this->mutateRelationshipDataBeforeFill($data);
 
         $this
-            ->getChildComponentContainer()
-            ->fill($data, andCallHydrationHooks: false, andFillStateWithNull: false);
+            ->getChildSchema()
+            ?->fill($data, false, false);
     }
 
     public function getCustomFormAnswer(): null|Model|CustomFormAnswer
@@ -80,6 +84,16 @@ class EmbeddedCustomForm extends Field implements CanEntangleWithSingularRelatio
         });
     }
 
+    public function getFormConfiguration(): CustomFormConfiguration
+    {
+        $customForm = $this->getCustomForm();
+        if (is_null($customForm)) {
+            return $this->getFormConfigurationFromParent();
+        }
+        return $customForm->getFormConfiguration();
+    }
+
+
     public function getCustomForm(): ?CustomForm
     {
         return $this
@@ -110,22 +124,30 @@ class EmbeddedCustomForm extends Field implements CanEntangleWithSingularRelatio
         $this->saveFormAnswer($customFormAnswer, $form, $component->getStatePath());
     }
 
+    public function relationship(
+        string $name,
+        bool|Closure $condition = true,
+        Closure|string|null $relatedModel = null
+    ): static {
+        return $this->parentRelationship($name, $condition, $relatedModel)
+            ->saveRelationshipsUsing(function (EmbeddedCustomForm $component, HasForms $livewire) {
+                $data = $component
+                    ->getChildSchema()
+                    ?->getState(shouldCallHooksBefore: false);
+                $this->saveCustomFormAnswerRelation($component, $livewire, $data);
+            });
+    }
+
+
     protected function setUp(): void
     {
         $this
-            ->autoViewMode()
-            ->label('')
-            ->columns(1)
-            //AutoSave
-            ->live(condition: $this->isAutoSaving(...))
             ->afterStateUpdated($this->runAutoSave(...))
-            //RelationSave
-            ->saveRelationshipsUsing(function (EmbeddedCustomForm $component, HasForms $livewire) {
-                $data = $component
-                    ->getChildComponentContainer()
-                    ->getState(shouldCallHooksBefore: false);
-                $this->saveCustomFormAnswerRelation($component, $livewire, $data);
-            });
+            ->live(condition: $this->isAutoSaving(...))
+            ->schema(fn() => $this->getFormSchema($this))
+            ->columns(1)
+            ->autoViewMode()
+            ->hiddenLabel();
     }
 
     protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
