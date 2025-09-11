@@ -11,12 +11,14 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasCustomTypePackageTranslation;
+use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasStaticMake;
 use Filament\Support\Colors\Color;
 use Illuminate\Support\Collection;
 
 final class TemplateFieldType extends CustomFieldType
 {
     use HasCustomTypePackageTranslation;
+    use HasStaticMake;
 
     public static function identifier(): string
     {

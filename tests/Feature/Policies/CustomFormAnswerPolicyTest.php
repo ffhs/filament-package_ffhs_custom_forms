@@ -1,7 +1,7 @@
 <?php
 
 use Ffhs\FilamentPackageFfhsCustomForms\Enums\CustomFormPermissionName;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormAnswerResource;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormAnswerResource\CustomFormAnswerResource;
 use Ffhs\FilamentPackageFfhsCustomForms\Tests\Feature\Policies\HasPolicyTestSetup;
 use Spatie\Permission\Models\Permission;
 

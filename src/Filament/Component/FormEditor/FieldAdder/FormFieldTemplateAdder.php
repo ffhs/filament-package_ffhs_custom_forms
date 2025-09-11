@@ -16,7 +16,7 @@ class FormFieldTemplateAdder extends FormFieldAdder
 
     public static function getSiteComponent(CustomFormConfiguration $configuration): Component
     {
-        return self::make('add_template_node')
+        return self::make('add_template_field')
             ->formConfiguration($configuration);
     }
 

@@ -1,21 +1,17 @@
 <?php
 
-namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources;
+namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormAnswerResource;
 
 use Closure;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormAnswerResource\Pages\CreateCustomFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormAnswerResource\Pages\EditCustomFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormAnswerResource\Pages\ListCustomFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormAnswerResource\Pages\ViewCustomFormAnswer;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormAnswerResource\Schemas\CustomFormAwareSchema;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormAnswerResource\Tables\CustomFormAnswerTable;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
 use Filament\Resources\Resource;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Actions\DeleteBulkAction;
-use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Actions\ViewAction;
-use Filament\Tables\Columns\TextColumn;
+use Filament\Schemas\Schema;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 
@@ -23,6 +19,7 @@ class CustomFormAnswerResource extends Resource
 {
     protected static ?string $model = CustomFormAnswer::class;
     protected static string|null|\BackedEnum $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $slug = 'custom-form-answers';
 
     public static function getRecordTitleAttribute(): ?string
     {
@@ -63,34 +60,12 @@ class CustomFormAnswerResource extends Resource
 
     public static function table(Table $table): Table
     {
-        return $table
-            ->recordUrl(fn($record) => static::getUrl('edit', [$record]))
-            ->columns([
-                TextColumn::make('id'),
-                TextColumn::make('short_title')
-                    ->label(CustomFormAnswer::__('attributes.short_title')),
-                TextColumn::make('customForm.short_title')
-                    ->label(
-                        CustomForm::__('label.single') . ' ' . CustomForm::__('attributes.short_title')
-                    ),
-                TextColumn::make('customForm.custom_form_identifier')
-                    ->label(CustomForm::__('attributes.custom_form_identifier'))
-                    ->state(fn(CustomFormAnswer $record) => $record
-                        ->customForm
-                        ->dynamicFormConfiguration()::displayName()
-                    ),
-            ])
-            ->filters([])
-            ->actions([
-                ViewAction::make(),
-                EditAction::make(),
-                DeleteAction::make()
-            ])
-            ->bulkActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                ]),
-            ]);
+        return CustomformAnswerTable::configure($table);
+    }
+
+    public static function form(Schema $schema): Schema
+    {
+        return CustomFormAwareSchema::configure($schema);
     }
 
     public static function getRelations(): array
