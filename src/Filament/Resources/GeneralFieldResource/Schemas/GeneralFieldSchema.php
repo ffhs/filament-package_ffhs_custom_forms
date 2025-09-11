@@ -212,5 +212,4 @@ class GeneralFieldSchema
 
         return empty($array);
     }
-
 }

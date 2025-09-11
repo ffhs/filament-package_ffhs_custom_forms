@@ -2,16 +2,15 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\GeneralFieldResource\RelationManagers;
 
-use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormConfiguration\CustomFormConfiguration;
-use Ffhs\FilamentPackageFfhsCustomForms\Facades\CustomForms;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormTypeSelector;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralFieldForm;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Schemas\Components\Group;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\CheckboxColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -25,28 +24,12 @@ class GeneralFieldFormRelationManager extends RelationManager
     public function form(Schema $schema): Schema
     {
         return $schema->schema([
-            Select::make('custom_form_identifier')
-                ->label(GeneralFieldForm::__('attributes.custom_form_identifier_name.label'))
-                ->helperText(GeneralFieldForm::__('attributes.custom_form_identifier_name.helper_text'))
-                ->required()
-                ->options(function ($livewire) {
-                    $generalField = $livewire->getOwnerRecord();
-                    $selectedIdentifiers = $generalField
-                        ->generalFieldForms
-                        ->map(fn(GeneralFieldForm $fieldForm) => $fieldForm->custom_form_identifier);
-
-                    return collect(CustomForms::getFormConfigurations())
-                        ->filter(
-                            fn(CustomFormConfiguration $configuration) => $selectedIdentifiers->contains($configuration)
-                        )
-                        ->mapWithKeys(fn(CustomFormConfiguration $configuration) => [
-                            $configuration::identifier() => $configuration::displayName()
-                        ]);
-                }),
+            CustomFormTypeSelector::make()
+                ->required(),
             Group::make([
                 Toggle::make('is_required')
                     ->label(GeneralFieldForm::__('attributes.is_required'))
-                    ->default(true),
+                    ->default(false),
                 Toggle::make('export')
                     ->label(GeneralFieldForm::__('attributes.export'))
                     ->default(false),

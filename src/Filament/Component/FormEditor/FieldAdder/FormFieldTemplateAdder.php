@@ -20,22 +20,7 @@ class FormFieldTemplateAdder extends FormFieldAdder
             ->formConfiguration($configuration);
     }
 
-    public function isTemplateDisabled($value): bool
-    {
-        if ($this->useTemplateUsedGeneralFields($value)) {
-            return true;
-        }
-
-        $usedTemplateIds = once(function () {
-            $templates = array_filter($this->getCustomFieldsState(), fn($da) => !empty($da['template_id']));
-
-            return array_map(fn($template) => $template['template_id'], $templates);
-        });
-
-        return in_array($value, $usedTemplateIds, true);
-    }
-
-    public function useTemplateUsedGeneralFields(int $templateId): bool
+    protected function useTemplateUsedGeneralFields(int $templateId): bool
     {
         $existingIds = $this->getUsedGeneralFieldIds($this->getCustomFieldsState(), $this->getFormConfiguration());
 
@@ -56,6 +41,21 @@ class FormFieldTemplateAdder extends FormFieldAdder
         $commonValues = array_intersect($templateGenIds, $existingIds);
 
         return !empty($commonValues);
+    }
+
+    protected function isTemplateDisabled($value): bool
+    {
+        if ($this->useTemplateUsedGeneralFields($value)) {
+            return true;
+        }
+
+        $usedTemplateIds = once(function () {
+            $templates = array_filter($this->getCustomFieldsState(), fn($da) => !empty($da['template_id']));
+
+            return array_map(fn($template) => $template['template_id'], $templates);
+        });
+
+        return in_array($value, $usedTemplateIds, true);
     }
 
     protected function setUp(): void
