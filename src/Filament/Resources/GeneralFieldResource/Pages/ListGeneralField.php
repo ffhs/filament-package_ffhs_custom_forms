@@ -1,20 +1,20 @@
 <?php
 
-namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\GeneralFieldsResource\Pages;
+namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\GeneralFieldResource\Pages;
 
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\GeneralFieldResource;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormConfiguration\CustomFormConfiguration;
+use Ffhs\FilamentPackageFfhsCustomForms\Facades\CustomForms;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\GeneralFieldResource\GeneralFieldResource;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralFieldForm;
 use Filament\Actions\CreateAction;
-use Filament\Actions\LocaleSwitcher;
-use Filament\Resources\Components\Tab;
 use Filament\Resources\Pages\ListRecords;
-use Filament\Resources\Pages\ListRecords\Concerns\Translatable;
+use Filament\Schemas\Components\Tabs\Tab;
 use Illuminate\Contracts\Support\Htmlable;
 
 class ListGeneralField extends ListRecords
 {
-    //use Translatable;;
+    //use Translatable; ToDo Readd
 
     protected static string $resource = GeneralFieldResource::class;
 
@@ -30,10 +30,12 @@ class ListGeneralField extends ListRecords
                 ->badge(GeneralField::query()->count()),
         ];
 
-        foreach (config('ffhs_custom_forms.forms') as $formClass) {
-            $tabs[$formClass::identifier()] = Tab::make($formClass::displayName())
-                ->badge($this->prepareTabQuerry($formClass::identifier(), GeneralField::query())->count())
-                ->modifyQueryUsing(fn($query) => $this->prepareTabQuerry($formClass::identifier(), $query));
+        foreach (CustomForms::getFormConfigurations() as $formConfiguration) {
+            /**@var CustomFormConfiguration $formConfiguration */
+            $identifier = $formConfiguration::identifier();
+            $tabs[$identifier] = Tab::make($formConfiguration::displayName())
+                ->badge($this->prepareTabQuery($identifier, GeneralField::query())->count())
+                ->modifyQueryUsing(fn($query) => $this->prepareTabQuery($identifier, $query));
         }
 
         return $tabs;
@@ -47,12 +49,12 @@ class ListGeneralField extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            LocaleSwitcher::make(),
+//            LocaleSwitcher::make(), ToDo Readd
             CreateAction::make(),
         ];
     }
 
-    private function prepareTabQuerry($identifier, $query)
+    protected function prepareTabQuery($identifier, $query)
     {
         return $query->whereIn(
             'id',

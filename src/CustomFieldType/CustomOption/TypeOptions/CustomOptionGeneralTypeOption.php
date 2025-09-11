@@ -2,13 +2,13 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\CustomOption\TypeOptions;
 
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\GeneralFieldsResource\Pages\EditGeneralField;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\GeneralFieldResource\Pages\EditGeneralField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomOption;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasOptionNoComponentModification;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\TypeOption;
-use Filament\Support\Components\Component;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\TextInput;
+use Filament\Support\Components\Component;
 
 class CustomOptionGeneralTypeOption extends TypeOption
 {

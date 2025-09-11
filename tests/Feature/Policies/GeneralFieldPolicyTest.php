@@ -2,7 +2,7 @@
 
 
 use Ffhs\FilamentPackageFfhsCustomForms\Enums\CustomFormPermissionName;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\GeneralFieldResource;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\GeneralFieldResource\GeneralFieldResource;
 use Ffhs\FilamentPackageFfhsCustomForms\Tests\Feature\Policies\HasPolicyTestSetup;
 use Spatie\Permission\Models\Permission;
 

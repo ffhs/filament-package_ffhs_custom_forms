@@ -4,7 +4,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms;
 
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormAnswerResource;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormResource\CustomFormResource;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\GeneralFieldResource;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\GeneralFieldResource\GeneralFieldResource;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\TemplateResource\TemplateResource;
 use Filament\Contracts\Plugin;
 use Filament\Panel;

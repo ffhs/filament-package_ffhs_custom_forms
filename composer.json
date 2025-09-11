@@ -25,7 +25,8 @@
         "spatie/laravel-permission": "^6.4",
         "davidhsianturi/blade-bootstrap-icons": "^1.4|^2.1.0",
         "codeat3/blade-carbon-icons": "^2.18.2",
-        "secondnetwork/blade-tabler-icons": "^3.26"
+        "secondnetwork/blade-tabler-icons": "^3.26",
+        "guava/filament-icon-picker": "^3.0"
     },
     "extra": {
         "laravel": {
@@ -88,5 +89,11 @@
         }
     ],
     "minimum-stability": "alpha",
-    "prefer-stable": true
+    "prefer-stable": true,
+    "repositories": {
+        "internal-git.alpen.ffhs.ch/36": {
+            "type": "composer",
+            "url": "https://internal-git.alpen.ffhs.ch/api/v4/group/36/-/packages/composer/packages.json"
+        }
+    }
 }

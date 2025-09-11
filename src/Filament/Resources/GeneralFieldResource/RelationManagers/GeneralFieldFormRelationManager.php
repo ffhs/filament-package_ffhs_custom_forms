@@ -1,10 +1,14 @@
 <?php
 
-namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\GeneralFieldsResource\RelationManagers;
+namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\GeneralFieldResource\RelationManagers;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormConfiguration\CustomFormConfiguration;
 use Ffhs\FilamentPackageFfhsCustomForms\Facades\CustomForms;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralFieldForm;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\CreateAction;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -68,10 +72,10 @@ class GeneralFieldFormRelationManager extends RelationManager
                 CreateAction::make()
                     ->label(GeneralFieldForm::__('actions.connect')),
             ])
-            ->actions([
+            ->recordActions([
                 DeleteAction::make(),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),
