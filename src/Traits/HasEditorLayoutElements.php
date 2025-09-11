@@ -34,7 +34,7 @@ trait HasEditorLayoutElements
             return $this->getTranslatedName();
         }
 
-        return $customField->name;
+        return $customField->name ?? '404';
     }
 
     public function getEditorFieldIcon(array $rawData, CustomFormConfiguration $configuration): string

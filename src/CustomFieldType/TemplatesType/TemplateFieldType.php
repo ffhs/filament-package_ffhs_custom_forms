@@ -66,7 +66,7 @@ final class TemplateFieldType extends CustomFieldType
         return $configuration
             ->getAvailableTemplates()
             ->get($fieldState['template_id'])
-            ->short_title;
+            ->short_title ?? '404';
     }
 
     public function hasEditorNameElement(array $fielData): bool

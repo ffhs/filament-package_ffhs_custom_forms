@@ -89,9 +89,4 @@ class FormFieldTemplateAdder extends FormFieldAdder
             ->pluck('short_title', 'id')
             ->toArray());
     }
-
-    protected function getCustomFieldsState(): array
-    {
-        return $this->getSchemaComponent()?->getState()['custom_fields'] ?? [];
-    }
 }

@@ -4,6 +4,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\FormEditor\Fiel
 
 use Ffhs\FfhsUtils\Filament\DragDrop\DragDropSelectAction;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\FormEditorSideComponent;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\FormEditor\StateCasts\CustomFieldStateCast;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasFormConfiguration;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasFormGroupName;
 use Filament\Forms\Components\Concerns\CanGenerateUuids;
@@ -40,6 +41,12 @@ abstract class FormFieldAdder extends DragDropSelectAction implements FormEditor
     {
         parent::setUp();
         $this->dragGroup($this->getGroupName(...));
+    }
+
+    protected function getCustomFieldsState(): array
+    {
+        $fields = $this->getSchemaComponent()?->getState()['custom_fields'] ?? [];
+        return new CustomFieldStateCast()->flattCustomFields($fields);
     }
 
 }

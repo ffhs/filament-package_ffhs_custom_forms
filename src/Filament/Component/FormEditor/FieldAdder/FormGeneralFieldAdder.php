@@ -56,7 +56,7 @@ class FormGeneralFieldAdder extends FormFieldAdder
                     $generalFieldForm = $generalField
                         ->generalFieldForms
                         ->firstWhere('custom_form_identifier', $formConfiguration::identifier());
-                    $name = ($generalFieldForm->is_required ? '* ' : '') . $generalField->name;
+                    $name = ($generalFieldForm->is_required ? '* ' : '') . ($generalField->name ?? '404');
 
                     return [$generalField->id => $name];
                 })->toArray();
@@ -66,8 +66,10 @@ class FormGeneralFieldAdder extends FormFieldAdder
     protected function isGeneralDisabled($value, $get): bool
     {
         $notAllowed = once(function () use ($get) {
-            $fields = $this->getSchemaComponent()?->getState()['custom_fields'] ?? [];
-            $usedGeneralFieldIds = collect($fields)->pluck('general_field_id');
+            $fields = $this->getCustomFieldsState();
+            $usedGeneralFieldIds = collect($fields)
+                ->whereNotNull('general_field_id')
+                ->pluck('general_field_id');
 
             if (!is_null($get('template_identifier'))) {
                 return $usedGeneralFieldIds;
@@ -84,9 +86,12 @@ class FormGeneralFieldAdder extends FormFieldAdder
                 ->whereNotNull('general_field_id')
                 ->pluck('general_field_id');
 
-            return $usedGeneralFieldIds->merge($usedGeneralFieldIdsFormTemplates);
+            return $usedGeneralFieldIds
+                ->merge($usedGeneralFieldIdsFormTemplates)
+                ->map(fn($id) => (int)$id)
+                ->toArray();
         });
 
-        return $notAllowed->contains($value);
+        return in_array($value, $notAllowed, true);
     }
 }
