@@ -2,7 +2,6 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Traits;
 
-use Ffhs\FilamentPackageFfhsCustomForms\CustomForms\CustomField\FieldMapper;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Filament\Support\Components\Component;
@@ -12,6 +11,7 @@ trait HasDefaultViewComponent
     use CanMapFields;
     use HasStaticMake;
 
+    //ToDo fix infolust stuff
     protected function makeComponent(
         string $class,
         CustomField|CustomFieldAnswer $record,
@@ -51,7 +51,8 @@ trait HasDefaultViewComponent
         }
 
         if (method_exists($component, 'label')) {
-            return $component->label($this->getLabelName($record));
+            $label = $this->getLabelName($record);
+            return empty($label) ? $component->hiddenLabel() : $component->label($label);
         }
         return $component;
     }

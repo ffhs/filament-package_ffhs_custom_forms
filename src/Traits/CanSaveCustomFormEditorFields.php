@@ -142,8 +142,6 @@ trait CanSaveCustomFormEditorFields
         ];
 
         foreach ($fields as $key => $field) {
-            $field['name'] = json_encode($field['name'] ?? null); //toDo Replace with translation plugin
-
             foreach ($columns as $name) {
                 $cleanFields[$key][$name] = $field[$name] ?? null;
             }
