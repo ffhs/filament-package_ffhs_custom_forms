@@ -7,11 +7,10 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\CustomOption\HasCustomOp
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\PrioritizeSelect;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
+use Filament\Support\Components\Component;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasDefaultViewComponent;
-use Filament\Forms\Components\Component as FormsComponent;
 use Filament\Forms\Components\Select;
-use Filament\Infolists\Components\Component as InfolistsComponent;
 use Filament\Infolists\Components\TextEntry;
 
 class SelectTypeView implements FieldTypeView
@@ -25,7 +24,7 @@ class SelectTypeView implements FieldTypeView
         CustomFieldType $type,
         CustomField $record,
         array $parameter = []
-    ): FormsComponent {
+    ): Component {
         $several = $this->getOptionParameter($record, 'several');
         $prioritized = $this->getOptionParameter($record, 'prioritized');
 
@@ -39,9 +38,9 @@ class SelectTypeView implements FieldTypeView
     public function getPrioritizedSelect(
         CustomField $record,
         array $parameter
-    ): FormsComponent|InfolistsComponent {
+    ): Component|Component {
         /**@var PrioritizeSelect $select */
-        $select = $this->makeComponent(PrioritizeSelect::class, $record);
+        $select = $this->makeComponent(PrioritizeSelect::class, $record); //ToDo FUCK!!!!!!!!!!!!!!!!!!
 
         $selectLabelTranslation = __('filament-package_ffhs_custom_forms::custom_forms.fields.type_view.select.select');
         $labels = $this->getOptionParameter($record, 'prioritized_labels');
@@ -76,7 +75,7 @@ class SelectTypeView implements FieldTypeView
     public function getSingleSelect(CustomField $record): Select
     {
         /** @var Select $select */
-        $select = $this->makeComponent(Select::class, $record);
+        $select = $this->makeComponent(Select::class, $record);//ToDo FUUUUUCK
         $select = $select->options($this->getAvailableCustomOptions($record));
         $required = $this->getOptionParameter($record, 'required');
         $minItems = $required ? $this->getOptionParameter($record, 'min_select') : 0;
@@ -99,7 +98,7 @@ class SelectTypeView implements FieldTypeView
         CustomFieldType $type,
         CustomFieldAnswer $record,
         array $parameter = []
-    ): InfolistsComponent {
+    ): Component {
         $several = $this->getOptionParameter($record, 'several');
         $prioritized = $this->getOptionParameter($record, 'prioritized');
 
@@ -108,7 +107,7 @@ class SelectTypeView implements FieldTypeView
         }
 
         /**@var TextEntry $textEntry */
-        $textEntry = $this->makeComponent(TextEntry::class, $record);
+        $textEntry = $this->makeComponent(TextEntry::class, $record, true);
         $answer = $this->getAnswer($record) ?? [];
         $stateList = $this
             ->getAllCustomOptions($record)

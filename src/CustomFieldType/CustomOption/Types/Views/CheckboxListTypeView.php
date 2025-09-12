@@ -20,7 +20,7 @@ class CheckboxListTypeView implements FieldTypeView
         CustomField $record,
         array $parameter = []
     ): Component {
-        return $this->makeComponent(CheckboxList::class, $record)
+        return $this->makeComponent(CheckboxList::class, $record, false)
             ->options($this->getAvailableCustomOptions($record))
             ->maxItems($this->getOptionParameter($record, 'max_items'))
             ->minItems($this->getOptionParameter($record, 'min_items'));

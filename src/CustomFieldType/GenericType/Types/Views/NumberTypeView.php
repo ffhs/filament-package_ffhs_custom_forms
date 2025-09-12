@@ -5,11 +5,10 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\Types\
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\FieldTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
+use Filament\Support\Components\Component;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasDefaultViewComponent;
-use Filament\Forms\Components\Component as FormsComponent;
 use Filament\Forms\Components\TextInput;
-use Filament\Infolists\Components\Component as InfolistsComponent;
 use Filament\Infolists\Components\TextEntry;
 
 class NumberTypeView implements FieldTypeView
@@ -20,9 +19,9 @@ class NumberTypeView implements FieldTypeView
         CustomFieldType $type,
         CustomField $record,
         array $parameter = []
-    ): FormsComponent {
+    ): Component {
         return $this
-            ->makeComponent(TextInput::class, $record)
+            ->makeComponent(TextInput::class, $record, false)
             ->numeric();
     }
 
@@ -30,7 +29,7 @@ class NumberTypeView implements FieldTypeView
         CustomFieldType $type,
         CustomFieldAnswer $record,
         array $parameter = []
-    ): InfolistsComponent {
-        return $this->makeComponent(TextEntry::class, $record);
+    ): Component {
+        return $this->makeComponent(TextEntry::class, $record, true);
     }
 }

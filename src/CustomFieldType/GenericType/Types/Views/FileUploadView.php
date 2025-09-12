@@ -5,13 +5,12 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\Types\
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\FieldTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
+use Filament\Support\Components\Component;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasDefaultViewComponent;
-use Filament\Forms\Components\Component as FormsComponent;
 use Filament\Forms\Components\FileUpload;
 use Filament\Infolists\Components\Actions;
 use Filament\Infolists\Components\Actions\Action;
-use Filament\Infolists\Components\Component as InfolistsComponent;
 use Filament\Infolists\Components\Fieldset;
 use Filament\Infolists\Components\Grid;
 use Filament\Infolists\Components\Group;
@@ -30,7 +29,7 @@ class FileUploadView implements FieldTypeView
         CustomFieldType $type,
         CustomField $record,
         array $parameter = []
-    ): FormsComponent {
+    ): Component {
         $fileUpload = FileUpload::make($this->getIdentifyKey($record) . '.files');
 
         return $this->prepareFileUploadComponent($fileUpload, $record);
@@ -39,7 +38,7 @@ class FileUploadView implements FieldTypeView
     public function prepareFileUploadComponent(FileUpload $component, CustomField $record): FileUpload
     {
         /** @var FileUpload $component */
-        $component = $this->modifyFormComponent($component, $record);
+        $component = $this->modifyFormComponent($component, $record, false);
         $component
             ->deleteUploadedFileUsing(fn(FileUpload $component) => $component->callAfterStateUpdated())
             ->multiple(fn($state) => $this->getOptionParameter($record, 'multiple'))
@@ -78,7 +77,7 @@ class FileUploadView implements FieldTypeView
         CustomFieldType $type,
         CustomFieldAnswer $record,
         array $parameter = []
-    ): InfolistsComponent {
+    ): Component {
         $answer = $this->getAnswer($record);
 
         if (is_null($answer) || !isset($answer['file_names'])) {

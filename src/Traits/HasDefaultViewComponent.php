@@ -15,22 +15,21 @@ trait HasDefaultViewComponent
     protected function makeComponent(
         string $class,
         CustomField|CustomFieldAnswer $record,
+        bool $isInfolist,
         array $ignoredOptions = []
     ): Component {
         $component = $class::make($this->getIdentifyKey($record));
 
-        if ($component instanceof Component) {
-            return $this->modifyFormComponent($component, $record, $ignoredOptions);
-        }
-
-        return $this->modifyInfolistComponent($component, $record, $ignoredOptions);
+        return $isInfolist ?
+            $this->modifyInfolistComponent($component, $record, $ignoredOptions) :
+            $this->modifyFormComponent($component, $record, $ignoredOptions);
     }
 
     protected function modifyFormComponent(
         Component $component,
         CustomField $record,
         array $ignoredOptions = []
-    ): Component {
+    ): Component { //toDo what????
         foreach ($record->getType()->getFlattenExtraTypeOptions() as $key => $typeOption) {
             if (in_array($key, $ignoredOptions, true)) {
                 continue;
@@ -51,7 +50,10 @@ trait HasDefaultViewComponent
             }
         }
 
-        return $component->label($this->getLabelName($record));
+        if (method_exists($component, 'label')) {
+            return $component->label($this->getLabelName($record));
+        }
+        return $component;
     }
 
     protected function modifyInfolistComponent(

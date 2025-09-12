@@ -5,11 +5,10 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\LayoutType\Types\V
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\FieldTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
+use Filament\Support\Components\Component;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasDefaultViewComponent;
-use Filament\Forms\Components\Component as FormsComponent;
 use Filament\Forms\Components\Placeholder;
-use Filament\Infolists\Components\Component as InfolistsComponent;
 use Filament\Infolists\Components\Group;
 use Filament\Infolists\Components\ImageEntry;
 use Filament\Infolists\Infolist;
@@ -23,9 +22,9 @@ class ImageTypeView implements FieldTypeView
         CustomFieldType $type,
         CustomField $record,
         array $parameter = []
-    ): FormsComponent {
+    ): Component {
         /**@var $placeholder Placeholder */
-        $placeholder = $this->makeComponent(Placeholder::class, $record);
+        $placeholder = $this->makeComponent(Placeholder::class, $record, false);
 
         return $placeholder
             ->content(
@@ -44,7 +43,7 @@ class ImageTypeView implements FieldTypeView
         CustomFieldType $type,
         CustomFieldAnswer $record,
         array $parameter = []
-    ): InfolistsComponent {
+    ): Component {
         if (!$this->getOptionParameter($record, 'show_in_view')) {
             return Group::make()
                 ->hidden();

@@ -7,11 +7,9 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldT
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasDefaultViewComponent;
-use Filament\Forms\Components\Component as FormsComponent;
-use Filament\Forms\Components\Group;
-use Filament\Infolists\Components\Component as InfolistsComponent;
-use Filament\Infolists\Components\Fieldset;
-use Filament\Infolists\Components\Group as InfolistGroup;
+use Filament\Schemas\Components\Fieldset;
+use Filament\Schemas\Components\Group;
+use Filament\Support\Components\Component;
 
 class GroupTypeView implements FieldTypeView
 {
@@ -21,7 +19,7 @@ class GroupTypeView implements FieldTypeView
         CustomFieldType $type,
         CustomField $record,
         array $parameter = []
-    ): FormsComponent {
+    ): Component {
         return $this
             ->modifyFormComponent(Group::make(), $record)
             ->schema($parameter['child_render']());
@@ -31,7 +29,7 @@ class GroupTypeView implements FieldTypeView
         CustomFieldType $type,
         CustomFieldAnswer $record,
         array $parameter = []
-    ): InfolistsComponent {
+    ): Component {
         $schema = $parameter['child_render']();
 
         if ($this->getOptionParameter($record, 'show_in_view')) {
@@ -44,7 +42,7 @@ class GroupTypeView implements FieldTypeView
                 ->columnSpanFull();
         }
 
-        $group = $this->modifyInfolistComponent(InfolistGroup::make(), $record, ['show_in_view']);
+        $group = $this->modifyInfolistComponent(Group::make(), $record, ['show_in_view']);
 
         return $group
             ->columnStart(1)

@@ -8,9 +8,9 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasDefaultViewComponent;
 use Filament\Forms\Components\Placeholder;
-use Filament\Infolists\Components\Component;
-use Filament\Infolists\Components\Group;
 use Filament\Infolists\Components\TextEntry;
+use Filament\Schemas\Components\Group;
+use Filament\Support\Components\Component;
 use Illuminate\Support\HtmlString;
 
 class TitleTypeView implements FieldTypeView
@@ -25,7 +25,7 @@ class TitleTypeView implements FieldTypeView
         $title = $this->getTitle($record);
 
         /**@var $placeholder Placeholder */
-        $placeholder = $this->makeComponent(Placeholder::class, $record);
+        $placeholder = $this->makeComponent(Placeholder::class, $record, false);
 
         return $placeholder
             ->content(new HtmlString($title))
@@ -45,7 +45,7 @@ class TitleTypeView implements FieldTypeView
         $title = $this->getTitle($record);
 
         /**@var $placeholder TextEntry */
-        $placeholder = $this->makeComponent(TextEntry::class, $record);
+        $placeholder = $this->makeComponent(TextEntry::class, $record, true);
 
         return $placeholder
             ->state(new HtmlString($title))

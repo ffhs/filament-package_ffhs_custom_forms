@@ -6,6 +6,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\Contracts\FieldTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\EmbeddedCustomForm\Render\InfolistFieldDisplayer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
+use Filament\Support\Components\Component;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanLoadFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanRenderCustomForm;
@@ -50,7 +51,7 @@ class RepeaterLayoutTypeView implements FieldTypeView
         $schema = $parameter['child_render']();
 
         /**@var Repeater $repeater */
-        $repeater = $this->makeComponent(Repeater::class, $record, ['min_amount', 'max_amount']);
+        $repeater = $this->makeComponent(Repeater::class, $record, false, ['min_amount', 'max_amount']);
         $repeater
             ->columns($columns)
             ->columnStart($columnStart)

@@ -5,8 +5,8 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\CustomOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanMapFields;
-use Filament\Infolists\Components\Component;
 use Filament\Infolists\Components\TextEntry;
+use Filament\Support\Components\Component;
 
 trait HasCustomOptionInfoListView
 {

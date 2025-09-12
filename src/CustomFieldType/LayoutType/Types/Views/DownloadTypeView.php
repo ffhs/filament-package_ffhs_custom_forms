@@ -8,14 +8,12 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanMapFields;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasStaticMake;
-use Filament\Forms\Components\Actions as FormsActions;
-use Filament\Forms\Components\Component as FormsComponent;
-use Filament\Forms\Components\Group as FormsGroup;
+use Filament\Actions\Action;
 use Filament\Forms\Components\Placeholder;
-use Filament\Infolists\Components\Actions as InfolistsActions;
-use Filament\Infolists\Components\Component as InfolistsComponent;
-use Filament\Infolists\Components\Group as InfolistsGroup;
 use Filament\Infolists\Components\TextEntry;
+use Filament\Schemas\Components\Actions;
+use Filament\Schemas\Components\Group;
+use Filament\Support\Components\Component;
 use Illuminate\Support\HtmlString;
 
 class DownloadTypeView implements FieldTypeView
@@ -27,13 +25,13 @@ class DownloadTypeView implements FieldTypeView
         CustomFieldType $type,
         CustomField $record,
         array $parameter = []
-    ): FormsComponent {
+    ): Component {
         $filePaths = $this->getOptionParameter($record, 'files');
 
-        if (sizeof($filePaths) === 1) {
-            $actions = $this->getSingleFilDownloadComponentAction($record, FormsActions::class);
+        if (count($filePaths) === 1) {
+            $actions = $this->getSingleFilDownloadComponentAction($record);
         } else {
-            $actions = $this->getMultipleFileDownloadComponentAction($record, FormsActions::class);
+            $actions = $this->getMultipleFileDownloadComponentAction($record);
         }
 
         $titelAsFileName = $this->getOptionParameter($record, 'title_as_filename');
@@ -57,15 +55,15 @@ class DownloadTypeView implements FieldTypeView
 
         //Toll Tip
         $helpText = $this->getOptionParameter($record, 'helper_text');
-        $actions[] = Placeholder::make('helper_text' . '-help_text')
-            ->label('')
+        $actions[] = Placeholder::make('helper_text' . '-help_text') //ToDo Replace
+        ->label('')
             ->helperText(
                 new HtmlString(
                     '</div> <div class="fi-fo-field-wrp-helper-text text-sm text-gray-500" style="margin-top: -30px; ">' . empty($helpText) ? "" : $helpText . '</div><div>'
                 )
             );
 
-        $group = FormsGroup::make($actions);
+        $group = Group::make($actions);
         $group->columnSpan($this->getOptionParameter($record, 'column_span'));
         $group->columnStart($this->getOptionParameter($record, 'new_line'));
 
@@ -76,9 +74,9 @@ class DownloadTypeView implements FieldTypeView
         CustomFieldType $type,
         CustomFieldAnswer $record,
         array $parameter = []
-    ): InfolistsComponent {
+    ): Component {
         if (!$this->getOptionParameter($record, 'show_in_view')) {
-            return InfolistsGroup::make($parameter['rendered'])
+            return Group::make($parameter['rendered'])
                 ->columnStart(1)
                 ->columnSpanFull()
                 ->hidden();
@@ -86,16 +84,10 @@ class DownloadTypeView implements FieldTypeView
 
         $filePaths = $this->getOptionParameter($record, 'files');
 
-        if (sizeof($filePaths) <= 1) {
-            $actions = $this->getSingleFilDownloadComponentAction(
-                $record->customField,
-                InfolistsActions::class
-            );
+        if (count($filePaths) <= 1) {
+            $actions = $this->getSingleFilDownloadComponentAction($record->customField);
         } else {
-            $actions = $this->getMultipleFileDownloadComponentAction(
-                $record->customField,
-                InfolistsActions::class
-            );
+            $actions = $this->getMultipleFileDownloadComponentAction($record->customField);
         }
 
         $titelAsFileName = $this->getOptionParameter($record, 'title_as_filename');
@@ -118,14 +110,14 @@ class DownloadTypeView implements FieldTypeView
         }
 
         //Toll Tip
-        $group = InfolistsGroup::make($actions);
+        $group = Group::make($actions);
         $group->columnSpan($this->getOptionParameter($record, 'column_span'));
         $group->columnStart($this->getOptionParameter($record, 'new_line'));
 
         return $group;
     }
 
-    private function getSingleFilDownloadComponentAction(CustomField $record, string $actionClass): mixed
+    private function getSingleFilDownloadComponentAction(CustomField $record): mixed
     {
         $paths = $this->getOptionParameter($record, 'files');
         $path = array_values($paths)[0];
@@ -135,7 +127,7 @@ class DownloadTypeView implements FieldTypeView
         $titelAsFileName = $this->getOptionParameter($record, 'title_as_filename');
         $label = $titelAsFileName ? $this->getLabelName($record) : $fileName;
 
-        $action = ($actionClass . '\Action')::make($this->getIdentifyKey($record))
+        $action = Action::make($this->getIdentifyKey($record))
             ->action(fn() => response()->download($pathAbsolute, $fileName))
             ->icon('tabler-download')
             ->label($label);
@@ -144,7 +136,7 @@ class DownloadTypeView implements FieldTypeView
             $action = $action->link();
         }
 
-        return $actionClass::make([$action]);
+        return $action;
     }
 
     private function getPathOfFileAbsolute(CustomField $record, mixed $path): string
@@ -155,7 +147,7 @@ class DownloadTypeView implements FieldTypeView
         return $diskRoot . '/' . $path;
     }
 
-    private function getMultipleFileDownloadComponentAction(CustomField $record, string $actionClass): mixed
+    private function getMultipleFileDownloadComponentAction(CustomField $record): mixed
     {
         $filePaths = $this->getOptionParameter($record, 'files');
         $fileNames = $this->getOptionParameter($record, 'file_names');
@@ -166,7 +158,7 @@ class DownloadTypeView implements FieldTypeView
             $name = $fileNames[$path];
             $pathAbsolute = $this->getPathOfFileAbsolute($record, $path);
 
-            $action = ($actionClass . '\Action')::make($this->getIdentifyKey($record) . '-' . $name)
+            $action = Action::make($this->getIdentifyKey($record) . '-' . $name)
                 ->action(fn() => response()->download($pathAbsolute, $name))
                 ->icon('tabler-download')
                 ->label($name);
@@ -178,6 +170,6 @@ class DownloadTypeView implements FieldTypeView
             $actions[] = $action;
         }
 
-        return $actionClass::make($actions);
+        return Actions::make($actions);
     }
 }

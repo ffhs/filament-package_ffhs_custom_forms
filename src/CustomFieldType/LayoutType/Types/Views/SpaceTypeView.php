@@ -5,12 +5,11 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\LayoutType\Types\V
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\FieldTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
+use Filament\Support\Components\Component;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasDefaultViewComponent;
-use Filament\Forms\Components\Component as FormsComponent;
 use Filament\Forms\Components\Group as FormsGroup;
 use Filament\Forms\Components\Placeholder;
-use Filament\Infolists\Components\Component as InfolistsComponent;
 use Filament\Infolists\Components\Group as InfolistsGroup;
 use Filament\Infolists\Components\TextEntry;
 
@@ -22,7 +21,7 @@ class SpaceTypeView implements FieldTypeView
         CustomFieldType $type,
         CustomField $record,
         array $parameter = []
-    ): FormsComponent {
+    ): Component {
         $spaces = [];
 
         for ($count = 0; $count < $this->getOptionParameter($record, 'amount'); $count++) {
@@ -42,7 +41,7 @@ class SpaceTypeView implements FieldTypeView
         CustomFieldType $type,
         CustomFieldAnswer $record,
         array $parameter = []
-    ): InfolistsComponent {
+    ): Component {
         if (!$this->getOptionParameter($record, 'show_in_view')) {
             return InfolistsGroup::make()
                 ->hidden();

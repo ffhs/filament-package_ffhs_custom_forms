@@ -5,6 +5,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\Types\
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\FieldTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
+use Filament\Support\Components\Component;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasDefaultViewComponent;
 use Filament\Forms\Components\Checkbox;
@@ -17,7 +18,7 @@ class CheckboxTypeView implements FieldTypeView
     public function getFormComponent(CustomFieldType $type, CustomField $record, array $parameter = []): Checkbox
     {
         /**@var $checkbox Checkbox */
-        $checkbox = $this->makeComponent(Checkbox::class, $record);
+        $checkbox = $this->makeComponent(Checkbox::class, $record, false);
 
         return $checkbox;
     }
@@ -28,7 +29,7 @@ class CheckboxTypeView implements FieldTypeView
         array $parameter = []
     ): IconEntry {
         /**@var $iconEntry IconEntry */
-        $iconEntry = $this->makeComponent(IconEntry::class, $record);
+        $iconEntry = $this->makeComponent(IconEntry::class, $record, true);
 
         return $iconEntry
             ->state(is_null($this->getAnswer($record)) ? false : $this->getAnswer($record))

@@ -7,11 +7,9 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldT
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasDefaultViewComponent;
-use Filament\Forms\Components\Component as FormsComponent;
-use Filament\Forms\Components\Fieldset as FormsFieldset;
-use Filament\Infolists\Components\Component as InfolistsComponent;
-use Filament\Infolists\Components\Fieldset as InfolistsFieldset;
-use Filament\Infolists\Components\Group;
+use Filament\Schemas\Components\Fieldset;
+use Filament\Schemas\Components\Group;
+use Filament\Support\Components\Component;
 
 class FieldsetTypeView implements FieldTypeView
 {
@@ -21,9 +19,8 @@ class FieldsetTypeView implements FieldTypeView
         CustomFieldType $type,
         CustomField $record,
         array $parameter = []
-    ): FormsComponent {
-        /**@var $fieldSet FormsFieldset */
-        $fieldSet = $this->modifyFormComponent(FormsFieldset::make($this->getLabelName($record)), $record);
+    ): Component {
+        $fieldSet = $this->modifyFormComponent(Fieldset::make($this->getLabelName($record)), $record, false);
 
         return $fieldSet
             ->columnSpan($this->getOptionParameter($record, 'column_span'))
@@ -35,7 +32,7 @@ class FieldsetTypeView implements FieldTypeView
         CustomFieldType $type,
         CustomFieldAnswer $record,
         array $parameter = []
-    ): InfolistsComponent {
+    ): Component {
         $schema = $parameter['child_render']();
 
         if (!$this->getOptionParameter($record, 'show_in_view')) {
@@ -45,7 +42,7 @@ class FieldsetTypeView implements FieldTypeView
                 ->columnSpanFull();
         }
 
-        $fieldSet = InfolistsFieldset::make($this->getLabelName($record));
+        $fieldSet = Fieldset::make($this->getLabelName($record));
 
         return $this
             ->modifyInfolistComponent($fieldSet, $record)

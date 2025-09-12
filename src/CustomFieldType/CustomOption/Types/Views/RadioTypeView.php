@@ -6,9 +6,10 @@ use Ffhs\FilamentPackageFfhsCustomForms\Contracts\FieldTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\CustomOption\HasCustomOptionInfoListViewWithBoolean;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
-use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasDefaultViewComponent;
 use Filament\Support\Components\Component;
+use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasDefaultViewComponent;
 use Filament\Forms\Components\Radio;
+use Filament\Support\Components\Component;
 
 class RadioTypeView implements FieldTypeView
 {
@@ -21,7 +22,7 @@ class RadioTypeView implements FieldTypeView
         array $parameter = []
     ): Component {
         /**@var Radio $radio */
-        $radio = $this->makeComponent(Radio::class, $record);
+        $radio = $this->makeComponent(Radio::class, $record, false);
         $radio = $radio->inline($this->getOptionParameter($record, 'inline'));
 
         if ($this->getOptionParameter($record, 'boolean')) {

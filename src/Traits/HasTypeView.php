@@ -8,8 +8,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\Exceptions\FieldTypeHasNoDefaultViewMode
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
-use Filament\Forms\Components\Component as FormsComponent;
-use Filament\Infolists\Components\Component as InfolistsComponent;
+use Filament\Support\Components\Component;
 
 trait HasTypeView
 {
@@ -17,7 +16,7 @@ trait HasTypeView
         CustomField $customField,
         string $viewMode = 'default',
         array $parameter = []
-    ): FormsComponent {
+    ): Component {
         return $this
             ->getFieldTypeView($customField->customForm, $viewMode)
             ->getFormComponent($this, $customField, $parameter);
@@ -27,7 +26,7 @@ trait HasTypeView
         CustomFieldAnswer $answer,
         string $viewMode = 'default',
         array $parameter = []
-    ): InfolistsComponent {
+    ): Component {
         return $this
             ->getFieldTypeView($answer->customForm, $viewMode)
             ->getInfolistComponent($this, $answer, $parameter);

@@ -7,10 +7,9 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldT
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasDefaultViewComponent;
-use Filament\Forms\Components\Component as FormsComponent;
-use Filament\Infolists\Components\Component as InfolistsComponent;
 use Filament\Infolists\Components\IconEntry;
-use Guava\FilamentIconPicker\Forms\IconPicker;
+use Filament\Support\Components\Component;
+use Guava\IconPicker\Forms\Components\IconPicker;
 
 class IconSelectView implements FieldTypeView
 {
@@ -20,17 +19,17 @@ class IconSelectView implements FieldTypeView
         CustomFieldType $type,
         CustomField $record,
         array $parameter = []
-    ): FormsComponent {
-        return $this->makeComponent(IconPicker::class, $record);
+    ): Component {
+        return $this->makeComponent(IconPicker::class, $record, false);
     }
 
     public function getInfolistComponent(
         CustomFieldType $type,
         CustomFieldAnswer $record,
         array $parameter = []
-    ): InfolistsComponent {
+    ): Component {
         return $this
-            ->makeComponent(IconEntry::class, $record)
+            ->makeComponent(IconEntry::class, $record, true)
             ->icon($this->getAnswer($record));
     }
 }

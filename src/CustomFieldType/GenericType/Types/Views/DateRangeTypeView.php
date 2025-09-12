@@ -8,18 +8,18 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldT
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasDefaultViewComponent;
-use Filament\Forms\Components\Component as FormsComponent;
-use Filament\Infolists\Components\Component as InfolistsComponent;
 use Filament\Infolists\Components\TextEntry;
+use Filament\Support\Components\Component;
 
+//ToDo replace range picker
 class DateRangeTypeView implements FieldTypeView
 {
     use HasDefaultViewComponent;
 
-    public function getFormComponent(CustomFieldType $type, CustomField $record, array $parameter = []): FormsComponent
+    public function getFormComponent(CustomFieldType $type, CustomField $record, array $parameter = []): Component
     {
         /**@var Flatpickr $flatpickr */
-        $flatpickr = $this->makeComponent(Flatpickr::class, $record);
+        $flatpickr = $this->makeComponent(Flatpickr::class, $record, false); //ToDoReplace
 
         return $flatpickr->rangePicker();
     }
@@ -28,7 +28,7 @@ class DateRangeTypeView implements FieldTypeView
         CustomFieldType $type,
         CustomFieldAnswer $record,
         array $parameter = []
-    ): InfolistsComponent {
-        return $this->makeComponent(TextEntry::class, $record);
+    ): Component {
+        return $this->makeComponent(TextEntry::class, $record, true);
     }
 }

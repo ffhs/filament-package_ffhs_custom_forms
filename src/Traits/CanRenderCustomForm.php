@@ -12,8 +12,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\Rule;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\RuleTrigger;
-use Filament\Forms\Components\Group as FormsGroup;
-use Filament\Infolists\Components\Group as InfolistsGroup;
+use Filament\Schemas\Components\Group;
 use Illuminate\Support\Collection;
 
 trait CanRenderCustomForm
@@ -27,7 +26,7 @@ trait CanRenderCustomForm
 
         //ToDo Maby add default con to FormConfiguration
         return [
-            FormsGroup::make($renderOutput[0])->columns(config('ffhs_custom_forms.default_column_count')),
+            Group::make($renderOutput[0])->columns(config('ffhs_custom_forms.default_column_count')),
         ];
     }
 
@@ -41,7 +40,7 @@ trait CanRenderCustomForm
 
         //ToDo Maby add default con to FormConfiguration
         return [
-            InfolistsGroup::make($renderOutput[0])
+            Group::make($renderOutput[0])
                 ->columns(config('ffhs_custom_forms.default_column_count')),
         ];
     }

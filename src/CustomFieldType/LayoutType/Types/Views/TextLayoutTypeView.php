@@ -5,6 +5,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\LayoutType\Types\V
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\FieldTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
+use Filament\Support\Components\Component;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasDefaultViewComponent;
 use Filament\Forms\Components\Placeholder;
@@ -25,7 +26,7 @@ class TextLayoutTypeView implements FieldTypeView
         $text = $this->getOptionParameter($record, 'text')[app()->getLocale()] ?? '';
 
         /**@var $placeholder Placeholder */
-        $placeholder = $this->makeComponent(Placeholder::class, $record);
+        $placeholder = $this->makeComponent(Placeholder::class, $record, false); //FUCK!!!!
 
         return $placeholder
             ->content(new HtmlString($text))
@@ -46,7 +47,7 @@ class TextLayoutTypeView implements FieldTypeView
         $text = $this->getOptionParameter($record, 'text')[app()->getLocale()] ?? '';
 
         /**@var $placeholder TextEntry */
-        $placeholder = $this->makeComponent(TextEntry::class, $record);
+        $placeholder = $this->makeComponent(TextEntry::class, $record, true);
 
         return $placeholder
             ->state(new HtmlString($text))

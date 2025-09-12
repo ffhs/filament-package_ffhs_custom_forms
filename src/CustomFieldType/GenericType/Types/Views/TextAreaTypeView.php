@@ -8,8 +8,8 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasDefaultViewComponent;
 use Filament\Forms\Components\Textarea;
-use Filament\Infolists\Components\Component;
 use Filament\Infolists\Components\TextEntry;
+use Filament\Support\Components\Component;
 
 class TextAreaTypeView implements FieldTypeView
 {
@@ -18,7 +18,7 @@ class TextAreaTypeView implements FieldTypeView
     public function getFormComponent(CustomFieldType $type, CustomField $record, array $parameter = []): Textarea
     {
         return $this
-            ->makeComponent(Textarea::class, $record)
+            ->makeComponent(Textarea::class, $record, false)
             ->autosize($this->getOptionParameter($record, 'auto_size'));
     }
 
@@ -27,6 +27,6 @@ class TextAreaTypeView implements FieldTypeView
         CustomFieldAnswer $record,
         array $parameter = []
     ): Component {
-        return $this->makeComponent(TextEntry::class, $record);
+        return $this->makeComponent(TextEntry::class, $record, true);
     }
 }

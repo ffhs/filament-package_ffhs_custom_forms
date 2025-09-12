@@ -4,8 +4,8 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Traits;
 
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
+use Filament\Schemas\Components\Form;
 use Filament\Support\Components\Component;
-use Filament\Forms\Form;
 use Illuminate\Support\Collection;
 
 trait HasAnswerCallbacks
