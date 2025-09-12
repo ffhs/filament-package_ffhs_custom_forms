@@ -22,7 +22,11 @@ class GeneralFieldResource extends Resource
 //    public const langPrefix = 'filament-package_ffhs_custom_forms::models.general_field.';
     protected static ?string $model = GeneralField::class;
     protected static string|null|\BackedEnum $navigationIcon = 'heroicon-o-rectangle-stack';
-    protected static ?string $recordTitleAttribute = 'name';
+
+    public static function getRecordTitleAttribute(): ?string
+    {
+        return 'name.' . app()->getLocale();
+    }
 
 
     public static function canAccess(): bool

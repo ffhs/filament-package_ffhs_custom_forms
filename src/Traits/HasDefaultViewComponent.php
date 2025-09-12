@@ -4,6 +4,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Traits;
 
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
+use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\TypeOption;
 use Filament\Support\Components\Component;
 
 trait HasDefaultViewComponent
@@ -29,7 +30,7 @@ trait HasDefaultViewComponent
         Component $component,
         CustomField $record,
         array $ignoredOptions = []
-    ): Component { //toDo what????
+    ): Component {
         foreach ($record->getType()->getFlattenExtraTypeOptions() as $key => $typeOption) {
             if (in_array($key, $ignoredOptions, true)) {
                 continue;
@@ -62,11 +63,35 @@ trait HasDefaultViewComponent
         CustomFieldAnswer $record,
         array $ignoredOptions = []
     ): Component {
-        return $component
-            ->columnStart($this->getOptionParameter($record, 'new_line'))
-            ->label($this->getLabelName($record))
+        /**@var $typeOption TypeOption */
+        foreach ($record->getType()->getFlattenExtraTypeOptions() as $key => $typeOption) {
+            if (in_array($key, $ignoredOptions, true)) {
+                continue;
+            }
+
+            $value = $this->getOptionParameter($record, $key);
+            $typeOption->modifyInfolistComponent($component, $value); //ToDo null value
+        }
+
+        if ($record->isGeneralField()) {
+            foreach ($record->getType()->getFlattenGeneralTypeOptions() as $key => $typeOption) {
+                if (in_array($key, $ignoredOptions, true)) {
+                    continue;
+                }
+
+                $value = $this->getOptionParameter($record, $key);
+                $typeOption->modifyInfolistComponent($component, $value); //ToDo null value
+            }
+        }
+        $component
             ->state($this->getAnswer($record))
             ->inlineLabel()
             ->columnSpanFull();
+
+        if (method_exists($component, 'label')) {
+            $label = $this->getLabelName($record);
+            return empty($label) ? $component->hiddenLabel() : $component->label($label);
+        }
+        return $component;
     }
 }

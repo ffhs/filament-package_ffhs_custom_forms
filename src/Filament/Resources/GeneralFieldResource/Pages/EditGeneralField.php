@@ -7,16 +7,19 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Contracts\Support\Htmlable;
+use LaraZeus\SpatieTranslatable\Actions\LocaleSwitcher;
+use LaraZeus\SpatieTranslatable\Resources\Pages\EditRecord\Concerns\Translatable;
 
 class EditGeneralField extends EditRecord
 {
-    //use Translatable;;
+    use Translatable;
 
     protected static string $resource = GeneralFieldResource::class;
 
     public function getTitle(): string|Htmlable
     {
-        return trans(GeneralField::__('pages.edit.title'), ['name' => $this->getRecord()->name]);
+        $local = app()->getLocale();
+        return trans(GeneralField::__('pages.edit.title'), ['name' => $this->getRecord()->name?->$local ?? '']);
     }
 
     protected function mutateFormDataBeforeSave(array $data): array
@@ -47,11 +50,10 @@ class EditGeneralField extends EditRecord
         return parent::mutateFormDataBeforeFill($data);
     }
 
-
     protected function getHeaderActions(): array
     {
         return [
-//            LocaleSwitcher::make(),
+            LocaleSwitcher::make(),
             DeleteAction::make(),
         ];
     }

@@ -4,6 +4,8 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\GeneralFieldRes
 
 use Error;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldType;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\GeneralFieldResource\Pages\CreateGeneralField;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\GeneralFieldResource\Pages\EditGeneralField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\TypeOption;
 use Filament\Forms\Components\Field;
@@ -21,13 +23,11 @@ use Illuminate\Support\Collection;
 
 class GeneralFieldSchema
 {
-    //toDo Slow
-
     public static function configure(Schema $schema): Schema
     {
         return $schema->schema([
             static::getGeneralFieldSection(),
-            Group::make(fn($record) => is_null($record) ? [] : [
+            Group::make(static fn($record) => is_null($record) ? [] : [
                 static::getGeneralFieldTypeOptions($record),
                 static::getOverwriteTypeOptions($record)
             ])
@@ -90,10 +90,10 @@ class GeneralFieldSchema
         return Section::make()
             ->columnSpan(2)
             ->columns()
-            ->schema([
-                TextInput::make('name') //ToDo Fix
-                ->label(static::label(...))
-                    ->helperText(static::helperText(...))
+            ->schema(fn(CreateGeneralField|EditGeneralField $livewire) => [
+                TextInput::make('name')
+                    ->label(GeneralField::__('attributes.name.label'))
+                    ->helperText(GeneralField::__('attributes.name.helper_text'))
                     ->columnStart(1)
                     ->columnSpan(1),
                 Group::make([
