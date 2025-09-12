@@ -13,7 +13,7 @@ trait HasAllFieldDataFromFormData
 
     protected function getFieldDataFromFormData(array $fields, CustomForm $customForm): array
     {
-        //Get the templated FormComponents
+        //Get the templated FormComponents ToDo make with form configuration
         $fieldsFromTemplate = collect($fields)
             ->whereNotNull('template_id')
             ->flatMap(fn($templateData) => CustomForms::getCustomFormFromId($templateData['template_id'])->customFields)

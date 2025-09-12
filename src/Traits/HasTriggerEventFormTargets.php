@@ -2,13 +2,14 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Traits;
 
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\FormEditor\StateCasts\CustomFieldStateCast;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Filament\Forms\Components\Select;
 use Filament\Schemas\Components\Utilities\Get;
 
 trait HasTriggerEventFormTargets
-{
+{ //ToDo do it without customForms only with form Configuration
     use HasAllFieldDataFromFormData;
     use HasFieldsMapToSelectOptions;
     use CanLoadFieldRelationFromForm;
@@ -42,6 +43,7 @@ trait HasTriggerEventFormTargets
     public function getTargetOptions(Get $get, ?CustomForm $record): array
     {
         $fields = collect($this->getAllFieldsData($get, $record))
+            ->filter(fn($fieldData) => empty($fieldData['template_id']))
             ->map(function ($fieldData) use ($record) {
                 $customField = new CustomField($fieldData);
 
@@ -58,6 +60,7 @@ trait HasTriggerEventFormTargets
         }
 
         $fields = $get('../../../../../custom_fields') ?? [];
+        $fields = new CustomFieldStateCast()->flattCustomFields($fields);
 
         return $this->cachedAllFieldsData = $this->getFieldDataFromFormData($fields, $customForm);
     }
