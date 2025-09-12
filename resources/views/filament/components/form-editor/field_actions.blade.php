@@ -4,7 +4,7 @@
 
 <div
     x-load
-    x-load-css="['{{FilamentAsset::getStyleHref('custom_forms', package: 'ffhs/filament-package_ffhs_drag-drop')}}']"
+    x-load-css="['{{FilamentAsset::getStyleHref('custom_forms', package: 'ffhs/filament-package_ffhs_custom-forms')}}']"
     class="-mt-5 -mr-1">
     @include('filament-schemas::components.actions')
 </div>

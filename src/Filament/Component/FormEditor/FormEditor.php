@@ -46,15 +46,15 @@ class FormEditor extends Field
         $this->columns(5);
         $this->schema([
             Fieldset::make()
+                ->extraAttributes([])
                 ->schema($this->getSideComponents(...))
                 ->columnSpan(1)
                 ->columns(1),
             EditFieldsGroup::make('custom_fields')
                 ->columns(fn() => $this->getFormConfiguration()->getColumns())
                 ->formConfiguration($this->getFormConfiguration(...))
+                ->extraAttributes([])
                 ->columnSpan(4),
         ]);
     }
-
-
 }

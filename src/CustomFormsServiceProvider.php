@@ -114,7 +114,7 @@ class CustomFormsServiceProvider extends PackageServiceProvider
 //            AlpineComponent::make('action_group', __DIR__ . '/../dist/js/drag-drop/action_group.js')
 //                ->loadedOnRequest(),
             Css::make('custom_forms', __DIR__ . '/../dist/css/custom_forms.css')->loadedOnRequest(),
-        ], 'ffhs/filament-package_ffhs_drag-drop');
+        ], 'ffhs/filament-package_ffhs_custom-forms');
     }
 
     private function registerPolicies(): void

@@ -10,8 +10,9 @@ use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasViewMode;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\UseSplitInfolistSchema;
 use Filament\Infolists\ComponentContainer;
 use Filament\Infolists\Components\Component;
+use Filament\Infolists\Components\Entry;
 
-class EmbeddedAnswerInfolist extends Component
+class EmbeddedAnswerInfolist extends Entry
 {
     use UseSplitInfolistSchema;
     use HasViewMode;
