@@ -5,7 +5,6 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Traits;
 use Closure;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
-use Filament\Infolists\Components\Component;
 
 trait HasViewMode
 {
@@ -25,24 +24,18 @@ trait HasViewMode
 
     public function autoViewMode(): static
     {
-        $this->viewMode = static function (?CustomForm $customForm, ?CustomFormAnswer $customFormAnswer, $component) {
-            if (is_null($customFormAnswer) || is_null($customForm)) {
+        $this->viewMode = static function (CustomForm|CustomFormAnswer|null $form) {
+            if (is_null($form)) {
                 return 'default';
             }
 
-            if ($component instanceof Component) {
-                return $customForm
-                    ->getFormConfiguration()
-                    ->displayViewMode();
-            }
-
-            if ($customFormAnswer->customFieldAnswers->count() === 0) {
-                return $customForm
+            if ($form instanceof CustomFormAnswer && $form->customFieldAnswers->count() === 0) {
+                return $form->customForm
                     ->getFormConfiguration()
                     ->displayEditMode();
             }
 
-            return $customForm
+            return $form
                 ->getFormConfiguration()
                 ->displayCreateMode();
         };

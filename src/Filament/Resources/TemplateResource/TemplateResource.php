@@ -12,10 +12,11 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use LaraZeus\SpatieTranslatable\Resources\Concerns\Translatable;
 
 class TemplateResource extends Resource
 {
-//    use Translatable;
+    use Translatable;
 
     protected static ?string $model = CustomForm::class;
 

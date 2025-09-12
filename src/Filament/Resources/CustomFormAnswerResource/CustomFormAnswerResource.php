@@ -14,9 +14,12 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
+use LaraZeus\SpatieTranslatable\Resources\Concerns\Translatable;
 
 class CustomFormAnswerResource extends Resource
 {
+    use Translatable;
+
     protected static ?string $model = CustomFormAnswer::class;
     protected static string|null|\BackedEnum $navigationIcon = 'heroicon-o-rectangle-stack';
     protected static ?string $slug = 'custom-form-answers';

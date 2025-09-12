@@ -12,12 +12,14 @@ use Filament\Resources\Pages\EditRecord;
 use Filament\Support\Enums\Width;
 use Filament\Support\Facades\FilamentView;
 use Illuminate\Contracts\Support\Htmlable;
+use LaraZeus\SpatieTranslatable\Actions\LocaleSwitcher;
+use LaraZeus\SpatieTranslatable\Resources\Pages\EditRecord\Concerns\Translatable;
 use Throwable;
 use function Filament\Support\is_app_url;
 
 class EditCustomForm extends EditRecord
 {
-    //use Translatable;;
+    use Translatable;
     use CanSaveCustomFormEditorData;
     use CanLoadCustomFormEditorData;
 
@@ -88,7 +90,7 @@ class EditCustomForm extends EditRecord
                     $action->callImportAction($data);
                     $action->redirect('edit');
                 }),
-//            LocaleSwitcher::make(),
+            LocaleSwitcher::make(),
 //            DeleteAction::make(),
         ];
     }

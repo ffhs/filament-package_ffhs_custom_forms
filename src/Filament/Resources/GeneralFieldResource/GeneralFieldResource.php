@@ -13,10 +13,11 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use LaraZeus\SpatieTranslatable\Resources\Concerns\Translatable;
 
 class GeneralFieldResource extends Resource
 {
-//    use Translatable;
+    use Translatable;
 
 //    public const langPrefix = 'filament-package_ffhs_custom_forms::models.general_field.';
     protected static ?string $model = GeneralField::class;

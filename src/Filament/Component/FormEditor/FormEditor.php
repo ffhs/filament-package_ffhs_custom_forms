@@ -48,12 +48,13 @@ class FormEditor extends Field
             Fieldset::make()
                 ->extraAttributes([])
                 ->schema($this->getSideComponents(...))
+                ->extraAttributes(['class' => 'self-stretch'])
                 ->columnSpan(1)
                 ->columns(1),
             EditFieldsGroup::make('custom_fields')
                 ->columns(fn() => $this->getFormConfiguration()->getColumns())
                 ->formConfiguration($this->getFormConfiguration(...))
-                ->extraAttributes([])
+                ->extraAttributes(['class' => 'self-stretch'])
                 ->columnSpan(4),
         ]);
     }

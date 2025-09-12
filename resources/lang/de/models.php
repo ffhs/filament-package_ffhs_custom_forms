@@ -85,7 +85,11 @@ return [
             'is_active' => [
                 'active' => 'Aktiv',
                 'not_active' => 'Inaktiv',
-            ]
+            ],
+            'name' => [
+                'label' => 'Name',
+                'helper_text' => '',
+            ],
         ],
         'actions' => [
             'delete' => [

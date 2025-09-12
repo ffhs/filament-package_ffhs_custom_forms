@@ -8,11 +8,11 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasViewMode;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\UseSplitInfolistSchema;
-use Filament\Infolists\ComponentContainer;
-use Filament\Infolists\Components\Component;
 use Filament\Infolists\Components\Entry;
 
 class EmbeddedAnswerInfolist extends Entry
+
+
 {
     use UseSplitInfolistSchema;
     use HasViewMode;

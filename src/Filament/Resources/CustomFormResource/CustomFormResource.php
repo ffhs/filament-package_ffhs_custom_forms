@@ -10,10 +10,11 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Builder;
+use LaraZeus\SpatieTranslatable\Resources\Concerns\Translatable;
 
 class CustomFormResource extends Resource
 {
-//    use Translatable;
+    use Translatable;
 
     protected static ?string $model = CustomForm::class;
     protected static string|null|\BackedEnum $navigationIcon = 'heroicon-o-clipboard-document-check';
