@@ -24,16 +24,6 @@ abstract class CustomFormConfiguration
             CustomForms::config('default_form_configuration.' . $config, $default);
     }
 
-    public static function getRuleTriggerTypes(): array
-    {
-        return config('ffhs_custom_forms.rule.trigger');
-    }
-
-    public static function getRuleEventTypes(): array
-    {
-        return config('ffhs_custom_forms.rule.event');
-    }
-
     public static function getEditorFieldAdder(): array
     {
         return static::config('field_adders');
@@ -45,6 +35,16 @@ abstract class CustomFormConfiguration
     }
 
     abstract public static function identifier(): string;
+
+    public function getRuleTriggerTypes(): array
+    {
+        return $this::config('rule.trigger') ?? [];
+    }
+
+    public function getRuleEventTypes(): array
+    {
+        return $this::config('rule.event') ?? [];
+    }
 
     public function getSelectableFieldTypeClasses(): array
     {

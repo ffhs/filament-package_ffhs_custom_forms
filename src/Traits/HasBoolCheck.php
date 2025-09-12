@@ -3,8 +3,8 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\Traits;
 
 use Filament\Forms\Components\Checkbox;
+use Filament\Schemas\Components\Group;
 use Filament\Support\Components\Component;
-use Filament\Forms\Components\Group;
 
 trait HasBoolCheck
 {

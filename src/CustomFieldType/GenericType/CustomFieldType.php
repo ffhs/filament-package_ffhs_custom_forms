@@ -28,7 +28,6 @@ abstract class CustomFieldType implements Type
 
     final public static function getTypeListConfig(): array
     {
-        $path = static::getConfigTypeList();
         $formConfig = CustomForms::config('form_configurations', []);
         $types = CustomForms::config('default_form_configuration.selectable_field_types', []);
         $genFields = CustomForms::config('selectable_general_field_types', []);

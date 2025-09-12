@@ -6,8 +6,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\Contracts\TriggerType;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\RuleTrigger;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\IsType;
-use Filament\Forms\Components\Component as FormsComponent;
-use Filament\Infolists\Components\Component as InfolistsComponent;
+use Filament\Schemas\Components\Component;
 
 abstract class FormRuleTriggerType implements TriggerType
 {
@@ -27,10 +26,8 @@ abstract class FormRuleTriggerType implements TriggerType
         return $components;
     }
 
-    public function prepareComponent(
-        FormsComponent|InfolistsComponent $component,
-        RuleTrigger $trigger
-    ): FormsComponent|InfolistsComponent {
+    public function prepareComponent(Component $component, RuleTrigger $trigger): Component
+    {
         return $component;
     }
 

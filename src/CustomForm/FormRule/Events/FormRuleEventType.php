@@ -9,8 +9,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\RuleEvent;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\IsType;
-use Filament\Forms\Components\Component as FormsComponent;
-use Filament\Infolists\Components\Component as InfolistsComponent;
+use Filament\Support\Components\Component;
 use Illuminate\Support\Collection;
 
 
@@ -29,7 +28,7 @@ abstract class FormRuleEventType implements EventType
             case 'before_render':
                 return $this->handlerBeforeRun($triggers, $arguments, $target, $rule);
             //case 'mutate_parameters': return $this->handleParameterMutation($triggers, $arguments, $target, $rule);
-            case 'after_render':
+            case 'after_render': //ToDo FUCK
                 if (is_array($target) && (array_values($target)[0] ?? '') instanceof FormsComponent) {
                     $handler = $this->handleAfterRenderForm(...);
                 } else {
@@ -70,18 +69,18 @@ abstract class FormRuleEventType implements EventType
     public function handleAfterRenderForm(
         Closure $triggers,
         array $arguments,
-        FormsComponent &$component,
+        Component &$component,
         RuleEvent $rule
-    ): FormsComponent {
+    ): Component {
         return $component;
     }
 
     public function handleAfterRenderInfolist(
         Closure $triggers,
         array $arguments,
-        InfolistsComponent &$component,
+        Component &$component,
         RuleEvent $rule
-    ): InfolistsComponent {
+    ): Component {
         return $component;
     }
 
@@ -114,7 +113,7 @@ abstract class FormRuleEventType implements EventType
         RuleEvent $rule
     ): mixed {
         foreach ($target as $identifier => $item) {
-            /**@var CustomField|FormsComponent|InfolistsComponent $item */
+            /**@var CustomField|Component $item */
             //dump($identifier, $item);
             $modifiedTrigger = fn(array $extraOptions = []) => $triggers(
                 array_merge(['target_field_identifier' => $identifier], $extraOptions)

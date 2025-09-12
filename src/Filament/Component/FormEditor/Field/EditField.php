@@ -42,7 +42,7 @@ class EditField extends Component
                     ->visible($type->hasEditorNameElement($state))
                     ->label(CustomField::__('attributes.name.label'))
                     ->helperText(CustomField::__('attributes.name.helper_text')),
-                FieldActions::make($actions)
+                ElevatedActions::make($actions)
                     ->columnSpan($type->hasEditorNameElement($state) ? 1 : 'full')
                     ->alignEnd(),
             ],

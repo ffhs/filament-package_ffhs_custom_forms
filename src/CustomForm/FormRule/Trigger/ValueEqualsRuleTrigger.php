@@ -12,10 +12,10 @@ use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasOptionCheck;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasRuleTriggerPluginTranslate;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasTextCheck;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasTriggerEventFormTargets;
-use Filament\Forms\Components\Component as FormsComponent;
+use Filament\Forms\Components\Field;
 use Filament\Forms\Components\ToggleButtons;
-use Filament\Forms\Get;
-use Filament\Infolists\Components\Component as InfolistsComponent;
+use Filament\Schemas\Components\Component;
+use Filament\Schemas\Components\Utilities\Get;
 
 class ValueEqualsRuleTrigger extends FormRuleTriggerType
 {
@@ -31,12 +31,10 @@ class ValueEqualsRuleTrigger extends FormRuleTriggerType
         return 'value_equals_anchor';
     }
 
-    public function prepareComponent(
-        FormsComponent|InfolistsComponent $component,
-        RuleTrigger $trigger
-    ): FormsComponent|InfolistsComponent {
-        if ($component instanceof FormsComponent) {
-            return $component->live();
+    public function prepareComponent(Component $component, RuleTrigger $trigger): Component
+    {
+        if ($component instanceof Field) {
+            return $component->live(); //ToDo improve
         }
 
         return $component;

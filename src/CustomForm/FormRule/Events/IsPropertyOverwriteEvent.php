@@ -8,8 +8,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\RuleEvent;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanLoadFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasRuleEventPluginTranslate;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasTriggerEventFormTargets;
-use Filament\Forms\Components\Component as FormsComponent;
-use Filament\Infolists\Components\Component as InfolistsComponent;
+use Filament\Support\Components\Component;
 
 abstract class  IsPropertyOverwriteEvent extends FormRuleEventType
 {
@@ -20,9 +19,9 @@ abstract class  IsPropertyOverwriteEvent extends FormRuleEventType
     public function handleAfterRenderForm(
         Closure $triggers,
         array $arguments,
-        FormsComponent &$component,
+        Component &$component,
         RuleEvent $rule
-    ): FormsComponent {
+    ): Component {
         if (!in_array($arguments['identifier'], $rule->data['targets'], false)) {
             return $component;
         }
@@ -33,9 +32,9 @@ abstract class  IsPropertyOverwriteEvent extends FormRuleEventType
     public function handleAfterRenderInfolist(
         Closure $triggers,
         array $arguments,
-        InfolistsComponent &$component,
+        Component &$component,
         RuleEvent $rule
-    ): InfolistsComponent {
+    ): Component {
         if (empty($rule->data) || empty($rule->data['targets'])) {
             return $component;
         }
@@ -60,14 +59,14 @@ abstract class  IsPropertyOverwriteEvent extends FormRuleEventType
     }
 
     protected function prepareComponent(
-        FormsComponent|InfolistsComponent $component,
+        Component $component,
         $triggers
-    ): FormsComponent|InfolistsComponent {
+    ): FComponent {
         $property = $this->property();
         //Access the protected Property from the object $component, $this is than $component
         $oldProperty = (fn() => $this->$property)->call($component);
 
-        if ($component instanceof FormsComponent) {
+        if ($component instanceof FormsComponent) { //ToDo FUCK
             $propertyFunction = $this->getPropertyFormFunction($oldProperty, $triggers);
         } else {
             $propertyFunction = $this->getPropertyInfolistFunction($oldProperty, $triggers);
@@ -81,7 +80,7 @@ abstract class  IsPropertyOverwriteEvent extends FormRuleEventType
 
     protected function getPropertyFormFunction(mixed $oldProperty, $triggers): Closure
     {
-        return fn(FormsComponent $component) => once(function () use ($component, $oldProperty, $triggers) {
+        return fn(Component $component) => once(function () use ($component, $oldProperty, $triggers) {
             $triggered = $triggers(['state' => $component->getGetCallback()('.')]);
 
             if ($triggered !== $this->dominatingSide()) {
@@ -94,7 +93,7 @@ abstract class  IsPropertyOverwriteEvent extends FormRuleEventType
 
     protected function getPropertyInfolistFunction(mixed $oldProperty, $triggers): Closure
     {
-        return function (InfolistsComponent $component, CustomFormAnswer $record) use ($oldProperty, $triggers) {
+        return function (Component $component, CustomFormAnswer $record) use ($oldProperty, $triggers) {
             $state = $record->loadedData();
             $triggered = $triggers(['state' => $state]);
 

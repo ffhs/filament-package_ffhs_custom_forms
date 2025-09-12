@@ -5,7 +5,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Traits;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Get;
+use Filament\Schemas\Components\Utilities\Get;
 
 trait HasTriggerEventFormTargets
 {
