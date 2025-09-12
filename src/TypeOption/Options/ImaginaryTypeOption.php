@@ -11,18 +11,11 @@ class ImaginaryTypeOption extends TypeOption
 {
     use HasOptionNoComponentModification;
 
-    private mixed $defaultValue;
-
-    public function default(mixed $value): static
+    public function default(mixed $default): static
     {
-        $this->defaultValue = $value;
+        $this->default = $default;
 
         return $this;
-    }
-
-    public function getDefaultValue(): mixed
-    {
-        return $this->defaultValue;
     }
 
     public function getComponent(string $name): Component

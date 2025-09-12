@@ -21,20 +21,11 @@ class ShowLabelOption extends TypeOption
             ->helperText(TypeOption::__('show_label.helper_text'));
     }
 
-    public
-    function modifyFormComponent(
-        Component $component,
-        mixed $value
-    ): Component {
-        if ($value) {
-            return $component->label('');
-        }
-
-        return $component;
-    }
-
-    public function modifyInfolistComponent(Component $component, mixed $value): Component
+    protected function modifyComponent(Component $component, mixed $value): Component
     {
+        if (method_exists($component, 'hiddenLabel')) {
+            $component->hiddenLabel(!$value);
+        }
         return $component;
     }
 }

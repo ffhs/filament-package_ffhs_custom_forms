@@ -11,11 +11,6 @@ class ActionLabelTypeOption extends TypeOption
 {
     use HasOptionNoComponentModification;
 
-    public function getDefaultValue(): mixed
-    {
-        return null;
-    }
-
     public function getComponent(string $name): Component
     {
         return TextInput::make($name)

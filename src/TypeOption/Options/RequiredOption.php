@@ -2,16 +2,17 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options;
 
+use Ffhs\FilamentPackageFfhsCustomForms\Traits\IsSimpleSetTypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\TypeOption;
 use Filament\Forms\Components\Toggle;
 use Filament\Support\Components\Component;
 
 class RequiredOption extends TypeOption
 {
-    public function getDefaultValue(): bool
-    {
-        return false;
-    }
+    use IsSimpleSetTypeOption;
+
+    protected string $attribute = 'required';
+    protected mixed $default = false;
 
     public function getComponent(string $name): Component
     {
@@ -20,18 +21,5 @@ class RequiredOption extends TypeOption
             ->helperText(TypeOption::__('required.helper_text'))
             ->columnSpanFull()
             ->live();
-    }
-
-    public
-    function modifyFormComponent(
-        Component $component,
-        mixed $value
-    ): Component {
-        return $component->required($value);
-    }
-
-    public function modifyInfolistComponent(Component $component, mixed $value): Component
-    {
-        return $component;
     }
 }

@@ -2,16 +2,14 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options;
 
+use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasOptionNoComponentModification;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\TypeOption;
 use Filament\Forms\Components\TextInput;
 use Filament\Support\Components\Component;
 
 class MinAmountOption extends TypeOption
 {
-    public function getDefaultValue(): mixed
-    {
-        return null;
-    }
+    use HasOptionNoComponentModification;
 
     public function getComponent(string $name): Component
     {
@@ -23,18 +21,5 @@ class MinAmountOption extends TypeOption
             ->nullable()
             ->minValue(0)
             ->integer();
-    }
-
-    public
-    function modifyFormComponent(
-        Component $component,
-        mixed $value
-    ): Component {
-        return $component;
-    }
-
-    public function modifyInfolistComponent(Component $component, mixed $value): Component
-    {
-        return $component;
     }
 }

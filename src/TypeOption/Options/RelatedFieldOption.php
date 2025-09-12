@@ -18,11 +18,6 @@ class RelatedFieldOption extends TypeOption
     use HasFieldsMapToSelectOptions;
     use HasOptionNoComponentModification;
 
-    public function getDefaultValue(): mixed
-    {
-        return null;
-    }
-
     public function getComponent(string $name): Component
     {
         return Select::make($name)
@@ -37,7 +32,7 @@ class RelatedFieldOption extends TypeOption
             ->getMountedFormComponentActionComponent(0)
             ->getGetCallback();
         $fields = collect($this->getFieldDataFromFormData($get('../custom_fields'), $record))
-            ->map(fn(array $field) => (new CustomField())->fill($field));
+            ->map(fn(array $field) => app(CustomField::class)->fill($field));
 
         return $this->getSelectOptionsFromFields($fields);
     }

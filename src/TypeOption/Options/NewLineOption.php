@@ -2,12 +2,17 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options;
 
+use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasOptionNoComponentModification;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\TypeOption;
 use Filament\Forms\Components\Toggle;
 use Filament\Support\Components\Component;
 
 class NewLineOption extends TypeOption
 {
+    use HasOptionNoComponentModification;
+
+    protected mixed $default = false;
+    
     public function getDefaultValue(): bool
     {
         return false;
@@ -20,11 +25,8 @@ class NewLineOption extends TypeOption
             ->helperText(TypeOption::__('new_line.helper_text'));
     }
 
-    public
-    function modifyFormComponent(
-        Component $component,
-        mixed $value
-    ): Component {
+    public function modifyFormComponent(Component $component, mixed $value): Component
+    {
         if (!$value) {
             return $component;
         }
@@ -32,8 +34,4 @@ class NewLineOption extends TypeOption
         return $component->columnStart(1);
     }
 
-    public function modifyInfolistComponent(Component $component, mixed $value): Component
-    {
-        return $component;
-    }
 }

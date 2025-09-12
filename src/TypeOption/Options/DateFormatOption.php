@@ -2,16 +2,14 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options;
 
+use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasOptionNoComponentModification;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\TypeOption;
 use Filament\Forms\Components\TextInput;
 use Filament\Support\Components\Component;
 
 class DateFormatOption extends TypeOption
 {
-    public function getDefaultValue(): null
-    {
-        return null;
-    }
+    use HasOptionNoComponentModification;
 
     public function getComponent(string $name): Component
     {
@@ -21,16 +19,8 @@ class DateFormatOption extends TypeOption
             ->placeholder('Y-m-d');
     }
 
-    public
-    function modifyFormComponent(
-        Component $component,
-        mixed $value
-    ): Component {
-        return $component->format($value);
-    }
-
-    public function modifyInfolistComponent(Component $component, mixed $value): Component
+    public function modifyFormComponent(Component $component, mixed $value): Component
     {
-        return $component;
+        return $component->format($value);
     }
 }

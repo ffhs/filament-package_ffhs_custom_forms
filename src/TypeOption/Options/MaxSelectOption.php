@@ -2,16 +2,16 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options;
 
+use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasOptionNoComponentModification;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\TypeOption;
 use Filament\Forms\Components\TextInput;
 use Filament\Support\Components\Component;
 
 class MaxSelectOption extends TypeOption
 {
-    public function getDefaultValue(): int
-    {
-        return 0;
-    }
+    use HasOptionNoComponentModification;
+
+    protected mixed $default = 0;
 
     public function getComponent(string $name): Component
     {
@@ -22,18 +22,5 @@ class MaxSelectOption extends TypeOption
             ->minValue(0)
             ->step(1)
             ->numeric();
-    }
-
-    public
-    function modifyFormComponent(
-        Component $component,
-        mixed $value
-    ): Component {
-        return $component;
-    }
-
-    public function modifyInfolistComponent(Component $component, mixed $value): Component
-    {
-        return $component;
     }
 }

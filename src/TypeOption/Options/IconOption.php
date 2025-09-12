@@ -5,7 +5,6 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\TypeOption;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Support\Components\Component;
-use Guava\FilamentIconPicker\Forms\IconPicker;
 
 class IconOption extends TypeOption
 {

@@ -2,6 +2,7 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options;
 
+use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasOptionNoComponentModification;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\TypeOption;
 use Filament\Forms\Components\TextInput;
 use Filament\Support\Components\Component;
@@ -9,10 +10,9 @@ use Filament\Support\Components\Component;
 
 class ColumnSpanOption extends TypeOption
 {
-    public function getDefaultValue(): int
-    {
-        return 3;
-    }
+    use HasOptionNoComponentModification;
+
+    protected mixed $default = 3;
 
     public function getComponent(string $name): Component
     {
@@ -28,11 +28,9 @@ class ColumnSpanOption extends TypeOption
 
     public function modifyFormComponent(Component $component, mixed $value): Component
     {
-        return $component->columnSpan($value);
-    }
-
-    public function modifyInfolistComponent(Component $component, mixed $value): Component
-    {
+        if (method_exists($component, 'columnSpan')) {
+            return $component->columnSpan($value);
+        }
         return $component;
     }
 }

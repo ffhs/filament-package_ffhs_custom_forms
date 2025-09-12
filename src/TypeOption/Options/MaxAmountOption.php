@@ -2,16 +2,16 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options;
 
+use Ffhs\FilamentPackageFfhsCustomForms\Traits\IsSimpleSetTypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\TypeOption;
 use Filament\Forms\Components\TextInput;
 use Filament\Support\Components\Component;
 
 class MaxAmountOption extends TypeOption
 {
-    public function getDefaultValue(): mixed
-    {
-        return null;
-    }
+    use IsSimpleSetTypeOption;
+
+    protected string $attribute = 'maxValue';
 
     public function getComponent(string $name): Component
     {
@@ -24,18 +24,5 @@ class MaxAmountOption extends TypeOption
             ->minValue(0)
             ->gt('min_amount')
             ->integer();
-    }
-
-    public
-    function modifyFormComponent(
-        Component $component,
-        mixed $value
-    ): Component {
-        return $component->maxValue($value);
-    }
-
-    public function modifyInfolistComponent(Component $component, mixed $value): Component
-    {
-        return $component;
     }
 }

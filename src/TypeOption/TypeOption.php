@@ -10,6 +10,7 @@ abstract class TypeOption
 {
     protected ?Closure $modifyComponentCloser = null;
     protected mixed $modifyDefault = null;
+    protected mixed $default = null;
 
     final public static function __(string $key): string
     {
@@ -21,13 +22,22 @@ abstract class TypeOption
         return new static();
     }
 
-    abstract public function modifyFormComponent(Component $component, mixed $value): Component;
+    public function modifyFormComponent(Component $component, mixed $value): Component
+    {
+        return $this->modifyComponent($component, $value);
+    }
 
-    abstract public function modifyInfolistComponent(Component $component, mixed $value): Component;
+    public function modifyInfolistComponent(Component $component, mixed $value): Component
+    {
+        return $this->modifyComponent($component, $value);
+    }
 
     abstract public function getComponent(string $name): Component;
 
-    abstract public function getDefaultValue(): mixed;
+    public function getDefaultValue(): mixed
+    {
+        return $this->default;
+    }
 
     public function modifyOptionComponent(Closure $closure): static
     {
@@ -65,11 +75,12 @@ abstract class TypeOption
             : $this->modifyDefault;
     }
 
-    //ToDo for GeneralField
     public function mutateOnFieldSave(mixed $data, string $key, CustomField $field): mixed
     {
         return $data;
     }
+
+    //ToDo for GeneralField
 
     public function mutateOnFieldLoad(mixed $data, string $key, CustomField $field): mixed
     {
@@ -105,4 +116,6 @@ abstract class TypeOption
     {
         return true;
     }
+
+    abstract protected function modifyComponent(Component $component, mixed $value): Component;
 }

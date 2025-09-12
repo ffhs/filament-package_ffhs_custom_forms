@@ -2,16 +2,16 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options;
 
+use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasOptionNoComponentModification;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\TypeOption;
 use Filament\Forms\Components\TextInput;
 use Filament\Support\Components\Component;
 
 class ColumnsOption extends TypeOption
 {
-    public function getDefaultValue(): int
-    {
-        return 2;
-    }
+    use HasOptionNoComponentModification;
+
+    protected mixed $default = 2;
 
     public function getComponent(string $name): Component
     {
@@ -25,16 +25,8 @@ class ColumnsOption extends TypeOption
             ->integer();
     }
 
-    public
-    function modifyFormComponent(
-        Component $component,
-        mixed $value
-    ): Component {
-        return $component->columns($value);
-    }
-
-    public function modifyInfolistComponent(Component $component, mixed $value): Component
+    public function modifyFormComponent(Component $component, mixed $value): Component
     {
-        return $component; //ToDo May Improve
+        return $component->columns($value);
     }
 }

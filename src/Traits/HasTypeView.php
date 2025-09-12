@@ -7,7 +7,6 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormConfiguration\CustomFormC
 use Ffhs\FilamentPackageFfhsCustomForms\Exceptions\FieldTypeHasNoDefaultViewModeException;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Filament\Support\Components\Component;
 
 trait HasTypeView
@@ -15,26 +14,34 @@ trait HasTypeView
     public function getFormComponent(
         CustomField $customField,
         string $viewMode = 'default',
-        array $parameter = []
+        array $parameter = [],
+        ?CustomFormConfiguration $formConfiguration = null
     ): Component {
+        $formConfiguration = $formConfiguration ?? $customField->customForm->getFormConfiguration();
+
         return $this
-            ->getFieldTypeView($customField->customForm, $viewMode)
+            ->getFieldTypeView($formConfiguration, $viewMode)
             ->getFormComponent($this, $customField, $parameter);
     }
 
     public function getInfolistComponent(
         CustomFieldAnswer $answer,
         string $viewMode = 'default',
-        array $parameter = []
+        array $parameter = [],
+        ?CustomFormConfiguration $formConfiguration = null
     ): Component {
+        $formConfiguration = $formConfiguration ?? $answer->customForm->getFormConfiguration();
+
         return $this
-            ->getFieldTypeView($answer->customForm, $viewMode)
+            ->getFieldTypeView($formConfiguration, $viewMode)
             ->getInfolistComponent($this, $answer, $parameter);
     }
 
-    public function getFieldTypeView(CustomForm $customForm, string $viewMode = 'default'): FieldTypeView
-    {
-        $viewMods = $this->getViewModes($customForm->getFormConfiguration());
+    public function getFieldTypeView(
+        CustomFormConfiguration $formConfiguration,
+        string $viewMode = 'default'
+    ): FieldTypeView {
+        $viewMods = $this->getViewModes($formConfiguration);
 
         if (empty($viewMods[$viewMode])) {
             $fieldTypeView = $viewMods['default'] ?? null;
