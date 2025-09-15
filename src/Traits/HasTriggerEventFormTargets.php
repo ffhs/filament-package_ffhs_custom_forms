@@ -35,8 +35,8 @@ trait HasTriggerEventFormTargets
     public function getTargetSelect(): Select
     {
         return Select::make('target')
-            ->label('Target')
             ->options($this->getTargetOptions(...))
+            ->label('Target')
             ->live();
     }
 

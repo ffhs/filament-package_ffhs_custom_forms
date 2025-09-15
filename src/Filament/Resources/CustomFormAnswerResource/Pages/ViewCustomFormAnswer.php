@@ -2,7 +2,7 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormAnswerResource\Pages;
 
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\EmbeddedCustomForm\EmbeddedAnswerInfolist;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\EmbeddedCustomForm\CustomFormAnswerEntry;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormAnswerResource\CustomFormAnswerResource;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanLoadFormAnswer;
@@ -32,7 +32,7 @@ class ViewCustomFormAnswer extends ViewRecord
     public function infolist(Schema $schema): Schema
     {
         return $schema->schema([
-            EmbeddedAnswerInfolist::make()
+            CustomFormAnswerEntry::make()
                 ->autoViewMode()
                 ->columnSpanFull()
         ]);

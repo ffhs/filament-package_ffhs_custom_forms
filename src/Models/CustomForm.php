@@ -2,6 +2,7 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Models;
 
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormConfiguration\CustomFormConfiguration;
 use Ffhs\FilamentPackageFfhsCustomForms\Facades\CustomForms;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\Rule;
@@ -60,7 +61,7 @@ use Spatie\Translatable\HasTranslations;
  * @method static Builder<static>|CustomForm whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-class CustomForm extends Model
+class CustomForm extends Model implements EmbedCustomForm
 {
     use HasTranslations;
     use HasFormIdentifier;

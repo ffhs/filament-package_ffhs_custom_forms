@@ -19,8 +19,7 @@ class MinLengthOption extends TypeOption
         return TextInput::make($name)
             ->label(TypeOption::__('min_length.label'))
             ->helperText(TypeOption::__('min_length.helper_text'))
-            ->step(1)
-            ->required()
-            ->integer();
+            ->integer()
+            ->step(1);
     }
 }

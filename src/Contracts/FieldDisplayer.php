@@ -2,9 +2,10 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Contracts;
 
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
+
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomField;
 
 interface FieldDisplayer
 {
-    public function __invoke(string $viewMode, CustomField $customField, array $parameter);
+    public function __invoke(string $viewMode, EmbedCustomField $customField, array $parameter);
 }

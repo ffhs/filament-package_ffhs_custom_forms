@@ -2,13 +2,14 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Traits;
 
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomField;
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\FieldDisplayer;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Trigger\FormRuleTriggerType;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\EmbeddedCustomForm\Render\ChildFieldRender;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\EmbeddedCustomForm\Render\FormFieldDisplayer;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\EmbeddedCustomForm\Render\InfolistFieldDisplayer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\Rule;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\RuleTrigger;
@@ -17,16 +18,16 @@ use Illuminate\Support\Collection;
 
 trait CanRenderCustomForm
 {
-    public function generateFormSchema(CustomForm $form, string $viewMode): array
+    public function generateFormSchema(EmbedCustomForm $form, string $viewMode): array
     {
+        $columns = $form->getFormConfiguration()->getColumns();
         $customFields = $form->getOwnedFields();
 
         $render = FormFieldDisplayer::make($form);
         $renderOutput = $this->renderCustomForm($viewMode, $render, $form, $customFields);
 
-        //ToDo Maby add default con to FormConfiguration
         return [
-            Group::make($renderOutput[0])->columns(config('ffhs_custom_forms.default_column_count')),
+            Group::make($renderOutput[0])->columns($columns),
         ];
     }
 
@@ -48,11 +49,11 @@ trait CanRenderCustomForm
     public function renderCustomForm(
         string $viewMode,
         FieldDisplayer $displayer,
-        CustomForm $customForm,
+        EmbedCustomForm $customForm,
         Collection $customFields,
         int $positionOffset = 0,
     ): array {
-        $rules = $customForm->rules;
+        $rules = collect([]);//ToDo $customForm->rules;
 
         if ($customFields->isEmpty()) {
             return [[], collect()];
@@ -80,17 +81,19 @@ trait CanRenderCustomForm
     public function renderCustomFormRaw(
         string $viewMode,
         FieldDisplayer $displayer,
-        CustomForm $customForm,
+        EmbedCustomForm $customForm,
         Collection $customFields,
         int $positionOffset
     ): array {
-        $customFields = $customFields->keyBy('form_position');
+        $customFields = $customFields->mapWithKeys(fn(EmbedCustomField $embedField
+        ) => [$embedField->form_position => $embedField]);
         $customFormSchema = [];
         $allComponents = [];
         //This Function allows to register the rendered components to $allComponents for the rules
         $registerRenderedComponents = static function (array $components) use (&$allComponents) {
             $allComponents += $components;
         };
+
         $defaultParameters = [
             'viewMode' => $viewMode,
             'registerComponents' => $registerRenderedComponents,
@@ -103,7 +106,7 @@ trait CanRenderCustomForm
             $formPosition <= $customFields->count() + $positionOffset;
             $formPosition++
         ) {
-            /** @var CustomField $customField */
+            /** @var EmbedCustomField $customField */
             $customField = $customFields->get($formPosition);
             $parameters = $defaultParameters;
 
@@ -115,8 +118,12 @@ trait CanRenderCustomForm
             //if field is a layout field, add Render Components
             if (!is_null($customField->layout_end_position)) {
                 $fieldRenderData = $customFields
-                    ->where('form_position', '>', $customField->form_position)
-                    ->where('form_position', '<=', $customField->layout_end_position);
+                    ->filter(function (EmbedCustomField $field) use ($customField) {
+                        return $field->form_position > $customField->form_position &&
+                            $field->form_position <= $customField->layout_end_position;
+                    });
+//                    ->where('form_position', '>', $customField->form_position)
+//                    ->where('form_position', '<=', $customField->layout_end_position);
 
                 $parameters['child_fields'] = $fieldRenderData;
                 $parameters['child_render'] = ChildFieldRender::make(
@@ -152,9 +159,10 @@ trait CanRenderCustomForm
     protected function runRulesAfterRender(
         Collection $rules,
         array &$allComponents,
-        CustomForm $customForm,
+        EmbedCustomForm $customForm,
         Collection &$customFields,
     ): void {
+        return; //toDo repair
         $rules
             ->map(fn(Rule $rule) => $rule->ruleTriggers)
             ->flatten(1)

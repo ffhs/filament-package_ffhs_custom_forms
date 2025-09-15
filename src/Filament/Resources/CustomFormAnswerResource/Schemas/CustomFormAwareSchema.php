@@ -2,7 +2,7 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormAnswerResource\Schemas;
 
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\EmbeddedCustomForm\EmbeddedCustomForm;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\EmbeddedCustomForm\CustomFormAnswerEditor;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
 use Filament\Forms\Components\Select;
@@ -28,7 +28,8 @@ class CustomFormAwareSchema
                 )
                 ->required(),
 
-            EmbeddedCustomForm::make('form_answer')
+            CustomFormAnswerEditor::make('form_answer')
+                ->customFormRelation('customForm')
                 ->hiddenOn('create')
                 ->autoViewMode()
                 ->columnSpanFull()

@@ -3,8 +3,8 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\EmbeddedCustomForm\Render;
 
 use Closure;
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\FieldDisplayer;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanRenderCustomForm;
 use Illuminate\Support\Collection;
 
@@ -15,7 +15,7 @@ class ChildFieldRender
     public function __construct(
         protected string $viewMode,
         protected FieldDisplayer $displayer,
-        protected CustomForm $customForm,
+        protected EmbedCustomForm $customForm,
         protected Collection $customFields,
         protected Closure $registerRenderedComponents,
         protected int $positionOffset
@@ -25,7 +25,7 @@ class ChildFieldRender
     public static function make(
         string $viewMode,
         FieldDisplayer $displayer,
-        CustomForm $customForm,
+        EmbedCustomForm $customForm,
         Collection $customFields,
         Closure $registerRenderedComponents,
         int $positionOffset

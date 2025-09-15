@@ -2,6 +2,7 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Traits;
 
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\FieldDisplayer;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\LayoutType\CustomLayoutType;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
@@ -9,11 +10,12 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 
 trait CanRenderSplitCustomForm
 {
+    //toDo Replace CustomForm with Embedet CustomForm
     use CanRenderCustomForm;
 
     protected function renderLayoutTypeSplit(
         CustomLayoutType $layoutType,
-        CustomForm $customForm,
+        EmbedCustomForm $customForm,
         FieldDisplayer $displayer,
         string $viewMode
     ) {

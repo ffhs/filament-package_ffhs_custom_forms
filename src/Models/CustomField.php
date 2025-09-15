@@ -2,6 +2,8 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Models;
 
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomField;
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\NestingObject;
 use Ffhs\FilamentPackageFfhsCustomForms\Facades\CustomForms;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -59,7 +61,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomField whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-class CustomField extends ACustomField implements NestingObject
+class CustomField extends ACustomField implements NestingObject, EmbedCustomField
 {
     use HasFactory;
 
@@ -104,7 +106,7 @@ class CustomField extends ACustomField implements NestingObject
         self::creating(static function (CustomField $field) {
             //Set identifier key to on other
             if (empty($field->identifier()) && !$field->isGeneralField()) {
-                $field->identifier = uniqid();
+                $field->identifier = uniqid('', false);
             }
 
             return $field;
@@ -188,5 +190,15 @@ class CustomField extends ACustomField implements NestingObject
             ... $ownOptions,
             ... $overwrittenOptions,
         ];
+    }
+
+    public function getGeneralField(): ?GeneralField
+    {
+        return $this->generalField;
+    }
+
+    public function getTemplate(): ?EmbedCustomForm
+    {
+        return $this->template;
     }
 }

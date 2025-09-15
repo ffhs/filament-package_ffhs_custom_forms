@@ -2,10 +2,12 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\TemplatesType;
 
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\FieldTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldType;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
+use Ffhs\FilamentPackageFfhsCustomForms\DataContainer\CustomFormDataContainer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
+use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanLoadCustomFormEditorData;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanRenderCustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasStaticMake;
 use Filament\Schemas\Components\Group;
@@ -15,13 +17,14 @@ class TemplateTypeView implements FieldTypeView
 {
     use HasStaticMake;
     use CanRenderCustomForm;
+    use CanLoadCustomFormEditorData;
 
     public function getFormComponent(
         TemplateFieldType|CustomFieldType $type,
-        CustomField $record,
+        EmbedCustomField $customField,
         array $parameter = []
     ): Component {
-        $schema = $this->renderTemplate($record, $parameter);
+        $schema = $this->renderTemplate($customField, $parameter);
 
         return Group::make($schema)
             ->columns(config('ffhs_custom_forms.default_column_count'))
@@ -39,16 +42,17 @@ class TemplateTypeView implements FieldTypeView
             ->columnSpanFull();
     }
 
-    protected function renderTemplate(CustomField|CustomFieldAnswer $customField, array $parameter)
+    protected function renderTemplate(EmbedCustomField|CustomFieldAnswer $customField, array $parameter)
     {
         if ($customField instanceof CustomFieldAnswer) {
             $customField = $customField->customField;
         }
 
         //Setup Render Data
-        $fields = $customField->template->customFields;
+//        $fields = $customField->template->customFields;
         $viewMode = $parameter['viewMode'];
-        $form = $customField->customForm;
+        $form = $customField->getTemplate();
+        $form = CustomFormDataContainer::make($this->loadCustomFormEditorData($form));
         $displayer = $parameter['displayer'];
 
         //Render Schema Input
@@ -56,7 +60,7 @@ class TemplateTypeView implements FieldTypeView
             $viewMode,
             $displayer,
             $form,
-            $fields,
+            $form->getOwnedFields(),
             0
         );
 

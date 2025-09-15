@@ -4,7 +4,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\LayoutType\Types\V
 
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\FieldTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldType;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasDefaultViewComponent;
 use Filament\Schemas\Components\Fieldset;
@@ -18,13 +18,13 @@ class SectionTypeView implements FieldTypeView
 
     public function getFormComponent(
         CustomFieldType $type,
-        CustomField $record,
+        EmbedCustomField $customField,
         array $parameter = []
     ): Component {
-        $section = Section::make($this->getLabelName($record));
+        $section = Section::make($this->getLabelName($customField));
         return $this
-            ->modifyFormComponent($section, $record)
-            ->aside($this->getOptionParameter($record, 'aside'))
+            ->modifyComponent($section, $customField, false)
+            ->aside($this->getOptionParameter($customField, 'aside'))
             ->schema($parameter['child_render']())
             ->label('');
     }

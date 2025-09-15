@@ -7,7 +7,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\Rule;
 use Filament\Forms\Components\Field;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -17,7 +17,7 @@ use Spatie\Activitylog\Models\Activity;
 
 trait CanSaveFormAnswer
 {
-    public function saveFormAnswer(CustomFormAnswer $formAnswer, Form $form, string $path = ''): void
+    public function saveFormAnswer(CustomFormAnswer $formAnswer, Schema $schema, string $path = ''): void
     {
         $customForm = $formAnswer->customForm;
 
@@ -27,10 +27,10 @@ trait CanSaveFormAnswer
             ->mapWithKeys(fn(CustomField $customField) => [$customField->identifier => $customField]);
 
         //Update form data after modifying components
-        $this->prepareFormComponents($customFieldsIdentify, $form, $path);
+        $this->prepareFormComponents($customFieldsIdentify, $schema, $path);
 
-        $pathState = substr($path, strlen($form->getStatePath()) + 1);
-        $data = Arr::get($form->getRawState(), $pathState);
+        $pathState = substr($path, strlen($schema->getStatePath()) + 1);
+        $data = Arr::get($schema->getRawState(), $pathState);
 
         // Mapping and combining field answers
         $preparedData = $this->splittingFormComponents($data, $customFieldsIdentify);
@@ -276,10 +276,10 @@ trait CanSaveFormAnswer
         return $fieldAnswererData;
     }
 
-    private function prepareFormComponents(Collection $customFieldsKeyByIdentifier, Form $form, string $path): void
+    private function prepareFormComponents(Collection $customFieldsKeyByIdentifier, Schema $schema, string $path): void
     {
         //ToDo That is slow (Extreme Slow) (getFlatFields)
-        $components = collect($form->getFlatFields(false, true))
+        $components = collect($schema->getFlatFields(false, true))
             ->filter(fn(Field $component, string $key) => str_starts_with($key, $path));
 
         foreach ($customFieldsKeyByIdentifier as $identifier => $customField) {
@@ -290,7 +290,7 @@ trait CanSaveFormAnswer
                 /**@var CustomField $customField */
                 $customField
                     ->getType()
-                    ->updateAnswerFormComponentOnSave($fieldComponent, $customField, $form, $components);
+                    ->updateAnswerFormComponentOnSave($fieldComponent, $customField, $schema, $components);
             }
         }
     }

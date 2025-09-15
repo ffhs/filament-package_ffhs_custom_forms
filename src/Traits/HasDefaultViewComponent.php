@@ -2,7 +2,7 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Traits;
 
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\TypeOption;
 use Filament\Support\Components\Component;
@@ -13,85 +13,67 @@ trait HasDefaultViewComponent
     use HasStaticMake;
 
     //ToDo fix infolust stuff
-    protected function makeComponent(
-        string $class,
-        CustomField|CustomFieldAnswer $record,
-        bool $isInfolist,
-        array $ignoredOptions = []
-    ): Component {
-        $component = $class::make($this->getIdentifyKey($record));
 
-        return $isInfolist ?
-            $this->modifyInfolistComponent($component, $record, $ignoredOptions) :
-            $this->modifyFormComponent($component, $record, $ignoredOptions);
-    }
-
-    protected function modifyFormComponent(
+    protected function modifyComponent(
         Component $component,
-        CustomField $record,
-        array $ignoredOptions = []
-    ): Component {
-        foreach ($record->getType()->getFlattenExtraTypeOptions() as $key => $typeOption) {
+        EmbedCustomField|CustomFieldAnswer $field,
+        bool $isInfolist,
+        array $ignoredOptions = [],
+
+    ): mixed {
+        /**@var $typeOption TypeOption */
+        foreach ($field->getType()->getFlattenExtraTypeOptions() as $key => $typeOption) {
             if (in_array($key, $ignoredOptions, true)) {
                 continue;
             }
 
-            $value = $this->getOptionParameter($record, $key);
-            $typeOption->modifyFormComponent($component, $value); //ToDo null value
-        }
-
-        if ($record->isGeneralField()) {
-            foreach ($record->getType()->getFlattenGeneralTypeOptions() as $key => $typeOption) {
-                if (in_array($key, $ignoredOptions, true)) {
-                    continue;
-                }
-
-                $value = $this->getOptionParameter($record, $key);
+            $value = $this->getOptionParameter($field, $key);
+            if ($isInfolist) {
+                $typeOption->modifyInfolistComponent($component, $value); //ToDo null value
+            } else {
                 $typeOption->modifyFormComponent($component, $value); //ToDo null value
             }
         }
 
-        if (method_exists($component, 'label')) {
-            $label = $this->getLabelName($record);
-            return empty($label) ? $component->hiddenLabel() : $component->label($label);
-        }
-        return $component;
-    }
-
-    protected function modifyInfolistComponent(
-        Component $component,
-        CustomFieldAnswer $record,
-        array $ignoredOptions = []
-    ): Component {
-        /**@var $typeOption TypeOption */
-        foreach ($record->getType()->getFlattenExtraTypeOptions() as $key => $typeOption) {
-            if (in_array($key, $ignoredOptions, true)) {
-                continue;
-            }
-
-            $value = $this->getOptionParameter($record, $key);
-            $typeOption->modifyInfolistComponent($component, $value); //ToDo null value
-        }
-
-        if ($record->isGeneralField()) {
-            foreach ($record->getType()->getFlattenGeneralTypeOptions() as $key => $typeOption) {
+        if ($field->isGeneralField()) {
+            foreach ($field->getType()->getFlattenGeneralTypeOptions() as $key => $typeOption) {
                 if (in_array($key, $ignoredOptions, true)) {
                     continue;
                 }
 
-                $value = $this->getOptionParameter($record, $key);
-                $typeOption->modifyInfolistComponent($component, $value); //ToDo null value
+                $value = $this->getOptionParameter($field, $key);
+                if ($isInfolist) {
+                    $typeOption->modifyInfolistComponent($component, $value); //ToDo null value
+                } else {
+                    $typeOption->modifyFormComponent($component, $value); //ToDo null value
+                }
             }
         }
-        $component
-            ->state($this->getAnswer($record))
-            ->inlineLabel()
-            ->columnSpanFull();
+
 
         if (method_exists($component, 'label')) {
-            $label = $this->getLabelName($record);
-            return empty($label) ? $component->hiddenLabel() : $component->label($label);
+            $label = $this->getLabelName($field);
+            $component = empty($label) ? $component->hiddenLabel() : $component->label($label);
         }
-        return $component;
+
+        if (!$isInfolist) {
+            return $component;
+        }
+
+        return $component
+            ->state($this->getAnswer($field))
+            ->inlineLabel()
+            ->columnSpanFull();
+    }
+
+    protected function makeComponent(
+        string $class,
+        EmbedCustomField|CustomFieldAnswer $field,
+        bool $isInfolist,
+        array $ignoredOptions = []
+    ): Component {
+        $component = $class::make($this->getIdentifyKey($field));
+        return $this->modifyComponent($component, $field, $isInfolist, $ignoredOptions);
+
     }
 }

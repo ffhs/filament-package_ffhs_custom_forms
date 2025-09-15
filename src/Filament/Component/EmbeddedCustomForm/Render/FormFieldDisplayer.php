@@ -2,26 +2,26 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\EmbeddedCustomForm\Render;
 
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomField;
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\FieldDisplayer;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Filament\Support\Components\Component;
 
 class FormFieldDisplayer implements FieldDisplayer
 {
-    public function __construct()
+    public function __construct(protected EmbedCustomForm $form)
     {
     }
 
-    public static function make(CustomForm $form): static
+    public static function make(EmbedCustomForm $customForm): static
     {
-        return app(__CLASS__, ['form' => $form]);
+        return app(__CLASS__, ['form' => $customForm]);
     }
 
-    public function __invoke(string $viewMode, CustomField $customField, array $parameter): Component
+    public function __invoke(string $viewMode, EmbedCustomField $customField, array $parameter): Component
     {
         return $customField
             ->getType()
-            ->getFormComponent($customField, $viewMode, $parameter);
+            ->getFormComponent($customField, $this->form->getFormConfiguration(), $viewMode, $parameter);
     }
 }

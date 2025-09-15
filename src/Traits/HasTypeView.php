@@ -4,20 +4,19 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Traits;
 
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\FieldTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormConfiguration\CustomFormConfiguration;
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Exceptions\FieldTypeHasNoDefaultViewModeException;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Filament\Support\Components\Component;
 
 trait HasTypeView
 {
     public function getFormComponent(
-        CustomField $customField,
+        EmbedCustomField $customField,
+        CustomFormConfiguration $formConfiguration,
         string $viewMode = 'default',
         array $parameter = [],
-        ?CustomFormConfiguration $formConfiguration = null
     ): Component {
-        $formConfiguration = $formConfiguration ?? $customField->customForm->getFormConfiguration();
 
         return $this
             ->getFieldTypeView($formConfiguration, $viewMode)

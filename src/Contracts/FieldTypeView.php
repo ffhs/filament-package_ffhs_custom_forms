@@ -3,7 +3,7 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\Contracts;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldType;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Filament\Support\Components\Component;
 
@@ -13,7 +13,7 @@ interface FieldTypeView
 
     public function getFormComponent(
         CustomFieldType $type,
-        CustomField $record,
+        EmbedCustomField $customField,
         array $parameter = []
     ): Component;
 

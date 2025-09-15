@@ -2,7 +2,7 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Traits;
 
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\EmbeddedCustomForm\EmbeddedCustomForm;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\EmbeddedCustomForm\CustomFormAnswerEditor;
 
 trait UseSplitCustomForm
 {
@@ -10,7 +10,7 @@ trait UseSplitCustomForm
     use HasFieldSplit;
     use HasPosSplit;
 
-    public function loadAnswerData(EmbeddedCustomForm $component): array
+    public function loadAnswerData(CustomFormAnswerEditor $component): array
     {
         $record = $component->getCustomFormAnswer();
 

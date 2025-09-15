@@ -2,5 +2,5 @@
     :component="$getFieldWrapperView()"
     :field="$field"
 >
-    {{ $getChildComponentContainer() }}
+    {{ $getChildSchema() }}
 </x-dynamic-component>

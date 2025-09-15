@@ -2,14 +2,14 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\Types\Views;
 
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\FieldTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldType;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
-use Filament\Support\Components\Component;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasDefaultViewComponent;
 use Filament\Forms\Components\TextInput;
 use Filament\Infolists\Components\TextEntry;
+use Filament\Support\Components\Component;
 use Illuminate\Support\Facades\Lang;
 
 class TextTypeView implements FieldTypeView
@@ -18,12 +18,12 @@ class TextTypeView implements FieldTypeView
 
     public function getFormComponent(
         CustomFieldType $type,
-        CustomField $record,
+        EmbedCustomField $customField,
         array $parameter = []
     ): Component {
         /** @var TextInput $input */
-        $input = $this->makeComponent(TextInput::class, $record, false);
-        $suggestions = $this->getOptionParameter($record, 'suggestions');
+        $input = $this->makeComponent(TextInput::class, $customField, false);
+        $suggestions = $this->getOptionParameter($customField, 'suggestions');
 
         if (!empty($suggestions) && !empty($suggestions[Lang::locale()])) {
             $suggestionsList = array_map(fn($data) => $data['value'] ?? '', $suggestions[Lang::locale()]);

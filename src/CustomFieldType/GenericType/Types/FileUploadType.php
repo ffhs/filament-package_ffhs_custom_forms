@@ -14,7 +14,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\ReorderableTypeOption
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\TypeOption;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Schemas\Components\Form;
+use Filament\Schemas\Schema;
 use Filament\Support\Components\Component;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
@@ -141,7 +141,7 @@ class FileUploadType extends CustomFieldType
     public function updateAnswerFormComponentOnSave(
         Component $component,
         CustomField $customField,
-        Form $form,
+        Schema $schema,
         Collection $flattenFormComponents
     ): void {
         try {

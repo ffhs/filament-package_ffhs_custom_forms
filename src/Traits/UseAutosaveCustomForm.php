@@ -17,6 +17,17 @@ trait UseAutosaveCustomForm
 
     public function isAutoSaving(): bool
     {
-        return $this->evaluate($this->isAutoSaving);
+        return $this->evaluate($this->isAutoSaving) && $this->relationship;
+    }
+
+    protected function runAutoSave(array $state): void
+    {
+        if (!$this->isAutoSaving()) {
+            return;
+        }
+
+        if ($this->getRelationshipName()) {
+            $this->saveCustomFormAnswerRelation($state);
+        }
     }
 }

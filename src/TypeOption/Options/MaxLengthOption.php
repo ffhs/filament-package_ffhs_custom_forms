@@ -20,8 +20,7 @@ class MaxLengthOption extends TypeOption
             ->label(TypeOption::__('max_length.label'))
             ->helperText(TypeOption::__('max_length.helper_text'))
             ->columnStart(1)
-            ->step(1)
-            ->required()
-            ->integer();
+            ->integer()
+            ->step(1);
     }
 }
