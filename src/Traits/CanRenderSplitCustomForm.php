@@ -10,7 +10,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 
 trait CanRenderSplitCustomForm
 {
-    //toDo Replace CustomForm with Embedet CustomForm
+    //toDo Replace CustomForm with Embedet CustomForm and combine with HAsSplitSchema
     use CanRenderCustomForm;
 
     protected function renderLayoutTypeSplit(

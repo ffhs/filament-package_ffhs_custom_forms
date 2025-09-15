@@ -8,5 +8,4 @@ trait HasFormGroupName
     {
         return 'custom_fields-' . $this->getFormConfiguration()::identifier();
     }
-
 }
