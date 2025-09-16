@@ -35,7 +35,7 @@ use Spatie\LaravelPackageTools\PackageServiceProvider;
 class CustomFormsServiceProvider extends PackageServiceProvider
 {
     protected array $policies = [
-        CustomForm::class => CustomFormPolicy::class, //
+        CustomForm::class => CustomFormPolicy::class,
         CustomField::class => CustomFieldPolicy::class,
         GeneralField::class => GeneralFieldPolicy::class,
         CustomOption::class => CustomOptionPolicy::class,
