@@ -2,11 +2,11 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Traits;
 
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomField;
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\FieldTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormConfiguration\CustomFormConfiguration;
-use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Exceptions\FieldTypeHasNoDefaultViewModeException;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Filament\Support\Components\Component;
 
 trait HasTypeView
@@ -20,20 +20,21 @@ trait HasTypeView
 
         return $this
             ->getFieldTypeView($formConfiguration, $viewMode)
-            ->getFormComponent($this, $customField, $parameter);
+            ->getFormComponent($customField, $parameter);
     }
 
-    public function getInfolistComponent(
-        CustomFieldAnswer $answer,
+    public function getEntryComponent(
+        EmbedCustomFieldAnswer $answer,
         string $viewMode = 'default',
         array $parameter = [],
         ?CustomFormConfiguration $formConfiguration = null
     ): Component {
-        $formConfiguration = $formConfiguration ?? $answer->customForm->getFormConfiguration();
+        $formConfiguration = $formConfiguration ?? $answer->getCustomForm()->getFormConfiguration();
 
         return $this
             ->getFieldTypeView($formConfiguration, $viewMode)
-            ->getInfolistComponent($this, $answer, $parameter);
+            ->getEntryComponent($answer, $parameter);
+        //  ->getEntryComponent($this, $answer, $parameter);
     }
 
     public function getFieldTypeView(

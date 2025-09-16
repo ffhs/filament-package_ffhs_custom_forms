@@ -5,11 +5,11 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\Types\
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\FieldTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
-use Filament\Support\Components\Component;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasDefaultViewComponent;
 use Filament\Forms\Components\ColorPicker;
 use Filament\Infolists\Components\ColorEntry;
+use Filament\Support\Components\Component;
 use Filament\Support\Components\Component;
 
 
@@ -28,7 +28,7 @@ class ColorPickerTypeView implements FieldTypeView
         return $picker;
     }
 
-    public function getInfolistComponent(
+    public function getEntryComponent(
         CustomFieldType $type,
         CustomFieldAnswer $record,
         array $parameter = []

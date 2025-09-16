@@ -20,7 +20,7 @@ class DateTimeTypeView implements FieldTypeView
         return $this->makeComponent(DateTimePicker::class, $record, false);
     }
 
-    public function getInfolistComponent(
+    public function getEntryComponent(
         CustomFieldType $type,
         CustomFieldAnswer $record,
         array $parameter = []

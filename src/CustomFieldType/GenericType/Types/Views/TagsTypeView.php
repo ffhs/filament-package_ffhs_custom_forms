@@ -23,7 +23,7 @@ class TagsTypeView implements FieldTypeView
         return $this->makeComponent(TagsInput::class, $record, false);
     }
 
-    public function getInfolistComponent(
+    public function getEntryComponent(
         CustomFieldType $type,
         CustomFieldAnswer $record,
         array $parameter = []

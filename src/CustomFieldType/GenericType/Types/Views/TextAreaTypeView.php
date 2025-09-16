@@ -22,7 +22,7 @@ class TextAreaTypeView implements FieldTypeView
             ->autosize($this->getOptionParameter($record, 'auto_size'));
     }
 
-    public function getInfolistComponent(
+    public function getEntryComponent(
         CustomFieldType $type,
         CustomFieldAnswer $record,
         array $parameter = []

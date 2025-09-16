@@ -20,4 +20,5 @@ interface EmbedCustomField
     public function getGeneralField(): ?GeneralField;
 
     public function getTemplate(): ?EmbedCustomForm;
+
 }

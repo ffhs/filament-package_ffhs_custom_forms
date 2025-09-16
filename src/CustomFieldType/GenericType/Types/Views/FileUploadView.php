@@ -5,7 +5,6 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\Types\
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\FieldTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
-use Filament\Support\Components\Component;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasDefaultViewComponent;
 use Filament\Forms\Components\FileUpload;
@@ -17,6 +16,7 @@ use Filament\Infolists\Components\Group;
 use Filament\Infolists\Components\ImageEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Components\View;
+use Filament\Support\Components\Component;
 use Filament\Support\Enums\Alignment;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\HtmlString;
@@ -73,7 +73,7 @@ class FileUploadView implements FieldTypeView
     }
 
 
-    public function getInfolistComponent(
+    public function getEntryComponent(
         CustomFieldType $type,
         CustomFieldAnswer $record,
         array $parameter = []

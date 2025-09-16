@@ -70,7 +70,7 @@ class DownloadTypeView implements FieldTypeView
         return $group;
     }
 
-    public function getInfolistComponent(
+    public function getEntryComponent(
         CustomFieldType $type,
         CustomFieldAnswer $record,
         array $parameter = []

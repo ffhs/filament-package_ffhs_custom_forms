@@ -4,9 +4,8 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\SplittedType\Types
 
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\FieldTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldType;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\EmbeddedCustomForm\Render\InfolistFieldDisplayer;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\EmbeddedCustomForm\Render\EntryFieldDisplayer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
-use Filament\Support\Components\Component;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanLoadFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanRenderCustomForm;
@@ -15,6 +14,7 @@ use Filament\Forms\Components\{Actions\Action, Component, Repeater};
 use Filament\Infolists\Components\Component as InfolistComponent;
 use Filament\Infolists\Components\Fieldset;
 use Filament\Infolists\Components\Section;
+use Filament\Support\Components\Component;
 use Illuminate\Support\Collection;
 
 class RepeaterLayoutTypeView implements FieldTypeView
@@ -70,7 +70,7 @@ class RepeaterLayoutTypeView implements FieldTypeView
         return $repeater;
     }
 
-    public function getInfolistComponent(
+    public function getEntryComponent(
         CustomFieldType $type,
         CustomFieldAnswer $record,
         array $parameter = []
@@ -98,7 +98,7 @@ class RepeaterLayoutTypeView implements FieldTypeView
         $customForm = $record->customFormAnswer->customForm;
 
         foreach ($loadedAnswers as $id => $answer) {
-            $displayer = InfolistFieldDisplayer::make($record->customFormAnswer, $id);
+            $displayer = EntryFieldDisplayer::make($record->customFormAnswer, $id);
 
             $renderOutput = $this->renderCustomFormRaw($viewMode, $displayer, $customForm, $fields, $offset);
             [$subSchema, $allComponents] = $renderOutput;

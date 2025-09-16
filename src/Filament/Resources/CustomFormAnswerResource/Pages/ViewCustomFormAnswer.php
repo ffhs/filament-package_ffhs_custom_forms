@@ -2,13 +2,12 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormAnswerResource\Pages;
 
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\EmbeddedCustomForm\CustomFormAnswerEntry;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormAnswer\CustomFormAnswerEntry;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormAnswerResource\CustomFormAnswerResource;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanLoadFormAnswer;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
-use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Schemas\Schema;
 use Illuminate\Contracts\Support\Htmlable;
@@ -31,12 +30,16 @@ class ViewCustomFormAnswer extends ViewRecord
 
     public function infolist(Schema $schema): Schema
     {
-        return $schema->schema([
-            CustomFormAnswerEntry::make()
-                ->autoViewMode()
-                ->columnSpanFull()
-        ]);
+        return $schema
+            ->schema([
+                CustomFormAnswerEntry::make('custom_form_answer')
+                    ->state($this->loadCustomAnswerForEntry($this->getRecord()))
+                    ->customForm(fn(CustomFormAnswer $record) => $record->customForm)
+                    ->autoViewMode()
+                    ->columnSpanFull()
+            ]);
     }
+
 
     protected function getHeaderActions(): array
     {

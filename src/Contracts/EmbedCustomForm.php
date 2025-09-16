@@ -11,4 +11,6 @@ interface EmbedCustomForm
     public function getFormConfiguration(): CustomFormConfiguration;
 
     public function getOwnedFields(): Collection;
+
+    public function customFields(): Collection;
 }

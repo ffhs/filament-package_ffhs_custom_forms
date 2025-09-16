@@ -13,7 +13,7 @@ trait HasCustomOptionInfoListViewWithBoolean
         HasCustomOptionInfoListView::getInfolistComponent as getBasicInfolistComponent;
     }
 
-    public function getInfolistComponent(
+    public function getEntryComponent(
         CustomFieldType $type,
         CustomFieldAnswer $record,
         array $parameter = []

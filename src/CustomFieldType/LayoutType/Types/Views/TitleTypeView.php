@@ -32,7 +32,7 @@ class TitleTypeView implements FieldTypeView
             ->label('');
     }
 
-    public function getInfolistComponent(
+    public function getEntryComponent(
         CustomFieldType $type,
         CustomFieldAnswer $record,
         array $parameter = []

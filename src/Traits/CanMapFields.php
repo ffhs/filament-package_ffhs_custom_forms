@@ -3,6 +3,7 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\Traits;
 
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomField;
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\SplittedType\CustomSplitType;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
@@ -10,19 +11,19 @@ use Illuminate\Support\Collection;
 
 trait CanMapFields
 {
-    public function getIdentifyKey(EmbedCustomField|CustomFieldAnswer $record): string
+    public function getIdentifyKey(EmbedCustomField|EmbedCustomFieldAnswer $record): string
     {
-        if ($record instanceof CustomFieldAnswer) {
-            $record = $record->customField;
+        if ($record instanceof EmbedCustomFieldAnswer) {
+            $record = $record->getCustomField();
         }
 
         return $record->identifier;
     }
 
-    public function getLabelName(EmbedCustomField|CustomFieldAnswer $record): string
+    public function getLabelName(EmbedCustomField|EmbedCustomFieldAnswer $record): string
     {
-        if ($record instanceof CustomFieldAnswer) {
-            $record = $record->customField;
+        if ($record instanceof EmbedCustomFieldAnswer) {
+            $record = $record->getCustomField();
         }
 
         $label = $record->name;
@@ -32,12 +33,12 @@ trait CanMapFields
     }
 
     public function getOptionParameter(
-        EmbedCustomField|CustomFieldAnswer $record,
+        EmbedCustomField|EmbedCustomFieldAnswer $record,
         string $option,
         bool $canBeNull = false
     ): mixed {
-        if ($record instanceof CustomFieldAnswer) {
-            $record = $record->customField;
+        if ($record instanceof EmbedCustomFieldAnswer) {
+            $record = $record->getCustomField();
         }
 
         if (is_null($record->options)) {
@@ -78,14 +79,14 @@ trait CanMapFields
     public function hasOptionParameter(EmbedCustomField|CustomFieldAnswer $record, string $option): bool
     {
         if ($record instanceof CustomFieldAnswer) {
-            $record = $record->customField;
+            $record = $record->getCustomField();;
         }
 
         return !is_null($record->getType()->getFlattenExtraTypeOptions()[$option] ?? null)
             || !is_null($record->getType()->getFlattenGeneralTypeOptions()[$option] ?? null);
     }
 
-    public function getAnswer(CustomFieldAnswer $answer)
+    public function getAnswer(EmbedCustomFieldAnswer $answer)
     {
         $rawAnswerer = $answer->answer;
 
@@ -94,7 +95,7 @@ trait CanMapFields
         }
 
         return $answer
-            ->customField
+            ->getCustomField()
             ->getType()
             ->prepareLoadAnswerData($answer, $rawAnswerer);
     }

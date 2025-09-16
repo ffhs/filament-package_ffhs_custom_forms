@@ -5,13 +5,13 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\LayoutType\Types\V
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\FieldTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
-use Filament\Support\Components\Component;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasDefaultViewComponent;
 use Filament\Forms\Components\Placeholder;
 use Filament\Infolists\Components\Group;
 use Filament\Infolists\Components\ImageEntry;
 use Filament\Infolists\Infolist;
+use Filament\Support\Components\Component;
 use Illuminate\Support\HtmlString;
 
 class ImageTypeView implements FieldTypeView
@@ -39,7 +39,7 @@ class ImageTypeView implements FieldTypeView
             ->label('');
     }
 
-    public function getInfolistComponent(
+    public function getEntryComponent(
         CustomFieldType $type,
         CustomFieldAnswer $record,
         array $parameter = []

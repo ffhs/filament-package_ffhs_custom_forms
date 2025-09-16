@@ -2,7 +2,9 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Models;
 
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomFieldAnswer;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldType;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -77,5 +79,20 @@ class CustomFieldAnswer extends Model implements EmbedCustomFieldAnswer
     public function customFormAnswer(): BelongsTo
     {
         return $this->belongsTo(CustomFormAnswer::class);
+    }
+
+    public function getCustomForm(): CustomForm
+    {
+        return $this->customFormAnswer->customForm;
+    }
+
+    public function getCustomField(): EmbedCustomField
+    {
+        return $this->customField;
+    }
+
+    public function getType(): CustomFieldType
+    {
+        return $this->getCustomField()->getType();
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\EmbeddedCustomForm\Render;
+namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormAnswer\Render;
 
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomForm;

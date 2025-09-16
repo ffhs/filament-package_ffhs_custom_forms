@@ -2,10 +2,9 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\LayoutType\Types\Views;
 
-use Ffhs\FilamentPackageFfhsCustomForms\Contracts\FieldTypeView;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomField;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomFieldAnswer;
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\FieldTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasDefaultViewComponent;
 use Filament\Schemas\Components\Fieldset;
 use Filament\Schemas\Components\Group;
@@ -16,11 +15,8 @@ class SectionTypeView implements FieldTypeView
 {
     use HasDefaultViewComponent;
 
-    public function getFormComponent(
-        CustomFieldType $type,
-        EmbedCustomField $customField,
-        array $parameter = []
-    ): Component {
+    public function getFormComponent(EmbedCustomField $customField, array $parameter = []): Component
+    {
         $section = Section::make($this->getLabelName($customField));
         return $this
             ->modifyComponent($section, $customField, false)
@@ -29,29 +25,29 @@ class SectionTypeView implements FieldTypeView
             ->label('');
     }
 
-    public function getInfolistComponent(
-        CustomFieldType $type,
-        CustomFieldAnswer $record,
-        array $parameter = []
-    ): Component {
+    public function getEntryComponent(EmbedCustomFieldAnswer $customFieldAnswer, array $parameter = []): Component
+    {
         $schema = $parameter['child_render']();
 
-        if (!$this->getOptionParameter($record, 'show_in_view')) {
+        if (!$this->getOptionParameter($customFieldAnswer, 'show_in_view')) {
             return Group::make($schema)
                 ->columnSpanFull()
                 ->columnStart(1);
         }
 
-        if ($this->getOptionParameter($record, 'show_as_fieldset')) {
-            return Fieldset::make($this->getLabelName($record))
+        if ($this->getOptionParameter($customFieldAnswer, 'show_as_fieldset')) {
+            return Fieldset::make($this->getLabelName($customFieldAnswer))
                 ->schema($schema)
                 ->columnStart(1)
+                ->hiddenLabel()
                 ->columnSpanFull();
         }
 
-        return Section::make($this->getLabelName($record))
+        return Section::make($this->getLabelName($customFieldAnswer))
             ->schema($schema)
             ->columnStart(1)
+            ->hiddenLabel()
             ->columnSpanFull();
     }
+
 }

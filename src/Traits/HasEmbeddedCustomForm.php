@@ -2,8 +2,12 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Traits;
 
+use Closure;
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormConfiguration\CustomFormConfiguration;
-use Ffhs\FilamentPackageFfhsCustomForms\Facades\CustomForms;
+use Ffhs\FilamentPackageFfhsCustomForms\DataContainer\CustomFormAnswerDataContainer;
+use Filament\Schemas\Components\Concerns\EntanglesStateWithSingularRelationship;
+use Illuminate\Database\Eloquent\Model;
 
 trait HasEmbeddedCustomForm
 {
@@ -16,6 +20,18 @@ trait HasEmbeddedCustomForm
     use HasFormConfiguration {
         HasFormConfiguration::getFormConfiguration as getFormConfigurationFromParent;
     }
+    use EntanglesStateWithSingularRelationship {
+        EntanglesStateWithSingularRelationship::relationship as parentRelationship;
+    }
+
+    public function relationship(
+        string $name,
+        bool|Closure $condition = true,
+        Closure|string|null $relatedModel = null
+    ): static {
+        return $this->parentRelationship($name, $condition, $relatedModel)
+            ->customForm(fn() => $this->getCachedExistingRecord()?->customForm);
+    }
 
     public function fillFromRelationship(): void
     {
@@ -27,14 +43,22 @@ trait HasEmbeddedCustomForm
 
     public function getFormConfiguration(): CustomFormConfiguration
     {
-        $customFormData = $this->getCustomFormData();
-        $formIdentifier = $customFormData['custom_form_identifier'] ?? null;
+        $formConfiguration = $this->getCustomForm()?->getFormConfiguration();
 
-        if (is_null($formIdentifier)) {
-            throw new \RuntimeException("Missing form identifier or form data");
+        if (is_null($formConfiguration)) {
+            throw new \RuntimeException('Missing form identifier or form data');
         }
 
-        return CustomForms::getFormConfiguration($formIdentifier);
+        return $formConfiguration;
+    }
+
+    public function getCustomFormAnswer(): EmbedCustomFormAnswer|Model
+    {
+        if ($this->relationship) {
+            return $this->getCachedExistingRecord(); //toDo maby create new record if none exist
+        }
+
+        return CustomFormAnswerDataContainer::make($this->getState() ?? [], $this->getCustomForm());
     }
 
     protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
@@ -42,7 +66,7 @@ trait HasEmbeddedCustomForm
         return match ($parameterName) {
             'viewMode' => [$this->getViewMode()],
             'customForm' => [$this->getCustomForm()],
-            'customFormAnswer' => [$this->getCachedExistingRecord() ?? $this->getRecord()], //ToDo Fix
+            'customFormAnswer' => [$this->getCustomFormAnswer()],
             'customFormData' => [$this->getCustomFormData()],
             'fieldDisplayer' => [$this->getFieldDisplayer()],
             default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName)

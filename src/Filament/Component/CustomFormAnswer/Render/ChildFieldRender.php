@@ -1,6 +1,6 @@
 <?php
 
-namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\EmbeddedCustomForm\Render;
+namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormAnswer\Render;
 
 use Closure;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomForm;

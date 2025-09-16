@@ -2,7 +2,8 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Traits;
 
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\EmbeddedCustomForm\CustomFormAnswerEditor;
+
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomFormAnswer;
 
 trait UseSplitCustomForm
 {
@@ -10,26 +11,20 @@ trait UseSplitCustomForm
     use HasFieldSplit;
     use HasPosSplit;
 
-    public function loadAnswerData(CustomFormAnswerEditor $component): array
+    public function loadAnswerData(EmbedCustomFormAnswer $answer): array
     {
-        $record = $component->getCustomFormAnswer();
-
-        if (is_null($record)) {
-            return [];
+        if ($this->isUseLayoutTypeSplit()) {
+            return $this->loadLayoutTypeSplitAnswerData($answer);
         }
 
-        if ($component->isUseLayoutTypeSplit()) {
-            return $component->loadLayoutTypeSplitAnswerData($record);
+        if ($this->isUseFieldSplit()) {
+            return $this->loadFieldTypeSplitAnswerData($answer);
         }
 
-        if ($component->isUseFieldSplit()) {
-            return $component->loadFieldTypeSplitAnswerData($record);
+        if ($this->isUsePoseSplit()) {
+            return $this->loadPosTypeSplitAnswerData($answer);
         }
 
-        if ($component->isUsePoseSplit()) {
-            return $component->loadPosTypeSplitAnswerData($record);
-        }
-
-        return $component->loadCustomAnswerData($record);
+        return $this->loadCustomAnswerData($answer);
     }
 }

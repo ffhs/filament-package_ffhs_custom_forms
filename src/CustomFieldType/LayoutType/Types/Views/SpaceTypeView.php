@@ -5,13 +5,13 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\LayoutType\Types\V
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\FieldTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
-use Filament\Support\Components\Component;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasDefaultViewComponent;
 use Filament\Forms\Components\Group as FormsGroup;
 use Filament\Forms\Components\Placeholder;
 use Filament\Infolists\Components\Group as InfolistsGroup;
 use Filament\Infolists\Components\TextEntry;
+use Filament\Support\Components\Component;
 
 class SpaceTypeView implements FieldTypeView
 {
@@ -37,7 +37,7 @@ class SpaceTypeView implements FieldTypeView
             ->columnSpanFull();
     }
 
-    public function getInfolistComponent(
+    public function getEntryComponent(
         CustomFieldType $type,
         CustomFieldAnswer $record,
         array $parameter = []

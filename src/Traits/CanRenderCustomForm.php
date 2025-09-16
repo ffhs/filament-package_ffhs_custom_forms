@@ -6,9 +6,9 @@ use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\FieldDisplayer;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Trigger\FormRuleTriggerType;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\EmbeddedCustomForm\Render\ChildFieldRender;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\EmbeddedCustomForm\Render\FormFieldDisplayer;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\EmbeddedCustomForm\Render\InfolistFieldDisplayer;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormAnswer\Render\ChildFieldRender;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormAnswer\Render\EntryFieldDisplayer;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormAnswer\Render\FormFieldDisplayer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\Rule;
@@ -35,14 +35,14 @@ trait CanRenderCustomForm
     {
         $form = $formAnswer->customForm;
         $customFields = $form->getOwnedFields();
+        $columns = $form->getFormConfiguration()->getColumns();
 
-        $render = InfolistFieldDisplayer::make($formAnswer);
+        $render = EntryFieldDisplayer::make($formAnswer);
         $renderOutput = $this->renderCustomForm($viewMode, $render, $form, $customFields);
 
-        //ToDo Maby add default con to FormConfiguration
         return [
             Group::make($renderOutput[0])
-                ->columns(config('ffhs_custom_forms.default_column_count')),
+                ->columns($columns),
         ];
     }
 

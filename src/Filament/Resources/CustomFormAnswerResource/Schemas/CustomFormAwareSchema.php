@@ -2,7 +2,7 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormAnswerResource\Schemas;
 
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\EmbeddedCustomForm\CustomFormAnswerEditor;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormAnswer\CustomFormAnswerEditor;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
 use Filament\Forms\Components\Select;

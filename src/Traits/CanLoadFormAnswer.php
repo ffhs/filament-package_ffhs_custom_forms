@@ -2,6 +2,7 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Traits;
 
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
@@ -12,7 +13,7 @@ use Illuminate\Support\Collection;
 
 trait CanLoadFormAnswer
 {
-    public function modifyFieldDataFormRules(CustomFormAnswer $answerer, mixed $fieldData, $formRules): mixed
+    public function modifyFieldDataFormRules(EmbedCustomFormAnswer $answerer, mixed $fieldData, $formRules): mixed
     {
         foreach ($formRules as $rule) {
             /**@var Rule $rule */
@@ -23,7 +24,7 @@ trait CanLoadFormAnswer
     }
 
     public function loadCustomAnswerData(
-        CustomFormAnswer $answer,
+        EmbedCustomFormAnswer $answer,
         int|null $begin = null,
         int|null $end = null,
         ?CustomForm $customForm = null,
@@ -62,6 +63,27 @@ trait CanLoadFormAnswer
 
         return $this->resolveComplexPaths($loadedData, $customFields);
     }
+
+    public function loadCustomAnswerForEntry(CustomFormAnswer $answer, ?CustomForm $customForm = null): array
+    {
+        $loadedData = [];
+        $customForm = $customForm ?? $answer->customForm;
+        $customFields = $customForm
+            ->customFields
+            ->keyBy('id');
+
+        /**@var CustomFieldAnswer $fieldAnswer */
+        foreach ($answer->customFieldAnswers as $fieldAnswer) {
+            $customField = $customFields->get($fieldAnswer->custom_field_id);
+
+            $fieldData = $fieldAnswer->answer;
+            $dataIdentifier = $this->getDataIdentifier($fieldAnswer, $customField);
+            $loadedData[$dataIdentifier] = $fieldData;
+        }
+        
+        return $loadedData;
+    }
+
 
     public function resolveComplexPaths(array $loadedData, Collection $customFields): array
     {

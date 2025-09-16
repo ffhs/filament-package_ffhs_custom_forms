@@ -2,6 +2,7 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Traits;
 
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Filament\Schemas\Schema;
@@ -23,7 +24,7 @@ trait HasAnswerCallbacks
         //You can interact with the Component like in FileUpload
     }
 
-    public function prepareToSaveAnswerData(CustomFieldAnswer $answer, mixed $data): ?array
+    public function prepareToSaveAnswerData(EmbedCustomFieldAnswer $answer, mixed $data): ?array
     {
         if (is_null($data)) {
             return null;
@@ -32,7 +33,7 @@ trait HasAnswerCallbacks
         return ['saved' => $data];
     }
 
-    public function prepareLoadAnswerData(CustomFieldAnswer $answer, ?array $data): mixed
+    public function prepareLoadAnswerData(EmbedCustomFieldAnswer $answer, ?array $data): mixed
     {
         if (is_null($data) || !array_key_exists('saved', $data) || is_null($data['saved'])) {
             return null;

@@ -7,11 +7,11 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\CustomOption\HasCustomOp
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\PrioritizeSelect;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
-use Filament\Support\Components\Component;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasDefaultViewComponent;
 use Filament\Forms\Components\Select;
 use Filament\Infolists\Components\TextEntry;
+use Filament\Support\Components\Component;
 
 class SelectTypeView implements FieldTypeView
 {
@@ -94,7 +94,7 @@ class SelectTypeView implements FieldTypeView
         return $select;
     }
 
-    public function getInfolistComponent(
+    public function getEntryComponent(
         CustomFieldType $type,
         CustomFieldAnswer $record,
         array $parameter = []

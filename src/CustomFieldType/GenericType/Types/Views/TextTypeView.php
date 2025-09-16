@@ -2,10 +2,10 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\Types\Views;
 
+use Ffhs\FilamentPackageFffhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomField;
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\FieldTypeView;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldType;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasDefaultViewComponent;
 use Filament\Forms\Components\TextInput;
 use Filament\Infolists\Components\TextEntry;
@@ -16,11 +16,8 @@ class TextTypeView implements FieldTypeView
 {
     use HasDefaultViewComponent;
 
-    public function getFormComponent(
-        CustomFieldType $type,
-        EmbedCustomField $customField,
-        array $parameter = []
-    ): Component {
+    public function getFormComponent(EmbedCustomField $customField, array $parameter = []): Component
+    {
         /** @var TextInput $input */
         $input = $this->makeComponent(TextInput::class, $customField, false);
         $suggestions = $this->getOptionParameter($customField, 'suggestions');
@@ -33,11 +30,10 @@ class TextTypeView implements FieldTypeView
         return $input;
     }
 
-    public function getInfolistComponent(
-        CustomFieldType $type,
-        CustomFieldAnswer $record,
+    public function getEntryComponent(
+        EmbedCustomFieldAnswer $customFieldAnswer,
         array $parameter = []
     ): Component {
-        return $this->makeComponent(TextEntry::class, $record, true);
+        return $this->makeComponent(TextEntry::class, $customFieldAnswer, true);
     }
 }

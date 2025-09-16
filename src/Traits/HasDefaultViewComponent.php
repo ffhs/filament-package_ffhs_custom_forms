@@ -3,7 +3,7 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\Traits;
 
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomField;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\TypeOption;
 use Filament\Support\Components\Component;
 
@@ -16,12 +16,14 @@ trait HasDefaultViewComponent
 
     protected function modifyComponent(
         Component $component,
-        EmbedCustomField|CustomFieldAnswer $field,
+        EmbedCustomField|EmbedCustomFieldAnswer $fieldRaw,
         bool $isInfolist,
         array $ignoredOptions = [],
 
     ): mixed {
         /**@var $typeOption TypeOption */
+        $field = $fieldRaw instanceof EmbedCustomField ? $fieldRaw : $fieldRaw->getCustomField();
+
         foreach ($field->getType()->getFlattenExtraTypeOptions() as $key => $typeOption) {
             if (in_array($key, $ignoredOptions, true)) {
                 continue;
@@ -50,7 +52,6 @@ trait HasDefaultViewComponent
             }
         }
 
-
         if (method_exists($component, 'label')) {
             $label = $this->getLabelName($field);
             $component = empty($label) ? $component->hiddenLabel() : $component->label($label);
@@ -60,15 +61,19 @@ trait HasDefaultViewComponent
             return $component;
         }
 
+        if ($fieldRaw instanceof EmbedCustomFieldAnswer && method_exists($component, 'state')) {
+            $component = $component->state($this->getAnswer($fieldRaw));
+        }
+
+
         return $component
-            ->state($this->getAnswer($field))
             ->inlineLabel()
             ->columnSpanFull();
     }
 
     protected function makeComponent(
         string $class,
-        EmbedCustomField|CustomFieldAnswer $field,
+        EmbedCustomField|EmbedCustomFieldAnswer $field,
         bool $isInfolist,
         array $ignoredOptions = []
     ): Component {

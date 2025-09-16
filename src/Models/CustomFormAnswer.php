@@ -73,4 +73,14 @@ class CustomFormAnswer extends Model implements EmbedCustomFormAnswer
         $fieldData = $this->loadCustomAnswerData($this);
         $this->setRelation('fieldData', $fieldData);
     }
+
+    public function getCustomFieldAnswers(): \Illuminate\Support\Collection
+    {
+        return $this->customFieldAnswers;
+    }
+
+    public function getCustomForm(): CustomForm
+    {
+        return $this->customForm;
+    }
 }

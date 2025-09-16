@@ -1,39 +1,34 @@
 <?php
 
-namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\EmbeddedCustomForm;
+namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormAnswer;
 
 use Closure;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\EmbeddedCustomForm\Render\FormFieldDisplayer;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormAnswer\Render\FormFieldDisplayer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanSaveFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasCustomFormData;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasEmbeddedCustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\UseAutosaveCustomForm;
 use Filament\Forms\Components\Field;
-use Filament\Schemas\Components\Concerns\EntanglesStateWithSingularRelationship;
 use Filament\Schemas\Components\Contracts\CanEntangleWithSingularRelationships;
 
 class CustomFormAnswerEditor extends Field implements CanEntangleWithSingularRelationships
 {
-    protected string $view = 'filament-package_ffhs_custom_forms::filament.components.custom-form-answer-editor';
-
     use HasEmbeddedCustomForm {
-        HasEmbeddedCustomForm::fillFromRelationship insteadof EntanglesStateWithSingularRelationship;
-    }
-    use EntanglesStateWithSingularRelationship {
-        EntanglesStateWithSingularRelationship::relationship as parentRelationship;
+        HasEmbeddedCustomForm::relationship as embeddedRelationship;
     }
     use UseAutosaveCustomForm;
     use CanSaveFormAnswer;
     use HasCustomFormData;
+
+    protected string $view = 'filament-package_ffhs_custom_forms::filament.components.custom-form-answer-editor';
 
     public function relationship(
         string $name,
         bool|Closure $condition = true,
         Closure|string|null $relatedModel = null
     ): static {
-        return $this->parentRelationship($name, $condition, $relatedModel)
-            ->customForm(fn() => $this->getCachedExistingRecord()?->customForm)
+        return $this->embeddedRelationship($name, $condition, $relatedModel)
             ->saveRelationshipsUsing(function () {
                 $data = $this->getChildSchema()?->getState(shouldCallHooksBefore: false);
                 $this->saveCustomFormAnswerRelation($data);

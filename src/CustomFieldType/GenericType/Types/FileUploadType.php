@@ -2,6 +2,7 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\Types;
 
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\Types\Views\FileUploadView;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
@@ -188,7 +189,7 @@ class FileUploadType extends CustomFieldType
         return empty($fieldAnswererData['saved']['files']);
     }
 
-    public function prepareToSaveAnswerData(CustomFieldAnswer $answer, mixed $data): array
+    public function prepareToSaveAnswerData(EmbedCustomFieldAnswer $answer, mixed $data): array
     {
         foreach ($data['files'] as $key => $file) {
             if (is_array($file)) {
@@ -199,7 +200,7 @@ class FileUploadType extends CustomFieldType
         return parent::prepareToSaveAnswerData($answer, $data);
     }
 
-    public function prepareLoadAnswerData(CustomFieldAnswer $answer, ?array $data): mixed
+    public function prepareLoadAnswerData(EmbedCustomFieldAnswer $answer, ?array $data): mixed
     {
         if (is_null($data)) {
             return null;

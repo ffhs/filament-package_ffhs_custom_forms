@@ -2,6 +2,7 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options;
 
+use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasOptionNoComponentModification;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\TypeOption;
 use Filament\Forms\Components\TextInput;
 use Filament\Support\Components\Component;
@@ -9,11 +10,7 @@ use Illuminate\Support\HtmlString;
 
 class HelperTextTypeOption extends TypeOption
 {
-
-    public function getDefaultValue(): mixed
-    {
-        return null;
-    }
+    use HasOptionNoComponentModification;
 
     public function getComponent(string $name): Component
     {
@@ -26,7 +23,7 @@ class HelperTextTypeOption extends TypeOption
             ->live();
     }
 
-    public function modifyComponent(Component $component, mixed $value): Component
+    public function modifyFormComponent(Component $component, mixed $value): Component
     {
         if (!empty($value)) {
             $text = str($value)->sanitizeHtml();

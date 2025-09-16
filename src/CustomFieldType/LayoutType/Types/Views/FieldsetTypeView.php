@@ -28,7 +28,7 @@ class FieldsetTypeView implements FieldTypeView
             ->schema($parameter['child_render']());
     }
 
-    public function getInfolistComponent(
+    public function getEntryComponent(
         CustomFieldType $type,
         CustomFieldAnswer $record,
         array $parameter = []

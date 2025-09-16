@@ -5,11 +5,11 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\Types\
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\FieldTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
-use Filament\Support\Components\Component;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasDefaultViewComponent;
 use Filament\Forms\Components\KeyValue;
 use Filament\Infolists\Components\KeyValueEntry;
+use Filament\Support\Components\Component;
 
 class KeyValueTypeView implements FieldTypeView
 {
@@ -26,7 +26,7 @@ class KeyValueTypeView implements FieldTypeView
             ->editableValues($this->getOptionParameter($record, 'editableValues'));
     }
 
-    public function getInfolistComponent(
+    public function getEntryComponent(
         CustomFieldType $type,
         CustomFieldAnswer $record,
         array $parameter = []

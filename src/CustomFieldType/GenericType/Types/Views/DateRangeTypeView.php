@@ -24,7 +24,7 @@ class DateRangeTypeView implements FieldTypeView
         return $flatpickr->rangePicker();
     }
 
-    public function getInfolistComponent(
+    public function getEntryComponent(
         CustomFieldType $type,
         CustomFieldAnswer $record,
         array $parameter = []

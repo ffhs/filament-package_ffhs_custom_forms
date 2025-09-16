@@ -23,7 +23,7 @@ class IconSelectView implements FieldTypeView
         return $this->makeComponent(IconPicker::class, $record, false);
     }
 
-    public function getInfolistComponent(
+    public function getEntryComponent(
         CustomFieldType $type,
         CustomFieldAnswer $record,
         array $parameter = []

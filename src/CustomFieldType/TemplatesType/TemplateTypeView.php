@@ -3,8 +3,8 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\TemplatesType;
 
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomField;
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\FieldTypeView;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\DataContainer\CustomFormDataContainer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanLoadCustomFormEditorData;
@@ -19,11 +19,8 @@ class TemplateTypeView implements FieldTypeView
     use CanRenderCustomForm;
     use CanLoadCustomFormEditorData;
 
-    public function getFormComponent(
-        TemplateFieldType|CustomFieldType $type,
-        EmbedCustomField $customField,
-        array $parameter = []
-    ): Component {
+    public function getFormComponent(EmbedCustomField $customField, array $parameter = []): Component
+    {
         $schema = $this->renderTemplate($customField, $parameter);
 
         return Group::make($schema)
@@ -31,18 +28,15 @@ class TemplateTypeView implements FieldTypeView
             ->columnSpanFull();
     }
 
-    public function getInfolistComponent(
-        TemplateFieldType|CustomFieldType $type,
-        CustomFieldAnswer $record,
-        array $parameter = []
-    ): Component {
-        $schema = $this->renderTemplate($record, $parameter);
+    public function getEntryComponent(EmbedCustomFieldAnswer $customFieldAnswer, array $parameter = []): Component
+    {
+        $schema = $this->renderTemplate($customFieldAnswer->getCustomField(), $parameter);
 
         return Group::make($schema)
             ->columnSpanFull();
     }
 
-    protected function renderTemplate(EmbedCustomField|CustomFieldAnswer $customField, array $parameter)
+    protected function renderTemplate(EmbedCustomField $customField, array $parameter)
     {
         if ($customField instanceof CustomFieldAnswer) {
             $customField = $customField->customField;
