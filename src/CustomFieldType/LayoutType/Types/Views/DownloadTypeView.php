@@ -2,10 +2,10 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\LayoutType\Types\Views;
 
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomField;
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\FieldTypeView;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanMapFields;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasStaticMake;
 use Filament\Actions\Action;
@@ -21,29 +21,27 @@ class DownloadTypeView implements FieldTypeView
     use HasStaticMake;
     use CanMapFields;
 
-    public function getFormComponent(
-        CustomFieldType $type,
-        CustomField $record,
-        array $parameter = []
-    ): Component {
-        $filePaths = $this->getOptionParameter($record, 'files');
+
+    public function getFormComponent(EmbedCustomField $customField, array $parameter = []): Component
+    {
+        $filePaths = $this->getOptionParameter($customField, 'files');
 
         if (count($filePaths) === 1) {
-            $actions = $this->getSingleFilDownloadComponentAction($record);
+            $actions = $this->getSingleFilDownloadComponentAction($customField);
         } else {
-            $actions = $this->getMultipleFileDownloadComponentAction($record);
+            $actions = $this->getMultipleFileDownloadComponentAction($customField);
         }
 
-        $titelAsFileName = $this->getOptionParameter($record, 'title_as_filename');
-        $showTitle = $this->getOptionParameter($record, 'show_label');
+        $titelAsFileName = $this->getOptionParameter($customField, 'title_as_filename');
+        $showTitle = $this->getOptionParameter($customField, 'show_label');
 
         if (!$titelAsFileName && $showTitle) {
             $actions = [
-                Placeholder::make($this->getIdentifyKey($record) . '-title')
+                Placeholder::make($this->getIdentifyKey($customField) . '-title')
                     ->label(
                         new HtmlString(
                             '</span> <span class="text-sm font-medium leading-6 text-gray-950 dark:text-white" style="margin-bottom: -25px; margin-left: -12px;">' . $this->getLabelName(
-                                $record
+                                $customField
                             ) . '</span> <span>'
                         )
                     ),
@@ -54,7 +52,7 @@ class DownloadTypeView implements FieldTypeView
         }
 
         //Toll Tip
-        $helpText = $this->getOptionParameter($record, 'helper_text');
+        $helpText = $this->getOptionParameter($customField, 'helper_text');
         $actions[] = Placeholder::make('helper_text' . '-help_text') //ToDo Replace
         ->label('')
             ->helperText(
@@ -64,42 +62,40 @@ class DownloadTypeView implements FieldTypeView
             );
 
         $group = Group::make($actions);
-        $group->columnSpan($this->getOptionParameter($record, 'column_span'));
-        $group->columnStart($this->getOptionParameter($record, 'new_line'));
+        $group->columnSpan($this->getOptionParameter($customField, 'column_span'));
+        $group->columnStart($this->getOptionParameter($customField, 'new_line'));
 
         return $group;
     }
 
-    public function getEntryComponent(
-        CustomFieldType $type,
-        CustomFieldAnswer $record,
-        array $parameter = []
-    ): Component {
-        if (!$this->getOptionParameter($record, 'show_in_view')) {
+
+    public function getEntryComponent(EmbedCustomFieldAnswer $customFieldAnswer, array $parameter = []): Component
+    {
+        if (!$this->getOptionParameter($customFieldAnswer, 'show_in_view')) {
             return Group::make($parameter['rendered'])
                 ->columnStart(1)
                 ->columnSpanFull()
                 ->hidden();
         }
 
-        $filePaths = $this->getOptionParameter($record, 'files');
+        $filePaths = $this->getOptionParameter($customFieldAnswer, 'files');
 
         if (count($filePaths) <= 1) {
-            $actions = $this->getSingleFilDownloadComponentAction($record->customField);
+            $actions = $this->getSingleFilDownloadComponentAction($customFieldAnswer->customField);
         } else {
-            $actions = $this->getMultipleFileDownloadComponentAction($record->customField);
+            $actions = $this->getMultipleFileDownloadComponentAction($customFieldAnswer->customField);
         }
 
-        $titelAsFileName = $this->getOptionParameter($record, 'title_as_filename');
-        $showTitle = $this->getOptionParameter($record, 'show_label');
+        $titelAsFileName = $this->getOptionParameter($customFieldAnswer, 'title_as_filename');
+        $showTitle = $this->getOptionParameter($customFieldAnswer, 'show_label');
 
         if (!$titelAsFileName && $showTitle) {
             $actions = [
-                TextEntry::make($this->getIdentifyKey($record) . '-title')
+                TextEntry::make($this->getIdentifyKey($customFieldAnswer) . '-title')
                     ->label(
                         new HtmlString(
                             '</span> <span class="text-sm font-medium leading-6 text-gray-950 dark:text-white" style="margin-bottom: -25px; margin-left: -12px;">' . $this->getLabelName(
-                                $record
+                                $customFieldAnswer
                             ) . '</span> <span>'
                         )
                     ),
@@ -111,8 +107,8 @@ class DownloadTypeView implements FieldTypeView
 
         //Toll Tip
         $group = Group::make($actions);
-        $group->columnSpan($this->getOptionParameter($record, 'column_span'));
-        $group->columnStart($this->getOptionParameter($record, 'new_line'));
+        $group->columnSpan($this->getOptionParameter($customFieldAnswer, 'column_span'));
+        $group->columnStart($this->getOptionParameter($customFieldAnswer, 'new_line'));
 
         return $group;
     }

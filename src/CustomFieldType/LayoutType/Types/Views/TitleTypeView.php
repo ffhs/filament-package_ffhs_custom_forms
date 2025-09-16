@@ -2,10 +2,9 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\LayoutType\Types\Views;
 
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomField;
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\FieldTypeView;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldType;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasDefaultViewComponent;
 use Filament\Forms\Components\Placeholder;
 use Filament\Infolists\Components\TextEntry;
@@ -17,35 +16,29 @@ class TitleTypeView implements FieldTypeView
 {
     use HasDefaultViewComponent;
 
-    public function getFormComponent(
-        CustomFieldType $type,
-        CustomField $record,
-        array $parameter = []
-    ): Placeholder {
-        $title = $this->getTitle($record);
+    public function getFormComponent(EmbedCustomField $customField, array $parameter = []): Component
+    {
+        $title = $this->getTitle($customField);
 
         /**@var $placeholder Placeholder */
-        $placeholder = $this->makeComponent(Placeholder::class, $record, false);
+        $placeholder = $this->makeComponent(Placeholder::class, $customField, false);
 
         return $placeholder
             ->content(new HtmlString($title))
             ->label('');
     }
 
-    public function getEntryComponent(
-        CustomFieldType $type,
-        CustomFieldAnswer $record,
-        array $parameter = []
-    ): Component {
-        if (!$this->getOptionParameter($record, 'show_in_view')) {
+    public function getEntryComponent(EmbedCustomFieldAnswer $customFieldAnswer, array $parameter = []): Component
+    {
+        if (!$this->getOptionParameter($customFieldAnswer, 'show_in_view')) {
             return Group::make()
                 ->hidden();
         }
 
-        $title = $this->getTitle($record);
+        $title = $this->getTitle($customFieldAnswer);
 
         /**@var $placeholder TextEntry */
-        $placeholder = $this->makeComponent(TextEntry::class, $record, true);
+        $placeholder = $this->makeComponent(TextEntry::class, $customFieldAnswer, true);
 
         return $placeholder
             ->state(new HtmlString($title))

@@ -2,11 +2,9 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\CustomOption\Types\Views;
 
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\FieldTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\CustomOption\HasCustomOptionInfoListViewWithBoolean;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldType;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
-use Filament\Support\Components\Component;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasDefaultViewComponent;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Support\Components\Component;
@@ -16,22 +14,19 @@ class ToggleButtonsView implements FieldTypeView
     use HasCustomOptionInfoListViewWithBoolean;
     use HasDefaultViewComponent;
 
-    public function getFormComponent(
-        CustomFieldType $type,
-        CustomField $record,
-        array $parameter = []
-    ): Component {
-        /**@var ToggleButtons $toggles */
-        $toggles = $this->makeComponent(ToggleButtons::class, $record, false, ['column_span']);
 
-        if ($this->getOptionParameter($record, 'grouped')) {
+    public function getFormComponent(EmbedCustomField $customField, array $parameter = []): Component
+    {
+        $toggles = $this->makeComponent(ToggleButtons::class, $customField, false, ['column_span']);
+
+        if ($this->getOptionParameter($customField, 'grouped')) {
             $toggles->grouped();
-        } elseif (!$this->getOptionParameter($record, 'inline')) {
-            $toggles->columnSpan($this->getOptionParameter($record, 'column_span'));
+        } elseif (!$this->getOptionParameter($customField, 'inline')) {
+            $toggles->columnSpan($this->getOptionParameter($customField, 'column_span'));
         }
 
-        if (!$this->getOptionParameter($record, 'boolean')) {
-            $toggles->options($this->getAvailableCustomOptions($record));
+        if (!$this->getOptionParameter($customField, 'boolean')) {
+            $toggles->options($this->getAvailableCustomOptions($customField));
         }
 
         return $toggles;

@@ -2,15 +2,12 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\LayoutType\Types\Views;
 
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomField;
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\FieldTypeView;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldType;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasDefaultViewComponent;
-use Filament\Forms\Components\Placeholder;
-use Filament\Infolists\Components\Component;
-use Filament\Infolists\Components\Group;
 use Filament\Infolists\Components\TextEntry;
+use Filament\Schemas\Components\Group;
 use Filament\Support\Components\Component;
 use Illuminate\Support\HtmlString;
 
@@ -18,36 +15,31 @@ class TextLayoutTypeView implements FieldTypeView
 {
     use HasDefaultViewComponent;
 
-    public function getFormComponent(
-        CustomFieldType $type,
-        CustomField $record,
-        array $parameter = []
-    ): Placeholder {
-        $text = $this->getOptionParameter($record, 'text')[app()->getLocale()] ?? '';
+    public function getFormComponent(EmbedCustomField $customField, array $parameter = []): Component
+    {
+        $text = $this->getOptionParameter($customField, 'text')[app()->getLocale()] ?? '';
 
         /**@var $placeholder Placeholder */
-        $placeholder = $this->makeComponent(Placeholder::class, $record, false); //FUCK!!!!
+        $placeholder = $this->makeComponent(TextEntry::class, $customField, false); //FUCK!!!!
 
         return $placeholder
             ->content(new HtmlString($text))
             ->label('');
     }
 
-    public function getEntryComponent(
-        CustomFieldType $type,
-        CustomFieldAnswer $record,
-        array $parameter = []
-    ): Component {
-        if (!$this->getOptionParameter($record, 'show_in_view')) {
+    public function getEntryComponent(EmbedCustomFieldAnswer $customFieldAnswer, array $parameter = []): Component
+    {
+        if (!$this->getOptionParameter($customFieldAnswer, 'show_in_view')) {
             return Group::make()
                 ->hidden();
         }
 
-        $label = $this->getOptionParameter($record, 'show_label') ? $this->getLabelName($record) : '';
-        $text = $this->getOptionParameter($record, 'text')[app()->getLocale()] ?? '';
+        $label = $this->getOptionParameter($customFieldAnswer,
+            'show_label') ? $this->getLabelName($customFieldAnswer) : '';
+        $text = $this->getOptionParameter($customFieldAnswer, 'text')[app()->getLocale()] ?? '';
 
         /**@var $placeholder TextEntry */
-        $placeholder = $this->makeComponent(TextEntry::class, $record, true);
+        $placeholder = $this->makeComponent(TextEntry::class, $customFieldAnswer, true);
 
         return $placeholder
             ->state(new HtmlString($text))

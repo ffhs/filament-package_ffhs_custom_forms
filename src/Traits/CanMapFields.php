@@ -100,10 +100,10 @@ trait CanMapFields
             ->prepareLoadAnswerData($answer, $rawAnswerer);
     }
 
-    public function getAvailableCustomOptions(CustomField $record): Collection
+    public function getAvailableCustomOptions(EmbedCustomField $record): Collection
     {
         return $record
-            ->customOptions
+            ->customOptions //ToDo fix
             ->pluck('name', 'identifier');
     }
 

@@ -2,8 +2,9 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\Types\Views;
 
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomField;
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\FieldTypeView;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasDefaultViewComponent;
@@ -25,14 +26,11 @@ class FileUploadView implements FieldTypeView
 {
     use HasDefaultViewComponent;
 
-    public function getFormComponent(
-        CustomFieldType $type,
-        CustomField $record,
-        array $parameter = []
-    ): Component {
-        $fileUpload = FileUpload::make($this->getIdentifyKey($record) . '.files');
+    public function getFormComponent(EmbedCustomField $customField, array $parameter = []): Component
+    {
+        $fileUpload = FileUpload::make($this->getIdentifyKey($customField) . '.files');
 
-        return $this->prepareFileUploadComponent($fileUpload, $record);
+        return $this->prepareFileUploadComponent($fileUpload, $customField);
     }
 
     public function prepareFileUploadComponent(FileUpload $component, CustomField $record): FileUpload
@@ -73,17 +71,14 @@ class FileUploadView implements FieldTypeView
     }
 
 
-    public function getEntryComponent(
-        CustomFieldType $type,
-        CustomFieldAnswer $record,
-        array $parameter = []
-    ): Component {
-        $answer = $this->getAnswer($record);
+    public function getEntryComponent(EmbedCustomFieldAnswer $customFieldAnswer, array $parameter = []): Component
+    {
+        $answer = $this->getAnswer($customFieldAnswer);
 
         if (is_null($answer) || !isset($answer['file_names'])) {
             $names = [];
             $files = [];
-        } elseif ($this->getOptionParameter($record, 'preserve_filenames')) {
+        } elseif ($this->getOptionParameter($customFieldAnswer, 'preserve_filenames')) {
             $names = $answer['file_names'];
             $files = array_values($answer['files']);
         } else {
@@ -92,22 +87,22 @@ class FileUploadView implements FieldTypeView
         }
 
         //disk
-        $image = $this->getOptionParameter($record, 'image');
+        $image = $this->getOptionParameter($customFieldAnswer, 'image');
         if ($image) {
-            $disk = $this->getTypeConfigAttribute($record, 'images.disk');
+            $disk = $this->getTypeConfigAttribute($customFieldAnswer, 'images.disk');
         } else {
-            $disk = $this->getTypeConfigAttribute($record, 'files.disk');
+            $disk = $this->getTypeConfigAttribute($customFieldAnswer, 'files.disk');
         }
 
         $diskRoot = config('filesystems.disks.' . $disk . '.root');
 
-        if ($this->getOptionParameter($record, 'image')
-            && $this->getOptionParameter($record, 'show_images_in_view')) {
-            return $this->getInfolistImageComponent($files, $diskRoot, $record, $names);
+        if ($this->getOptionParameter($customFieldAnswer, 'image')
+            && $this->getOptionParameter($customFieldAnswer, 'show_images_in_view')) {
+            return $this->getInfolistImageComponent($files, $diskRoot, $customFieldAnswer, $names);
         }
 
         return $this
-            ->getInfoListFiles($files, $diskRoot, $record, $names)
+            ->getInfoListFiles($files, $diskRoot, $customFieldAnswer, $names)
             ->columnSpanFull();
     }
 

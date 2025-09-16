@@ -8,6 +8,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\Contracts\FieldTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormConfiguration\CustomFormConfiguration;
 use Ffhs\FilamentPackageFfhsCustomForms\Exceptions\FieldTypeHasNoDefaultViewModeException;
 use Filament\Support\Components\Component;
+use Illuminate\Support\Facades\Config;
 
 trait HasTypeView
 {
@@ -17,7 +18,6 @@ trait HasTypeView
         string $viewMode = 'default',
         array $parameter = [],
     ): Component {
-
         return $this
             ->getFieldTypeView($formConfiguration, $viewMode)
             ->getFormComponent($customField, $parameter);
@@ -34,7 +34,6 @@ trait HasTypeView
         return $this
             ->getFieldTypeView($formConfiguration, $viewMode)
             ->getEntryComponent($answer, $parameter);
-        //  ->getEntryComponent($this, $answer, $parameter);
     }
 
     public function getFieldTypeView(
@@ -58,43 +57,42 @@ trait HasTypeView
 
     public function getViewModes(CustomFormConfiguration $dynamicFormConfig): array
     {
-        return once(function () use ($dynamicFormConfig) {
+        return once(function () use ($dynamicFormConfig): array {
+            // Basis View Modes initialisieren
             $viewMods = $this->viewModes();
 
-            foreach ($viewMods as $viewMode => $viewMod) {
-                $viewMods[$viewMode] = $viewMod::make();
+            foreach ($viewMods as $viewModeKey => $viewMode) {
+                $viewMods[$viewModeKey] = $viewMode::make();
             }
 
             //Config Overwrite
-            $overWrittenLevelOne = $this->overwriteViewModes();
-
-            if (!empty($overWrittenLevelOne)) {
-                foreach ($overWrittenLevelOne as $key => $value) {
-                    $viewMods[$key] = $value::make();
-                }
-            }
-
+            $this->applyOverwrittenConfigViewModes($viewMods);
             // Form Overwritten
-            $overWrittenLevelTwo = $dynamicFormConfig::overwriteViewModes();
+            $this->applyOverwrittenFormViewModes($viewMods, $dynamicFormConfig);
 
-            if (!empty($overWrittenLevelTwo) && !empty($overWrittenLevelTwo[$this::class])) {
-                foreach ($overWrittenLevelTwo[$this::class] as $key => $value) {
-                    $viewMods[$key] = $value::make();
-                }
-            }
 
             return $viewMods;
         });
     }
 
-    public function overwriteViewModes(): array
+    protected function applyOverwrittenFormViewModes(array &$viewMods, CustomFormConfiguration $dynamicFormConfig): void
     {
-        $viewModes = config('ffhs_custom_forms.view_modes');
+        $overWrittenLevelTwo = $dynamicFormConfig::overwriteViewModes();
 
-        if (empty($viewModes[$this::class])) {
-            return [];
+        if (!empty($overWrittenLevelTwo) && !empty($overWrittenLevelTwo[$this::class])) {
+            foreach ($overWrittenLevelTwo[$this::class] as $key => $value) {
+                $viewMods[$key] = $value::make();
+            }
         }
+    }
 
-        return $viewModes[$this::class];
+    protected function applyOverwrittenConfigViewModes(array &$viewMods): void
+    {
+        $configViewModes = Config::get('ffhs_custom_forms.view_modes', []);
+        $overWrittenConfig = $configViewModes[$this::class] ?? [];
+
+        foreach ($overWrittenConfig as $key => $value) {
+            $viewMods[$key] = $value::make();
+        }
     }
 }

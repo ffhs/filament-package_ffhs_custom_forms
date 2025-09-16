@@ -2,12 +2,11 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\Types\Views;
 
-use Coolsam\Flatpickr\Forms\Components\Flatpickr;
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomField;
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\FieldTypeView;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldType;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasDefaultViewComponent;
+use Filament\Forms\Components\Hidden;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Support\Components\Component;
 
@@ -16,19 +15,18 @@ class DateRangeTypeView implements FieldTypeView
 {
     use HasDefaultViewComponent;
 
-    public function getFormComponent(CustomFieldType $type, CustomField $record, array $parameter = []): Component
+
+    public function getFormComponent(EmbedCustomField $customField, array $parameter = []): Component
     {
+        return $this->makeComponent(Hidden::class, $customField, false); //ToDo Replace
         /**@var Flatpickr $flatpickr */
-        $flatpickr = $this->makeComponent(Flatpickr::class, $record, false); //ToDoReplace
+        $flatpickr = $this->makeComponent(Flatpickr::class, $customField, false);
 
         return $flatpickr->rangePicker();
     }
 
-    public function getEntryComponent(
-        CustomFieldType $type,
-        CustomFieldAnswer $record,
-        array $parameter = []
-    ): Component {
-        return $this->makeComponent(TextEntry::class, $record, true);
+    public function getEntryComponent(EmbedCustomFieldAnswer $customFieldAnswer, array $parameter = []): Component
+    {
+        return $this->makeComponent(TextEntry::class, $customFieldAnswer, true);
     }
 }

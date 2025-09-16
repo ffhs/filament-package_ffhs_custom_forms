@@ -30,10 +30,8 @@ class TextTypeView implements FieldTypeView
         return $input;
     }
 
-    public function getEntryComponent(
-        EmbedCustomFieldAnswer $customFieldAnswer,
-        array $parameter = []
-    ): Component {
+    public function getEntryComponent(EmbedCustomFieldAnswer $customFieldAnswer, array $parameter = []): Component
+    {
         return $this->makeComponent(TextEntry::class, $customFieldAnswer, true);
     }
 }

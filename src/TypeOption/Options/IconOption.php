@@ -2,26 +2,25 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options;
 
+use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasOptionNoComponentModification;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\TypeOption;
-use Filament\Infolists\Components\TextEntry;
 use Filament\Support\Components\Component;
+use Guava\IconPicker\Forms\Components\IconPicker;
 
 class IconOption extends TypeOption
 {
-    public function getDefaultValue(): mixed
-    {
-        return '';
-    }
+    use HasOptionNoComponentModification;
+
+    protected mixed $default = '';
 
     public function getComponent(string $name): Component
     {
-        return TextEntry::make($name); //ToDo Reimplement
-//        return IconPicker::make($name)
-//            ->label(TypeOption::__('icon.label'))
-//            ->helperText(TypeOption::__('icon.helper_text'))
-//            ->columnSpanFull()
-//            ->columns()
-//            ->live();
+        return IconPicker::make($name)
+            ->label(TypeOption::__('icon.label'))
+            ->helperText(TypeOption::__('icon.helper_text'))
+            ->columnSpanFull()
+            ->columns()
+            ->live();
     }
 
     public
@@ -34,10 +33,5 @@ class IconOption extends TypeOption
         }
 
         return $component->icon($value);
-    }
-
-    public function modifyInfolistComponent(Component $component, mixed $value): Component
-    {
-        return $component;
     }
 }

@@ -17,7 +17,7 @@ trait HasDefaultViewComponent
     protected function modifyComponent(
         Component $component,
         EmbedCustomField|EmbedCustomFieldAnswer $fieldRaw,
-        bool $isInfolist,
+        bool $isEntry,
         array $ignoredOptions = [],
 
     ): mixed {
@@ -30,7 +30,7 @@ trait HasDefaultViewComponent
             }
 
             $value = $this->getOptionParameter($field, $key);
-            if ($isInfolist) {
+            if ($isEntry) {
                 $typeOption->modifyInfolistComponent($component, $value); //ToDo null value
             } else {
                 $typeOption->modifyFormComponent($component, $value); //ToDo null value
@@ -44,7 +44,7 @@ trait HasDefaultViewComponent
                 }
 
                 $value = $this->getOptionParameter($field, $key);
-                if ($isInfolist) {
+                if ($isEntry) {
                     $typeOption->modifyInfolistComponent($component, $value); //ToDo null value
                 } else {
                     $typeOption->modifyFormComponent($component, $value); //ToDo null value
@@ -57,7 +57,7 @@ trait HasDefaultViewComponent
             $component = empty($label) ? $component->hiddenLabel() : $component->label($label);
         }
 
-        if (!$isInfolist) {
+        if (!$isEntry) {
             return $component;
         }
 
@@ -71,6 +71,11 @@ trait HasDefaultViewComponent
             ->columnSpanFull();
     }
 
+    /**
+     * @template T of Component
+     * @param class-string<T> $class
+     * @return T
+     */
     protected function makeComponent(
         string $class,
         EmbedCustomField|EmbedCustomFieldAnswer $field,
@@ -79,6 +84,5 @@ trait HasDefaultViewComponent
     ): Component {
         $component = $class::make($this->getIdentifyKey($field));
         return $this->modifyComponent($component, $field, $isInfolist, $ignoredOptions);
-
     }
 }

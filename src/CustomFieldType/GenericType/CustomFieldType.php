@@ -62,17 +62,6 @@ abstract class CustomFieldType implements Type
         return $output;
     }
 
-    final public static function getSelectableFieldTypes(): array
-    {
-        $output = [];
-
-        foreach (config('ffhs_custom_forms.selectable_field_types') as $typeClass) {
-            $output[$typeClass::identifier()] = $typeClass;
-        }
-
-        return $output;
-    }
-
     abstract public function viewModes(): array;
 
     public function getTranslatedName(): string
