@@ -22,8 +22,10 @@ trait HasEditorLayoutElements
             return null;
         }
 
-        return view('filament-package_ffhs_custom_forms::filament.components.form-editor.badge',
-            ['text' => $text, 'color' => $color]);
+        return view(
+            'filament-package_ffhs_custom_forms::filament.components.form-editor.badge',
+            ['text' => $text, 'color' => $color]
+        );
     }
 
     public function getEditorFieldTitle(array $fieldState, CustomFormConfiguration $configuration): string
@@ -61,8 +63,8 @@ trait HasEditorLayoutElements
             DefaultFieldEditOptionsAction::make('edit-options')
                 ->formConfiguration($formConfiguration),
             DefaultCustomActivationAction::make('toggle_active')
-                ->visible($this->canBeDeactivate())
-                ->formConfiguration($formConfiguration),
+                ->formConfiguration($formConfiguration)
+                ->visible($this->canBeDeactivate()),
         ];
     }
 

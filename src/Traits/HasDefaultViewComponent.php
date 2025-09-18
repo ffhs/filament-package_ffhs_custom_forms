@@ -12,8 +12,6 @@ trait HasDefaultViewComponent
     use CanMapFields;
     use HasStaticMake;
 
-    //ToDo fix infolust stuff
-
     protected function modifyComponent(
         Component $component,
         EmbedCustomField|EmbedCustomFieldAnswer $fieldRaw,

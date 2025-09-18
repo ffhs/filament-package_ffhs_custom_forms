@@ -5,6 +5,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Trigger;
 use Ffhs\FfhsUtils\Contracts\Rules\EmbedRuleTrigger;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasRuleTriggerPluginTranslate;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasTriggerEventFormTargets;
+use Filament\Schemas\Components\Component;
 
 class IsEntryTrigger extends FormRuleTriggerType
 {
@@ -23,8 +24,12 @@ class IsEntryTrigger extends FormRuleTriggerType
 
     public function isTrigger(array $arguments, mixed &$target, EmbedRuleTrigger $trigger): bool
     {
-        //ToDo Fix
+        $component = array_values($target)[0] ?? null;
+
+        if ($component instanceof Component) {
+            $component->getContainer()->getOperation() === 'view';
+        }
+
         return false;
-        return (array_values($target)[0] ?? null) instanceof Component;
     }
 }

@@ -63,10 +63,10 @@ abstract class  IsPropertyOverwriteEvent extends FormRuleEventType
     {
         return fn(Component $component) => once(function () use ($component, $oldProperty, $triggers) {
             if (!$component instanceof \Filament\Schemas\Components\Component) {
-                return static fn() => $component->evaluate($oldProperty);
+                return $component->evaluate($oldProperty);
             }
 
-            $triggered = $triggers(['state' => $component->makeGetUtility()('.')]);
+            $triggered = $triggers(['state' => $component->makeGetUtility()('.')]); //todo fuck... what if with repeaters
 
             if ($triggered !== $this->dominatingSide()) {
                 $triggered = $component->evaluate($oldProperty);
@@ -76,24 +76,7 @@ abstract class  IsPropertyOverwriteEvent extends FormRuleEventType
         });
     }
 
-    /*protected function getPropertyInfolistFunction(mixed $oldProperty, $triggers): Closure
-    {
-        return function (Component $component, CustomFormAnswer $record) use ($oldProperty, $triggers) {
-            $state = $record->loadedData(); //FFFF
-            $triggered = $triggers(['state' => $state]);
-
-            if ($triggered !== $this->dominatingSide()) {
-                $triggered = $component->evaluate($oldProperty);
-            }
-
-            return $triggered;
-        };
-    }
-     */
-
-
     abstract protected function property(): string;
 
     abstract protected function dominatingSide(): bool;
-
 }

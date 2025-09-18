@@ -13,7 +13,6 @@ trait HasEmbeddedCustomForm
 {
     use CanLoadFormAnswer;
     use UseSplitSchema;
-    use UseSplitCustomForm;
     use HasFieldDisplayer;
     use HasCustomFormData;
     use HasViewMode;

@@ -43,7 +43,7 @@ trait CanSaveCustomFormEditorRules
         $ruleTriggersToCreate = [];
         $ruleTriggersToUpdate = [];
 
-        $usedRuleIds = [];
+//        $usedRuleIds = []; //ToDo fuck ????
 
         $existingTriggers = RuleTrigger::query()
             ->whereIn('rule_id', $form->ownedRules()->select('rules.id'))
@@ -60,7 +60,7 @@ trait CanSaveCustomFormEditorRules
             $rule->is_or_mode = $rawRule['is_or_mode'] ?? false;
             $rule->save();
 
-            $usedRuleIds[] = $rule->id;
+//            $usedRuleIds[] = $rule->id;
 
             $triggers = $existingTriggers[$rule->id] ?? collect();
             $triggers = $triggers->keyBy('id');

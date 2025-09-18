@@ -7,7 +7,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\TemplateResource\Temp
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
-use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanModifyCustomFormEditorData;
+use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanGetUsedGeneralFields;
 use Filament\Actions\Action;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Builder;
@@ -18,7 +18,7 @@ use Illuminate\Support\HtmlString;
 class EditTemplate extends EditCustomForm
 {
     //ToDo Check function
-    use CanModifyCustomFormEditorData;
+    use CanGetUsedGeneralFields;
 
     protected static string $resource = TemplateResource::class;
 

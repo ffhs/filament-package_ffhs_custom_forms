@@ -7,6 +7,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormAnswer\Rend
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasEmbeddedCustomForm;
 use Filament\Infolists\Components\Entry;
 use Filament\Schemas\Components\Contracts\CanEntangleWithSingularRelationships;
+use Filament\Schemas\Schema;
 
 class CustomFormAnswerEntry extends Entry implements CanEntangleWithSingularRelationships
 {
@@ -33,4 +34,9 @@ class CustomFormAnswerEntry extends Entry implements CanEntangleWithSingularRela
             ->hiddenLabel();
     }
 
+    protected function makeChildSchema(string $key): Schema
+    {
+        return parent::makeChildSchema($key)
+            ->operation('view');
+    }
 }

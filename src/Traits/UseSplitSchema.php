@@ -3,13 +3,33 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\Traits;
 
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomForm;
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\FieldDisplayer;
 use Filament\Schemas\Components\Group;
 
 trait UseSplitSchema
 {
-    use UseSplitCustomForm;
     use CanRenderSplitCustomForm;
+    use HasLayoutSplit;
+    use HasFieldSplit;
+    use HasPosSplit;
+
+    public function loadAnswerData(EmbedCustomFormAnswer $answer): array
+    {
+        if ($this->isUseLayoutTypeSplit()) {
+            return $this->loadLayoutTypeSplitAnswerData($answer);
+        }
+
+        if ($this->isUseFieldSplit()) {
+            return $this->loadFieldTypeSplitAnswerData($answer);
+        }
+
+        if ($this->isUsePoseSplit()) {
+            return $this->loadPosTypeSplitAnswerData($answer);
+        }
+
+        return $this->loadCustomAnswerData($answer);
+    }
 
     public function getCustomFormSchema(
         EmbedCustomForm $customForm,
@@ -45,7 +65,6 @@ trait UseSplitSchema
             Group::make($renderOutput[0])->columns($columns),
         ];
     }
-
 
     protected function getLayoutTypeSplitFormSchema(
         EmbedCustomForm $customForm,

@@ -2,10 +2,10 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Traits;
 
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
-use Ffhs\FfhsUtils\Models\\Rule;
+use Ffhs\FfhsUtils\Models\Rule;
 use Ffhs\FfhsUtils\Models\RuleEvent;
 use Ffhs\FfhsUtils\Models\RuleTrigger;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 
 trait CanImportRuleInformation
 {

@@ -56,36 +56,60 @@ trait CanSaveFormAnswer
         return $attributes;
     }
 
-    protected function splittingFormComponents(
-        array $formData,
-        Collection $customFieldsIdentify
-    ): array {
-        $dateSplit = [];
-        foreach ($formData as $identifyKey => $customFieldAnswererRawData) {
-            /**@var CustomField $customField */
-            $customField = $customFieldsIdentify->get($identifyKey);
+//    protected function splittingFormComponents(array $formData, Collection $customFieldsIdentify): array
+//    {
+//        $dateSplit = [];
+//        foreach ($formData as $identifyKey => $customFieldAnswererRawData) {
+//            /**@var CustomField $customField */
+//            $customField = $customFieldsIdentify->get($identifyKey);
+//
+//            if (is_null($customField)) {
+//                continue;
+//            }
+//
+//            $type = $customField->getType();
+//
+//            if (!$type->hasSplitFields()) {
+//                $dateSplit[$identifyKey] = $customFieldAnswererRawData;
+//                continue;
+//            }
+//
+//            foreach ($customFieldAnswererRawData as $subPath => $subData) {
+//                $getSplitData = $this->splittingFormComponents($subData, $customFieldsIdentify);
+//
+//                foreach ($getSplitData as $subKey => $subValue) {
+//                    $dateSplit[$subKey . '.' . $subPath] = $subValue;
+//                }
+//            }
+//        }
+//
+//        return $dateSplit;
+//    }
 
-            if (is_null($customField)) {
+    protected function splittingFormComponents(array $formData, Collection $customFieldsIdentify): array
+    {
+        $result = [];
+
+        foreach ($formData as $fieldKey => $fieldData) {
+            $customField = $customFieldsIdentify->get($fieldKey);
+
+            // Skip if field doesn't exist or doesn't need splitting
+            if (!$customField || !$customField->getType()->hasSplitFields()) {
+                $result[$fieldKey] = $fieldData;
                 continue;
             }
 
-            $type = $customField->getType();
+            // Recursively process nested data and flatten with dot notation
+            foreach ($fieldData as $subPath => $subData) {
+                $splitData = $this->splittingFormComponents($subData, $customFieldsIdentify);
 
-            if (!$type->hasSplitFields()) {
-                $dateSplit[$identifyKey] = $customFieldAnswererRawData;
-                continue;
-            }
-
-            foreach ($customFieldAnswererRawData as $subPath => $subData) {
-                $getSplitData = $this->splittingFormComponents($subData, $customFieldsIdentify);
-
-                foreach ($getSplitData as $subKey => $subValue) {
-                    $dateSplit[$subKey . '.' . $subPath] = $subValue;
+                foreach ($splitData as $subKey => $subValue) {
+                    $result["{$subKey}.{$subPath}"] = $subValue;
                 }
             }
         }
 
-        return $dateSplit;
+        return $result;
     }
 
     protected function saveWithoutPreparation(

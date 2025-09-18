@@ -4,14 +4,14 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\FormEditor\Fiel
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormConfiguration\CustomFormConfiguration;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
-use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanModifyCustomFormEditorData;
+use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanGetUsedGeneralFields;
 use Filament\Forms\Components\Concerns\CanGenerateUuids;
 use Filament\Support\Colors\Color;
 use Filament\Support\Components\Component;
 
 class FormFieldTemplateAdder extends FormFieldAdder
 {
-    use CanModifyCustomFormEditorData;
+    use CanGetUsedGeneralFields;
     use CanGenerateUuids;
 
     public static function getSiteComponent(CustomFormConfiguration $configuration): Component

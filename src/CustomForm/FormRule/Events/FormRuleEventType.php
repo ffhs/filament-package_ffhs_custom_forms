@@ -19,38 +19,6 @@ abstract class FormRuleEventType implements EventType
         IsEventType::handle as handleEvent;
     }
 
-
-    //ToDo fix
-
-    /*
-     *   public function handle(
-        RuleTriggersCallback $triggers,
-        array $arguments,
-        mixed &$target,
-        EmbedRuleEvent $rule
-    ): mixed {
-
-        switch ($arguments['action']) {
-            case 'before_render':
-                return $this->handlerBeforeRun($triggers, $arguments, $target, $rule);
-            //case 'mutate_parameters': return $this->handleParameterMutation($triggers, $arguments, $target, $rule);
-            case 'after_render': //ToDo FUCK
-                if (is_array($target) && (array_values($target)[0] ?? '') instanceof FormsComponent) {
-                    $handler = $this->handleAfterRenderForm(...);
-                } else {
-                    $handler = $this->handleAfterRenderEntry(...);
-                }
-
-                return $this->subHandlerRun($handler, $triggers, $arguments, $target, $rule);
-            case 'load_answer':
-                return $this->handleAnswerLoadMutation($triggers, $arguments, $target, $rule);
-            case 'save_answer':
-                return $this->handleAnswerSaveMutation($triggers, $arguments, $target, $rule);
-            default:
-                return null;
-        }
-    }
-     */
     public function handle(
         BackedEnum|string $action,
         EmbedRuleEvent $ruleEvent,
@@ -59,8 +27,8 @@ abstract class FormRuleEventType implements EventType
     ): mixed {
 
         return match ($action) {
-            FormRuleAction::AfterRenderForm => $this->handleAfterRenderForm($ruleEvent, $target, $arguments),
-            FormRuleAction::AfterRenderEntry => $this->handleAfterRenderEntry($ruleEvent, $target, $arguments),
+            FormRuleAction::AfterRenderForm => $this->handleAfterRender($ruleEvent, $target, $arguments, false),
+            FormRuleAction::AfterRenderEntry => $this->handleAfterRender($ruleEvent, $target, $arguments, true),
             default => $this->handleEvent($action, $ruleEvent, $target, $arguments)
         };
     }
@@ -81,31 +49,6 @@ abstract class FormRuleEventType implements EventType
     public function handleBeforeRender(EmbedRuleEvent $rule, Collection $data, array $arguments = []): Collection
     {
         return $data;
-    }
-
-    public function handleAfterRenderForm(EmbedRuleEvent $event, array $target, array $arguments = []): array
-    {
-        foreach ($target as $identifier => $component) {
-            /**@var Component $component */
-            $arguments['identifier'] = $identifier;
-            $target[$identifier] = $this->handleAfterRenderFormComponent($event, $component, $arguments);
-        }
-
-        return $target;
-    }
-
-    public function handleAfterRenderEntry(
-        EmbedRuleEvent $event,
-        array $target,
-        array $arguments = [],
-    ): array {
-        foreach ($target as $identifier => $component) {
-            /**@var Component $component */
-            $arguments['identifier'] = $identifier;
-            $target[$identifier] = $this->handleAfterRenderEntryComponent($event, $component, $arguments);
-        }
-
-        return $target;
     }
 
     public function handleAfterRenderFormComponent(
@@ -129,7 +72,6 @@ abstract class FormRuleEventType implements EventType
         return $data; //ToDo????
     }
 
-
     public function handleAnswerLoadMutation(
         EmbedRuleEvent $rule,
         mixed $target,
@@ -143,6 +85,22 @@ abstract class FormRuleEventType implements EventType
         mixed $target,
         array $arguments = [],
     ): mixed {
+        return $target;
+    }
+
+    protected function handleAfterRender(EmbedRuleEvent $event, array $target, array $arguments, bool $isEntry): array
+    {
+        foreach ($target as $identifier => $component) {
+            /**@var Component $component */
+            $arguments['identifier'] = $identifier;
+
+            if ($isEntry) {
+                $target[$identifier] = $this->handleAfterRenderEntryComponent($event, $component, $arguments);
+            } else {
+                $target[$identifier] = $this->handleAfterRenderFormComponent($event, $component, $arguments);
+            }
+        }
+
         return $target;
     }
 }

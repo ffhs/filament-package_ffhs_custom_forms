@@ -74,7 +74,7 @@ trait CanRenderCustomForm
             $positionOffset
         );
 
-        //TriggerPreparation (maintain for live attribute)  ca 10ms
+        //TriggerPreparation (maintain for live attribute)
         $this->runRulesAfterRender($rules, $allComponents, $customForm, $customFields);
 
         return [$customFormSchema, $allComponents];
@@ -117,15 +117,13 @@ trait CanRenderCustomForm
                 continue;
             }
 
-            //if field is a layout field, add Render Components
+            //if a field is a layout field, add Render Components
             if (!is_null($customField->layout_end_position)) {
                 $fieldRenderData = $customFields
                     ->filter(function (EmbedCustomField $field) use ($customField) {
                         return $field->form_position > $customField->form_position &&
                             $field->form_position <= $customField->layout_end_position;
                     });
-//                    ->where('form_position', '>', $customField->form_position)
-//                    ->where('form_position', '<=', $customField->layout_end_position);
 
                 $parameters['child_fields'] = $fieldRenderData;
                 $parameters['child_render'] = ChildFieldRender::make(
