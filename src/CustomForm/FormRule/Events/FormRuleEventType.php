@@ -3,16 +3,12 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Events;
 
-use Closure;
-use Ffhs\FfhsUtils\Contracts\Rules\EmbedRule;
+use Ffhs\FfhsUtils\Contracts\Rules\EmbedRuleEvent;
 use Ffhs\FfhsUtils\Contracts\Rules\EventType;
-use Ffhs\FfhsUtils\Contracts\Rules\RuleTriggersCallback;
-use Ffhs\FfhsUtils\Models\RuleEvent;
 use Ffhs\FfhsUtils\Traits\Rules\IsEventType;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Filament\Support\Components\Component;
-use Illuminate\Support\Collection;
 
 abstract class FormRuleEventType implements EventType
 {
@@ -59,16 +55,15 @@ abstract class FormRuleEventType implements EventType
     }
 
     public function handleBeforeRender(
-        Closure $triggers,
-        array $arguments,
+        EmbedRuleEvent $rule,
         CustomField $target,
-        RuleEvent $rule
+        array $arguments = [],
     ): CustomField {
         return $target;
     }
 
     public function handleAfterRenderForm(
-        EmbedRule $rule,
+        EmbedRuleEvent $rule,
         Component $target,
         array $arguments = [],
     ): Component {
@@ -76,12 +71,11 @@ abstract class FormRuleEventType implements EventType
     }
 
     public function handleAfterRenderEntry(
-        RuleTriggersCallback $triggers,
-        array $arguments,
-        Component &$component,
-        RuleEvent $rule
+        EmbedRuleEvent $rule,
+        Component $target,
+        array $arguments = [],
     ): Component {
-        return $component;
+        return $target;
     }
 
     public function mutateDataOnClone(array $data, CustomForm $target): array
@@ -89,12 +83,11 @@ abstract class FormRuleEventType implements EventType
         return $data;
     }
 
-    private function handlerBeforeRun(
-        RuleTriggersCallback $triggers,
-        array $arguments,
-        Collection $target,
-        RuleEvent $rule
-    ): mixed {
+    public function handlerBeforeRun(
+        EmbedRuleEvent $rule,
+        Component $target,
+        array $arguments = [],
+    ): mixed { //Todo ????
         return $target->map(function (CustomField $item) use ($rule, $triggers) {
             if ($item instanceof CustomField) {
                 $identifier = $item;
@@ -109,13 +102,11 @@ abstract class FormRuleEventType implements EventType
         });
     }
 
-    private function subHandlerRun(
-        Closure $subFunction,
-        RuleTriggersCallback $triggers,
-        array $arguments,
-        array &$target,
-        RuleEvent $rule
-    ): mixed {
+    public function subHandlerRun(
+        EmbedRuleEvent $rule,
+        mixed $target,
+        array $arguments = [],
+    ): mixed { //ToDo fix
         foreach ($target as $identifier => $item) {
             /**@var CustomField|Component $item */
             //dump($identifier, $item);
@@ -129,20 +120,18 @@ abstract class FormRuleEventType implements EventType
         return $target;
     }
 
-    private function handleAnswerLoadMutation(
-        RuleTriggersCallback $triggers,
-        array $arguments,
-        mixed &$target,
-        RuleEvent $rule
+    public function handleAnswerLoadMutation(
+        EmbedRuleEvent $rule,
+        mixed $target,
+        array $arguments = [],
     ): mixed {
         return $target;
     }
 
-    private function handleAnswerSaveMutation(
-        RuleTriggersCallback $triggers,
-        array $arguments,
-        mixed &$target,
-        RuleEvent $rule
+    public function handleAnswerSaveMutation(
+        EmbedRuleEvent $rule,
+        mixed $target,
+        array $arguments = [],
     ): mixed {
         return $target;
     }

@@ -3,6 +3,7 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Events;
 
 use Closure;
+use Ffhs\FfhsUtils\Contracts\Rules\EmbedRuleEvent;
 use Ffhs\FfhsUtils\Models\RuleEvent;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\CustomOption\CustomOptionType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\TempCustomField;
@@ -45,30 +46,27 @@ class ChangeOptionsEvent extends FormRuleEventType
         ];
     }
 
-    public function handleAfterRenderForm(
-        Closure $triggers,
-        array $arguments,
-        Component &$component,
-        RuleEvent $rule
-    ): Component {
+    public function handleAfterRenderForm(EmbedRuleEvent $rule, Component $target, array $arguments = []): Component
+    {
+        return $target; //ToDo Fix this stuff
         $identifier = $arguments['identifier'];
 
         if ($identifier !== ($rule->data['target'] ?? '')) {
-            return $component;
+            return $target;
         }
-        if (!in_array(HasOptions::class, class_uses_recursive($component::class), true)) {
-            return $component;
+        if (!in_array(HasOptions::class, class_uses_recursive($target::class), true)) {
+            return $target;
         }
 
-        /** @var HasOptions|Component $component */
-        $reflection = new ReflectionClass($component);
+        /** @var HasOptions|Component $target */
+        $reflection = new ReflectionClass($target);
         $property = $reflection->getProperty('options');
         $property->setAccessible(true);
-        $optionsOld = $property->getValue($component);
+        $optionsOld = $property->getValue($target);
 
-        $component->options($this->getModifiedOptionsClosure($identifier, $triggers, $optionsOld, $component, $rule));
+        $target->options($this->getModifiedOptionsClosure($identifier, $triggers, $optionsOld, $target, $rule));
 
-        return $component;
+        return $target;
     }
 
     public function getCustomOptionsOptions($get, CustomForm $record)
@@ -108,7 +106,7 @@ class ChangeOptionsEvent extends FormRuleEventType
      * @param mixed $identifier
      * @param Closure $triggers
      * @param mixed $optionsOld
-     * @param Component $component
+     * @param Component $target
      * @param RuleEvent $rule
      * @return Closure
      */
@@ -116,13 +114,13 @@ class ChangeOptionsEvent extends FormRuleEventType
         mixed $identifier,
         Closure $triggers,
         mixed $optionsOld,
-        Component $component,
+        Component $target,
         RuleEvent $rule
     ): Closure {
-        return static function ($get, $set) use ($identifier, $triggers, $optionsOld, $component, $rule) {
+        return static function ($get, $set) use ($identifier, $triggers, $optionsOld, $target, $rule) {
             $triggered = $triggers(['state' => $get('.')]);
             /**@var array|Collection $options */
-            $options = $component->evaluate($optionsOld);
+            $options = $target->evaluate($optionsOld);
             $options = is_array($options) ? collect($options) : $options;
 
             if (!$triggered) {
