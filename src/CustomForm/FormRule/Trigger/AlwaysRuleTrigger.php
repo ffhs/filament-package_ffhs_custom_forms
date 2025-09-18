@@ -2,7 +2,7 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Trigger;
 
-use Ffhs\FfhsUtils\Models\RuleTrigger;
+use Ffhs\FfhsUtils\Contracts\Rules\EmbedRuleTrigger;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasRuleTriggerPluginTranslate;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasTriggerEventFormTargets;
 
@@ -16,12 +16,12 @@ class AlwaysRuleTrigger extends FormRuleTriggerType
         return 'always';
     }
 
-    public function isTrigger(array $arguments, mixed &$target, RuleTrigger $rule): bool
+    public function isTrigger(array $arguments, mixed &$target, EmbedRuleTrigger $trigger): bool
     {
         return true;
     }
 
-    public function getFormSchema(): array
+    public function getConfigurationSchema(): array
     {
         return [];
     }

@@ -19,7 +19,8 @@ trait CanLoadFormAnswer
     {
         foreach ($formRules as $rule) {
             /**@var Rule $rule */
-            $fieldData = $rule->handle(FormRuleAction::BeforeRender, ['field_answerer' => $answer], $fieldData);
+            $fieldData = $rule->handle(FormRuleAction::LoadData, ['field_answerer' => $answer],
+                $fieldData); //ToDo Maby remove
         }
 
         return $fieldData;
@@ -85,7 +86,6 @@ trait CanLoadFormAnswer
 
         return $loadedData;
     }
-
 
     public function resolveComplexPaths(array $loadedData, Collection $customFields): array
     {

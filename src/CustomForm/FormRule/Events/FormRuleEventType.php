@@ -9,6 +9,7 @@ use Ffhs\FfhsUtils\Traits\Rules\IsEventType;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Filament\Support\Components\Component;
+use Illuminate\Support\Collection;
 
 abstract class FormRuleEventType implements EventType
 {
@@ -54,12 +55,14 @@ abstract class FormRuleEventType implements EventType
         return ($arguments['custom_fields'] ?? collect())->get($identifier);
     }
 
-    public function handleBeforeRender(
-        EmbedRuleEvent $rule,
-        CustomField $target,
-        array $arguments = [],
-    ): CustomField {
-        return $target;
+    public function handleLoadData(EmbedRuleEvent $rule, mixed $data, array $arguments = []): mixed
+    {
+        return $data;
+    }
+
+    public function handleBeforeRender(EmbedRuleEvent $rule, Collection $data, array $arguments = []): Collection
+    {
+        return $data;
     }
 
     public function handleAfterRenderForm(
@@ -80,27 +83,9 @@ abstract class FormRuleEventType implements EventType
 
     public function mutateDataOnClone(array $data, CustomForm $target): array
     {
-        return $data;
+        return $data; //ToDo????
     }
 
-    public function handlerBeforeRun(
-        EmbedRuleEvent $rule,
-        Component $target,
-        array $arguments = [],
-    ): mixed { //Todo ????
-        return $target->map(function (CustomField $item) use ($rule, $triggers) {
-            if ($item instanceof CustomField) {
-                $identifier = $item;
-            }
-
-            $modifiedTrigger = fn(array $extraOptions = []) => $triggers(
-                array_merge(['target_field_identifier' => $identifier], $extraOptions)
-            );
-            $arguments['identifier'] = $identifier;
-
-            return $this->handleBeforeRender($modifiedTrigger, $arguments, $item, $rule);
-        });
-    }
 
     public function subHandlerRun(
         EmbedRuleEvent $rule,

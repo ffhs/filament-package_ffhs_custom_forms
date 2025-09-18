@@ -2,7 +2,7 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\FormEditor\FieldAdder;
 
-use Ffhs\FfhsUtils\Filament\DragDrop\DragDropSelectAction;
+use Ffhs\FfhsUtils\Filament\Components\DragDrop\DragDropSelectAction;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\FormEditorSideComponent;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\FormEditor\StateCasts\CustomFieldStateCast;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasFormConfiguration;

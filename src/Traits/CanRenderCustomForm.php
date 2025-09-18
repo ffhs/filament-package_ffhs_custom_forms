@@ -8,6 +8,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\FieldDisplayer;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Trigger\FormRuleTriggerType;
+use Ffhs\FilamentPackageFfhsCustomForms\Enums\FormRuleAction;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormAnswer\Render\ChildFieldRender;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormAnswer\Render\EntryFieldDisplayer;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormAnswer\Render\FormFieldDisplayer;
@@ -152,7 +153,7 @@ trait CanRenderCustomForm
     protected function runRulesBeforeRender(Collection $rules, Collection &$customFields): void
     {
         $rules->each(function (Rule $rule) use (&$customFields) {
-            $customFields = $rule->handle(['action' => 'before_render'], $customFields);
+            $customFields = $rule->handle(FormRuleAction::BeforeRender, [], $customFields);
         });
     }
 

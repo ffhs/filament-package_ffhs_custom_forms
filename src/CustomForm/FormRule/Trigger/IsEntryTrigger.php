@@ -16,7 +16,7 @@ class IsEntryTrigger extends FormRuleTriggerType
         return 'infolist_view';
     }
 
-    public function getFormSchema(): array
+    public function getConfigurationSchema(): array
     {
         return [];
     }

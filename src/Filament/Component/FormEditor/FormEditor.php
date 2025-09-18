@@ -2,11 +2,11 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\FormEditor;
 
+use Ffhs\FfhsUtils\Filament\Components\RuleEditor\RuleEditor;
 use Ffhs\FfhsUtils\Models\Rule;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\FormEditorSideComponent;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\FormEditor\Field\EditFieldsGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\FormEditor\StateCasts\CustomFieldStateCast;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\RuleEditor\RuleEditor;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasFormConfiguration;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasFormGroupName;

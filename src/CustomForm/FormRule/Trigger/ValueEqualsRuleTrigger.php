@@ -2,6 +2,7 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Trigger;
 
+use Ffhs\FfhsUtils\Contracts\Rules\EmbedRuleTrigger;
 use Ffhs\FfhsUtils\Models\RuleTrigger;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\CustomOption\CustomOptionType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\TempCustomField;
@@ -40,34 +41,34 @@ class ValueEqualsRuleTrigger extends FormRuleTriggerType
         return $component;
     }
 
-    public function isTrigger(array $arguments, mixed &$target, RuleTrigger $rule): bool
+    public function isTrigger(array $arguments, mixed &$target, EmbedRuleTrigger $trigger): bool
     {
         if (!array_key_exists('state', $arguments)) {
             return false;
         }
 
-        if (empty($rule->data)
-            || empty($rule->data['target'])
-            || empty($rule->data['type'])) {
+        if (empty($trigger->data)
+            || empty($trigger->data['target'])
+            || empty($trigger->data['type'])) {
             return false;
         }
 
-        $targetFieldIdentifier = $rule->data['target'];
+        $targetFieldIdentifier = $trigger->data['target'];
         $state = $arguments['state'];
         $targetValue = $state[$targetFieldIdentifier] ?? null;
-        $type = $rule->data['type'];
+        $type = $trigger->data['type'];
 
         return match ($type) {
-            'number' => $this->checkNumber($targetValue, $rule->data),
-            'text' => $this->checkText($targetValue, $rule->data),
-            'boolean' => $this->checkBoolean($targetValue, $rule->data),
+            'number' => $this->checkNumber($targetValue, $trigger->data),
+            'text' => $this->checkText($targetValue, $trigger->data),
+            'boolean' => $this->checkBoolean($targetValue, $trigger->data),
             'null' => $this->checkNull($targetValue),
-            'option' => $this->checkOption($targetValue, $rule->data),
+            'option' => $this->checkOption($targetValue, $trigger->data),
             default => false,
         };
     }
 
-    public function getFormSchema(): array
+    public function getConfigurationSchema(): array
     {
         return [
             $this

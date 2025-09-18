@@ -3,7 +3,7 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\FormEditor\Field;
 
 
-use Ffhs\FfhsUtils\Filament\DragDrop\DragDropGroup;
+use Ffhs\FfhsUtils\Filament\Components\DragDrop\DragDropGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\Facades\CustomForms;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasFormConfiguration;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasFormGroupName;
