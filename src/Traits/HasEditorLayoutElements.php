@@ -31,7 +31,7 @@ trait HasEditorLayoutElements
         $customField = $this->getEditorCustomFieldFromData($fieldState, $configuration);
 
         if (!$customField->isGeneralField()) {
-            return $this->getTranslatedName();
+            return $this->displayname();
         }
 
         return $customField->name ?? '404';

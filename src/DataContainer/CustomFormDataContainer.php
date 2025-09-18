@@ -56,4 +56,9 @@ class CustomFormDataContainer implements EmbedCustomForm
             ->flatten(1);
 
     }
+
+    public function getRules(): Collection
+    {
+        return collect();
+    }
 }

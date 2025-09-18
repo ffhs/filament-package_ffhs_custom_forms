@@ -27,7 +27,7 @@ class GeneralFieldTable
                 TextColumn::make('type')
                     ->label(GeneralField::__('attributes.type.label'))
                     ->searchable()
-                    ->getStateUsing(fn(GeneralField $record) => $record->getType()->getTranslatedName()),
+                    ->getStateUsing(fn(GeneralField $record) => $record->getType()->displayname()),
                 TextColumn::make('generalFieldForms.custom_form_identifier')
                     ->label(GeneralField::__('attributes.form_connections.label'))
                     ->listWithLineBreaks()

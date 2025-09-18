@@ -116,7 +116,7 @@ class SelectTypeView implements FieldTypeView
             $selectId = str_replace('prioritized_', '', $key);
 
             $name = $stateList->toArray()[$value] ?? '';
-            $translatedSelect = $customFieldAnswer->getType()->getTranslatedName();
+            $translatedSelect = $customFieldAnswer->getType()->displayname();
             $cleanedAnswers[$selectId] = $selectId + 1 . '. ' . $translatedSelect . ': ' . $name;
         }
 

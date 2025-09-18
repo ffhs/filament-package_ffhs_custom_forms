@@ -3,8 +3,8 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Events;
 
 use Closure;
+use Ffhs\FfhsUtils\Models\RuleEvent;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\RuleEvent;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanLoadFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasRuleEventPluginTranslate;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasTriggerEventFormTargets;
@@ -29,7 +29,7 @@ abstract class  IsPropertyOverwriteEvent extends FormRuleEventType
         return $this->prepareComponent($component, $triggers);
     }
 
-    public function handleAfterRenderInfolist(
+    public function handleAfterRenderEntry(
         Closure $triggers,
         array $arguments,
         Component &$component,
@@ -53,7 +53,7 @@ abstract class  IsPropertyOverwriteEvent extends FormRuleEventType
             : $component;
     }
 
-    public function getFormSchema(): array
+    public function getConfigurationSchema(): array
     {
         return [$this->getTargetsSelect()];
     }

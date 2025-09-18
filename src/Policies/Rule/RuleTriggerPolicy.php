@@ -3,7 +3,7 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\Policies\Rule;
 
 use App\Models\User;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\RuleTrigger;
+use Ffhs\FfhsUtils\Models\RuleTrigger;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 

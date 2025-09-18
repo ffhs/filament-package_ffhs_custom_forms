@@ -2,7 +2,8 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType;
 
-use Ffhs\FilamentPackageFfhsCustomForms\Contracts\Type;
+use Ffhs\FfhsUtils\Contracts\Type;
+use Ffhs\FfhsUtils\Traits\IsType;
 use Ffhs\FilamentPackageFfhsCustomForms\Facades\CustomForms;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasAnswerCallbacks;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasConfigAttribute;
@@ -12,7 +13,6 @@ use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasFieldSplitting;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasGridModifiers;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasTypeOptions;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasTypeView;
-use Ffhs\FilamentPackageFfhsCustomForms\Traits\IsType;
 
 abstract class CustomFieldType implements Type
 {
@@ -62,12 +62,12 @@ abstract class CustomFieldType implements Type
         return $output;
     }
 
-    abstract public function viewModes(): array;
-
-    public function getTranslatedName(): string
+    public static function displayname(): string
     {
-        return __('custom_forms.types.' . $this::identifier());
+        return __('custom_forms.types.' . static::identifier());
     }
+
+    abstract public function viewModes(): array;
 
     public function canBeDeactivate(): bool
     {

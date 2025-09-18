@@ -2,10 +2,10 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Models;
 
+use Ffhs\FfhsUtils\Models\Rule;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormConfiguration\CustomFormConfiguration;
 use Ffhs\FilamentPackageFfhsCustomForms\Facades\CustomForms;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\Rule;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasCustomFields;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasFormIdentifier;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasFormRules;
@@ -107,5 +107,10 @@ class CustomForm extends Model implements EmbedCustomForm
     public function getFormConfiguration(): CustomFormConfiguration
     {
         return CustomForms::getFormConfiguration($this->custom_form_identifier);
+    }
+
+    public function getRules(): \Illuminate\Support\Collection
+    {
+        return $this->rules;
     }
 }

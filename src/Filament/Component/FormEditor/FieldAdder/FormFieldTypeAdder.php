@@ -30,7 +30,7 @@ class FormFieldTypeAdder extends FormFieldAdder
     {
         return once(function () {
             return collect($this->getFormConfiguration()->getSelectableFieldTypes())
-                ->map(fn(CustomFieldType $fieldType) => $fieldType->getTranslatedName());
+                ->map(fn(CustomFieldType $fieldType) => $fieldType->displayname());
         });
     }
 

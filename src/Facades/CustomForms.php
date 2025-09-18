@@ -14,6 +14,8 @@ use Illuminate\Support\Facades\Facade;
  * @method static array getFormConfigurations()
  * @method static null|CustomForm getCustomFormFromId(int $id)
  * @method static void cacheForm(CustomForm|Collection $customForm)
+ * @method static array getFormRuleTriggerClasses()
+ * @method static array getFormRuleEventClasses()
  */
 class CustomForms extends Facade
 {

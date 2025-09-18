@@ -11,7 +11,7 @@ trait HasRuleEventPluginTranslate
         return FormRule::type__('events.' . static::identifier() . '.' . $translate);
     }
 
-    public function getDisplayName(): string
+    public static function displayname(): string
     {
         return static::__('label');
     }

@@ -3,17 +3,17 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Events;
 
 use Closure;
+use Ffhs\FfhsUtils\Models\RuleEvent;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\CustomOption\CustomOptionType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\TempCustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\RuleEvent;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanMapFields;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasRuleEventPluginTranslate;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasTriggerEventFormTargets;
-use Filament\Support\Components\Component;
 use Filament\Forms\Components\Concerns\HasOptions;
 use Filament\Forms\Components\Select;
+use Filament\Support\Components\Component;
 use Illuminate\Support\Collection;
 use ReflectionClass;
 
@@ -28,7 +28,7 @@ class ChangeOptionsEvent extends FormRuleEventType
         return 'change_options_rule';
     }
 
-    public function getFormSchema(): array
+    public function getConfigurationSchema(): array
     {
         return [
             $this->getTargetSelect(),

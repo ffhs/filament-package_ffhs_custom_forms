@@ -32,6 +32,6 @@ trait HasFieldsMapToSelectOptions
 
     protected function getDefaultFieldName(CustomField $field): string
     {
-        return 'No Name: ' . $field->getType()->getTranslatedName();
+        return 'No Name: ' . $field->getType()->displayname();
     }
 }

@@ -123,12 +123,6 @@ return [
             'helper_text' => '',
         ],
     ],
-    'rule' => [
-        'label' => [
-            'single' => 'Regel',
-            'multiple' => 'Regeln',
-        ],
-    ],
     'custom_form' => [
         'label' => [
             'single' => 'Formular',

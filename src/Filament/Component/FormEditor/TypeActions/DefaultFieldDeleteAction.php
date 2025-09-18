@@ -18,7 +18,7 @@ class DefaultFieldDeleteAction extends FieldTypeAction
             ->requiresConfirmation()
             ->color('danger')
             ->modalHeading(function (CustomFieldType $type) {
-                $fieldTypeName = $type->getTranslatedName();
+                $fieldTypeName = $type->displayname();
                 $fieldName = $fieldData['name'][app()->getLocale()] ?? ''; //ToDo Translation
                 $parameters = ['name' => $fieldName, 'type' => $fieldTypeName];
 

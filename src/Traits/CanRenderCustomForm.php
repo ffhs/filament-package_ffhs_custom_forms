@@ -2,6 +2,8 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Traits;
 
+use Ffhs\FfhsUtils\Models\Rule;
+use Ffhs\FfhsUtils\Models\RuleTrigger;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\FieldDisplayer;
@@ -11,8 +13,6 @@ use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormAnswer\Rend
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormAnswer\Render\FormFieldDisplayer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\Rule;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\RuleTrigger;
 use Filament\Schemas\Components\Group;
 use Illuminate\Support\Collection;
 
@@ -53,7 +53,7 @@ trait CanRenderCustomForm
         Collection $customFields,
         int $positionOffset = 0,
     ): array {
-        $rules = collect([]);//ToDo $customForm->rules;
+        $rules = collect($customForm->getRules());
 
         if ($customFields->isEmpty()) {
             return [[], collect()];
