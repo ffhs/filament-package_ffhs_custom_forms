@@ -35,7 +35,7 @@ class ValueEqualsRuleTrigger extends FormRuleTriggerType
     public function prepareComponent(Component $component, RuleTrigger $trigger): Component
     {
         if ($component instanceof Field) {
-            return $component->live(); //ToDo improve
+            return $component->live(); //ToDo improve with js functions but holy moly
         }
 
         return $component;

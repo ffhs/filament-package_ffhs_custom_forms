@@ -3,9 +3,11 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Events;
 
+use BackedEnum;
 use Ffhs\FfhsUtils\Contracts\Rules\EmbedRuleEvent;
 use Ffhs\FfhsUtils\Contracts\Rules\EventType;
 use Ffhs\FfhsUtils\Traits\Rules\IsEventType;
+use Ffhs\FilamentPackageFfhsCustomForms\Enums\FormRuleAction;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Filament\Support\Components\Component;
@@ -13,7 +15,9 @@ use Illuminate\Support\Collection;
 
 abstract class FormRuleEventType implements EventType
 {
-    use IsEventType;
+    use IsEventType {
+        IsEventType::handle as handleEvent;
+    }
 
 
     //ToDo fix
@@ -47,6 +51,20 @@ abstract class FormRuleEventType implements EventType
         }
     }
      */
+    public function handle(
+        BackedEnum|string $action,
+        EmbedRuleEvent $ruleEvent,
+        mixed &$target,
+        array $arguments = [],
+    ): mixed {
+
+        return match ($action) {
+            FormRuleAction::AfterRenderForm => $this->handleAfterRenderForm($ruleEvent, $target, $arguments),
+            FormRuleAction::AfterRenderEntry => $this->handleAfterRenderEntry($ruleEvent, $target, $arguments),
+            default => $this->handleEvent($action, $ruleEvent, $target, $arguments)
+        };
+    }
+
 
     public function getCustomField($arguments): ?CustomField
     {
@@ -65,7 +83,32 @@ abstract class FormRuleEventType implements EventType
         return $data;
     }
 
-    public function handleAfterRenderForm(
+    public function handleAfterRenderForm(EmbedRuleEvent $event, array $target, array $arguments = []): array
+    {
+        foreach ($target as $identifier => $component) {
+            /**@var Component $component */
+            $arguments['identifier'] = $identifier;
+            $target[$identifier] = $this->handleAfterRenderFormComponent($event, $component, $arguments);
+        }
+
+        return $target;
+    }
+
+    public function handleAfterRenderEntry(
+        EmbedRuleEvent $event,
+        array $target,
+        array $arguments = [],
+    ): array {
+        foreach ($target as $identifier => $component) {
+            /**@var Component $component */
+            $arguments['identifier'] = $identifier;
+            $target[$identifier] = $this->handleAfterRenderEntryComponent($event, $component, $arguments);
+        }
+
+        return $target;
+    }
+
+    public function handleAfterRenderFormComponent(
         EmbedRuleEvent $rule,
         Component $target,
         array $arguments = [],
@@ -73,7 +116,7 @@ abstract class FormRuleEventType implements EventType
         return $target;
     }
 
-    public function handleAfterRenderEntry(
+    public function handleAfterRenderEntryComponent(
         EmbedRuleEvent $rule,
         Component $target,
         array $arguments = [],
@@ -86,24 +129,6 @@ abstract class FormRuleEventType implements EventType
         return $data; //ToDo????
     }
 
-
-    public function subHandlerRun(
-        EmbedRuleEvent $rule,
-        mixed $target,
-        array $arguments = [],
-    ): mixed { //ToDo fix
-        foreach ($target as $identifier => $item) {
-            /**@var CustomField|Component $item */
-            //dump($identifier, $item);
-            $modifiedTrigger = fn(array $extraOptions = []) => $triggers(
-                array_merge(['target_field_identifier' => $identifier], $extraOptions)
-            );
-            $arguments['identifier'] = $identifier;
-            $target[$identifier] = $subFunction($modifiedTrigger, $arguments, $item, $rule);
-        }
-
-        return $target;
-    }
 
     public function handleAnswerLoadMutation(
         EmbedRuleEvent $rule,

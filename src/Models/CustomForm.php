@@ -113,4 +113,9 @@ class CustomForm extends Model implements EmbedCustomForm
     {
         return $this->rules;
     }
+
+    public function getCustomFields(): \Illuminate\Support\Collection
+    {
+        return $this->customFields;
+    }
 }

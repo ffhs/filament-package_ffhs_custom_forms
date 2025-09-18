@@ -2,6 +2,7 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Traits;
 
+use Ffhs\FfhsUtils\Contracts\Rules\EmbedRule;
 use Ffhs\FfhsUtils\Models\Rule;
 use Ffhs\FfhsUtils\Models\RuleTrigger;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomField;
@@ -163,9 +164,8 @@ trait CanRenderCustomForm
         EmbedCustomForm $customForm,
         Collection &$customFields,
     ): void {
-        return; //toDo repair
         $rules
-            ->map(fn(Rule $rule) => $rule->ruleTriggers)
+            ->map(fn(EmbedRule $rule) => $rule->getTriggers())
             ->flatten(1)
             ->filter(fn(RuleTrigger $ruleTrigger) => !is_null($ruleTrigger))
             ->filter(fn(RuleTrigger $ruleTrigger) => $ruleTrigger->getType() instanceof FormRuleTriggerType)
@@ -174,12 +174,13 @@ trait CanRenderCustomForm
             });
 
         $customFields = $customForm
-            ->customFields
+            ->getCustomFields()
             ->mapWithKeys(fn(CustomField $field) => [$field->identifier => $field]);
 
         $rules->each(function (Rule $rule) use ($customFields, &$allComponents) {
-            $data = ['action' => 'after_render', 'custom_fields' => $customFields];
-            $allComponents = $rule->handle($data, $allComponents);
+            $data = ['custom_fields' => $customFields];
+            //ToDo FUCK, do Entry
+            $allComponents = $rule->handle(FormRuleAction::AfterRenderForm, $data, $allComponents);
         });
     }
 }

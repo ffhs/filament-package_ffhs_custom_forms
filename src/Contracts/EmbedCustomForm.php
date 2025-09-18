@@ -15,4 +15,6 @@ interface EmbedCustomForm
     public function customFields(): Collection;
 
     public function getRules(): Collection;
+
+    public function getCustomFields(): Collection;
 }

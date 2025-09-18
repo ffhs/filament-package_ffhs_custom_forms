@@ -16,8 +16,11 @@ abstract class  IsPropertyOverwriteEvent extends FormRuleEventType
     use HasTriggerEventFormTargets;
     use CanLoadFormAnswer;
 
-    public function handleAfterRenderForm(EmbedRuleEvent $rule, Component $target, array $arguments = []): Component
-    {
+    public function handleAfterRenderFormComponent(
+        EmbedRuleEvent $rule,
+        Component $target,
+        array $arguments = []
+    ): Component {
         if (!in_array($arguments['identifier'] ?? '', $rule->data['targets'] ?? [], false)) {
             return $target;
         }
@@ -25,31 +28,16 @@ abstract class  IsPropertyOverwriteEvent extends FormRuleEventType
         return $this->prepareComponent($target, $rule->getRule()->getTriggersCallback($target, $arguments));
     }
 
-
-    public function handleAfterRenderEntry(EmbedRuleEvent $rule, Component $target, array $arguments = []): Component
-    {
+    public function handleAfterRenderEntryComponent(
+        EmbedRuleEvent $rule,
+        Component $target,
+        array $arguments = []
+    ): Component {
         if (!in_array($arguments['identifier'] ?? '', $rule->data['targets'] ?? [], false)) {
             return $target;
         }
 
         return $this->prepareComponent($target, $rule->getRule()->getTriggersCallback($target, $arguments));
-        /*
-        if (empty($rule->data) || empty($rule->data['targets'])) {
-            return $target;
-        }
-
-        $customField = $this->getCustomField($arguments);
-
-        if (is_null($customField)) {
-            return $target;
-        }
-
-        $customFieldId = $customField->identifier;
-        $inTargets = in_array($customFieldId, $rule->data['targets'], false);
-
-        return $inTargets
-            ? $this->prepareComponent($target, $rule->getRule()->getTriggersCallback($target, $arguments))
-            : $target;*/
     }
 
     public function getConfigurationSchema(): array

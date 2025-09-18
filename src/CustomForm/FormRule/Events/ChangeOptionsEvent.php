@@ -46,8 +46,11 @@ class ChangeOptionsEvent extends FormRuleEventType
         ];
     }
 
-    public function handleAfterRenderForm(EmbedRuleEvent $rule, Component $target, array $arguments = []): Component
-    {
+    public function handleAfterRenderFormComponent(
+        EmbedRuleEvent $rule,
+        mixed $target,
+        array $arguments = []
+    ): Component {
         return $target; //ToDo Fix this stuff
         $identifier = $arguments['identifier'];
 
