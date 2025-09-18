@@ -6,12 +6,12 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\FormRule;
 
 trait HasRuleTriggerPluginTranslate
 {
-    public static function __(string $translate)
+    public static function __(string $translate): string
     {
         return FormRule::type__('triggers.' . static::identifier() . '.' . $translate);
     }
 
-    public function getDisplayName(): string
+    public static function displayname(): string
     {
         return static::__('label');
     }

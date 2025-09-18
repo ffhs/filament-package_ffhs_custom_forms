@@ -2,20 +2,15 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Trigger;
 
+use Ffhs\FfhsUtils\Contracts\Rules\TriggerType;
 use Ffhs\FfhsUtils\Models\RuleTrigger;
-use Ffhs\FilamentPackageFfhsCustomForms\Contracts\TriggerType;
+use Ffhs\FfhsUtils\Traits\Rules\IsTriggerType;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
-use Ffhs\FilamentPackageFfhsCustomForms\Traits\IsType;
 use Filament\Schemas\Components\Component;
 
 abstract class FormRuleTriggerType implements TriggerType
 {
-    use IsType;
-
-    public static function getConfigTypeList(): string
-    {
-        return 'rule.trigger';
-    }
+    use IsTriggerType;
 
     public function prepareComponents(array &$components, RuleTrigger $trigger): array
     {

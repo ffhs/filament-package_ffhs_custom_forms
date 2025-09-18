@@ -2,12 +2,11 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Trigger;
 
-use Ffhs\FfhsUtils\Models\RuleTrigger;
+use Ffhs\FfhsUtils\Contracts\Rules\EmbedRuleTrigger;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasRuleTriggerPluginTranslate;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasTriggerEventFormTargets;
-use Filament\Infolists\Components\Component;
 
-class IsInfolistTrigger extends FormRuleTriggerType
+class IsEntryTrigger extends FormRuleTriggerType
 {
     use HasRuleTriggerPluginTranslate;
     use HasTriggerEventFormTargets;
@@ -22,8 +21,10 @@ class IsInfolistTrigger extends FormRuleTriggerType
         return [];
     }
 
-    public function isTrigger(array $arguments, mixed &$target, RuleTrigger $rule): bool
+    public function isTrigger(array $arguments, mixed &$target, EmbedRuleTrigger $trigger): bool
     {
+        //ToDo Fix
+        return false;
         return (array_values($target)[0] ?? null) instanceof Component;
     }
 }

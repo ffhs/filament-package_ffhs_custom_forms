@@ -3,7 +3,9 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\Traits;
 
 use Ffhs\FfhsUtils\Models\Rule;
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomFormAnswer;
+use Ffhs\FilamentPackageFfhsCustomForms\Enums\FormRuleAction;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
@@ -13,11 +15,11 @@ use Illuminate\Support\Collection;
 
 trait CanLoadFormAnswer
 {
-    public function modifyFieldDataFormRules(EmbedCustomFormAnswer $answerer, mixed $fieldData, $formRules): mixed
+    public function modifyFieldDataFormRules(EmbedCustomFieldAnswer $answer, mixed $fieldData, $formRules): mixed
     {
         foreach ($formRules as $rule) {
             /**@var Rule $rule */
-            $fieldData = $rule->handle(['action' => 'load_answer', 'custom_field_answerer' => $answerer], $fieldData);
+            $fieldData = $rule->handle(FormRuleAction::BeforeRender, ['field_answerer' => $answer], $fieldData);
         }
 
         return $fieldData;
@@ -52,7 +54,7 @@ trait CanLoadFormAnswer
             $fieldData = $customField
                 ->getType()
                 ?->prepareLoadAnswerData($fieldAnswer, $fieldAnswer->answer);
-            $fieldData = $this->modifyFieldDataFormRules($answer, $fieldData, $formRules); //10ms
+            $fieldData = $this->modifyFieldDataFormRules($fieldAnswer, $fieldData, $formRules); //Check Performance
             $dataIdentifier = $this->getDataIdentifier($fieldAnswer, $customField);
             $loadedData[$dataIdentifier] = $fieldData;
         }

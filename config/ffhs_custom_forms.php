@@ -34,7 +34,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Events\HideEvent;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Events\RequiredEvent;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Events\VisibleEvent;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Trigger\AlwaysRuleTrigger;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Trigger\IsInfolistTrigger;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Trigger\IsEntryTrigger;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Trigger\ValueEqualsRuleTrigger;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormEditor\AdderComponents\Default\CustomFieldTypeAdder;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormEditor\AdderComponents\Default\GeneralFieldAdder;
@@ -58,7 +58,7 @@ return [
         'view_modes' => [],
         'rule' => [
             'trigger' => [
-                IsInfolistTrigger::class,
+                IsEntryTrigger::class,
                 ValueEqualsRuleTrigger::class,
                 AlwaysRuleTrigger::class,
             ],
