@@ -8,6 +8,7 @@ return [
         'disabled_event' => ['label' => 'Feld deaktivieren'],
         'required_event' => ['label' => 'Feld benötigen'],
         'change_options_rule' => ['label' => 'Feld Optionen ändern'],
+        'disable_options_rule' => ['label' => 'Feld Optionen deaktivieren'],
     ],
     'triggers' => [
         'value_equals_anchor' => [

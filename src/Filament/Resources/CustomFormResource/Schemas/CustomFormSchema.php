@@ -20,7 +20,8 @@ class CustomFormSchema
                     ->label(CustomForm::__('attributes.template_identifier.label'))
                     ->helperText(CustomForm::__('attributes.template_identifier.helper_text'))
                     ->hiddenOn('edit')
-                    ->required(),
+                    ->required()
+                    ->unique(),
                 TextInput::make('short_title') //ToDo Make it work in edit
                 ->label(CustomForm::__('attributes.short_title.label'))
                     ->helperText(CustomForm::__('attributes.short_title.helper_text'))

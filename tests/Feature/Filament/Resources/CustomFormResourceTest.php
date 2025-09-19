@@ -18,7 +18,7 @@ beforeEach(function () {
     $this->actingAs($user);
 });
 
-describe('Can access resource', function () {
+describe('Can access custom form resource', function () {
     it('can create custom form', function ($shortTitle, $identifier) {
 
         /** @var CreateCustomForm|Testable $livewire */
@@ -57,13 +57,13 @@ describe('Can access resource', function () {
 
     it('can list custom form', function ($shortTitle, $identifier) {
 
-        $customForm = CustomForm::create([
+        CustomForm::create([
             'short_title' => $shortTitle,
             'custom_form_identifier' => $identifier
         ]);
 
         /** @var CreateCustomForm|Testable $livewire */
-        expect(function () use ($customForm) {
+        expect(function () {
             livewire(ListCustomFormAnswer::class);
         })->not->toThrow(Error::class);
 
@@ -71,4 +71,4 @@ describe('Can access resource', function () {
         ['Test Formular 1', DefaultFormConfiguration::identifier()],
         ['Test Formular 2', DefaultFormConfiguration::identifier()],
     ]);
-})->only();
+});
