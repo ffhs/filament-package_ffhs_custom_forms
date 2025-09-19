@@ -5,6 +5,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormAnswe
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\FieldDisplayer;
+use Ffhs\FilamentPackageFfhsCustomForms\Enums\FormRuleAction;
 use Filament\Support\Components\Component;
 
 class FormFieldDisplayer implements FieldDisplayer
@@ -23,5 +24,15 @@ class FormFieldDisplayer implements FieldDisplayer
         return $customField
             ->getType()
             ->getFormComponent($customField, $this->form->getFormConfiguration(), $viewMode, $parameter);
+    }
+
+    public function getRuleActionBeforeRender(): FormRuleAction
+    {
+        return FormRuleAction::BeforeRender;
+    }
+
+    public function getRuleActionAfterRender(): FormRuleAction
+    {
+        return FormRuleAction::AfterRenderForm;
     }
 }

@@ -62,7 +62,7 @@ trait CanRenderCustomForm
         }
 
         //Rule before render
-        $this->runRulesBeforeRender($rules, $customFields);
+        $this->runRulesBeforeRender($rules, $customFields, $displayer->getRuleActionBeforeRender());
 
         //Rule Rendering
         /**@var Collection $allComponents */
@@ -75,7 +75,8 @@ trait CanRenderCustomForm
         );
 
         //TriggerPreparation (maintain for live attribute)
-        $this->runRulesAfterRender($rules, $allComponents, $customForm, $customFields);
+        $this->runRulesAfterRender($rules, $allComponents, $customForm, $customFields,
+            $displayer->getRuleActionAfterRender());
 
         return [$customFormSchema, $allComponents];
     }
@@ -149,10 +150,10 @@ trait CanRenderCustomForm
         return [$customFormSchema, $allComponents];
     }
 
-    protected function runRulesBeforeRender(Collection $rules, Collection &$customFields): void
+    protected function runRulesBeforeRender(Collection $rules, Collection &$customFields, FormRuleAction $action): void
     {
-        $rules->each(function (Rule $rule) use (&$customFields) {
-            $customFields = $rule->handle(FormRuleAction::BeforeRender, [], $customFields);
+        $rules->each(function (Rule $rule) use ($action, &$customFields) {
+            $customFields = $rule->handle($action, [], $customFields);
         });
     }
 
@@ -161,6 +162,7 @@ trait CanRenderCustomForm
         array &$allComponents,
         EmbedCustomForm $customForm,
         Collection &$customFields,
+        FormRuleAction $action
     ): void {
         $rules
             ->map(fn(EmbedRule $rule) => $rule->getTriggers())
@@ -175,10 +177,9 @@ trait CanRenderCustomForm
             ->getCustomFields()
             ->mapWithKeys(fn(CustomField $field) => [$field->identifier => $field]);
 
-        $rules->each(function (Rule $rule) use ($customFields, &$allComponents) {
+        $rules->each(function (Rule $rule) use ($action, $customFields, &$allComponents) {
             $data = ['custom_fields' => $customFields];
-            //ToDo FUCK, do Entry
-            $allComponents = $rule->handle(FormRuleAction::AfterRenderForm, $data, $allComponents);
+            $allComponents = $rule->handle($action, $data, $allComponents);
         });
     }
 }

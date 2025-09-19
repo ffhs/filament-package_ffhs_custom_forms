@@ -12,13 +12,18 @@ trait HasDefaultViewComponent
     use CanMapFields;
     use HasStaticMake;
 
+    /**
+     * @template T of Component
+     * @param T $component
+     * @return T
+     */
     protected function modifyComponent(
         Component $component,
         EmbedCustomField|EmbedCustomFieldAnswer $fieldRaw,
         bool $isEntry,
         array $ignoredOptions = [],
 
-    ): mixed {
+    ): Component {
         /**@var $typeOption TypeOption */
         $field = $fieldRaw instanceof EmbedCustomField ? $fieldRaw : $fieldRaw->getCustomField();
 

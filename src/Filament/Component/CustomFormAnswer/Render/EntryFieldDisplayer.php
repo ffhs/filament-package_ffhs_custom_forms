@@ -7,6 +7,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\FieldDisplayer;
 use Ffhs\FilamentPackageFfhsCustomForms\DataContainer\CustomFieldAnswerDataContainer;
+use Ffhs\FilamentPackageFfhsCustomForms\Enums\FormRuleAction;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
 use Filament\Support\Components\Component;
 use Illuminate\Database\Eloquent\Model;
@@ -58,5 +59,15 @@ class EntryFieldDisplayer implements FieldDisplayer
         return $customField
             ->getType()
             ->getEntryComponent($answer, $viewMode, $parameter);
+    }
+
+    public function getRuleActionBeforeRender(): FormRuleAction
+    {
+        return FormRuleAction::BeforeRender;
+    }
+
+    public function getRuleActionAfterRender(): FormRuleAction
+    {
+        return FormRuleAction::AfterRenderEntry;
     }
 }

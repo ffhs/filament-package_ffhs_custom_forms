@@ -4,8 +4,6 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\GeneralFieldRes
 
 use Error;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldType;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\GeneralFieldResource\Pages\CreateGeneralField;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\GeneralFieldResource\Pages\EditGeneralField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\TypeOption;
 use Filament\Forms\Components\Field;
@@ -90,7 +88,7 @@ class GeneralFieldSchema
         return Section::make()
             ->columnSpan(2)
             ->columns()
-            ->schema(fn(CreateGeneralField|EditGeneralField $livewire) => [
+            ->schema([
                 TextInput::make('name')
                     ->label(GeneralField::__('attributes.name.label'))
                     ->helperText(GeneralField::__('attributes.name.helper_text'))
@@ -108,9 +106,10 @@ class GeneralFieldSchema
                         })
                         ->columnStart(1)
                         ->columnSpan(1)
+                        ->searchable()
                         ->required()
                         ->live(),
-                    IconPicker::make('icon') //todo häää fix ???
+                    IconPicker::make('icon') //todo ???
                     ->helperText(static::helperText(...))
                         ->label(static::label(...))
                         ->gridSearchResults()
@@ -121,7 +120,8 @@ class GeneralFieldSchema
                     ->label(static::label(...))
                     ->disabledOn('edit')
                     ->columnSpan(1)
-                    ->required(),
+                    ->required()
+                    ->unique(),
                 Toggle::make('is_active')
                     ->helperText(static::helperText(...))
                     ->label(static::label(...))
@@ -198,7 +198,7 @@ class GeneralFieldSchema
     {
         $types = CustomFieldType::getSelectableGeneralFieldTypes();
 
-        return collect($types)->map(fn($type) => ($type)::make()->getTranslatedName());
+        return collect($types)->map(fn(string|CustomFieldType $type) => $type::displayname());
     }
 
     protected static function hasFieldTypeOptions(?GeneralField $record): bool
