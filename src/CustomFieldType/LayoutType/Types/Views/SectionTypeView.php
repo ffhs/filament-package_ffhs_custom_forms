@@ -22,7 +22,7 @@ class SectionTypeView implements FieldTypeView
             ->modifyComponent($section, $customField, false)
             ->aside($this->getOptionParameter($customField, 'aside'))
             ->schema($parameter['child_render']())
-            ->label('');
+            ->hiddenLabel();
     }
 
     public function getEntryComponent(EmbedCustomFieldAnswer $customFieldAnswer, array $parameter = []): Component
@@ -49,5 +49,4 @@ class SectionTypeView implements FieldTypeView
             ->hiddenLabel()
             ->columnSpanFull();
     }
-
 }

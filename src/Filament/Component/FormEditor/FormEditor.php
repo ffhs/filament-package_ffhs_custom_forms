@@ -70,13 +70,13 @@ class FormEditor extends Field
 
                     Tabs\Tab::make(Rule::__('label.single'))
                         ->icon('carbon-rule')
-                        ->columns(1)
+                        ->columns(3)
                         ->schema([
                             RuleEditor::make('rules')
                                 ->triggers(fn() => $this->getFormConfiguration()->getRuleTriggerTypes() ?? [])
                                 ->events(fn() => $this->getFormConfiguration()->getRuleEventTypes() ?? [])
                                 ->group(fn() => $this->getGroupName() . '-rules')
-                                ->columnSpanFull()
+                                ->columnSpan(2)
                         ])
                 ])
         ]);

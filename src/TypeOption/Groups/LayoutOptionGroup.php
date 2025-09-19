@@ -4,6 +4,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Groups;
 
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\ColumnSpanOption;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\HelperTextTypeOption;
+use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\HiddenLabelOption;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\InLineLabelOption;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\NewLineOption;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\TypeOption;
@@ -25,6 +26,7 @@ class LayoutOptionGroup extends TypeOptionGroup
             'new_line' => NewLineOption::make()
                 ->modifyOptionComponent(fn(Component $component) => $component->columnStart(1)),
             'helper_text' => HelperTextTypeOption::make(),
+            'hidden_label' => HiddenLabelOption::make()
         ]);
     }
 
