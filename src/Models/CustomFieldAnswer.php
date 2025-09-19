@@ -4,6 +4,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Models;
 
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomFieldAnswer;
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldType;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -53,7 +54,6 @@ class CustomFieldAnswer extends Model implements EmbedCustomFieldAnswer
         'path',
     ];
 
-
     protected $casts = [
         'answer' => 'array',
     ];
@@ -94,5 +94,15 @@ class CustomFieldAnswer extends Model implements EmbedCustomFieldAnswer
     public function getType(): CustomFieldType
     {
         return $this->getCustomField()->getType();
+    }
+
+    public function getCustomFormAnswer(): EmbedCustomFormAnswer
+    {
+        return $this->customFormAnswer;
+    }
+
+    public function getPath(): ?string
+    {
+        return $this->path;
     }
 }

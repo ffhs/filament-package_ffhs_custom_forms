@@ -44,4 +44,15 @@ class CustomFieldAnswerDataContainer implements EmbedCustomFieldAnswer
     {
         return $this->getCustomField()->getType();
     }
+
+    public function getCustomFormAnswer(): EmbedCustomFormAnswer
+    {
+        return $this->formAnswer;
+    }
+
+    public function getPath(): ?string
+    {
+        return $this->data['path'];
+    }
+
 }

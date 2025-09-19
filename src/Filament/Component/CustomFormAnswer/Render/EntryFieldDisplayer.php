@@ -22,11 +22,11 @@ class EntryFieldDisplayer implements FieldDisplayer
         $this->fieldAnswers = $customFormAnswer
             ->getCustomFieldAnswers()
             ->filter(function (EmbedCustomFieldAnswer $item) use ($path) {
-                if (is_null($item->path) || is_null($path)) {
-                    return is_null($item->path) && is_null($path);
+                if (is_null($path) || is_null($item->getPath())) {
+                    return is_null($item->getPath()) && is_null($path);
                 }
 
-                return str_contains($item->path, $path);
+                return str_contains($item->getPath(), $path);
             })
             ->mapWithKeys(function (EmbedCustomFieldAnswer $item) {
                 return [$item->getCustomField()->identifier => $item];

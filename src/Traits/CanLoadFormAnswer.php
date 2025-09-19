@@ -3,13 +3,13 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\Traits;
 
 use Ffhs\FfhsUtils\Models\Rule;
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomFieldAnswer;
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Enums\FormRuleAction;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 
@@ -26,66 +26,99 @@ trait CanLoadFormAnswer
         return $fieldData;
     }
 
+    public function loadCustomAnswerForEntry(
+        EmbedCustomFormAnswer $answer,
+        int|null $begin = null,
+        int|null $end = null,
+        ?EmbedCustomForm $customForm = null
+    ): array {
+        $loadedData = [];
+        $customForm = $customForm ?? $answer->getCustomForm();
+        $customFields = $customForm
+            ->getCustomFields()
+            ->mapWithKeys(fn(EmbedCustomField $field) => [$field->identifier => $field])
+            ->sortBy(function ($item) {
+                return $item->form_position;
+            });
+
+
+        $identifierTemplateMap = $customFields
+            ->whereNotNull('template_id')
+            ->keyBy('template_id')
+            ->map(function (EmbedCustomField $template) {
+                return $template->getTemplate()
+                    ?->getOwnedFields()
+                    ->mapWithKeys(fn(EmbedCustomField $field) => $template);
+            })->flatten(1);
+
+        /**@var CustomFieldAnswer $fieldAnswer */
+        foreach ($answer->getCustomFieldAnswers() as $fieldAnswer) {
+            /**@var CustomField $customField */
+            $customField = $fieldAnswer->getCustomField();
+
+            if (!$this->isFieldInRange($customField, $identifierTemplateMap, $begin, $end)) {
+                continue;
+            }
+            $dataIdentifier = $this->getDataIdentifier($fieldAnswer, $customField);
+            $loadedData[$dataIdentifier] = $fieldAnswer->answer;
+        }
+
+        return $this->resolveComplexPaths($loadedData, $customFields);
+    }
+
     public function loadCustomAnswerData(
         EmbedCustomFormAnswer $answer,
         int|null $begin = null,
         int|null $end = null,
-        ?CustomForm $customForm = null,
+        ?EmbedCustomForm $customForm = null,
+        bool $withRules = true
     ): array {
         $loadedData = [];
-        $customForm = $customForm ?? $answer->customForm;
+        $customForm = $customForm ?? $answer->getCustomForm();
         $customFields = $customForm
-            ->customFields
-            ->keyBy('id');
-        $templateTypeFields = $customFields
+            ->getCustomFields()
+            ->mapWithKeys(fn(EmbedCustomField $field) => [$field->identifier => $field])
+            ->sortBy(function ($item) {
+                return $item->form_position;
+            });
+
+
+        $identifierTemplateMap = $customFields
             ->whereNotNull('template_id')
-            ->keyBy('template_id');
-        $formRules = $customForm->rules;
+            ->keyBy('template_id')
+            ->map(function (EmbedCustomField $template) {
+                return $template->getTemplate()
+                    ?->getOwnedFields()
+                    ->mapWithKeys(fn(EmbedCustomField $field) => $template);
+            })->flatten(1);
+
+
+        $formRules = $customForm->getRules();
 
         /**@var CustomFieldAnswer $fieldAnswer */
-        foreach ($answer->customFieldAnswers as $fieldAnswer) {
+        foreach ($answer->getCustomFieldAnswers() as $fieldAnswer) {
             /**@var CustomField $customField */
-            $customField = $customFields->get($fieldAnswer->custom_field_id);
-            $isFieldInRange = $this->isFieldInRange($customField, $customForm, $templateTypeFields, $begin, $end);
+            $customField = $fieldAnswer->getCustomField();
 
-            if (!$isFieldInRange) {
+            if (!$this->isFieldInRange($customField, $identifierTemplateMap, $begin, $end)) {
                 continue;
             }
 
             $fieldData = $customField
                 ->getType()
                 ?->prepareLoadAnswerData($fieldAnswer, $fieldAnswer->answer);
-            $fieldData = $this->modifyFieldDataFormRules($fieldAnswer, $fieldData, $formRules); //Check Performance
+
+            if ($withRules) {
+                $fieldData = $this->modifyFieldDataFormRules($fieldAnswer, $fieldData,
+                    $formRules); //todo Check Performance
+            }
             $dataIdentifier = $this->getDataIdentifier($fieldAnswer, $customField);
             $loadedData[$dataIdentifier] = $fieldData;
         }
-
-        $customFields = $customFields
-            ->sortBy('form_position')
-            ->keyBy(fn(CustomField $item) => $item->identifier);
 
         return $this->resolveComplexPaths($loadedData, $customFields);
     }
 
-    public function loadCustomAnswerForEntry(CustomFormAnswer $answer, ?CustomForm $customForm = null): array
-    {
-        $loadedData = [];
-        $customForm = $customForm ?? $answer->customForm;
-        $customFields = $customForm
-            ->customFields
-            ->keyBy('id');
-
-        /**@var CustomFieldAnswer $fieldAnswer */
-        foreach ($answer->customFieldAnswers as $fieldAnswer) {
-            $customField = $customFields->get($fieldAnswer->custom_field_id);
-
-            $fieldData = $fieldAnswer->answer;
-            $dataIdentifier = $this->getDataIdentifier($fieldAnswer, $customField);
-            $loadedData[$dataIdentifier] = $fieldData;
-        }
-
-        return $loadedData;
-    }
 
     public function resolveComplexPaths(array $loadedData, Collection $customFields): array
     {
@@ -98,18 +131,23 @@ trait CanLoadFormAnswer
             $identifier = $keyPath[0];
             $path = implode('.', array_slice($keyPath, 1)); //the path without identifier
 
+            /**@var ?EmbedCustomField $customField */
             $customField = $customFields->get($identifier);
+
+            if (is_null($customField)) {
+                continue;
+            }
+
             $pathResolved = $this->resolveFieldPath($customField, $customFields, $path);
             $pathResolved .= '.' . $identifier;
 
             Arr::set($loadedData, $pathResolved, $data);
             unset($loadedData[$key]);
         }
-
         return $loadedData;
     }
 
-    protected function resolveFieldPath(CustomField $childField, Collection $formFields, string $path): string
+    protected function resolveFieldPath(EmbedCustomField $childField, Collection $formFields, string $path): string
     {
         //ToDo what if an template is in an repeater
         $nearestParent = $this->getNearestParentField($childField, $formFields);
@@ -121,7 +159,7 @@ trait CanLoadFormAnswer
         $pathFragments = explode('.', $path);
         $path = end($pathFragments);
         //Get Last Path element ToDO check if that works???
-        $lastPath = sizeof($pathFragments) > 1 ? implode(' ', array_slice($pathFragments, 0, -1)) : null;
+        $lastPath = count($pathFragments) > 1 ? implode(' ', array_slice($pathFragments, 0, -1)) : null;
 
         if (!is_null($lastPath)) {
             $resultPathParent = static::resolveFieldPath($nearestParent, $formFields, $lastPath);
@@ -131,22 +169,18 @@ trait CanLoadFormAnswer
         return $nearestParent->identifier . '.' . $path;
     }
 
-    private function isFieldInRange(
-        ?CustomField $customField,
-        CustomForm $customForm,
-        Collection $templateTypeFields,
+    protected function isFieldInRange(
+        ?EmbedCustomField $customField,
+        Collection $identifierTemplateMap,
         ?int $begin,
         ?int $end
     ): bool {
-        //If field is in template, get template field for position
-        if (!is_null($customField) && $customForm->id !== $customField->custom_form_id) {
-            /** @var CustomField $customField */
-            $customField = $templateTypeFields->get($customField->custom_form_id);
-        }
-
         if (is_null($customField)) {
             return false;
         }
+
+        //If field is in template, get template field for position
+        $customField = $identifierTemplateMap->get($customField->identifier) ?? $customField;
 
         $beginCondition = is_null($begin) || $begin <= $customField->form_position;
         $endCondition = is_null($end) || $customField->form_position <= $end;
@@ -154,32 +188,38 @@ trait CanLoadFormAnswer
         return $beginCondition && $endCondition;
     }
 
-    private function getDataIdentifier(CustomFieldAnswer $fieldAnswer, CustomField $customField): string
+    private function getDataIdentifier(EmbedCustomFieldAnswer $fieldAnswer, EmbedCustomField $customField): string
     {
         $dataIdentifier = $customField->identifier;
-        $dataIdentifier .= is_null($fieldAnswer->path) ? '' : '.' . $fieldAnswer->path;
+        $dataIdentifier .= is_null($fieldAnswer->getPath()) ? '' : '.' . $fieldAnswer->getPath();
 
         return $dataIdentifier;
     }
 
-    private function getNearestParentField(CustomField $childField, Collection $formFields): ?CustomField
+    private function getNearestParentField(EmbedCustomField $childField, Collection $formFields): ?EmbedCustomField
     {
-        $nearestParent = [];
+        $nearestParent = null;
+        $nearestParentEnd = null;
 
         foreach ($formFields as $field) {
-            if ($childField->custom_form_id !== $field->custom_form_id) {
-                continue;
-            }
             if ($field->form_position >= $childField->form_position) {
                 break;
             }
-            if ($field->layout_end_position < $childField->form_position || !$field->getType()?->hasSplitFields()) {
+            if (!$field->getType()?->hasSplitFields()) {
+                continue;
+            }
+
+            if ($field->layout_end_position < $childField->form_position) {
+                continue;
+            }
+
+            if (!is_null($field->layout_end_position) && $field->layout_end_position < $nearestParentEnd) {
                 continue;
             }
 
             $nearestParent = $field;
+            $nearestParentEnd = $field->layout_end_position;
         }
-
         return $nearestParent;
     }
 }

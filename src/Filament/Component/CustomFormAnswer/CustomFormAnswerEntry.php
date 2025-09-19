@@ -26,8 +26,8 @@ class CustomFormAnswerEntry extends Entry implements CanEntangleWithSingularRela
     protected function setUp(): void
     {
         parent::setUp();
-        $this
-            ->fieldDisplayer(EntryFieldDisplayer::make(...))
+
+        $this->fieldDisplayer(EntryFieldDisplayer::make(...))
             ->schema($this->getCustomFormSchema(...))
             ->columns(1)
             ->autoViewMode()
@@ -36,7 +36,6 @@ class CustomFormAnswerEntry extends Entry implements CanEntangleWithSingularRela
 
     protected function makeChildSchema(string $key): Schema
     {
-        return parent::makeChildSchema($key)
-            ->operation('view');
+        return parent::makeChildSchema($key)->operation('view');
     }
 }

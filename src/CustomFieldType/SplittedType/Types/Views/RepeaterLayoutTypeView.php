@@ -9,7 +9,6 @@ use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormAnswer\Rend
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanLoadFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanRenderCustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasDefaultViewComponent;
-use Filament\Actions\Action;
 use Filament\Forms\Components\Repeater;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Fieldset;
@@ -53,8 +52,6 @@ class RepeaterLayoutTypeView implements FieldTypeView
             ->minItems($minAmount)
             ->maxItems($maxAmount)
             ->schema($schema)
-            ->deleteAction($this->modifyRepeaterAction(...))
-            ->addAction($this->modifyRepeaterAction(...))
             ->reorderable(false); //ToDo add order
 
         if (!is_null($addActionLabel)) {
@@ -75,22 +72,27 @@ class RepeaterLayoutTypeView implements FieldTypeView
         /** @var Collection $fields */
         $schema = [];
 
-        $loadedAnswers = $this->loadCustomAnswerData(
-            $customFieldAnswer->customFormAnswer, //ToDo .... FUCK
-            $customFieldAnswer->customField->custom_form_id,
-            $customFieldAnswer->customField->layout_end_position,
-            $customFieldAnswer->customField->customForm
+        $customField = $customFieldAnswer->getCustomField();
+
+        $loadedAnswers = $this->loadCustomAnswerForEntry(
+            $customFieldAnswer->getCustomFormAnswer(),
+            $customField->form_position,
+            $customField->layout_end_position,
         );
-        $loadedAnswers = $loadedAnswers[$customFieldAnswer->customField->identifier ?? ''] ?? [];
+
+        //ToDo the problem is thath the shit doesnt load the answers ffor the sup stufff -_-
+
+        $loadedAnswers = $loadedAnswers[$customFieldAnswer->getCustomField()->identifier ?? ''] ?? [];
 
         $fields = $parameter['child_fields'];
         $fields = $fields->keyBy('form_position');
         $offset = $fields->sortBy('form_position')->first()->form_position - 1;
         $viewMode = $parameter['viewMode'];
-        $customForm = $customFieldAnswer->customFormAnswer->customForm;//ToDo .... FUCK
+        $customForm = $customFieldAnswer->getCustomForm();
+
 
         foreach ($loadedAnswers as $id => $answer) {
-            $displayer = EntryFieldDisplayer::make($customFieldAnswer->customFormAnswer, $id);//ToDo .... FUCK
+            $displayer = EntryFieldDisplayer::make($customFieldAnswer->getCustomFormAnswer(), $id);
 
             $renderOutput = $this->renderCustomFormRaw($viewMode, $displayer, $customForm, $fields, $offset);
             [$subSchema, $allComponents] = $renderOutput;
@@ -98,26 +100,14 @@ class RepeaterLayoutTypeView implements FieldTypeView
             $parameter['registerComponents']($allComponents);
 
             $schema[] = Fieldset::make('')
-                ->statePath($id)
                 ->schema($subSchema)
                 ->statePath($id);
         }
 
         return $component
+            ->columnSpanFull()
             ->schema($schema)
-            ->columnStart(1)
-            ->columnSpanFull();
+            ->columnStart(1);
     }
 
-    protected function modifyRepeaterAction(Action $action): void
-    {
-        $oldAction = $action->getActionFunction();
-
-        $action->action(function ($livewire, Repeater $component, Action $action) use ($oldAction) {
-            $action->evaluate($oldAction);
-            $livewire
-                ->getForm('form')
-                ->callAfterStateUpdated($component->getStatePath());
-        });
-    }
 }

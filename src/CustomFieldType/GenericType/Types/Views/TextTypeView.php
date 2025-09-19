@@ -2,7 +2,6 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\Types\Views;
 
-use Ffhs\FilamentPackageFffhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\FieldTypeView;
@@ -32,6 +31,9 @@ class TextTypeView implements FieldTypeView
 
     public function getEntryComponent(EmbedCustomFieldAnswer $customFieldAnswer, array $parameter = []): Component
     {
+        if ($customFieldAnswer->getCustomField()->id == 20) {
+            dd($this->getAnswer($customFieldAnswer), $customFieldAnswer);
+        }
         return $this->makeComponent(TextEntry::class, $customFieldAnswer, true);
     }
 }

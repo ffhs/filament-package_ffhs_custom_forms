@@ -12,4 +12,8 @@ interface EmbedCustomFieldAnswer
     public function getCustomField(): EmbedCustomField;
 
     public function getType(): CustomFieldType;
+
+    public function getCustomFormAnswer(): EmbedCustomFormAnswer;
+
+    public function getPath(): ?string;
 }
