@@ -5,6 +5,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\DataContainer;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomFormAnswer;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 
 
@@ -26,8 +27,22 @@ class CustomFormAnswerDataContainer implements EmbedCustomFormAnswer
             ->customFields()
             ->mapWithKeys(fn(EmbedCustomField $field) => [$field->identifier => $field]);
 
-        foreach ($this->data as $key => $fieldData) {
+        foreach (Arr::dot($this->data) as $key => $fieldData) {
             $path = explode('.', $key);
+
+            // Entferne alle Array-Elemente nach "saved"
+            $savedIndex = array_search('saved', $path);
+            if ($savedIndex !== false) {
+                $path = array_slice($path, 0, $savedIndex);
+            }
+
+            $pathKey = implode('.', $path);
+
+            if (array_key_exists($pathKey, $answer)) {
+                continue;
+            }
+
+
             $identifier = array_pop($path);
             $path = implode('.', $path);
             $path = empty($path) ? null : $path;
@@ -38,11 +53,11 @@ class CustomFormAnswerDataContainer implements EmbedCustomFormAnswer
                 continue;
             }
 
-            $newData = ['answer' => $fieldData, 'path' => $path];
-            $answer[] = CustomFieldAnswerDataContainer::make($newData, $this, $field);
+            $newData = ['answer' => Arr::get($this->data, $pathKey), 'path' => $path];
+            $answer[$pathKey] = CustomFieldAnswerDataContainer::make($newData, $this, $field);
         }
 
-        return collect($answer);
+        return collect(array_values($answer));
     }
 
     public function getCustomForm(): EmbedCustomForm

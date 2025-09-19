@@ -80,16 +80,17 @@ class RepeaterLayoutTypeView implements FieldTypeView
             $customField->layout_end_position,
         );
 
+        //ToDo Doesnt use the right parent ...
         //ToDo the problem is thath the shit doesnt load the answers ffor the sup stufff -_-
 
-        $loadedAnswers = $loadedAnswers[$customFieldAnswer->getCustomField()->identifier ?? ''] ?? [];
+        //$loadedAnswers = $loadedAnswers[$customFieldAnswer->getCustomField()->identifier ?? ''] ?? [];
+        $loadedAnswers = array_values(array_values($loadedAnswers)[0])[0] ?? [];
 
         $fields = $parameter['child_fields'];
         $fields = $fields->keyBy('form_position');
         $offset = $fields->sortBy('form_position')->first()->form_position - 1;
         $viewMode = $parameter['viewMode'];
         $customForm = $customFieldAnswer->getCustomForm();
-
 
         foreach ($loadedAnswers as $id => $answer) {
             $displayer = EntryFieldDisplayer::make($customFieldAnswer->getCustomFormAnswer(), $id);

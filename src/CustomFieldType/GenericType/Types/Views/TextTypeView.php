@@ -31,9 +31,6 @@ class TextTypeView implements FieldTypeView
 
     public function getEntryComponent(EmbedCustomFieldAnswer $customFieldAnswer, array $parameter = []): Component
     {
-        if ($customFieldAnswer->getCustomField()->id == 20) {
-            dd($this->getAnswer($customFieldAnswer), $customFieldAnswer);
-        }
         return $this->makeComponent(TextEntry::class, $customFieldAnswer, true);
     }
 }
