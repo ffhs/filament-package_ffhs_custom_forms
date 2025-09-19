@@ -92,6 +92,10 @@
     "minimum-stability": "alpha",
     "prefer-stable": true,
     "repositories": {
+        "ffhs": {
+            "type": "path",
+            "url": "../*"
+        },
         "internal-git.alpen.ffhs.ch/36": {
             "type": "composer",
             "url": "https://internal-git.alpen.ffhs.ch/api/v4/group/36/-/packages/composer/packages.json"

@@ -13,3 +13,11 @@ arch()
 arch()
     ->expect('Ffhs\FilamentPackageFfhsCustomForms\Traits')
     ->toBeTraits();
+
+arch()
+    ->expect('Ffhs\FilamentPackageFfhsCustomForms\Enums')
+    ->toBeEnums();
+
+arch()
+    ->expect('Ffhs\FilamentPackageFfhsCustomForms\Contracts')
+    ->toBeInterfaces();

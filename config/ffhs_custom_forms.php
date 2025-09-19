@@ -36,25 +36,59 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Events\VisibleEvent;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Trigger\AlwaysRuleTrigger;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Trigger\IsEntryTrigger;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Trigger\ValueEqualsRuleTrigger;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormEditor\AdderComponents\Default\CustomFieldTypeAdder;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormEditor\AdderComponents\Default\GeneralFieldAdder;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormEditor\AdderComponents\Default\TemplateFieldAdder;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\FormEditor\FieldAdder\FormFieldTemplateAdder;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\FormEditor\FieldAdder\FormFieldTypeAdder;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\FormEditor\FieldAdder\FormGeneralFieldAdder;
 
 return [
-    'default_column_count' => 4,
 
     'form_configurations' => [
         DefaultFormConfiguration::class => [],
     ],
 
+
     'default_form_configuration' => [
+        'column_count' => 4,
         'editor' => [
-            'field_adders' => [
-                CustomFieldTypeAdder::class,
-                TemplateFieldAdder::class,
-                GeneralFieldAdder::class
+            'side_components' => [
+                FormFieldTypeAdder::class,
+                FormGeneralFieldAdder::class,
+                FormFieldTemplateAdder::class,
             ],
         ],
+        'selectable_field_types' => [
+            CheckboxType::class,
+            TextType::class,
+            EmailType::class,
+            NumberType::class,
+            TextAreaType::class,
+            DateTimeType::class,
+            DateType::class,
+            DateRangeType::class,
+            FileUploadType::class,
+
+            TagsType::class,
+            KeyValueType::class,
+
+            ColorPickerType::class,
+            IconSelectType::class,
+
+            SelectType::class,
+            RadioType::class,
+            CheckboxListType::class,
+            ToggleButtonsType::class,
+
+            SectionType::class,
+            RepeaterLayoutType::class,
+            FieldsetType::class,
+            GroupType::class,
+            TitleType::class,
+            TextLayoutType::class,
+            DownloadType::class,
+            ImageLayoutType::class,
+            SpaceType::class,
+        ],
+
         'view_modes' => [],
         'rule' => [
             'trigger' => [
@@ -70,60 +104,28 @@ return [
                 ChangeOptionsEvent::class,
             ],
         ],
-        'types_settings' => [
-            'download_file' => [
-                'save_path' => '/custom-form-plugin/custom-fields/specified-data',
-                'disk' => 'local',
-            ],
-            'image_layout' => [
-                'save_path' => '/custom-form-plugin/images',
-                'disk' => 'public',
-            ],
-            FileUploadType::identifier() => [
-                'files' => [
-                    'url_prefix' => null, // Null means default path
-                    'save_path' => '/custom-form-plugin/custom-fields/uploaded',
-                    'disk' => 'local',
-                ],
-                'images' => [
-                    'url_prefix' => null, // Null means default path
-                    'save_path' => '/custom-form-plugin/uploaded-images',
-                    'disk' => 'public',
-                ]
-            ],
-            'selectable_field_types' => [
-                CheckboxType::class,
-                TextType::class,
-                EmailType::class,
-                NumberType::class,
-                TextAreaType::class,
-                DateTimeType::class,
-                DateType::class,
-                DateRangeType::class,
-                FileUploadType::class,
-
-                TagsType::class,
-                KeyValueType::class,
-
-                ColorPickerType::class,
-                IconSelectType::class,
-
-                SelectType::class,
-                RadioType::class,
-                CheckboxListType::class,
-                ToggleButtonsType::class,
-
-                SectionType::class,
-                RepeaterLayoutType::class,
-                FieldsetType::class,
-                GroupType::class,
-                TitleType::class,
-                TextLayoutType::class,
-                DownloadType::class,
-                ImageLayoutType::class,
-                SpaceType::class,
-            ],
-        ],
+//        'types_settings' => [
+//            'download_file' => [
+//                'save_path' => '/custom-form-plugin/custom-fields/specified-data',
+//                'disk' => 'local',
+//            ],
+//            'image_layout' => [
+//                'save_path' => '/custom-form-plugin/images',
+//                'disk' => 'public',
+//            ],
+//            FileUploadType::identifier() => [
+//                'files' => [
+//                    'url_prefix' => null, // Null means default path
+//                    'save_path' => '/custom-form-plugin/custom-fields/uploaded',
+//                    'disk' => 'local',
+//                ],
+//                'images' => [
+//                    'url_prefix' => null, // Null means default path
+//                    'save_path' => '/custom-form-plugin/uploaded-images',
+//                    'disk' => 'public',
+//                ]
+//            ],
+//        ],
     ],
 
     'extra_custom_field_types' => [

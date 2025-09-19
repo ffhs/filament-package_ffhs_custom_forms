@@ -126,6 +126,6 @@ abstract class CustomFormConfiguration
 
     public function getSideComponentModifiers()
     {
-        return $this::config('editor.side_components', []);
+        return $this::config('editor.side_components') ?? [];
     }
 }

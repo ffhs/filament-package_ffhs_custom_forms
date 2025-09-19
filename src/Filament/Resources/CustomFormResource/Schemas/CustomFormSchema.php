@@ -2,6 +2,7 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormResource\Schemas;
 
+use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormConfiguration\DefaultFormConfiguration;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormTypeSelector;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\FormEditor\FormEditor;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
@@ -30,8 +31,10 @@ class CustomFormSchema
                     ->required(),
                 FormEditor::make('custom_form')
                     ->hiddenOn('create')
-                    ->formConfiguration(fn(CustomForm $record) => $record->getFormConfiguration())
                     ->hiddenLabel()
+                    ->formConfiguration(function (?CustomForm $record) {
+                        return $record?->getFormConfiguration() ?? DefaultFormConfiguration::make();
+                    })
             ]);
     }
 }
