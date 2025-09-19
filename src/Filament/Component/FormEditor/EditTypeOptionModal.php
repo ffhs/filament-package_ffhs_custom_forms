@@ -6,6 +6,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Filament\Forms\Components\Field;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Group;
+use LaraZeus\SpatieTranslatable\Actions\LocaleSwitcher;
 
 class EditTypeOptionModal extends Component
 {
@@ -51,6 +52,8 @@ class EditTypeOptionModal extends Component
             }
 
             return [
+                Group::make([LocaleSwitcher::make()])
+                    ->columns(),
                 Group::make($components)
                     ->statePath('options')
                     ->columns()

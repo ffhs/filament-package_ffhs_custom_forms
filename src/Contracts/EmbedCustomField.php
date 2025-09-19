@@ -4,6 +4,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Contracts;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
+use Illuminate\Support\Collection;
 
 /**
  * @property $is_active
@@ -21,4 +22,5 @@ interface EmbedCustomField
 
     public function getTemplate(): ?EmbedCustomForm;
 
+    public function getCustomOptions(): Collection;
 }

@@ -107,18 +107,18 @@ trait CanMapFields
             ->pluck('name', 'identifier');
     }
 
-    public function getAllCustomOptions(EmbedCustomField|CustomFieldAnswer $record): Collection
+    public function getAllCustomOptions(EmbedCustomField|EmbedCustomFieldAnswer $record): Collection
     {
-        if ($record instanceof CustomFieldAnswer) {
-            $record = $record->customField;
+        if ($record instanceof EmbedCustomFieldAnswer) {
+            $record = $record->getCustomField();
         }
 
         if ($record->isGeneralField()) {
             $options = $record
-                ->generalField
+                ->getGeneralField()
                 ->customOptions;
         } else {
-            $options = $record->customOptions;
+            $options = $record->getCustomOptions();
         }
 
         return $options->pluck('name', 'identifier');

@@ -2,14 +2,14 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\CustomOption\Types\Views;
 
-use Ffhs\FfhsUtils\Filament\Component\PrioritizeSelect;
+use Ffhs\FfhsUtils\Filament\Components\PrioritizeEntry;
+use Ffhs\FfhsUtils\Filament\Components\PrioritizeSelect;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\FieldTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\CustomOption\HasCustomOptionInfoListView;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasDefaultViewComponent;
 use Filament\Forms\Components\Select;
-use Filament\Infolists\Components\TextEntry;
 use Filament\Support\Components\Component;
 
 class SelectTypeView implements FieldTypeView
@@ -35,7 +35,7 @@ class SelectTypeView implements FieldTypeView
     {
         $select = $this->makeComponent(PrioritizeSelect::class, $customField, false);
 
-        $selectLabelTranslation = __('filament-package_ffhs_custom_forms::custom_forms.fields.type_view.select.select');
+        $selectLabelTranslation = 'test'; //__('filament-package_ffhs_custom_forms::custom_forms.fields.type_view.select.select'); ToD o Fix
         $labels = $this->getOptionParameter($customField, 'prioritized_labels');
         $labels = array_values($labels);
         $validationMessagesRaw = $this->getOptionParameter($customField, 'validation_messages_prioritized');
@@ -67,7 +67,6 @@ class SelectTypeView implements FieldTypeView
 
     public function getSingleSelect(EmbedCustomField $customField): Select
     {
-        /** @var Select $select */
         $select = $this->makeComponent(Select::class, $customField, false);
         $select = $select->options($this->getAvailableCustomOptions($customField));
         $required = $this->getOptionParameter($customField, 'required');
@@ -96,37 +95,15 @@ class SelectTypeView implements FieldTypeView
             return $this->getEntryComponentNormalSelect($customFieldAnswer, $parameter);
         }
 
-        /**@var TextEntry $textEntry */
-        $textEntry = $this->makeComponent(TextEntry::class, $customFieldAnswer, true);
+        $prioritizeEntry = $this->makeComponent(PrioritizeEntry::class, $customFieldAnswer, true);
+        $translatedSelect = $customFieldAnswer->getType()->displayname();
         $answer = $this->getAnswer($customFieldAnswer) ?? [];
         $stateList = $this
             ->getAllCustomOptions($customFieldAnswer)
             ->filter(fn($value, $id) => in_array($id, $answer, false));
 
-        if (!is_array($answer)) {
-            $answer = [];
-        }
 
-        $cleanedAnswers = [];
-        foreach ($answer as $key => $value) {
-            if (is_null($value) || !str_contains($key, 'prioritized_')) {
-                continue;
-            }
-
-            $selectId = str_replace('prioritized_', '', $key);
-
-            $name = $stateList->toArray()[$value] ?? '';
-            $translatedSelect = $customFieldAnswer->getType()->displayname();
-            $cleanedAnswers[$selectId] = $selectId + 1 . '. ' . $translatedSelect . ': ' . $name;
-        }
-
-        ksort($cleanedAnswers, SORT_NUMERIC);
-
-        return $textEntry
-            ->state($cleanedAnswers)
-            ->listWithLineBreaks()
-            ->columnSpanFull()
-            ->inlineLabel()
-            ->badge();
+        return $prioritizeEntry->formatPrioritizedState($answer, $stateList, $translatedSelect);
     }
+
 }

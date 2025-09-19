@@ -3,6 +3,7 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\Traits;
 
 use Ffhs\FfhsUtils\Models\Rule;
+use Ffhs\FilamentPackageFfhsCustomForms\Enums\FormRuleAction;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
@@ -292,7 +293,8 @@ trait CanSaveFormAnswer
         foreach ($formRules as $rule) {
             /**@var Rule $rule */
             $fieldAnswererData = $rule->handle(
-                ['action' => 'save_answer', 'custom_field_answer' => $customFieldAnswer],
+                FormRuleAction::OnAnswerSave,
+                ['custom_field_answer' => $customFieldAnswer],
                 $fieldAnswererData
             );
         }

@@ -8,6 +8,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldT
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormConfiguration\CustomFormConfiguration;
 use Ffhs\FilamentPackageFfhsCustomForms\Facades\CustomForms;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
+use Illuminate\Support\Collection;
 
 
 class CustomFieldDataContainer implements EmbedCustomField
@@ -48,6 +49,11 @@ class CustomFieldDataContainer implements EmbedCustomField
 
     public function getTemplate(): ?EmbedCustomForm
     {
-        // TODO: Implement getTemplate() method.
+        return $this->customFormConfiguration->getAvailableTemplates()->get($this->data['template_id'] ?? '');
+    }
+
+    public function getCustomOptions(): Collection
+    {
+        return collect($this->data['options']['custom_options'] ?? []);
     }
 }
