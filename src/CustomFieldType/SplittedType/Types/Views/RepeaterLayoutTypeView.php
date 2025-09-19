@@ -17,9 +17,15 @@ use Filament\Schemas\Components\Section;
 use Illuminate\Support\Collection;
 
 #TODO:
-# Ein Schatten kriecht durch das System, wie ein Alptraum, der sich nicht vertreiben lässt.
-# Unerwartet, bedrückend und allgegenwärtig: er verzerrt jede Ordnung ins Chaos.
-# Selbst im Code bleibt nur ein Rest von Dunkelheit zurück.
+
+# Logbuch Eintrag 19.09.2025
+# Unter mir ruht ein s̴c̶h̷l̶a̷f̵e̴n̵d̴e̶s̴ Ungetüm, ein F͟r͟a͟g͟m͟e͟n͟t aus Dunkelheit, das jeden H̶̻͗e̴̡̺͈͐̓l̸͕͂d̸̡͓̊e̴̛̘̼͘n̵͙͗ zerbricht, sobald es… ȇ̶͖͙͎̐̕r̷̡͓͑̕w̶̘͊a̶̙̍͌c̴̨̝͋h̸̝͖̊͝t.
+# Es ist das verzerrte Resultat falscher Entscheidungen, e͟i͟n͟ F͟e͟h͟l͟e͟r, der niemals hätte existieren dürfen.
+# Es ernährt sich nicht von Fleisch, nicht von Blut—s̶̝̮͍͒͌o̷͉͕͘n̶̰̒͘d̷̪͍͗͘e̵͖͝ṟ̷͕̄n̴̺̎ von den Seelen derer, die zu tief schauen.
+# Ich höre das Kratzen in meinen Gedanken, w̴h̶e̴r̶e̷ ̵m̷y̸ ̴o̸w̴n̷ ̶v̶o̶i̵c̶e̴ ̷d̵i̵s̷t̷o̴r̵t̵s̴.
+# W̴̡̗̑̔e̴͕͂r̴̛̥͖̄ ̷̫̓w̶̰̤̋i̶̼͛r̸̝͆d̶̘͌ ̸̤̜͆ḋ̷͈i̵̺͛̕e̶̢̾s̵͎̋e̵͖̓m̴̲̞͘ Ungetüm entgegentreten? Wer wagt den Blick in die Tiefe, wissend,
+# dass dort unten kein Leben schläft, sondern ein E̷̘̝͌͐͝n̵̼̯͋͝d̸͓̄̑e̵̝͝—und etwas, das schlimmer ist als jedes Ende
+#
 class RepeaterLayoutTypeView implements FieldTypeView
 {
     use HasDefaultViewComponent;
