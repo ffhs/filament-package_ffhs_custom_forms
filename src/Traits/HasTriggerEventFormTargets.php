@@ -2,19 +2,21 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Traits;
 
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomField;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormConfiguration\CustomFormConfiguration;
+use Ffhs\FilamentPackageFfhsCustomForms\Facades\CustomForms;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\FormEditor\StateCasts\CustomFieldStateCast;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Filament\Forms\Components\Select;
 use Filament\Schemas\Components\Utilities\Get;
+use Illuminate\Support\Collection;
 
 trait HasTriggerEventFormTargets
-{ //ToDo do it without customForms only with form Configuration
+{
     use HasAllFieldDataFromFormData;
     use HasFieldsMapToSelectOptions;
     use CanLoadFieldRelationFromForm;
 
-    protected array|null $cachedAllFieldsData = null;
+    protected Collection|null $cachedAllFieldsData = null;
 
     public function getTargetsSelect(): Select
     {
@@ -40,20 +42,16 @@ trait HasTriggerEventFormTargets
             ->live();
     }
 
-    public function getTargetOptions(Get $get, ?CustomForm $record): array
+    public function getTargetOptions(Get $get): array
     {
-        $fields = collect($this->getAllFieldsData($get, $record))
-            ->filter(fn($fieldData) => empty($fieldData['template_id']))
-            ->map(function ($fieldData) use ($record) {
-                $customField = new CustomField($fieldData);
+        $formConfiguration = $this->getFormConfiguration($get);
+        $fields = collect($this->getAllFieldsData($get, $formConfiguration))
+            ->filter(fn(EmbedCustomField $field) => is_null($field->template_id));
 
-                return $this->loadFieldRelationsFromForm($customField, $record);
-            });
-
-        return $this->getSelectOptionsFromFields($fields);
+        return $this->getSelectOptionsFromFields($fields, $get);
     }
 
-    public function getAllFieldsData(Get $get, CustomForm $customForm): array
+    public function getAllFieldsData(Get $get, CustomFormConfiguration $formConfiguration): Collection
     {
         if (!is_null($this->cachedAllFieldsData)) {
             return $this->cachedAllFieldsData;
@@ -62,10 +60,10 @@ trait HasTriggerEventFormTargets
         $fields = $get('../../../../../custom_fields') ?? [];
         $fields = new CustomFieldStateCast()->flattCustomFields($fields);
 
-        return $this->cachedAllFieldsData = $this->getFieldDataFromFormData($fields, $customForm);
+        return $this->cachedAllFieldsData = $this->getFieldDataFromFormData($fields, $formConfiguration);
     }
 
-    public function getTargetFieldData(Get $get, $customForm): array|null
+    public function getTargetFieldData(Get $get): EmbedCustomField|null
     {
         $identifier = $get('target');
 
@@ -73,8 +71,13 @@ trait HasTriggerEventFormTargets
             return null;
         }
 
-        $fields = $this->getAllFieldsData($get, $customForm);
+        $fields = $this->getAllFieldsData($get, $this->getFormConfiguration($get));
 
         return $fields[$identifier] ?? null;
+    }
+
+    public function getFormConfiguration(Get $get): CustomFormConfiguration
+    {
+        return CustomForms::getFormConfiguration($get('../../../../../custom_form_identifier'));
     }
 }

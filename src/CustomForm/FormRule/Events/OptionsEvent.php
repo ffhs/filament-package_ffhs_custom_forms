@@ -2,17 +2,16 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Events;
 
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\CustomOption\CustomOptionType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\TempCustomField;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanMapFields;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasRuleEventPluginTranslate;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasTriggerEventFormTargets;
 use Filament\Forms\Components\Select;
+use Filament\Schemas\Components\Utilities\Get;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Enumerable;
-use Illuminate\Support\Traits\EnumeratesValues;
 
 abstract class OptionsEvent extends FormRuleEventType
 {
@@ -27,91 +26,51 @@ abstract class OptionsEvent extends FormRuleEventType
             Select::make('selected_options')
                 ->label('Anzuzeigende Optionen')
                 ->multiple()
-                ->hidden(function ($set, $get) {
-                    //Fields with an array doesn't generate properly
-                    if (is_null($get('selected_options'))) {
-                        $set('selected_options', []);
-                    }
-                })
                 ->options($this->getCustomOptionsOptions(...))
+                ->hidden(function ($set, $get) {
+                    is_null($get('selected_options')) ? $set('selected_options', []) : null;
+                })
         ];
     }
 
     public function getCustomOptionsOptions(
-        $get,
-        CustomForm $record
-    ): \Illuminate\Database\Eloquent\Collection|EnumeratesValues|Enumerable|array|Collection {
-        $field = $this->getTargetFieldData($get, $record);
+        Get $get,
+        Model $record
+    ): \Illuminate\Database\Eloquent\Collection|Enumerable|array|Collection {
+        $field = $this->getTargetFieldData($get);
 
-        if (empty($field)) {
+        if (is_null($field)) {
             return [];
         }
 
-        if (!empty($field['general_field_id'])) {
-            $customField = new TempCustomField($record, $field);
-            $genOptions = $customField
-                ->getGeneralField()
-                ->customOptions;
+        if ($field->isGeneralField()) {
+            $genOptions = $field->getGeneralField()->customOptions;
 
-            $selectedOptions = $this->getTargetFieldData($get, $record)['options']['customOptions'] ?? [];
+            $selectedOptions = $field->options['customOptions'] ?? [];
             $genOptions = $genOptions->whereIn('id', $selectedOptions);
 
             return $genOptions->pluck('name', 'identifier');
         }
 
-        if (!array_key_exists('options', $field)) {
-            $field['options'] = [];
-        }
-        if (!array_key_exists('customOptions', $field['options'])) {
-            $field['options']['customOptions'] = [];
+        $options = $field->options ?? [];
+        $local = method_exists($record, 'getLocale') ? $record->getLocale() : app()->getLocale();
+
+        if (array_key_exists('customOptions', $options)) {
+            $options = $options['customOptions'];
+        } else {
+            $options = [];
         }
 
-        $options = $field['options']['customOptions'];
-
-        return collect($options)
-            ->pluck('name.' . $record->getLocale(), 'identifier');
+        return collect($options)->pluck('name.' . $local, 'identifier');
     }
 
-
-    protected function getTargetOptions($get, $record): array
+    protected function getTargetOptions($get): array
     {
-        //ToDo fix
-        $output = [];
-        collect($this->getAllFieldsData($get, $record))
-            ->map(function ($field) use ($record) {
-                $customField = new CustomField($field);
+        $formConfiguration = $this->getFormConfiguration($get);
+        $fields = collect($this->getAllFieldsData($get, $formConfiguration))
+            ->filter(fn(EmbedCustomField $field) => is_null($field->template_id))
+            ->filter(fn(EmbedCustomField $field) => $field->getType() instanceof CustomOptionType);
 
-                if ($customField->isGeneralField()) {
-                    $genField = $record
-                        ->getFormConfiguration()
-                        ->getAvailableGeneralFields()
-                        ->get($customField->general_field_id);
-                    $customField->setRelation('generalField', $genField);
-                }
-
-                if ($customField->custom_form_id === $record->id) {
-                    $customField->setRelation('customForm', $record);
-                } else {
-                    $template = $record
-                        ->getFormConfiguration()
-                        ->getAvailableTemplates()
-                        ->get($customField->custom_form_id);
-                    $customField->setRelation('customForm', $template);
-                }
-
-                return $customField;
-            })
-            ->filter(fn(CustomField $field) => $field->getType() instanceof CustomOptionType)
-            ->each(function (CustomField $field) use ($record, &$output) {
-                $title = $field->customForm?->short_title;
-
-                if (empty($title)) {
-                    $title = '?';
-                }
-
-                $output[$title][$field->identifier] = $field->name ?? ' ';
-            });
-
-        return $output;
+        return $this->getSelectOptionsFromFields($fields, $get);
     }
 }
