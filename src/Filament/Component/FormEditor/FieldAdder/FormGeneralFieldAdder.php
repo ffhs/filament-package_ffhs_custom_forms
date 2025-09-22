@@ -6,14 +6,12 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormConfiguration\CustomFormC
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralFieldForm;
-use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanModifyCustomFormEditorData;
 use Filament\Forms\Components\Concerns\CanGenerateUuids;
 use Filament\Support\Colors\Color;
 use Filament\Support\Components\Component;
 
 class FormGeneralFieldAdder extends FormFieldAdder
 {
-    use CanModifyCustomFormEditorData;
     use CanGenerateUuids;
 
     public static function getSiteComponent(CustomFormConfiguration $configuration): Component

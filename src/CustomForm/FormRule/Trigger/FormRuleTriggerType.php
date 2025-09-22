@@ -5,7 +5,6 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Trigger;
 use Ffhs\FfhsUtils\Contracts\Rules\TriggerType;
 use Ffhs\FfhsUtils\Models\RuleTrigger;
 use Ffhs\FfhsUtils\Traits\Rules\IsTriggerType;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Filament\Schemas\Components\Component;
 
 abstract class FormRuleTriggerType implements TriggerType
@@ -26,7 +25,7 @@ abstract class FormRuleTriggerType implements TriggerType
         return $component;
     }
 
-    public function mutateDataOnClone(array $data, CustomForm $target): array
+    public function mutateDataOnClone(array $data): array
     {
         return $data;
     }

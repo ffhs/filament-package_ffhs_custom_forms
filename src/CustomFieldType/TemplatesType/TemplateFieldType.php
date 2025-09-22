@@ -7,6 +7,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldT
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormConfiguration\CustomFormConfiguration;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\FormEditor\TypeActions\DefaultCustomActivationAction;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\FormEditor\TypeActions\DefaultFieldDeleteAction;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\FormEditor\TypeActions\DefaultTemplateDissolveAction;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
@@ -54,7 +55,8 @@ final class TemplateFieldType extends CustomFieldType
         return array(
             DefaultFieldDeleteAction::make('delete-field')
                 ->formConfiguration($formConfiguration),
-//            DefaultTemplateDissolveAction::make('dissolve-template-' . $key), ToDo Reimplement
+            DefaultTemplateDissolveAction::make('dissolve-template')
+                ->formConfiguration($formConfiguration),
 
             DefaultCustomActivationAction::make('toggle_active')
                 ->visible($this->canBeDeactivate())
