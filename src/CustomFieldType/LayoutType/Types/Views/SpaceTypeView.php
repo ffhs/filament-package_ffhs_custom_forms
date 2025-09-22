@@ -33,27 +33,21 @@ class SpaceTypeView implements FieldTypeView
         $spaces = $this->createSpaceEntries($customFieldAnswer, false);
 
         return $this
-            ->modifyComponent(Group::make($spaces), $customFieldAnswer, true)
+            ->modifyComponent(Group::make($spaces), $customFieldAnswer, false)
             ->columns(1)
             ->columnSpanFull();
     }
 
-    private function createSpaceEntries($object, bool $isFormComponent = true): array
+    private function createSpaceEntries($object): array
     {
         $spaces = [];
         $amount = $this->getOptionParameter($object, 'amount');
 
         for ($count = 0; $count < $amount; $count++) {
-            $entry = TextEntry::make($this->getIdentifyKey($object) . '-' . $count)
-                ->state(' ');
-
-            if ($isFormComponent) {
-                $entry->columnSpanFull()->hiddenLabel();
-            } else {
-                $entry->label('');
-            }
-
-            $spaces[] = $entry;
+            $spaces[] = $entry = TextEntry::make($this->getIdentifyKey($object) . '-' . $count)
+                ->state(' ')
+                ->columnSpanFull()
+                ->hiddenLabel();
         }
 
         return $spaces;

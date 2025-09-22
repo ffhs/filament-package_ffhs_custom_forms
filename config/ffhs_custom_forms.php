@@ -110,10 +110,12 @@ return [
             DownloadType::identifier() => [
                 'save_path' => '/custom-form-plugin/custom-fields/specified-data',
                 'disk' => 'local',
+                'visibility' => 'private',
             ],
             ImageLayoutType::identifier() => [
                 'save_path' => '/custom-form-plugin/images',
                 'disk' => 'public',
+                'visibility' => 'public',
             ],
             FileUploadType::identifier() => [
                 'files' => [

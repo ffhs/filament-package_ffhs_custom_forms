@@ -29,6 +29,7 @@ class TextLayoutTypeView implements FieldTypeView
 
         return $this->makeComponent(TextEntry::class, $customFieldAnswer, true)
             ->state(new HtmlString($text))
-            ->hiddenLabel();
+            ->hiddenLabel()
+            ->inlineLabel(false);
     }
 }

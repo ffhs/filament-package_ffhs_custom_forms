@@ -79,9 +79,9 @@ class DownloadTypeView implements FieldTypeView
         $filePaths = $this->getOptionParameter($customFieldAnswer, 'files');
 
         if (count($filePaths) <= 1) {
-            $actions = $this->getSingleFilDownloadComponentAction($customFieldAnswer->customField);
+            $actions = $this->getSingleFilDownloadComponentAction($customFieldAnswer->getCustomField());
         } else {
-            $actions = $this->getMultipleFileDownloadComponentAction($customFieldAnswer->customField);
+            $actions = $this->getMultipleFileDownloadComponentAction($customFieldAnswer->getCustomField());
         }
 
         $titelAsFileName = $this->getOptionParameter($customFieldAnswer, 'title_as_filename');

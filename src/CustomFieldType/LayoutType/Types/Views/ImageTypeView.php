@@ -7,7 +7,6 @@ use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\FieldTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasDefaultViewComponent;
 use Filament\Infolists\Components\ImageEntry;
-use Filament\Schemas\Components\Group;
 use Filament\Support\Components\Component;
 
 class ImageTypeView implements FieldTypeView
@@ -21,23 +20,22 @@ class ImageTypeView implements FieldTypeView
 
     public function getEntryComponent(EmbedCustomFieldAnswer $customFieldAnswer, array $parameter = []): Component
     {
-        if (!$this->getOptionParameter($customFieldAnswer, 'show_in_view')) {
-            return Group::make()->hidden();
-        }
-
-        return $this->getImageEntry($customFieldAnswer->getCustomField());
+        return $this->getImageEntry($customFieldAnswer->getCustomField())
+            ->hidden(!$this->getOptionParameter($customFieldAnswer, 'show_in_view'));
     }
 
-    private function getImageEntry(EmbedCustomField $customField): ImageEntry
+    protected function getImageEntry(EmbedCustomField $customField): Component
     {
-        return ImageEntry::make('customField.options.image')
-            ->label($this->getOptionParameter($customField, 'show_label') ? $this->getLabelName($customField) : '')
-            ->checkFileExistence(false)
-            ->visibility('private')
-            ->state(array_values($this->getOptionParameter($customField, 'image'))[0] ?? null)
+        return $this->makeComponent(ImageEntry::class, $customField, false)
+            ->label($this->getLabelName($customField))
+            ->hiddenLabel(!$this->getOptionParameter($customField, 'show_label'))
+            ->defaultImageUrl($this->getOptionParameter($customField, 'image'))
+            ->state($this->getOptionParameter($customField, 'image'))
             ->disk($this->getTypeConfigAttribute($customField, 'disk'))
-            ->columnSpan(2)
             ->imageHeight($this->getOptionParameter($customField, 'height'))
-            ->imageWidth($this->getOptionParameter($customField, 'width'));
+            ->imageWidth($this->getOptionParameter($customField, 'width'))
+            ->visibility($this->getTypeConfigAttribute($customField, 'visibility'))
+            ->checkFileExistence()
+            ->columnSpan(2);
     }
 }
