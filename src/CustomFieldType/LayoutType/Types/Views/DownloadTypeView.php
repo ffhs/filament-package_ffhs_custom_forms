@@ -5,11 +5,9 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\LayoutType\Types\V
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\FieldTypeView;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanMapFields;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasStaticMake;
 use Filament\Actions\Action;
-use Filament\Forms\Components\Placeholder;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Group;
@@ -37,7 +35,7 @@ class DownloadTypeView implements FieldTypeView
 
         if (!$titelAsFileName && $showTitle) {
             $actions = [
-                Placeholder::make($this->getIdentifyKey($customField) . '-title')
+                TextEntry::make($this->getIdentifyKey($customField) . '-title')
                     ->label(
                         new HtmlString(
                             '</span> <span class="text-sm font-medium leading-6 text-gray-950 dark:text-white" style="margin-bottom: -25px; margin-left: -12px;">' . $this->getLabelName(
@@ -53,8 +51,8 @@ class DownloadTypeView implements FieldTypeView
 
         //Toll Tip
         $helpText = $this->getOptionParameter($customField, 'helper_text');
-        $actions[] = Placeholder::make('helper_text' . '-help_text') //ToDo Replace
-        ->label('')
+        $actions[] = TextEntry::make('helper_text' . '-help_text') //ToDo Replace
+        ->hiddenLabel()
             ->helperText(
                 new HtmlString(
                     '</div> <div class="fi-fo-field-wrp-helper-text text-sm text-gray-500" style="margin-top: -30px; ">' . empty($helpText) ? "" : $helpText . '</div><div>'
@@ -113,7 +111,7 @@ class DownloadTypeView implements FieldTypeView
         return $group;
     }
 
-    private function getSingleFilDownloadComponentAction(CustomField $record): mixed
+    private function getSingleFilDownloadComponentAction(EmbedCustomField $record): mixed
     {
         $paths = $this->getOptionParameter($record, 'files');
         $path = array_values($paths)[0];
@@ -135,7 +133,7 @@ class DownloadTypeView implements FieldTypeView
         return $action;
     }
 
-    private function getPathOfFileAbsolute(CustomField $record, mixed $path): string
+    private function getPathOfFileAbsolute(EmbedCustomField $record, mixed $path): string
     {
         $disk = $this->getTypeConfigAttribute($record, 'disk');
         $diskRoot = config('filesystems.disks.' . $disk . '.root');
@@ -143,7 +141,7 @@ class DownloadTypeView implements FieldTypeView
         return $diskRoot . '/' . $path;
     }
 
-    private function getMultipleFileDownloadComponentAction(CustomField $record): mixed
+    private function getMultipleFileDownloadComponentAction(EmbedCustomField $record): mixed
     {
         $filePaths = $this->getOptionParameter($record, 'files');
         $fileNames = $this->getOptionParameter($record, 'file_names');

@@ -10,9 +10,11 @@ trait HasCustomFieldTypeConfig
     public function getConfigAttribute(string $attribute, ?CustomFormConfiguration $formConfiguration = null): mixed
     {
         $path = implode('.', ['type_settings', $this::identifier(), $attribute]);
+        
         if (is_null($formConfiguration)) {
-            CustomForms::config('default_form_configuration.' . $path);
+            return CustomForms::config('default_form_configuration.' . $path);
         }
-        return $formConfiguration::config($path, null);
+
+        return $formConfiguration::config($path);
     }
 }

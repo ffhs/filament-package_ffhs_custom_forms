@@ -7,7 +7,6 @@ use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\FieldTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasDefaultViewComponent;
 use Filament\Infolists\Components\TextEntry;
-use Filament\Schemas\Components\Group;
 use Filament\Support\Components\Component;
 use Illuminate\Support\HtmlString;
 
@@ -19,32 +18,17 @@ class TextLayoutTypeView implements FieldTypeView
     {
         $text = $this->getOptionParameter($customField, 'text')[app()->getLocale()] ?? '';
 
-        /**@var $placeholder Placeholder */
-        $placeholder = $this->makeComponent(TextEntry::class, $customField, false); //FUCK!!!!
-
-        return $placeholder
-            ->content(new HtmlString($text))
-            ->label('');
+        return $this->makeComponent(TextEntry::class, $customField, false)
+            ->state(new HtmlString($text))
+            ->hiddenLabel();
     }
 
     public function getEntryComponent(EmbedCustomFieldAnswer $customFieldAnswer, array $parameter = []): Component
     {
-        if (!$this->getOptionParameter($customFieldAnswer, 'show_in_view')) {
-            return Group::make()
-                ->hidden();
-        }
-
-        $label = $this->getOptionParameter($customFieldAnswer,
-            'show_label') ? $this->getLabelName($customFieldAnswer) : '';
         $text = $this->getOptionParameter($customFieldAnswer, 'text')[app()->getLocale()] ?? '';
 
-        /**@var $placeholder TextEntry */
-        $placeholder = $this->makeComponent(TextEntry::class, $customFieldAnswer, true);
-
-        return $placeholder
+        return $this->makeComponent(TextEntry::class, $customFieldAnswer, true)
             ->state(new HtmlString($text))
-            ->label($label)
-            ->columnSpanFull()
-            ->inlineLabel();
+            ->hiddenLabel();
     }
 }

@@ -107,14 +107,14 @@ return [
             ],
         ],
         'type_settings' => [
-//            'download_file' => [
-//                'save_path' => '/custom-form-plugin/custom-fields/specified-data',
-//                'disk' => 'local',
-//            ],
-//            'image_layout' => [
-//                'save_path' => '/custom-form-plugin/images',
-//                'disk' => 'public',
-//            ],
+            DownloadType::identifier() => [
+                'save_path' => '/custom-form-plugin/custom-fields/specified-data',
+                'disk' => 'local',
+            ],
+            ImageLayoutType::identifier() => [
+                'save_path' => '/custom-form-plugin/images',
+                'disk' => 'public',
+            ],
             FileUploadType::identifier() => [
                 'files' => [
                     'url_prefix' => null, // Null means default path

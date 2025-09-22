@@ -6,7 +6,6 @@ use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\FieldTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasDefaultViewComponent;
-use Filament\Forms\Components\Placeholder;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Components\Group;
 use Filament\Support\Components\Component;
@@ -20,33 +19,27 @@ class TitleTypeView implements FieldTypeView
     {
         $title = $this->getTitle($customField);
 
-        /**@var $placeholder Placeholder */
-        $placeholder = $this->makeComponent(Placeholder::class, $customField, false);
-
-        return $placeholder
-            ->content(new HtmlString($title))
-            ->label('');
+        return $this->makeComponent(TextEntry::class, $customField, false)
+            ->state(new HtmlString($title))
+            ->hiddenLabel();
     }
 
     public function getEntryComponent(EmbedCustomFieldAnswer $customFieldAnswer, array $parameter = []): Component
     {
         if (!$this->getOptionParameter($customFieldAnswer, 'show_in_view')) {
-            return Group::make()
-                ->hidden();
+            return Group::make()->hidden();
         }
 
         $title = $this->getTitle($customFieldAnswer);
 
-        /**@var $placeholder TextEntry */
-        $placeholder = $this->makeComponent(TextEntry::class, $customFieldAnswer, true);
-
-        return $placeholder
+        return $this->makeComponent(TextEntry::class, $customFieldAnswer, true)
             ->state(new HtmlString($title))
             ->columnSpanFull()
+            ->hiddenLabel()
             ->inlineLabel();
     }
 
-    private function getTitle($record): string
+    private function getTitle($record): string //ToDo make with css
     {
         $titleSize = $this->getOptionParameter($record, 'title_size');
 

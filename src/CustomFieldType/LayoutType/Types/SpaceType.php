@@ -37,6 +37,11 @@ class SpaceType extends CustomFieldType
         return false;
     }
 
+    public function isFullSizeField(): bool
+    {
+        return true;
+    }
+
     public function extraTypeOptions(): array
     {
         return [
