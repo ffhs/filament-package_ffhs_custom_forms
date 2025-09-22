@@ -30,6 +30,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\TemplatesType\TemplateFi
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormConfiguration\DefaultFormConfiguration;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Events\ChangeOptionsEvent;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Events\DisabledEvent;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Events\DisableOptionsEvent;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Events\HideEvent;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Events\RequiredEvent;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Events\VisibleEvent;
@@ -102,9 +103,10 @@ return [
                 DisabledEvent::class,
                 RequiredEvent::class,
                 ChangeOptionsEvent::class,
+                DisableOptionsEvent::class,
             ],
         ],
-//        'types_settings' => [
+        'type_settings' => [
 //            'download_file' => [
 //                'save_path' => '/custom-form-plugin/custom-fields/specified-data',
 //                'disk' => 'local',
@@ -113,19 +115,21 @@ return [
 //                'save_path' => '/custom-form-plugin/images',
 //                'disk' => 'public',
 //            ],
-//            FileUploadType::identifier() => [
-//                'files' => [
-//                    'url_prefix' => null, // Null means default path
-//                    'save_path' => '/custom-form-plugin/custom-fields/uploaded',
-//                    'disk' => 'local',
-//                ],
-//                'images' => [
-//                    'url_prefix' => null, // Null means default path
-//                    'save_path' => '/custom-form-plugin/uploaded-images',
-//                    'disk' => 'public',
-//                ]
-//            ],
-//        ],
+            FileUploadType::identifier() => [
+                'files' => [
+                    'url_prefix' => null, // Null means default path
+                    'save_path' => '/custom-form-plugin/custom-fields/uploaded',
+                    'disk' => 'local',
+                    'visibility' => 'private',
+                ],
+                'images' => [
+                    'url_prefix' => null, // Null means default path
+                    'save_path' => '/custom-form-plugin/uploaded-images',
+                    'visibility' => 'public',
+                    'disk' => 'public',
+                ]
+            ],
+        ],
     ],
 
     'extra_custom_field_types' => [
