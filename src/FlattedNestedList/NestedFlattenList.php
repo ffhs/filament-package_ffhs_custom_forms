@@ -7,7 +7,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\Contracts\NestingObject;
 use Illuminate\Support\Collection;
 use RuntimeException;
 
-class NestedFlattenList
+class NestedFlattenList //ToDo Delet
 {
     protected Collection $data;
     protected ?string $fixedType = null;

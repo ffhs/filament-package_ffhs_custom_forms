@@ -3,6 +3,7 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\Traits;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormConfiguration\CustomFormConfiguration;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 
 trait CanGetUsedGeneralFields
 {
@@ -17,12 +18,14 @@ trait CanGetUsedGeneralFields
         $templateIds = array_map(fn($used) => $used['template_id'], $templateData);
 
         foreach ($templateIds as $templateId) {
-            $genFields = $configuration
-                ->getAvailableTemplates()
-                ->get($templateId)
-                ->ownedGeneralFields
+            /**@var CustomForm $template */
+            $template = $configuration->getAvailableTemplates()->find($templateId);
+
+            $genFields = $template
+                ->getOwnedFields()
                 ->pluck('id')
                 ->toArray();
+
             $generalFieldId = [
                 ...$generalFieldId,
                 ...$genFields,

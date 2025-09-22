@@ -46,11 +46,6 @@ abstract class CustomFieldType implements Type
         return array_unique($allTypes);
     }
 
-    final public static function getConfigTypeList(): string
-    {
-        return 'custom_field_types';
-    }
-
     final public static function getSelectableGeneralFieldTypes(): array
     {
         $output = [];
