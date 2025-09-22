@@ -124,15 +124,14 @@ trait CanMapFields
         return $options->pluck('name', 'identifier');
     }
 
-    public function getTypeConfigAttribute(EmbedCustomField|CustomFieldAnswer $record, string $attribute): mixed
+    public function getTypeConfigAttribute(EmbedCustomField|EmbedCustomFieldAnswer $record, string $attribute): mixed
     {
-        if ($record instanceof CustomFieldAnswer) {
-            $record = $record->customField;
+        if ($record instanceof EmbedCustomFieldAnswer) {
+            $record = $record->getCustomField();
         }
 
-        return $record
-            ->getType()
-            ->getConfigAttribute($attribute);
+        return $record->getType()
+            ->getConfigAttribute($attribute, $record->getFormConfiguration());
     }
 
     /**

@@ -6,7 +6,7 @@ use Ffhs\FfhsUtils\Contracts\Type;
 use Ffhs\FfhsUtils\Traits\IsType;
 use Ffhs\FilamentPackageFfhsCustomForms\Facades\CustomForms;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasAnswerCallbacks;
-use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasConfigAttribute;
+use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasCustomFieldTypeConfig;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasEditFieldCallbacks;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasEditorLayoutElements;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasFieldSplitting;
@@ -19,7 +19,7 @@ abstract class CustomFieldType implements Type
     use IsType;
     use HasTypeView;
     use HasTypeOptions;
-    use HasConfigAttribute;
+    use HasCustomFieldTypeConfig;
     use HasEditFieldCallbacks;
     use HasGridModifiers;
     use HasFieldSplitting;

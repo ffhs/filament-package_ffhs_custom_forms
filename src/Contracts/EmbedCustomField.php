@@ -3,6 +3,7 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\Contracts;
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormConfiguration\CustomFormConfiguration;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Illuminate\Support\Collection;
 
@@ -23,4 +24,6 @@ interface EmbedCustomField
     public function getTemplate(): ?EmbedCustomForm;
 
     public function getCustomOptions(): Collection;
+
+    public function getFormConfiguration(): CustomFormConfiguration;
 }

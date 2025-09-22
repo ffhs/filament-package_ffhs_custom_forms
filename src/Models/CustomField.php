@@ -5,6 +5,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Models;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\NestingObject;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormConfiguration\CustomFormConfiguration;
 use Ffhs\FilamentPackageFfhsCustomForms\Facades\CustomForms;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -208,5 +209,10 @@ class CustomField extends ACustomField implements NestingObject, EmbedCustomFiel
     public function getCustomOptions(): Collection
     {
         return $this->customOptions;
+    }
+
+    public function getFormConfiguration(): CustomFormConfiguration
+    {
+        return $this->customForm->getFormConfiguration();
     }
 }
