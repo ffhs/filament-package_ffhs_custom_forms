@@ -158,15 +158,23 @@ trait CanLoadFormAnswer
 
         $pathFragments = explode('.', $path);
         $path = end($pathFragments);
-        //Get Last Path element ToDO check if that works???
         $lastPath = count($pathFragments) > 1 ? implode(' ', array_slice($pathFragments, 0, -1)) : null;
+        $endPath = [];
 
         if (!is_null($lastPath)) {
             $resultPathParent = static::resolveFieldPath($nearestParent, $formFields, $lastPath);
-            return $resultPathParent . '.' . $nearestParent->identifier . '.' . $path;
+            if (!empty($resultPathParent)) {
+                $endPath[] = $resultPathParent;
+            }
+        }
+        if (!empty($nearestParent->identifier)) {
+            $endPath[] = $nearestParent->identifier;
+        }
+        if (!empty($nearestParent->identifier)) {
+            $endPath[] = $path;
         }
 
-        return $nearestParent->identifier . '.' . $path;
+        return implode('.', $endPath);
     }
 
     protected function isFieldInRange(
