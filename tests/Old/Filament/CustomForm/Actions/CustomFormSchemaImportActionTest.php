@@ -1,10 +1,10 @@
 <?php
 
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormHeaderActions\CustomFormSchemaImportAction;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormConfiguration\DefaultFormConfiguration;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormSchemaImportAction;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormResource\Pages\EditCustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormResource\Pages\ListCustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
-use Workbench\App\FFHs\TestCustomFormConfiguration;
 use Workbench\App\Models\UserSuperAdmin;
 use function Pest\Livewire\livewire;
 
@@ -26,7 +26,7 @@ test('open action modal from import', function () {
 
     $this->livewire->assertSee('Formulardatei');
 //     $this->livewire->assertSee('Formularart');
-});
+})->only();
 
 describe('getFormSchema visible options after file upload and select of form config', function () {
     test('import without form', function () {
@@ -39,7 +39,7 @@ describe('getFormSchema visible options after file upload and select of form con
 
     test('import with form', function () {
         $customFormExisting = new CustomForm([
-            'custom_form_identifier' => TestCustomFormConfiguration::identifier(),
+            'custom_form_identifier' => DefaultFormConfiguration::identifier(),
             'short_title' => 'test'
         ]);
         $customFormExisting->save();

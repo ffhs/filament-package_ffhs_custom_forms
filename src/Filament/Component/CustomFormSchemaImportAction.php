@@ -1,13 +1,12 @@
 <?php
 
-namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormHeaderActions;
+namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component;
 
 use Closure;
 use Error;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormConverter\FormSchemaImporter;
 use Ffhs\FilamentPackageFfhsCustomForms\Exceptions\FormImportException;
 use Ffhs\FilamentPackageFfhsCustomForms\Facades\CustomForms;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormTypeSelector;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormResource\CustomFormResource;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
@@ -298,7 +297,7 @@ class CustomFormSchemaImportAction extends Action
 
             $importer = FormSchemaImporter::make();
 
-            $file = array_values($get('form_file') ?? [])[0] ?? null;
+            $file = $get('form_file');
             $formData = $this->getUploadedInfos($file);
 
             $rawFields = $formData['fields'] ?? [];

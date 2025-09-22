@@ -13,7 +13,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanImportRuleInformation;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasStaticMake;
 use Illuminate\Support\Facades\DB;
 
-class FormSchemaImporter
+class FormSchemaImporter  //ToDo let it work with Embedet forms
 {
     use CanImportFieldInformation;
     use CanImportCustomForm;

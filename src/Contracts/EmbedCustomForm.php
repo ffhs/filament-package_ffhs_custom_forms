@@ -12,6 +12,8 @@ interface EmbedCustomForm
 
     public function getOwnedFields(): Collection;
 
+    public function getOwnedRules(): Collection;
+
     public function customFields(): Collection;
 
     public function getRules(): Collection;

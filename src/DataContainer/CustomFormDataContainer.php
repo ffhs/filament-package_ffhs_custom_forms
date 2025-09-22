@@ -59,11 +59,16 @@ class CustomFormDataContainer implements EmbedCustomForm
 
     public function getRules(): Collection
     {
-        return collect(); //ToDo
+        return collect(); //ToDo implement
     }
 
     public function getCustomFields(): Collection
     {
-        return $this->getOwnedFields(); //ToDo
+        return $this->getOwnedFields(); //ToDo implement
+    }
+
+    public function getOwnedRules(): Collection
+    {
+        return collect(); //ToDo implement
     }
 }

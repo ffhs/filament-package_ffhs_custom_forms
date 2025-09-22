@@ -2,6 +2,7 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Traits;
 
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\FlattedNestedList\NestedFlattenList;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomOption;
@@ -19,12 +20,12 @@ trait CanExportFieldInformation
         return $this->exportFields($structure, $customFields);
     }
 
-    public function exportFields(array $structure, Collection &$customFields): array
+    public function exportFields(array $structure, Collection $customFields): array //ToDo fix for embedded forms
     {
         $exportedFields = [];
 
         foreach ($structure as $customFieldIdentifier => $subStructure) {
-            /**@var CustomField $field */
+            /**@var EmbedCustomField $field */
             $field = $customFields->get($customFieldIdentifier);
             $rawFieldData = $field->toArray();
             $fieldData = [];
@@ -44,9 +45,9 @@ trait CanExportFieldInformation
                 $fieldData['name'] = $rawFieldData['name'] ?? null;
 
                 //Options
-                if ($field->customOptions->isNotEmpty()) {
+                if ($field->getCustomOptions()->isNotEmpty()) {
                     $fieldData['customOptions'] = $field
-                        ->customOptions
+                        ->getCustomOptions()
                         ->map(function (CustomOption $option) {
                             $optionData = $option->toArray();
                             $optionData['name'] = $option->translations['name'];
