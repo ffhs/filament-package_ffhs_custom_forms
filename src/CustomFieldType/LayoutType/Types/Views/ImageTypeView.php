@@ -26,8 +26,8 @@ class ImageTypeView implements FieldTypeView
 
     protected function getImageEntry(EmbedCustomField $customField): Component
     {
-        return $this->makeComponent(ImageEntry::class, $customField, false)
-            ->label($this->getLabelName($customField))
+        return $this->makeComponent(ImageEntry::class, $customField, false) //toDo fix
+        ->label($this->getLabelName($customField))
             ->hiddenLabel(!$this->getOptionParameter($customField, 'show_label'))
             ->defaultImageUrl($this->getOptionParameter($customField, 'image'))
             ->state($this->getOptionParameter($customField, 'image'))
