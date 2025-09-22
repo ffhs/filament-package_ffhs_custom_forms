@@ -23,7 +23,7 @@ class RepeaterLayoutTypeView implements FieldTypeView
 
     public function getFormComponent(EmbedCustomField $customField, array $parameter = []): Component
     {
-//      $ordered = $this->getOptionParameter($record, 'ordered');
+//      $ordered = $this->getOptionParameter($record, 'ordered'); ToDo
         $minAmount = $this->getOptionParameter($customField, 'min_amount');
         $maxAmount = $this->getOptionParameter($customField, 'max_amount');
         $defaultAmount = $this->getOptionParameter($customField, 'default_amount');
@@ -50,7 +50,6 @@ class RepeaterLayoutTypeView implements FieldTypeView
 
         return $repeater;
     }
-
 
     public function getEntryComponent(EmbedCustomFieldAnswer $customFieldAnswer, array $parameter = []): Component
     {

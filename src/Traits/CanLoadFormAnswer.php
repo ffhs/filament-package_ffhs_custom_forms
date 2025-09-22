@@ -8,8 +8,6 @@ use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Enums\FormRuleAction;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 
@@ -32,38 +30,7 @@ trait CanLoadFormAnswer
         int|null $end = null,
         ?EmbedCustomForm $customForm = null
     ): array {
-        $loadedData = [];
-        $customForm = $customForm ?? $answer->getCustomForm();
-        $customFields = $customForm
-            ->getCustomFields()
-            ->mapWithKeys(fn(EmbedCustomField $field) => [$field->identifier => $field])
-            ->sortBy(function ($item) {
-                return $item->form_position;
-            });
-
-
-        $identifierTemplateMap = $customFields
-            ->whereNotNull('template_id')
-            ->keyBy('template_id')
-            ->map(function (EmbedCustomField $template) {
-                return $template->getTemplate()
-                    ?->getOwnedFields()
-                    ->mapWithKeys(fn(EmbedCustomField $field) => $template);
-            })->flatten(1);
-
-        /**@var CustomFieldAnswer $fieldAnswer */
-        foreach ($answer->getCustomFieldAnswers() as $fieldAnswer) {
-            /**@var CustomField $customField */
-            $customField = $fieldAnswer->getCustomField();
-
-            if (!$this->isFieldInRange($customField, $identifierTemplateMap, $begin, $end)) {
-                continue;
-            }
-            $dataIdentifier = $this->getDataIdentifier($fieldAnswer, $customField);
-            $loadedData[$dataIdentifier] = $fieldAnswer->answer;
-        }
-
-        return $this->resolveComplexPaths($loadedData, $customFields);
+        return $this->loadCustomAnswerData($answer, $begin, $end, $customForm, false);
     }
 
     public function loadCustomAnswerData(
@@ -75,50 +42,27 @@ trait CanLoadFormAnswer
     ): array {
         $loadedData = [];
         $customForm = $customForm ?? $answer->getCustomForm();
-        $customFields = $customForm
-            ->getCustomFields()
-            ->mapWithKeys(fn(EmbedCustomField $field) => [$field->identifier => $field])
-            ->sortBy(function ($item) {
-                return $item->form_position;
-            });
+        $customFields = $this->getCustomFieldsCollection($customForm);
+        $identifierTemplateMap = $this->buildIdentifierTemplateMap($customFields);
+        $formRules = $withRules ? $customForm->getRules() : null;
 
-
-        $identifierTemplateMap = $customFields
-            ->whereNotNull('template_id')
-            ->keyBy('template_id')
-            ->map(function (EmbedCustomField $template) {
-                return $template->getTemplate()
-                    ?->getOwnedFields()
-                    ->mapWithKeys(fn(EmbedCustomField $field) => $template);
-            })->flatten(1);
-
-
-        $formRules = $customForm->getRules();
-
-        /**@var CustomFieldAnswer $fieldAnswer */
         foreach ($answer->getCustomFieldAnswers() as $fieldAnswer) {
-            /**@var CustomField $customField */
             $customField = $fieldAnswer->getCustomField();
 
             if (!$this->isFieldInRange($customField, $identifierTemplateMap, $begin, $end)) {
                 continue;
             }
 
-            $fieldData = $customField
-                ->getType()
-                ?->prepareLoadAnswerData($fieldAnswer, $fieldAnswer->answer);
+            $fieldData = $withRules
+                ? $this->processFieldDataWithRules($fieldAnswer, $customField, $formRules)
+                : $fieldAnswer->answer;
 
-            if ($withRules) {
-                $fieldData = $this->modifyFieldDataFormRules($fieldAnswer, $fieldData,
-                    $formRules); //todo Check Performance
-            }
             $dataIdentifier = $this->getDataIdentifier($fieldAnswer, $customField);
             $loadedData[$dataIdentifier] = $fieldData;
         }
 
         return $this->resolveComplexPaths($loadedData, $customFields);
     }
-
 
     public function resolveComplexPaths(array $loadedData, Collection $customFields): array
     {
@@ -194,6 +138,38 @@ trait CanLoadFormAnswer
         $endCondition = is_null($end) || $customField->form_position <= $end;
 
         return $beginCondition && $endCondition;
+    }
+
+    private function getCustomFieldsCollection(EmbedCustomForm $customForm): Collection
+    {
+        return $customForm
+            ->getCustomFields()
+            ->mapWithKeys(fn(EmbedCustomField $field) => [$field->identifier => $field])
+            ->sortBy(fn($item) => $item->form_position);
+    }
+
+    private function buildIdentifierTemplateMap(Collection $customFields): Collection
+    {
+        return $customFields
+            ->whereNotNull('template_id')
+            ->keyBy('template_id')
+            ->map(function (EmbedCustomField $template) {
+                return $template->getTemplate()
+                    ?->getOwnedFields()
+                    ->mapWithKeys(fn(EmbedCustomField $field) => $template);
+            })->flatten(1);
+    }
+
+    private function processFieldDataWithRules(
+        EmbedCustomFieldAnswer $fieldAnswer,
+        EmbedCustomField $customField,
+        $formRules
+    ): mixed {
+        $fieldData = $customField
+            ->getType()
+            ?->prepareLoadAnswerData($fieldAnswer, $fieldAnswer->answer);
+
+        return $this->modifyFieldDataFormRules($fieldAnswer, $fieldData, $formRules);
     }
 
     private function getDataIdentifier(EmbedCustomFieldAnswer $fieldAnswer, EmbedCustomField $customField): string
