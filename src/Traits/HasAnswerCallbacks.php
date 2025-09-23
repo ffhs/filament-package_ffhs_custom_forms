@@ -2,10 +2,11 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Traits;
 
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
-use Filament\Forms\Components\Component;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
+use Filament\Support\Components\Component;
 use Illuminate\Support\Collection;
 
 trait HasAnswerCallbacks
@@ -17,13 +18,13 @@ trait HasAnswerCallbacks
     public function updateAnswerFormComponentOnSave(
         Component $component,
         CustomField $customField,
-        Form $form,
+        Schema $schema,
         Collection $flattenFormComponents
     ): void {
         //You can interact with the Component like in FileUpload
     }
 
-    public function prepareToSaveAnswerData(CustomFieldAnswer $answer, mixed $data): ?array
+    public function prepareToSaveAnswerData(EmbedCustomFieldAnswer $answer, mixed $data): ?array
     {
         if (is_null($data)) {
             return null;
@@ -32,7 +33,7 @@ trait HasAnswerCallbacks
         return ['saved' => $data];
     }
 
-    public function prepareLoadAnswerData(CustomFieldAnswer $answer, ?array $data): mixed
+    public function prepareLoadAnswerData(EmbedCustomFieldAnswer $answer, ?array $data): mixed
     {
         if (is_null($data) || !array_key_exists('saved', $data) || is_null($data['saved'])) {
             return null;
@@ -45,7 +46,7 @@ trait HasAnswerCallbacks
     {
         return empty($fieldAnswererData)
             || (empty($fieldAnswererData['saved'] ?? [])
-                && sizeof($fieldAnswererData) === 1
+                && count($fieldAnswererData) === 1
                 && !is_bool($fieldAnswererData['saved']));
     }
 }

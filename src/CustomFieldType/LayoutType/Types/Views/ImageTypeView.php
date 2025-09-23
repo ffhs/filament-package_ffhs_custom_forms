@@ -2,67 +2,40 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\LayoutType\Types\Views;
 
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomField;
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\FieldTypeView;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldType;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasDefaultViewComponent;
-use Filament\Forms\Components\Component as FormsComponent;
-use Filament\Forms\Components\Placeholder;
-use Filament\Infolists\Components\Component as InfolistsComponent;
-use Filament\Infolists\Components\Group;
 use Filament\Infolists\Components\ImageEntry;
-use Filament\Infolists\Infolist;
-use Illuminate\Support\HtmlString;
+use Filament\Support\Components\Component;
 
 class ImageTypeView implements FieldTypeView
 {
     use HasDefaultViewComponent;
 
-    public function getFormComponent(
-        CustomFieldType $type,
-        CustomField $record,
-        array $parameter = []
-    ): FormsComponent {
-        /**@var $placeholder Placeholder */
-        $placeholder = $this->makeComponent(Placeholder::class, $record);
-
-        return $placeholder
-            ->content(
-                new HtmlString(
-                    app(Infolist::class)
-                        ->columns(1)
-                        ->schema([$this->getImageEntry($record)])
-                        ->record($record)
-                        ->render()
-                )
-            )
-            ->label('');
-    }
-
-    public function getInfolistComponent(
-        CustomFieldType $type,
-        CustomFieldAnswer $record,
-        array $parameter = []
-    ): InfolistsComponent {
-        if (!$this->getOptionParameter($record, 'show_in_view')) {
-            return Group::make()
-                ->hidden();
-        }
-
-        return $this->getImageEntry($record->customField);
-    }
-
-    private function getImageEntry(CustomField $record): ImageEntry
+    public function getFormComponent(EmbedCustomField $customField, array $parameter = []): Component
     {
-        return ImageEntry::make('customField.options.image')
-            ->label($this->getOptionParameter($record, 'show_label') ? $this->getLabelName($record) : '')
-            ->checkFileExistence(false)
-            ->visibility('private')
-            ->state(array_values($this->getOptionParameter($record, 'image'))[0] ?? null)
-            ->disk($this->getTypeConfigAttribute($record, 'disk'))
-            ->columnSpan(2)
-            ->height($this->getOptionParameter($record, 'height'))
-            ->width($this->getOptionParameter($record, 'width'));
+        return $this->getImageEntry($customField);
+    }
+
+    public function getEntryComponent(EmbedCustomFieldAnswer $customFieldAnswer, array $parameter = []): Component
+    {
+        return $this->getImageEntry($customFieldAnswer->getCustomField())
+            ->hidden(!$this->getOptionParameter($customFieldAnswer, 'show_in_view'));
+    }
+
+    protected function getImageEntry(EmbedCustomField $customField): Component
+    {
+        return $this->makeComponent(ImageEntry::class, $customField, false) //toDo fix
+        ->label($this->getLabelName($customField))
+            ->hiddenLabel(!$this->getOptionParameter($customField, 'show_label'))
+            ->defaultImageUrl($this->getOptionParameter($customField, 'image'))
+            ->state($this->getOptionParameter($customField, 'image'))
+            ->disk($this->getTypeConfigAttribute($customField, 'disk'))
+            ->imageHeight($this->getOptionParameter($customField, 'height'))
+            ->imageWidth($this->getOptionParameter($customField, 'width'))
+            ->visibility($this->getTypeConfigAttribute($customField, 'visibility'))
+            ->checkFileExistence()
+            ->columnSpan(2);
     }
 }

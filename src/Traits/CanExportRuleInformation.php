@@ -2,9 +2,9 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Traits;
 
-use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\Rule;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\RuleEvent;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\RuleTrigger;
+use Ffhs\FfhsUtils\Models\Rule;
+use Ffhs\FfhsUtils\Models\RuleEvent;
+use Ffhs\FfhsUtils\Models\RuleTrigger;
 use Illuminate\Support\Collection;
 
 trait CanExportRuleInformation

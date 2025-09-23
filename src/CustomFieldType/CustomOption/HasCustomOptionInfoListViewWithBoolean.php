@@ -2,31 +2,27 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\CustomOption;
 
-use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldType;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
-use Filament\Infolists\Components\Component;
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomFieldAnswer;
 use Filament\Infolists\Components\IconEntry;
+use Filament\Support\Components\Component;
 
 trait HasCustomOptionInfoListViewWithBoolean
 {
     use HasCustomOptionInfoListView {
-        HasCustomOptionInfoListView::getInfolistComponent as getBasicInfolistComponent;
+        HasCustomOptionInfoListView::getEntryComponent as getBasicInfolistComponent;
     }
 
-    public function getInfolistComponent(
-        CustomFieldType $type,
-        CustomFieldAnswer $record,
-        array $parameter = []
-    ): Component {
-        if (!$this->getOptionParameter($record, 'boolean')) {
-            return $this->getBasicInfolistComponent($type, $record, $parameter);
+    public function getEntryComponent(EmbedCustomFieldAnswer $customFieldAnswer, array $parameter = []): Component
+    {
+        if (!$this->getOptionParameter($customFieldAnswer, 'boolean')) {
+            return $this->getBasicInfolistComponent($customFieldAnswer, $parameter);
         }
 
-        $answer = $this->getAnswer($record);
+        $answer = $this->getAnswer($customFieldAnswer);
         $answer = is_null($answer) ? false : $answer;
 
-        return IconEntry::make($this->getIdentifyKey($record))
-            ->label($this->getLabelName($record))
+        return IconEntry::make($this->getIdentifyKey($customFieldAnswer))
+            ->label($this->getLabelName($customFieldAnswer))
             ->state($answer)
             ->columnSpanFull()
             ->inlineLabel()

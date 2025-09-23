@@ -14,7 +14,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\MinAmountOption;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\ShowAsFieldsetOption;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\ShowLabelOption;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\TypeOption;
-use Filament\Forms\Components\Component;
+use Filament\Support\Components\Component;
 use Filament\Forms\Components\TextInput;
 
 class RepeaterLayoutType extends CustomSplitType

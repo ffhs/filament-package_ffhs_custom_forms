@@ -2,9 +2,9 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Traits;
 
-use Filament\Forms\Components\Component;
-use Filament\Forms\Components\Group;
 use Filament\Forms\Components\TagsInput;
+use Filament\Schemas\Components\Group;
+use Filament\Support\Components\Component;
 
 trait HasTextCheck
 {

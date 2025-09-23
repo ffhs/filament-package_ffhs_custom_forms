@@ -14,9 +14,9 @@ use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\MaxLengthOption;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\MinLengthOption;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\TypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\TypeOptionGroup;
-use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Group;
 
 class TextType extends CustomFieldType
 {
@@ -56,7 +56,7 @@ class TextType extends CustomFieldType
                         ->statePath('suggestions')
                         ->columnSpanFull()
                         ->schema(fn($record) => once(fn() => [
-                            Repeater::make($record->getLocale()) //ToDo may make simple repeater
+                            Repeater::make(app()->getLocale()) //ToDo translate //ToDo may make simple repeater
                             ->helperText(TypeOption::__('suggestions.helper_text'))
                                 ->addActionLabel(TypeOption::__('suggestions.add_label'))
                                 ->schema([TextInput::make('value')->label('')])

@@ -4,17 +4,12 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options;
 
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasOptionNoComponentModification;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\TypeOption;
-use Filament\Forms\Components\Component;
 use Filament\Forms\Components\TextInput;
+use Filament\Support\Components\Component;
 
 class ActionLabelTypeOption extends TypeOption
 {
     use HasOptionNoComponentModification;
-
-    public function getDefaultValue(): mixed
-    {
-        return null;
-    }
 
     public function getComponent(string $name): Component
     {

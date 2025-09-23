@@ -20,7 +20,8 @@ class CustomFormTypeSelector extends Select
         parent::setUp();
 
         $this
-            ->label(CustomForm::__('attributes.custom_form_identifier'))
+            ->label(CustomForm::__('attributes.custom_form_identifier.label'))
+            ->helperText(CustomForm::__('attributes.custom_form_identifier.helper_text'))
             ->options($this->getTypeOptions());
     }
 

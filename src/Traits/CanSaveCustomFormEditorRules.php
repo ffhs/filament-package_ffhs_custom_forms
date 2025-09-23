@@ -2,10 +2,10 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Traits;
 
+use Ffhs\FfhsUtils\Models\Rule;
+use Ffhs\FfhsUtils\Models\RuleEvent;
+use Ffhs\FfhsUtils\Models\RuleTrigger;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\Rule;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\RuleEvent;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\RuleTrigger;
 use Illuminate\Support\Collection;
 
 trait CanSaveCustomFormEditorRules
@@ -43,7 +43,7 @@ trait CanSaveCustomFormEditorRules
         $ruleTriggersToCreate = [];
         $ruleTriggersToUpdate = [];
 
-        $usedRuleIds = [];
+//        $usedRuleIds = []; //ToDo fuck ????
 
         $existingTriggers = RuleTrigger::query()
             ->whereIn('rule_id', $form->ownedRules()->select('rules.id'))
@@ -60,7 +60,7 @@ trait CanSaveCustomFormEditorRules
             $rule->is_or_mode = $rawRule['is_or_mode'] ?? false;
             $rule->save();
 
-            $usedRuleIds[] = $rule->id;
+//            $usedRuleIds[] = $rule->id;
 
             $triggers = $existingTriggers[$rule->id] ?? collect();
             $triggers = $triggers->keyBy('id');

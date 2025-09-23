@@ -2,11 +2,11 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\CustomOption\Types;
 
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\CustomOption\CustomOptionType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\CustomOption\TypeOptions\CustomOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\CustomOption\TypeOptions\CustomOptionTypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\CustomOption\Types\Views\ToggleButtonsView;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasCustomTypePackageTranslation;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Groups\LayoutWithColumnsOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Groups\ValidationTypeOptionGroup;
@@ -14,8 +14,8 @@ use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\BooleanOption;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\FastTypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\InlineOption;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\TypeOption;
-use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Toggle;
+use Filament\Support\Components\Component;
 
 class ToggleButtonsType extends CustomOptionType
 {
@@ -33,7 +33,7 @@ class ToggleButtonsType extends CustomOptionType
         ];
     }
 
-    public function prepareToSaveAnswerData(CustomFieldAnswer $answer, mixed $data): ?array
+    public function prepareToSaveAnswerData(EmbedCustomFieldAnswer $answer, mixed $data): ?array
     {
         if ($data === '0') {
             $data = false;

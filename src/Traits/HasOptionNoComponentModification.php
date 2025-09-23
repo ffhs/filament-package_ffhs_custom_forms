@@ -2,17 +2,22 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Traits;
 
-use Filament\Forms\Components\Component as FormsComponent;
-use Filament\Infolists\Components\Component as InfolistComponent;
+
+use Filament\Support\Components\Component;
 
 trait HasOptionNoComponentModification
 {
-    public function modifyFormComponent(FormsComponent $component, mixed $value): FormsComponent
+    public function modifyComponent(Component $component, mixed $value): Component
     {
         return $component;
     }
 
-    public function modifyInfolistComponent(InfolistComponent $component, mixed $value): InfolistComponent
+    public function modifyFormComponent(Component $component, mixed $value): Component
+    {
+        return $component;
+    }
+
+    public function modifyInfolistComponent(Component $component, mixed $value): Component
     {
         return $component;
     }

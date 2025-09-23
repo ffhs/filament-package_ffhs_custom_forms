@@ -1,0 +1,52 @@
+<?php
+
+namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\FormEditor\FieldAdder;
+
+use Ffhs\FfhsUtils\Filament\Components\DragDrop\DragDropSelectAction;
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\FormEditorSideComponent;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\FormEditor\StateCasts\CustomFieldStateCast;
+use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasFormConfiguration;
+use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasFormGroupName;
+use Filament\Forms\Components\Concerns\CanGenerateUuids;
+
+abstract class FormFieldAdder extends DragDropSelectAction implements FormEditorSideComponent
+{
+    use HasFormConfiguration;
+    use CanGenerateUuids;
+    use HasFormGroupName;
+
+    public function addNewField(
+        array $fieldData
+    ): void {
+        $arguments = $this->getArguments();
+        $path = $arguments['path'];
+        $position = $arguments['position'];
+//        $type = CustomForms::getFieldTypeFromRawDate($fieldData, $this->getRecord()); //ToDo Change
+        $get = $this->getSchemaComponent()->makeGetUtility();
+        $set = $this->getSchemaComponent()->makeSetUtility();
+
+        $state = $get($path, true) ?? [];
+
+        // Split the array into two parts
+        $before = array_slice($state, 0, $position, true);
+        $after = array_slice($state, $position, null, true);
+
+// Merge with the new element in between
+        $arr = $before + [$this->generateUuid() => $fieldData] + $after;
+
+        $set($path, $arr, true);
+    }
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->dragGroup($this->getGroupName(...));
+    }
+
+    protected function getCustomFieldsState(): array
+    {
+        $fields = $this->getSchemaComponent()?->getState()['custom_fields'] ?? [];
+        return new CustomFieldStateCast()->flattCustomFields($fields);
+    }
+
+}

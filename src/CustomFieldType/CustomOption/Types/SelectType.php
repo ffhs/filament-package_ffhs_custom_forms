@@ -13,12 +13,12 @@ use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\MaxSelectOption;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\MinSelectOption;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\ValidationMessageOption;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\TypeOption;
-use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Field;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Get;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Support\Components\Component;
 
 class SelectType extends CustomOptionType
 {
@@ -90,13 +90,13 @@ class SelectType extends CustomOptionType
                     ),
                     'min_select' => MinSelectOption::make()
                         ->modifyOptionComponent(fn(Field $component) => $component
-                            ->required(fn($get) => $get('prioritized'))
+                            ->required(fn(Get $get) => $get('prioritized'))
                             ->whenTruthy('several')
                             ->columnStart(1)
                         ),
                     'max_select' => MaxSelectOption::make()
                         ->modifyOptionComponent(fn(Field $component) => $component
-                            ->required(fn($get) => $get('prioritized'))
+                            ->required(fn(Get $get) => $get('prioritized'))
                             ->whenTruthy('several')
                         ),
                     'validation_messages' => ValidationMessageOption::make()

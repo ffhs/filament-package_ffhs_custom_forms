@@ -9,6 +9,7 @@ trait CanLoadFieldRelationFromForm
 {
     protected function loadFieldRelationsFromForm(CustomField $customField, CustomForm $customForm): CustomField
     {
+        //ToDo without customForm
         if ($customField->isGeneralField() && !$customField->relationLoaded('generalField')) {
             $genField = $customForm
                 ->getFormConfiguration()

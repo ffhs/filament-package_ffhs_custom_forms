@@ -2,59 +2,51 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\LayoutType\Types\Views;
 
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomField;
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\FieldTypeView;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldType;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasDefaultViewComponent;
-use Filament\Forms\Components\Component as FormsComponent;
-use Filament\Forms\Components\Section as FormsSection;
-use Filament\Infolists\Components\Component as InfolistsComponent;
-use Filament\Infolists\Components\Fieldset;
-use Filament\Infolists\Components\Group;
-use Filament\Infolists\Components\Section as InfolistsSection;
+use Filament\Schemas\Components\Fieldset;
+use Filament\Schemas\Components\Group;
+use Filament\Schemas\Components\Section;
+use Filament\Support\Components\Component;
 
 class SectionTypeView implements FieldTypeView
 {
     use HasDefaultViewComponent;
 
-    public function getFormComponent(
-        CustomFieldType $type,
-        CustomField $record,
-        array $parameter = []
-    ): FormsComponent {
-        $section = FormsSection::make($this->getLabelName($record));
-        $section = $this->modifyFormComponent($section, $record);
-
-        /**@var $section FormsSection */
-        return $section
-            ->aside($this->getOptionParameter($record, 'aside'))
-            ->schema($parameter['child_render']());
+    public function getFormComponent(EmbedCustomField $customField, array $parameter = []): Component
+    {
+        $section = Section::make($this->getLabelName($customField));
+        return $this
+            ->modifyComponent($section, $customField, false)
+            ->aside($this->getOptionParameter($customField, 'aside'))
+            ->schema($parameter['child_render']())
+            ->hiddenLabel();
     }
 
-    public function getInfolistComponent(
-        CustomFieldType $type,
-        CustomFieldAnswer $record,
-        array $parameter = []
-    ): InfolistsComponent {
+    public function getEntryComponent(EmbedCustomFieldAnswer $customFieldAnswer, array $parameter = []): Component
+    {
         $schema = $parameter['child_render']();
 
-        if (!$this->getOptionParameter($record, 'show_in_view')) {
+        if (!$this->getOptionParameter($customFieldAnswer, 'show_in_view')) {
             return Group::make($schema)
-                ->columnStart(1)
-                ->columnSpanFull();
+                ->columnSpanFull()
+                ->columnStart(1);
         }
 
-        if ($this->getOptionParameter($record, 'show_as_fieldset')) {
-            return Fieldset::make($this->getLabelName($record))
+        if ($this->getOptionParameter($customFieldAnswer, 'show_as_fieldset')) {
+            return Fieldset::make($this->getLabelName($customFieldAnswer))
                 ->schema($schema)
                 ->columnStart(1)
+                ->hiddenLabel()
                 ->columnSpanFull();
         }
 
-        return InfolistsSection::make($this->getLabelName($record))
+        return Section::make($this->getLabelName($customFieldAnswer))
             ->schema($schema)
             ->columnStart(1)
+            ->hiddenLabel()
             ->columnSpanFull();
     }
 }

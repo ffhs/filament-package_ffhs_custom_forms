@@ -2,20 +2,21 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Traits;
 
-use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EventType;
-use Ffhs\FilamentPackageFfhsCustomForms\Contracts\TriggerType;
+use Ffhs\FfhsUtils\Contracts\Rules\EventType;
+use Ffhs\FfhsUtils\Contracts\Rules\TriggerType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormConfiguration\CustomFormConfiguration;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Events\FormRuleEventType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Trigger\FormRuleTriggerType;
+use Ffhs\FilamentPackageFfhsCustomForms\DataContainer\CustomFieldDataContainer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\TypeOption;
 
 trait CanCloneCustomForm
 {
-    //ToDo Test and maby improve
-    public function cloneField(array $fieldData, CustomForm $targetForm, bool $useSameIdentifier = true): array
+    public function cloneField(array $fieldData, CustomFormConfiguration $configuration): array
     {
         //Mutate Field Data's
+        CustomFieldDataContainer::make($fieldData, $configuration);
         $field = CustomField::query()
             ->firstWhere('id', $fieldData['id']);
 
@@ -26,7 +27,8 @@ trait CanCloneCustomForm
             ->mutateOnCloneField($fieldData, $field);
         $fieldData = $this->mutateOptionData($fieldData, $field);
         $fieldData = $this->unsetAttributesForClone($fieldData);
-        $fieldData['custom_form_id'] = $targetForm->id;
+
+        unset($fieldData['custom_form_id']);
 
         return $fieldData;
     }
@@ -48,23 +50,22 @@ trait CanCloneCustomForm
         return $fieldData;
     }
 
-    protected function cloneRule(array $ruleData, CustomForm $targetForm): array
+    protected function cloneRule(array $ruleData): array
     {
         $ruleData = $this->unsetAttributesForClone($ruleData);
 
         unset($ruleData['pivot']);
 
         $ruleData['events'] = $this
-            ->cloneRuleComponents($ruleData['events'], $targetForm, FormRuleEventType::class);
+            ->cloneRuleComponents($ruleData['events'], FormRuleEventType::class);
         $ruleData['triggers'] = $this
-            ->cloneRuleComponents($ruleData['triggers'], $targetForm, FormRuleTriggerType::class);
+            ->cloneRuleComponents($ruleData['triggers'], FormRuleTriggerType::class);
 
         return $ruleData;
     }
 
     protected function cloneRuleComponents(
         array $ruleComponentsData,
-        CustomForm $targetForm,
         string|EventType|TriggerType $componentClass
     ): array {
         foreach ($ruleComponentsData as $eventKey => $data) {
@@ -74,7 +75,7 @@ trait CanCloneCustomForm
             $type = $componentClass::getTypeFromIdentifier($type);
 
             if ($type instanceof FormRuleEventType || $type instanceof FormRuleTriggerType) {
-                $data = $type->mutateDataOnClone($data, $targetForm);
+                $data = $type->mutateDataOnClone($data);
             }
 
             unset($data['rule_id']);

@@ -2,10 +2,11 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Traits;
 
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomField;
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\FieldDisplayer;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\LayoutType\CustomLayoutType;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 
 trait CanRenderSplitCustomForm
 {
@@ -13,12 +14,12 @@ trait CanRenderSplitCustomForm
 
     protected function renderLayoutTypeSplit(
         CustomLayoutType $layoutType,
-        CustomForm $customForm,
+        EmbedCustomForm $customForm,
         FieldDisplayer $displayer,
         string $viewMode
     ) {
         /**@var null|CustomField $layoutField */
-        $customFields = $customForm->customFields;
+        $customFields = $customForm->getCustomFields();
         $layoutField = $customFields->firstWhere(fn(CustomField $field) => $field->type === $layoutType::identifier());
 
         if (is_null($layoutField)) {
@@ -38,13 +39,13 @@ trait CanRenderSplitCustomForm
     protected function renderPose(
         int $formBeginPos,
         int $formEndPos,
-        CustomForm $customForm,
+        EmbedCustomForm $customForm,
         FieldDisplayer $displayer,
         string $viewMode
     ) {
         $positionOffset = $formBeginPos - 1;
         $customFields = $customForm
-            ->customFields()
+            ->getCustomFields()
             ->where('form_position', '>=', $formBeginPos)
             ->where('layout_end_position', '<=', $formEndPos)
             ->get();
@@ -53,8 +54,8 @@ trait CanRenderSplitCustomForm
     }
 
     protected function renderField(
-        CustomField $field,
-        CustomForm $customForm,
+        EmbedCustomField $field,
+        EmbedCustomForm $customForm,
         FieldDisplayer $displayer,
         string $viewMode
     ) {

@@ -2,14 +2,14 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Traits;
 
-use Filament\Forms\Components\Actions\Action;
+use Filament\Actions\Action;
 use Filament\Forms\Components\Checkbox;
-use Filament\Forms\Components\Component;
-use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Group;
 use Filament\Support\Colors\Color;
+use Filament\Support\Components\Component;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\HtmlString;
 
@@ -89,7 +89,8 @@ trait HasNumberCheck
                         ->columnStart(1)
                         ->columnSpan(2)
                         ->numeric(),
-                    Placeholder::make('')
+                    Placeholder::make('3') //ToDo replace
+                    ->hiddenLabel()
                         ->content(fn() => new HtmlString(
                             Blade::render(
                                 '<div class="flex flex-col items-center justify-center"><br><x-bi-input-cursor style="height: auto; width: 40px"/></div>'
@@ -103,7 +104,8 @@ trait HasNumberCheck
                         ->columnSpan(2)
                         ->numeric(),
                 ]),
-            Placeholder::make('')
+            Placeholder::make('4')
+                ->hiddenLabel()
                 ->content(fn() => static::__('number.greater_smaller_info_on_empty'))
                 ->columnSpanFull()
                 ->label(''),

@@ -2,32 +2,22 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options;
 
+use Ffhs\FilamentPackageFfhsCustomForms\Traits\IsSimpleSetTypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\TypeOption;
-use Filament\Forms\Components\Component as FormsComponent;
 use Filament\Forms\Components\Toggle;
-use Filament\Infolists\Components\Component as InfolistsComponent;
+use Filament\Support\Components\Component;
 
 class InLineLabelOption extends TypeOption
 {
-    public function getDefaultValue(): bool
-    {
-        return false;
-    }
+    use IsSimpleSetTypeOption;
 
-    public function getComponent(string $name): FormsComponent
+    protected string $attribute = 'inlineLabel';
+    protected mixed $default = false;
+
+    public function getComponent(string $name): Component
     {
         return Toggle::make($name)
             ->label(TypeOption::__('inline_label.label'))
             ->helperText(TypeOption::__('inline_label.helper_text'));
-    }
-
-    public function modifyFormComponent(FormsComponent $component, mixed $value): FormsComponent
-    {
-        return $component->inlineLabel($value);
-    }
-
-    public function modifyInfolistComponent(InfolistsComponent $component, mixed $value): InfolistsComponent
-    {
-        return $component;
     }
 }

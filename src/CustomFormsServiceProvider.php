@@ -2,6 +2,10 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms;
 
+use Ffhs\FfhsUtils\Facades\FfhsRules;
+use Ffhs\FfhsUtils\Models\Rule;
+use Ffhs\FfhsUtils\Models\RuleEvent;
+use Ffhs\FfhsUtils\Models\RuleTrigger;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
@@ -10,9 +14,6 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomOption;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\FormRule;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralFieldForm;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\Rule;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\RuleEvent;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\RuleTrigger;
 use Ffhs\FilamentPackageFfhsCustomForms\Policies\CustomFieldAnswerPolicy;
 use Ffhs\FilamentPackageFfhsCustomForms\Policies\CustomFieldPolicy;
 use Ffhs\FilamentPackageFfhsCustomForms\Policies\CustomFormAnswerPolicy;
@@ -24,7 +25,6 @@ use Ffhs\FilamentPackageFfhsCustomForms\Policies\GeneralFieldPolicy;
 use Ffhs\FilamentPackageFfhsCustomForms\Policies\Rule\RuleEventPolicy;
 use Ffhs\FilamentPackageFfhsCustomForms\Policies\Rule\RulePolicy;
 use Ffhs\FilamentPackageFfhsCustomForms\Policies\Rule\RuleTriggerPolicy;
-use Filament\Support\Assets\AlpineComponent;
 use Filament\Support\Assets\Css;
 use Filament\Support\Facades\FilamentAsset;
 use Illuminate\Support\Facades\Artisan;
@@ -57,7 +57,6 @@ class CustomFormsServiceProvider extends PackageServiceProvider
                 'create_custom_forms_tables',
                 'create_custom_fields_tables',
                 'create_custom_options_tables',
-                'create_rules_tables',
                 'create_form_relations_tables',
                 'seed_custom_forms_permissions'
             ])
@@ -97,6 +96,7 @@ class CustomFormsServiceProvider extends PackageServiceProvider
         parent::boot();
         $this->registerPolicies();
         $this->registerFilamentAssets();
+        $this->overwriteRuleConfig();
     }
 
     /**
@@ -106,17 +106,35 @@ class CustomFormsServiceProvider extends PackageServiceProvider
     {
         // Drag and Drop Components
         FilamentAsset::register([
-            AlpineComponent::make('parent', __DIR__ . '/../dist/js/drag-drop/parent.js')
-                ->loadedOnRequest(),
-            AlpineComponent::make('element', __DIR__ . '/../dist/js/drag-drop/element.js')
-                ->loadedOnRequest(),
-            AlpineComponent::make('container', __DIR__ . '/../dist/js/drag-drop/container.js')
-                ->loadedOnRequest(),
-            AlpineComponent::make('action_group', __DIR__ . '/../dist/js/drag-drop/action_group.js')
-                ->loadedOnRequest(),
-            Css::make('stylesheet', __DIR__ . '/../dist/css/drag_drop.css')
-                ->loadedOnRequest(),
-        ], 'ffhs/filament-package_ffhs_drag-drop');
+//            AlpineComponent::make('parent', __DIR__ . '/../dist/js/drag-drop/parent.js')
+//                ->loadedOnRequest(),
+//            AlpineComponent::make('element', __DIR__ . '/../dist/js/drag-drop/element.js')
+//                ->loadedOnRequest(),
+//            AlpineComponent::make('container', __DIR__ . '/../dist/js/drag-drop/container.js')
+//                ->loadedOnRequest(),
+//            AlpineComponent::make('action_group', __DIR__ . '/../dist/js/drag-drop/action_group.js')
+//                ->loadedOnRequest(),
+            Css::make('custom_forms', __DIR__ . '/../dist/css/custom_forms.css')->loadedOnRequest(),
+        ], 'ffhs/filament-package_ffhs_custom-forms');
+    }
+
+    protected function overwriteRuleConfig(): void
+    {
+        // Bestehende rule_triggers laden
+        $existingRuleTriggers = FfhsRules::config('rules.rule_triggers', []);
+        $existingRuleEvents = FfhsRules::config('rules.rule_events', []);
+
+        // Deine Custom Form Rule Triggers
+        $customFormRuleTriggers = \Ffhs\FilamentPackageFfhsCustomForms\Facades\CustomForms::getFormRuleTriggerClasses();
+        $customFormRuleEvents = \Ffhs\FilamentPackageFfhsCustomForms\Facades\CustomForms::getFormRuleEventClasses();
+
+        // Arrays mergen (neue Werte werden zu bestehenden hinzugefügt)
+        $mergedRuleTriggers = array_merge($existingRuleTriggers, $customFormRuleTriggers);
+        $mergedRuleEvents = array_merge($customFormRuleEvents, $existingRuleEvents);
+
+        // Konfiguration aktualisieren
+        config(['ffhs-rules.rules.rule_triggers' => $mergedRuleTriggers]);
+        config(['ffhs-rules.rules.rule_events' => $mergedRuleEvents]);
     }
 
     private function registerPolicies(): void

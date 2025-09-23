@@ -3,8 +3,8 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\Policies\Rule;
 
 use App\Models\User;
+use Ffhs\FfhsUtils\Models\Rule;
 use Ffhs\FilamentPackageFfhsCustomForms\Enums\CustomFormPermissionName;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\Rule;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 

@@ -2,63 +2,55 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\LayoutType\Types\Views;
 
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomField;
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\FieldTypeView;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldType;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasDefaultViewComponent;
-use Filament\Forms\Components\Component as FormsComponent;
-use Filament\Forms\Components\Group as FormsGroup;
-use Filament\Forms\Components\Placeholder;
-use Filament\Infolists\Components\Component as InfolistsComponent;
-use Filament\Infolists\Components\Group as InfolistsGroup;
 use Filament\Infolists\Components\TextEntry;
+use Filament\Schemas\Components\Group;
+use Filament\Support\Components\Component;
 
 class SpaceTypeView implements FieldTypeView
 {
     use HasDefaultViewComponent;
 
-    public function getFormComponent(
-        CustomFieldType $type,
-        CustomField $record,
-        array $parameter = []
-    ): FormsComponent {
-        $spaces = [];
-
-        for ($count = 0; $count < $this->getOptionParameter($record, 'amount'); $count++) {
-            $spaces[] = Placeholder::make($this->getIdentifyKey($record) . '-' . $count)
-                ->content('')
-                ->label('')
-                ->columnSpanFull();
-        }
+    public function getFormComponent(EmbedCustomField $customField, array $parameter = []): Component
+    {
+        $spaces = $this->createSpaceEntries($customField);
 
         return $this
-            ->modifyFormComponent(FormsGroup::make($spaces), $record)
+            ->modifyComponent(Group::make($spaces), $customField, false)
             ->columns(1)
             ->columnSpanFull();
     }
 
-    public function getInfolistComponent(
-        CustomFieldType $type,
-        CustomFieldAnswer $record,
-        array $parameter = []
-    ): InfolistsComponent {
-        if (!$this->getOptionParameter($record, 'show_in_view')) {
-            return InfolistsGroup::make()
-                ->hidden();
+    public function getEntryComponent(EmbedCustomFieldAnswer $customFieldAnswer, array $parameter = []): Component
+    {
+        if (!$this->getOptionParameter($customFieldAnswer, 'show_in_view')) {
+            return Group::make()->hidden();
         }
 
-        $spaces = [];
+        $spaces = $this->createSpaceEntries($customFieldAnswer, false);
 
-        for ($count = 0; $count < $this->getOptionParameter($record, 'amount'); $count++) {
-            $spaces[] = TextEntry::make($this->getIdentifyKey($record) . '-' . $count)
+        return $this
+            ->modifyComponent(Group::make($spaces), $customFieldAnswer, false)
+            ->columns(1)
+            ->columnSpanFull();
+    }
+
+    private function createSpaceEntries($object): array
+    {
+        $spaces = [];
+        $amount = $this->getOptionParameter($object, 'amount');
+
+        for ($count = 0; $count < $amount; $count++) {
+            $spaces[] = $entry = TextEntry::make($this->getIdentifyKey($object) . '-' . $count)
                 ->state(' ')
-                ->label('');
+                ->columnSpanFull()
+                ->hiddenLabel();
         }
 
-        return $this
-            ->modifyInfolistComponent(InfolistsGroup::make($spaces), $record)
-            ->columns(1)
-            ->columnSpanFull();
+        return $spaces;
     }
+
 }

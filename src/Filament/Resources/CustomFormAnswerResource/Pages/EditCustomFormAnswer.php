@@ -2,16 +2,13 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormAnswerResource\Pages;
 
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\EmbeddedCustomForm\EmbeddedCustomForm;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormAnswerResource;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormAnswerResource\CustomFormAnswerResource;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanLoadFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanSaveFormAnswer;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
-use Filament\Forms\Form;
 use Filament\Resources\Pages\EditRecord;
-use Filament\Schemas\Schema;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 
@@ -29,15 +26,6 @@ class EditCustomFormAnswer extends EditRecord
             ->attributesToArray();
 
         return trans(CustomFormAnswer::__('pages.edit.title'), $attributes);
-    }
-
-    public function form(Schema $schema): Schema
-    {
-        return $schema->schema([
-            EmbeddedCustomForm::make('form_answer')
-                ->autoViewMode()
-                ->columnSpanFull(),
-        ]);
     }
 
     public function mount(int|string $record): void

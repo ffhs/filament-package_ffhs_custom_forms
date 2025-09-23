@@ -2,31 +2,27 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\Types\Views;
 
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomField;
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\FieldTypeView;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldType;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasDefaultViewComponent;
 use Filament\Forms\Components\Textarea;
-use Filament\Infolists\Components\Component;
 use Filament\Infolists\Components\TextEntry;
+use Filament\Support\Components\Component;
 
 class TextAreaTypeView implements FieldTypeView
 {
     use HasDefaultViewComponent;
 
-    public function getFormComponent(CustomFieldType $type, CustomField $record, array $parameter = []): Textarea
+    public function getFormComponent(EmbedCustomField $customField, array $parameter = []): Component
     {
         return $this
-            ->makeComponent(Textarea::class, $record)
-            ->autosize($this->getOptionParameter($record, 'auto_size'));
+            ->makeComponent(Textarea::class, $customField, false)
+            ->autosize($this->getOptionParameter($customField, 'auto_size'));
     }
 
-    public function getInfolistComponent(
-        CustomFieldType $type,
-        CustomFieldAnswer $record,
-        array $parameter = []
-    ): Component {
-        return $this->makeComponent(TextEntry::class, $record);
+    public function getEntryComponent(EmbedCustomFieldAnswer $customFieldAnswer, array $parameter = []): Component
+    {
+        return $this->makeComponent(TextEntry::class, $customFieldAnswer, true);
     }
 }

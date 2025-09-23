@@ -2,35 +2,29 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Traits;
 
-use Ffhs\FilamentPackageFfhsCustomForms\Facades\CustomForms;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomField;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormConfiguration\CustomFormConfiguration;
+use Ffhs\FilamentPackageFfhsCustomForms\DataContainer\CustomFieldDataContainer;
+use Illuminate\Support\Collection;
 
 trait HasAllFieldDataFromFormData
 {
     use CanLoadCustomFormEditorData;
     use CanLoadFieldRelationFromForm;
 
-    protected function getFieldDataFromFormData(array $fields, CustomForm $customForm): array
+    protected function getFieldDataFromFormData(array $fields, CustomFormConfiguration $configuration): Collection
     {
-        //Get the templated FormComponents
         $fieldsFromTemplate = collect($fields)
             ->whereNotNull('template_id')
-            ->flatMap(fn($templateData) => CustomForms::getCustomFormFromId($templateData['template_id'])->customFields)
-            ->mapWithKeys(function (CustomField $customField) use ($customForm) {
-                $customField = $this->loadFieldRelationsFromForm($customField, $customForm);
-
-                return [$customField->identifier() => $this->loadEditorField($customField)];
-            });
+            ->flatMap(fn($templateData
+            ) => $configuration->getAvailableTemplates()->find($templateData['template_id'])?->getCustomFields())
+            ->keyBy(fn(EmbedCustomField $customField) => $customField->identifier());
 
         return collect($fields)
-            ->mapWithKeys(function (array $field) use ($customForm) {
-                $customField = app(CustomField::class)->fill($field);
-                $customField = $this->loadFieldRelationsFromForm($customField, $customForm);
-
-                return [$customField->identifier() => $field];
+            ->mapWithKeys(function (array $field) use ($configuration) {
+                $customField = CustomFieldDataContainer::make($field, $configuration);
+                return [$customField->identifier => $customField];
             })
-            ->merge($fieldsFromTemplate)
-            ->toArray();
+            ->merge($fieldsFromTemplate);
     }
 }

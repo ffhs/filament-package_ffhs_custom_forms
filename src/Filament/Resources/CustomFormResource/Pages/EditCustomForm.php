@@ -2,25 +2,24 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormResource\Pages;
 
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormEditor\CustomFormEditor;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormHeaderActions\CustomFormSchemaExportAction;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormHeaderActions\CustomFormSchemaImportAction;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormResource;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormSchemaExportAction;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormSchemaImportAction;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormResource\CustomFormResource;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanLoadCustomFormEditorData;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanSaveCustomFormEditorData;
-use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
-use Filament\Schemas\Schema;
 use Filament\Support\Enums\Width;
 use Filament\Support\Facades\FilamentView;
 use Illuminate\Contracts\Support\Htmlable;
+use LaraZeus\SpatieTranslatable\Actions\LocaleSwitcher;
+use LaraZeus\SpatieTranslatable\Resources\Pages\EditRecord\Concerns\Translatable;
 use Throwable;
 use function Filament\Support\is_app_url;
 
 class EditCustomForm extends EditRecord
 {
-    //use Translatable;;
+    use Translatable;
     use CanSaveCustomFormEditorData;
     use CanLoadCustomFormEditorData;
 
@@ -46,21 +45,14 @@ class EditCustomForm extends EditRecord
         return Width::Full;
     }
 
-    public function form(Schema $schema): Schema
-    {
-        return $schema->components([
-            CustomFormEditor::make('custom_form')
-                ->label('')
-        ]);
-    }
-
     /**
      * @throws Throwable
      */
     public function save(bool $shouldRedirect = true, bool $shouldSendSavedNotification = true): void
     {
         $this->authorizeAccess();
-        $this->saveCustomFormEditorData($this->data['custom_form'], $this->getRecord());
+        $state = $this->form->getState();
+        $this->saveCustomFormEditorData($state['custom_form'], $this->getRecord());
         $this->rememberData();
 
         if ($shouldSendSavedNotification) {
@@ -82,9 +74,7 @@ class EditCustomForm extends EditRecord
 
         $this
             ->form
-            ->fill([
-                'custom_form' => $this->loadCustomFormEditorData($customForm)
-            ]);
+            ->fill(['custom_form' => $this->loadCustomFormEditorData($customForm)]);
     }
 
     protected function getHeaderActions(): array
@@ -101,7 +91,9 @@ class EditCustomForm extends EditRecord
                     $action->redirect('edit');
                 }),
             LocaleSwitcher::make(),
-            DeleteAction::make(),
+//            DeleteAction::make(),
         ];
     }
+
+
 }

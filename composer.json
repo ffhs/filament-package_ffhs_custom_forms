@@ -17,6 +17,7 @@
     "require": {
         "php": "^8.2",
         "filament/filament": "^4.0",
+        "ffhs/filament-package_ffhs_utils": "~0.1.0",
         "filament/notifications": "^4.0",
         "laravel/framework": "^11|^12.0",
         "laravel/prompts": "^0.3",
@@ -24,7 +25,9 @@
         "spatie/laravel-permission": "^6.4",
         "davidhsianturi/blade-bootstrap-icons": "^1.4|^2.1.0",
         "codeat3/blade-carbon-icons": "^2.18.2",
-        "secondnetwork/blade-tabler-icons": "^3.26"
+        "secondnetwork/blade-tabler-icons": "^3.26",
+        "guava/filament-icon-picker": "^3.0",
+        "lara-zeus/spatie-translatable": "*"
     },
     "extra": {
         "laravel": {
@@ -87,5 +90,15 @@
         }
     ],
     "minimum-stability": "alpha",
-    "prefer-stable": true
+    "prefer-stable": true,
+    "repositories": {
+        "ffhs": {
+            "type": "path",
+            "url": "../*"
+        },
+        "internal-git.alpen.ffhs.ch/36": {
+            "type": "composer",
+            "url": "https://internal-git.alpen.ffhs.ch/api/v4/group/36/-/packages/composer/packages.json"
+        }
+    }
 }

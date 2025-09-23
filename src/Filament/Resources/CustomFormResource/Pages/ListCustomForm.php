@@ -4,8 +4,8 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormResou
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormConfiguration\CustomFormConfiguration;
 use Ffhs\FilamentPackageFfhsCustomForms\Facades\CustomForms;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormHeaderActions\CustomFormSchemaImportAction;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormResource;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormSchemaImportAction;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormResource\CustomFormResource;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\TemplateResource\Pages\ListTemplate;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Filament\Actions\CreateAction;
@@ -50,7 +50,7 @@ class ListCustomForm extends ListRecords
         return 'all';
     }
 
-    public function table(Table $table): Table
+    public function table(Table $table): Table //ToDo put in table class
     {
         return parent::table($table)
             ->recordActions([
@@ -60,15 +60,15 @@ class ListCustomForm extends ListRecords
                 TextColumn::make('id'),
                 TextColumn::make('template_identifier')
                     ->visible($this instanceof ListTemplate)
-                    ->label(CustomForm::__('attributes.template_identifier'))
+                    ->label(CustomForm::__('attributes.template_identifier.label'))
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('short_title')
-                    ->label(CustomForm::__('attributes.short_title'))
+                    ->label(CustomForm::__('attributes.short_title.label'))
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('custom_form_identifier')
-                    ->label(CustomForm::__('attributes.custom_form_identifier'))
+                    ->label(CustomForm::__('attributes.custom_form_identifier.label'))
                     ->state(fn(CustomForm $record) => ($record->dynamicFormConfiguration())::displayName())
                     ->sortable(),
                 TextColumn::make('owned_fields_count')

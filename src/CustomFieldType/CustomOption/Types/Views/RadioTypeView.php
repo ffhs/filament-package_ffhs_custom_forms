@@ -2,32 +2,29 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\CustomOption\Types\Views;
 
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\FieldTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\CustomOption\HasCustomOptionInfoListViewWithBoolean;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldType;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasDefaultViewComponent;
-use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Radio;
+use Filament\Support\Components\Component;
 
 class RadioTypeView implements FieldTypeView
 {
     use HasCustomOptionInfoListViewWithBoolean;
     use HasDefaultViewComponent;
 
-    public function getFormComponent(
-        CustomFieldType $type,
-        CustomField $record,
-        array $parameter = []
-    ): Component {
-        /**@var Radio $radio */
-        $radio = $this->makeComponent(Radio::class, $record);
-        $radio = $radio->inline($this->getOptionParameter($record, 'inline'));
 
-        if ($this->getOptionParameter($record, 'boolean')) {
+    public function getFormComponent(EmbedCustomField $customField, array $parameter = []): Component
+    {
+        /**@var Radio $radio */
+        $radio = $this->makeComponent(Radio::class, $customField, false);
+        $radio = $radio->inline($this->getOptionParameter($customField, 'inline'));
+
+        if ($this->getOptionParameter($customField, 'boolean')) {
             $radio->boolean();
         } else {
-            $radio->options($this->getAvailableCustomOptions($record));
+            $radio->options($this->getAvailableCustomOptions($customField));
         }
 
         return $radio;

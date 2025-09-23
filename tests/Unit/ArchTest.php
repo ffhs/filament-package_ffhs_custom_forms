@@ -3,7 +3,7 @@
 arch()
     ->expect('Ffhs\FilamentPackageFfhsCustomForms')
     //->toUseStrictTypes()
-    ->not->toUse(['die', 'dd', 'dump']);
+    ->not->toUse(['die', 'dd', 'dump', 'Debugbar']);
 
 arch()
     ->expect('Ffhs\FilamentPackageFfhsCustomForms\Models')
@@ -13,3 +13,11 @@ arch()
 arch()
     ->expect('Ffhs\FilamentPackageFfhsCustomForms\Traits')
     ->toBeTraits();
+
+arch()
+    ->expect('Ffhs\FilamentPackageFfhsCustomForms\Enums')
+    ->toBeEnums();
+
+arch()
+    ->expect('Ffhs\FilamentPackageFfhsCustomForms\Contracts')
+    ->toBeInterfaces();

@@ -2,9 +2,9 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Traits;
 
+use Ffhs\FfhsUtils\Models\Rule;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\FormRule;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\Rule;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -19,7 +19,7 @@ trait HasFormRules
 
     public function ownedRules(): BelongsToMany
     {
-        return $this->belongsToMany(Rule::class, (new FormRule())->getTable());
+        return $this->belongsToMany(Rule::class, app(FormRule::class)->getTable());
     }
 
     public function getOwnedRules(): Collection

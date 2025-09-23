@@ -44,7 +44,7 @@ class DownloadType extends CustomFieldType
                 'files' => FastTypeOption::makeFast([],
                     FileUpload::make('files')
                         ->afterStateUpdated(
-                            fn($set, $state) => sizeof($state) > 1 ? $set('title_as_filename', false) : null
+                            fn($set, $state) => count($state) > 1 ? $set('title_as_filename', false) : null
                         )
                         ->directory($this->getConfigAttribute('save_path'))
                         ->disk($this->getConfigAttribute('disk'))
