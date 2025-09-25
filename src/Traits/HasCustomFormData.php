@@ -64,7 +64,7 @@ trait HasCustomFormData
         return $this->cachedCustomFormRelation = $record;
     }
 
-    public function getCustomForm(): ?CustomForm
+    public function getCustomForm(): ?EmbedCustomForm
     {
         return $this->getCustomFormRelation() ?? $this->evaluate($this->customForm) ?? $this->evaluate($this->customFormData);
     }

@@ -54,7 +54,7 @@ trait HasEmbeddedCustomForm
     public function getCustomFormAnswer(): EmbedCustomFormAnswer|Model
     {
         if ($this->relationship) {
-            return $this->getCachedExistingRecord(); //toDo maby create new record if none exist
+            return $this->getCachedExistingRecord() ?? CustomFormAnswerDataContainer::make([], $this->getCustomForm());
         }
 
         return CustomFormAnswerDataContainer::make($this->getState() ?? [], $this->getCustomForm());
