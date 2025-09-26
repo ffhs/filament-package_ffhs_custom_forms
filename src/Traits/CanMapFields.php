@@ -103,8 +103,14 @@ trait CanMapFields
     public function getAvailableCustomOptions(EmbedCustomField $record): Collection
     {
         return $record
-            ->getCustomOptions() //ToDo fix
-            ->pluck('name', 'identifier');
+            ->getCustomOptions()
+            ->mapWithKeys(function (array $option) {
+                $name = $option['name'];
+                if (is_array($name)) {
+                    $name = $name[app()->getLocale()] ?? $name[app()->getFallbackLocale()] ?? '';
+                }
+                return [$option['identifier'] => $name];
+            });
     }
 
     public function getAllCustomOptions(EmbedCustomField|EmbedCustomFieldAnswer $record): Collection

@@ -54,7 +54,8 @@ class CustomFieldDataContainer implements EmbedCustomField
 
     public function getCustomOptions(): Collection
     {
-        return collect($this->data['options']['custom_options'] ?? []);
+        $options = $this->data['options']['custom_options'] ?? $this->data['options']['customOptions'] ?? [];
+        return collect($options);
     }
 
     public function getFormConfiguration(): CustomFormConfiguration

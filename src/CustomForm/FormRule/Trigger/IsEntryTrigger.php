@@ -29,6 +29,8 @@ class IsEntryTrigger extends FormRuleTriggerType
             $component = array_values($target)[0] ?? null;
         } elseif ($target instanceof Collection) {
             $component = $target->first();
+        } else {
+            $component = null;
         }
 
         if ($component instanceof Component) {
