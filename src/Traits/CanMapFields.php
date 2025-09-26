@@ -103,7 +103,7 @@ trait CanMapFields
     public function getAvailableCustomOptions(EmbedCustomField $record): Collection
     {
         return $record
-            ->customOptions //ToDo fix
+            ->getCustomOptions() //ToDo fix
             ->pluck('name', 'identifier');
     }
 

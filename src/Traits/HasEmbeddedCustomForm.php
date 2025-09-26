@@ -34,7 +34,7 @@ trait HasEmbeddedCustomForm
 
     public function fillFromRelationship(): void
     {
-        $data = $this->loadAnswerData($this);
+        $data = $this->loadAnswerData($this->getCustomFormAnswer());
         $data = $this->mutateRelationshipDataBeforeFill($data);
 
         $this->getChildSchema()?->fill($data, false, false);

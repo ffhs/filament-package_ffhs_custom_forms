@@ -3,7 +3,7 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\Traits;
 
 use Closure;
-use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomFieldAnswer;
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 
 trait HasFieldSplit
@@ -32,7 +32,7 @@ trait HasFieldSplit
         return $this->evaluate($this->useFieldSplit);
     }
 
-    public function loadFieldTypeSplitAnswerData(EmbedCustomFieldAnswer $answer): array
+    public function loadFieldTypeSplitAnswerData(EmbedCustomFormAnswer $answer): array
     {
         $field = $this->getFieldSplit();
 
