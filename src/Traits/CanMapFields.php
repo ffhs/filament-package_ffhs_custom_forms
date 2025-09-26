@@ -104,7 +104,10 @@ trait CanMapFields
     {
         return $record
             ->getCustomOptions()
-            ->mapWithKeys(function (array $option) {
+            ->mapWithKeys(function (mixed $option) {
+                if (!is_array($option)) {
+                    return [$option => $option];
+                }
                 $name = $option['name'];
                 if (is_array($name)) {
                     $name = $name[app()->getLocale()] ?? $name[app()->getFallbackLocale()] ?? '';
