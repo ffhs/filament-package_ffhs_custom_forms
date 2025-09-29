@@ -44,10 +44,9 @@ class CustomFormAnswerEditor extends Field implements CanEntangleWithSingularRel
             return;
         }
 
-        $customFormAnswer->save();
         $data = $this->mutateRelationshipDataBeforeSave($state);
 
-        $this->saveFormAnswer($customFormAnswer, $this->getLivewire()?->form, $this->getStatePath());
+        $this->saveFormAnswer($customFormAnswer, $this->getChildSchema());
 
         $customFormAnswer
             ->fill($data)
