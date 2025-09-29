@@ -11,6 +11,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanLoadCustomFormEditorData;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanRenderCustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasStaticMake;
 use Filament\Schemas\Components\Group;
+use Filament\Schemas\Components\Section;
 use Filament\Support\Components\Component;
 
 class TemplateTypeView implements FieldTypeView
@@ -32,7 +33,10 @@ class TemplateTypeView implements FieldTypeView
     {
         $schema = $this->renderTemplate($customFieldAnswer->getCustomField(), $parameter);
 
-        return Group::make($schema)
+
+        return Section::make()
+            ->contained(false)
+            ->schema($schema)
             ->columnSpanFull();
     }
 
@@ -61,6 +65,7 @@ class TemplateTypeView implements FieldTypeView
         //Register Components for rule stuff
         $allComponents = $renderedOutput[1];
         $parameter['registerComponents']($allComponents);
+
 
         //return Schema
         return $renderedOutput[0];

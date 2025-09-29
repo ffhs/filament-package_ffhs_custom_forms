@@ -5,6 +5,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Traits;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\TypeOption;
+use Filament\Infolists\Components\Entry;
 use Filament\Support\Components\Component;
 
 trait HasDefaultViewComponent
@@ -64,7 +65,8 @@ trait HasDefaultViewComponent
             return $component;
         }
 
-        if ($fieldRaw instanceof EmbedCustomFieldAnswer && method_exists($component, 'state')) {
+        if ($fieldRaw instanceof EmbedCustomFieldAnswer && method_exists($component,
+                'state') && $component instanceof Entry) {
             $component = $component->state($this->getAnswer($fieldRaw));
         }
 

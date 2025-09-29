@@ -146,14 +146,14 @@ trait CanMapFields
     /**
      * Like an Repeater
      */
-    public function isFieldInSplitGroup(EmbedCustomField|CustomFieldAnswer $record): bool
+    public function isFieldInSplitGroup(EmbedCustomField|EmbedCustomFieldAnswer $record): bool
     {//ToDo Slow
-        if ($record instanceof CustomFieldAnswer) {
+        if ($record instanceof EmbedCustomFieldAnswer) {
             $record = $record->customField;
         }
 
         $fields = $record
-            ->customForm
+            ->getC  //ToDo FUCK
             ->customFields;
         $parentSplitField = $fields
             ->firstWhere(function (CustomField $field) use ($record) {
