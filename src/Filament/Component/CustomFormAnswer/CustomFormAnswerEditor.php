@@ -59,9 +59,11 @@ class CustomFormAnswerEditor extends Field implements CanEntangleWithSingularRel
             ->fieldDisplayer(FormFieldDisplayer::make(...))
             ->afterStateUpdated($this->runAutoSave(...))
             ->live(condition: $this->isAutoSaving(...))
-            ->schema($this->getCustomFormSchema(...))
+//            ->schema($this->getCustomFormSchema(...))
             ->columns(1)
             ->autoViewMode()
             ->hiddenLabel();
     }
+
+
 }
