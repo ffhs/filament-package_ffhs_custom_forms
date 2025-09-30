@@ -41,9 +41,10 @@ trait HasLayoutSplit
 
     public function loadLayoutTypeSplitAnswerData(EmbedCustomFormAnswer $answer): array
     {
+        //ToDo doesnt work when field is in Template
         $layoutField = $answer
-            ->customForm
-            ->customFields
+            ->getCustomForm()
+            ->getCustomFields()
             ->filter(fn(CustomField $field) => $field->type === $this->getLayoutTypeSplit()::identifier())
             ->first();
 
