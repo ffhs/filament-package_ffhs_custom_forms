@@ -7,6 +7,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\SplittedType\CustomSplitType;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
 use Illuminate\Support\Collection;
 
 trait CanMapFields
@@ -153,7 +154,7 @@ trait CanMapFields
         }
 
         $fields = $record
-            ->getC  //ToDo FUCK
+            ->customForm //ToDo Make for EmbedCustomField
             ->customFields;
         $parentSplitField = $fields
             ->firstWhere(function (CustomField $field) use ($record) {
@@ -184,45 +185,45 @@ trait CanMapFields
             ->filter(fn(CustomField $field) => $field->getType() instanceof CustomSplitType);
     }
 
-//    public function getFieldsInLayout(EmbedCustomField|CustomFieldAnswer $record): Collection //ToDo Check if its needed
-//    {
-//        if ($record instanceof CustomFieldAnswer) {
-//            $record = $record->customField;
-//        }
-//
-//        return $record
-//            ->customForm
-//            ->customFields
-//            ->filter(function (CustomField $field) use ($record) {
-//                return !($field->form_position > $record->layout_end_position
-//                    || $field->form_position <= $record->form_position);
-//            });
-//    }
-//
-//    public function getExistingPaths(
-//        EmbedCustomField|CustomFieldAnswer $record,
-//        CustomFormAnswer $customFormAnswer
-//    ): Collection {
-//        if ($record instanceof CustomFieldAnswer) {
-//            $customFormAnswer = $record->customFormAnswer;
-//            $record = $record->customField;
-//        }
-//
-//        $splitGroup = $this
-//            ->getParentSplitGroups($record)
-//            ->sortByDesc('form_position')
-//            ->first();
-//
-//        $fieldsInGroup = $this->getFieldsInLayout($splitGroup);
-//
-//        $answersWithPath = $customFormAnswer
-//            ->customFieldAnswers
-//            ->whereIn('custom_field_id', $fieldsInGroup->pluck('id'))
-//            ->whereNotNull('path');
-//
-//        return $answersWithPath
-//            ->keyBy('path')
-//            ->keys();
-//    }
+    public function getFieldsInLayout(EmbedCustomField|CustomFieldAnswer $record): Collection
+    {
+        if ($record instanceof CustomFieldAnswer) {
+            $record = $record->customField;
+        }
+
+        return $record
+            ->customForm
+            ->customFields
+            ->filter(function (CustomField $field) use ($record) {
+                return !($field->form_position > $record->layout_end_position
+                    || $field->form_position <= $record->form_position);
+            });
+    }
+
+    public function getExistingPaths(
+        CustomField|CustomFieldAnswer $record,
+        CustomFormAnswer $customFormAnswer
+    ): Collection {
+        if ($record instanceof CustomFieldAnswer) {
+            $customFormAnswer = $record->customFormAnswer;
+            $record = $record->customField;
+        }
+
+        $splitGroup = $this
+            ->getParentSplitGroups($record)
+            ->sortByDesc('form_position')
+            ->first();
+
+        $fieldsInGroup = $this->getFieldsInLayout($splitGroup);
+
+        $answersWithPath = $customFormAnswer
+            ->customFieldAnswers
+            ->whereIn('custom_field_id', $fieldsInGroup->pluck('id'))
+            ->whereNotNull('path');
+
+        return $answersWithPath
+            ->keyBy('path')
+            ->keys();
+    }
 
 }

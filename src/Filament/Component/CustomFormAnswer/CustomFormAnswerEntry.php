@@ -23,12 +23,18 @@ class CustomFormAnswerEntry extends Entry implements CanEntangleWithSingularRela
         $this->getChildSchema()?->fill($data, false, false);
     }
 
+    public function getDefaultChildComponents(): array
+    {
+        return once(function (): array {
+            return $this->getCustomFormSchema($this->getCustomForm(), $this->getFieldDisplayer(), $this->getViewMode());
+        });
+    }
+
     protected function setUp(): void
     {
         parent::setUp();
 
         $this->fieldDisplayer(EntryFieldDisplayer::make(...))
-            ->schema($this->getCustomFormSchema(...))
             ->columns(1)
             ->autoViewMode()
             ->hiddenLabel();
