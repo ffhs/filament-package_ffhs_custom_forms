@@ -132,10 +132,10 @@ trait CanLoadFormAnswer
         }
 
         //If field is in template, get template field for position
-        $customField = $identifierTemplateMap->get($customField->identifier) ?? $customField;
+        $customFieldSolved = $identifierTemplateMap->get($customField->identifier, $customField);
 
-        $beginCondition = is_null($begin) || $begin <= $customField->form_position;
-        $endCondition = is_null($end) || $customField->form_position <= $end;
+        $beginCondition = is_null($begin) || $begin <= $customFieldSolved->form_position;
+        $endCondition = is_null($end) || $customFieldSolved->form_position <= $end;
 
         return $beginCondition && $endCondition;
     }
@@ -156,8 +156,8 @@ trait CanLoadFormAnswer
             ->map(function (EmbedCustomField $template) {
                 return $template->getTemplate()
                     ?->getOwnedFields()
-                    ->mapWithKeys(fn(EmbedCustomField $field) => $template);
-            })->flatten(1);
+                    ->mapWithKeys(fn(EmbedCustomField $field) => [$field->identifier => $template]);
+            })->collapse();
     }
 
     private function processFieldDataWithRules(

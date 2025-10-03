@@ -6,10 +6,10 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\FormEditor\Fiel
 use Ffhs\FfhsUtils\Filament\Components\ElevatedActions;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\Facades\CustomForms;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormResource\Pages\EditCustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasFormConfiguration;
 use Filament\Forms\Components\TextInput;
+use Filament\Pages\Page;
 use Filament\Schemas\Components\Component;
 
 class EditField extends Component
@@ -31,7 +31,7 @@ class EditField extends Component
         return CustomForms::getFieldTypeFromRawDate($state, $this->getFormConfiguration());
     }
 
-    public function getFieldComponents($state, EditCustomForm $livewire): array
+    public function getFieldComponents($state, Page $livewire): array
     {
         $type = $this->getFieldType($state);
         $localAdding = $livewire->getActiveSchemaLocale() ?? app()->getLocale();

@@ -33,6 +33,7 @@ abstract class CustomFieldType implements Type
         $genFields = CustomForms::config('selectable_general_field_types', []);
         $extraTypes = CustomForms::config('extra_custom_field_types', []);
 
+
         $formConfigTypes = collect($formConfig)
             ->map(function ($item) {
                 return $item['selectable_field_types'] ?? null;
@@ -41,7 +42,7 @@ abstract class CustomFieldType implements Type
             ->flatten(1)
             ->toArray();
 
-        $allTypes = array_merge($types + $genFields + $extraTypes + $formConfigTypes);
+        $allTypes = array_merge($types, $genFields, $extraTypes, $formConfigTypes);
 
         return array_unique($allTypes);
     }

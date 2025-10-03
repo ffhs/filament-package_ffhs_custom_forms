@@ -25,7 +25,6 @@ trait UseAutosaveCustomForm
         if (!$this->isAutoSaving()) {
             return;
         }
-
         if ($this->getRelationshipName()) {
             $this->saveCustomFormAnswerRelation($state);
         }

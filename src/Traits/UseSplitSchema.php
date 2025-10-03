@@ -31,6 +31,13 @@ trait UseSplitSchema
         return $this->loadCustomAnswerData($answer);
     }
 
+    public function getDefaultChildComponents(): array
+    {
+        return once(function (): array {
+            return $this->getCustomFormSchema($this->getCustomForm(), $this->getFieldDisplayer(), $this->getViewMode());
+        });
+    }
+
     public function getCustomFormSchema(
         EmbedCustomForm $customForm,
         FieldDisplayer $fieldDisplayer,

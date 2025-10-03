@@ -6,6 +6,7 @@ use Ffhs\FfhsUtils\Contracts\Rules\EmbedRuleTrigger;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasRuleTriggerPluginTranslate;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasTriggerEventFormTargets;
 use Filament\Schemas\Components\Component;
+use Illuminate\Support\Collection;
 
 class IsEntryTrigger extends FormRuleTriggerType
 {
@@ -24,7 +25,13 @@ class IsEntryTrigger extends FormRuleTriggerType
 
     public function isTrigger(array $arguments, mixed &$target, EmbedRuleTrigger $trigger): bool
     {
-        $component = array_values($target)[0] ?? null;
+        if (is_array($target)) {
+            $component = array_values($target)[0] ?? null;
+        } elseif ($target instanceof Collection) {
+            $component = $target->first();
+        } else {
+            $component = null;
+        }
 
         if ($component instanceof Component) {
             $component->getContainer()->getOperation() === 'view';

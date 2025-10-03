@@ -2,24 +2,63 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\FormEditor;
 
+use Closure;
 use Ffhs\FfhsUtils\Filament\Components\RuleEditor\RuleEditor;
 use Ffhs\FfhsUtils\Models\Rule;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\FormEditorSideComponent;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormConfiguration\CustomFormConfiguration;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormConfiguration\DefaultFormConfiguration;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\FormEditor\Field\EditFieldsGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\FormEditor\StateCasts\CustomFieldStateCast;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
+use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanLoadCustomFormEditorData;
+use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanSaveCustomFormEditorData;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasFormConfiguration;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasFormGroupName;
 use Filament\Forms\Components\Field;
+use Filament\Schemas\Components\Component;
+use Filament\Schemas\Components\Concerns\EntanglesStateWithSingularRelationship;
+use Filament\Schemas\Components\Contracts\CanEntangleWithSingularRelationships;
 use Filament\Schemas\Components\Fieldset;
 use Filament\Schemas\Components\Tabs;
 
-class FormEditor extends Field
+class CustomFormEditor extends Field implements CanEntangleWithSingularRelationships
 {
     use HasFormConfiguration;
     use HasFormGroupName;
+    use CanLoadCustomFormEditorData;
+    use CanSaveCustomFormEditorData;
+    use EntanglesStateWithSingularRelationship {
+        EntanglesStateWithSingularRelationship::relationship as parentRelationship;
+    }
 
     protected string $view = 'filament-package_ffhs_custom_forms::filament.components.form-editor.index';
+
+    public function relationship(
+        string $name,
+        bool|Closure $condition = true,
+        string|Closure|null $relatedModel = null
+    ): static {
+        $this->parentRelationship($name, $condition, $relatedModel);
+
+        $this->saveRelationshipsBeforeChildrenUsing(function (Component|CanEntangleWithSingularRelationships $component
+        ): void {
+            $state = $component->getState();
+            $record = $component->getCachedExistingRecord();
+
+            $this->saveCustomFormEditorData($state, $record);
+            $this->clearCachedExistingRecord();
+            $this->fillFromRelationship();
+        });
+
+        $this->formConfiguration(function (): CustomFormConfiguration {
+            /**@var null|CustomForm $customForm */
+            $customForm = $this->getCachedExistingRecord();
+            return $customForm?->getFormConfiguration() ?? DefaultFormConfiguration::make();
+        });
+
+        return $this;
+    }
 
     public function getSideComponents(): array
     {
@@ -41,6 +80,11 @@ class FormEditor extends Field
         $casts[] = new CustomFieldStateCast();
 
         return $casts;
+    }
+
+    protected function getStateFromRelatedRecord(CustomForm $record): array
+    {
+        return $this->loadCustomFormEditorData($record);
     }
 
     protected function setUp(): void

@@ -131,12 +131,12 @@ class ValueEqualsRuleTrigger extends FormRuleTriggerType
             $identifier = $field['identifier'] ?? '';
 
             if (!empty($field['general_field_id'])) {
-                $customField = new TempCustomField($record, $field);
+                $customField = new TempCustomField($record, $field); //ToDo Remove
                 $identifier = $customField->identifier();
             }
 
             if ($identifier === $target) {
-                $customField = new TempCustomField($record, $field);
+                $customField = new TempCustomField($record, $field);  //ToDo Remove
 
                 return !($customField->getType() instanceof CustomOptionType);
             }

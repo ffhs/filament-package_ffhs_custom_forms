@@ -2,11 +2,10 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Traits;
 
-use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\TempCustomField;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Select;
 use Filament\Schemas\Components\Group;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Support\Components\Component;
 use Illuminate\Support\Collection;
 
@@ -33,7 +32,7 @@ trait HasOptionCheck
 
         //Custom Option Types like Select
         if (is_array($targetValue)) {
-            return sizeof(array_intersect($targetValue, $options)) > 0;
+            return count(array_intersect($targetValue, $options)) > 0;
         }
 
         return !is_null($targetValue) && in_array($targetValue, $options, false);
@@ -46,45 +45,39 @@ trait HasOptionCheck
                 ->label(static::__('options.selected_include_null')),
             Select::make('selected_options')
                 ->label(static::__('options.selected_options'))
-                ->options(fn($get, $record) => once(fn() => $this->getOptionTypeGroupOptions($get, $record)))
+                ->options($this->getOptionTypeGroupOptions(...))
                 ->columnSpanFull()
                 ->multiple(),
         ]);
     }
 
-    protected function getOptionTypeGroupOptions(Get $get, CustomForm $record): array|Collection
+    protected function getOptionTypeGroupOptions(Get $get, $record): array|Collection
     {
-        $finalField = $this->getTargetFieldData($get, $record);
+        $finalField = $this->getTargetFieldData($get);
 
         if (is_null($finalField)) {
             return [];
         }
 
-        if (array_key_exists('general_field_id', $finalField) && !is_null($finalField['general_field_id'])) {
-            //GeneralFields
-            $tempField = new TempCustomField($record, $finalField);
-            $genField = $tempField->generalField;
-
-            if (!array_key_exists('options', $finalField)
-                || !array_key_exists('customOptions', $finalField['options'])) {
-                return [];
-            }
-
-            $options = collect($finalField['options']['customOptions']);
-
-            return $genField->customOptions
-                ->whereIn('id', $options)
-                ->pluck('name', 'identifier')
-                ->toArray();
-        }
-
-        if (!array_key_exists('options', $finalField)
-            || !array_key_exists('customOptions', $finalField['options'])) {
+        if (!array_key_exists('customOptions', $finalField->options ?? [])) {
             return [];
         }
 
-        $options = collect($finalField['options']['customOptions']);
+        if ($finalField->isGeneralField()) {
+            //GeneralFields
+            $genField = $finalField->getGeneralField();
+            $options = collect($finalField['options']['customOptions']);
 
-        return $options->pluck('name.' . $record->getLocale(), 'identifier');
+            return $genField?->customOptions
+                ->whereIn('id', $options)
+                ->pluck('name', 'identifier')
+                ->toArray() ?? [];
+        }
+
+
+        $options = collect($finalField->options['customOptions'] ?? []);
+        $local = method_exists($record, 'getLocale') ? $record->getLocale() : app()->getLocale();
+
+        return $options->pluck('name.' . $local, 'identifier');
     }
 }

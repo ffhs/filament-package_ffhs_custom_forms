@@ -34,8 +34,9 @@ trait HasEmbeddedCustomForm
 
     public function fillFromRelationship(): void
     {
-        $data = $this->loadAnswerData($this);
+        $data = $this->loadAnswerData($this->getCustomFormAnswer());
         $data = $this->mutateRelationshipDataBeforeFill($data);
+
 
         $this->getChildSchema()?->fill($data, false, false);
     }
@@ -51,10 +52,18 @@ trait HasEmbeddedCustomForm
         return $formConfiguration;
     }
 
+    public function getChildSchemas(bool $withHidden = false): array
+    {
+        if ((!$withHidden) && $this->isHidden()) {
+            return [];
+        }
+        return $this->getDefaultChildSchemas();
+    }
+
     public function getCustomFormAnswer(): EmbedCustomFormAnswer|Model
     {
         if ($this->relationship) {
-            return $this->getCachedExistingRecord(); //toDo maby create new record if none exist
+            return $this->getCachedExistingRecord() ?? CustomFormAnswerDataContainer::make([], $this->getCustomForm());
         }
 
         return CustomFormAnswerDataContainer::make($this->getState() ?? [], $this->getCustomForm());

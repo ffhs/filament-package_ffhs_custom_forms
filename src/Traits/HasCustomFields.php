@@ -21,7 +21,7 @@ trait HasCustomFields
     public function customFields(): Collection
     {
         if ($this->relationLoaded('customFields')) {
-            return $this->getRelation('customFields');
+            return $this->getRelation('customFields') ?? collect();
         }
 
         $templateIdQueries = CustomField::query()
@@ -92,7 +92,7 @@ trait HasCustomFields
     public function getOwnedFields(): Collection
     {
         if ($this->relationLoaded('ownedFields')) {
-            return parent::__get('ownedFields');
+            return parent::__get('ownedFields') ?? collect();
         }
 
         $customFields = $this->customFields();

@@ -27,8 +27,7 @@ trait CanRenderSplitCustomForm
         }
 
         $positionOffset = $layoutField->form_position;
-        $customFields = $layoutField
-            ->customForm
+        $customFields = $customForm
             ->getOwnedFields()
             ->where('form_position', '>', $layoutField->form_position)
             ->where('form_position', '<=', $layoutField->layout_end_position);

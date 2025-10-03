@@ -7,6 +7,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Group;
 use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -28,13 +29,14 @@ class CustomFormAwareSchema
                 )
                 ->required(),
 
-            CustomFormAnswerEditor::make('form_answer')
-                ->customFormRelation('customForm')
-                ->hiddenOn('create')
-                ->autoViewMode()
-                ->columnSpanFull()
+            Group::make(static fn($operation
+            ) => $operation === 'create' ? [] : [ //todo add fill_out on start without record.
+                CustomFormAnswerEditor::make('form_answer')
+                    ->customFormRelation('customForm')
+                    ->hiddenOn('create')
+                    ->autoViewMode()
+                    ->columnSpanFull()
+            ])
         ]);
-
-        //todo add fill_out on start without record.
     }
 }
