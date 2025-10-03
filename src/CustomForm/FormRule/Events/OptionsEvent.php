@@ -46,7 +46,8 @@ abstract class OptionsEvent extends FormRuleEventType
         if ($field->isGeneralField()) {
             $genOptions = $field->getGeneralField()->customOptions;
 
-            $selectedOptions = $field->options['customOptions'] ?? [];
+
+            $selectedOptions = $field->customOptions->pluck('id') ?? [];
             $genOptions = $genOptions->whereIn('id', $selectedOptions);
 
             return $genOptions->pluck('name', 'identifier');
