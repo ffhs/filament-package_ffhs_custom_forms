@@ -27,9 +27,12 @@ class FileUploadView implements FieldTypeView
 
     public function getFormComponent(EmbedCustomField $customField, array $parameter = []): Component
     {
-        $fileUpload = FileUpload::make($this->getIdentifyKey($customField) . '.files');
+//        return FileUpload::make('files')
+//            ->statePath($this->getIdentifyKey($customField) . '.files')
+//            ->multiple();
 
-        return $this->prepareFileUploadComponent($fileUpload, $customField);
+        return $this->prepareFileUploadComponent(FileUpload::make('files'), $customField)
+            ->statePath($this->getIdentifyKey($customField) . '.files');
     }
 
     public function prepareFileUploadComponent(FileUpload $component, EmbedCustomField $customField): FileUpload
@@ -40,9 +43,9 @@ class FileUploadView implements FieldTypeView
             ->deleteUploadedFileUsing(fn(FileUpload $component) => $component->callAfterStateUpdated())
             ->acceptedFileTypes($this->getOptionParameter($customField, 'allowed_type'))
             ->multiple($this->getOptionParameter($customField, 'multiple'))
+            ->openable(false)
             ->appendFiles()
             ->moveFiles()
-            ->openable()
             ->live();
 
 
@@ -82,6 +85,9 @@ class FileUploadView implements FieldTypeView
             $files = [];
         } elseif ($this->getOptionParameter($customFieldAnswer, 'preserve_filenames')) {
             $names = $answer['file_names'];
+            if (!is_array($answer['files'])) {
+                $answer['files'] = [$answer['files']];
+            }
             $files = array_values($answer['files']);
         } else {
             $names = $answer;

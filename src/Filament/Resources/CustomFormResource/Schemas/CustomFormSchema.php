@@ -4,7 +4,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormResou
 
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormConfiguration\DefaultFormConfiguration;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormTypeSelector;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\FormEditor\FormEditor;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\FormEditor\CustomFormEditor;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
@@ -30,7 +30,7 @@ class CustomFormSchema
                 CustomFormTypeSelector::make() //ToDo Make it work in edit
                 ->hiddenOn('edit')
                     ->required(),
-                FormEditor::make('custom_form')
+                CustomFormEditor::make('custom_form')
                     ->hiddenOn('create')
                     ->hiddenLabel()
                     ->formConfiguration(function (?CustomForm $record) {

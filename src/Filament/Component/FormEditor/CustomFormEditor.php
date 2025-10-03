@@ -14,7 +14,7 @@ use Filament\Forms\Components\Field;
 use Filament\Schemas\Components\Fieldset;
 use Filament\Schemas\Components\Tabs;
 
-class FormEditor extends Field
+class CustomFormEditor extends Field
 {
     use HasFormConfiguration;
     use HasFormGroupName;

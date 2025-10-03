@@ -7,12 +7,14 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldT
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\Types\Views\FileUploadView;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
+use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanMapFields;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasCustomTypePackageTranslation;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Groups\LayoutOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Groups\ValidationTypeOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\FastTypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\ReorderableTypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\TypeOption;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Schema;
@@ -21,10 +23,12 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use RuntimeException;
+use function PHPUnit\Framework\isEmpty;
 
 class FileUploadType extends CustomFieldType
 {
     use HasCustomTypePackageTranslation;
+    use CanMapFields;
 
     public static function identifier(): string
     {
@@ -140,30 +144,43 @@ class FileUploadType extends CustomFieldType
     }
 
     public function updateAnswerFormComponentOnSave(
-        Component $component,
+        Component|FileUpload $component,
         CustomField $customField,
         Schema $schema,
         Collection $flattenFormComponents
     ): void {
         try {
             $acceptedFileTypes = $component->getAcceptedFileTypes();
+            $hadTemporaryFile = false;
 
             foreach (Arr::wrap($component->getState()) as $key => $file) {
                 if (!$file instanceof TemporaryUploadedFile) {
                     continue;
                 }
-
+                $hadTemporaryFile = true;
                 $mimeType = $file->getMimeType();
 
                 // Do not save if even one of the submitted files mimetype does not match the accepted file types
+
                 if (!in_array($mimeType, $acceptedFileTypes, true)) {
                     $component->deleteUploadedFile($key);
                 }
             }
 
-            $state = array_filter($component->getState() ?? [], static fn($file) => !empty($file));
+            if (!$hadTemporaryFile) {
+                return;
+            }
+
+            $state = $component->getState();
+
+            if (!is_array($state)) {
+                $state = [$state];
+            }
+
+            $state = array_filter($state ?? [], static fn($file) => !empty($file));
             $component->state($state);
             $component->saveUploadedFiles();
+
         } catch (RuntimeException $exception) {
             foreach (Arr::wrap($component->getState()) as $file) {
                 if ($file instanceof TemporaryUploadedFile && $file->exists()) {
@@ -208,11 +225,19 @@ class FileUploadType extends CustomFieldType
 
         $data = parent::prepareLoadAnswerData($answer, $data);
 
-        foreach ($data['files'] as $key => $file) {
-            if (is_array($file)) {
-                unset($data['files'][$key]);
+        if ($this->getOptionParameter($answer, 'multiple')) {
+            if (!is_array($data['files']) && !isEmpty($data['files'])) {
+                $data['files'] = [$data['files']];
             }
+            foreach ($data['files'] as $key => $file) {
+                if (is_array($file)) {
+                    unset($data['files'][$key]);
+                }
+            }
+        } elseif (is_array($data['files'])) {
+            $data['files'] = array_values($data['files'])[0];
         }
+
 
         return $data;
     }

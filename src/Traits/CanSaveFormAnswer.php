@@ -3,6 +3,7 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\Traits;
 
 use Ffhs\FfhsUtils\Models\Rule;
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Enums\FormRuleAction;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
@@ -30,9 +31,12 @@ trait CanSaveFormAnswer
         //Update form data after modifying components
         $this->prepareFormComponents($customFieldsIdentify, $schema, $path);
 
-        $pathState = substr($path, strlen($schema->getStatePath()) + 1);
         $data = $schema->getRawState();
-        $data = is_null($path) ? $data : Arr::get($data, $pathState);
+
+        if (!is_null($path)) {
+            $pathState = substr($path, strlen($schema->getStatePath()) + 1);
+            $data = Arr::get($data, $pathState);
+        }
 
         // Mapping and combining field answers
         $preparedData = $this->splittingFormComponents($data, $customFieldsIdentify);
@@ -315,7 +319,7 @@ trait CanSaveFormAnswer
                 ->filter(fn(Field $component, string $key) => str_contains($key, $identifier));
 
             foreach ($fieldComponents as $fieldComponent) {
-                /**@var CustomField $customField */
+                /**@var EmbedCustomField $customField */
                 $customField
                     ->getType()
                     ->updateAnswerFormComponentOnSave($fieldComponent, $customField, $schema, $components);
