@@ -6,6 +6,8 @@ use Closure;
 use Ffhs\FfhsUtils\Filament\Components\RuleEditor\RuleEditor;
 use Ffhs\FfhsUtils\Models\Rule;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\FormEditorSideComponent;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormConfiguration\CustomFormConfiguration;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormConfiguration\DefaultFormConfiguration;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\FormEditor\Field\EditFieldsGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\FormEditor\StateCasts\CustomFieldStateCast;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
@@ -45,6 +47,14 @@ class CustomFormEditor extends Field implements CanEntangleWithSingularRelations
             $record = $component->getCachedExistingRecord();
 
             $this->saveCustomFormEditorData($state, $record);
+            $this->clearCachedExistingRecord();
+            $this->fillFromRelationship();
+        });
+
+        $this->formConfiguration(function (): CustomFormConfiguration {
+            /**@var null|CustomForm $customForm */
+            $customForm = $this->getCachedExistingRecord();
+            return $customForm?->getFormConfiguration() ?? DefaultFormConfiguration::make();
         });
 
         return $this;

@@ -58,7 +58,9 @@ trait HasTriggerEventFormTargets
         }
 
         $fields = $get('../../../../../custom_fields') ?? [];
+
         $fields = new CustomFieldStateCast()->flattCustomFields($fields);
+
 
         return $this->cachedAllFieldsData = $this->getFieldDataFromFormData($fields, $formConfiguration);
     }

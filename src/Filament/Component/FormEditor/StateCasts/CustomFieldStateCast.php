@@ -14,7 +14,7 @@ class CustomFieldStateCast implements StateCast
             $customField['form_position'] = $position;
             ++$position;
             if (array_key_exists('custom_fields', $customField)) {
-                $finalState += $this->flattCustomFields($customField['custom_fields'], $position);
+                $finalState += $this->flattCustomFields($customField['custom_fields'] ?? [], $position);
                 unset($customField['custom_fields']);
                 $customField['layout_end_position'] = $position - 1;
             }
