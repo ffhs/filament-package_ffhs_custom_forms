@@ -103,11 +103,17 @@ trait CanMapFields
 
     public function getAvailableCustomOptions(EmbedCustomField $record): Collection
     {
-        return $record
-            ->getCustomOptions()
+
+        if ($record->isGeneralField()) {
+            $options = $record->getGeneralField()->customOptions;
+        } else {
+            $options = $record->getCustomOptions();
+        }
+
+        return $options
             ->mapWithKeys(function (mixed $option) {
                 if (!is_array($option)) {
-                    return [$option => $option];
+                    return [$option->identifier => $option->name];
                 }
                 $name = $option['name'];
                 if (is_array($name)) {
