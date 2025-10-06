@@ -66,6 +66,9 @@ trait CanLoadCustomFormEditorData
         $rules = [];
 
         foreach ($form->ownedRules as $rule) {
+            $rule->ruleEvents->each(fn($event) => $event->setRelation('rule', $rule));
+            $rule->ruleTriggers->each(fn($trigger) => $trigger->setRelation('rule', $rule));
+
             /**@var Rule $rule */
             $rawRule = $rule->toArray();
             $rawRule['events'] = $rule->ruleEvents->toArray();
