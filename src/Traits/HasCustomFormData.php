@@ -3,6 +3,9 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\Traits;
 
 use Closure;
+use Ffhs\FfhsUtils\Models\Rule;
+use Ffhs\FfhsUtils\Models\RuleEvent;
+use Ffhs\FfhsUtils\Models\RuleTrigger;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 
@@ -66,7 +69,23 @@ trait HasCustomFormData
 
     public function getCustomForm(): ?EmbedCustomForm
     {
-        return $this->getCustomFormRelation() ?? $this->evaluate($this->customForm) ?? $this->evaluate($this->customFormData);
+        $form = $this->getCustomFormRelation() ?? $this->evaluate($this->customForm) ?? $this->evaluate($this->customFormData);
+
+        if (!$form instanceof CustomForm) {
+            return $form;
+        }
+
+        if (!$form->rules->first()->relationLoaded('ruleTriggers') || !$form->rules->first()->relationLoaded('ruleEvents')) {
+            $form->rules->loadExists(['ruleTriggers', 'ruleEvents']);
+        }
+
+        $form->rules->each(function (Rule $rule) {
+            $rule->ruleTriggers->each(fn(RuleTrigger $ruleEvent) => $ruleEvent->setRelation('rule', $rule));
+            $rule->ruleEvents->each(fn(RuleEvent $ruleEvent) => $ruleEvent->setRelation('rule', $rule));
+        });
+
+
+        return $form;
     }
 
 }

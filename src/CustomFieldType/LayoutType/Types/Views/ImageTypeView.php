@@ -15,21 +15,21 @@ class ImageTypeView implements FieldTypeView
 
     public function getFormComponent(EmbedCustomField $customField, array $parameter = []): Component
     {
-        return $this->getImageEntry($customField);
+        return $this->getImageEntry($customField, false);
     }
 
     public function getEntryComponent(EmbedCustomFieldAnswer $customFieldAnswer, array $parameter = []): Component
     {
-        return $this->getImageEntry($customFieldAnswer->getCustomField())
+        return $this->getImageEntry($customFieldAnswer->getCustomField(), true)
             ->hidden(!$this->getOptionParameter($customFieldAnswer, 'show_in_view'));
     }
 
-    protected function getImageEntry(EmbedCustomField $customField): Component
+    protected function getImageEntry(EmbedCustomField $customField, $entry): ImageEntry
     {
-        return $this->makeComponent(ImageEntry::class, $customField, false) //toDo fix
+        return $this->makeComponent(ImageEntry::class, $customField, $entry) //toDo fix
         ->label($this->getLabelName($customField))
             ->hiddenLabel(!$this->getOptionParameter($customField, 'show_label'))
-            ->defaultImageUrl($this->getOptionParameter($customField, 'image'))
+            ->defaultImageUrl($this->getTypeConfigAttribute($customField, 'url_prefix'))
             ->state($this->getOptionParameter($customField, 'image'))
             ->disk($this->getTypeConfigAttribute($customField, 'disk'))
             ->imageHeight($this->getOptionParameter($customField, 'height'))

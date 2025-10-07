@@ -114,6 +114,7 @@ return [
             ],
             ImageLayoutType::identifier() => [
                 'save_path' => '/custom-form-plugin/images',
+                'url_prefix' => null, // Null means default path
                 'disk' => 'public',
                 'visibility' => 'public',
             ],

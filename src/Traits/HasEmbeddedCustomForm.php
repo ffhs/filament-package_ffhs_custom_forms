@@ -28,7 +28,8 @@ trait HasEmbeddedCustomForm
         bool|Closure $condition = true,
         Closure|string|null $relatedModel = null
     ): static {
-        return $this->parentRelationship($name, $condition, $relatedModel)
+        return $this
+            ->parentRelationship($name, $condition, $relatedModel)
             ->customForm(fn() => $this->getCachedExistingRecord()?->customForm);
     }
 

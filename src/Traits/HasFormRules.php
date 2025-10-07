@@ -19,7 +19,8 @@ trait HasFormRules
 
     public function ownedRules(): BelongsToMany
     {
-        return $this->belongsToMany(Rule::class, app(FormRule::class)->getTable());
+        return $this->belongsToMany(Rule::class, app(FormRule::class)->getTable())
+            ->with(['ruleTriggers', 'ruleEvents']);
     }
 
     public function getOwnedRules(): Collection
@@ -30,8 +31,9 @@ trait HasFormRules
 
         if ($this->relationLoaded('rules')) {
             $ownedRules = $this
-                ->rules
-                ->where('formRule.custom_form_id', $this->id);
+                ->getRules()
+                ->whereIn('id', $this->formRules->pluck('rule_id'));
+
             $this->setRelation('ownedRules', $ownedRules);
 
             return $ownedRules;
