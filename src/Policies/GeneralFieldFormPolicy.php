@@ -2,36 +2,36 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Policies;
 
-use App\Models\User;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralFieldForm;
 use Illuminate\Auth\Access\HandlesAuthorization;
+use Illuminate\Contracts\Auth\Access\Authorizable;
 
 class GeneralFieldFormPolicy
 {
     use HandlesAuthorization;
 
-    public function view(User $user, GeneralFieldForm $generalFieldForm): bool
+    public function view(Authorizable $user, GeneralFieldForm $generalFieldForm): bool
     {
         return $this->viewAny($user);
     }
 
-    public function viewAny(User $user): bool
+    public function viewAny(Authorizable $user): bool
     {
-        return (new GeneralFieldPolicy())->viewAny($user);
+        return new GeneralFieldPolicy()->viewAny($user);
     }
 
-    public function create(User $user): bool
+    public function create(Authorizable $user): bool
     {
-        return (new GeneralFieldPolicy())->create($user);
+        return new GeneralFieldPolicy()->create($user);
     }
 
-    public function delete(User $user, GeneralFieldForm $generalFieldForm): bool
+    public function delete(Authorizable $user, GeneralFieldForm $generalFieldForm): bool
     {
         return $this->update($user, $generalFieldForm);
     }
 
-    public function update(User $user, GeneralFieldForm $generalFieldForm): bool
+    public function update(Authorizable $user, GeneralFieldForm $generalFieldForm): bool
     {
-        return (new GeneralFieldPolicy())->update($user, $generalFieldForm->generalField);
+        return new GeneralFieldPolicy()->update($user, $generalFieldForm->generalField);
     }
 }

@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Log;
 
 trait HasFieldsMapToSelectOptions
 {
+    use HasFormConfiguration;
+
     protected function getSelectOptionsFromFields(Collection $customFields, Get $get): array
     {
         $options = [];

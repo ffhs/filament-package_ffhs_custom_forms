@@ -51,7 +51,7 @@ trait CanLoadCustomFormEditorData
     protected function getFieldEditorKey(array|CustomField $toAdd)
     {
         if ($toAdd instanceof CustomField) {
-            return empty($field->identifier) ? uniqid() : $field->identifier;
+            return empty($toAdd->identifier) ? uniqid() : $toAdd->identifier;
         }
 
         if (array_key_exists('identifier', $toAdd) && !empty($toAdd['identifier'])) {

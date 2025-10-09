@@ -2,6 +2,7 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Traits;
 
+use Exception;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormConfiguration\CustomFormConfiguration;
 
 trait HasFormConfiguration
@@ -10,6 +11,10 @@ trait HasFormConfiguration
 
     public function getFormConfiguration(): CustomFormConfiguration
     {
+        if (!method_exists($this, 'evaluate')) {
+            throw new Exception('Method evaluate not found');
+        }
+
         $formConfiguration = $this->evaluate($this->formConfiguration);
         if ($formConfiguration instanceof CustomFormConfiguration) {
             return $formConfiguration;

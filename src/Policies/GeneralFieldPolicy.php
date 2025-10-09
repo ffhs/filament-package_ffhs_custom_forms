@@ -2,42 +2,41 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Policies;
 
-use App\Models\User;
 use Ffhs\FilamentPackageFfhsCustomForms\Enums\CustomFormPermissionName;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Illuminate\Auth\Access\HandlesAuthorization;
+use Illuminate\Contracts\Auth\Access\Authorizable;
 
 class GeneralFieldPolicy
 {
     use HandlesAuthorization;
 
-    public function view(User $user, GeneralField $generalField): bool
+    public function view(Authorizable $user, GeneralField $generalField): bool
     {
         return $this->viewAny($user);
     }
 
-    public function viewAny(User $user): bool
+    public function viewAny(Authorizable $user): bool
     {
-        return (new CustomFormPolicy())->viewAny($user)
-            || $user->can(CustomFormPermissionName::MANAGE_GENERAL_FIELDS);
+        return new CustomFormPolicy()->viewAny($user) || $user->can(CustomFormPermissionName::MANAGE_GENERAL_FIELDS);
     }
 
-    public function filamentResource(User $user): bool
+    public function filamentResource(Authorizable $user): bool
     {
         return $user->can(CustomFormPermissionName::FILAMENT_RESOURCE_GENERAL_FIELDS);
     }
 
-    public function create(User $user): bool
+    public function create(Authorizable $user): bool
     {
         return $user->can(CustomFormPermissionName::MANAGE_GENERAL_FIELDS);
     }
 
-    public function delete(User $user, GeneralField $generalField): bool
+    public function delete(Authorizable $user, GeneralField $generalField): bool
     {
         return $this->update($user, $generalField);
     }
 
-    public function update(User $user, GeneralField $generalField): bool
+    public function update(Authorizable $user, GeneralField $generalField): bool
     {
         return $user->can(CustomFormPermissionName::MANAGE_GENERAL_FIELDS);
     }

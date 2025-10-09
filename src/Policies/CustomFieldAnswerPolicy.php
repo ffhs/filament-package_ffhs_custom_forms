@@ -2,36 +2,37 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Policies;
 
-use App\Models\User;
+
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Illuminate\Auth\Access\HandlesAuthorization;
+use Illuminate\Contracts\Auth\Access\Authorizable;
 
 class CustomFieldAnswerPolicy
 {
     use HandlesAuthorization;
 
-    public function view(User $user, CustomFieldAnswer $customFieldAnswer): bool
+    public function view(Authorizable $user, CustomFieldAnswer $customFieldAnswer): bool
     {
         return $this->viewAny($user);
     }
 
-    public function viewAny(User $user): bool
+    public function viewAny(Authorizable $user): bool
     {
-        return (new CustomFormAnswerPolicy())->viewAny($user);
+        return new CustomFormAnswerPolicy()->viewAny($user);
     }
 
-    public function create(User $user): bool
+    public function create(Authorizable $user): bool
     {
-        return (new CustomFormAnswerPolicy())->create($user);
+        return new CustomFormAnswerPolicy()->create($user);
     }
 
-    public function delete(User $user, CustomFieldAnswer $customFieldAnswer): bool
+    public function delete(Authorizable $user, CustomFieldAnswer $customFieldAnswer): bool
     {
         return $this->update($user, $customFieldAnswer);
     }
 
-    public function update(User $user, CustomFieldAnswer $customFieldAnswer): bool
+    public function update(Authorizable $user, CustomFieldAnswer $customFieldAnswer): bool
     {
-        return (new CustomFormAnswerPolicy())->update($user, $customFieldAnswer->customFormAnswer);
+        return new CustomFormAnswerPolicy()->update($user, $customFieldAnswer->customFormAnswer);
     }
 }

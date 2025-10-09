@@ -107,7 +107,7 @@ abstract class CustomFormConfiguration
     {
         return once(function () {
             $generalFieldFormQuery = GeneralFieldForm::query()
-                ->with('customOptions')
+//                ->with('customOptions')
                 ->select('general_field_id')
                 ->where('custom_form_identifier', $this::identifier());
 

@@ -16,7 +16,7 @@ class FieldsetTypeView implements FieldTypeView
 
     public function getFormComponent(EmbedCustomField $customField, array $parameter = []): Component
     {
-        $fieldSet = $this->modifyFormComponent(Fieldset::make($this->getLabelName($customField)), $customField, false);
+        $fieldSet = $this->modifyComponent(Fieldset::make($this->getLabelName($customField)), $customField, false);
 
         return $fieldSet
             ->columnSpan($this->getOptionParameter($customField, 'column_span'))

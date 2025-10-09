@@ -3,6 +3,7 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\TemplatesType;
 
 use Closure;
+use Ffhs\FfhsUtils\Traits\HasStaticMake;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormConfiguration\CustomFormConfiguration;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\FormEditor\TypeActions\DefaultCustomActivationAction;
@@ -12,7 +13,6 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasCustomTypePackageTranslation;
-use Ffhs\FilamentPackageFfhsUtils\Traits\HasStaticMake;
 use Filament\Support\Colors\Color;
 use Illuminate\Support\Collection;
 
