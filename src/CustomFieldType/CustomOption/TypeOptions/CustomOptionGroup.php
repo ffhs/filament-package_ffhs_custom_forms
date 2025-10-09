@@ -8,11 +8,12 @@ use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\TypeOptionGroup;
 class CustomOptionGroup extends TypeOptionGroup
 {
     public function __construct(
-        string $name = 'Optionen',
+        ?string $name = null,
         array $typeOptions = [],
         ?string $icon = 'heroicon-m-queue-list'
     ) {
-        parent::__construct(CustomOption::__('label.multiple'), $typeOptions, $icon);
+        $name = $name ?? CustomOption::__('label.multiple');
+        parent::__construct($name, $typeOptions, $icon);
 
         $this->mergeTypeOptions([
             'customOptions' => CustomOptionTypeOption::make(),

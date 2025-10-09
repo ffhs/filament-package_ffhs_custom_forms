@@ -3,21 +3,30 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\Traits;
 
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomField;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormConfiguration\CustomFormConfiguration;
+use Ffhs\FilamentPackageFfhsCustomForms\Facades\CustomForms;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Filament\Schemas\Components\Utilities\Get;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Log;
 
 trait HasFieldsMapToSelectOptions
 {
-    use HasFormConfiguration;
+
+    public function getFormConfiguration(Get $get): CustomFormConfiguration
+    {
+        return CustomForms::getFormConfiguration($get('../../../../../custom_form_identifier'));
+    }
 
     protected function getSelectOptionsFromFields(Collection $customFields, Get $get): array
     {
+        if (!method_exists($get, 'getFormConfiguration')) {
+            throw new \RuntimeException('getFormConfiguration is already defined in the Get component');
+        }
+
         $options = [];
         $formConfiguration = $this->getFormConfiguration($get);
 
-        Log::info($customFields);
+
         foreach ($customFields as $field) {
             /**@var EmbedCustomField $field */
             $title = '';

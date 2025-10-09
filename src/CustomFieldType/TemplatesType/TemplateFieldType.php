@@ -64,7 +64,6 @@ final class TemplateFieldType extends CustomFieldType
         );
     }
 
-
     public function getEditorFieldTitle(array $fieldState, CustomFormConfiguration $configuration): string
     {
         return $configuration
@@ -110,11 +109,7 @@ final class TemplateFieldType extends CustomFieldType
         $field
             ->customForm
             ->customFormAnswers
-            ->each(function (CustomFormAnswer $formAnswer) use (
-                $formFields,
-                $field,
-                $templateFields
-            ) {
+            ->each(function (CustomFormAnswer $formAnswer) use ($formFields, $templateFields) {
                 $templateIdentifiers = $templateFields->pluck('identifier');
                 $formFieldIds = $formFields
                     ->whereIn('identifier', $templateIdentifiers)

@@ -13,11 +13,12 @@ use Filament\Support\Components\Component;
 class LayoutWithColumnsOptionGroup extends LayoutOptionGroup
 {
     public function __construct(
-        string $name = 'Layout',
+        ?string $name = null,
         array $typeOptions = [],
         ?string $icon = 'bi-layout-text-window'
     ) {
-        parent::__construct(TypeOption::__('layout-group.label'), $typeOptions, $icon);
+        $name = $name ?? TypeOption::__('layout-group.label');
+        parent::__construct($name, $typeOptions, $icon);
 
         $this->mergeTypeOptions([
             'column_span' => ColumnSpanOption::make(),

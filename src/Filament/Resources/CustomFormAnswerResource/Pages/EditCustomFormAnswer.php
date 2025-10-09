@@ -45,14 +45,12 @@ class EditCustomFormAnswer extends EditRecord
     {
         $data = parent::mutateFormDataBeforeFill($data);
 
-        if (!empty($customFormAnswer->customFieldAnswers)) {
+        /**@var CustomFormAnswer $customFormAnswer */
+        $customFormAnswer = $this->form->getRecord();
+
+        if (!$customFormAnswer->customFieldAnswers->isEmpty()) {
             return $data;
         }
-
-        /**@var CustomFormAnswer $customFormAnswer */
-        $customFormAnswer = $this
-            ->form
-            ->getRecord();
 
         //Load data's from fields
         return ['form_answer' => array_merge($data, $this->loadCustomAnswerData($customFormAnswer))];

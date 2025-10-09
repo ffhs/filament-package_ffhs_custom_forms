@@ -70,13 +70,14 @@ trait HasEmbeddedCustomForm
         return CustomFormAnswerDataContainer::make($this->getState() ?? [], $this->getCustomForm());
     }
 
+
     protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
     {
         return match ($parameterName) {
             'viewMode' => [$this->getViewMode()],
             'customForm' => [$this->getCustomForm()],
             'customFormAnswer' => [$this->getCustomFormAnswer()],
-            'customFormData' => [$this->getCustomFormData()],
+//            'customFormData' => [$this->getCustomFormData()],
             'fieldDisplayer' => [$this->getFieldDisplayer()],
             default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName)
         };

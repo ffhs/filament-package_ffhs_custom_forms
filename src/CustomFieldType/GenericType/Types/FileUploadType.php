@@ -177,7 +177,7 @@ class FileUploadType extends CustomFieldType
                 $state = [$state];
             }
 
-            $state = array_filter($state ?? [], static fn($file) => !empty($file));
+            $state = array_filter($state, static fn($file) => !empty($file));
             $component->state($state);
             $component->saveUploadedFiles();
 
