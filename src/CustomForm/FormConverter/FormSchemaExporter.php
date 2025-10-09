@@ -6,7 +6,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanExportFieldInformation;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanExportFormInformation;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanExportRuleInformation;
-use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasStaticMake;
+use Ffhs\FilamentPackageFfhsUtils\Traits\HasStaticMake;
 
 class FormSchemaExporter
 {

@@ -9,7 +9,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\DataContainer\CustomFormDataContainer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanLoadCustomFormEditorData;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanRenderCustomForm;
-use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasStaticMake;
+use Ffhs\FilamentPackageFfhsUtils\Traits\HasStaticMake;
 use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Section;
 use Filament\Support\Components\Component;

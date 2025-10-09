@@ -6,7 +6,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\FieldTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanMapFields;
-use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasStaticMake;
+use Ffhs\FilamentPackageFfhsUtils\Traits\HasStaticMake;
 use Filament\Actions\Action;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Components\Actions;
