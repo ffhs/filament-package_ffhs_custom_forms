@@ -102,23 +102,27 @@ final class TemplateFieldType extends CustomFieldType
         $templateFields = $field
             ->template
             ->customFields;
+
         $formFields = $field
             ->customForm
             ->customFields;
 
         $field
             ->customForm
-            ->customFormAnswers
-            ->each(function (CustomFormAnswer $formAnswer) use ($formFields, $templateFields) {
-                $templateIdentifiers = $templateFields->pluck('identifier');
-                $formFieldIds = $formFields
-                    ->whereIn('identifier', $templateIdentifiers)
-                    ->pluck('id');
-                $formAnswer
-                    ->customFieldAnswers
-                    ->whereIn('custom_field_id', $formFieldIds)
-                    ->each($this->getFieldTransferClosure($templateFields, $formFields));
+            ->customFormAnswers()
+            ->chunk(10, function ($formAnswers) use ($templateFields, $formFields) {
+                $formAnswers->each(function (CustomFormAnswer $formAnswer) use ($formFields, $templateFields) {
+                    $templateIdentifiers = $templateFields->pluck('identifier');
+                    $formFieldIds = $formFields
+                        ->whereIn('identifier', $templateIdentifiers)
+                        ->pluck('id');
+                    $formAnswer
+                        ->customFieldAnswers()
+                        ->whereIn('custom_field_id', $formFieldIds)
+                        ->each($this->getFieldTransferClosure($templateFields, $formFields));
+                });
             });
+
     }
 
     protected function getFieldTransferClosure(Collection $newFields, Collection $originalFields): Closure

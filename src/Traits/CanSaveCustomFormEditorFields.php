@@ -42,12 +42,10 @@ trait CanSaveCustomFormEditorFields
 
         //Run after Save
         $savedFields
-            ->whereIn('id', $usedIds)
+            ->whereIn('id', collect($fieldsToSaveData)->pluck('id'))
             ->each(function (CustomField $field) use ($rawData): void {
                 $data = $rawData->get($field->identifier, []);
-                $field
-                    ->getType()
-                    ->doAfterSaveField($field, $data);
+                $field->getType()->doAfterSaveField($field, $data);
             });
 
         //Run after Create
