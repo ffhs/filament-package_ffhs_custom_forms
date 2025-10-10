@@ -87,7 +87,7 @@ class CustomFieldDataContainer implements EmbedCustomField
 
     public function isActive(): bool
     {
-        return $this->__get('active');
+        return $this->__get('is_active');
     }
 
     public function getOptions(): array
