@@ -30,6 +30,7 @@ trait HasEmbeddedCustomForm
     ): static {
         return $this
             ->parentRelationship($name, $condition, $relatedModel)
+            /** @phpstan-ignore-next-line */
             ->customForm(fn() => $this->getCachedExistingRecord()?->customForm);
     }
 

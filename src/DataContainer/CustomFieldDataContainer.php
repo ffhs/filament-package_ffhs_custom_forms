@@ -62,4 +62,44 @@ class CustomFieldDataContainer implements EmbedCustomField
     {
         return $this->customFormConfiguration;
     }
+
+    public function isTemplate(): bool
+    {
+        return (bool)($this->data['template_id'] ?? false);
+    }
+
+    public function identifier(): string
+    {
+        return $this->__get('identifier');
+    }
+
+    public function getLayoutEndPosition(): ?int
+    {
+        return $this->__get('layout_end_position');
+    }
+
+    public function getFormPosition(): int
+    {
+        return $this->__get('form_position');
+    }
+
+    public function isActive(): bool
+    {
+        return $this->__get('active');
+    }
+
+    public function getOptions(): array
+    {
+        return $this->__get('options') ?? [];
+    }
+
+    public function setOptions(array $options): void
+    {
+        $this->data['options'] = $options;
+    }
+
+    public function getName(): ?string
+    {
+        return $this->__get('name');
+    }
 }

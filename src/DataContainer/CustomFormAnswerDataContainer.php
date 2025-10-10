@@ -25,7 +25,7 @@ class CustomFormAnswerDataContainer implements EmbedCustomFormAnswer
         $answer = [];
         $customFields = $this->getCustomForm()
             ->customFields()
-            ->mapWithKeys(fn(EmbedCustomField $field) => [$field->identifier => $field]);
+            ->mapWithKeys(fn(EmbedCustomField $field) => [$field->identifier() => $field]);
 
         foreach (Arr::dot($this->data) as $key => $fieldData) {
             $path = explode('.', $key);

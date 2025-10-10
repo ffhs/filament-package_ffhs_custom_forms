@@ -28,7 +28,7 @@ class IconOption extends TypeOption
         Component $component,
         mixed $value
     ): Component {
-        if (empty($value)) {
+        if (empty($value) || !method_exists($component, 'icon')) {
             return $component;
         }
 

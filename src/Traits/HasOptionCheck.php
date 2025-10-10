@@ -6,7 +6,6 @@ use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Select;
 use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Utilities\Get;
-use Filament\Support\Components\Component;
 use Illuminate\Support\Collection;
 
 trait HasOptionCheck
@@ -38,7 +37,7 @@ trait HasOptionCheck
         return !is_null($targetValue) && in_array($targetValue, $options, false);
     }
 
-    protected function getOptionTypeGroup(): Component
+    protected function getOptionTypeGroup(): Group
     {
         return Group::make([
             Checkbox::make('selected_include_null')

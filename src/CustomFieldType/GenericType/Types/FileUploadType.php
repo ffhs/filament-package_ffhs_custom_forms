@@ -149,6 +149,10 @@ class FileUploadType extends CustomFieldType
         Schema $schema,
         Collection $flattenFormComponents
     ): void {
+        if (!$component instanceof FileUpload) {
+            throw new RuntimeException('Component is not a FileUpload');
+        }
+
         try {
             $acceptedFileTypes = $component->getAcceptedFileTypes();
             $hadTemporaryFile = false;

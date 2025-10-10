@@ -16,8 +16,11 @@ trait HasAllFieldDataFromFormData
     {
         $fieldsFromTemplate = collect($fields)
             ->whereNotNull('template_id')
-            ->flatMap(fn($templateData
-            ) => $configuration->getAvailableTemplates()->find($templateData['template_id'])?->getCustomFields())
+            ->flatMap(function ($templateData) use ($configuration) {
+                $template = $configuration->getAvailableTemplates()->find($templateData['template_id']);
+                /** @phpstan-ignore-next-line */
+                return $template?->getCustomFields();
+            })
             ->keyBy(fn(EmbedCustomField $customField) => $customField->identifier());
 
         return collect($fields)

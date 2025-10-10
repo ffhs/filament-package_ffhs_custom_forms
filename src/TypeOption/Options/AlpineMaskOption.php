@@ -22,7 +22,7 @@ class AlpineMaskOption extends TypeOption
 
     public function modifyFormComponent(Component $component, mixed $value): Component
     {
-        if (empty($value)) {
+        if (empty($value) || !method_exists($component, 'mask')) {
             return $component;
         }
 

@@ -215,4 +215,34 @@ class CustomField extends ACustomField implements NestingObject, EmbedCustomFiel
     {
         return $this->customForm->getFormConfiguration();
     }
+
+    public function getLayoutEndPosition(): ?int
+    {
+        return $this->layout_end_position;
+    }
+
+    public function getFormPosition(): int
+    {
+        return $this->form_position;
+    }
+
+    public function isActive(): bool
+    {
+        return $this->is_active;
+    }
+
+    public function setOptions(array $options): void
+    {
+        $this->options = $options;
+    }
+
+    public function getOptions(): array
+    {
+        return $this->options ?? [];
+    }
+
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
 }

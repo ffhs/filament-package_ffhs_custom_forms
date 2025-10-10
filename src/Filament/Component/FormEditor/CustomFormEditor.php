@@ -54,7 +54,9 @@ class CustomFormEditor extends Field implements CanEntangleWithSingularRelations
         $this->formConfiguration(function (): CustomFormConfiguration {
             /**@var null|CustomForm $customForm */
             $customForm = $this->getCachedExistingRecord();
-            return $customForm?->getFormConfiguration() ?? DefaultFormConfiguration::make();
+            /**@phpstan-ignore-next-line */
+            $formConfiguration = $customForm?->getFormConfiguration();
+            return $formConfiguration ?? DefaultFormConfiguration::make();
         });
 
         return $this;

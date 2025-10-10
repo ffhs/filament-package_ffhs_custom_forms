@@ -8,6 +8,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\FieldDisplayer;
 use Ffhs\FilamentPackageFfhsCustomForms\DataContainer\CustomFieldAnswerDataContainer;
 use Ffhs\FilamentPackageFfhsCustomForms\Enums\FormRuleAction;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
 use Filament\Support\Components\Component;
 use Illuminate\Database\Eloquent\Model;
@@ -29,7 +30,7 @@ class EntryFieldDisplayer implements FieldDisplayer
                 return str_contains($item->getPath(), $path);
             })
             ->mapWithKeys(function (EmbedCustomFieldAnswer $item) {
-                return [$item->getCustomField()->identifier => $item];
+                return [$item->getCustomField()->identifier() => $item];
             });
     }
 
@@ -43,14 +44,14 @@ class EntryFieldDisplayer implements FieldDisplayer
         /** @var CustomFormAnswer $answer */
         $answer = $this
             ->fieldAnswers
-            ->get($customField->identifier);
+            ->get($customField->identifier());
 
         if (is_null($answer)) {
             $answer = CustomFieldAnswerDataContainer::make(['answer' => null, 'path' => $this->path,],
                 $this->customFormAnswer, $customField);
         }
 
-        if ($answer instanceof Model && $this->customFormAnswer instanceof Model && $customField instanceof Model) {
+        if ($answer instanceof Model && $this->customFormAnswer instanceof Model && $customField instanceof CustomField) {
             $answer->setRelation('customField', $customField);
             $answer->setRelation('customFormAnswer', $this->customFormAnswer);
             $answer->setRelation('customForm', $customField->customForm);

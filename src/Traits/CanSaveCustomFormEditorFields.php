@@ -33,9 +33,10 @@ trait CanSaveCustomFormEditorFields
                 return [$fieldData['identifier'] => $fieldData];
             }
 
-            /**@var null|GeneralField $genField */
+            /**@phpstan-var null|GeneralField $genField */
             $genField = $generalFields->firstWhere('id', $fieldData['general_field_id']);
 
+            /** @phpstan-ignore-next-line */
             return [$genField?->identifier => $fieldData];
         });
 

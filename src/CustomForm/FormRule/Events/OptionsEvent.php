@@ -46,7 +46,7 @@ abstract class OptionsEvent extends FormRuleEventType
         if ($field->isGeneralField()) {
 
             $selectedOptions = $field->options['customOptions'] ?? [];
-            $selectedOptions = empty($selectedOptions) ? $field->customOptions->pluck('id') : $selectedOptions;
+            $selectedOptions = empty($selectedOptions) ? $field->getCustomOptions()->pluck('id') : $selectedOptions;
 
             $genOptions = $field
                 ->getGeneralField()
@@ -72,7 +72,7 @@ abstract class OptionsEvent extends FormRuleEventType
     {
         $formConfiguration = $this->getFormConfiguration($get);
         $fields = collect($this->getAllFieldsData($get, $formConfiguration))
-            ->filter(fn(EmbedCustomField $field) => is_null($field->template_id))
+            ->filter(fn(EmbedCustomField $field) => !$field->isTemplate())
             ->filter(fn(EmbedCustomField $field) => $field->getType() instanceof CustomOptionType);
 
         return $this->getSelectOptionsFromFields($fields, $get);

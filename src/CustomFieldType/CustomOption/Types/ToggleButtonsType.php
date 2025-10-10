@@ -14,8 +14,8 @@ use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\BooleanOption;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\FastTypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\InlineOption;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\TypeOption;
+use Filament\Forms\Components\Field;
 use Filament\Forms\Components\Toggle;
-use Filament\Support\Components\Component;
 
 class ToggleButtonsType extends CustomOptionType
 {
@@ -73,9 +73,7 @@ class ToggleButtonsType extends CustomOptionType
             CustomOptionGroup::make()
                 ->setTypeOptions([
                     'customOptions' => CustomOptionTypeOption::make()
-                        ->modifyOptionComponent(
-                            fn(Component $component) => $component->hidden(fn($get) => $get('boolean'))
-                        ),
+                        ->modifyOptionComponent(fn(Field $component) => $component->hidden(fn($get) => $get('boolean')))
                 ]),
         ];
     }

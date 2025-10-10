@@ -4,7 +4,6 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Traits;
 
 use Filament\Forms\Components\TagsInput;
 use Filament\Schemas\Components\Group;
-use Filament\Support\Components\Component;
 
 trait HasTextCheck
 {
@@ -23,7 +22,7 @@ trait HasTextCheck
         return false;
     }
 
-    protected function getTextTypeGroup(): Component
+    protected function getTextTypeGroup(): Group
     {
         return Group::make([
             TagsInput::make('values')

@@ -85,6 +85,9 @@ abstract class CustomFormConfiguration
         return $this->defaultViewMode();
     }
 
+    /**
+     * @return Collection<CustomForm>
+     */
     final public function getAvailableTemplates(): Collection
     {
         return once(function () {
@@ -103,6 +106,9 @@ abstract class CustomFormConfiguration
         });
     }
 
+    /**
+     * @return Collection<GeneralField>
+     */
     final public function getAvailableGeneralFields(): Collection
     {
         return once(function () {

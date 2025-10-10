@@ -105,4 +105,9 @@ class CustomFieldAnswer extends Model implements EmbedCustomFieldAnswer
     {
         return $this->path;
     }
+
+    public function getAnswer(): mixed
+    {
+        return $this->answer;
+    }
 }

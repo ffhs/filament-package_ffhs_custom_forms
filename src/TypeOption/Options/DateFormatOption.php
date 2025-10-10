@@ -21,6 +21,9 @@ class DateFormatOption extends TypeOption
 
     public function modifyFormComponent(Component $component, mixed $value): Component
     {
+        if (!method_exists($component, 'format')) {
+            return $component;
+        }
         return $component->format($value);
     }
 }

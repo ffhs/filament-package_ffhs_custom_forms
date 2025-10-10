@@ -79,7 +79,9 @@ class EditTemplate extends EditCustomForm
                     ->where('general_field_id', $generalField->general_field_id)
                     ->first();
 
-                $generalField->answers()->update(['custom_field_id' => $newGeneralField->id]);
+                /**@phpstan-ignore-next-line */
+                $newGeneralFieldId = $newGeneralField->id;
+                $generalField->answers()->update(['custom_field_id' => $newGeneralFieldId]);
             }
 
             $toDeleteGenFieldQuery->delete();
@@ -124,7 +126,7 @@ class EditTemplate extends EditCustomForm
             ->submit(null)
             ->requiresConfirmation(fn() => $this->showSaveConfirmation() || $this->showCollideMessage())
             ->modalWidth(Width::ExtraLarge)
-            ->modalSubmitAction(function ($action) {
+            ->modalSubmitAction(function (Action $action) {
                 if ($this->showCollideMessage()) {
                     $action->hidden();
                 }
@@ -196,16 +198,18 @@ class EditTemplate extends EditCustomForm
 
     protected function getTemplateGeneralFieldCollisionQuery(): Builder
     {
+        /**@phpstan-ignore-next-line */
+        $id = $this->record->id;
         $customFields = $this->form->getState()['custom_form']['custom_fields'] ?? [];
         $usedGeneralFieldIds = $this->getUsedGeneralFieldIds($customFields, $this->getFormConfiguration());
 
         $templateFieldsQuery = CustomField::query()
-            ->where('template_id', $this->record->id);
+            ->where('template_id', $id);
 
         $otherTemplatesQuery = CustomField::query()
             ->whereIn('custom_form_id', $templateFieldsQuery->select('custom_form_id'))
             ->whereNotNull('template_id')
-            ->whereNot('template_id', $this->record->id);
+            ->whereNot('template_id', $id);
 
         return CustomField::query()
             ->whereIn('custom_form_id', $otherTemplatesQuery->select('template_id'))
@@ -247,6 +251,8 @@ class EditTemplate extends EditCustomForm
 
     protected function getCollidedFormQuery(): Builder
     {
+        /**@phpstan-ignore-next-line */
+        $id = $this->record->id;
         $collidedFields = $this->getTemplateGeneralFieldCollision();
         $collidedTemplates = [];
         $collidedFields->each(function (CustomField $field) use (&$collidedTemplates) {
@@ -257,7 +263,7 @@ class EditTemplate extends EditCustomForm
             ->whereIn('template_id', $collidedTemplates);
         $collidedFormsIds = CustomField::query()
             ->whereIn('custom_form_id', $collideTemplatesUsedFields->select('custom_form_id'))
-            ->where('template_id', $this->record->id)
+            ->where('template_id', $id)
             ->select('custom_form_id');
 
         return CustomForm::query()

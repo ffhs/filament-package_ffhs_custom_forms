@@ -43,6 +43,10 @@ class ValidationMessageOption extends TypeOption
 
     public function modifyFormComponent(Component|Field $component, mixed $value): Component
     {
+        if (!$component instanceof Field) {
+            return $component;
+        }
+
         if (!is_array($value)) {
             $value = [];
         }

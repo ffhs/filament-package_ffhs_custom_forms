@@ -88,8 +88,8 @@ trait CanRenderCustomForm
         Collection $customFields,
         int $positionOffset
     ): array {
-        $customFields = $customFields->mapWithKeys(fn(EmbedCustomField $embedField
-        ) => [$embedField->form_position => $embedField]);
+        $customFields = $customFields
+            ->mapWithKeys(fn(EmbedCustomField $embedField) => [$embedField->getFormPosition() => $embedField]);
         $customFormSchema = [];
         $allComponents = [];
         //This Function allows to register the rendered components to $allComponents for the rules
@@ -114,16 +114,16 @@ trait CanRenderCustomForm
             $parameters = $defaultParameters;
 
             //When field isn't Active skip it or not exist
-            if (is_null($customField) || !$customField->is_active) {
+            if (is_null($customField) || !$customField->isActive()) {
                 continue;
             }
 
             //if a field is a layout field, add Render Components
-            if (!is_null($customField->layout_end_position)) {
+            if (!is_null($customField->getLayoutEndPosition())) {
                 $fieldRenderData = $customFields
                     ->filter(function (EmbedCustomField $field) use ($customField) {
-                        return $field->form_position > $customField->form_position &&
-                            $field->form_position <= $customField->layout_end_position;
+                        return $field->getFormPosition() > $customField->getFormPosition() &&
+                            $field->getFormPosition() <= $customField->getLayoutEndPosition();
                     });
 
                 $parameters['child_fields'] = $fieldRenderData;
@@ -143,7 +143,7 @@ trait CanRenderCustomForm
             //render Field
             $renderedComponent = $displayer($viewMode, $customField, $parameters);
 
-            $allComponents[$customField->identifier] = $renderedComponent;
+            $allComponents[$customField->identifier()] = $renderedComponent;
             $customFormSchema[] = $renderedComponent;
         }
 
@@ -170,6 +170,7 @@ trait CanRenderCustomForm
             ->filter(fn(RuleTrigger $ruleTrigger) => !is_null($ruleTrigger))
             ->filter(fn(RuleTrigger $ruleTrigger) => $ruleTrigger->getType() instanceof FormRuleTriggerType)
             ->each(function (RuleTrigger $trigger) use (&$allComponents) {
+                /** @phpstan-ignore-next-line */
                 $allComponents = $trigger->getType()->prepareComponents($allComponents, $trigger);
             });
 

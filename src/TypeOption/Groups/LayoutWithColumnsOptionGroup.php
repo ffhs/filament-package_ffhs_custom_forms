@@ -8,7 +8,6 @@ use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\HelperTextTypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\InLineLabelOption;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\NewLineOption;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\TypeOption;
-use Filament\Support\Components\Component;
 
 class LayoutWithColumnsOptionGroup extends LayoutOptionGroup
 {
@@ -24,9 +23,7 @@ class LayoutWithColumnsOptionGroup extends LayoutOptionGroup
             'column_span' => ColumnSpanOption::make(),
             'columns' => ColumnsOption::make(),
             'in_line_label' => InLineLabelOption::make(),
-            'new_line' => NewLineOption::make()->modifyOptionComponent(
-                fn(Component $component) => $component->columnStart(1)
-            ),
+            'new_line' => NewLineOption::make()->modifyDefault(fn($default) => 1),
             'helper_text' => HelperTextTypeOption::make(),
         ]);
     }

@@ -11,7 +11,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\ShowAsFieldsetOption;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\ShowInViewOption;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\ShowLabelOption;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\TypeOption;
-use Filament\Support\Components\Component;
+use Filament\Forms\Components\Field;
 use Filament\Forms\Components\Toggle;
 
 class SectionType extends CustomLayoutType
@@ -41,9 +41,9 @@ class SectionType extends CustomLayoutType
             LayoutTypeLayoutOptionGroup::make()
                 ->mergeTypeOptions([
                     'show_in_view' => ShowInViewOption::make()
-                        ->modifyOptionComponent(fn(Component $component) => $component->columnStart(1)),
+                        ->modifyOptionComponent(fn(Field $component) => $component->columnStart(1)),
                     'show_as_fieldset' => ShowAsFieldsetOption::make()
-                        ->modifyOptionComponent(fn(Component $component) => $component->columnStart(2)),
+                        ->modifyOptionComponent(fn(Field $component) => $component->columnStart(2)),
                     'show_label' => ShowLabelOption::make(),
                     'aside' => FastTypeOption::makeFast(
                         false,

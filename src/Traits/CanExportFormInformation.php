@@ -2,11 +2,11 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Traits;
 
-use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomForm;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 
 trait CanExportFormInformation
 {
-    public function exportFormInformation(EmbedCustomForm $form): array
+    public function exportFormInformation(CustomForm $form): array
     {
         $formInformation = ['short_title' => $form->short_title];
 

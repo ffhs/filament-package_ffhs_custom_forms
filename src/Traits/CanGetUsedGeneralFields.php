@@ -21,10 +21,8 @@ trait CanGetUsedGeneralFields
             /**@var CustomForm $template */
             $template = $configuration->getAvailableTemplates()->find($templateId);
 
-            $genFields = $template
-                ->getOwnedFields()
-                ->pluck('id')
-                ->toArray();
+            /**@phpstan-ignore-next-line */
+            $genFields = $template->getOwnedFields()->pluck('id')->toArray();
 
             $generalFieldId = [
                 ...$generalFieldId,

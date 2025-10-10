@@ -9,6 +9,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormConfiguration\CustomFormC
 use Ffhs\FilamentPackageFfhsCustomForms\Exceptions\FieldDataHasNoOrWrongCustomFieldTypeException;
 use Ffhs\FilamentPackageFfhsCustomForms\Exceptions\FieldHasNoOrWrongCustomFieldTypeException;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 
 trait CanInteractionWithFieldTypes
 {
@@ -41,10 +42,13 @@ trait CanInteractionWithFieldTypes
         }
 
         if (!empty($data['general_field_id'])) {
-            return $configuration
+            /**@var GeneralField $generalField */
+            $generalField = $configuration
                 ->getAvailableGeneralFields()
-                ->firstWhere('id', $data['general_field_id'])
-                ->getType();
+                ->firstWhere('id', $data['general_field_id']);
+
+            /**@phpstan-ignore-next-line */
+            return $generalField->getType();
         }
 
         if (empty($data['type'])) {

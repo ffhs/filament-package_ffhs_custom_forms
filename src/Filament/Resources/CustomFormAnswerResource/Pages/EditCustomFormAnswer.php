@@ -48,6 +48,10 @@ class EditCustomFormAnswer extends EditRecord
         /**@var CustomFormAnswer $customFormAnswer */
         $customFormAnswer = $this->form->getRecord();
 
+        if (!$customFormAnswer instanceof CustomFormAnswer) {
+            throw new \RuntimeException('CustomFormAnswer not found');
+        }
+
         if (!$customFormAnswer->customFieldAnswers->isEmpty()) {
             return $data;
         }

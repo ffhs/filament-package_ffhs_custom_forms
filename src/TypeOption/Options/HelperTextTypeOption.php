@@ -25,7 +25,7 @@ class HelperTextTypeOption extends TypeOption
 
     public function modifyFormComponent(Component $component, mixed $value): Component
     {
-        if (!empty($value)) {
+        if (!empty($value) && method_exists($component, 'helperText')) {
             $text = str($value)->sanitizeHtml();
             $text = new HtmlString($text);
             $component = $component->helperText($text);

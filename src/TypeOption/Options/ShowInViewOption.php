@@ -24,6 +24,10 @@ class ShowInViewOption extends TypeOption
 
     public function modifyInfolistComponent(Component $component, mixed $value): Component
     {
+        if (!method_exists($component, 'visible')) {
+            return $component;
+        }
+
         return $component->visible($value);
     }
 }

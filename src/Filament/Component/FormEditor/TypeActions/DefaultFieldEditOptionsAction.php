@@ -28,9 +28,11 @@ class DefaultFieldEditOptionsAction extends FieldTypeAction
                 $state,
                 $formConfiguration
             ) {
+
+                /** @phpstan-ignore-next-line */
                 $genFieldName = static fn() => $formConfiguration
                     ->getAvailableGeneralFields()
-                    ->firstWhere('id', $state['general_field_id'])
+                    ->find($state['general_field_id'])
                     ->name;
 
                 $modalHeading = CustomField::__('actions.edit_options.modal_heading');
