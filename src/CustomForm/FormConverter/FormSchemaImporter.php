@@ -4,13 +4,13 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormConverter;
 
 use Error;
 use Exception;
+use Ffhs\FfhsUtils\Traits\HasStaticMake;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormConfiguration\CustomFormConfiguration;
 use Ffhs\FilamentPackageFfhsCustomForms\Exceptions\FormImportException;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanImportCustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanImportFieldInformation;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanImportRuleInformation;
-use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasStaticMake;
 use Illuminate\Support\Facades\DB;
 
 class FormSchemaImporter  //ToDo let it work with Embedet forms

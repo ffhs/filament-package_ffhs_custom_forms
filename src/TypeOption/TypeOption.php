@@ -19,7 +19,7 @@ abstract class TypeOption
 
     public static function make(): static
     {
-        return new static();
+        return app(static::class);
     }
 
     public function modifyFormComponent(Component $component, mixed $value): Component

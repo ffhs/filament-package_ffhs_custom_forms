@@ -14,7 +14,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\MinAmountOption;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\ShowAsFieldsetOption;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\ShowLabelOption;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\TypeOption;
-use Filament\Support\Components\Component;
+use Filament\Forms\Components\Field;
 use Filament\Forms\Components\TextInput;
 
 class RepeaterLayoutType extends CustomSplitType
@@ -46,7 +46,7 @@ class RepeaterLayoutType extends CustomSplitType
                 ->mergeTypeOptions([
                     'show_label' => ShowLabelOption::make(),
                     'show_as_fieldset' => ShowAsFieldsetOption::make()
-                        ->modifyOptionComponent(fn(Component $component) => $component->columnStart(2)),
+                        ->modifyOptionComponent(fn(Field $component) => $component->columnStart(2)),
                     'default_amount' => FastTypeOption::makeFast(
                         1,
                         TextInput::make('default_amount')

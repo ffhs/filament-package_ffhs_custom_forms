@@ -85,6 +85,9 @@ abstract class CustomFormConfiguration
         return $this->defaultViewMode();
     }
 
+    /**
+     * @return Collection<CustomForm>
+     */
     final public function getAvailableTemplates(): Collection
     {
         return once(function () {
@@ -103,11 +106,14 @@ abstract class CustomFormConfiguration
         });
     }
 
+    /**
+     * @return Collection<GeneralField>
+     */
     final public function getAvailableGeneralFields(): Collection
     {
         return once(function () {
             $generalFieldFormQuery = GeneralFieldForm::query()
-                ->with('customOptions')
+//                ->with('customOptions')
                 ->select('general_field_id')
                 ->where('custom_form_identifier', $this::identifier());
 

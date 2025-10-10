@@ -2,16 +2,17 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Policies;
 
-use App\Models\User;
+
 use Ffhs\FilamentPackageFfhsCustomForms\Enums\CustomFormPermissionName;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Illuminate\Auth\Access\HandlesAuthorization;
+use Illuminate\Contracts\Auth\Access\Authorizable;
 
 class CustomFormPolicy
 {
     use HandlesAuthorization;
 
-    public function view(User $user, CustomForm $customForm): bool
+    public function view(Authorizable $user, CustomForm $customForm): bool
     {
         if ($user->can(CustomFormPermissionName::FILL_CUSTOM_FORMS)
             || $user->can(CustomFormPermissionName::MANAGE_CUSTOM_FORMS)) {
@@ -25,51 +26,51 @@ class CustomFormPolicy
         return $user->can(CustomFormPermissionName::MANAGE_TEMPLATES);
     }
 
-    public function viewAny(User $user): bool
+    public function viewAny(Authorizable $user): bool
     {
         return $user->can(CustomFormPermissionName::FILL_CUSTOM_FORMS)
             || $user->can(CustomFormPermissionName::MANAGE_CUSTOM_FORMS)
             || $user->can(CustomFormPermissionName::MANAGE_TEMPLATES);
     }
 
-    public function create(User $user): bool
+    public function create(Authorizable $user): bool
     {
         return $user->can(CustomFormPermissionName::MANAGE_CUSTOM_FORMS) || $user->can(
                 CustomFormPermissionName::MANAGE_TEMPLATES
             );
     }
 
-    public function delete(User $user, CustomForm $customForm): bool
+    public function delete(Authorizable $user, CustomForm $customForm): bool
     {
         return $this->update($user, $customForm);
     }
 
-    public function update(User $user, CustomForm $customForm): bool
+    public function update(Authorizable $user, CustomForm $customForm): bool
     {
         if (!empty($customForm->template_identifier)) {
-            return $user->can(CustomFormPermissionName::MANAGE_TEMPLATES) ?? false;
+            return $user->can(CustomFormPermissionName::MANAGE_TEMPLATES);
         }
 
-        return $user->can(CustomFormPermissionName::MANAGE_CUSTOM_FORMS) ?? false;
+        return $user->can(CustomFormPermissionName::MANAGE_CUSTOM_FORMS);
     }
 
-    public function manageForms(User $user): bool
+    public function manageForms(Authorizable $user): bool
     {
-        return $user->can(CustomFormPermissionName::MANAGE_CUSTOM_FORMS) ?? false;
+        return $user->can(CustomFormPermissionName::MANAGE_CUSTOM_FORMS);
     }
 
-    public function manageTemplates(User $user): bool
+    public function manageTemplates(Authorizable $user): bool
     {
-        return $user->can(CustomFormPermissionName::MANAGE_TEMPLATES) ?? false;
+        return $user->can(CustomFormPermissionName::MANAGE_TEMPLATES);
     }
 
-    public function showResource(User $user): bool
+    public function showResource(Authorizable $user): bool
     {
-        return $user->can(CustomFormPermissionName::FILAMENT_RESOURCE_CUSTOM_FORMS) ?? false;
+        return $user->can(CustomFormPermissionName::FILAMENT_RESOURCE_CUSTOM_FORMS);
     }
 
-    public function showTemplateResource(User $user): bool
+    public function showTemplateResource(Authorizable $user): bool
     {
-        return $user->can(CustomFormPermissionName::FILAMENT_RESOURCE_TEMPLATES) ?? false;
+        return $user->can(CustomFormPermissionName::FILAMENT_RESOURCE_TEMPLATES);
     }
 }

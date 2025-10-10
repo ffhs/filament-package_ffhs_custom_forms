@@ -9,7 +9,6 @@ use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Group;
 use Filament\Support\Colors\Color;
-use Filament\Support\Components\Component;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\HtmlString;
 
@@ -63,7 +62,7 @@ trait HasNumberCheck
         return $inclusive ? $value >= $threshold : $value > $threshold;
     }
 
-    protected function getNumberTypeGroup(): Component
+    protected function getNumberTypeGroup(): Group
     {
         return Group::make([
             Checkbox::make('exactly_number')

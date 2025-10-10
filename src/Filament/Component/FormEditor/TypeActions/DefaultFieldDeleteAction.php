@@ -19,7 +19,8 @@ class DefaultFieldDeleteAction extends FieldTypeAction
             ->color('danger')
             ->modalHeading(function (CustomFieldType $type) {
                 $fieldTypeName = $type->displayname();
-                $fieldName = $fieldData['name'][app()->getLocale()] ?? ''; //ToDo Translation
+//                $fieldName = $fieldData['name'][app()->getLocale()] ?? ''; //ToDo Fix
+                $fieldName = '';
                 $parameters = ['name' => $fieldName, 'type' => $fieldTypeName];
 
                 return trans(CustomField::__('actions.delete.confirmation_message'), $parameters);

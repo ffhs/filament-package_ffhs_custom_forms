@@ -27,7 +27,7 @@ class NestedFlattenList //ToDo Delet
 
     public static function make(array|Collection $items = [], ?string $type = null): static
     {
-        return new static($items, $type);
+        return app(static::class, ['items' => $items, 'type' => $type]);
     }
 
     public function getStructure(bool $useKey = false): array

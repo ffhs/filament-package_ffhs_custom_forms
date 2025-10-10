@@ -28,7 +28,7 @@ use Illuminate\Support\Carbon;
  * @property int|null $form_position
  * @property int|null $layout_end_position
  * @property array<array-key, mixed>|null $options
- * @property int $is_active
+ * @property bool $is_active
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property-read Collection<int, CustomFieldAnswer> $answers
@@ -214,5 +214,35 @@ class CustomField extends ACustomField implements NestingObject, EmbedCustomFiel
     public function getFormConfiguration(): CustomFormConfiguration
     {
         return $this->customForm->getFormConfiguration();
+    }
+
+    public function getLayoutEndPosition(): ?int
+    {
+        return $this->layout_end_position;
+    }
+
+    public function getFormPosition(): int
+    {
+        return $this->form_position;
+    }
+
+    public function isActive(): bool
+    {
+        return $this->is_active;
+    }
+
+    public function setOptions(array $options): void
+    {
+        $this->options = $options;
+    }
+
+    public function getOptions(): array
+    {
+        return $this->options ?? [];
+    }
+
+    public function getName(): ?string
+    {
+        return $this->name;
     }
 }

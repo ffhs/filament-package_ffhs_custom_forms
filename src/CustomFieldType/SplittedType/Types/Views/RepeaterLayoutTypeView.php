@@ -58,19 +58,19 @@ class RepeaterLayoutTypeView implements FieldTypeView
         $isFieldset = $this->getOptionParameter($customFieldAnswer, 'show_as_fieldset');
         $component = $isFieldset ? Fieldset::make($label) : Section::make($label);
 
-        /** @var Collection $fields */
         $schema = [];
 
         $customField = $customFieldAnswer->getCustomField();
 
         $loadedAnswers = $this->loadCustomAnswerForEntry(
             $customFieldAnswer->getCustomFormAnswer(),
-            $customField->form_position,
-            $customField->layout_end_position,
+            $customField->getFormPosition(),
+            $customField->getLayoutEndPosition(),
         );
 
         $loadedAnswers = $loadedAnswers[$customFieldAnswer->getCustomField()->identifier ?? ''] ?? [];
 
+        /** @var Collection $fields */
         $fields = $parameter['child_fields'];
         $fields = $fields->keyBy('form_position');
         $offset = $fields->sortBy('form_position')->first()->form_position - 1;

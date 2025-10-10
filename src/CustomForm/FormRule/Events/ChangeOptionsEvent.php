@@ -41,16 +41,18 @@ class ChangeOptionsEvent extends OptionsEvent
         if ($identifier !== ($rule->data['target'] ?? '')) {
             return $target;
         }
-        if (!in_array(HasOptions::class, class_uses_recursive($target::class), true)) {
+        if (!in_array(HasOptions::class, class_uses_recursive($target::class),
+            true)) {
             return $target;
         }
 
-        /** @var HasOptions|Component $target */
+        /** @var Component $target */
         $reflection = new ReflectionClass($target);
         $property = $reflection->getProperty('options');
         $property->setAccessible(true);
         $optionsOld = $property->getValue($target);
 
+        /** @phpstan-ignore-next-line */
         $target->options($this->getModifiedOptionsClosure($rule, $target, $optionsOld, $arguments, $identifier));
 
         return $target;
@@ -58,7 +60,6 @@ class ChangeOptionsEvent extends OptionsEvent
 
     public function getOldProperty(Component $target, string $property): mixed
     {
-        /** @var HasOptions|Component $target */
         $reflection = new ReflectionClass($target);
         $property = $reflection->getProperty($property);
         $property->setAccessible(true);
@@ -82,9 +83,9 @@ class ChangeOptionsEvent extends OptionsEvent
                 return $options;
             }
 
-            /**@var array|Collection $array */
+            $selectedOptions = $rule->data['selected_options'] ?? [];
             $options = $options
-                ->filter(fn($option, $key) => in_array($key, $rule->data['selected_options'], true))
+                ->filter(fn($option, $key) => in_array($key, $selectedOptions, true))
                 ->toArray();
 
             //Check to replace the current value
@@ -94,7 +95,7 @@ class ChangeOptionsEvent extends OptionsEvent
                 //If Multiple
                 $diff = array_intersect($currentValue, array_keys($options));
 
-                if (sizeof($diff) !== sizeof($currentValue)) {
+                if (count($diff) !== count($currentValue)) {
                     $set($identifier, $diff);
                 }
             } elseif (!array_key_exists($currentValue, $options)) {

@@ -30,7 +30,7 @@ class SpaceTypeView implements FieldTypeView
             return Group::make()->hidden();
         }
 
-        $spaces = $this->createSpaceEntries($customFieldAnswer, false);
+        $spaces = $this->createSpaceEntries($customFieldAnswer);
 
         return $this
             ->modifyComponent(Group::make($spaces), $customFieldAnswer, false)

@@ -43,6 +43,10 @@ class ValidationMessageOption extends TypeOption
 
     public function modifyFormComponent(Component|Field $component, mixed $value): Component
     {
+        if (!$component instanceof Field) {
+            return $component;
+        }
+
         if (!is_array($value)) {
             $value = [];
         }
@@ -84,7 +88,7 @@ class ValidationMessageOption extends TypeOption
                     return null;
                 }
 
-                return explode(':', $rule)[0] ?? null;
+                return explode(':', $rule)[0];
             })
             ->filter(fn($ruleName) => $ruleName !== null && !in_array($ruleName, $excludedRules, true))
             ->unique()

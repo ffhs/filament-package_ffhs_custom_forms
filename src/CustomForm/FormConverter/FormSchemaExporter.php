@@ -2,11 +2,11 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormConverter;
 
+use Ffhs\FfhsUtils\Traits\HasStaticMake;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanExportFieldInformation;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanExportFormInformation;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanExportRuleInformation;
-use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasStaticMake;
 
 class FormSchemaExporter
 {

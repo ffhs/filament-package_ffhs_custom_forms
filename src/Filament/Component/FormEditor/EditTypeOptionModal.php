@@ -45,6 +45,10 @@ class EditTypeOptionModal extends Component
                 $items = ($item instanceof Field) ? [$item] : $item->getDefaultChildComponents();
 
                 foreach ($items as $itemField) {
+                    if (!$itemField instanceof Component) {
+                        continue;
+                    }
+
                     $itemKey = $itemField->getStatePath(false);
                     $isItemDisabled = in_array($itemKey, $disabledOption, false);
                     $itemField->disabled($isItemDisabled);

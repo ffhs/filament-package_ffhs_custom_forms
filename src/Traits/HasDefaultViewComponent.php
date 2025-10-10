@@ -2,6 +2,7 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Traits;
 
+use Ffhs\FfhsUtils\Traits\HasStaticMake;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\TypeOption;
@@ -56,7 +57,7 @@ trait HasDefaultViewComponent
             }
         }
 
-        if (method_exists($component, 'label')) {
+        if (method_exists($component, 'label') && method_exists($component, 'hiddenLabel')) {
             $label = $this->getLabelName($field);
             $component = empty($label) ? $component->hiddenLabel() : $component->label($label);
         }
@@ -87,6 +88,9 @@ trait HasDefaultViewComponent
         bool $isInfolist,
         array $ignoredOptions = []
     ): Component {
+        if (!method_exists($class, 'make')) {
+            throw new \RuntimeException('Make method is not defined in the component');
+        }
         $component = $class::make($this->getIdentifyKey($field));
         return $this->modifyComponent($component, $field, $isInfolist, $ignoredOptions);
     }

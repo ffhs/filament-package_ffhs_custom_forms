@@ -23,7 +23,7 @@ class BooleanOption extends TypeOption
 
     public function modifyFormComponent(Component $component, mixed $value): Component
     {
-        if ($value) {
+        if ($value && method_exists($component, 'boolean')) {
             $component = $component->boolean();
         }
 

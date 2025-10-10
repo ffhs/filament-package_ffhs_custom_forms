@@ -18,7 +18,7 @@ trait CanMapFields
             $record = $record->getCustomField();
         }
 
-        return $record->identifier;
+        return $record->identifier();
     }
 
     public function getLabelName(EmbedCustomField|EmbedCustomFieldAnswer $record): string
@@ -27,10 +27,7 @@ trait CanMapFields
             $record = $record->getCustomField();
         }
 
-        $label = $record->name;
-        $label = is_null($label) ? '' : $label;
-
-        return str($label)->sanitizeHtml();
+        return str($record->getName() ?? '')->sanitizeHtml();
     }
 
     public function getOptionParameter(
@@ -42,19 +39,12 @@ trait CanMapFields
             $record = $record->getCustomField();
         }
 
-        if (is_null($record->options)) {
-            $record->options = [];
-        }
+        $options = $record->getOptions();
+        if (array_key_exists($option, $options)) {
+            $return = $options[$option];
 
-        if (array_key_exists($option, $record->options)) {
-            $return = $record->options[$option];
-
-            if (!is_null($return)) {
+            if (!is_null($return) || $canBeNull) {
                 return $return;
-            }
-
-            if ($canBeNull) {
-                return null;
             }
         }
 
@@ -89,7 +79,7 @@ trait CanMapFields
 
     public function getAnswer(EmbedCustomFieldAnswer $answer)
     {
-        $rawAnswerer = $answer->answer;
+        $rawAnswerer = $answer->getAnswer();
 
         if (is_null($rawAnswerer)) {
             return null;
@@ -156,16 +146,15 @@ trait CanMapFields
     public function isFieldInSplitGroup(EmbedCustomField|EmbedCustomFieldAnswer $record): bool
     {//ToDo Slow
         if ($record instanceof EmbedCustomFieldAnswer) {
-            $record = $record->customField;
+            $record = $record->getCustomField();
         }
 
-        $fields = $record
-            ->customForm //ToDo Make for EmbedCustomField
-            ->customFields;
+        /**@phpstan-ignore-next-line */ //ToDo make for non CustomForm
+        $fields = $record->customForm->getCustomFields();
         $parentSplitField = $fields
             ->firstWhere(function (CustomField $field) use ($record) {
-                if ($field->form_position >= $record->form_position
-                    || $field->layout_end_position < $record->form_position) {
+                if ($field->getFormPosition() >= $record->getFormPosition()
+                    || $field->getLayoutEndPosition() < $record->getFormPosition()) {
                     return false;
                 }
 
@@ -181,28 +170,26 @@ trait CanMapFields
             $record = $record->customField;
         }
 
-        $fields = $record
-            ->customForm
-            ->customFields;
+        /**@phpstan-ignore-next-line */ //ToDo make for non CustomForm
+        $fields = $record->customForm->customFields;
 
         return $fields
-            ->where('form_position', '<', $record->form_position)
-            ->where('layout_end_position', '>=', $record->form_position)
+            ->where('form_position', '<', $record->getFormPosition())
+            ->where('layout_end_position', '>=', $record->getFormPosition())
             ->filter(fn(CustomField $field) => $field->getType() instanceof CustomSplitType);
     }
 
     public function getFieldsInLayout(EmbedCustomField|CustomFieldAnswer $record): Collection
     {
         if ($record instanceof CustomFieldAnswer) {
-            $record = $record->customField;
+            $record = $record->getCustomField();;
         }
 
-        return $record
-            ->customForm
-            ->customFields
+        /**@phpstan-ignore-next-line */ //ToDo make for non CustomForm
+        return $record->customForm->getCustomFields()
             ->filter(function (CustomField $field) use ($record) {
-                return !($field->form_position > $record->layout_end_position
-                    || $field->form_position <= $record->form_position);
+                return !($field->getFormPosition() > $record->getLayoutEndPosition()
+                    || $field->getFormPosition() <= $record->getFormPosition());
             });
     }
 
@@ -212,7 +199,7 @@ trait CanMapFields
     ): Collection {
         if ($record instanceof CustomFieldAnswer) {
             $customFormAnswer = $record->customFormAnswer;
-            $record = $record->customField;
+            $record = $record->getCustomField();
         }
 
         $splitGroup = $this

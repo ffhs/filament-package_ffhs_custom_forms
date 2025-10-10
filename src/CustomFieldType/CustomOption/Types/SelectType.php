@@ -18,7 +18,6 @@ use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Utilities\Get;
-use Filament\Support\Components\Component;
 
 class SelectType extends CustomOptionType
 {
@@ -101,7 +100,7 @@ class SelectType extends CustomOptionType
                         ),
                     'validation_messages' => ValidationMessageOption::make()
                         ->modifyOptionComponent(
-                            fn(Component $component) => $component->hidden(fn(Get $get) => $get('prioritized'))
+                            fn(Field $component) => $component->hidden(fn(Get $get) => $get('prioritized'))
                         ),
                     'validation_messages_prioritized' => FastTypeOption::makeFast([],
                         Repeater::make('validation_messages_prioritized')

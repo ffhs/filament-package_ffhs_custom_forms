@@ -16,4 +16,6 @@ interface EmbedCustomFieldAnswer
     public function getCustomFormAnswer(): EmbedCustomFormAnswer;
 
     public function getPath(): ?string;
+
+    public function getAnswer(): mixed;
 }

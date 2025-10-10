@@ -132,10 +132,10 @@ trait CanLoadFormAnswer
         }
 
         //If field is in template, get template field for position
-        $customFieldSolved = $identifierTemplateMap->get($customField->identifier, $customField);
+        $customFieldSolved = $identifierTemplateMap->get($customField->identifier(), $customField);
 
-        $beginCondition = is_null($begin) || $begin <= $customFieldSolved->form_position;
-        $endCondition = is_null($end) || $customFieldSolved->form_position <= $end;
+        $beginCondition = is_null($begin) || $begin <= $customFieldSolved->getFormPosition();
+        $endCondition = is_null($end) || $customFieldSolved->getFormPosition() <= $end;
 
         return $beginCondition && $endCondition;
     }
@@ -144,8 +144,8 @@ trait CanLoadFormAnswer
     {
         return $customForm
             ->getCustomFields()
-            ->mapWithKeys(fn(EmbedCustomField $field) => [$field->identifier => $field])
-            ->sortBy(fn($item) => $item->form_position);
+            ->mapWithKeys(fn(EmbedCustomField $field) => [$field->identifier() => $field])
+            ->sortBy(fn(EmbedCustomField $item) => $item->getFormPosition());
     }
 
     private function buildIdentifierTemplateMap(Collection $customFields): Collection
@@ -156,7 +156,7 @@ trait CanLoadFormAnswer
             ->map(function (EmbedCustomField $template) {
                 return $template->getTemplate()
                     ?->getOwnedFields()
-                    ->mapWithKeys(fn(EmbedCustomField $field) => [$field->identifier => $template]);
+                    ->mapWithKeys(fn(EmbedCustomField $field) => [$field->identifier() => $template]);
             })->collapse();
     }
 
@@ -167,14 +167,14 @@ trait CanLoadFormAnswer
     ): mixed {
         $fieldData = $customField
             ->getType()
-            ?->prepareLoadAnswerData($fieldAnswer, $fieldAnswer->answer);
+            ?->prepareLoadAnswerData($fieldAnswer, $fieldAnswer->getAnswer());
 
         return $this->modifyFieldDataFormRules($fieldAnswer, $fieldData, $formRules);
     }
 
     private function getDataIdentifier(EmbedCustomFieldAnswer $fieldAnswer, EmbedCustomField $customField): string
     {
-        $dataIdentifier = $customField->identifier;
+        $dataIdentifier = $customField->identifier();
         $dataIdentifier .= is_null($fieldAnswer->getPath()) ? '' : '.' . $fieldAnswer->getPath();
 
         return $dataIdentifier;
@@ -186,23 +186,24 @@ trait CanLoadFormAnswer
         $nearestParentEnd = null;
 
         foreach ($formFields as $field) {
-            if ($field->form_position >= $childField->form_position) {
+            /**@var EmbedCustomField $field */
+            if ($field->form_position >= $childField->getFormPosition()) {
                 break;
             }
             if (!$field->getType()?->hasSplitFields()) {
                 continue;
             }
 
-            if ($field->layout_end_position < $childField->form_position) {
+            if ($field->getLayoutEndPosition() < $childField->getFormPosition()) {
                 continue;
             }
 
-            if (!is_null($field->layout_end_position) && $field->layout_end_position < $nearestParentEnd) {
+            if (!is_null($field->getLayoutEndPosition()) && $field->getLayoutEndPosition() < $nearestParentEnd) {
                 continue;
             }
 
             $nearestParent = $field;
-            $nearestParentEnd = $field->layout_end_position;
+            $nearestParentEnd = $field->getLayoutEndPosition();
         }
         return $nearestParent;
     }

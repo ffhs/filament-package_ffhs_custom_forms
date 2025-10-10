@@ -296,7 +296,7 @@ trait CanSaveFormAnswer
         mixed $fieldAnswererData
     ): mixed {
         foreach ($formRules as $rule) {
-            /**@var Rule $rule */
+            /** @phpstan-var Rule $rule */
             $fieldAnswererData = $rule->handle(
                 FormRuleAction::OnAnswerSave,
                 ['custom_field_answer' => $customFieldAnswer],

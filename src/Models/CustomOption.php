@@ -3,7 +3,6 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\Models;
 
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasCustomFormModelTranslations;
-use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasFormIdentifier;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -38,8 +37,6 @@ use Spatie\Translatable\HasTranslations;
  */
 class CustomOption extends Model
 {
-    use HasFormIdentifier;
-
     use HasTranslations;
     use HasFactory;
     use HasCustomFormModelTranslations;
@@ -56,6 +53,7 @@ class CustomOption extends Model
     {
         parent::booted();
         self::creating(function (CustomOption $customOption) {
+            /**@phpstan-ignore-next-line */
             if (is_null($customOption->identifier)) {
                 $customOption->identifier = uniqid();
             }

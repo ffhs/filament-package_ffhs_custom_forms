@@ -55,4 +55,9 @@ class CustomFieldAnswerDataContainer implements EmbedCustomFieldAnswer
         return $this->data['path'];
     }
 
+    public function getAnswer(): mixed
+    {
+        return $this->data['answer'];
+    }
+
 }

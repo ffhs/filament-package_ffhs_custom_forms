@@ -46,8 +46,7 @@ trait CanRenderSplitCustomForm
         $customFields = $customForm
             ->getCustomFields()
             ->where('form_position', '>=', $formBeginPos)
-            ->where('layout_end_position', '<=', $formEndPos)
-            ->get();
+            ->where('layout_end_position', '<=', $formEndPos);
 
         return $this->renderCustomForm($viewMode, $displayer, $customForm, $customFields, $positionOffset)[0];
     }
@@ -58,8 +57,8 @@ trait CanRenderSplitCustomForm
         FieldDisplayer $displayer,
         string $viewMode
     ) {
-        $endPos = $field->layout_end_position;
-        $beginPos = $field->form_position;
+        $endPos = $field->getLayoutEndPosition();
+        $beginPos = $field->getFormPosition();
 
         if ($endPos === 0) {
             $endPos = $beginPos;

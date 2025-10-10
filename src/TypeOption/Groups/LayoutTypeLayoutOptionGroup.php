@@ -10,12 +10,10 @@ use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\TypeOptionGroup;
 
 class LayoutTypeLayoutOptionGroup extends TypeOptionGroup
 {
-    public function __construct(
-        string $name = 'Layout',
-        array $typeOptions = [],
-        ?string $icon = 'bi-layout-text-window'
-    ) {
-        parent::__construct(TypeOption::__('layout-group.label'), $typeOptions, $icon);
+    public function __construct(?string $name = null, array $typeOptions = [], ?string $icon = 'bi-layout-text-window')
+    {
+        $name = $name ?? TypeOption::__('layout-group.label');
+        parent::__construct($name, $typeOptions, $icon);
 
         $this->mergeTypeOptions([
             'column_span' => ColumnSpanOption::make(),

@@ -23,7 +23,6 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use RuntimeException;
-use function PHPUnit\Framework\isEmpty;
 
 class FileUploadType extends CustomFieldType
 {
@@ -149,6 +148,10 @@ class FileUploadType extends CustomFieldType
         Schema $schema,
         Collection $flattenFormComponents
     ): void {
+        if (!$component instanceof FileUpload) {
+            throw new RuntimeException('Component is not a FileUpload');
+        }
+
         try {
             $acceptedFileTypes = $component->getAcceptedFileTypes();
             $hadTemporaryFile = false;
@@ -177,7 +180,7 @@ class FileUploadType extends CustomFieldType
                 $state = [$state];
             }
 
-            $state = array_filter($state ?? [], static fn($file) => !empty($file));
+            $state = array_filter($state, static fn($file) => !empty($file));
             $component->state($state);
             $component->saveUploadedFiles();
 
@@ -226,9 +229,9 @@ class FileUploadType extends CustomFieldType
         $data = parent::prepareLoadAnswerData($answer, $data);
 
         if ($this->getOptionParameter($answer, 'multiple')) {
-            if (!is_array($data['files']) && !isEmpty($data['files'])) {
-                $data['files'] = [$data['files']];
-            }
+//            if (!is_array($data['files']) && !empty($data['files'])) {
+//                $data['files'] = [$data['files']];
+//            }
             foreach ($data['files'] as $key => $file) {
                 if (is_array($file)) {
                     unset($data['files'][$key]);

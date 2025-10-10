@@ -50,7 +50,9 @@ class GeneralFieldSchema
                 $item->visible($isOverwritten);
             } elseif ($item instanceof Section) {
                 foreach ($item->getDefaultChildComponents() as $field) {
-                    $field->visible($isOverwritten);
+                    if ($field instanceof Component) {
+                        $field->visible($isOverwritten);
+                    }
                 }
             }
         }

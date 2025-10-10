@@ -24,7 +24,7 @@ class ValidationAttributeOption extends TypeOption
 
     public function modifyFormComponent(Component $component, mixed $value): Component
     {
-        if (empty($value)) {
+        if (empty($value) || !method_exists($component, 'validationAttribute')) {
             return $component;
         }
 

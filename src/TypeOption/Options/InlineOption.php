@@ -10,7 +10,7 @@ use Filament\Support\Components\Component;
 class InlineOption extends TypeOption
 {
     use HasOptionNoComponentModification;
-    
+
     protected mixed $default = false;
 
     public function getComponent(string $name): Component
@@ -23,7 +23,7 @@ class InlineOption extends TypeOption
 
     public function modifyFormComponent(Component $component, mixed $value): Component
     {
-        if ($value) {
+        if ($value && method_exists($component, 'inline')) {
             return $component->inline();
         }
 

@@ -12,7 +12,7 @@ class NewLineOption extends TypeOption
     use HasOptionNoComponentModification;
 
     protected mixed $default = false;
-    
+
     public function getDefaultValue(): bool
     {
         return false;
@@ -27,7 +27,7 @@ class NewLineOption extends TypeOption
 
     public function modifyFormComponent(Component $component, mixed $value): Component
     {
-        if (!$value) {
+        if (!$value || !method_exists($component, 'columnStart')) {
             return $component;
         }
 

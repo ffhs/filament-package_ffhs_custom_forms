@@ -21,7 +21,7 @@ class TypeOptionGroup
 
     public static function make(string $name, array $typeOptions, ?string $icon = null): static
     {
-        return new static($name, $typeOptions, $icon);
+        return app(static::class, ['name' => $name, 'typeOptions' => $typeOptions, 'icon' => $icon]);
     }
 
     public function mergeTypeOptions(array $typeOptions): static

@@ -27,6 +27,10 @@ class ColumnsOption extends TypeOption
 
     public function modifyFormComponent(Component $component, mixed $value): Component
     {
+        if (!method_exists($component, 'columns')) {
+            return $component;
+        }
+
         return $component->columns($value);
     }
 }

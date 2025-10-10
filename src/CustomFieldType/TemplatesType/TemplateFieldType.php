@@ -3,6 +3,7 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\TemplatesType;
 
 use Closure;
+use Ffhs\FfhsUtils\Traits\HasStaticMake;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormConfiguration\CustomFormConfiguration;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\FormEditor\TypeActions\DefaultCustomActivationAction;
@@ -12,7 +13,6 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasCustomTypePackageTranslation;
-use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasStaticMake;
 use Filament\Support\Colors\Color;
 use Illuminate\Support\Collection;
 
@@ -64,7 +64,6 @@ final class TemplateFieldType extends CustomFieldType
         );
     }
 
-
     public function getEditorFieldTitle(array $fieldState, CustomFormConfiguration $configuration): string
     {
         return $configuration
@@ -103,27 +102,27 @@ final class TemplateFieldType extends CustomFieldType
         $templateFields = $field
             ->template
             ->customFields;
+
         $formFields = $field
             ->customForm
             ->customFields;
 
         $field
             ->customForm
-            ->customFormAnswers
-            ->each(function (CustomFormAnswer $formAnswer) use (
-                $formFields,
-                $field,
-                $templateFields
-            ) {
-                $templateIdentifiers = $templateFields->pluck('identifier');
-                $formFieldIds = $formFields
-                    ->whereIn('identifier', $templateIdentifiers)
-                    ->pluck('id');
-                $formAnswer
-                    ->customFieldAnswers
-                    ->whereIn('custom_field_id', $formFieldIds)
-                    ->each($this->getFieldTransferClosure($templateFields, $formFields));
+            ->customFormAnswers()
+            ->chunk(10, function ($formAnswers) use ($templateFields, $formFields) {
+                $formAnswers->each(function (CustomFormAnswer $formAnswer) use ($formFields, $templateFields) {
+                    $templateIdentifiers = $templateFields->pluck('identifier');
+                    $formFieldIds = $formFields
+                        ->whereIn('identifier', $templateIdentifiers)
+                        ->pluck('id');
+                    $formAnswer
+                        ->customFieldAnswers()
+                        ->whereIn('custom_field_id', $formFieldIds)
+                        ->each($this->getFieldTransferClosure($templateFields, $formFields));
+                });
             });
+
     }
 
     protected function getFieldTransferClosure(Collection $newFields, Collection $originalFields): Closure
@@ -150,12 +149,12 @@ final class TemplateFieldType extends CustomFieldType
         };
     }
 
-    protected function getEditorFieldBadgeColor(array $rawData): ?array
+    protected function getEditorFieldBadgeColor(array $rawData): array
     {
         return Color::rgb('rgb(34, 135, 0)');
     }
 
-    protected function getEditorFieldBadgeText(array $rawData): ?string
+    protected function getEditorFieldBadgeText(array $rawData): string
     {
         return 'Template';
     }

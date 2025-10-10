@@ -54,7 +54,9 @@ class CustomFormEditor extends Field implements CanEntangleWithSingularRelations
         $this->formConfiguration(function (): CustomFormConfiguration {
             /**@var null|CustomForm $customForm */
             $customForm = $this->getCachedExistingRecord();
-            return $customForm?->getFormConfiguration() ?? DefaultFormConfiguration::make();
+            /**@phpstan-ignore-next-line */
+            $formConfiguration = $customForm?->getFormConfiguration();
+            return $formConfiguration ?? DefaultFormConfiguration::make();
         });
 
         return $this;
@@ -117,8 +119,8 @@ class CustomFormEditor extends Field implements CanEntangleWithSingularRelations
                         ->columns(3)
                         ->schema([
                             RuleEditor::make('rules')
-                                ->triggers(fn() => $this->getFormConfiguration()->getRuleTriggerTypes() ?? [])
-                                ->events(fn() => $this->getFormConfiguration()->getRuleEventTypes() ?? [])
+                                ->triggers(fn() => $this->getFormConfiguration()->getRuleTriggerTypes())
+                                ->events(fn() => $this->getFormConfiguration()->getRuleEventTypes())
                                 ->group(fn() => $this->getGroupName() . '-rules')
                                 ->columnSpan(2)
                         ])

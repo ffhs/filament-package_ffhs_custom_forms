@@ -2,11 +2,11 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\LayoutType\Types\Views;
 
+use Ffhs\FfhsUtils\Traits\HasStaticMake;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\FieldTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanMapFields;
-use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasStaticMake;
 use Filament\Actions\Action;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Components\Actions;
@@ -51,13 +51,14 @@ class DownloadTypeView implements FieldTypeView
 
         //Toll Tip
         $helpText = $this->getOptionParameter($customField, 'helper_text');
+        $helpText = empty($helpText) ? '' : $helpText;
+        $helpText = new HtmlString(
+            '</div> <div class="fi-fo-field-wrp-helper-text text-sm text-gray-500" style="margin-top: -30px; ">' . $helpText . '</div><div>'
+        );
+
         $actions[] = TextEntry::make('helper_text' . '-help_text') //ToDo Replace
         ->hiddenLabel()
-            ->helperText(
-                new HtmlString(
-                    '</div> <div class="fi-fo-field-wrp-helper-text text-sm text-gray-500" style="margin-top: -30px; ">' . empty($helpText) ? "" : $helpText . '</div><div>'
-                )
-            );
+            ->helperText($helpText);
 
         $group = Group::make($actions);
         $group->columnSpan($this->getOptionParameter($customField, 'column_span'));
