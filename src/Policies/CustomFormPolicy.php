@@ -48,29 +48,29 @@ class CustomFormPolicy
     public function update(Authorizable $user, CustomForm $customForm): bool
     {
         if (!empty($customForm->template_identifier)) {
-            return $user->can(CustomFormPermissionName::MANAGE_TEMPLATES) ?? false;
+            return $user->can(CustomFormPermissionName::MANAGE_TEMPLATES);
         }
 
-        return $user->can(CustomFormPermissionName::MANAGE_CUSTOM_FORMS) ?? false;
+        return $user->can(CustomFormPermissionName::MANAGE_CUSTOM_FORMS);
     }
 
     public function manageForms(Authorizable $user): bool
     {
-        return $user->can(CustomFormPermissionName::MANAGE_CUSTOM_FORMS) ?? false;
+        return $user->can(CustomFormPermissionName::MANAGE_CUSTOM_FORMS);
     }
 
     public function manageTemplates(Authorizable $user): bool
     {
-        return $user->can(CustomFormPermissionName::MANAGE_TEMPLATES) ?? false;
+        return $user->can(CustomFormPermissionName::MANAGE_TEMPLATES);
     }
 
     public function showResource(Authorizable $user): bool
     {
-        return $user->can(CustomFormPermissionName::FILAMENT_RESOURCE_CUSTOM_FORMS) ?? false;
+        return $user->can(CustomFormPermissionName::FILAMENT_RESOURCE_CUSTOM_FORMS);
     }
 
     public function showTemplateResource(Authorizable $user): bool
     {
-        return $user->can(CustomFormPermissionName::FILAMENT_RESOURCE_TEMPLATES) ?? false;
+        return $user->can(CustomFormPermissionName::FILAMENT_RESOURCE_TEMPLATES);
     }
 }

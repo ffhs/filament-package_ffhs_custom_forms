@@ -19,10 +19,10 @@ class DateRangeTypeView implements FieldTypeView
     public function getFormComponent(EmbedCustomField $customField, array $parameter = []): Component
     {
         return $this->makeComponent(Hidden::class, $customField, false); //ToDo Replace
-        /**@var Flatpickr $flatpickr */
-        $flatpickr = $this->makeComponent(Flatpickr::class, $customField, false);
-
-        return $flatpickr->rangePicker();
+//        /**@var Flatpickr $flatpickr */
+//        $flatpickr = $this->makeComponent(Flatpickr::class, $customField, false);
+//
+//        return $flatpickr->rangePicker();
     }
 
     public function getEntryComponent(EmbedCustomFieldAnswer $customFieldAnswer, array $parameter = []): Component

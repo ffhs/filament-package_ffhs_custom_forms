@@ -88,7 +88,7 @@ class ValidationMessageOption extends TypeOption
                     return null;
                 }
 
-                return explode(':', $rule)[0] ?? null;
+                return explode(':', $rule)[0];
             })
             ->filter(fn($ruleName) => $ruleName !== null && !in_array($ruleName, $excludedRules, true))
             ->unique()

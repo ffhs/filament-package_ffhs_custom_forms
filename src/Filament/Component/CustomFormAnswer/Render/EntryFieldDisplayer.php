@@ -9,7 +9,6 @@ use Ffhs\FilamentPackageFfhsCustomForms\Contracts\FieldDisplayer;
 use Ffhs\FilamentPackageFfhsCustomForms\DataContainer\CustomFieldAnswerDataContainer;
 use Ffhs\FilamentPackageFfhsCustomForms\Enums\FormRuleAction;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
 use Filament\Support\Components\Component;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
@@ -41,7 +40,7 @@ class EntryFieldDisplayer implements FieldDisplayer
 
     public function __invoke(string $viewMode, EmbedCustomField $customField, array $parameter): Component
     {
-        /** @var CustomFormAnswer $answer */
+        /** @var ?EmbedCustomFormAnswer $answer */
         $answer = $this
             ->fieldAnswers
             ->get($customField->identifier());

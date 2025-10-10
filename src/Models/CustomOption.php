@@ -53,6 +53,7 @@ class CustomOption extends Model
     {
         parent::booted();
         self::creating(function (CustomOption $customOption) {
+            /**@phpstan-ignore-next-line */
             if (is_null($customOption->identifier)) {
                 $customOption->identifier = uniqid();
             }

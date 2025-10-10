@@ -119,8 +119,8 @@ class CustomFormEditor extends Field implements CanEntangleWithSingularRelations
                         ->columns(3)
                         ->schema([
                             RuleEditor::make('rules')
-                                ->triggers(fn() => $this->getFormConfiguration()->getRuleTriggerTypes() ?? [])
-                                ->events(fn() => $this->getFormConfiguration()->getRuleEventTypes() ?? [])
+                                ->triggers(fn() => $this->getFormConfiguration()->getRuleTriggerTypes())
+                                ->events(fn() => $this->getFormConfiguration()->getRuleEventTypes())
                                 ->group(fn() => $this->getGroupName() . '-rules')
                                 ->columnSpan(2)
                         ])

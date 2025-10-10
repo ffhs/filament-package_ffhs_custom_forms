@@ -40,6 +40,6 @@ class CustomFormAnswerPolicy
 
     public function showResource(Authorizable $user): bool
     {
-        return $user->can(CustomFormPermissionName::FILAMENT_RESOURCE_CUSTOM_FORM_ANSWERS) ?? false;
+        return $user->can(CustomFormPermissionName::FILAMENT_RESOURCE_CUSTOM_FORM_ANSWERS);
     }
 }

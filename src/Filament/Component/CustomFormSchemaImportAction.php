@@ -218,19 +218,10 @@ class CustomFormSchemaImportAction extends Action
         ];
     }
 
-    /**
-     * @param $data
-     * @param false $isTemplate
-     * @param array $formData
-     * @param FormSchemaImporter $importer
-     * @param array $templateMap
-     * @param array $generalFieldMap
-     * @return CustomForm
-     * @throws FormImportException
-     */
+
     public function importNotExisingForm(
         $data,
-        false $isTemplate,
+        bool $isTemplate,
         array $formData,
         FormSchemaImporter $importer,
         array $templateMap,

@@ -36,7 +36,7 @@ trait HasEditorLayoutElements
             return $this->displayname();
         }
 
-        return $customField->getGeneralField()?->name ?? '404';
+        return str($customField->getGeneralField()->name ?? '404');
     }
 
     public function getEditorFieldIcon(array $rawData, CustomFormConfiguration $configuration): string

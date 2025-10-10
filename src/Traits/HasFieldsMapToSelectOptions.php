@@ -9,7 +9,6 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Filament\Schemas\Components\Utilities\Get;
 use Illuminate\Support\Collection;
-use RuntimeException;
 
 trait HasFieldsMapToSelectOptions
 {
@@ -21,10 +20,6 @@ trait HasFieldsMapToSelectOptions
 
     protected function getSelectOptionsFromFields(Collection $customFields, Get $get): array
     {
-        if (!method_exists($this, 'getFormConfiguration')) {
-            throw new RuntimeException('Method getFormConfiguration not found in ' . static::class);
-        }
-
         $options = [];
         $formConfiguration = $this->getFormConfiguration($get);
 

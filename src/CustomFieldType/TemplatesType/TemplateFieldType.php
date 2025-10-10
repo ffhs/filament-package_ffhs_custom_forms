@@ -145,12 +145,12 @@ final class TemplateFieldType extends CustomFieldType
         };
     }
 
-    protected function getEditorFieldBadgeColor(array $rawData): ?array
+    protected function getEditorFieldBadgeColor(array $rawData): array
     {
         return Color::rgb('rgb(34, 135, 0)');
     }
 
-    protected function getEditorFieldBadgeText(array $rawData): ?string
+    protected function getEditorFieldBadgeText(array $rawData): string
     {
         return 'Template';
     }

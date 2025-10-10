@@ -109,7 +109,7 @@ trait CanRenderCustomForm
             $formPosition <= $customFields->count() + $positionOffset;
             $formPosition++
         ) {
-            /** @var EmbedCustomField $customField */
+            /** @var ?EmbedCustomField $customField */
             $customField = $customFields->get($formPosition);
             $parameters = $defaultParameters;
 
@@ -167,7 +167,7 @@ trait CanRenderCustomForm
         $rules
             ->map(fn(EmbedRule $rule) => $rule->getTriggers())
             ->flatten(1)
-            ->filter(fn(RuleTrigger $ruleTrigger) => !is_null($ruleTrigger))
+//            ->filter(fn(?RuleTrigger $ruleTrigger) => !is_null($ruleTrigger))
             ->filter(fn(RuleTrigger $ruleTrigger) => $ruleTrigger->getType() instanceof FormRuleTriggerType)
             ->each(function (RuleTrigger $trigger) use (&$allComponents) {
                 /** @phpstan-ignore-next-line */

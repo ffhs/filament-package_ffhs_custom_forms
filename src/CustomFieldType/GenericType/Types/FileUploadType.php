@@ -23,7 +23,6 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use RuntimeException;
-use function PHPUnit\Framework\isEmpty;
 
 class FileUploadType extends CustomFieldType
 {
@@ -230,9 +229,9 @@ class FileUploadType extends CustomFieldType
         $data = parent::prepareLoadAnswerData($answer, $data);
 
         if ($this->getOptionParameter($answer, 'multiple')) {
-            if (!is_array($data['files']) && !isEmpty($data['files'])) {
-                $data['files'] = [$data['files']];
-            }
+//            if (!is_array($data['files']) && !empty($data['files'])) {
+//                $data['files'] = [$data['files']];
+//            }
             foreach ($data['files'] as $key => $file) {
                 if (is_array($file)) {
                     unset($data['files'][$key]);
