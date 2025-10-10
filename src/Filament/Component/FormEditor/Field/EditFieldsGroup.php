@@ -5,6 +5,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\FormEditor\Fiel
 
 use Ffhs\FfhsUtils\Filament\Components\DragDrop\DragDropGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\Facades\CustomForms;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\FormEditor\StateCasts\CustomFieldStateCast;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasFormConfiguration;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasFormGroupName;
 use Illuminate\Support\HtmlString;
@@ -13,6 +14,16 @@ class EditFieldsGroup extends DragDropGroup
 {
     use HasFormConfiguration;
     use HasFormGroupName;
+
+    public function hydrateState(?array &$hydratedDefaultState, bool $shouldCallHydrationHooks = true): void
+    {
+        if ($hydratedDefaultState === null) {
+            $rawState = $this->getPassiveRawState();
+            $rawState = new CustomFieldStateCast()->unflattenCustomFields($rawState);
+            $this->rawState($rawState);
+        }
+        parent::hydrateState($hydratedDefaultState, $shouldCallHydrationHooks);
+    }
 
     protected function setUp(): void
     {
@@ -65,4 +76,23 @@ class EditFieldsGroup extends DragDropGroup
         return CustomForms::getFieldTypeFromRawDate($itemState,
             $this->getFormConfiguration())->getEditorFieldIcon($itemState, $this->getFormConfiguration());
     }
+
+    private function getPassiveRawState()
+    {
+        $statePath = $this->getStatePath();
+
+        if (blank($statePath)) {
+            return [];
+        }
+
+        $state = data_get($this->getLivewire(), $statePath);
+
+        if ((!is_array($state)) && blank($state)) {
+            $state = null;
+        }
+
+        return $state;
+    }
+
+
 }
