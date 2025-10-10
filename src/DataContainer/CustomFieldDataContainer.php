@@ -44,11 +44,13 @@ class CustomFieldDataContainer implements EmbedCustomField
 
     public function getGeneralField(): ?GeneralField
     {
+        /**@phpstan-ignore-next-line */
         return $this->customFormConfiguration->getAvailableGeneralFields()[$this->data['general_field_id']] ?? null;
     }
 
     public function getTemplate(): ?EmbedCustomForm
     {
+        /**@phpstan-ignore-next-line */
         return $this->customFormConfiguration->getAvailableTemplates()->get($this->data['template_id'] ?? '');
     }
 

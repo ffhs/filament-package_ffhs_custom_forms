@@ -6,6 +6,7 @@ use Ffhs\FfhsUtils\Contracts\Rules\EmbedRuleTrigger;
 use Ffhs\FfhsUtils\Models\RuleTrigger;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\CustomOption\CustomOptionType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\TempCustomField;
+use Ffhs\FilamentPackageFfhsCustomForms\DataContainer\CustomFieldDataContainer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasBoolCheck;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasNumberCheck;
@@ -131,12 +132,12 @@ class ValueEqualsRuleTrigger extends FormRuleTriggerType
             $identifier = $field['identifier'] ?? '';
 
             if (!empty($field['general_field_id'])) {
-                $customField = new TempCustomField($record, $field); //ToDo Remove
+                $customField = CustomFieldDataContainer::make($field, $record->getFormConfiguration());
                 $identifier = $customField->identifier();
             }
 
             if ($identifier === $target) {
-                $customField = new TempCustomField($record, $field);  //ToDo Remove
+                $customField = CustomFieldDataContainer::make($field, $record->getFormConfiguration());
 
                 return !($customField->getType() instanceof CustomOptionType);
             }

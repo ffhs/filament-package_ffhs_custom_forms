@@ -111,6 +111,7 @@ class EditTemplate extends EditCustomForm
 
     public function getRecord(): CustomForm
     {
+        /**@phpstan-ignore-next-line */
         return parent::getRecord();
     }
 

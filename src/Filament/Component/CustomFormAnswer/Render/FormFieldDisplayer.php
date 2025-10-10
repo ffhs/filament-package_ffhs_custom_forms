@@ -16,7 +16,7 @@ class FormFieldDisplayer implements FieldDisplayer
 
     public static function make(EmbedCustomForm $customForm): static
     {
-        return app(__CLASS__, ['form' => $customForm]);
+        return app(static::class, ['form' => $customForm]);
     }
 
     public function __invoke(string $viewMode, EmbedCustomField $customField, array $parameter): Component
