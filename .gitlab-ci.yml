@@ -1,4 +1,5 @@
 stages:
+  - setup
   - build
   - test
   - stan
