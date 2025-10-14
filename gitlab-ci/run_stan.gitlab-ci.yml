@@ -11,7 +11,7 @@ stan:
     - update-ca-certificates
 
     - echo xdebug.mode=coverage >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
-    - composer config --global --auth gitlab-token.internal-git.alpen.ffhs.ch $CI_JOB_TOKEN
+    - composer config --global --auth gitlab-token.internal-git.alpen.ffhs.ch ${CI_JOB_TOKEN}
     - composer install --prefer-dist --no-ansi --no-interaction --no-progress --no-scripts
   script:
     - ./vendor/bin/phpstan analyse --error-format=X
