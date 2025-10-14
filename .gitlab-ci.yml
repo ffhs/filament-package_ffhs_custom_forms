@@ -1,11 +1,12 @@
 stages:
   - build
   - test
+  - stan
   - publish
 
 include:
-  #  - local: gitlab-ci/run_test.gitlab-ci.yml todo  needs to move to internal git for utils
-  #  - local: gitlab-ci/run_stan.gitlab-ci.yml todo  needs to move to internal git for utils
+  - local: gitlab-ci/run_tests.gitlab-ci.yml
+  - local: gitlab-ci/run_stan.gitlab-ci.yml
   - local: gitlab-ci/intern_publish.gitlab-ci.yml
   - local: gitlab-ci/dev_publish.gitlab-ci.yml
   - local: gitlab-ci/minimum-stability.gitlab-ci.yml
