@@ -76,5 +76,4 @@ stan:
   stage: stan
   extends: .base_job
   script:
-    - ./vendor/bin/phpstan analyse --error-format=gitlab
-
+    - ./vendor/bin/phpstan analyse --error-format=gitlab --memory-limit=2G
