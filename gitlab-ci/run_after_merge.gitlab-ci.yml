@@ -4,6 +4,8 @@ publish:
   rules:
     - if: '$CI_COMMIT_TAG =~ /^v/ && $CI_COMMIT_TAG !~ /dev/'
   script:
+    - cp /etc/gitlab-runner/certs/ca.crt /usr/local/share/ca-certificates/
+    - update-ca-certificates
     - 'curl --fail-with-body --header "Job-Token: $CI_JOB_TOKEN" --data tag=$CI_COMMIT_TAG "${CI_API_V4_URL}/projects/$CI_PROJECT_ID/packages/composer"'
 
 # Publishes a tag/branch to Composer Packages of the current project
@@ -15,6 +17,8 @@ publish-dev:
       when: never
     - if: '$CI_COMMIT_BRANCH =~ /^develop\/.*$/ && $CI_PIPELINE_SOURCE == "push"' # Runs only on push after MR merge
   before_script:
+    - cp /etc/gitlab-runner/certs/ca.crt /usr/local/share/ca-certificates/
+    - update-ca-certificates
     - apt-get update && apt-get install -y jq
     - git config user.email "gitlab-ci@ffhs.ch"
     - git config user.name "GitLab CI"
@@ -33,6 +37,8 @@ set-minimum-stability:
     - if: '$CI_COMMIT_BRANCH == "main" && $CI_COMMIT_MESSAGE =~ /^Merge branch/'
       when: always
   before_script:
+    - cp /etc/gitlab-runner/certs/ca.crt /usr/local/share/ca-certificates/
+    - update-ca-certificates
     - apt-get update && apt-get install -y jq git
     - git config user.email "gitlab-ci@ffhs.ch"
     - git config user.name "GitLab CI"
