@@ -1,6 +1,6 @@
 test:
   stage: test
-  image: lorisleiva/laravel-docker:8.3
+  image: lorisleiva/laravel-docker:8.4
   rules:
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'  # Only runs in MR pipelines
       when: always  # Explicitly set to always run when condition is met
