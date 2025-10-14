@@ -2,7 +2,7 @@ import * as esbuild from 'esbuild'
 
 esbuild.build({
     entryPoints: [],
-    outdir: './dist/js/',
+    outdir: './resources/dist/js/',
 
     bundle: true,
     mainFields: ['module', 'main'],
