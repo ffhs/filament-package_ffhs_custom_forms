@@ -6,7 +6,7 @@ stages:
 
 include:
   - local: gitlab-ci/run_test.gitlab-ci.yml
-  #  - local: gitlab-ci/run_stan.gitlab-ci.yml
+  - local: gitlab-ci/run_stan.gitlab-ci.yml
   - local: gitlab-ci/intern_publish.gitlab-ci.yml
   - local: gitlab-ci/dev_publish.gitlab-ci.yml
   - local: gitlab-ci/minimum-stability.gitlab-ci.yml
