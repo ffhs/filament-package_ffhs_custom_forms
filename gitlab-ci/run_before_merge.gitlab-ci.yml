@@ -51,7 +51,7 @@ build_css_js:
       if [ -n "$(git status --porcelain resources/dist)" ]; then
         echo "Changes detected in resources/dist, committing..."
         git add resources/dist
-        git commit -m "chore: update built assets [skip ci]"
+        git commit -m "chore: update built assets"
 
         # Push zurück zum Branch
         git push https://oauth2:${CI_PUSH_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git HEAD:${CI_COMMIT_REF_NAME}
