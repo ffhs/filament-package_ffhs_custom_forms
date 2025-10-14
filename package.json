@@ -4,10 +4,10 @@
     "type": "module",
     "description": "... //ToDo",
     "scripts": {
-        "dev:styles": "npx tailwindcss -i ./resources/css/custom_forms.css -o ./dist/css/custom_forms.css --postcss --watch",
+        "dev:styles": "npx tailwindcss -i ./resources/css/custom_forms.css -o ./resources/dist/css/custom_forms.css --postcss --watch",
         "dev:scripts": "node bin/build.js --dev",
         "dev:update": "watch 'cd ../../../ && ./vendor/bin/sail artisan filament:assets' ./",
-        "build:styles": "npx tailwindcss -i resources/css/custom_forms.css -o ./dist/css/custom_forms.css --postcss --minify && npm run purge",
+        "build:styles": "npx tailwindcss -i resources/css/custom_forms.css -o ./resources/dist/css/custom_forms.css --postcss --minify && npm run purge",
         "build:scripts": "node bin/build.js",
         "purge": "",
         "dev": "npm-run-all --parallel dev:*",

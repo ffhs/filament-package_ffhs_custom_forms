@@ -8,7 +8,6 @@ setup:
   before_script:
     - cp /etc/gitlab-runner/certs/ca.crt /usr/local/share/ca-certificates/
     - update-ca-certificates
-    - echo xdebug.mode=coverage >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
     - composer config --global gitlab-oauth.internal-git.alpen.ffhs.ch ${COMPOSER_AUTH_TOKEN}
   script:
     - composer install --prefer-dist --no-ansi --no-interaction --no-progress --no-scripts
@@ -35,22 +34,37 @@ setup:
     - cp /etc/gitlab-runner/certs/ca.crt /usr/local/share/ca-certificates/
     - update-ca-certificates
 
-#build_css_js:
-#  stage: build
-#  extends: .base_job
-#  before_script:
-#    - !reference [ .base_job, before_script ]
-#    - npm install
-#  script:
-#    - npm run build
-#    - git push
-#  coverage: /Total:\s*([^%]+)/
+build_css_js:
+  stage: build
+  extends: .base_job
+  before_script:
+    - !reference [ .base_job, before_script ]
+    - npm install
+    # Git-Konfiguration für Commits
+    - git config user.email "gitlab-ci@ffhs.ch"
+    - git config user.name "GitLab CI"
+    - rm -rf resources/dist
+    - mkdir resources/dist
+  script:
+    - npm run build
+    - |
+      if [ -n "$(git status --porcelain resources/dist)" ]; then
+        echo "Changes detected in resources/dist, committing..."
+        git add resources/dist
+        git commit -m "chore: update built assets [skip ci]"
+
+        # Push zurück zum Branch
+        git push https://oauth2:${CI_JOB_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git HEAD:${CI_COMMIT_REF_NAME}
+      else
+        echo "No changes in resources/dist"
+      fi
 
 php-tests:
   stage: test
   extends: .base_job
   before_script:
     - !reference [ .base_job, before_script ]
+    - echo xdebug.mode=coverage >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
     - ./vendor/bin/testbench vendor:publish --tag="filament-package_ffhs_utils-migrations"
     - ./vendor/bin/testbench vendor:publish --tag="filament-package_ffhs_custom_forms-migrations"
     - ./vendor/bin/testbench workbench:build

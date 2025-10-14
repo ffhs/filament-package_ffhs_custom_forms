@@ -106,15 +106,7 @@ class CustomFormsServiceProvider extends PackageServiceProvider
     {
         // Drag and Drop Components
         FilamentAsset::register([
-//            AlpineComponent::make('parent', __DIR__ . '/../dist/js/drag-drop/parent.js')
-//                ->loadedOnRequest(),
-//            AlpineComponent::make('element', __DIR__ . '/../dist/js/drag-drop/element.js')
-//                ->loadedOnRequest(),
-//            AlpineComponent::make('container', __DIR__ . '/../dist/js/drag-drop/container.js')
-//                ->loadedOnRequest(),
-//            AlpineComponent::make('action_group', __DIR__ . '/../dist/js/drag-drop/action_group.js')
-//                ->loadedOnRequest(),
-            Css::make('custom_forms', __DIR__ . '/../dist/css/custom_forms.css')->loadedOnRequest(),
+            Css::make('custom_forms', __DIR__ . '/../resources/dist/css/custom_forms.css')->loadedOnRequest(),
         ], 'ffhs/filament-package_ffhs_custom-forms');
     }
 
