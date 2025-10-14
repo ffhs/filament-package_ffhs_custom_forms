@@ -19,7 +19,7 @@ class EditFieldsGroup extends DragDropGroup
     {
         if ($hydratedDefaultState === null) {
             $rawState = $this->getPassiveRawState();
-            $rawState = new CustomFieldStateCast()->unflattenCustomFields($rawState);
+            $rawState = new CustomFieldStateCast()->unflattenCustomFields($rawState ?? []);
             $this->rawState($rawState);
         }
         parent::hydrateState($hydratedDefaultState, $shouldCallHydrationHooks);
