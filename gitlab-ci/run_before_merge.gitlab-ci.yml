@@ -54,7 +54,7 @@ build_css_js:
         git commit -m "chore: update built assets [skip ci]"
 
         # Push zurück zum Branch
-        git push https://oauth2:${CI_JOB_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git HEAD:${CI_COMMIT_REF_NAME}
+        git push https://oauth2:${CI_PUSH_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git HEAD:${CI_COMMIT_REF_NAME}
       else
         echo "No changes in resources/dist"
       fi
