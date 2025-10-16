@@ -6,7 +6,6 @@ use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\FieldTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\FileUploadTypeEntry;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasDefaultViewComponent;
 use Filament\Actions\Action;
 use Filament\Forms\Components\FileUpload;
@@ -186,11 +185,7 @@ class FileUploadView implements FieldTypeView
             ->iconButton();
     }
 
-    /**
-     * @param CustomFieldAnswer $record
-     *
-     * @return TextEntry
-     */
+
     public function getTextEntryLabel(EmbedCustomFieldAnswer $record): TextEntry
     {
         return TextEntry::make($this->getIdentifyKey($record) . '-title')
