@@ -8,6 +8,12 @@
     ],
     "type": "library",
     "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Ffhs\\FilamentPackageFfhsCustomForms\\": "src/",
+            "Ffhs\\FilamentPackageFfhsCustomForms\\Tests\\": "tests"
+        }
+    },
     "require": {
         "php": "^8.2",
         "filament/filament": "^4.0",
