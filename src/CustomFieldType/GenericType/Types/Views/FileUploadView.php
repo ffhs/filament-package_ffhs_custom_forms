@@ -18,7 +18,6 @@ use Filament\Schemas\Components\Group;
 use Filament\Support\Components\Component;
 use Filament\Support\Enums\Alignment;
 use Illuminate\Support\Facades\Request;
-use Illuminate\Support\HtmlString;
 
 class FileUploadView implements FieldTypeView
 {
@@ -26,10 +25,6 @@ class FileUploadView implements FieldTypeView
 
     public function getFormComponent(EmbedCustomField $customField, array $parameter = []): Component
     {
-//        return FileUpload::make('files')
-//            ->statePath($this->getIdentifyKey($customField) . '.files')
-//            ->multiple();
-
         return $this->prepareFileUploadComponent(FileUpload::make('files'), $customField)
             ->statePath($this->getIdentifyKey($customField) . '.files');
     }
@@ -46,7 +41,6 @@ class FileUploadView implements FieldTypeView
             ->appendFiles()
             ->moveFiles()
             ->live();
-
 
         if ($this->getOptionParameter($customField, 'image')) {
             $fileUpload = $fileUpload
@@ -189,13 +183,8 @@ class FileUploadView implements FieldTypeView
     public function getTextEntryLabel(EmbedCustomFieldAnswer $record): TextEntry
     {
         return TextEntry::make($this->getIdentifyKey($record) . '-title')
-            ->label(
-                new HtmlString(
-                    '</span> <span class="text-sm font-medium leading-6 text-gray-950 dark:text-white" style="margin-bottom: -25px; margin-left: -12px;">' . $this->getLabelName(
-                        $record
-                    ) . '</span> <span>'
-                )
-            );
+            ->label($this->getLabelName($record))
+            ->inlineLabel();
     }
 
     public function getEntryListFiles(
@@ -203,7 +192,7 @@ class FileUploadView implements FieldTypeView
         mixed $diskRoot,
         EmbedCustomFieldAnswer $fieldAnswer,
         mixed $names
-    ): Group {
+    ): \Filament\Schemas\Components\Component {
         $downloadable = $this->getOptionParameter($fieldAnswer, 'downloadable');
         $openInNewTab = $this->getOptionParameter($fieldAnswer, 'open_in_new_tab');
         $urlPrefix = $this->getTypeConfigAttribute($fieldAnswer, 'files.url_prefix') ?? $diskRoot;
@@ -227,16 +216,17 @@ class FileUploadView implements FieldTypeView
 
             $fileComponents[] =
                 FileUploadTypeEntry::make($path)
-                    ->hiddenLabel()
+                    ->schema([Actions::make($actions)])
                     ->label($names[$path] ?? $path)
-                    ->schema([Actions::make($actions)]);
+                    ->hiddenLabel();
         }
 
-        return Group::make([
-            $this->getTextEntryLabel($fieldAnswer),
-            Grid::make()
-                ->schema($fileComponents)
-                ->columns(),
-        ]);
+        return Group::make()
+            ->columns(2)
+            ->columnSpanFull()
+            ->schema([
+                $this->getTextEntryLabel($fieldAnswer),
+                ...$fileComponents
+            ]);
     }
 }
