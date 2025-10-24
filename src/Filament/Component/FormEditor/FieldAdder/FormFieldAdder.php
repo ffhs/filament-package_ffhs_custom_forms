@@ -15,13 +15,12 @@ abstract class FormFieldAdder extends DragDropSelectAction implements FormEditor
     use CanGenerateUuids;
     use HasFormGroupName;
 
-    public function addNewField(
-        array $fieldData
-    ): void {
+    public function addNewField(array $fieldData): void
+    {
         $arguments = $this->getArguments();
         $path = $arguments['path'];
         $position = $arguments['position'];
-//        $type = CustomForms::getFieldTypeFromRawDate($fieldData, $this->getRecord()); //ToDo Change
+
         $get = $this->getSchemaComponent()->makeGetUtility();
         $set = $this->getSchemaComponent()->makeSetUtility();
 
@@ -31,7 +30,7 @@ abstract class FormFieldAdder extends DragDropSelectAction implements FormEditor
         $before = array_slice($state, 0, $position, true);
         $after = array_slice($state, $position, null, true);
 
-// Merge with the new element in between
+        // Merge with the new element in between
         $arr = $before + [$this->generateUuid() => $fieldData] + $after;
 
         $set($path, $arr, true);

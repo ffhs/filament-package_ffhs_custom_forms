@@ -9,7 +9,6 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanLoadCustomFormEditorData;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanSaveCustomFormEditorData;
 use Filament\Resources\Pages\EditRecord;
-use Filament\Support\Enums\Width;
 use Filament\Support\Facades\FilamentView;
 use Illuminate\Contracts\Support\Htmlable;
 use LaraZeus\SpatieTranslatable\Actions\LocaleSwitcher;
@@ -40,10 +39,10 @@ class EditCustomForm extends EditRecord
         return trans(CustomForm::__('pages.edit.title'), $attributes);
     }
 
-    public function getMaxContentWidth(): string|null|Width
-    {
-        return Width::Full;
-    }
+//    public function getMaxContentWidth(): string|null|Width
+//    {
+//        return Width::Full;
+//    }
 
     /**
      * @throws Throwable
