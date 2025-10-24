@@ -18,9 +18,7 @@ class EditGeneralField extends EditRecord
 
     public function getTitle(): string|Htmlable
     {
-        $local = app()->getLocale();
-
-        return trans(GeneralField::__('pages.edit.title'), ['name' => $this->getRecord()->name->$local ?? '']);
+        return trans(GeneralField::__('pages.edit.title'), ['name' => $this->getRecord()->name ?? '']);
     }
 
     protected function mutateFormDataBeforeSave(array $data): array
