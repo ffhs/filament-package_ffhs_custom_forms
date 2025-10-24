@@ -23,7 +23,7 @@ class LayoutOptionGroup extends TypeOptionGroup
         $this->mergeTypeOptions([
             'column_span' => ColumnSpanOption::make(),
             'in_line_label' => InLineLabelOption::make(),
-            'new_line' => NewLineOption::make()->modifyDefault(fn($default) => 1),
+            'new_line' => NewLineOption::make(),
             'helper_text' => HelperTextTypeOption::make(),
             'hidden_label' => HiddenLabelOption::make()
         ]);
