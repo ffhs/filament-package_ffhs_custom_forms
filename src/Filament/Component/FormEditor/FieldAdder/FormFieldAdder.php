@@ -23,6 +23,7 @@ abstract class FormFieldAdder extends DragDropSelectAction implements FormEditor
 
         $get = $this->getSchemaComponent()->makeGetUtility();
         $set = $this->getSchemaComponent()->makeSetUtility();
+        $fieldData['order'] = $position;
 
         $state = $get($path, true) ?? [];
 
