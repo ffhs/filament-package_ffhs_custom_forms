@@ -201,7 +201,7 @@ class EditTemplate extends EditCustomForm
     {
         /**@phpstan-ignore-next-line */
         $id = $this->record->id;
-        $customFields = $this->form->getState()['custom_form']['custom_fields'] ?? [];
+        $customFields = $this->form->getRawState()['custom_form']['custom_fields'] ?? [];
         $usedGeneralFieldIds = $this->getUsedGeneralFieldIds($customFields, $this->getFormConfiguration());
 
         $templateFieldsQuery = CustomField::query()
