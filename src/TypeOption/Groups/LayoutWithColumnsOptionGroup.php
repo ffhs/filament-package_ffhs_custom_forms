@@ -23,7 +23,7 @@ class LayoutWithColumnsOptionGroup extends LayoutOptionGroup
             'column_span' => ColumnSpanOption::make(),
             'columns' => ColumnsOption::make(),
             'in_line_label' => InLineLabelOption::make(),
-            'new_line' => NewLineOption::make()->modifyDefault(fn($default) => 1),
+            'new_line' => NewLineOption::make(),
             'helper_text' => HelperTextTypeOption::make(),
         ]);
     }

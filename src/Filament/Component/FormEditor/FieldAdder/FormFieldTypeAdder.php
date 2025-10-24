@@ -19,7 +19,8 @@ class FormFieldTypeAdder extends FormFieldAdder
     {
         parent::setUp();
 
-        $this->columns(3)
+        $this
+            ->columns(2)
             ->options($this->getTypeOptions(...))
             ->label(CustomForm::__('pages.type_adder.label'))
             ->optionIcons($this->getTypeOptionIcons(...))

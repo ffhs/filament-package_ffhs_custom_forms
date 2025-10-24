@@ -25,10 +25,11 @@ class GeneralFieldSchema
     {
         return $schema->schema([
             static::getGeneralFieldSection(),
-            Group::make(static fn($record) => is_null($record) ? [] : [
-                static::getGeneralFieldTypeOptions($record),
-                static::getOverwriteTypeOptions($record)
-            ])
+            Group::make()
+                ->schema(static fn(?GeneralField $record) => is_null($record) ? [] : [
+                    static::getGeneralFieldTypeOptions($record),
+                    static::getOverwriteTypeOptions($record)
+                ])
                 ->columnSpanFull()
                 ->columns(2),
         ]);
@@ -98,7 +99,13 @@ class GeneralFieldSchema
                     ->columnSpan(1),
                 Group::make([
                     Select::make('type')
-                        ->options(static::getAllCustomFieldTypeOptions())
+                        ->options(function (?GeneralField $record) {
+                            if ($record) {
+                                $type = $record->getType();
+                                return [$type::identifier() => $type::displayname()];
+                            }
+                            return static::getAllCustomFieldTypeOptions();
+                        })
                         ->helperText(static::helperText(...))
                         ->disabledOn('edit')
                         ->label(static::label(...))
