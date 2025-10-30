@@ -5,13 +5,21 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Traits;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\FieldTypeView;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormConfiguration\CustomFormConfiguration;
 use Ffhs\FilamentPackageFfhsCustomForms\Exceptions\FieldTypeHasNoDefaultViewModeException;
+use Ffhs\FilamentPackageFfhsCustomForms\Facades\CustomForms;
 use Filament\Support\Components\Component;
-use Illuminate\Support\Facades\Config;
 
 trait HasTypeView
 {
+    /**
+     * @param EmbedCustomField $customField
+     * @param CustomFormConfiguration $formConfiguration
+     * @param string $viewMode
+     * @param array<string, mixed> $parameter
+     * @return Component
+     */
     public function getFormComponent(
         EmbedCustomField $customField,
         CustomFormConfiguration $formConfiguration,
@@ -23,6 +31,13 @@ trait HasTypeView
             ->getFormComponent($customField, $parameter);
     }
 
+    /**
+     * @param EmbedCustomFieldAnswer $answer
+     * @param string $viewMode
+     * @param array<string, mixed> $parameter
+     * @param CustomFormConfiguration|null $formConfiguration
+     * @return Component
+     */
     public function getEntryComponent(
         EmbedCustomFieldAnswer $answer,
         string $viewMode = 'default',
@@ -42,19 +57,23 @@ trait HasTypeView
     ): FieldTypeView {
         $viewMods = $this->getViewModes($formConfiguration);
 
-        if (empty($viewMods[$viewMode])) {
-            $fieldTypeView = $viewMods['default'] ?? null;
-
-            if (is_array($fieldTypeView)) {
-                throw new FieldTypeHasNoDefaultViewModeException($this::identifier() . ' has no default view mode');
-            }
-
-            return $fieldTypeView;
+        if (array_key_exists($viewMode, $viewMods)) {
+            return $viewMods[$viewMode];
         }
 
-        return $viewMods[$viewMode];
+        $fieldTypeView = $viewMods['default'] ?? null;
+
+        if (!$fieldTypeView) {
+            throw new FieldTypeHasNoDefaultViewModeException($this::identifier() . ' has no default view mode');
+        }
+
+        return $fieldTypeView;
     }
 
+    /**
+     * @param CustomFormConfiguration $dynamicFormConfig
+     * @return array<string, FieldTypeView>
+     */
     public function getViewModes(CustomFormConfiguration $dynamicFormConfig): array
     {
         return once(function () use ($dynamicFormConfig): array {
@@ -75,6 +94,11 @@ trait HasTypeView
         });
     }
 
+    /**
+     * @param array<string, FieldTypeView> $viewMods
+     * @param CustomFormConfiguration $dynamicFormConfig
+     * @return void
+     */
     protected function applyOverwrittenFormViewModes(array &$viewMods, CustomFormConfiguration $dynamicFormConfig): void
     {
         $overWrittenLevelTwo = $dynamicFormConfig::overwriteViewModes();
@@ -86,9 +110,14 @@ trait HasTypeView
         }
     }
 
+    /**
+     * @param array<string, FieldTypeView> $viewMods
+     * @return void
+     */
     protected function applyOverwrittenConfigViewModes(array &$viewMods): void
     {
-        $configViewModes = Config::get('ffhs_custom_forms.view_modes', []);
+        /** @var array<class-string<CustomFieldType>, array<string, class-string<FieldTypeView>>> $configViewModes */
+        $configViewModes = CustomForms::config('view_modes', []);
         $overWrittenConfig = $configViewModes[$this::class] ?? [];
 
         foreach ($overWrittenConfig as $key => $value) {

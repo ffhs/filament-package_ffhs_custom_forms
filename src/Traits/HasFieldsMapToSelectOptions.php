@@ -19,9 +19,9 @@ trait HasFieldsMapToSelectOptions
     }
 
     /**
-     * @param Collection<EmbedCustomField> $customFields
+     * @param Collection<int|string, EmbedCustomField> $customFields
      * @param CustomFormConfiguration $formConfiguration
-     * @return array
+     * @return array<string|int, array<string, string>>
      */
     protected function getSelectOptionsFromFields(
         Collection $customFields,

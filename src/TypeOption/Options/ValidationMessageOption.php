@@ -64,6 +64,11 @@ class ValidationMessageOption extends TypeOption
         return $component->validationMessages($validationMessages->toArray());
     }
 
+    /**
+     * @param Get $get
+     * @param RelationManager|Page $livewire
+     * @return array<string|int, string>
+     */
     protected function getValidationMessageParameters(Get $get, RelationManager|Page $livewire): array
     {
         try {
@@ -98,6 +103,10 @@ class ValidationMessageOption extends TypeOption
         }
     }
 
+    /**
+     * @param Field $component
+     * @return array<string|int, string>
+     */
     private function extractValidationRules(Field $component): array
     {
         $excludedRules = ['nullable', 'array'];

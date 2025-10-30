@@ -5,7 +5,9 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Traits;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\FieldDisplayer;
+use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Group;
+use Illuminate\Support\HtmlString;
 
 trait UseSplitSchema
 {
@@ -14,6 +16,10 @@ trait UseSplitSchema
     use HasFieldSplit;
     use HasPosSplit;
 
+    /**
+     * @param EmbedCustomFormAnswer $answer
+     * @return array<string, mixed>
+     */
     public function loadAnswerData(EmbedCustomFormAnswer $answer): array
     {
         if ($this->isUseLayoutTypeSplit()) {
@@ -38,6 +44,12 @@ trait UseSplitSchema
         });
     }
 
+    /**
+     * @param EmbedCustomForm $customForm
+     * @param FieldDisplayer $fieldDisplayer
+     * @param string $viewMode
+     * @return array<int|string, Component|HtmlString|string>
+     */
     public function getCustomFormSchema(
         EmbedCustomForm $customForm,
         FieldDisplayer $fieldDisplayer,
@@ -58,6 +70,12 @@ trait UseSplitSchema
         return $this->getDefaultFormSchema($customForm, $fieldDisplayer, $viewMode);
     }
 
+    /**
+     * @param EmbedCustomForm $customForm
+     * @param FieldDisplayer $fieldDisplayer
+     * @param string $viewMode
+     * @return array<int|string, Component|HtmlString|string>
+     */
     protected function getDefaultFormSchema(
         EmbedCustomForm $customForm,
         FieldDisplayer $fieldDisplayer,
@@ -73,6 +91,12 @@ trait UseSplitSchema
         ];
     }
 
+    /**
+     * @param EmbedCustomForm $customForm
+     * @param FieldDisplayer $fieldDisplayer
+     * @param string $viewMode
+     * @return array<int|string, Component|HtmlString|string>
+     */
     protected function getLayoutTypeSplitFormSchema(
         EmbedCustomForm $customForm,
         FieldDisplayer $fieldDisplayer,
@@ -83,6 +107,12 @@ trait UseSplitSchema
         return $this->renderLayoutTypeSplit($layoutType, $customForm, $fieldDisplayer, $viewMode);
     }
 
+    /**
+     * @param EmbedCustomForm $customForm
+     * @param FieldDisplayer $fieldDisplayer
+     * @param string $viewMode
+     * @return array<int|string, Component|HtmlString|string>
+     */
     protected function getPosSplitFormSchema(
         EmbedCustomForm $customForm,
         FieldDisplayer $fieldDisplayer,
@@ -94,6 +124,12 @@ trait UseSplitSchema
         return $this->renderPose($customFormBeginPos, $customFormEndPos, $customForm, $fieldDisplayer, $viewMode);
     }
 
+    /**
+     * @param EmbedCustomForm $customForm
+     * @param FieldDisplayer $fieldDisplayer
+     * @param string $viewMode
+     * @return array<int|string, Component|HtmlString|string>
+     */
     protected function getFieldSplitFormSchema(
         EmbedCustomForm $customForm,
         FieldDisplayer $fieldDisplayer,

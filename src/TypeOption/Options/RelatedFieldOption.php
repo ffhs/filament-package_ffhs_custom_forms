@@ -12,7 +12,6 @@ use Filament\Pages\Page;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Support\Components\Component;
-use Illuminate\Support\Collection;
 
 class RelatedFieldOption extends TypeOption
 {
@@ -32,9 +31,9 @@ class RelatedFieldOption extends TypeOption
     /**
      * @param Get $get
      * @param Page|RelationManager $livewire
-     * @return array|Collection
+     * @return array<string|int, array<string, string>>
      */
-    protected function getOptions(Get $get, Page|RelationManager $livewire): array|Collection
+    protected function getOptions(Get $get, Page|RelationManager $livewire): array
     {
         $customFormComponent = $this->getFormEditorComponent($get('../../context.schemaComponent'), $livewire);
 
@@ -47,6 +46,7 @@ class RelatedFieldOption extends TypeOption
 
         $fields = collect($this->getFieldDataFromFormData($state, $formConfiguration));
 
+        /**@phpstan-ignore-next-line */
         return $this->getSelectOptionsFromFields($fields, $formConfiguration);
     }
 }

@@ -4,14 +4,21 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\TypeOption;
 
 
 use Filament\Schemas\Components\Section;
+use Filament\Support\Components\Component;
 
 
 class TypeOptionGroup
 {
+    /** @var array<string, TypeOption> $typeOptions */
     protected array $typeOptions;
     protected string $name;
     protected ?string $icon;
 
+    /**
+     * @param string $name
+     * @param array<int|string, TypeOption> $typeOptions
+     * @param string|null $icon
+     */
     public function __construct(string $name, array $typeOptions, ?string $icon = null)
     {
         $this->name = $name;
@@ -19,11 +26,23 @@ class TypeOptionGroup
         $this->icon = $icon;
     }
 
+    /**
+     * @param string $name
+     * @param array<int|string, TypeOption> $typeOptions
+     * @param string|null $icon
+     *
+     * @return static
+     */
     public static function make(string $name, array $typeOptions, ?string $icon = null): static
     {
         return app(static::class, ['name' => $name, 'typeOptions' => $typeOptions, 'icon' => $icon]);
     }
 
+
+    /**
+     * @param array<int|String, TypeOption> $typeOptions
+     * @return $this
+     */
     public function mergeTypeOptions(array $typeOptions): static
     {
         foreach ($typeOptions as $key => $typeOption) {
@@ -33,7 +52,7 @@ class TypeOptionGroup
         return $this;
     }
 
-    public function addTypeOptions($key, TypeOption $typeOption): static
+    public function addTypeOptions(string $key, TypeOption $typeOption): static
     {
         $this->typeOptions[$key] = $typeOption;
 
@@ -42,29 +61,35 @@ class TypeOptionGroup
 
     public function getModifyOptionComponent(): Section
     {
-        return once(function () {
-            $data = [];
+        return once(function (): Section {
+            /** @var Component[] $schema */
+            $schema = [];
 
             foreach ($this->getTypeOptions() as $key => $extraTypeOption) {
-                /**@var TypeOption $extraTypeOption */
-                $data[] = $extraTypeOption->getModifyOptionComponent($key);
+                $schema[] = $extraTypeOption->getModifyOptionComponent($key);
             }
 
             return Section::make($this->getName())
                 ->icon($this->getIcon())
+                ->columnSpanFull()
+                /**@phpstan-ignore-next-line */
+                ->schema($schema)
                 ->collapsible()
                 ->collapsed()
-                ->columnSpanFull()
-                ->columns()
-                ->schema($data);
+                ->columns();
         });
     }
 
-    public function getTypeOptions(): ?array
+    /** @return array<string|int, TypeOption> */
+    public function getTypeOptions(): array
     {
         return $this->typeOptions;
     }
 
+    /**
+     * @param array<string|int, TypeOption> $typeOptions
+     * @return $this
+     */
     public function setTypeOptions(array $typeOptions): static
     {
         $this->typeOptions = $typeOptions;

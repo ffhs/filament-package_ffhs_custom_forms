@@ -16,14 +16,15 @@ trait HasTriggerEventFormTargets
     use HasFieldsMapToSelectOptions;
     use CanLoadFieldRelationFromForm;
 
-    protected Collection|null $cachedAllFieldsData = null;
+    /** @var Collection<string, EmbedCustomField>|null */
+    protected $cachedAllFieldsData = null;
 
     public function getTargetsSelect(): Select
     {
         return Select::make('targets')
-            ->multiple()
-            ->label('Target')
             ->options($this->getTargetOptions(...))
+            ->label('Target') //todo Translate
+            ->multiple()
             ->lazy()
             ->hidden(function ($set, $get) {
                 //Fields with an array doesn't generate properly
@@ -42,15 +43,25 @@ trait HasTriggerEventFormTargets
             ->live();
     }
 
+    /**
+     * @param Get $get
+     * @return array<string|int, string|array<string, string>>
+     */
     public function getTargetOptions(Get $get): array
     {
         $formConfiguration = $this->getFormConfiguration($get);
         $fields = collect($this->getAllFieldsData($get, $formConfiguration))
             ->filter(fn(EmbedCustomField $field) => !$field->isTemplate());
 
+        /**@phpstan-ignore-next-line */
         return $this->getSelectOptionsFromFields($fields, $formConfiguration);
     }
 
+    /**
+     * @param Get $get
+     * @param CustomFormConfiguration $formConfiguration
+     * @return Collection<string, EmbedCustomField>
+     */
     public function getAllFieldsData(Get $get, CustomFormConfiguration $formConfiguration): Collection
     {
         if (!is_null($this->cachedAllFieldsData)) {

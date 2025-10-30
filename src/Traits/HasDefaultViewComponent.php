@@ -17,6 +17,7 @@ trait HasDefaultViewComponent
     /**
      * @template T of Component
      * @param T $component
+     * @param array<int|string, string> $ignoredOptions
      * @return T
      */
     protected function modifyComponent(
@@ -80,6 +81,7 @@ trait HasDefaultViewComponent
     /**
      * @template T of Component
      * @param class-string<T> $class
+     * @param array<int|string, string> $ignoredOptions
      * @return T
      */
     protected function makeComponent(
@@ -92,6 +94,8 @@ trait HasDefaultViewComponent
             throw new \RuntimeException('Make method is not defined in the component');
         }
         $component = $class::make($this->getIdentifyKey($field));
+
+        /** @var T $component */
         return $this->modifyComponent($component, $field, $isInfolist, $ignoredOptions);
     }
 }
