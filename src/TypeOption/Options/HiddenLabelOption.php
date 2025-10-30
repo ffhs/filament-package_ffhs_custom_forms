@@ -17,8 +17,8 @@ class HiddenLabelOption extends TypeOption
     public function getComponent(string $name): Component
     {
         return Toggle::make($name)
-            ->label(TypeOption::__('inline_label.label'))
-            ->helperText(TypeOption::__('inline_label.helper_text'));
+            ->label(TypeOption::__('hidden_label.label'))
+            ->helperText(TypeOption::__('hidden_label.helper_text'));
     }
 
     public function modifyInfolistComponent(Component $component, mixed $value): Component

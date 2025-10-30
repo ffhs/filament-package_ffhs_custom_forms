@@ -3,18 +3,24 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options;
 
 use Exception;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
+use Ffhs\FilamentPackageFfhsCustomForms\DataContainer\CustomFieldDataContainer;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasOptionNoComponentModification;
+use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasTypeOptionFormEditorComponent;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\TypeOption;
 use Filament\Forms\Components\Field;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\TextInput;
+use Filament\Pages\Page;
+use Filament\Resources\Pages\EditRecord;
+use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Schema;
 use Filament\Support\Components\Component;
 
 class ValidationMessageOption extends TypeOption
 {
     use HasOptionNoComponentModification;
+    use HasTypeOptionFormEditorComponent;
 
     protected mixed $default = [];
 
@@ -58,22 +64,36 @@ class ValidationMessageOption extends TypeOption
         return $component->validationMessages($validationMessages->toArray());
     }
 
-    protected function getValidationMessageParameters(Get $get): array
+    protected function getValidationMessageParameters(Get $get, RelationManager|Page $livewire): array
     {
         try {
-            $temporaryField = new CustomField();
-            $temporaryField->fill($get('../../../'));
+            $componentPath = $get('../../../../context.schemaComponent');
+            $customFormComponent = $this->getFormEditorComponent($componentPath, $livewire);
 
-            /** @var Field $schemaComponent */
-            $schemaComponent = $temporaryField
-                ->getType()
-                ->getFormComponent($temporaryField, 'default', ['renderer' => fn() => []]);
+            if (is_null($customFormComponent)) {
+                return [];
+            }
 
-//            $schema = Schema::make(new EditRecord()); ToDo check if its need i dont think so
-//            $schemaComponent->container($schema);
+            $formConfiguration = $customFormComponent->getFormConfiguration();
+            $temporaryField = CustomFieldDataContainer::make($get('../../../'), $formConfiguration);
+            $fieldType = $temporaryField->getType();
+
+            $schemaComponent = $fieldType?->getFormComponent(
+                $temporaryField,
+                $formConfiguration,
+                'default',
+                ['child_render' => fn() => []]
+            );
+
+            if (!$schemaComponent instanceof Field) {
+                return [];
+            }
+
+            $schema = Schema::make(new EditRecord());
+            $schemaComponent->container($schema);
 
             return $this->extractValidationRules($schemaComponent);
-        } catch (Exception $exception) {
+        } catch (Exception) {
             return [];
         }
     }
