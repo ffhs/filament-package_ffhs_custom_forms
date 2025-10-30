@@ -41,8 +41,8 @@ trait HasFieldsMapToSelectOptions
             }
 
             $title = empty($title) ? 'Aktuelles Formular' : $title;
-            $name = $field->isGeneralField() ? $field->getGeneralField()->name : $field->name;
-            $options[$title][$field->identifier] = empty($name) ? $this->getDefaultFieldName($field) : $name;
+            $name = $field->isGeneralField() ? $field->getGeneralField()->name : $field->getName();
+            $options[$title][$field->identifier()] = empty($name) ? $this->getDefaultFieldName($field) : $name;
         }
 
         return $options;

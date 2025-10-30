@@ -2,7 +2,6 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options;
 
-use Barryvdh\Debugbar\Facades\Debugbar;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\FormEditor\CustomFormEditor;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasAllFieldDataFromFormData;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasFieldsMapToSelectOptions;
@@ -34,7 +33,7 @@ class RelatedFieldOption extends TypeOption
 
     /**
      * @param Get $get
-     * @param Page<InteractsWithForms, HasForms>|RelationManager $livewire
+     * @param Page|RelationManager $livewire
      * @return array|Collection
      */
     protected function getOptions(Get $get, Page|RelationManager $livewire): array|Collection
@@ -50,7 +49,6 @@ class RelatedFieldOption extends TypeOption
         $customFormComponent = null;
         for ($path = 0, $pathMax = count($pathSet); $path < $pathMax; $path++) {
             $component = $form->getComponentByStatePath(implode('.', $pathSet));
-            Debugbar::info($component::class);
             if ($component instanceof CustomFormEditor) {
                 $customFormComponent = $component;
                 break;
