@@ -12,6 +12,9 @@ use Ffhs\FilamentPackageFfhsCustomForms\Traits\UseAutosaveCustomForm;
 use Filament\Forms\Components\Field;
 use Filament\Schemas\Components\Contracts\CanEntangleWithSingularRelationships;
 
+/**
+ * @method null|CustomFormAnswer getCachedExistingRecord()
+ */
 class CustomFormAnswerEditor extends Field implements CanEntangleWithSingularRelationships
 {
     use HasEmbeddedCustomForm {

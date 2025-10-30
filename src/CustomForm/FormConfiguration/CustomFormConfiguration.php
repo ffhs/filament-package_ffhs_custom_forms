@@ -86,7 +86,7 @@ abstract class CustomFormConfiguration
     }
 
     /**
-     * @return Collection<CustomForm>
+     * @return Collection<int|string, CustomForm>
      */
     final public function getAvailableTemplates(): Collection
     {
@@ -107,7 +107,7 @@ abstract class CustomFormConfiguration
     }
 
     /**
-     * @return Collection<GeneralField>
+     * @return Collection<int|string, GeneralField>
      */
     final public function getAvailableGeneralFields(): Collection
     {

@@ -22,10 +22,9 @@ trait HasEditorLayoutElements
             return null;
         }
 
-        return view(
-            'filament-package_ffhs_custom_forms::filament.components.form-editor.badge',
-            ['text' => $text, 'color' => $color]
-        );
+        /** @phpstan-ignore argument.type */
+        return view('filament-package_ffhs_custom_forms::filament.components.form-editor.badge',
+            ['text' => $text, 'color' => $color]);
     }
 
     public function getEditorFieldTitle(array $fieldState, CustomFormConfiguration $configuration): string

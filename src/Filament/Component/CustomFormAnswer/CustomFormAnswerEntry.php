@@ -4,11 +4,15 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormAnswe
 
 
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormAnswer\Render\EntryFieldDisplayer;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasEmbeddedCustomForm;
 use Filament\Infolists\Components\Entry;
 use Filament\Schemas\Components\Contracts\CanEntangleWithSingularRelationships;
 use Filament\Schemas\Schema;
 
+/**
+ * @method null|CustomFormAnswer getCachedExistingRecord()
+ */
 class CustomFormAnswerEntry extends Entry implements CanEntangleWithSingularRelationships
 {
     use HasEmbeddedCustomForm;

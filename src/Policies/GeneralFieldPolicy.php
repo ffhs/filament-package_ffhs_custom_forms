@@ -18,17 +18,18 @@ class GeneralFieldPolicy
 
     public function viewAny(Authorizable $user): bool
     {
-        return new CustomFormPolicy()->viewAny($user) || $user->can(CustomFormPermissionName::MANAGE_GENERAL_FIELDS);
+        return new CustomFormPolicy()->viewAny($user)
+            || $user->can(CustomFormPermissionName::MANAGE_GENERAL_FIELDS->value);
     }
 
     public function filamentResource(Authorizable $user): bool
     {
-        return $user->can(CustomFormPermissionName::FILAMENT_RESOURCE_GENERAL_FIELDS);
+        return $user->can(CustomFormPermissionName::FILAMENT_RESOURCE_GENERAL_FIELDS->value);
     }
 
     public function create(Authorizable $user): bool
     {
-        return $user->can(CustomFormPermissionName::MANAGE_GENERAL_FIELDS);
+        return $user->can(CustomFormPermissionName::MANAGE_GENERAL_FIELDS->value);
     }
 
     public function delete(Authorizable $user, GeneralField $generalField): bool
@@ -38,6 +39,6 @@ class GeneralFieldPolicy
 
     public function update(Authorizable $user, GeneralField $generalField): bool
     {
-        return $user->can(CustomFormPermissionName::MANAGE_GENERAL_FIELDS);
+        return $user->can(CustomFormPermissionName::MANAGE_GENERAL_FIELDS->value);
     }
 }

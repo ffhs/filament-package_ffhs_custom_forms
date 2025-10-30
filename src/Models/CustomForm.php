@@ -99,6 +99,9 @@ class CustomForm extends Model implements EmbedCustomForm
         return !is_null($this->template_identifier);
     }
 
+    /**
+     * @return HasMany<CustomFormAnswer, $this>
+     */
     public function customFormAnswers(): HasMany
     {
         return $this->hasMany(CustomFormAnswer::class);

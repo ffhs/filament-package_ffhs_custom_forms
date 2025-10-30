@@ -16,12 +16,14 @@ use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanSaveCustomFormEditorData;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasFormConfiguration;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasFormGroupName;
 use Filament\Forms\Components\Field;
-use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Concerns\EntanglesStateWithSingularRelationship;
 use Filament\Schemas\Components\Contracts\CanEntangleWithSingularRelationships;
 use Filament\Schemas\Components\Fieldset;
 use Filament\Schemas\Components\Tabs;
 
+/**
+ * @method null|CustomForm getCachedExistingRecord()
+ */
 class CustomFormEditor extends Field implements CanEntangleWithSingularRelationships
 {
     use HasFormConfiguration;
@@ -41,10 +43,15 @@ class CustomFormEditor extends Field implements CanEntangleWithSingularRelations
     ): static {
         $this->parentRelationship($name, $condition, $relatedModel);
 
-        $this->saveRelationshipsBeforeChildrenUsing(function (Component|CanEntangleWithSingularRelationships $component
+        $this->saveRelationshipsBeforeChildrenUsing(function (CustomFormEditor $component
         ): void {
             $state = $component->getState();
             $record = $component->getCachedExistingRecord();
+
+            if (is_null($record)) {
+                $record = new CustomForm();
+                $record->fill($state);
+            }
 
             $this->saveCustomFormEditorData($state, $record);
             $this->clearCachedExistingRecord();
@@ -54,7 +61,6 @@ class CustomFormEditor extends Field implements CanEntangleWithSingularRelations
         $this->formConfiguration(function (): CustomFormConfiguration {
             /**@var null|CustomForm $customForm */
             $customForm = $this->getCachedExistingRecord();
-            /**@phpstan-ignore-next-line */
             $formConfiguration = $customForm?->getFormConfiguration();
             return $formConfiguration ?? DefaultFormConfiguration::make();
         });

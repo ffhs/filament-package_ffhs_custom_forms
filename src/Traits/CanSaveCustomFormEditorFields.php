@@ -100,7 +100,7 @@ trait CanSaveCustomFormEditorFields
                 $customField = app(CustomField::class);
             }
 
-            $type = CustomForms::getFieldTypeFromRawDate($field, $form);
+            $type = CustomForms::getFieldTypeFromRawDate($field, $form->getFormConfiguration());
             $mutatedFieldData = $type->getMutateCustomFieldDataOnSave($customField, $field);
 
             $customField->fill($mutatedFieldData);

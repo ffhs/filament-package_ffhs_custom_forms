@@ -29,7 +29,6 @@ class DefaultFieldEditOptionsAction extends FieldTypeAction
                 $formConfiguration
             ) {
 
-                /** @phpstan-ignore-next-line */
                 $genFieldName = static fn() => $formConfiguration
                     ->getAvailableGeneralFields()
                     ->find($state['general_field_id'])

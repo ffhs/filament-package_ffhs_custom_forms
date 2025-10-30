@@ -174,21 +174,16 @@ trait CanSaveFormAnswer
         }
 
         $handledPaths = $handledPaths->filter(fn($path) => !is_null($path));
-        $answersToHandle = $answersToHandle->groupBy(fn(CustomFieldAnswer $answer) => $answer->exists);
-        $answersToCreate = $answersToHandle->get(false, collect())
-            ->filter(fn(CustomFieldAnswer $answer) => !$answer
-                ->customField
-                ->getType()
-                ->isEmptyAnswer($answer, $answer->answer)
-            );
-        $answersToDelete = $answersToHandle->get(true, collect())
-            ->filter(fn(CustomFieldAnswer $answer) => $answer
-                ->customField
-                ->getType()
-                ->isEmptyAnswer($answer, $answer->answer)
-            );
-        $answersToSave = $answersToHandle
-            ->get(true, collect())
+        $answersToHandle = $answersToHandle->groupBy(fn(CustomFieldAnswer $answer): int => (int)$answer->exists);
+        $answersToCreate = $answersToHandle->get(0, collect())
+            ->filter(function (CustomFieldAnswer $answer) {
+                return !$answer->customField->getType()->isEmptyAnswer($answer, $answer->answer);
+            });
+        $answersToDelete = $answersToHandle->get(1, collect())
+            ->filter(function (CustomFieldAnswer $answer) {
+                return $answer->customField->getType()->isEmptyAnswer($answer, $answer->answer);
+            });
+        $answersToSave = $answersToHandle->get(1, collect())
             ->whereNotIn('id', $answersToDelete->pluck('id'))
             ->filter(fn(CustomFieldAnswer $answer) => $answer->isDirty());
 
@@ -283,7 +278,8 @@ trait CanSaveFormAnswer
             ->with('customField')
             ->with('customField.generalField')
             ->get()
-            ->mapWithKeys(function (CustomFieldAnswer $answer) {
+            /**@phpstan-ignore-next-line */
+            ->mapWithKeys(function (CustomFieldAnswer $answer, int $_) {
                 $path = $answer->customField->identifier . (is_null($answer->path) ? '' : '.' . $answer->path);
 
                 return [$path => $answer];
