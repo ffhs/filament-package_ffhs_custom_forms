@@ -20,12 +20,12 @@ class CustomFormAnswerPolicy
 
     public function viewAny(Authorizable $user): bool
     {
-        return $user->can(CustomFormPermissionName::FILL_CUSTOM_FORMS);
+        return $user->can(CustomFormPermissionName::FILL_CUSTOM_FORMS->value);
     }
 
     public function create(Authorizable $user): bool
     {
-        return $user->can(CustomFormPermissionName::FILL_CUSTOM_FORMS);
+        return $user->can(CustomFormPermissionName::FILL_CUSTOM_FORMS->value);
     }
 
     public function delete(Authorizable $user, CustomFormAnswer $customFormAnswer): bool
@@ -35,11 +35,11 @@ class CustomFormAnswerPolicy
 
     public function update(Authorizable $user, CustomFormAnswer $customFormAnswer): bool
     {
-        return $user->can(CustomFormPermissionName::FILL_CUSTOM_FORMS);
+        return $user->can(CustomFormPermissionName::FILL_CUSTOM_FORMS->value);
     }
 
     public function showResource(Authorizable $user): bool
     {
-        return $user->can(CustomFormPermissionName::FILAMENT_RESOURCE_CUSTOM_FORM_ANSWERS);
+        return $user->can(CustomFormPermissionName::FILAMENT_RESOURCE_CUSTOM_FORM_ANSWERS->value);
     }
 }

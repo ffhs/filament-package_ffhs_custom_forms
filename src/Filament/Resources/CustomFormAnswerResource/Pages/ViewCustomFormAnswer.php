@@ -12,6 +12,9 @@ use Filament\Resources\Pages\ViewRecord;
 use Filament\Schemas\Schema;
 use Illuminate\Contracts\Support\Htmlable;
 
+/**
+ * @method CustomFormAnswer getRecord()
+ */
 class ViewCustomFormAnswer extends ViewRecord
 {
     use CanLoadFormAnswer;
@@ -39,7 +42,6 @@ class ViewCustomFormAnswer extends ViewRecord
                     ->columnSpanFull()
             ]);
     }
-
 
     protected function getHeaderActions(): array
     {

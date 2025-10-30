@@ -14,8 +14,8 @@ class CustomFormPolicy
 
     public function view(Authorizable $user, CustomForm $customForm): bool
     {
-        if ($user->can(CustomFormPermissionName::FILL_CUSTOM_FORMS)
-            || $user->can(CustomFormPermissionName::MANAGE_CUSTOM_FORMS)) {
+        if ($user->can(CustomFormPermissionName::FILL_CUSTOM_FORMS->value)
+            || $user->can(CustomFormPermissionName::MANAGE_CUSTOM_FORMS->value)) {
             return true;
         }
 
@@ -23,21 +23,20 @@ class CustomFormPolicy
             return false;
         }
 
-        return $user->can(CustomFormPermissionName::MANAGE_TEMPLATES);
+        return $user->can(CustomFormPermissionName::MANAGE_TEMPLATES->value);
     }
 
     public function viewAny(Authorizable $user): bool
     {
-        return $user->can(CustomFormPermissionName::FILL_CUSTOM_FORMS)
-            || $user->can(CustomFormPermissionName::MANAGE_CUSTOM_FORMS)
-            || $user->can(CustomFormPermissionName::MANAGE_TEMPLATES);
+        return $user->can(CustomFormPermissionName::FILL_CUSTOM_FORMS->value)
+            || $user->can(CustomFormPermissionName::MANAGE_CUSTOM_FORMS->value)
+            || $user->can(CustomFormPermissionName::MANAGE_TEMPLATES->value);
     }
 
     public function create(Authorizable $user): bool
     {
-        return $user->can(CustomFormPermissionName::MANAGE_CUSTOM_FORMS) || $user->can(
-                CustomFormPermissionName::MANAGE_TEMPLATES
-            );
+        return $user->can(CustomFormPermissionName::MANAGE_CUSTOM_FORMS->value)
+            || $user->can(CustomFormPermissionName::MANAGE_TEMPLATES->value);
     }
 
     public function delete(Authorizable $user, CustomForm $customForm): bool
@@ -48,29 +47,29 @@ class CustomFormPolicy
     public function update(Authorizable $user, CustomForm $customForm): bool
     {
         if (!empty($customForm->template_identifier)) {
-            return $user->can(CustomFormPermissionName::MANAGE_TEMPLATES);
+            return $user->can(CustomFormPermissionName::MANAGE_TEMPLATES->value);
         }
 
-        return $user->can(CustomFormPermissionName::MANAGE_CUSTOM_FORMS);
+        return $user->can(CustomFormPermissionName::MANAGE_CUSTOM_FORMS->value);
     }
 
     public function manageForms(Authorizable $user): bool
     {
-        return $user->can(CustomFormPermissionName::MANAGE_CUSTOM_FORMS);
+        return $user->can(CustomFormPermissionName::MANAGE_CUSTOM_FORMS->value);
     }
 
     public function manageTemplates(Authorizable $user): bool
     {
-        return $user->can(CustomFormPermissionName::MANAGE_TEMPLATES);
+        return $user->can(CustomFormPermissionName::MANAGE_TEMPLATES->value);
     }
 
     public function showResource(Authorizable $user): bool
     {
-        return $user->can(CustomFormPermissionName::FILAMENT_RESOURCE_CUSTOM_FORMS);
+        return $user->can(CustomFormPermissionName::FILAMENT_RESOURCE_CUSTOM_FORMS->value);
     }
 
     public function showTemplateResource(Authorizable $user): bool
     {
-        return $user->can(CustomFormPermissionName::FILAMENT_RESOURCE_TEMPLATES);
+        return $user->can(CustomFormPermissionName::FILAMENT_RESOURCE_TEMPLATES->value);
     }
 }

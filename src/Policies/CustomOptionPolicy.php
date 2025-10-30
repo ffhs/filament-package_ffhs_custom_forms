@@ -23,9 +23,8 @@ class CustomOptionPolicy
 
     public function create(Authorizable $user): bool
     {
-        return $user->can(CustomFormPermissionName::MANAGE_CUSTOM_FORMS) || $user->can(
-                CustomFormPermissionName::MANAGE_TEMPLATES
-            );
+        return $user->can(CustomFormPermissionName::MANAGE_CUSTOM_FORMS->value)
+            || $user->can(CustomFormPermissionName::MANAGE_TEMPLATES->value);
     }
 
     public function delete(Authorizable $user, CustomOption $option): bool
@@ -35,7 +34,7 @@ class CustomOptionPolicy
 
     public function update(Authorizable $user, CustomOption $option): bool
     {
-        return $user->can(CustomFormPermissionName::MANAGE_CUSTOM_FORMS)
-            || $user->can(CustomFormPermissionName::MANAGE_TEMPLATES);
+        return $user->can(CustomFormPermissionName::MANAGE_CUSTOM_FORMS->value)
+            || $user->can(CustomFormPermissionName::MANAGE_TEMPLATES->value);
     }
 }

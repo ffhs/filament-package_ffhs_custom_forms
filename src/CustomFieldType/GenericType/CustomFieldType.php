@@ -4,6 +4,7 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType;
 
 use Ffhs\FfhsUtils\Contracts\Type;
 use Ffhs\FfhsUtils\Traits\IsType;
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\FieldTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\Facades\CustomForms;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasAnswerCallbacks;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasCustomFieldTypeConfig;
@@ -63,6 +64,9 @@ abstract class CustomFieldType implements Type
         return __('custom_forms.types.' . static::identifier());
     }
 
+    /**
+     * @return array<string, class-string<FieldTypeView>>
+     */
     abstract public function viewModes(): array;
 
     public function canBeDeactivate(): bool

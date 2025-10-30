@@ -7,7 +7,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\Enums\CustomFormPermissionName;
 use Illuminate\Auth\Access\HandlesAuthorization;
 use Illuminate\Contracts\Auth\Access\Authorizable;
 
-
+//ToDo Move to Utils????
 class RulePolicy
 {
     use HandlesAuthorization;
@@ -18,10 +18,9 @@ class RulePolicy
     }
 
     public function viewAny(Authorizable $user): bool
-    {
-        return $user->can(CustomFormPermissionName::MANAGE_CUSTOM_FORMS) || $user->can( //ToDO do for rule only
-                CustomFormPermissionName::MANAGE_TEMPLATES
-            );
+    { //ToDO do for rule only
+        return $user->can(CustomFormPermissionName::MANAGE_CUSTOM_FORMS->value)
+            || $user->can(CustomFormPermissionName::MANAGE_TEMPLATES->value);
     }
 
     public function create(Authorizable $user, Rule $rule): bool
@@ -30,16 +29,13 @@ class RulePolicy
     }
 
     public function update(Authorizable $user, Rule $rule): bool
-    {
-        return $user->can(CustomFormPermissionName::MANAGE_CUSTOM_FORMS) || $user->can( //ToDO do for rule only
-                CustomFormPermissionName::MANAGE_TEMPLATES
-            );
+    {   //ToDO do for rule only
+        return $user->can(CustomFormPermissionName::MANAGE_CUSTOM_FORMS->value)
+            || $user->can(CustomFormPermissionName::MANAGE_TEMPLATES->value);
     }
 
     public function delete(Authorizable $user, Rule $rule): bool
     {
         return $this->update($user, $rule);
     }
-
-
 }

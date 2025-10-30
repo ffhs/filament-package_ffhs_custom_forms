@@ -12,6 +12,9 @@ use Filament\Resources\Pages\EditRecord;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @method CustomFormAnswer getRecord()
+ */
 class EditCustomFormAnswer extends EditRecord
 {
     use CanLoadFormAnswer;
@@ -62,13 +65,8 @@ class EditCustomFormAnswer extends EditRecord
 
     protected function handleRecordUpdate(Model $record, array $data): Model
     {
-        /**@var CustomFormAnswer $customFormAnswer */
-        $customFormAnswer = $this
-            ->form
-            ->getRecord();
+        $this->saveFormAnswer($this->getRecord(), $this->form, 'data.form_answer');
 
-        $this->saveFormAnswer($customFormAnswer, $this->form, 'data.form_answer');
-
-        return $customFormAnswer->refresh();
+        return $this->form->getRecord()?->refresh();
     }
 }

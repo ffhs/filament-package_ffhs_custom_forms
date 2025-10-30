@@ -12,6 +12,11 @@ trait HasAllFieldDataFromFormData
     use CanLoadCustomFormEditorData;
     use CanLoadFieldRelationFromForm;
 
+    /**
+     * @param array<string, mixed> $fields
+     * @param CustomFormConfiguration $configuration
+     * @return Collection<string, EmbedCustomField>
+     */
     protected function getFieldDataFromFormData(array $fields, CustomFormConfiguration $configuration): Collection
     {
         $fieldsFromTemplate = collect($fields)

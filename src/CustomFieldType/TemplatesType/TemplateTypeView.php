@@ -50,6 +50,7 @@ class TemplateTypeView implements FieldTypeView
 //        $fields = $customField->template->customFields;
         $viewMode = $parameter['viewMode'];
         $form = $customField->getTemplate();
+        /**@phpstan-ignore-next-line */ //ToDo Fix for EmbeddedCustomField
         $form = CustomFormDataContainer::make($this->loadCustomFormEditorData($form));
         $displayer = $parameter['displayer'];
 

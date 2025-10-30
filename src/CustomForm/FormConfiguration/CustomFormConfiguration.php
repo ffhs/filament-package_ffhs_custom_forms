@@ -2,6 +2,7 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormConfiguration;
 
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\FieldTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\Facades\CustomForms;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
@@ -29,6 +30,9 @@ abstract class CustomFormConfiguration
         return static::config('field_adders');
     }
 
+    /**
+     * @return array<class-string<CustomFieldType>, array<string, class-string<FieldTypeView>>>
+     */
     public static function overwriteViewModes(): array
     {
         return [];
@@ -86,7 +90,7 @@ abstract class CustomFormConfiguration
     }
 
     /**
-     * @return Collection<CustomForm>
+     * @return Collection<int|string, CustomForm>
      */
     final public function getAvailableTemplates(): Collection
     {
@@ -107,7 +111,7 @@ abstract class CustomFormConfiguration
     }
 
     /**
-     * @return Collection<GeneralField>
+     * @return Collection<int|string, GeneralField>
      */
     final public function getAvailableGeneralFields(): Collection
     {

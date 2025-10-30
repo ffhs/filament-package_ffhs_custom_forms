@@ -13,6 +13,9 @@ use Illuminate\Support\Collection;
 
 trait HasCustomFields
 {
+    /**
+     * @return HasMany<CustomField, $this>
+     */
     public function ownedFields(): HasMany
     {
         return $this->hasMany(CustomField::class);

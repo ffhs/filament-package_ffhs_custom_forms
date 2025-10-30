@@ -7,6 +7,11 @@ use Filament\Schemas\Components\Group;
 
 trait HasTextCheck
 {
+    /**
+     * @param mixed $targetValue
+     * @param array<string, array<string|int, string>> $data
+     * @return bool
+     */
     protected function checkText(mixed $targetValue, array $data): bool
     {
         if (!is_string($targetValue) || empty($data['values'])) {
