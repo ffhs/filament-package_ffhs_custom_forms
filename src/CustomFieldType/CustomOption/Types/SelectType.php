@@ -53,7 +53,7 @@ class SelectType extends CustomOptionType
                             ->label(TypeOption::__('prioritized_labels.label'))
                             ->schema([
                                 TextInput::make('label')
-                                    ->label(''),
+                                    ->hiddenLabel(),
                             ])
                             ->whenTruthy('prioritized')
                             ->addActionLabel('prioritized_labels.add_label')

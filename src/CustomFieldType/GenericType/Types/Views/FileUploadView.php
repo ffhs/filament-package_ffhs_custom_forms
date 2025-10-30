@@ -126,7 +126,7 @@ class FileUploadView implements FieldTypeView
                 ->schema([
                     ImageEntry::make($path)
                         ->disk($this->getTypeConfigAttribute($record, 'images.disk'))
-                        ->label('')
+                        ->hiddenLabel()
                         ->state($path)
                         ->imageSize(175),
                     Actions::make([

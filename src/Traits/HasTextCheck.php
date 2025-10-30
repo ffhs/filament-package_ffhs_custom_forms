@@ -28,7 +28,7 @@ trait HasTextCheck
             TagsInput::make('values')
                 ->reorderable(false)
                 ->columnSpanFull()
-                ->label(''),
+                ->hiddenLabel(),
         ]);
     }
 }
