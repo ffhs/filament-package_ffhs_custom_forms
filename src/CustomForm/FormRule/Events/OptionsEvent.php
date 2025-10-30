@@ -68,13 +68,14 @@ abstract class OptionsEvent extends FormRuleEventType
         return collect($options)->pluck('name.' . $local, 'identifier');
     }
 
-    protected function getTargetOptions($get): array
+    protected function getTargetOptions(Get $get): array
     {
         $formConfiguration = $this->getFormConfiguration($get);
-        $fields = collect($this->getAllFieldsData($get, $formConfiguration))
+        $fields = $this->getAllFieldsData($get, $formConfiguration)
             ->filter(fn(EmbedCustomField $field) => !$field->isTemplate())
             ->filter(fn(EmbedCustomField $field) => $field->getType() instanceof CustomOptionType);
 
+        /**@phpstan-ignore-next-line */
         return $this->getSelectOptionsFromFields($fields, $formConfiguration);
     }
 }

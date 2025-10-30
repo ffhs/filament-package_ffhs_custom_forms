@@ -189,6 +189,7 @@ class GeneralFieldSchema
                     ->hiddenOn('edit'),
                 Group::make()
                     ->hiddenOn('create')
+                    /**@phpstan-ignore-next-line */
                     ->schema($schema),
             ]);
     }

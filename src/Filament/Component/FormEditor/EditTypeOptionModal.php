@@ -12,7 +12,6 @@ class EditTypeOptionModal extends Component
 {
     protected string $view = 'filament-schemas::components.grid';
 
-
     public static function make(): static
     {
         $static = app(static::class);
@@ -58,6 +57,7 @@ class EditTypeOptionModal extends Component
             return [
                 Group::make([LocaleSwitcher::make()])
                     ->columns(),
+                /**@phpstan-ignore-next-line */
                 Group::make($components)
                     ->statePath('options')
                     ->columns()
