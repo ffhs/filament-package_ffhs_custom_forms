@@ -2,14 +2,18 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options;
 
-use Ffhs\FilamentPackageFfhsCustomForms\Facades\CustomForms;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\FormEditor\CustomFormEditor;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasAllFieldDataFromFormData;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasFieldsMapToSelectOptions;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasOptionNoComponentModification;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\TypeOption;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Forms\Contracts\HasForms;
+use Filament\Pages\Page;
+use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Schema;
 use Filament\Support\Components\Component;
 use Illuminate\Support\Collection;
 
@@ -27,12 +31,40 @@ class RelatedFieldOption extends TypeOption
             ->options($this->getOptions(...));
     }
 
-    protected function getOptions(Get $get): array|Collection
+    /**
+     * @param Get $get
+     * @param Page|RelationManager $livewire
+     * @return array|Collection
+     */
+    protected function getOptions(Get $get, Page|RelationManager $livewire): array|Collection
     {
-        $fields = collect($this->getFieldDataFromFormData($get('../custom_fields'),
-            CustomForms::getFormConfiguration($get('../custom_form_identifier'))))
-            ->map(fn(array $field) => app(CustomField::class)->fill($field));
+        $actionPath = $get('../../context.schemaComponent');
+        $pathSet = explode('.', $actionPath);
+        $formName = $pathSet[0];
+        array_shift($pathSet);
+        /** @var Schema $form */
+        $form = $livewire->$formName;
 
-        return $this->getSelectOptionsFromFields($fields, $get);
+        /** @var CustomFormEditor|null $customFormComponent */
+        $customFormComponent = null;
+        for ($path = 0, $pathMax = count($pathSet); $path < $pathMax; $path++) {
+            $component = $form->getComponentByStatePath(implode('.', $pathSet));
+            if ($component instanceof CustomFormEditor) {
+                $customFormComponent = $component;
+                break;
+            }
+            array_pop($pathSet);
+        }
+
+        if (is_null($customFormComponent)) {
+            throw new \RuntimeException('CustomFormEditor not found');
+        }
+
+        $state = $customFormComponent->getState()['custom_fields'] ?? [];
+        $formConfiguration = $customFormComponent->getFormConfiguration();
+
+        $fields = collect($this->getFieldDataFromFormData($state, $formConfiguration));
+
+        return $this->getSelectOptionsFromFields($fields, $formConfiguration);
     }
 }
