@@ -18,10 +18,16 @@ trait HasFieldsMapToSelectOptions
         return CustomForms::getFormConfiguration($get('../../../../../custom_form_identifier'));
     }
 
-    protected function getSelectOptionsFromFields(Collection $customFields, Get $get): array
-    {
+    /**
+     * @param Collection<EmbedCustomField> $customFields
+     * @param CustomFormConfiguration $formConfiguration
+     * @return array
+     */
+    protected function getSelectOptionsFromFields(
+        Collection $customFields,
+        CustomFormConfiguration $formConfiguration
+    ): array {
         $options = [];
-        $formConfiguration = $this->getFormConfiguration($get);
 
         foreach ($customFields as $field) {
             /**@var EmbedCustomField $field */

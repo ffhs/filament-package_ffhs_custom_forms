@@ -48,7 +48,7 @@ trait HasTriggerEventFormTargets
         $fields = collect($this->getAllFieldsData($get, $formConfiguration))
             ->filter(fn(EmbedCustomField $field) => !$field->isTemplate());
 
-        return $this->getSelectOptionsFromFields($fields, $get);
+        return $this->getSelectOptionsFromFields($fields, $formConfiguration);
     }
 
     public function getAllFieldsData(Get $get, CustomFormConfiguration $formConfiguration): Collection
