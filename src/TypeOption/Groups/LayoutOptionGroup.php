@@ -9,6 +9,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\InLineLabelOption;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\NewLineOption;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\TypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\TypeOptionGroup;
+use Filament\Forms\Components\Toggle;
 
 class LayoutOptionGroup extends TypeOptionGroup
 {
@@ -22,10 +23,19 @@ class LayoutOptionGroup extends TypeOptionGroup
 
         $this->mergeTypeOptions([
             'column_span' => ColumnSpanOption::make(),
-            'in_line_label' => InLineLabelOption::make(),
-            'new_line' => NewLineOption::make(),
             'helper_text' => HelperTextTypeOption::make(),
             'hidden_label' => HiddenLabelOption::make()
+                ->modifyOptionComponent(function (Toggle $component) {
+                    return $component
+                        ->afterStateUpdated(fn($set) => $set('in_line_label', false))
+                        ->live();
+                }),
+            'in_line_label' => InLineLabelOption::make()
+                ->modifyOptionComponent(function (Toggle $component) {
+                    return $component->disabled(fn($get) => $get('hidden_label'));
+                }),
+            'new_line' => NewLineOption::make()
+                ->modifyOptionComponent(fn(Toggle $component) => $component->columnStart(1)),
         ]);
     }
 

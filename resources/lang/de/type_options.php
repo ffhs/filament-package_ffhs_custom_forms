@@ -71,6 +71,10 @@ return [
         'label' => 'Titel in der Zeile',
         'helper_text' => '',
     ],
+    'hidden_label' => [
+        'label' => 'Titel verstecken',
+        'helper_text' => '',
+    ],
     'icon' => [
         'label' => 'Icon',
         'helper_text' => '',
@@ -85,7 +89,7 @@ return [
     ],
     'validation_attribute' => [
         'label' => 'Validierungsname',
-        'helper_text' => 'Der Name welcher verwendet wird, bei Standardfehlermeldungen',
+        'helper_text' => 'Der angezeigte Name bei einer Standardfehlermeldung.',
     ],
     'column_span' => [
         'label' => 'Grösse in Spalten',

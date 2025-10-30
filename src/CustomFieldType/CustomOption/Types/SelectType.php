@@ -53,7 +53,7 @@ class SelectType extends CustomOptionType
                             ->label(TypeOption::__('prioritized_labels.label'))
                             ->schema([
                                 TextInput::make('label')
-                                    ->label(''),
+                                    ->hiddenLabel(),
                             ])
                             ->whenTruthy('prioritized')
                             ->addActionLabel('prioritized_labels.add_label')
@@ -104,6 +104,7 @@ class SelectType extends CustomOptionType
                         ),
                     'validation_messages_prioritized' => FastTypeOption::makeFast([],
                         Repeater::make('validation_messages_prioritized')
+                            ->visible(fn(Get $get) => $get('prioritized'))
                             ->label(TypeOption::__('validation_messages_prioritized.label'))
                             ->helperText(TypeOption::__('validation_messages_prioritized.helper_text'))
                             ->schema([
