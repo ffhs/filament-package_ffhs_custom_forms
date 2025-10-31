@@ -8,9 +8,11 @@ use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\HelperTextTypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\InLineLabelOption;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\NewLineOption;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\TypeOption;
+use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\TypeOptionGroup;
 
-class LayoutWithColumnsOptionGroup extends LayoutOptionGroup
+class LayoutWithColumnsOptionGroup extends TypeOptionGroup
 {
+
     public function __construct(
         ?string $name = null,
         array $typeOptions = [],
@@ -22,9 +24,17 @@ class LayoutWithColumnsOptionGroup extends LayoutOptionGroup
         $this->mergeTypeOptions([
             'column_span' => ColumnSpanOption::make(),
             'columns' => ColumnsOption::make(),
+            'helper_text' => HelperTextTypeOption::make(),
             'in_line_label' => InLineLabelOption::make(),
             'new_line' => NewLineOption::make(),
-            'helper_text' => HelperTextTypeOption::make(),
         ]);
+    }
+
+    public static function make(
+        string $name = 'Layout',
+        array $typeOptions = [],
+        ?string $icon = 'bi-layout-text-window'
+    ): static {
+        return parent::make($name, $typeOptions, $icon);
     }
 }
