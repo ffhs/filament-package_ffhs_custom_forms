@@ -12,7 +12,6 @@ use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\FastTypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\MaxAmountOption;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\MinAmountOption;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\ShowAsFieldsetOption;
-use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\ShowLabelOption;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\TypeOption;
 use Filament\Forms\Components\Field;
 use Filament\Forms\Components\TextInput;
@@ -44,9 +43,9 @@ class RepeaterLayoutType extends CustomSplitType
         return [
             LayoutWithColumnsOptionGroup::make()
                 ->mergeTypeOptions([
-                    'show_label' => ShowLabelOption::make(),
-                    'show_as_fieldset' => ShowAsFieldsetOption::make()
-                        ->modifyOptionComponent(fn(Field $component) => $component->columnStart(2)),
+                    'show_as_fieldset' => ShowAsFieldsetOption::make(),
+                    'add_action_label' => ActionLabelTypeOption::make()
+                        ->modifyOptionComponent(fn(Field $component) => $component->columnSpan(1)),
                     'default_amount' => FastTypeOption::makeFast(
                         1,
                         TextInput::make('default_amount')
@@ -57,7 +56,6 @@ class RepeaterLayoutType extends CustomSplitType
                             ->integer()
                             ->required(),
                     ),
-                    'add_action_label' => ActionLabelTypeOption::make(),
                 ]),
             ValidationTypeOptionGroup::make()
                 ->removeTypeOption('required')
