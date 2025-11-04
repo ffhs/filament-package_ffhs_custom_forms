@@ -44,7 +44,7 @@ class GeneralFieldFormRelationManager extends RelationManager
                 TextColumn::make('id'),
                 TextColumn::make('custom_form_identifier_name')
                     ->label(GeneralFieldForm::__('attributes.custom_form_identifier_name.label'))
-                    ->state(fn(GeneralFieldForm $record) => ($record->dynamicFormConfiguration())::displayName()),
+                    ->state(fn(GeneralFieldForm $record) => ($record->dynamicFormConfiguration())::displayname()),
                 CheckboxColumn::make('is_required')
                     ->label(GeneralFieldForm::__('attributes.is_required')),
                 CheckboxColumn::make('export')

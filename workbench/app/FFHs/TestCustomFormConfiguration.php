@@ -12,7 +12,7 @@ class TestCustomFormConfiguration extends CustomFormConfiguration
         return 'test_form';
     }
 
-    public static function displayName(): string
+    public static function displayname(): string
     {
         return 'test form';
     }

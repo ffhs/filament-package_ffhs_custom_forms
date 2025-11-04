@@ -34,7 +34,7 @@ class GeneralFieldTable
                     ->searchable()
                     ->state(fn(GeneralField $record) => $record->generalFieldForms
                         ->map(fn($generalFieldForm) => $generalFieldForm->dynamicFormConfiguration())
-                        ->map(fn(CustomFormConfiguration $class) => ($class)::displayName())
+                        ->map(fn(CustomFormConfiguration $class) => ($class)::displayname())
                     ),
                 ToggleColumn::make('is_active')
                     ->label(GeneralField::__('attributes.is_active.label')),
