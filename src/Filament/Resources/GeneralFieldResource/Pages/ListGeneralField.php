@@ -33,7 +33,7 @@ class ListGeneralField extends ListRecords
         foreach (CustomForms::getFormConfigurations() as $formConfiguration) {
             /**@var CustomFormConfiguration $formConfiguration */
             $identifier = $formConfiguration::identifier();
-            $tabs[$identifier] = Tab::make($formConfiguration::displayName())
+            $tabs[$identifier] = Tab::make($formConfiguration::displayname())
                 ->badge($this->prepareTabQuery($identifier, GeneralField::query())->count())
                 ->modifyQueryUsing(fn($query) => $this->prepareTabQuery($identifier, $query));
         }

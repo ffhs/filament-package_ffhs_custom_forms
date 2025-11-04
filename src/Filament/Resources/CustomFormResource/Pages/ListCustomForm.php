@@ -37,7 +37,7 @@ class ListCustomForm extends ListRecords
         foreach (CustomForms::getFormConfigurations() as $identifier => $formConfiguration) {
             /**@var CustomFormConfiguration $formConfiguration */
             $tabs[$identifier] =
-                Tab::make($formConfiguration::displayName())
+                Tab::make($formConfiguration::displayname())
                     ->badge($query->where('custom_form_identifier', $identifier)->count())
                     ->modifyQueryUsing(fn($query) => $this->prepareTabQuery($identifier, $query));
         }
@@ -69,7 +69,7 @@ class ListCustomForm extends ListRecords
                     ->sortable(),
                 TextColumn::make('custom_form_identifier')
                     ->label(CustomForm::__('attributes.custom_form_identifier.label'))
-                    ->state(fn(CustomForm $record) => ($record->dynamicFormConfiguration())::displayName())
+                    ->state(fn(CustomForm $record) => ($record->dynamicFormConfiguration())::displayname())
                     ->sortable(),
                 TextColumn::make('owned_fields_count')
                     ->label(CustomForm::__('attributes.owned_fields_amount'))

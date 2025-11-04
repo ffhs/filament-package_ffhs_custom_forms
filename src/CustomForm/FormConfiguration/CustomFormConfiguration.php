@@ -9,10 +9,13 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralFieldForm;
 use Illuminate\Database\Eloquent\Collection;
+use RuntimeException;
 
 abstract class CustomFormConfiguration
 {
-    abstract public static function displayName(): string;
+    protected static string $identifier;
+    protected static string $displayname;
+
 
     final public static function make(): static
     {
@@ -38,7 +41,23 @@ abstract class CustomFormConfiguration
         return [];
     }
 
-    abstract public static function identifier(): string;
+    public static function identifier(): string
+    {
+        if (!isset(static::$identifier)) {
+            throw new RuntimeException(static::class . ' has no $identifier set');
+        }
+
+        return static::$identifier;
+    }
+
+    public static function displayname(): string
+    {
+        if (!isset(static::$displayname)) {
+            throw new RuntimeException(static::class . ' has no $identifier set');
+        }
+
+        return static::$displayname;
+    }
 
     public function getRuleTriggerTypes(): array
     {

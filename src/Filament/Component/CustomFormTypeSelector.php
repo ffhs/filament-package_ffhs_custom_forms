@@ -28,6 +28,6 @@ class CustomFormTypeSelector extends Select
     protected function getTypeOptions(): Collection|array
     {
         return collect(CustomForms::getFormConfigurations())
-            ->map(fn(CustomFormConfiguration $configuration) => $configuration::displayName());
+            ->map(fn(CustomFormConfiguration $configuration) => $configuration::displayname());
     }
 }

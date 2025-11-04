@@ -32,7 +32,7 @@ class CustomFormAnswerTable
                     ->label(CustomForm::__('attributes.custom_form_identifier.label'))
                     ->state(fn(CustomFormAnswer $record) => $record
                         ->customForm
-                        ->dynamicFormConfiguration()::displayName()
+                        ->dynamicFormConfiguration()::displayname()
                     ),
             ])
             ->filters([])
