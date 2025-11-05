@@ -56,16 +56,8 @@ abstract class OptionsEvent extends FormRuleEventType
             return $genOptions->pluck('name', 'identifier');
         }
 
-        $options = $field->options ?? [];
-        $local = method_exists($record, 'getLocale') ? $record->getLocale() : app()->getLocale();
-
-        if (array_key_exists('customOptions', $options)) {
-            $options = $options['customOptions'];
-        } else {
-            $options = [];
-        }
-
-        return collect($options)->pluck('name.' . $local, 'identifier');
+        $options = $field->getCustomOptions();
+        return collect($options)->pluck('name', 'identifier');
     }
 
     protected function getTargetOptions(Get $get): array
