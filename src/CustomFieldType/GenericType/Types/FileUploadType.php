@@ -154,24 +154,19 @@ class FileUploadType extends CustomFieldType
 
         try {
             $acceptedFileTypes = $component->getAcceptedFileTypes();
-            $hadTemporaryFile = false;
 
             foreach (Arr::wrap($component->getState()) as $key => $file) {
                 if (!$file instanceof TemporaryUploadedFile) {
                     continue;
                 }
-                $hadTemporaryFile = true;
                 $mimeType = $file->getMimeType();
 
                 // Do not save if even one of the submitted files mimetype does not match the accepted file types
-
                 if (!in_array($mimeType, $acceptedFileTypes, true)) {
                     $component->deleteUploadedFile($key);
+                    $file->delete();
+                    return;
                 }
-            }
-
-            if (!$hadTemporaryFile) {
-                return;
             }
 
             $state = $component->getState();
