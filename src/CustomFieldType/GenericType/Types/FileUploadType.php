@@ -154,11 +154,13 @@ class FileUploadType extends CustomFieldType
 
         try {
             $acceptedFileTypes = $component->getAcceptedFileTypes();
+            $hasTemporaryFileToSaveInStorage = false;
 
             foreach (Arr::wrap($component->getState()) as $key => $file) {
                 if (!$file instanceof TemporaryUploadedFile) {
                     continue;
                 }
+                $hasTemporaryFileToSaveInStorage = true;
                 $mimeType = $file->getMimeType();
 
                 // Do not save if even one of the submitted files mimetype does not match the accepted file types
@@ -167,6 +169,11 @@ class FileUploadType extends CustomFieldType
                     $file->delete();
                     return;
                 }
+            }
+
+            //Prevents from looping because saveUploadedFiles calls an stateUpdated event which can calls this method again
+            if (!$hasTemporaryFileToSaveInStorage) {
+                return;
             }
 
             $state = $component->getState();
