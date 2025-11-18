@@ -171,7 +171,7 @@ class FileUploadType extends CustomFieldType
                 }
             }
 
-            //Prevents from looping because saveUploadedFiles calls an stateUpdated event which can calls this method again
+            //Prevents from looping because $component->saveUploadedFiles() calls an stateUpdated event, which can calls this method again
             if (!$hasTemporaryFileToSaveInStorage) {
                 return;
             }
