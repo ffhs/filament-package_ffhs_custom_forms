@@ -6,6 +6,8 @@ use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\FieldTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormAnswer\Render\EntryFieldDisplayer;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanLoadFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanRenderCustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasDefaultViewComponent;
@@ -23,7 +25,7 @@ class RepeaterLayoutTypeView implements FieldTypeView
 
     public function getFormComponent(EmbedCustomField $customField, array $parameter = []): Component
     {
-//      $ordered = $this->getOptionParameter($record, 'ordered'); ToDo
+//      $ordered = $this->getOptionParameter($record, 'ordered'); ToDo add order for Repeater
         $minAmount = $this->getOptionParameter($customField, 'min_amount');
         $maxAmount = $this->getOptionParameter($customField, 'max_amount');
         $defaultAmount = $this->getOptionParameter($customField, 'default_amount');
@@ -53,46 +55,63 @@ class RepeaterLayoutTypeView implements FieldTypeView
 
     public function getEntryComponent(EmbedCustomFieldAnswer $customFieldAnswer, array $parameter = []): Component
     {
-
+        //ToDo Make for other non database fields
         $label = $this->getLabelName($customFieldAnswer);
         $isFieldset = $this->getOptionParameter($customFieldAnswer, 'show_as_fieldset');
         $component = $isFieldset ? Fieldset::make($label) : Section::make($label);
 
         $schema = [];
 
+        $formAnswer = $customFieldAnswer->getCustomFormAnswer();
         $customField = $customFieldAnswer->getCustomField();
+        $customFormAnswer = $formAnswer->getCustomForm();
+        /**@phpstan-ignore-next-line */
+        $customFormField = Customform::find($customField->custom_form_id);
 
+        /**@phpstan-ignore-next-line */
+        $relatedField = $customFormAnswer->id === $customFormField->id
+            ? $customField
+            : $customFormAnswer->getCustomFields()->firstWhere('template_id', $customFormField->id);
+
+        /**@phpstan-ignore-next-line */
         $loadedAnswers = $this->loadCustomAnswerForEntry(
             $customFieldAnswer->getCustomFormAnswer(),
-            $customField->getFormPosition(),
-            $customField->getLayoutEndPosition(),
-        );
+            $relatedField->getFormPosition(),
+            $relatedField->getLayoutEndPosition() ?? $relatedField->getFormPosition()
+        ) ?? [];
 
-        $loadedAnswers = $loadedAnswers[$customFieldAnswer->getCustomField()->identifier ?? ''] ?? [];
+        $loadedAnswers = $loadedAnswers[$customField->identifier()];
 
-        /** @var Collection $fields */
+        /** @var Collection<int, CustomField> $fields */ //ToDo make for the other non database fields
         $fields = $parameter['child_fields'];
-        $fields = $fields->keyBy('form_position');
-        $offset = $fields->sortBy('form_position')->first()->form_position - 1;
+        $fields = $fields->keyBy(fn(CustomField $container) => $container->getFormPosition());
         $viewMode = $parameter['viewMode'];
-        $customForm = $customFieldAnswer->getCustomForm();
 
         foreach ($loadedAnswers as $id => $answer) {
             $displayer = EntryFieldDisplayer::make($customFieldAnswer->getCustomFormAnswer(), $id);
 
-            $renderOutput = $this->renderCustomFormRaw($viewMode, $displayer, $customForm, $fields, $offset);
+            $renderOutput = $this->renderCustomFormRaw(
+                $viewMode,
+                $displayer,
+                $customFormField,
+                $fields,
+                $customField->getFormPosition()
+            );
             [$subSchema, $allComponents] = $renderOutput;
 
             $parameter['registerComponents']($allComponents);
 
             $schema[] = Fieldset::make('')
+                ->columnSpanFull()
                 ->schema($subSchema)
+                ->columns(1)
                 ->statePath($id);
         }
 
         return $component
             ->columnSpanFull()
             ->schema($schema)
-            ->columnStart(1);
+            ->columnStart(1)
+            ->columns(1);
     }
 }
