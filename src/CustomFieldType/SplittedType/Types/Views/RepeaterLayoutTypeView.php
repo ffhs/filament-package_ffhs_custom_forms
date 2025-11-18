@@ -56,7 +56,7 @@ class RepeaterLayoutTypeView implements FieldTypeView
 
     public function getEntryComponent(EmbedCustomFieldAnswer $customFieldAnswer, array $parameter = []): Component
     {
-
+        //ToDo Make for other non database fields
         $label = $this->getLabelName($customFieldAnswer);
         $isFieldset = $this->getOptionParameter($customFieldAnswer, 'show_as_fieldset');
         $component = $isFieldset ? Fieldset::make($label) : Section::make($label);
@@ -66,12 +66,15 @@ class RepeaterLayoutTypeView implements FieldTypeView
         $formAnswer = $customFieldAnswer->getCustomFormAnswer();
         $customField = $customFieldAnswer->getCustomField();
         $customFormAnswer = $formAnswer->getCustomForm();
+        /**@phpstan-ignore-next-line */
         $customFormField = Customform::find($customField->custom_form_id);
 
+        /**@phpstan-ignore-next-line */
         $relatedField = $customFormAnswer->id === $customFormField->id
             ? $customField
             : $customFormAnswer->getCustomFields()->firstWhere('template_id', $customFormField->id);
 
+        /**@phpstan-ignore-next-line */
         $loadedAnswers = $this->loadCustomAnswerForEntry(
             $customFieldAnswer->getCustomFormAnswer(),
             $relatedField->getFormPosition(),
