@@ -18,7 +18,6 @@ use Filament\Forms\Components\TextInput;
 
 class RepeaterLayoutType extends CustomSplitType
 {
-
     use HasCustomTypePackageTranslation;
 
     public static function identifier(): string

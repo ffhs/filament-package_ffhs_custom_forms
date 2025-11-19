@@ -5,8 +5,8 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\SplittedType\Types
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\FieldTypeView;
+use Ffhs\FilamentPackageFfhsCustomForms\DataContainer\CustomFieldDataContainer;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormAnswer\Render\EntryFieldDisplayer;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanLoadFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanRenderCustomForm;
@@ -82,9 +82,9 @@ class RepeaterLayoutTypeView implements FieldTypeView
 
         $loadedAnswers = $loadedAnswers[$customField->identifier()];
 
-        /** @var Collection<int, CustomField> $fields */ //ToDo make for the other non database fields
+        /** @var Collection<int, CustomFieldDataContainer> $fields */ //ToDo make for the other non database fields
         $fields = $parameter['child_fields'];
-        $fields = $fields->keyBy(fn(CustomField $container) => $container->getFormPosition());
+        $fields = $fields->keyBy(fn(CustomFieldDataContainer $container) => $container->getFormPosition());
         $viewMode = $parameter['viewMode'];
 
         foreach ($loadedAnswers as $id => $answer) {
