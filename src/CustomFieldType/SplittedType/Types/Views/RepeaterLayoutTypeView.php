@@ -80,7 +80,7 @@ class RepeaterLayoutTypeView implements FieldTypeView
             $relatedField->getLayoutEndPosition() ?? $relatedField->getFormPosition()
         ) ?? [];
 
-        $loadedAnswers = $loadedAnswers[$customField->identifier()];
+        $loadedAnswers = $loadedAnswers[$customField->identifier()] ?? [];
 
         /** @var Collection<int, CustomFieldDataContainer> $fields */ //ToDo make for the other non database fields
         $fields = $parameter['child_fields'];
