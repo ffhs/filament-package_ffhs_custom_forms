@@ -26,15 +26,18 @@ abstract class FormFieldAdder extends DragDropSelectAction implements FormEditor
         $fieldData['order'] = $position;
 
         $state = $get($path, true) ?? [];
+        $fields = collect($state)
+            ->map(function ($field) use ($position) {
+                if ($field['order'] >= $position) {
+                    $field['order'] += 1;
+                }
+                return $field;
+            })
+            ->put($this->generateUuid(), $fieldData)
+            ->sortBy('order')
+            ->toArray();
 
-        // Split the array into two parts
-        $before = array_slice($state, 0, $position, true);
-        $after = array_slice($state, $position, null, true);
-
-        // Merge with the new element in between
-        $arr = $before + [$this->generateUuid() => $fieldData] + $after;
-
-        $set($path, $arr, true);
+        $set($path, $fields, true);
     }
 
     protected function setUp(): void
