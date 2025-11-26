@@ -39,29 +39,48 @@ trait CanMapFields
             $record = $record->getCustomField();
         }
 
+        // Check record-specific options first
         $options = $record->getOptions();
-        if (array_key_exists($option, $options)) {
-            $return = $options[$option];
-
-            if (!is_null($return) || $canBeNull) {
-                return $return;
-            }
+        if (array_key_exists($option, $options) && (!is_null($options[$option]) || $canBeNull)) {
+            return $options[$option];
         }
 
-        $generalOptions = $record
-            ->getType()
-            ->getDefaultGeneralOptionValues();
+        // Fall back to type defaults
+        $type = $record->getType();
+        $generalOptions = $type->getDefaultGeneralOptionValues();
 
         if (array_key_exists($option, $generalOptions)) {
             return $generalOptions[$option];
         }
 
-        $fieldOptions = $record
-            ->getType()
-            ->getDefaultTypeOptionValues();
+        $fieldOptions = $type->getDefaultTypeOptionValues();
 
         if (array_key_exists($option, $fieldOptions)) {
             return $fieldOptions[$option];
+        }
+
+        return $canBeNull ? null : 0;
+    }
+
+    public function getOptionParameterWithCached(
+        string $option,
+        bool $canBeNull,
+        array $defaultValues,
+        array $generalDefaultValues,
+        array $options
+    ): mixed {
+
+        // Check record-specific options first
+        if (array_key_exists($option, $options) && (!is_null($options[$option]) || $canBeNull)) {
+            return $options[$option];
+        }
+
+        if (array_key_exists($option, $generalDefaultValues)) {
+            return $generalDefaultValues[$option];
+        }
+
+        if (array_key_exists($option, $defaultValues)) {
+            return $defaultValues[$option];
         }
 
         return $canBeNull ? null : 0;

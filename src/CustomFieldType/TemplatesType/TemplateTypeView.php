@@ -6,7 +6,6 @@ use Ffhs\FfhsUtils\Traits\HasStaticMake;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\FieldTypeView;
-use Ffhs\FilamentPackageFfhsCustomForms\DataContainer\CustomFormDataContainer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanLoadCustomFormEditorData;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanRenderCustomForm;
@@ -50,8 +49,7 @@ class TemplateTypeView implements FieldTypeView
 //        $fields = $customField->template->customFields;
         $viewMode = $parameter['viewMode'];
         $form = $customField->getTemplate();
-        /**@phpstan-ignore-next-line */ //ToDo Fix for EmbeddedCustomField
-        $form = CustomFormDataContainer::make($this->loadCustomFormEditorData($form));
+//        $form = CustomFormDataContainer::make($this->loadCustomFormEditorData($form)); ToDo Check
         $displayer = $parameter['displayer'];
 
         //Render Schema Input

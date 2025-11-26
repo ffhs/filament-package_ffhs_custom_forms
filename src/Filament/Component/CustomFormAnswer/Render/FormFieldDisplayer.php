@@ -21,9 +21,12 @@ class FormFieldDisplayer implements FieldDisplayer
 
     public function __invoke(string $viewMode, EmbedCustomField $customField, array $parameter): Component
     {
-        return $customField
-            ->getType()
-            ->getFormComponent($customField, $this->form->getFormConfiguration(), $viewMode, $parameter);
+        $formConfiguration = $this->form->getFormConfiguration();
+        $fieldType = $customField->getType();
+//        \Debugbar::startMeasure('test-' . $fieldType::identifier());
+        $schema = $fieldType->getFormComponent($customField, $formConfiguration, $viewMode, $parameter);
+//        \Debugbar::stopMeasure('test-' . $fieldType::identifier());
+        return $schema;
     }
 
     public function getRuleActionBeforeRender(): FormRuleAction

@@ -72,7 +72,6 @@ class TypeOptionGroup
             return Section::make($this->getName())
                 ->icon($this->getIcon())
                 ->columnSpanFull()
-                /**@phpstan-ignore-next-line */
                 ->schema($schema)
                 ->collapsible()
                 ->collapsed()

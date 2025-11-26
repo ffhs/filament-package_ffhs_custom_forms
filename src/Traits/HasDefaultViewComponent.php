@@ -5,7 +5,6 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Traits;
 use Ffhs\FfhsUtils\Traits\HasStaticMake;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomFieldAnswer;
-use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\TypeOption;
 use Filament\Infolists\Components\Entry;
 use Filament\Support\Components\Component;
 
@@ -25,53 +24,55 @@ trait HasDefaultViewComponent
         EmbedCustomField|EmbedCustomFieldAnswer $fieldRaw,
         bool $isEntry,
         array $ignoredOptions = [],
-
     ): Component {
-        /**@var $typeOption TypeOption */
         $field = $fieldRaw instanceof EmbedCustomField ? $fieldRaw : $fieldRaw->getCustomField();
+        $type = $field->getType();
+        $isGeneralField = $field->isGeneralField();
 
-        foreach ($field->getType()->getFlattenExtraTypeOptions() as $key => $typeOption) {
-            if (in_array($key, $ignoredOptions, true)) {
-                continue;
-            }
+        // Pre-compute all defaults once
+        $fieldOptions = $field->getOptions();
+        $default = $type->getDefaultTypeOptionValues();
+        $generalDefault = $isGeneralField ? $type->getDefaultGeneralOptionValues() : [];
 
-            $value = $this->getOptionParameter($field, $key);
-            if ($isEntry) {
-                $typeOption->modifyInfolistComponent($component, $value); //ToDo null value
-            } else {
-                $typeOption->modifyFormComponent($component, $value); //ToDo null value
-            }
+        // Apply type options
+        $this->applyTypeOptions(
+            $type->getFlattenExtraTypeOptions(),
+            $component,
+            $ignoredOptions,
+            $isEntry,
+            $fieldOptions,
+            $default,
+            $generalDefault
+        );
+
+        // Apply general options if applicable
+        if ($isGeneralField) {
+            $this->applyTypeOptions(
+                $type->getFlattenGeneralTypeOptions(),
+                $component,
+                $ignoredOptions,
+                $isEntry,
+                $fieldOptions,
+                $default,
+                $generalDefault
+            );
         }
 
-        if ($field->isGeneralField()) {
-            foreach ($field->getType()->getFlattenGeneralTypeOptions() as $key => $typeOption) {
-                if (in_array($key, $ignoredOptions, true)) {
-                    continue;
-                }
-
-                $value = $this->getOptionParameter($field, $key);
-                if ($isEntry) {
-                    $typeOption->modifyInfolistComponent($component, $value); //ToDo null value
-                } else {
-                    $typeOption->modifyFormComponent($component, $value); //ToDo null value
-                }
-            }
-        }
-
+        // Handle label
         if (method_exists($component, 'label') && method_exists($component, 'hiddenLabel')) {
             $label = $this->getLabelName($field);
             $component = empty($label) ? $component->hiddenLabel() : $component->label($label);
         }
 
+        // Early return for non-entry components
         if (!$isEntry) {
             return $component;
         }
 
-        if ($fieldRaw instanceof EmbedCustomFieldAnswer && method_exists($component,
-                'state') && $component instanceof Entry) {
+        // Handle answer state for entries
+        if ($fieldRaw instanceof EmbedCustomFieldAnswer && $component instanceof Entry) {
             $component = $component->state($this->getAnswer($fieldRaw));
         }
-
 
         return $component
             ->inlineLabel()
@@ -97,5 +98,35 @@ trait HasDefaultViewComponent
 
         /** @var T $component */
         return $this->modifyComponent($component, $field, $isInfolist, $ignoredOptions);
+    }
+
+    private function applyTypeOptions(
+        array $typeOptions,
+        Component $component,
+        array $ignoredOptions,
+        bool $isEntry,
+        array $fieldOptions,
+        array $default,
+        array $generalDefault
+    ): void {
+        foreach ($typeOptions as $key => $typeOption) {
+            if (in_array($key, $ignoredOptions, true)) {
+                continue;
+            }
+
+            $value = $this->getOptionParameterWithCached(
+                $key,
+                false,
+                $default,
+                $generalDefault,
+                $fieldOptions
+            );
+
+            if ($isEntry) {
+                $typeOption->modifyInfolistComponent($component, $value);
+            } else {
+                $typeOption->modifyFormComponent($component, $value);
+            }
+        }
     }
 }

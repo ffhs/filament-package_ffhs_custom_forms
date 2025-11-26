@@ -45,7 +45,8 @@ trait HasTypeOptions
      */
     final public function getDefaultTypeOptionValues(): array
     {
-        return $this->getDefaultTypeOptionValuesFormArray($this->getFlattenExtraTypeOptions());
+        $flattenExtraTypes = $this->getFlattenExtraTypeOptions();
+        return $this->getDefaultTypeOptionValuesFormArray($flattenExtraTypes);
     }
 
     /**
@@ -53,7 +54,8 @@ trait HasTypeOptions
      */
     final public function getFlattenExtraTypeOptions(): array
     {
-        return once(fn(): array => $this->getFlattenTypeOptions($this->extraTypeOptions()));
+        $flattenExtraTypes = $this->extraTypeOptions(); //May Optimize more
+        return $this->getFlattenTypeOptions($flattenExtraTypes);
     }
 
     /**
@@ -61,7 +63,8 @@ trait HasTypeOptions
      */
     final public function getDefaultGeneralOptionValues(): array
     {
-        return $this->getDefaultTypeOptionValuesFormArray($this->getFlattenGeneralTypeOptions());
+        $stuff = $this->getFlattenGeneralTypeOptions();
+        return $this->getDefaultTypeOptionValuesFormArray($stuff);
     }
 
     /**
@@ -69,7 +72,7 @@ trait HasTypeOptions
      */
     final public function getFlattenGeneralTypeOptions(): array
     {
-        return $this->getFlattenTypeOptions($this->extraTypeOptions());
+        return once(fn(): array => $this->getFlattenTypeOptions($this->generalTypeOptions()));
     }
 
     /**

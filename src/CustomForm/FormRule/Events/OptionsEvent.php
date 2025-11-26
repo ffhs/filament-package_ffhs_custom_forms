@@ -67,7 +67,6 @@ abstract class OptionsEvent extends FormRuleEventType
             ->filter(fn(EmbedCustomField $field) => !$field->isTemplate())
             ->filter(fn(EmbedCustomField $field) => $field->getType() instanceof CustomOptionType);
 
-        /**@phpstan-ignore-next-line */
         return $this->getSelectOptionsFromFields($fields, $formConfiguration);
     }
 }
