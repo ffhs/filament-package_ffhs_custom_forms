@@ -42,10 +42,17 @@ class FileUploadView implements FieldTypeView
             ->moveFiles()
             ->live();
 
-        if ($this->getOptionParameter($customField, 'image')) {
+        $type = $customField->getType();
+        $fieldOptions = $customField->getOptions();
+        $default = $type->getDefaultTypeOptionValues();
+        $generalDefault = $customField->isGeneralField() ? $type->getDefaultGeneralOptionValues() : [];
+
+        if ($this->getOptionParameterWithCached('image', false, $default, $generalDefault, $fieldOptions)) {
             $fileUpload = $fileUpload
-                ->previewable($this->getOptionParameter($customField, 'show_images'))
-                ->downloadable($this->getOptionParameter($customField, 'downloadable'))
+                ->previewable($this->getOptionParameterWithCached('show_images', false, $default, $generalDefault,
+                    $fieldOptions))
+                ->downloadable($this->getOptionParameterWithCached('downloadable', false, $default, $generalDefault,
+                    $fieldOptions))
                 ->disk($this->getTypeConfigAttribute($customField, 'images.disk'))
                 ->directory($this->getTypeConfigAttribute($customField, 'images.save_path'))
                 ->visibility($this->getTypeConfigAttribute($customField, 'images.visibility'))
@@ -58,11 +65,12 @@ class FileUploadView implements FieldTypeView
                 ->previewable(false);
         }
 
-        if ($this->getOptionParameter($customField, 'preserve_filenames')) {
+        if ($this->getOptionParameterWithCached('preserve_filenames', false, $default, $generalDefault,
+            $fieldOptions)) {
             $fileUpload = $fileUpload->storeFileNamesIn($this->getIdentifyKey($customField) . '.file_names');
         }
 
-        if ($this->getOptionParameter($customField, 'grid_layout')) {
+        if ($this->getOptionParameterWithCached('grid_layout', false, $default, $generalDefault, $fieldOptions)) {
             $fileUpload = $fileUpload->panelLayout('grid');
         }
 
