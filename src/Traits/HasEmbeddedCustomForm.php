@@ -39,7 +39,6 @@ trait HasEmbeddedCustomForm
         $data = $this->loadAnswerData($this->getCustomFormAnswer());
         $data = $this->mutateRelationshipDataBeforeFill($data);
 
-
         $this->getChildSchema()?->fill($data, false, false);
     }
 
@@ -54,14 +53,6 @@ trait HasEmbeddedCustomForm
         return $formConfiguration;
     }
 
-    public function getChildSchemas(bool $withHidden = false): array
-    {
-        if ((!$withHidden) && $this->isHidden()) {
-            return [];
-        }
-        return $this->getDefaultChildSchemas();
-    }
-
     public function getCustomFormAnswer(): EmbedCustomFormAnswer|Model
     {
         if ($this->relationship) {
@@ -70,7 +61,6 @@ trait HasEmbeddedCustomForm
 
         return CustomFormAnswerDataContainer::make($this->getState() ?? [], $this->getCustomForm());
     }
-
 
     protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
     {
