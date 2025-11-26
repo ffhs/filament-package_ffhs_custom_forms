@@ -119,16 +119,9 @@ class CustomField extends ACustomField implements NestingObject, EmbedCustomFiel
 
     public function __get($key)
     {
-        if ($key === 'general_field_id') {
-            return parent::__get($key);
-        }
 
-        if (!$this->isGeneralField()) {
-            if ('overwritten_options' === $key) {
-                return [];
-            }
-
-            return parent::__get($key);
+        if (empty($this->getAttribute('general_field_id'))) {
+            return $this->getAttribute($key);
         }
 
         return match ($key) {
@@ -137,7 +130,7 @@ class CustomField extends ACustomField implements NestingObject, EmbedCustomFiel
             'options' => $this->getOptionsWithOverwritten(),
             'overwritten_options' => array_keys($this->generalField->overwrite_options ?? []),
             'identifier' => $this->generalField->identifier,
-            default => parent::__get($key),
+            default => $this->getAttribute($key),
         };
     }
 
