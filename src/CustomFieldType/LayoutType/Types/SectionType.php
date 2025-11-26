@@ -6,13 +6,11 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\LayoutType\CustomLayoutT
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\LayoutType\Types\Views\SectionTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasCustomTypePackageTranslation;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Groups\LayoutTypeLayoutOptionGroup;
-use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\FastTypeOption;
+use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\AsideOption;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\ShowAsFieldsetOption;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\ShowInViewOption;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\ShowLabelOption;
-use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\TypeOption;
 use Filament\Forms\Components\Field;
-use Filament\Forms\Components\Toggle;
 
 class SectionType extends CustomLayoutType
 {
@@ -45,13 +43,7 @@ class SectionType extends CustomLayoutType
                     'show_as_fieldset' => ShowAsFieldsetOption::make()
                         ->modifyOptionComponent(fn(Field $component) => $component->columnStart(2)),
                     'show_label' => ShowLabelOption::make(),
-                    'aside' => FastTypeOption::makeFast(
-                        false,
-                        Toggle::make('aside')
-                            ->label(TypeOption::__('aside.label'))
-                            ->helperText(TypeOption::__('aside.helper_text'))
-                            ->disabled(fn($get) => !$get('show_label'))
-                    ),
+                    'aside' => AsideOption::make(),
                 ]),
         ];
     }

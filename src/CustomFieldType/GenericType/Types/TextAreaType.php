@@ -42,7 +42,7 @@ class TextAreaType extends CustomFieldType
                     'auto_size',
                     FastTypeOption::makeFast(
                         false,
-                        Toggle::make('auto_size')
+                        static fn($name) => Toggle::make($name)
                             ->helperText(TypeOption::__('auto_size.helper_text'))
                             ->label(TypeOption::__('auto_size.label'))
                             ->columnSpan(2)
