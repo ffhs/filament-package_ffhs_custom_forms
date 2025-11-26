@@ -11,11 +11,17 @@ use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanMapFields;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasCustomTypePackageTranslation;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Groups\LayoutOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Groups\ValidationTypeOptionGroup;
+use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\AllowedFileTypeOption;
+use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\Downloadable;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\FastTypeOption;
+use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\GridLayoutOption;
+use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\MultipleOption;
+use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\OpenInNewTabOption;
+use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\PreserveFilenamesOption;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\ReorderableTypeOption;
+use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\ShowImagesOption;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\TypeOption;
 use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Schema;
 use Filament\Support\Components\Component;
@@ -38,21 +44,12 @@ class FileUploadType extends CustomFieldType
     {
         return [
             LayoutOptionGroup::make()
-                ->addTypeOptions(
-                    'grid_layout',
-                    FastTypeOption::makeFast(
-                        false,
-                        Toggle::make('grid_layout')
-                            ->helperText(TypeOption::__('grid_layout.helper_text'))
-                            ->label(TypeOption::__('grid_layout.label'))
-                            ->hidden(fn($get) => !$get('image'))
-                    )
-                ),
+                ->addTypeOptions('grid_layout', GridLayoutOption::make()),
             ValidationTypeOptionGroup::make()
                 ->mergeTypeOptions([
                     'image' => FastTypeOption::makeFast(
                         false,
-                        Toggle::make('image')
+                        fn($name) => Toggle::make($name)
                             ->label(TypeOption::__('only_images.label'))
                             ->helperText(TypeOption::__('only_images.helper_text'))
                             ->afterStateUpdated(function ($state, $set) {
@@ -66,73 +63,25 @@ class FileUploadType extends CustomFieldType
                             })
                             ->live()
                     ),
-                    'show_images' => FastTypeOption::makeFast(
-                        false,
-                        Toggle::make('show_images')
-                            ->label(TypeOption::__('show_images.label'))
-                            ->helperText(TypeOption::__('show_images.helper_text'))
-                            ->disabled(fn($get) => !$get('image'))
-                            ->hidden(fn($get) => !$get('image'))
-                            ->live()
-                    ),
+                    'show_images' => ShowImagesOption::make(),
                     'show_images_in_view' => FastTypeOption::makeFast(
                         false,
-                        Toggle::make('show_images_in_view')
+                        fn($name) => Toggle::make($name)
                             ->label(TypeOption::__('show_images_in_view.label'))
                             ->helperText(TypeOption::__('show_images_in_view.helper_text'))
                             ->disabled(fn($get) => !$get('image'))
                             ->hidden(fn($get) => !$get('image'))
                             ->live()
                     ),
-                    'downloadable' => FastTypeOption::makeFast(
-                        true,
-                        Toggle::make('downloadable')
-                            ->label(TypeOption::__('downloadable.label'))
-                            ->helperText(TypeOption::__('downloadable.helper_text'))
-                    ),
-                    'multiple' => FastTypeOption::makeFast(
-                        false,
-                        Toggle::make('multiple')
-                            ->label(TypeOption::__('multiple_uploads_allowed.label'))
-                            ->helperText(TypeOption::__('multiple_uploads_allowed.helper_text'))
-                            ->afterStateUpdated(function ($state, $set) {
-                                if ($state) {
-                                    return;
-                                }
-
-                                $set('reorderable', false);
-                            })
-                            ->live()
-                    ),
+                    'downloadable' => Downloadable::make(),
+                    'multiple' => MultipleOption::make(),
                     'reorderable' => ReorderableTypeOption::make()
                         ->modifyOptionComponent(
                             fn(Toggle $component) => $component->hidden(fn($get) => !$get('multiple'))
                         ),
-                    'preserve_filenames' => FastTypeOption::makeFast(
-                        true,
-                        Toggle::make('preserve_filenames')
-                            ->label(TypeOption::__('preserve_filenames.label'))
-                            ->helperText(TypeOption::__('preserve_filenames.helper_text'))
-                    ),
-                    'open_in_new_tab' => FastTypeOption::makeFast(
-                        true,
-                        Toggle::make('open_in_new_tab')
-                            ->label(TypeOption::__('open_in_new_tab.label'))
-                            ->helperText(TypeOption::__('open_in_new_tab.helper_text'))
-                            ->hidden(fn($get) => $get('image'))
-                    ),
-                    'allowed_type' => FastTypeOption::makeFast(
-                        [
-                            'application/pdf',
-                            'image/jpeg',
-                            'image/jpg',
-                            'image/png',
-                        ],
-                        TagsInput::make('allowed_type')
-                            ->columnSpanFull()
-                            ->label(TypeOption::__('allowed_file_types.label'))
-                            ->helperText(TypeOption::__('allowed_file_types.helper_text'))
-                    ),
+                    'preserve_filenames' => PreserveFilenamesOption::make(),
+                    'open_in_new_tab' => OpenInNewTabOption::make(),
+                    'allowed_type' => AllowedFileTypeOption::make(),
                 ]),
         ];
     }
