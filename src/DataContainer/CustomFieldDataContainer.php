@@ -34,7 +34,12 @@ class CustomFieldDataContainer implements EmbedCustomField
 
     public function getType(): ?CustomFieldType
     {
-        return CustomForms::getFieldTypeFromRawDate($this->data, $this->customFormConfiguration);
+        if (array_key_exists('cachedType', $this->data)) {
+            return $this->data['cachedType'];
+        }
+
+        return $this->data['cachedType'] = CustomForms::getFieldTypeFromRawDate($this->data,
+            $this->customFormConfiguration);
     }
 
     public function isGeneralField(): bool
