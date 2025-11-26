@@ -31,7 +31,8 @@ class CustomFormAnswerEditor extends Field implements CanEntangleWithSingularRel
         bool|Closure $condition = true,
         Closure|string|null $relatedModel = null
     ): static {
-        return $this->embeddedRelationship($name, $condition, $relatedModel)
+        return $this
+            ->embeddedRelationship($name, $condition, $relatedModel)
             ->saveRelationshipsUsing(function () {
                 $data = $this->getChildSchema()?->getState(shouldCallHooksBefore: false);
                 $this->saveCustomFormAnswerRelation($data);
