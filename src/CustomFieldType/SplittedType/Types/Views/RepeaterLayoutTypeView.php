@@ -84,7 +84,7 @@ class RepeaterLayoutTypeView implements FieldTypeView
 
         /** @var Collection<int, CustomFieldDataContainer> $fields */ //ToDo make for the other non database fields
         $fields = $parameter['child_fields'];
-        $fields = $fields->keyBy(fn(CustomFieldDataContainer $container) => $container->getFormPosition());
+        $fields = $fields->keyBy(fn(EmbedCustomField $container) => $container->getFormPosition());
         $viewMode = $parameter['viewMode'];
 
         foreach ($loadedAnswers as $id => $answer) {
