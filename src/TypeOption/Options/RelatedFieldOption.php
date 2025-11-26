@@ -46,7 +46,6 @@ class RelatedFieldOption extends TypeOption
 
         $fields = collect($this->getFieldDataFromFormData($state, $formConfiguration));
 
-        /**@phpstan-ignore-next-line */
         return $this->getSelectOptionsFromFields($fields, $formConfiguration);
     }
 }

@@ -70,9 +70,7 @@ trait HasDefaultViewComponent
         }
 
         // Handle answer state for entries
-        if ($fieldRaw instanceof EmbedCustomFieldAnswer
-            && $component instanceof Entry
-            && method_exists($component, 'state')) {
+        if ($fieldRaw instanceof EmbedCustomFieldAnswer && $component instanceof Entry) {
             $component = $component->state($this->getAnswer($fieldRaw));
         }
 
