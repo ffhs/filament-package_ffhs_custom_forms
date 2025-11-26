@@ -31,25 +31,21 @@ trait HasCustomFields
             ->select('template_id')
             ->where('custom_form_id', $this->id);
 
-        $customFieldQuery = CustomField::query()
-            ->where(function (Builder $query) use ($templateIdQueries) {
-                $query
-                    ->where('custom_form_id', $this->id)
-                    ->orWhereIn('custom_form_id', $templateIdQueries);
-            });
-
-        $templates = CustomForm::query()
-            ->whereIn('id', $templateIdQueries)
-            ->get()
-            ->keyBy('id');
-
-        $customFields = $customFieldQuery
+        $customFields = CustomField::query()
+            ->where('custom_form_id', $this->id)
+            ->orWhereIn('custom_form_id', $templateIdQueries)
             ->with([
                 'generalField',
                 'generalField.customOptions',
                 'customOptions'
             ])
             ->get();
+
+
+        $templates = CustomForm::query()
+            ->whereIn('id', $templateIdQueries)
+            ->get()
+            ->keyBy('id');
 
         $groupedCustomFields = $customFields->groupBy('custom_form_id');
         $this->setRelation('ownedFields', $groupedCustomFields->get($this->id));
