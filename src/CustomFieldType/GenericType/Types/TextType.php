@@ -9,14 +9,11 @@ use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasCustomTypePackageTranslation;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Groups\LayoutOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Groups\ValidationTypeOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\AlpineMaskOption;
-use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\FastTypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\MaxLengthOption;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\MinLengthOption;
+use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\SuggestionsOption;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\TypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\TypeOptionGroup;
-use Filament\Forms\Components\Repeater;
-use Filament\Forms\Components\TextInput;
-use Filament\Schemas\Components\Group;
 
 class TextType extends CustomFieldType
 {
@@ -51,18 +48,7 @@ class TextType extends CustomFieldType
                 ]),
 
             TypeOptionGroup::make(TypeOption::__('suggestions.label'), [
-                'suggestions' => FastTypeOption::makeFast([],
-                    Group::make()
-                        ->statePath('suggestions')
-                        ->columnSpanFull()
-                        ->schema(fn($record) => once(fn() => [
-                            Repeater::make(app()->getLocale())
-                                ->helperText(TypeOption::__('suggestions.helper_text'))
-                                ->addActionLabel(TypeOption::__('suggestions.add_label'))
-                                ->schema([TextInput::make('value')]) //ToDO change to simple repeater
-                                ->hiddenLabel(),
-                        ]))
-                ),
+                'suggestions' => SuggestionsOption::make(),
             ]),
         ];
     }

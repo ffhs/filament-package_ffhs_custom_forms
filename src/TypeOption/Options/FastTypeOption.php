@@ -11,25 +11,21 @@ class FastTypeOption extends TypeOption
 {
     use HasOptionNoComponentModification;
 
-    private Component|Closure $component;
+    private Closure $component;
 
-    public function __construct(mixed $default, Component|Closure $component)
+    public function __construct(mixed $default, Closure $component)
     {
         $this->default = $default;
         $this->component = $component;
     }
 
-    public static function makeFast(mixed $default, Component|Closure $component): FastTypeOption
+    public static function makeFast(mixed $default, Closure $component): FastTypeOption
     {
         return app(static::class, ['default' => $default, 'component' => $component]);
     }
 
     public function getComponent(string $name): Component
     {
-        if ($this->component instanceof Closure) {
-            return ($this->component)($name);
-        }
-
-        return $this->component;
+        return ($this->component)($name);
     }
 }

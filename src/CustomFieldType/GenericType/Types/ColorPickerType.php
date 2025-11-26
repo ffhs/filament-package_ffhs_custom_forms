@@ -7,9 +7,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\Types\Views\
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasCustomTypePackageTranslation;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Groups\LayoutOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Groups\ValidationTypeOptionGroup;
-use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\FastTypeOption;
-use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\TypeOption;
-use Filament\Forms\Components\Select;
+use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\ColorTypeOption;
 
 class ColorPickerType extends CustomOptionType
 {
@@ -32,22 +30,7 @@ class ColorPickerType extends CustomOptionType
         return [
             LayoutOptionGroup::make(),
             ValidationTypeOptionGroup::make()
-                ->mergeTypeOptions([
-                    'color_type' => FastTypeOption::makeFast(
-                        'rgb',
-                        Select::make('color_type')
-                            ->label(TypeOption::__('color_type.label'))
-                            ->helperText(TypeOption::__('color_type.helper_text'))
-                            ->columnSpanFull()
-                            ->required()
-                            ->selectablePlaceholder(false)
-                            ->options([
-                                'rgb' => 'RGB',
-                                'hsl' => 'HSL',
-                                'rgba' => 'RGBA',
-                            ])
-                    ),
-                ]),
+                ->addTypeOptions('color_type', ColorTypeOption::make()),
         ];
     }
 

@@ -11,9 +11,8 @@ use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasCustomTypePackageTranslation;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Groups\LayoutWithColumnsOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Groups\ValidationTypeOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\BooleanOption;
-use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\FastTypeOption;
+use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\GroupedOption;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\InlineOption;
-use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\TypeOption;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Component;
 
@@ -55,14 +54,7 @@ class ToggleButtonsType extends CustomOptionType
                         ->modifyOptionComponent(function (Toggle $component) {
                             return $component->hidden(fn($get) => $get('grouped'));
                         }),
-                    'grouped' => FastTypeOption::makeFast(
-                        false,
-                        Toggle::make('grouped')
-                            ->helperText(TypeOption::__('toggle_grouped.helper_text'))
-                            ->label(TypeOption::__('toggle_grouped.label'))
-                            ->disabled(fn($get) => $get('inline'))
-                            ->live(),
-                    ),
+                    'grouped' => GroupedOption::make(),
                     'boolean' => BooleanOption::make()
                         ->modifyOptionComponent(fn(Toggle $component) => $component
                             ->disabled(fn($get) => $get('multiple'))
