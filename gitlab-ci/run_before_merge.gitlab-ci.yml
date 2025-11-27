@@ -38,29 +38,29 @@ setup:
       - node_modules/
     policy: pull
 
-build_css_js:
-  stage: build
-  extends: .base_job
-  before_script:
-    - npm install
-    # Git-Konfiguration für Commits
-    - git config user.email "gitlab-ci@ffhs.ch"
-    - git config user.name "GitLab CI"
-    - rm -rf resources/dist
-    - mkdir resources/dist
-  script:
-    - npm run build
-    - |
-      if [ -n "$(git status --porcelain resources/dist)" ]; then
-        echo "Changes detected in resources/dist, committing..."
-        git add resources/dist
-        git commit -m "chore: update built assets"
+#build_css_js:
+#  stage: build
+#  extends: .base_job
+#  before_script:
+#    - npm install
+#    # Git-Konfiguration für Commits
+#    - git config user.email "gitlab-ci@ffhs.ch"
+#    - git config user.name "GitLab CI"
+#    - rm -rf resources/dist
+#    - mkdir resources/dist
+#  script:
+#    - npm run build
+#    - |
+#      if [ -n "$(git status --porcelain resources/dist)" ]; then
+#        echo "Changes detected in resources/dist, committing..."
+#        git add resources/dist
+#        git commit -m "chore: update built assets"
 
-        # Push zurück zum Branch
-        git push https://oauth2:${CI_PUSH_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git HEAD:${CI_COMMIT_REF_NAME}
-      else
-        echo "No changes in resources/dist"
-      fi
+#        # Push zurück zum Branch
+#        git push https://oauth2:${CI_PUSH_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git HEAD:${CI_COMMIT_REF_NAME}
+#      else
+#        echo "No changes in resources/dist"
+#      fi
 
 php-tests:
   stage: test
