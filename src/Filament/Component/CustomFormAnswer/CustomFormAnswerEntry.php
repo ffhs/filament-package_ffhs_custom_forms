@@ -9,8 +9,6 @@ use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasEmbeddedCustomForm;
 use Filament\Infolists\Components\Entry;
 use Filament\Schemas\Components\Contracts\CanEntangleWithSingularRelationships;
 use Filament\Schemas\Schema;
-use Filament\Support\Components\Component;
-use Illuminate\Support\HtmlString;
 
 /**
  * @method null|CustomFormAnswer getCachedExistingRecord()
@@ -29,21 +27,15 @@ class CustomFormAnswerEntry extends Entry implements CanEntangleWithSingularRela
         $this->getChildSchema()?->fill($data, false, false);
     }
 
-    /**
-     * @return array<Component|string|HtmlString>
-     */
-    public function getDefaultChildComponents(): array
-    {
-        return once(function (): array {
-            return $this->getCustomFormSchema($this->getCustomForm(), $this->getFieldDisplayer(), $this->getViewMode());
-        });
-    }
-
     protected function setUp(): void
     {
         parent::setUp();
 
         $this->fieldDisplayer(EntryFieldDisplayer::make(...))
+            ->components(fn() => once(function (): array {
+                return $this->getCustomFormSchema($this->getCustomForm(), $this->getFieldDisplayer(),
+                    $this->getViewMode());
+            }))
             ->columns(1)
             ->autoViewMode()
             ->hiddenLabel();
