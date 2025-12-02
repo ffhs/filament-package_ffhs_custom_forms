@@ -7,6 +7,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormConfiguration\CustomFormC
 use Ffhs\FilamentPackageFfhsCustomForms\Facades\CustomForms;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\FormRule;
 use Filament\Schemas\Components\Utilities\Get;
 use Illuminate\Support\Collection;
 
@@ -40,7 +41,8 @@ trait HasFieldsMapToSelectOptions
                 $title = !is_null($template) ? $template->short_title : '';
             }
 
-            $title = empty($title) ? 'Aktuelles Formular' : $title;
+            $currentFormTitle = FormRule::type__('events.has_targets.target_field.current_form');
+            $title = empty($title) ? $currentFormTitle : $title;
             $name = $field->isGeneralField() ? $field->getGeneralField()->name : $field->getName();
             $options[$title][$field->identifier()] = empty($name) ? $this->getDefaultFieldName($field) : $name;
         }
@@ -50,6 +52,6 @@ trait HasFieldsMapToSelectOptions
 
     protected function getDefaultFieldName(EmbedCustomField $field): string
     {
-        return 'No Name: ' . $field->getType()->displayname();
+        return FormRule::type__('events.has_targets.target_field.no_name') . ':' . $field->getType()->displayname();
     }
 }

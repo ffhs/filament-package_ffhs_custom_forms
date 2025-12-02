@@ -6,6 +6,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormConfiguration\CustomFormConfiguration;
 use Ffhs\FilamentPackageFfhsCustomForms\Facades\CustomForms;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\FormEditor\StateCasts\CustomFieldStateCast;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\FormRule;
 use Filament\Forms\Components\Select;
 use Filament\Schemas\Components\Utilities\Get;
 use Illuminate\Support\Collection;
@@ -39,7 +40,7 @@ trait HasTriggerEventFormTargets
     {
         return Select::make('target')
             ->options($this->getTargetOptions(...))
-            ->label('Target')
+            ->label(FormRule::type__('events.has_targets.target_field.label'))
             ->live();
     }
 

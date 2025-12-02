@@ -9,6 +9,13 @@ return [
         'required_event' => ['label' => 'Feld benötigen'],
         'change_options_rule' => ['label' => 'Feld Optionen ändern'],
         'disable_options_rule' => ['label' => 'Feld Optionen deaktivieren'],
+        'has_targets' => [
+            'target_field' => [
+                'label' => 'Zielfeld',
+                'no_name' => 'Kein Name',
+                'current_form' => 'Aktuelles Formular',
+            ]
+        ]
     ],
     'triggers' => [
         'value_equals_anchor' => [
