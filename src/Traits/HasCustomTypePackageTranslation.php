@@ -11,7 +11,7 @@ trait HasCustomTypePackageTranslation
         return CustomForms::__('custom_field_types.' . static::identifier() . '.' . $string);
     }
 
-    public function getTranslatedName(): string
+    public static function displayname(): string
     {
         return static::__('label');
     }

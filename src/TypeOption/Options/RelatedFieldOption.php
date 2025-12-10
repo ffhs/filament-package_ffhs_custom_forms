@@ -2,26 +2,23 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options;
 
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasAllFieldDataFromFormData;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasFieldsMapToSelectOptions;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasOptionNoComponentModification;
+use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasTypeOptionFormEditorComponent;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\TypeOption;
-use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Select;
-use Illuminate\Support\Collection;
+use Filament\Pages\Page;
+use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Support\Components\Component;
 
 class RelatedFieldOption extends TypeOption
 {
     use HasAllFieldDataFromFormData;
     use HasFieldsMapToSelectOptions;
     use HasOptionNoComponentModification;
-
-    public function getDefaultValue(): mixed
-    {
-        return null;
-    }
+    use HasTypeOptionFormEditorComponent;
 
     public function getComponent(string $name): Component
     {
@@ -31,14 +28,24 @@ class RelatedFieldOption extends TypeOption
             ->options($this->getOptions(...));
     }
 
-    protected function getOptions($livewire, CustomForm $record): array|Collection
+    /**
+     * @param Get $get
+     * @param Page|RelationManager $livewire
+     * @return array<string|int, array<string, string>>
+     */
+    protected function getOptions(Get $get, Page|RelationManager $livewire): array
     {
-        $get = $livewire
-            ->getMountedFormComponentActionComponent(0)
-            ->getGetCallback();
-        $fields = collect($this->getFieldDataFromFormData($get('../custom_fields'), $record))
-            ->map(fn(array $field) => (new CustomField())->fill($field));
+        $customFormComponent = $this->getFormEditorComponent($get('../../context.schemaComponent'), $livewire);
 
-        return $this->getSelectOptionsFromFields($fields);
+        if (is_null($customFormComponent)) {
+            throw new \RuntimeException('CustomFormEditor not found');
+        }
+
+        $state = $customFormComponent->getState()['custom_fields'] ?? [];
+        $formConfiguration = $customFormComponent->getFormConfiguration();
+
+        $fields = collect($this->getFieldDataFromFormData($state, $formConfiguration));
+
+        return $this->getSelectOptionsFromFields($fields, $formConfiguration);
     }
 }

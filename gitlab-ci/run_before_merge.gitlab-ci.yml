@@ -1,0 +1,82 @@
+setup:
+  stage: setup
+  image: internal-git.alpen.ffhs.ch:5050/ffhs-it-services/laravel/laravel-filament-docker-image-for-test-ci:latest
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: always
+    - when: never
+  before_script:
+    - composer config --global gitlab-oauth.internal-git.alpen.ffhs.ch ${CI_JOB_TOKEN}
+  script:
+    - composer install --prefer-dist --no-ansi --no-interaction --no-progress --no-scripts
+    - npm install
+  cache:
+    key:
+      files:
+        - composer.lock
+    paths:
+      - vendor/
+      - packages/ffhs/
+      - node_modules/
+    policy: push
+
+.base_job:
+  image: internal-git.alpen.ffhs.ch:5050/ffhs-it-services/laravel/laravel-filament-docker-image-for-test-ci:latest
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'  # Only runs in MR pipelines
+      when: always  # Explicitly set to always run when condition is met
+    - when: never  # Never run in any other  case
+  dependencies:
+    - setup
+  cache:
+    key:
+      files:
+        - composer.lock
+    paths:
+      - vendor/
+      - packages/ffhs/
+      - node_modules/
+    policy: pull
+
+#build_css_js:
+#  stage: build
+#  extends: .base_job
+#  before_script:
+#    - npm install
+#    # Git-Konfiguration für Commits
+#    - git config user.email "gitlab-ci@ffhs.ch"
+#    - git config user.name "GitLab CI"
+#    - rm -rf resources/dist
+#    - mkdir resources/dist
+#  script:
+#    - npm run build
+#    - |
+#      if [ -n "$(git status --porcelain resources/dist)" ]; then
+#        echo "Changes detected in resources/dist, committing..."
+#        git add resources/dist
+#        git commit -m "chore: update built assets"
+
+#        # Push zurück zum Branch
+#        git push https://oauth2:${CI_PUSH_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git HEAD:${CI_COMMIT_REF_NAME}
+#      else
+#        echo "No changes in resources/dist"
+#      fi
+
+php-tests:
+  stage: test
+  extends: .base_job
+  before_script:
+    - ./vendor/bin/testbench vendor:publish --tag="filament-package_ffhs_utils-migrations"
+    - ./vendor/bin/testbench vendor:publish --tag="filament-package_ffhs_custom_forms-migrations"
+    - ./vendor/bin/testbench vendor:publish --provider="Spatie\Permission\PermissionServiceProvider"
+    - ./vendor/bin/testbench vendor:publish --provider="Spatie\Activitylog\ActivitylogServiceProvider" --tag="activitylog-migrations"
+    - ./vendor/bin/testbench workbench:build
+  script:
+    - php -d memory_limit=512M vendor/bin/pest --coverage
+  coverage: /Total:\s*([^%]+)/
+
+stan:
+  stage: stan
+  extends: .base_job
+  script:
+    - ./vendor/bin/phpstan analyse --error-format=gitlab --memory-limit=2G

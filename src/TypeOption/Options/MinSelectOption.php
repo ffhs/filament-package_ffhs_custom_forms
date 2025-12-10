@@ -2,19 +2,18 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options;
 
+use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasOptionNoComponentModification;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\TypeOption;
-use Filament\Forms\Components\Component as FormsComponent;
 use Filament\Forms\Components\TextInput;
-use Filament\Infolists\Components\Component as InfolistsComponent;
+use Filament\Support\Components\Component;
 
 class MinSelectOption extends TypeOption
 {
-    public function getDefaultValue(): int
-    {
-        return 0;
-    }
+    use HasOptionNoComponentModification;
 
-    public function getComponent(string $name): FormsComponent
+    protected mixed $default = 0;
+
+    public function getComponent(string $name): Component
     {
         return TextInput::make($name)
             ->label(TypeOption::__('min_select.label'))
@@ -24,15 +23,5 @@ class MinSelectOption extends TypeOption
             ->minValue(0)
             ->numeric()
             ->step(1);
-    }
-
-    public function modifyFormComponent(FormsComponent $component, mixed $value): FormsComponent
-    {
-        return $component;
-    }
-
-    public function modifyInfolistComponent(InfolistsComponent $component, mixed $value): InfolistsComponent
-    {
-        return $component;
     }
 }

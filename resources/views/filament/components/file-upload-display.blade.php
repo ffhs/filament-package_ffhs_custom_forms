@@ -1,21 +1,17 @@
-<div
-    {{
-        $attributes
-            ->merge([
-                'id' => $getId(),
-            ], escape: false)
-            ->merge($getExtraAttributes(), escape: false)
-    }}>
-
-    <div style="--c-50:var(--primary-50);--c-400:var(--primary-400);--c-600:var(--primary-600);"
-         class="flex justify-center fi-badge w-full gap-x-1 rounded-md text-xs font-medium ring-1 ring-inset px-2 min-w-[theme(spacing.6)] py-1 fi-color-custom bg-custom-50 text-custom-600 ring-custom-600/10 dark:bg-custom-400/10 dark:text-custom-400 dark:ring-custom-400/30 fi-color-primary">
-        <span
-            style="flex: 1; text-align: left; color: black; padding-top: 3px; padding-left: 5px">{{$getLabel()}}</span>
-        <span style="text-align: right; justify-items: right; padding-right: 5px">
-
-            {{ $getChildComponentContainer() }}
-
-        </span>
+<x-dynamic-component
+    :component="$getEntryWrapperView()"
+    :entry="$entry"
+>
+    <div style="width: 100% !important; padding-top: 25px">
+        <x-filament::badge color="success" style="width: 100% !important; display: block !important;">
+            <div style="position: relative; width: 100% !important; min-height: 24px; display: block !important;">
+                <div style="position: absolute; left: 5px; top: 50%; transform: translateY(-50%);">
+                    {{$getLabel()}}
+                </div>
+                <div style="position: absolute; right: 5px; top: 50%; transform: translateY(-50%);">
+                    {{ $getChildSchema() }}
+                </div>
+            </div>
+        </x-filament::badge>
     </div>
-
-</div>
+</x-dynamic-component>

@@ -2,32 +2,32 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\TemplateResource\Pages;
 
+use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormConfiguration\CustomFormConfiguration;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormResource\Pages\EditCustomForm;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\TemplateResource;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\TemplateResource\TemplateResource;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
-use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanModifyCustomFormEditorData;
+use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanGetUsedGeneralFields;
 use Filament\Actions\Action;
-use Filament\Support\Enums\MaxWidth;
+use Filament\Support\Enums\Width;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\HtmlString;
 
 class EditTemplate extends EditCustomForm
 {
-    use CanModifyCustomFormEditorData;
-
-    //ToDo Check function
+    use CanGetUsedGeneralFields;
 
     protected static string $resource = TemplateResource::class;
 
     public static function canAccess(array $parameters = []): bool
     {
         return static::$resource::canAccess()
-            && static::$resource::can('manageTemplates');
+            && static::$resource::can('manageTemplates'); //ToDo improve
     }
 
     public function getTitle(): string|Htmlable
@@ -39,90 +39,79 @@ class EditTemplate extends EditCustomForm
         return trans(CustomForm::__('pages.edit_template.title'), $attributes);
     }
 
-    public function save(bool $shouldRedirect = true, bool $shouldSendSavedNotification = true): void
+    public function save(bool $shouldRedirect = true, bool $shouldSendSavedNotification = true): void //ToDo improve
     {
-        parent::save($shouldRedirect, $shouldSendSavedNotification);
-
-        /*
-         * Delete GeneralFields in Forms
-         * Where one of the Template used GeneralField is used and move the answerers on this field.
-         */
-
-        /**@var CustomForm $template */
-        $template = CustomForm::query()
-            ->firstWhere('id', $this->record->id);
-
-        $templateGeneralFieldQuery = $template
-            ->customFieldsQuery()
-            ->whereNotNull('general_field_id');
-        $toDeleteGenFieldQuery = CustomField::query()
-            ->whereIn(
-                'general_field_id',
-                $templateGeneralFieldQuery
-                    ->clone()
-                    ->select('general_field_id')
-            )
-            ->whereIn(
-                'custom_form_id',
-                CustomField::query()
-                    ->where('template_id', $template->id)
-                    ->select('custom_form_id')
-            );
-
-        $toDeleteGenFields = $toDeleteGenFieldQuery
-            ->clone()
-            ->get();
-
-        if ($toDeleteGenFields->count() === 0) {
-            return;
+        if (!$this->showSaveConfirmation()) {
+            parent::save($shouldRedirect, $shouldSendSavedNotification);
         }
 
-        $newGeneralFields = $templateGeneralFieldQuery
-            ->select(['general_field_id', 'id'])
-            ->get();
+        DB::transaction(function () use ($shouldSendSavedNotification, $shouldRedirect) {
+            parent::save($shouldRedirect, $shouldSendSavedNotification);
 
-        foreach ($toDeleteGenFields as $generalField) {
-            /**@var CustomField $generalField */
-            $newGeneralField = $newGeneralFields
-                ->where('general_field_id', $generalField->general_field_id)
-                ->first();
+            $template = $this->getRecord();
 
-            $generalField
-                ->answers()
-                ->update(['custom_field_id' => $newGeneralField->id]);
-        }
+            $templateGeneralFieldQuery = $template
+                ->customFieldsQuery()
+                ->whereNotNull('general_field_id');
 
-        $toDeleteGenFieldQuery->delete();
+            $templateGeneralFieldQueryId = $templateGeneralFieldQuery
+                ->clone()
+                ->select('general_field_id');
 
-        //Reorder
-        $toReorderForm = CustomForm::query()
-            ->whereIn('id', $toDeleteGenFieldQuery->select('custom_form_id'));
+            $customFormsWitchUseTemplate = CustomField::query()->where('template_id',
+                $template->id)->select('custom_form_id');
 
-        foreach ($toReorderForm as $form) { //toDo Optimize
-            /**@var CustomForm $form */
-            $fields = $form->customFields;
-            $position = 0;
+            $toDeleteGenFieldQuery = CustomField::query()
+                ->whereIn('general_field_id', $templateGeneralFieldQueryId)
+                ->whereIn('custom_form_id', $customFormsWitchUseTemplate);
 
-            foreach ($fields as $field) {
-                /**@var CustomField $field */
-                $position++;
-                $field->layout_end_position = $position;
+            $toDeleteGenFields = $toDeleteGenFieldQuery->get();
 
-                if ($field->isDirty()) {
-                    $field->save();
+            if ($toDeleteGenFields->count() === 0) {
+                return;
+            }
+
+            $newGeneralFields = $templateGeneralFieldQuery->select(['general_field_id', 'id'])->get();
+
+            foreach ($toDeleteGenFields as $generalField) {
+                /**@var CustomField $generalField */
+                $newGeneralField = $newGeneralFields
+                    ->where('general_field_id', $generalField->general_field_id)
+                    ->first();
+
+                /**@phpstan-ignore-next-line */
+                $newGeneralFieldId = $newGeneralField->id;
+                $generalField->answers()->update(['custom_field_id' => $newGeneralFieldId]);
+            }
+
+            $toDeleteGenFieldQuery->delete();
+
+            //Reorder
+            $toReorderForm = CustomForm::query()
+                ->whereIn('id', $toDeleteGenFieldQuery->select('custom_form_id'))
+                ->get();
+
+            foreach ($toReorderForm as $form) {
+                /**@var CustomForm $form */
+                $fields = $form->customFields;
+                $position = 0;
+
+                foreach ($fields as $field) {
+                    /**@var CustomField $field */
+                    $position++;
+                    $field->layout_end_position = $position;
+
+                    if ($field->isDirty()) {
+                        $field->save();
+                    }
                 }
             }
-        }
+        });
     }
 
-    /**
-     * @return mixed
-     */
-    public function getRawCustomFields(): array
+    public function getFormConfiguration(): CustomFormConfiguration
     {
-        return once(
-            fn() => array_values($this->getCachedForms())[0]->getRawState()['custom_form']['custom_fields'] ?? []
-        );
+        return $this->getRecord()->getFormConfiguration();
     }
 
     protected function getSaveFormAction(): Action
@@ -130,20 +119,20 @@ class EditTemplate extends EditCustomForm
         return parent::getSaveFormAction()
             ->action(fn() => $this->save())
             ->submit(null)
-            ->requiresConfirmation(
-                fn() => $this->showSaveConfirmation() || $this->showCollideMessage()
-            )
-            ->modalWidth(MaxWidth::ExtraLarge)
-            ->modalSubmitAction(function ($action) {
+            ->requiresConfirmation(fn() => $this->showSaveConfirmation() || $this->showCollideMessage())
+            ->modalWidth(Width::ExtraLarge)
+            ->modalSubmitAction(function (Action $action) {
                 if ($this->showCollideMessage()) {
                     $action->hidden();
                 }
 
                 return $action;
             })
-            ->modalSubmitActionLabel(fn() => ($this->showSaveConfirmation() ?
-                __('filament-panels::resources/pages/edit-record.form.actions.save.label') :
-                null))
+            ->modalSubmitActionLabel(function () {
+                return $this->showSaveConfirmation() ?
+                    __('filament-panels::resources/pages/edit-record.form.actions.save.label') :
+                    null;
+            })
             ->modalDescription(function () {
                 if ($this->showCollideMessage()) {
                     return $this->collideMessageDescription();
@@ -170,27 +159,7 @@ class EditTemplate extends EditCustomForm
 
     protected function showSaveConfirmation(): bool
     {
-        return $this
-                ->cachedGeneralFieldsOverwritten()
-                ->count() > 0;
-    }
-
-    protected function cachedGeneralFieldsOverwritten(): Collection
-    {
-        return once(fn() => $this->getGeneralFieldsOverwrittenQuery()->get());
-    }
-
-    protected function getGeneralFieldsOverwrittenQuery(): Builder
-    {
-        $customFields = $this->getRawCustomFields();
-        $usedGeneralIDs = $this->getUsedGeneralFieldIds($customFields, $this->getRecord());
-
-        $templateFieldsQuery = CustomField::query()
-            ->where('template_id', $this->record->id);
-
-        return CustomField::query()
-            ->whereIn('custom_form_id', $templateFieldsQuery->select('custom_form_id'))
-            ->whereIn('general_field_id', $usedGeneralIDs);
+        return $this->cachedGeneralFieldsOverwritten()->count() > 0;
     }
 
     protected function showCollideMessage(): bool
@@ -198,26 +167,48 @@ class EditTemplate extends EditCustomForm
         return $this->getTemplateGeneralFieldCollision()->count() > 0;
     }
 
+    protected function cachedGeneralFieldsOverwritten(): Collection
+    {
+        return once(fn(): Collection => $this->getGeneralFieldsOverwrittenQuery()->get());
+    }
+
+    protected function getGeneralFieldsOverwrittenQuery(): Builder
+    {
+        $configuration = $this->getFormConfiguration();
+        $customFields = $this->data['custom_form']['custom_fields'] ?? [];
+        $usedGeneralIds = $this->getUsedGeneralFieldIds($customFields, $configuration);
+
+        $templateFieldsQuery = CustomField::query()
+            ->where('template_id', $this->getRecord()->id);
+
+        return CustomField::query()
+            ->whereIn('custom_form_id', $templateFieldsQuery->select('custom_form_id'))
+            ->whereIn('general_field_id', $usedGeneralIds);
+    }
+
     protected function getTemplateGeneralFieldCollision(): Collection
     {
-        return once(fn() => $this->getTemplateGeneralFieldCollisionQuery()->get());
+        return once(fn(): Collection => $this->getTemplateGeneralFieldCollisionQuery()->get());
     }
 
     protected function getTemplateGeneralFieldCollisionQuery(): Builder
     {
-        $customFields = $this->getRawCustomFields();
+        /**@phpstan-ignore-next-line */
+        $id = $this->record->id;
+        $customFields = $this->form->getRawState()['custom_form']['custom_fields'] ?? [];
+        $usedGeneralFieldIds = $this->getUsedGeneralFieldIds($customFields, $this->getFormConfiguration());
 
         $templateFieldsQuery = CustomField::query()
-            ->where('template_id', $this->record->id);
+            ->where('template_id', $id);
 
         $otherTemplatesQuery = CustomField::query()
             ->whereIn('custom_form_id', $templateFieldsQuery->select('custom_form_id'))
             ->whereNotNull('template_id')
-            ->whereNot('template_id', $this->record->id);
+            ->whereNot('template_id', $id);
 
         return CustomField::query()
             ->whereIn('custom_form_id', $otherTemplatesQuery->select('template_id'))
-            ->whereIn('general_field_id', $this->getUsedGeneralFieldIds($customFields, $this->getRecord()));
+            ->whereIn('general_field_id', $usedGeneralFieldIds);
     }
 
     protected function collideMessageDescription(): HtmlString
@@ -255,6 +246,8 @@ class EditTemplate extends EditCustomForm
 
     protected function getCollidedFormQuery(): Builder
     {
+        /**@phpstan-ignore-next-line */
+        $id = $this->record->id;
         $collidedFields = $this->getTemplateGeneralFieldCollision();
         $collidedTemplates = [];
         $collidedFields->each(function (CustomField $field) use (&$collidedTemplates) {
@@ -265,7 +258,7 @@ class EditTemplate extends EditCustomForm
             ->whereIn('template_id', $collidedTemplates);
         $collidedFormsIds = CustomField::query()
             ->whereIn('custom_form_id', $collideTemplatesUsedFields->select('custom_form_id'))
-            ->where('template_id', $this->record->id)
+            ->where('template_id', $id)
             ->select('custom_form_id');
 
         return CustomForm::query()
@@ -277,14 +270,10 @@ class EditTemplate extends EditCustomForm
         $styleClasses = 'class="fi-modal-description text-sm text-gray-500 dark:text-gray-400 mt-2"';
         $generalFields = GeneralField::query()
             ->whereIn('id', $this->cachedGeneralFieldsOverwritten()->select('general_field_id'))
-            ->select('name_de')
-            ->get()
-            ->pluck('name_de');  //ToDo Translate
+            ->pluck('name');
 
         $forms = CustomForm::query()
             ->whereIn('id', $this->cachedGeneralFieldsOverwritten()->select('custom_form_id'))
-            ->select('short_title')
-            ->get()
             ->pluck('short_title');
 
         return

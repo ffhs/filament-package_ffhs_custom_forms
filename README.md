@@ -115,7 +115,6 @@ A **CustomForm** is composed of two main parts:
 
 - **CustomFields** – Dynamic fields rendered within the form.
 
-
 ---
 
 ### 3. CustomFormConfiguration
@@ -167,7 +166,8 @@ After creating a new configuration, register it in the `ffhs_custom_forms` confi
 
 ### ✅ Form Configurations (FormTypes)
 
-You can create different **FormTypes**, each with its own set of available **FieldTypes** and required **GeneralFields**. 
+You can create different **FormTypes**, each with its own set of available **FieldTypes** and required **GeneralFields
+**.
 This allows you to customize forms for different application scenarios.
 
 For example, you might have custom forms for requests and custom forms for applications. Now you can create two
@@ -459,7 +459,7 @@ public function extraTypeOptions(): array
     return [  
        'my_option' => FastTypeOption::makeFast(  
 		    default: false,  
-		    Toggle::make('my_option')
+		    fn($name) => Toggle::make($name)
 		)
     ];  
 }
@@ -481,7 +481,7 @@ return $input
 
 ### OptionsGroups
 
-OptionsGroups help organize multiple related TypeOptions into logical collections, 
+OptionsGroups help organize multiple related TypeOptions into logical collections,
 making your field configuration cleaner and easier to manage.
 
 In the image TypeOptions are marked red and the OptionGroups are marked blue.
@@ -740,10 +740,9 @@ composer install
 
 Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed recently.
 
-
 ## Postcards
 
-We highly appreciate you sending us a postcard. 
+We highly appreciate you sending us a postcard.
 You'll find our address on our [page](https://www.ffhs.ch/).
 
 ## License

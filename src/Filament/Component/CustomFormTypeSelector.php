@@ -2,12 +2,15 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Component;
 
+use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormConfiguration\CustomFormConfiguration;
+use Ffhs\FilamentPackageFfhsCustomForms\Facades\CustomForms;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Filament\Forms\Components\Select;
+use Illuminate\Support\Collection;
 
 class CustomFormTypeSelector extends Select
 {
-    public static function make(string $name = 'custom_form_identifier'): static
+    public static function make(?string $name = 'custom_form_identifier'): static
     {
         return parent::make($name);
     }
@@ -17,15 +20,14 @@ class CustomFormTypeSelector extends Select
         parent::setUp();
 
         $this
-            ->label(CustomForm::__('attributes.custom_form_identifier'))
+            ->label(CustomForm::__('attributes.custom_form_identifier.label'))
+            ->helperText(CustomForm::__('attributes.custom_form_identifier.helper_text'))
             ->options($this->getTypeOptions());
     }
 
-    protected function getTypeOptions(): array
+    protected function getTypeOptions(): Collection|array
     {
-        $keys = array_map(fn($config) => $config::identifier(), config('ffhs_custom_forms.forms'));
-        $values = array_map(fn($config) => $config::displayName(), config('ffhs_custom_forms.forms'));
-
-        return array_combine($keys, $values);
+        return collect(CustomForms::getFormConfigurations())
+            ->map(fn(CustomFormConfiguration $configuration) => $configuration::displayname());
     }
 }

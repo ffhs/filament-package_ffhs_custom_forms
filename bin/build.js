@@ -1,13 +1,8 @@
 import * as esbuild from 'esbuild'
 
 esbuild.build({
-    entryPoints: [
-        './resources/js/drag_drop/alpine_components/parent.js',
-        './resources/js/drag_drop/alpine_components/element.js',
-        './resources/js/drag_drop/alpine_components/container.js',
-        './resources/js/drag_drop/alpine_components/action_group.js',
-    ],
-    outdir: './dist/js/drag-drop',
+    entryPoints: [],
+    outdir: './resources/dist/js/',
 
     bundle: true,
     mainFields: ['module', 'main'],

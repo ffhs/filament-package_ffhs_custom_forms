@@ -2,44 +2,40 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Policies\Rule;
 
-use App\Models\User;
+use Ffhs\FfhsUtils\Models\Rule;
 use Ffhs\FilamentPackageFfhsCustomForms\Enums\CustomFormPermissionName;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\Rule;
 use Illuminate\Auth\Access\HandlesAuthorization;
+use Illuminate\Contracts\Auth\Access\Authorizable;
 
-
+//ToDo Move to Utils????
 class RulePolicy
 {
     use HandlesAuthorization;
 
-    public function view(User $user, Rule $rule): bool
+    public function view(Authorizable $user, Rule $rule): bool
     {
         return $this->viewAny($user);
     }
 
-    public function viewAny(User $user): bool
-    {
-        return $user->can(CustomFormPermissionName::MANAGE_CUSTOM_FORMS) || $user->can( //ToDO do for rule only
-                CustomFormPermissionName::MANAGE_TEMPLATES
-            );
+    public function viewAny(Authorizable $user): bool
+    { //ToDO do for rule only
+        return $user->can(CustomFormPermissionName::MANAGE_CUSTOM_FORMS->value)
+            || $user->can(CustomFormPermissionName::MANAGE_TEMPLATES->value);
     }
 
-    public function create(User $user, Rule $rule): bool
-    {
-        return $this->update($user, $rule);
-    }
-
-    public function update(User $user, Rule $rule): bool
-    {
-        return $user->can(CustomFormPermissionName::MANAGE_CUSTOM_FORMS) || $user->can( //ToDO do for rule only
-                CustomFormPermissionName::MANAGE_TEMPLATES
-            );
-    }
-
-    public function delete(User $user, Rule $rule): bool
+    public function create(Authorizable $user, Rule $rule): bool
     {
         return $this->update($user, $rule);
     }
 
+    public function update(Authorizable $user, Rule $rule): bool
+    {   //ToDO do for rule only
+        return $user->can(CustomFormPermissionName::MANAGE_CUSTOM_FORMS->value)
+            || $user->can(CustomFormPermissionName::MANAGE_TEMPLATES->value);
+    }
 
+    public function delete(Authorizable $user, Rule $rule): bool
+    {
+        return $this->update($user, $rule);
+    }
 }

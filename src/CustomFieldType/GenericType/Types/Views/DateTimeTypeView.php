@@ -2,30 +2,25 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\Types\Views;
 
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomField;
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\FieldTypeView;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldType;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasDefaultViewComponent;
-use Filament\Forms\Components\Component as FormsComponent;
 use Filament\Forms\Components\DateTimePicker;
-use Filament\Infolists\Components\Component as InfolistsComponent;
 use Filament\Infolists\Components\TextEntry;
+use Filament\Support\Components\Component;
 
 class DateTimeTypeView implements FieldTypeView
 {
     use HasDefaultViewComponent;
 
-    public function getFormComponent(CustomFieldType $type, CustomField $record, array $parameter = []): FormsComponent
+    public function getFormComponent(EmbedCustomField $customField, array $parameter = []): Component
     {
-        return $this->makeComponent(DateTimePicker::class, $record);
+        return $this->makeComponent(DateTimePicker::class, $customField, false);
     }
 
-    public function getInfolistComponent(
-        CustomFieldType $type,
-        CustomFieldAnswer $record,
-        array $parameter = []
-    ): InfolistsComponent {
-        return $this->makeComponent(TextEntry::class, $record);
+    public function getEntryComponent(EmbedCustomFieldAnswer $customFieldAnswer, array $parameter = []): Component
+    {
+        return $this->makeComponent(TextEntry::class, $customFieldAnswer, true);
     }
 }

@@ -3,7 +3,8 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\Traits;
 
 use Closure;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomFormAnswer;
+use Filament\Schemas\Components\Component;
 
 trait HasPosSplit
 {
@@ -39,7 +40,11 @@ trait HasPosSplit
         return $this->evaluate($this->usePoseSplit);
     }
 
-    public function loadPosTypeSplitAnswerData(CustomFormAnswer $answer): array
+    /**
+     * @param EmbedCustomFormAnswer $answer
+     * @return array<int|string, Component>
+     */
+    public function loadPosTypeSplitAnswerData(EmbedCustomFormAnswer $answer): array
     {
         $beginPos = $this->getPoseSpiltStart();
         $endPos = $this->getPoseSpiltEnd();

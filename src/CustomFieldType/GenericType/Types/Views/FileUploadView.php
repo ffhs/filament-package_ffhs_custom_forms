@@ -2,90 +2,93 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\Types\Views;
 
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomField;
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\FieldTypeView;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldType;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\FileUploadTypeEntry;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasDefaultViewComponent;
-use Filament\Forms\Components\Component as FormsComponent;
+use Filament\Actions\Action;
 use Filament\Forms\Components\FileUpload;
-use Filament\Infolists\Components\Actions;
-use Filament\Infolists\Components\Actions\Action;
-use Filament\Infolists\Components\Component as InfolistsComponent;
-use Filament\Infolists\Components\Fieldset;
-use Filament\Infolists\Components\Grid;
-use Filament\Infolists\Components\Group;
 use Filament\Infolists\Components\ImageEntry;
 use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Components\View;
+use Filament\Schemas\Components\Actions;
+use Filament\Schemas\Components\Fieldset;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Group;
+use Filament\Support\Components\Component;
 use Filament\Support\Enums\Alignment;
 use Illuminate\Support\Facades\Request;
-use Illuminate\Support\HtmlString;
 
 class FileUploadView implements FieldTypeView
 {
     use HasDefaultViewComponent;
 
-    public function getFormComponent(
-        CustomFieldType $type,
-        CustomField $record,
-        array $parameter = []
-    ): FormsComponent {
-        $fileUpload = FileUpload::make($this->getIdentifyKey($record) . '.files');
-
-        return $this->prepareFileUploadComponent($fileUpload, $record);
+    public function getFormComponent(EmbedCustomField $customField, array $parameter = []): Component
+    {
+        return $this->prepareFileUploadComponent(FileUpload::make('files'), $customField)
+            ->statePath($this->getIdentifyKey($customField) . '.files');
     }
 
-    public function prepareFileUploadComponent(FileUpload $component, CustomField $record): FileUpload
+    public function prepareFileUploadComponent(FileUpload $component, EmbedCustomField $customField): FileUpload
     {
-        /** @var FileUpload $component */
-        $component = $this->modifyFormComponent($component, $record);
-        $component
+        $fileUpload = $this->modifyComponent($component, $customField, false);
+
+        $fileUpload
             ->deleteUploadedFileUsing(fn(FileUpload $component) => $component->callAfterStateUpdated())
-            ->multiple(fn($state) => $this->getOptionParameter($record, 'multiple'))
-            ->acceptedFileTypes($this->getOptionParameter($record, 'allowed_type'))
+            ->acceptedFileTypes($this->getOptionParameter($customField, 'allowed_type'))
+            ->multiple($this->getOptionParameter($customField, 'multiple'))
+            ->openable(false)
             ->appendFiles()
+            ->moveFiles()
             ->live();
 
+        $type = $customField->getType();
+        $fieldOptions = $customField->getOptions();
+        $default = $type->getDefaultTypeOptionValues();
+        $generalDefault = $customField->isGeneralField() ? $type->getDefaultGeneralOptionValues() : [];
 
-        if ($this->getOptionParameter($record, 'image')) {
-            $component = $component
-                ->previewable($this->getOptionParameter($record, 'show_images'))
-                ->downloadable($this->getOptionParameter($record, 'downloadable'))
-                ->disk($this->getTypeConfigAttribute($record, 'images.disk'))
-                ->directory($this->getTypeConfigAttribute($record, 'images.save_path'))
+        if ($this->getOptionParameterWithCached('image', false, $default, $generalDefault, $fieldOptions)) {
+            $fileUpload = $fileUpload
+                ->previewable($this->getOptionParameterWithCached('show_images', false, $default, $generalDefault,
+                    $fieldOptions))
+                ->downloadable($this->getOptionParameterWithCached('downloadable', false, $default, $generalDefault,
+                    $fieldOptions))
+                ->disk($this->getTypeConfigAttribute($customField, 'images.disk'))
+                ->directory($this->getTypeConfigAttribute($customField, 'images.save_path'))
+                ->visibility($this->getTypeConfigAttribute($customField, 'images.visibility'))
                 ->image();
         } else {
-            $component = $component
-                ->directory($this->getTypeConfigAttribute($record, 'files.save_path'))
-                ->disk($this->getTypeConfigAttribute($record, 'files.disk'))
+            $fileUpload = $fileUpload
+                ->directory($this->getTypeConfigAttribute($customField, 'files.save_path'))
+                ->disk($this->getTypeConfigAttribute($customField, 'files.disk'))
+                ->visibility($this->getTypeConfigAttribute($customField, 'files.visibility'))
                 ->previewable(false);
         }
 
-        if ($this->getOptionParameter($record, 'preserve_filenames')) {
-            $component = $component->storeFileNamesIn($this->getIdentifyKey($record) . '.file_names');
+        if ($this->getOptionParameterWithCached('preserve_filenames', false, $default, $generalDefault,
+            $fieldOptions)) {
+            $fileUpload = $fileUpload->storeFileNamesIn($this->getIdentifyKey($customField) . '.file_names');
         }
 
-        if ($this->getOptionParameter($record, 'grid_layout')) {
-            $component = $component->panelLayout('grid');
+        if ($this->getOptionParameterWithCached('grid_layout', false, $default, $generalDefault, $fieldOptions)) {
+            $fileUpload = $fileUpload->panelLayout('grid');
         }
 
-        return $component;
+        return $fileUpload;
     }
 
-
-    public function getInfolistComponent(
-        CustomFieldType $type,
-        CustomFieldAnswer $record,
-        array $parameter = []
-    ): InfolistsComponent {
-        $answer = $this->getAnswer($record);
+    public function getEntryComponent(EmbedCustomFieldAnswer $customFieldAnswer, array $parameter = []): Component
+    {
+        $answer = $this->getAnswer($customFieldAnswer);
 
         if (is_null($answer) || !isset($answer['file_names'])) {
             $names = [];
             $files = [];
-        } elseif ($this->getOptionParameter($record, 'preserve_filenames')) {
+        } elseif ($this->getOptionParameter($customFieldAnswer, 'preserve_filenames')) {
             $names = $answer['file_names'];
+            if (!is_array($answer['files'])) {
+                $answer['files'] = [$answer['files']];
+            }
             $files = array_values($answer['files']);
         } else {
             $names = $answer;
@@ -93,22 +96,22 @@ class FileUploadView implements FieldTypeView
         }
 
         //disk
-        $image = $this->getOptionParameter($record, 'image');
+        $image = $this->getOptionParameter($customFieldAnswer, 'image');
         if ($image) {
-            $disk = $this->getTypeConfigAttribute($record, 'images.disk');
+            $disk = $this->getTypeConfigAttribute($customFieldAnswer, 'images.disk');
         } else {
-            $disk = $this->getTypeConfigAttribute($record, 'files.disk');
+            $disk = $this->getTypeConfigAttribute($customFieldAnswer, 'files.disk');
         }
 
         $diskRoot = config('filesystems.disks.' . $disk . '.root');
 
-        if ($this->getOptionParameter($record, 'image')
-            && $this->getOptionParameter($record, 'show_images_in_view')) {
-            return $this->getInfolistImageComponent($files, $diskRoot, $record, $names);
+        if ($this->getOptionParameter($customFieldAnswer, 'image')
+            && $this->getOptionParameter($customFieldAnswer, 'show_images_in_view')) {
+            return $this->getInfolistImageComponent($files, $diskRoot, $customFieldAnswer, $names);
         }
 
         return $this
-            ->getInfoListFiles($files, $diskRoot, $record, $names)
+            ->getEntryListFiles($files, $diskRoot, $customFieldAnswer, $names)
             ->columnSpanFull();
     }
 
@@ -116,7 +119,7 @@ class FileUploadView implements FieldTypeView
     public function getInfolistImageComponent(
         mixed $files,
         mixed $diskRoot,
-        CustomFieldAnswer $record,
+        EmbedCustomFieldAnswer $record,
         mixed $names
     ): Group {
         $groups = [];
@@ -131,9 +134,9 @@ class FileUploadView implements FieldTypeView
                 ->schema([
                     ImageEntry::make($path)
                         ->disk($this->getTypeConfigAttribute($record, 'images.disk'))
-                        ->label('')
+                        ->hiddenLabel()
                         ->state($path)
-                        ->size(175),
+                        ->imageSize(175),
                     Actions::make([
                         $this->getDownloadInfolistAction($record, $path, $diskRoot . '/' . $path, $names[$path]),
                         $this->getRedirectInfolistAction($record, $path, $urlPrefix),
@@ -159,7 +162,7 @@ class FileUploadView implements FieldTypeView
 
     public function getDownloadInfolistAction(
         mixed $path,
-        CustomFieldAnswer $record,
+        EmbedCustomFieldAnswer $record,
         string $absolutePath,
         $names
     ): Action {
@@ -171,7 +174,7 @@ class FileUploadView implements FieldTypeView
             ->iconButton();
     }
 
-    public function getRedirectInfolistAction(CustomFieldAnswer $record, mixed $path, $urlPrefix): Action
+    public function getRedirectInfolistAction(EmbedCustomFieldAnswer $record, mixed $path, $urlPrefix): Action
     {
         return Action::make($path . '-' . $this->getIdentifyKey($record) . '-action-view')
             ->action(function ($livewire) use ($path, $urlPrefix) {
@@ -184,32 +187,23 @@ class FileUploadView implements FieldTypeView
             ->iconButton();
     }
 
-    /**
-     * @param CustomFieldAnswer $record
-     *
-     * @return TextEntry
-     */
-    public function getTextEntryLabel(CustomFieldAnswer $record): TextEntry
+
+    public function getTextEntryLabel(EmbedCustomFieldAnswer $record): TextEntry
     {
         return TextEntry::make($this->getIdentifyKey($record) . '-title')
-            ->label(
-                new HtmlString(
-                    '</span> <span class="text-sm font-medium leading-6 text-gray-950 dark:text-white" style="margin-bottom: -25px; margin-left: -12px;">' . $this->getLabelName(
-                        $record
-                    ) . '</span> <span>'
-                )
-            );
+            ->label($this->getLabelName($record))
+            ->inlineLabel();
     }
 
-    public function getInfoListFiles(
+    public function getEntryListFiles(
         mixed $files,
         mixed $diskRoot,
-        CustomFieldAnswer $record,
+        EmbedCustomFieldAnswer $fieldAnswer,
         mixed $names
-    ): Group {
-        $downloadable = $this->getOptionParameter($record, 'downloadable');
-        $openInNewTab = $this->getOptionParameter($record, 'open_in_new_tab');
-        $urlPrefix = $this->getTypeConfigAttribute($record, 'files.url_prefix') ?? $diskRoot;
+    ): \Filament\Schemas\Components\Component {
+        $downloadable = $this->getOptionParameter($fieldAnswer, 'downloadable');
+        $openInNewTab = $this->getOptionParameter($fieldAnswer, 'open_in_new_tab');
+        $urlPrefix = $this->getTypeConfigAttribute($fieldAnswer, 'files.url_prefix') ?? $diskRoot;
         $fileComponents = [];
 
         foreach ($files as $path) {
@@ -221,24 +215,26 @@ class FileUploadView implements FieldTypeView
             $actions = [];
 
             if ($downloadable) {
-                $actions[] = $this->getDownloadInfolistAction($path, $record, $absolutePath, $names[$path]);
+                $actions[] = $this->getDownloadInfolistAction($path, $fieldAnswer, $absolutePath, $names[$path]);
             }
 
             if ($openInNewTab) {
-                $actions[] = $this->getRedirectInfolistAction($record, $path, $urlPrefix);
+                $actions[] = $this->getRedirectInfolistAction($fieldAnswer, $path, $urlPrefix);
             }
 
             $fileComponents[] =
-                View::make('filament-package_ffhs_custom_forms::filament.components.file-upload-display')
+                FileUploadTypeEntry::make($path)
                     ->schema([Actions::make($actions)])
-                    ->label($names[$path] ?? $path);
+                    ->label($names[$path] ?? $path)
+                    ->hiddenLabel();
         }
 
-        return Group::make([
-            $this->getTextEntryLabel($record),
-            Grid::make()
-                ->schema($fileComponents)
-                ->columns(),
-        ]);
+        return Group::make()
+            ->columns(2)
+            ->columnSpanFull()
+            ->schema([
+                $this->getTextEntryLabel($fieldAnswer),
+                ...$fileComponents
+            ]);
     }
 }

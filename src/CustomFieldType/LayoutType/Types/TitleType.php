@@ -40,7 +40,7 @@ class TitleType extends CustomFieldType
                     'title_size',
                     FastTypeOption::makeFast(
                         1,
-                        TextInput::make('title_size')
+                        static fn($name) => TextInput::make($name)
                             ->label(TypeOption::__('title_size.label'))
                             ->helperText(TypeOption::__('title_size.helper_text'))
                             ->numeric()

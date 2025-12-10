@@ -27,126 +27,116 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\LayoutType\Types\TextLay
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\LayoutType\Types\TitleType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\SplittedType\Types\RepeaterLayoutType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\TemplatesType\TemplateFieldType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormConfiguration\DefaultFormConfiguration;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Events\ChangeOptionsEvent;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Events\DisabledEvent;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Events\DisableOptionsEvent;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Events\HideEvent;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Events\RequiredEvent;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Events\VisibleEvent;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Trigger\AlwaysRuleTrigger;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Trigger\IsInfolistTrigger;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Trigger\IsEntryTrigger;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Trigger\ValueEqualsRuleTrigger;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormEditor\AdderComponents\Default\CustomFieldTypeAdder;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormEditor\AdderComponents\Default\GeneralFieldAdder;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormEditor\AdderComponents\Default\TemplateFieldAdder;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\FormEditor\FieldAdder\FormFieldTemplateAdder;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\FormEditor\FieldAdder\FormFieldTypeAdder;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\FormEditor\FieldAdder\FormGeneralFieldAdder;
 
 return [
-    'cache_duration' => 1,
-    'save_stopper_time' => 1,
-    'default_column_count' => 4,
 
-    'rule' => [
-        'trigger' => [
-            IsInfolistTrigger::class,
-            ValueEqualsRuleTrigger::class,
-            AlwaysRuleTrigger::class,
+    'form_configurations' => [
+        DefaultFormConfiguration::class => [],
+    ],
+
+
+    'default_form_configuration' => [
+        'column_count' => 4,
+        'editor' => [
+            'side_components' => [
+                FormFieldTypeAdder::class,
+                FormGeneralFieldAdder::class,
+                FormFieldTemplateAdder::class,
+            ],
         ],
-        'event' => [
-            HideEvent::class,
-            VisibleEvent::class,
-            DisabledEvent::class,
-            RequiredEvent::class,
-            ChangeOptionsEvent::class,
+        'selectable_field_types' => [
+            CheckboxType::class,
+            TextType::class,
+            EmailType::class,
+            NumberType::class,
+            TextAreaType::class,
+            DateTimeType::class,
+            DateType::class,
+            DateRangeType::class,
+            FileUploadType::class,
+
+            TagsType::class,
+            KeyValueType::class,
+
+            ColorPickerType::class,
+            IconSelectType::class,
+
+            SelectType::class,
+            RadioType::class,
+            CheckboxListType::class,
+            ToggleButtonsType::class,
+
+            SectionType::class,
+            RepeaterLayoutType::class,
+            FieldsetType::class,
+            GroupType::class,
+            TitleType::class,
+            TextLayoutType::class,
+            DownloadType::class,
+            ImageLayoutType::class,
+            SpaceType::class,
+        ],
+
+        'view_modes' => [],
+        'rule' => [
+            'trigger' => [
+                IsEntryTrigger::class,
+                ValueEqualsRuleTrigger::class,
+                AlwaysRuleTrigger::class,
+            ],
+            'event' => [
+                HideEvent::class,
+                VisibleEvent::class,
+                DisabledEvent::class,
+                RequiredEvent::class,
+                ChangeOptionsEvent::class,
+                DisableOptionsEvent::class,
+            ],
+        ],
+        'type_settings' => [
+            DownloadType::identifier() => [
+                'save_path' => '/custom-form-plugin/custom-fields/specified-data',
+                'disk' => 'local',
+                'visibility' => 'private',
+            ],
+            ImageLayoutType::identifier() => [
+                'save_path' => '/custom-form-plugin/images',
+                'url_prefix' => null, // Null means default path
+                'disk' => 'public',
+                'visibility' => 'public',
+            ],
+            FileUploadType::identifier() => [
+                'files' => [
+                    'url_prefix' => null, // Null means default path
+                    'save_path' => '/custom-form-plugin/custom-fields/uploaded',
+                    'disk' => 'local',
+                    'visibility' => 'private',
+                ],
+                'images' => [
+                    'url_prefix' => null, // Null means default path
+                    'save_path' => '/custom-form-plugin/uploaded-images',
+                    'visibility' => 'public',
+                    'disk' => 'public',
+                ]
+            ],
         ],
     ],
 
-    'forms' => [
-    ],
-
-    'view_modes' => [
-    ],
-
-    'editor' => [
-        'field_adders' => [
-            CustomFieldTypeAdder::class,
-            TemplateFieldAdder::class,
-            GeneralFieldAdder::class
-        ],
-    ],
-
-    'custom_field_types' => [
+    'extra_custom_field_types' => [
         TemplateFieldType::class,
-
-        TextType::class,
-        EmailType::class,
-        NumberType::class,
-        TextAreaType::class,
-        CheckboxType::class,
-        DateTimeType::class,
-        DateType::class,
-        DateRangeType::class,
-        FileUploadType::class,
-
-        TagsType::class,
-        KeyValueType::class,
-
-        ColorPickerType::class,
-        IconSelectType::class,
-
-        SelectType::class,
-        RadioType::class,
-        CheckboxListType::class,
-        ToggleButtonsType::class,
-
-        SectionType::class,
-        RepeaterLayoutType::class,
-        FieldsetType::class,
-        GroupType::class,
-        TitleType::class,
-        TextLayoutType::class,
-        DownloadType::class,
-        ImageLayoutType::class,
-        SpaceType::class,
-
-        //TabsCustomNestType::class, ToDo Fix
-        //CustomTabCustomEggType::class,
-        // WizardCustomNestType::class,
-        //WizardStepCustomEggType::class,
-    ],
-
-    'selectable_field_types' => [
-        CheckboxType::class,
-        TextType::class,
-        EmailType::class,
-        NumberType::class,
-        TextAreaType::class,
-        DateTimeType::class,
-        DateType::class,
-        DateRangeType::class,
-        FileUploadType::class,
-
-        TagsType::class,
-        KeyValueType::class,
-
-        ColorPickerType::class,
-        IconSelectType::class,
-
-        SelectType::class,
-        RadioType::class,
-        CheckboxListType::class,
-        ToggleButtonsType::class,
-
-        SectionType::class,
-        RepeaterLayoutType::class,
-        FieldsetType::class,
-        GroupType::class,
-        TitleType::class,
-        TextLayoutType::class,
-        DownloadType::class,
-        ImageLayoutType::class,
-        SpaceType::class,
-
-        // TabsCustomNestType::class,
-        // WizardCustomNestType::class,
     ],
 
     'selectable_general_field_types' => [
@@ -169,28 +159,5 @@ return [
         RadioType::class,
         CheckboxListType::class,
         ToggleButtonsType::class,
-    ],
-
-    'type_settings' => [
-        'download_file' => [
-            'save_path' => '/custom-form-plugin/custom-fields/specified-data',
-            'disk' => 'local',
-        ],
-        'image_layout' => [
-            'save_path' => '/custom-form-plugin/images',
-            'disk' => 'public',
-        ],
-        'file_upload' => [
-            'files' => [
-                'url_prefix' => null, // Null means default path
-                'save_path' => '/custom-form-plugin/custom-fields/uploaded',
-                'disk' => 'local',
-            ],
-            'images' => [
-                'url_prefix' => null, // Null means default path
-                'save_path' => '/custom-form-plugin/uploaded-images',
-                'disk' => 'public',
-            ]
-        ]
     ],
 ];

@@ -42,14 +42,14 @@ class KeyValueType extends CustomOptionType
                     'reorderable' => ReorderableTypeOption::make(),
                     'editableKeys' => FastTypeOption::makeFast(
                         true,
-                        Toggle::make('editableKeys')
+                        static fn() => Toggle::make('editableKeys')
                             ->label(TypeOption::__('editable_keys.label'))
                             ->helperText(TypeOption::__('editable_keys.helper_text'))
                             ->columnSpanFull()
                     ),
                     'editableValues' => FastTypeOption::makeFast(
                         true,
-                        Toggle::make('editableValues')
+                        static fn() => Toggle::make('editableValues')
                             ->label(TypeOption::__('editable_values.label'))
                             ->helperText(TypeOption::__('editable_keys.helper_text'))
                             ->columnSpanFull()

@@ -2,20 +2,22 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Trigger;
 
+use Ffhs\FfhsUtils\Contracts\Rules\EmbedRuleTrigger;
+use Ffhs\FfhsUtils\Models\RuleTrigger;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\CustomOption\CustomOptionType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\TempCustomField;
+use Ffhs\FilamentPackageFfhsCustomForms\DataContainer\CustomFieldDataContainer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\RuleTrigger;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasBoolCheck;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasNumberCheck;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasOptionCheck;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasRuleTriggerPluginTranslate;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasTextCheck;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasTriggerEventFormTargets;
-use Filament\Forms\Components\Component as FormsComponent;
+use Filament\Forms\Components\Field;
 use Filament\Forms\Components\ToggleButtons;
-use Filament\Forms\Get;
-use Filament\Infolists\Components\Component as InfolistsComponent;
+use Filament\Schemas\Components\Component;
+use Filament\Schemas\Components\Utilities\Get;
 
 class ValueEqualsRuleTrigger extends FormRuleTriggerType
 {
@@ -31,45 +33,43 @@ class ValueEqualsRuleTrigger extends FormRuleTriggerType
         return 'value_equals_anchor';
     }
 
-    public function prepareComponent(
-        FormsComponent|InfolistsComponent $component,
-        RuleTrigger $trigger
-    ): FormsComponent|InfolistsComponent {
-        if ($component instanceof FormsComponent) {
-            return $component->live();
+    public function prepareComponent(Component $component, RuleTrigger $trigger): Component
+    {
+        if ($component instanceof Field) {
+            return $component->live(); //ToDo improve with js functions but holy moly
         }
 
         return $component;
     }
 
-    public function isTrigger(array $arguments, mixed &$target, RuleTrigger $rule): bool
+    public function isTrigger(array $arguments, mixed &$target, EmbedRuleTrigger $trigger): bool
     {
         if (!array_key_exists('state', $arguments)) {
             return false;
         }
 
-        if (empty($rule->data)
-            || empty($rule->data['target'])
-            || empty($rule->data['type'])) {
+        if (empty($trigger->data)
+            || empty($trigger->data['target'])
+            || empty($trigger->data['type'])) {
             return false;
         }
 
-        $targetFieldIdentifier = $rule->data['target'];
+        $targetFieldIdentifier = $trigger->data['target'];
         $state = $arguments['state'];
         $targetValue = $state[$targetFieldIdentifier] ?? null;
-        $type = $rule->data['type'];
+        $type = $trigger->data['type'];
 
         return match ($type) {
-            'number' => $this->checkNumber($targetValue, $rule->data),
-            'text' => $this->checkText($targetValue, $rule->data),
-            'boolean' => $this->checkBoolean($targetValue, $rule->data),
+            'number' => $this->checkNumber($targetValue, $trigger->data),
+            'text' => $this->checkText($targetValue, $trigger->data),
+            'boolean' => $this->checkBoolean($targetValue, $trigger->data),
             'null' => $this->checkNull($targetValue),
-            'option' => $this->checkOption($targetValue, $rule->data),
+            'option' => $this->checkOption($targetValue, $trigger->data),
             default => false,
         };
     }
 
-    public function getFormSchema(): array
+    public function getConfigurationSchema(): array
     {
         return [
             $this
@@ -132,12 +132,12 @@ class ValueEqualsRuleTrigger extends FormRuleTriggerType
             $identifier = $field['identifier'] ?? '';
 
             if (!empty($field['general_field_id'])) {
-                $customField = new TempCustomField($record, $field);
+                $customField = CustomFieldDataContainer::make($field, $record->getFormConfiguration());
                 $identifier = $customField->identifier();
             }
 
             if ($identifier === $target) {
-                $customField = new TempCustomField($record, $field);
+                $customField = CustomFieldDataContainer::make($field, $record->getFormConfiguration());
 
                 return !($customField->getType() instanceof CustomOptionType);
             }

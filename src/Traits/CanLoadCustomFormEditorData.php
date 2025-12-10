@@ -2,9 +2,9 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Traits;
 
+use Ffhs\FfhsUtils\Models\Rule;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\Rule;
 use Illuminate\Support\Collection;
 
 trait CanLoadCustomFormEditorData
@@ -51,7 +51,7 @@ trait CanLoadCustomFormEditorData
     protected function getFieldEditorKey(array|CustomField $toAdd)
     {
         if ($toAdd instanceof CustomField) {
-            return empty($field->identifier) ? uniqid() : $field->identifier;
+            return empty($toAdd->identifier) ? uniqid() : $toAdd->identifier;
         }
 
         if (array_key_exists('identifier', $toAdd) && !empty($toAdd['identifier'])) {
@@ -66,6 +66,9 @@ trait CanLoadCustomFormEditorData
         $rules = [];
 
         foreach ($form->ownedRules as $rule) {
+            $rule->ruleEvents->each(fn($event) => $event->setRelation('rule', $rule));
+            $rule->ruleTriggers->each(fn($trigger) => $trigger->setRelation('rule', $rule));
+
             /**@var Rule $rule */
             $rawRule = $rule->toArray();
             $rawRule['events'] = $rule->ruleEvents->toArray();

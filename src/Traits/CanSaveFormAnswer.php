@@ -2,12 +2,14 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Traits;
 
+use Ffhs\FfhsUtils\Models\Rule;
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomField;
+use Ffhs\FilamentPackageFfhsCustomForms\Enums\FormRuleAction;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\Rule;
 use Filament\Forms\Components\Field;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -17,7 +19,7 @@ use Spatie\Activitylog\Models\Activity;
 
 trait CanSaveFormAnswer
 {
-    public function saveFormAnswer(CustomFormAnswer $formAnswer, Form $form, string $path = ''): void
+    public function saveFormAnswer(CustomFormAnswer $formAnswer, Schema $schema, ?string $path = null): void
     {
         $customForm = $formAnswer->customForm;
 
@@ -27,10 +29,14 @@ trait CanSaveFormAnswer
             ->mapWithKeys(fn(CustomField $customField) => [$customField->identifier => $customField]);
 
         //Update form data after modifying components
-        $this->prepareFormComponents($customFieldsIdentify, $form, $path);
+        $this->prepareFormComponents($customFieldsIdentify, $schema, $path);
 
-        $pathState = substr($path, strlen($form->getStatePath()) + 1);
-        $data = Arr::get($form->getRawState(), $pathState);
+        $data = $schema->getRawState();
+
+        if (!is_null($path)) {
+            $pathState = substr($path, strlen($schema->getStatePath()) + 1);
+            $data = Arr::get($data, $pathState);
+        }
 
         // Mapping and combining field answers
         $preparedData = $this->splittingFormComponents($data, $customFieldsIdentify);
@@ -56,36 +62,60 @@ trait CanSaveFormAnswer
         return $attributes;
     }
 
-    protected function splittingFormComponents(
-        array $formData,
-        Collection $customFieldsIdentify
-    ): array {
-        $dateSplit = [];
-        foreach ($formData as $identifyKey => $customFieldAnswererRawData) {
-            /**@var CustomField $customField */
-            $customField = $customFieldsIdentify->get($identifyKey);
+//    protected function splittingFormComponents(array $formData, Collection $customFieldsIdentify): array
+//    {
+//        $dateSplit = [];
+//        foreach ($formData as $identifyKey => $customFieldAnswererRawData) {
+//            /**@var CustomField $customField */
+//            $customField = $customFieldsIdentify->get($identifyKey);
+//
+//            if (is_null($customField)) {
+//                continue;
+//            }
+//
+//            $type = $customField->getType();
+//
+//            if (!$type->hasSplitFields()) {
+//                $dateSplit[$identifyKey] = $customFieldAnswererRawData;
+//                continue;
+//            }
+//
+//            foreach ($customFieldAnswererRawData as $subPath => $subData) {
+//                $getSplitData = $this->splittingFormComponents($subData, $customFieldsIdentify);
+//
+//                foreach ($getSplitData as $subKey => $subValue) {
+//                    $dateSplit[$subKey . '.' . $subPath] = $subValue;
+//                }
+//            }
+//        }
+//
+//        return $dateSplit;
+//    }
 
-            if (is_null($customField)) {
+    protected function splittingFormComponents(array $formData, Collection $customFieldsIdentify): array
+    {
+        $result = [];
+
+        foreach ($formData as $fieldKey => $fieldData) {
+            $customField = $customFieldsIdentify->get($fieldKey);
+
+            // Skip if field doesn't exist or doesn't need splitting
+            if (!$customField || !$customField->getType()->hasSplitFields()) {
+                $result[$fieldKey] = $fieldData;
                 continue;
             }
 
-            $type = $customField->getType();
+            // Recursively process nested data and flatten with dot notation
+            foreach ($fieldData as $subPath => $subData) {
+                $splitData = $this->splittingFormComponents($subData, $customFieldsIdentify);
 
-            if (!$type->hasSplitFields()) {
-                $dateSplit[$identifyKey] = $customFieldAnswererRawData;
-                continue;
-            }
-
-            foreach ($customFieldAnswererRawData as $subPath => $subData) {
-                $getSplitData = $this->splittingFormComponents($subData, $customFieldsIdentify);
-
-                foreach ($getSplitData as $subKey => $subValue) {
-                    $dateSplit[$subKey . '.' . $subPath] = $subValue;
+                foreach ($splitData as $subKey => $subValue) {
+                    $result["{$subKey}.{$subPath}"] = $subValue;
                 }
             }
         }
 
-        return $dateSplit;
+        return $result;
     }
 
     protected function saveWithoutPreparation(
@@ -108,7 +138,7 @@ trait CanSaveFormAnswer
             $identifier = $explodedIdentifierPath[0];
             $path = null;
 
-            if (sizeof($explodedIdentifierPath) !== 1) {
+            if (count($explodedIdentifierPath) !== 1) {
                 $path = implode('.', array_slice(explode('.', $identifierPath), 1));
                 $handledPaths->add($path);
             }
@@ -144,21 +174,16 @@ trait CanSaveFormAnswer
         }
 
         $handledPaths = $handledPaths->filter(fn($path) => !is_null($path));
-        $answersToHandle = $answersToHandle->groupBy(fn(CustomFieldAnswer $answer) => $answer->exists);
-        $answersToCreate = $answersToHandle->get(false, collect())
-            ->filter(fn(CustomFieldAnswer $answer) => !$answer
-                ->customField
-                ->getType()
-                ->isEmptyAnswer($answer, $answer->answer)
-            );
-        $answersToDelete = $answersToHandle->get(true, collect())
-            ->filter(fn(CustomFieldAnswer $answer) => $answer
-                ->customField
-                ->getType()
-                ->isEmptyAnswer($answer, $answer->answer)
-            );
-        $answersToSave = $answersToHandle
-            ->get(true, collect())
+        $answersToHandle = $answersToHandle->groupBy(fn(CustomFieldAnswer $answer): int => (int)$answer->exists);
+        $answersToCreate = $answersToHandle->get(0, collect())
+            ->filter(function (CustomFieldAnswer $answer) {
+                return !$answer->customField->getType()->isEmptyAnswer($answer, $answer->answer);
+            });
+        $answersToDelete = $answersToHandle->get(1, collect())
+            ->filter(function (CustomFieldAnswer $answer) {
+                return $answer->customField->getType()->isEmptyAnswer($answer, $answer->answer);
+            });
+        $answersToSave = $answersToHandle->get(1, collect())
             ->whereNotIn('id', $answersToDelete->pluck('id'))
             ->filter(fn(CustomFieldAnswer $answer) => $answer->isDirty());
 
@@ -253,7 +278,8 @@ trait CanSaveFormAnswer
             ->with('customField')
             ->with('customField.generalField')
             ->get()
-            ->mapWithKeys(function (CustomFieldAnswer $answer) {
+            /**@phpstan-ignore-next-line */
+            ->mapWithKeys(function (CustomFieldAnswer $answer, int $_) {
                 $path = $answer->customField->identifier . (is_null($answer->path) ? '' : '.' . $answer->path);
 
                 return [$path => $answer];
@@ -266,9 +292,10 @@ trait CanSaveFormAnswer
         mixed $fieldAnswererData
     ): mixed {
         foreach ($formRules as $rule) {
-            /**@var Rule $rule */
+            /** @phpstan-var Rule $rule */
             $fieldAnswererData = $rule->handle(
-                ['action' => 'save_answer', 'custom_field_answer' => $customFieldAnswer],
+                FormRuleAction::OnAnswerSave,
+                ['custom_field_answer' => $customFieldAnswer],
                 $fieldAnswererData
             );
         }
@@ -276,10 +303,11 @@ trait CanSaveFormAnswer
         return $fieldAnswererData;
     }
 
-    private function prepareFormComponents(Collection $customFieldsKeyByIdentifier, Form $form, string $path): void
+    private function prepareFormComponents(Collection $customFieldsKeyByIdentifier, Schema $schema, ?string $path): void
     {
         //ToDo That is slow (Extreme Slow) (getFlatFields)
-        $components = collect($form->getFlatFields(false, true))
+        $components = collect($schema->getFlatFields(false, true));
+        $components = is_null($path) ? $components : $components
             ->filter(fn(Field $component, string $key) => str_starts_with($key, $path));
 
         foreach ($customFieldsKeyByIdentifier as $identifier => $customField) {
@@ -287,10 +315,10 @@ trait CanSaveFormAnswer
                 ->filter(fn(Field $component, string $key) => str_contains($key, $identifier));
 
             foreach ($fieldComponents as $fieldComponent) {
-                /**@var CustomField $customField */
+                /**@var EmbedCustomField $customField */
                 $customField
                     ->getType()
-                    ->updateAnswerFormComponentOnSave($fieldComponent, $customField, $form, $components);
+                    ->updateAnswerFormComponentOnSave($fieldComponent, $customField, $schema, $components);
             }
         }
     }

@@ -2,48 +2,91 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormConfiguration;
 
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\FieldTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\Facades\CustomForms;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralFieldForm;
 use Illuminate\Database\Eloquent\Collection;
+use RuntimeException;
 
 abstract class CustomFormConfiguration
 {
-    abstract public static function displayName(): string;
+    protected static string $identifier;
+    protected static string $displayname;
+
 
     final public static function make(): static
     {
         return app(static::class);
     }
 
-    public static function formFieldTypes(): array
+    public static function config(string $config, $default = null)
     {
-        return CustomFieldType::getSelectableFieldTypes();
+        return CustomForms::config('form_configurations.' . static::class . '.' . $config, $default) ??
+            CustomForms::config('default_form_configuration.' . $config, $default);
     }
 
-    public static function getRuleTriggerTypes(): array
+    public static function getEditorFieldAdder(): array
     {
-        return config('ffhs_custom_forms.rule.trigger');
+        return static::config('field_adders');
     }
 
-    public static function getRuleEventTypes(): array
-    {
-        return config('ffhs_custom_forms.rule.event');
-    }
-
-    public static function editorFieldAdder(): array
-    {
-        return config('ffhs_custom_forms.editor.field_adders');
-    }
-
+    /**
+     * @return array<class-string<CustomFieldType>, array<string, class-string<FieldTypeView>>>
+     */
     public static function overwriteViewModes(): array
     {
         return [];
     }
 
-    abstract public static function identifier(): string;
+    public static function identifier(): string
+    {
+        if (!isset(static::$identifier)) {
+            throw new RuntimeException(static::class . ' has no $identifier set');
+        }
+
+        return static::$identifier;
+    }
+
+    public static function displayname(): string
+    {
+        if (!isset(static::$displayname)) {
+            throw new RuntimeException(static::class . ' has no $identifier set');
+        }
+
+        return static::$displayname;
+    }
+
+    public function getRuleTriggerTypes(): array
+    {
+        return $this::config('rule.trigger') ?? [];
+    }
+
+    public function getRuleEventTypes(): array
+    {
+        return $this::config('rule.event') ?? [];
+    }
+
+    public function getSelectableFieldTypeClasses(): array
+    {
+        return static::config('selectable_field_types');
+    }
+
+    public function getSelectableFieldTypes(): array
+    {
+        return once(function () {
+            $classes = $this->getSelectableFieldTypeClasses();
+            $types = [];
+            foreach ($classes as $class) {
+                /**@var CustomFieldType $class */
+                $types[$class::identifier()] = $class::make();
+            }
+            return $types;
+        });
+
+    }
 
     public function displayViewMode(): string
     {
@@ -65,6 +108,9 @@ abstract class CustomFormConfiguration
         return $this->defaultViewMode();
     }
 
+    /**
+     * @return Collection<int|string, CustomForm>
+     */
     final public function getAvailableTemplates(): Collection
     {
         return once(function () {
@@ -83,11 +129,14 @@ abstract class CustomFormConfiguration
         });
     }
 
+    /**
+     * @return Collection<int|string, GeneralField>
+     */
     final public function getAvailableGeneralFields(): Collection
     {
         return once(function () {
             $generalFieldFormQuery = GeneralFieldForm::query()
-                ->with('customOptions')
+//                ->with('customOptions')
                 ->select('general_field_id')
                 ->where('custom_form_identifier', $this::identifier());
 
@@ -97,5 +146,15 @@ abstract class CustomFormConfiguration
                 ->get()
                 ->keyBy('id');
         });
+    }
+
+    public function getColumns()
+    {
+        return $this::config('column_count', 4);
+    }
+
+    public function getSideComponentModifiers()
+    {
+        return $this::config('editor.side_components') ?? [];
     }
 }

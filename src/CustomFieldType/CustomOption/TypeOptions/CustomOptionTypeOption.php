@@ -7,11 +7,11 @@ use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomOption;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasOptionNoComponentModification;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\TypeOption;
-use Filament\Forms\Components\Component;
-use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Group;
+use Filament\Support\Components\Component;
 
 class CustomOptionTypeOption extends TypeOption
 {
@@ -72,7 +72,6 @@ class CustomOptionTypeOption extends TypeOption
                 ->firstWhere('id', $optionData['id'])
                 ?->update($optionData);
         }
-
         $field
             ->customOptions()
             ->whereNotIn('custom_options.id', $ids)
@@ -151,7 +150,7 @@ class CustomOptionTypeOption extends TypeOption
         return Repeater::make($name)
             ->collapseAllAction(fn($action) => $action->hidden())
             ->expandAllAction(fn($action) => $action->hidden())
-            ->itemLabel(fn($state, $record) => $state['name'][$record->getLocale()])
+            ->itemLabel(fn($state, $record) => $state['name'][app()->getLocale()] ?? '')
             ->label(CustomOption::__('label.multiple'))
             ->hidden(function ($get, $set) use ($name) {
                 if (is_null($get($name))) {
@@ -163,14 +162,14 @@ class CustomOptionTypeOption extends TypeOption
             ->collapsed()
             ->addable()
             ->columns()
-            ->afterStateUpdated(function ($set, array $state) use ($name) {
-                foreach (array_keys($state) as $optionKey) {
-                    if (empty($state[$optionKey]['identifier'])) {
-                        $state[$optionKey]['identifier'] = uniqid();
-                    }
-                }
-                $set($name, $state);
-            })
+//            ->afterStateUpdated(function ($set, array $state) use ($name) {
+//                foreach (array_keys($state) as $optionKey) {
+//                    if (empty($state[$optionKey]['identifier'])) {
+//                        $state[$optionKey]['identifier'] = uniqid();
+//                    }
+//                }
+//                $set($name, $state);
+//            })
             ->schema(fn($record) => once(fn() => [
                 TextInput::make('name.' . $record->getLocale())
                     ->label(CustomOption::__('name.label'))

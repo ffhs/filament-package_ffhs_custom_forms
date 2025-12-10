@@ -39,8 +39,9 @@ class ImageLayoutType extends CustomFieldType
     {
         return [
             TypeOptionGroup::make('Data', [
-                'image' => FastTypeOption::makeFast([],
-                    FileUpload::make('image')
+                'image' => FastTypeOption::makeFast(
+                    [],
+                    fn($name) => FileUpload::make($name)
                         ->directory($this->getConfigAttribute('save_path'))
                         ->disk($this->getConfigAttribute('disk'))
                         ->label('Bild') //ToDo Translate
@@ -58,7 +59,7 @@ class ImageLayoutType extends CustomFieldType
                     'column_span' => new ColumnSpanOption(),
                     'width' => FastTypeOption::makeFast(
                         null,
-                        TextInput::make('width')
+                        static fn($name) => TextInput::make($name)
                             ->label('Breite') //ToDo Translate
                             ->minValue(1)
                             ->numeric()

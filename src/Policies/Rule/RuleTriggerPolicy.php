@@ -2,39 +2,37 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Policies\Rule;
 
-use App\Models\User;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\RuleTrigger;
+use Ffhs\FfhsUtils\Models\RuleTrigger;
 use Illuminate\Auth\Access\HandlesAuthorization;
+use Illuminate\Contracts\Auth\Access\Authorizable;
 
 
 class RuleTriggerPolicy
 {
     use HandlesAuthorization;
 
-    public function view(User $user, RuleTrigger $ruleTrigger): bool
+    public function view(Authorizable $user, RuleTrigger $ruleTrigger): bool
     {
-        return (new RulePolicy())->view($user, $ruleTrigger->rule);
+        return new RulePolicy()->view($user, $ruleTrigger->rule);
     }
 
-    public function viewAny(User $user): bool
+    public function viewAny(Authorizable $user): bool
     {
-        return (new RulePolicy())->viewAny($user);
+        return new RulePolicy()->viewAny($user);
     }
 
-    public function create(User $user, RuleTrigger $ruleTrigger): bool
-    {
-        return $this->update($user, $ruleTrigger);
-    }
-
-    public function update(User $user, RuleTrigger $ruleTrigger): bool
-    {
-        return (new RulePolicy())->update($user, $ruleTrigger->rule);
-    }
-
-    public function delete(User $user, RuleTrigger $ruleTrigger): bool
+    public function create(Authorizable $user, RuleTrigger $ruleTrigger): bool
     {
         return $this->update($user, $ruleTrigger);
     }
 
+    public function update(Authorizable $user, RuleTrigger $ruleTrigger): bool
+    {
+        return new RulePolicy()->update($user, $ruleTrigger->rule);
+    }
 
+    public function delete(Authorizable $user, RuleTrigger $ruleTrigger): bool
+    {
+        return $this->update($user, $ruleTrigger);
+    }
 }

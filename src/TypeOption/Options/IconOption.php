@@ -2,19 +2,18 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options;
 
+use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasOptionNoComponentModification;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\TypeOption;
-use Filament\Forms\Components\Component as FormsComponent;
-use Filament\Infolists\Components\Component as InfolistsComponent;
-use Guava\FilamentIconPicker\Forms\IconPicker;
+use Filament\Support\Components\Component;
+use Guava\IconPicker\Forms\Components\IconPicker;
 
 class IconOption extends TypeOption
 {
-    public function getDefaultValue(): mixed
-    {
-        return '';
-    }
+    use HasOptionNoComponentModification;
 
-    public function getComponent(string $name): FormsComponent
+    protected mixed $default = '';
+
+    public function getComponent(string $name): Component
     {
         return IconPicker::make($name)
             ->label(TypeOption::__('icon.label'))
@@ -24,17 +23,15 @@ class IconOption extends TypeOption
             ->live();
     }
 
-    public function modifyFormComponent(FormsComponent $component, mixed $value): FormsComponent
-    {
-        if (empty($value)) {
+    public
+    function modifyFormComponent(
+        Component $component,
+        mixed $value
+    ): Component {
+        if (empty($value) || !method_exists($component, 'icon')) {
             return $component;
         }
 
         return $component->icon($value);
-    }
-
-    public function modifyInfolistComponent(InfolistsComponent $component, mixed $value): InfolistsComponent
-    {
-        return $component;
     }
 }

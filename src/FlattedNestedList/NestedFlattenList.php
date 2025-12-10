@@ -7,7 +7,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\Contracts\NestingObject;
 use Illuminate\Support\Collection;
 use RuntimeException;
 
-class NestedFlattenList
+class NestedFlattenList //ToDo Delet
 {
     protected Collection $data;
     protected ?string $fixedType = null;
@@ -27,7 +27,7 @@ class NestedFlattenList
 
     public static function make(array|Collection $items = [], ?string $type = null): static
     {
-        return new static($items, $type);
+        return app(static::class, ['items' => $items, 'type' => $type]);
     }
 
     public function getStructure(bool $useKey = false): array

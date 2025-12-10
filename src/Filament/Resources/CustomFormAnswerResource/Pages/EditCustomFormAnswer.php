@@ -2,18 +2,19 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormAnswerResource\Pages;
 
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\EmbeddedCustomForm\EmbeddedCustomForm;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormAnswerResource;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormAnswerResource\CustomFormAnswerResource;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanLoadFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanSaveFormAnswer;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
-use Filament\Forms\Form;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @method CustomFormAnswer getRecord()
+ */
 class EditCustomFormAnswer extends EditRecord
 {
     use CanLoadFormAnswer;
@@ -28,15 +29,6 @@ class EditCustomFormAnswer extends EditRecord
             ->attributesToArray();
 
         return trans(CustomFormAnswer::__('pages.edit.title'), $attributes);
-    }
-
-    public function form(Form $form): Form
-    {
-        return $form->schema([
-            EmbeddedCustomForm::make('form_answer')
-                ->autoViewMode()
-                ->columnSpanFull(),
-        ]);
     }
 
     public function mount(int|string $record): void
@@ -56,14 +48,16 @@ class EditCustomFormAnswer extends EditRecord
     {
         $data = parent::mutateFormDataBeforeFill($data);
 
-        if (!empty($customFormAnswer->customFieldAnswers)) {
-            return $data;
+        /**@var CustomFormAnswer $customFormAnswer */
+        $customFormAnswer = $this->form->getRecord();
+
+        if (!$customFormAnswer instanceof CustomFormAnswer) {
+            throw new \RuntimeException('CustomFormAnswer not found');
         }
 
-        /**@var CustomFormAnswer $customFormAnswer */
-        $customFormAnswer = $this
-            ->form
-            ->getRecord();
+        if (!$customFormAnswer->customFieldAnswers->isEmpty()) {
+            return $data;
+        }
 
         //Load data's from fields
         return ['form_answer' => array_merge($data, $this->loadCustomAnswerData($customFormAnswer))];
@@ -71,13 +65,8 @@ class EditCustomFormAnswer extends EditRecord
 
     protected function handleRecordUpdate(Model $record, array $data): Model
     {
-        /**@var CustomFormAnswer $customFormAnswer */
-        $customFormAnswer = $this
-            ->form
-            ->getRecord();
+        $this->saveFormAnswer($this->getRecord(), $this->form, 'data.form_answer');
 
-        $this->saveFormAnswer($customFormAnswer, $this->form, 'data.form_answer');
-
-        return $customFormAnswer->refresh();
+        return $this->form->getRecord()?->refresh();
     }
 }

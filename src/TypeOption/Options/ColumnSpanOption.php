@@ -2,19 +2,19 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options;
 
+use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasOptionNoComponentModification;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\TypeOption;
-use Filament\Forms\Components\Component as FormsComponent;
 use Filament\Forms\Components\TextInput;
-use Filament\Infolists\Components\Component as InfolistsComponent;
+use Filament\Support\Components\Component;
+
 
 class ColumnSpanOption extends TypeOption
 {
-    public function getDefaultValue(): int
-    {
-        return 3;
-    }
+    use HasOptionNoComponentModification;
 
-    public function getComponent(string $name): FormsComponent
+    protected mixed $default = 3;
+
+    public function getComponent(string $name): Component
     {
         return TextInput::make($name)
             ->label(TypeOption::__('column_span.label'))
@@ -26,13 +26,11 @@ class ColumnSpanOption extends TypeOption
             ->required();
     }
 
-    public function modifyFormComponent(FormsComponent $component, mixed $value): FormsComponent
+    public function modifyFormComponent(Component $component, mixed $value): Component
     {
-        return $component->columnSpan($value);
-    }
-
-    public function modifyInfolistComponent(InfolistsComponent $component, mixed $value): InfolistsComponent
-    {
+        if (method_exists($component, 'columnSpan')) {
+            return $component->columnSpan($value);
+        }
         return $component;
     }
 }

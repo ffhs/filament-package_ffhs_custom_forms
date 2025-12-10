@@ -2,36 +2,37 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Policies;
 
-use App\Models\User;
+
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Illuminate\Auth\Access\HandlesAuthorization;
+use Illuminate\Contracts\Auth\Access\Authorizable;
 
 class CustomFieldPolicy
 {
     use HandlesAuthorization;
 
-    public function view(User $user, CustomField $customField): bool
+    public function view(Authorizable $user, CustomField $customField): bool
     {
-        return (new CustomFormPolicy())->view($user, $customField->customForm);
+        return new CustomFormPolicy()->view($user, $customField->customForm);
     }
 
-    public function viewAny(User $user): bool
+    public function viewAny(Authorizable $user): bool
     {
-        return (new CustomFormPolicy())->viewAny($user);
+        return new CustomFormPolicy()->viewAny($user);
     }
 
-    public function create(User $user): bool
+    public function create(Authorizable $user): bool
     {
-        return (new CustomFormPolicy())->create($user);
+        return new CustomFormPolicy()->create($user);
     }
 
-    public function update(User $user, CustomField $customField): bool
+    public function update(Authorizable $user, CustomField $customField): bool
     {
-        return (new CustomFormPolicy())->update($user, $customField->customForm);
+        return new CustomFormPolicy()->update($user, $customField->customForm);
     }
 
-    public function delete(User $user, CustomField $customField): bool
+    public function delete(Authorizable $user, CustomField $customField): bool
     {
-        return (new CustomFormPolicy())->delete($user, $customField->customForm);
+        return new CustomFormPolicy()->delete($user, $customField->customForm);
     }
 }

@@ -8,18 +8,14 @@ use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasCustomTypePackageTranslation;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Groups\LayoutWithColumnsOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Groups\ValidationTypeOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\ActionLabelTypeOption;
-use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\FastTypeOption;
+use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\DefaultAmountOption;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\MaxAmountOption;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\MinAmountOption;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\ShowAsFieldsetOption;
-use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\ShowLabelOption;
-use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\TypeOption;
-use Filament\Forms\Components\Component;
-use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Field;
 
 class RepeaterLayoutType extends CustomSplitType
 {
-
     use HasCustomTypePackageTranslation;
 
     public static function identifier(): string
@@ -44,20 +40,10 @@ class RepeaterLayoutType extends CustomSplitType
         return [
             LayoutWithColumnsOptionGroup::make()
                 ->mergeTypeOptions([
-                    'show_label' => ShowLabelOption::make(),
-                    'show_as_fieldset' => ShowAsFieldsetOption::make()
-                        ->modifyOptionComponent(fn(Component $component) => $component->columnStart(2)),
-                    'default_amount' => FastTypeOption::makeFast(
-                        1,
-                        TextInput::make('default_amount')
-                            ->helperText(TypeOption::__('default_amount.helper_text'))
-                            ->label(TypeOption::__('default_amount.label'))
-                            ->lte('max_amount')
-                            ->minValue(0)
-                            ->integer()
-                            ->required(),
-                    ),
-                    'add_action_label' => ActionLabelTypeOption::make(),
+                    'show_as_fieldset' => ShowAsFieldsetOption::make(),
+                    'add_action_label' => ActionLabelTypeOption::make()
+                        ->modifyOptionComponent(fn(Field $component) => $component->columnSpan(1)),
+                    'default_amount' => DefaultAmountOption::make(),
                 ]),
             ValidationTypeOptionGroup::make()
                 ->removeTypeOption('required')

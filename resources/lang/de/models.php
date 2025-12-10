@@ -85,7 +85,11 @@ return [
             'is_active' => [
                 'active' => 'Aktiv',
                 'not_active' => 'Inaktiv',
-            ]
+            ],
+            'name' => [
+                'label' => 'Name',
+                'helper_text' => '',
+            ],
         ],
         'actions' => [
             'delete' => [
@@ -119,12 +123,6 @@ return [
             'helper_text' => '',
         ],
     ],
-    'rule' => [
-        'label' => [
-            'single' => 'Regel',
-            'multiple' => 'Regeln',
-        ],
-    ],
     'custom_form' => [
         'label' => [
             'single' => 'Formular',
@@ -141,9 +139,18 @@ return [
         ],
 
         'attributes' => [
-            'short_title' => 'Name',
-            'custom_form_identifier' => 'Formularart',
-            'template_identifier' => 'Template Id',
+            'short_title' => [
+                'label' => 'Name',
+                'helper_text' => '',
+            ],
+            'custom_form_identifier' => [
+                'label' => 'Formularart',
+                'helper_text' => '',
+            ],
+            'template_identifier' => [
+                'label' => 'Template ID',
+                'helper_text' => 'Diese ID wird verwendet für den Export des Templates oder Formulare um dieses dann zuordnen zu können.',
+            ],
             'owned_fields_amount' => 'Anzahl Felder'
         ],
 
@@ -170,6 +177,9 @@ return [
             'type_adder' => [
                 'label' => 'Spezifische Felder',
                 'new_field_name' => 'Neues Feld'
+            ],
+            'template_adder' => [
+                'label' => 'Templates',
             ],
             'general_field_adder' => [
                 'label' => 'Generelle Felder',

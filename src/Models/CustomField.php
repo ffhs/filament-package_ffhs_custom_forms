@@ -2,12 +2,18 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Models;
 
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomField;
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\NestingObject;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormConfiguration\CustomFormConfiguration;
 use Ffhs\FilamentPackageFfhsCustomForms\Facades\CustomForms;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Carbon;
 
 /**
  *
@@ -22,44 +28,44 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property int|null $form_position
  * @property int|null $layout_end_position
  * @property array<array-key, mixed>|null $options
- * @property int $is_active
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer> $answers
+ * @property bool $is_active
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property-read Collection<int, CustomFieldAnswer> $answers
  * @property-read int|null $answers_count
- * @property-read \Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm|null $customForm
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Ffhs\FilamentPackageFfhsCustomForms\Models\CustomOption> $customOptions
+ * @property-read CustomForm|null $customForm
+ * @property-read Collection<int, CustomOption> $customOptions
  * @property-read int|null $custom_options_count
- * @property-read \Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField|null $generalField
+ * @property-read GeneralField|null $generalField
  * @property-read string $cache_key_for
  * @property-read string $end_container_position
  * @property-read string $position
- * @property-read \Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm|null $template
+ * @property-read CustomForm|null $template
  * @property-read mixed $translations
  * @property string[] $overwritten_options
- * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomField newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomField newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomField query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomField whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomField whereCustomFormId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomField whereFormPosition($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomField whereGeneralFieldId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomField whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomField whereIdentifier($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomField whereIsActive($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomField whereJsonContainsLocale(string $column, string $locale, ?mixed $value, string $operand = '=')
- * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomField whereJsonContainsLocales(string $column, array $locales, ?mixed $value, string $operand = '=')
- * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomField whereLayoutEndPosition($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomField whereLocale(string $column, string $locale)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomField whereLocales(string $column, array $locales)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomField whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomField whereOptions($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomField whereTemplateId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomField whereType($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomField whereUpdatedAt($value)
+ * @method static Builder<static>|CustomField newModelQuery()
+ * @method static Builder<static>|CustomField newQuery()
+ * @method static Builder<static>|CustomField query()
+ * @method static Builder<static>|CustomField whereCreatedAt($value)
+ * @method static Builder<static>|CustomField whereCustomFormId($value)
+ * @method static Builder<static>|CustomField whereFormPosition($value)
+ * @method static Builder<static>|CustomField whereGeneralFieldId($value)
+ * @method static Builder<static>|CustomField whereId($value)
+ * @method static Builder<static>|CustomField whereIdentifier($value)
+ * @method static Builder<static>|CustomField whereIsActive($value)
+ * @method static Builder<static>|CustomField whereJsonContainsLocale(string $column, string $locale, ?mixed $value, string $operand = '=')
+ * @method static Builder<static>|CustomField whereJsonContainsLocales(string $column, array $locales, ?mixed $value, string $operand = '=')
+ * @method static Builder<static>|CustomField whereLayoutEndPosition($value)
+ * @method static Builder<static>|CustomField whereLocale(string $column, string $locale)
+ * @method static Builder<static>|CustomField whereLocales(string $column, array $locales)
+ * @method static Builder<static>|CustomField whereName($value)
+ * @method static Builder<static>|CustomField whereOptions($value)
+ * @method static Builder<static>|CustomField whereTemplateId($value)
+ * @method static Builder<static>|CustomField whereType($value)
+ * @method static Builder<static>|CustomField whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-class CustomField extends ACustomField implements NestingObject
+class CustomField extends ACustomField implements NestingObject, EmbedCustomField
 {
     use HasFactory;
 
@@ -104,7 +110,7 @@ class CustomField extends ACustomField implements NestingObject
         self::creating(static function (CustomField $field) {
             //Set identifier key to on other
             if (empty($field->identifier()) && !$field->isGeneralField()) {
-                $field->identifier = uniqid();
+                $field->identifier = uniqid('', false);
             }
 
             return $field;
@@ -113,16 +119,9 @@ class CustomField extends ACustomField implements NestingObject
 
     public function __get($key)
     {
-        if ($key === 'general_field_id') {
-            return parent::__get($key);
-        }
 
-        if (!$this->isGeneralField()) {
-            if ('overwritten_options' === $key) {
-                return [];
-            }
-
-            return parent::__get($key);
+        if (empty($this->getAttribute('general_field_id'))) {
+            return $this->getAttribute($key);
         }
 
         return match ($key) {
@@ -131,7 +130,7 @@ class CustomField extends ACustomField implements NestingObject
             'options' => $this->getOptionsWithOverwritten(),
             'overwritten_options' => array_keys($this->generalField->overwrite_options ?? []),
             'identifier' => $this->generalField->identifier,
-            default => parent::__get($key),
+            default => $this->getAttribute($key),
         };
     }
 
@@ -188,5 +187,55 @@ class CustomField extends ACustomField implements NestingObject
             ... $ownOptions,
             ... $overwrittenOptions,
         ];
+    }
+
+    public function getGeneralField(): ?GeneralField
+    {
+        return $this->generalField;
+    }
+
+    public function getTemplate(): ?EmbedCustomForm
+    {
+        return $this->template;
+    }
+
+    public function getCustomOptions(): Collection
+    {
+        return $this->customOptions;
+    }
+
+    public function getFormConfiguration(): CustomFormConfiguration
+    {
+        return $this->customForm->getFormConfiguration();
+    }
+
+    public function getLayoutEndPosition(): ?int
+    {
+        return $this->layout_end_position;
+    }
+
+    public function getFormPosition(): int
+    {
+        return $this->form_position;
+    }
+
+    public function isActive(): bool
+    {
+        return $this->is_active;
+    }
+
+    public function setOptions(array $options): void
+    {
+        $this->options = $options;
+    }
+
+    public function getOptions(): array
+    {
+        return $this->options ?? [];
+    }
+
+    public function getName(): ?string
+    {
+        return $this->name;
     }
 }

@@ -2,37 +2,37 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Policies;
 
-use App\Models\User;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\FormRule;
 use Illuminate\Auth\Access\HandlesAuthorization;
+use Illuminate\Contracts\Auth\Access\Authorizable;
 
 class FormRulePolicy
 {
     use HandlesAuthorization;
 
-    public function view(User $user, FormRule $formRule): bool
+    public function view(Authorizable $user, FormRule $formRule): bool
     {
         return $this->viewAny($user);
     }
 
-    public function viewAny(User $user): bool
+    public function viewAny(Authorizable $user): bool
     {
         return true;
     }
 
-    public function create(User $user): bool
+    public function create(Authorizable $user): bool
     {
-        return (new CustomFormPolicy())->create($user);
+        return new CustomFormPolicy()->create($user);
     }
 
-    public function delete(User $user, FormRule $formRule): bool
+    public function delete(Authorizable $user, FormRule $formRule): bool
     {
         return $this->update($user, $formRule);
     }
 
-    public function update(User $user, FormRule $formRule): bool
+    public function update(Authorizable $user, FormRule $formRule): bool
     {
-        return (new CustomFormPolicy())->update($user, $formRule->customForm);
+        return new CustomFormPolicy()->update($user, $formRule->customForm);
     }
 
 

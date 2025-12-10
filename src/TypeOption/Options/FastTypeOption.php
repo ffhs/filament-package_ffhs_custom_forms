@@ -2,35 +2,30 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options;
 
+use Closure;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasOptionNoComponentModification;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\TypeOption;
-use Filament\Forms\Components\Component;
+use Filament\Support\Components\Component;
 
 class FastTypeOption extends TypeOption
 {
     use HasOptionNoComponentModification;
 
-    private mixed $defaultValue;
-    private Component $component;
+    private Closure $component;
 
-    public function __construct(mixed $defaultValue, Component $component)
+    public function __construct(mixed $default, Closure $component)
     {
-        $this->defaultValue = $defaultValue;
+        $this->default = $default;
         $this->component = $component;
     }
 
-    public static function makeFast(mixed $defaultValue, Component $component): FastTypeOption
+    public static function makeFast(mixed $default, Closure $component): FastTypeOption
     {
-        return app(static::class, ['defaultValue' => $defaultValue, 'component' => $component]);
-    }
-
-    public function getDefaultValue(): mixed
-    {
-        return $this->defaultValue;
+        return app(static::class, ['default' => $default, 'component' => $component]);
     }
 
     public function getComponent(string $name): Component
     {
-        return $this->component;
+        return ($this->component)($name);
     }
 }

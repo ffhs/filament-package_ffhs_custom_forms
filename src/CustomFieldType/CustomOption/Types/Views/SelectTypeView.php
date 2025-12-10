@@ -2,51 +2,43 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\CustomOption\Types\Views;
 
+use Ffhs\FfhsUtils\Filament\Components\PrioritizeEntry;
+use Ffhs\FfhsUtils\Filament\Components\PrioritizeSelect;
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomField;
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\FieldTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\CustomOption\HasCustomOptionInfoListView;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldType;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\PrioritizeSelect;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasDefaultViewComponent;
-use Filament\Forms\Components\Component as FormsComponent;
 use Filament\Forms\Components\Select;
-use Filament\Infolists\Components\Component as InfolistsComponent;
-use Filament\Infolists\Components\TextEntry;
+use Filament\Support\Components\Component;
 
 class SelectTypeView implements FieldTypeView
 {
     use HasCustomOptionInfoListView {
-        HasCustomOptionInfoListView::getInfolistComponent as getInfolistComponentNormalSelect;
+        HasCustomOptionInfoListView::getEntryComponent as getEntryComponentNormalSelect;
     }
     use HasDefaultViewComponent;
 
-    public function getFormComponent(
-        CustomFieldType $type,
-        CustomField $record,
-        array $parameter = []
-    ): FormsComponent {
-        $several = $this->getOptionParameter($record, 'several');
-        $prioritized = $this->getOptionParameter($record, 'prioritized');
+    public function getFormComponent(EmbedCustomField $customField, array $parameter = []): Component
+    {
+        $several = $this->getOptionParameter($customField, 'several');
+        $prioritized = $this->getOptionParameter($customField, 'prioritized');
 
         if ($several && $prioritized) {
-            return $this->getPrioritizedSelect($record, $parameter);
+            return $this->getPrioritizedSelect($customField, $parameter);
         }
 
-        return $this->getSingleSelect($record);
+        return $this->getSingleSelect($customField);
     }
 
-    public function getPrioritizedSelect(
-        CustomField $record,
-        array $parameter
-    ): FormsComponent|InfolistsComponent {
-        /**@var PrioritizeSelect $select */
-        $select = $this->makeComponent(PrioritizeSelect::class, $record);
+    public function getPrioritizedSelect(EmbedCustomField $customField, array $parameter): Component
+    {
+        $select = $this->makeComponent(PrioritizeSelect::class, $customField, false);
 
-        $selectLabelTranslation = __('filament-package_ffhs_custom_forms::custom_forms.fields.type_view.select.select');
-        $labels = $this->getOptionParameter($record, 'prioritized_labels');
+        $selectLabelTranslation = 'test'; //__('filament-package_ffhs_custom_forms::custom_forms.fields.type_view.select.select'); ToD o Fix
+        $labels = $this->getOptionParameter($customField, 'prioritized_labels');
         $labels = array_values($labels);
-        $validationMessagesRaw = $this->getOptionParameter($record, 'validation_messages_prioritized');
+        $validationMessagesRaw = $this->getOptionParameter($customField, 'validation_messages_prioritized');
 
         $validationMessages = [];
         foreach ($validationMessagesRaw as $message) {
@@ -54,10 +46,10 @@ class SelectTypeView implements FieldTypeView
         }
 
         return $select
-            ->minItems($this->getOptionParameter($record, 'min_select'))
-            ->maxItems($this->getOptionParameter($record, 'max_select'))
-            ->options($this->getAvailableCustomOptions($record))
-            ->dynamic($this->getOptionParameter($record, 'dynamic_prioritized'))
+            ->minItems($this->getOptionParameter($customField, 'min_select'))
+            ->maxItems($this->getOptionParameter($customField, 'max_select'))
+            ->options($this->getAvailableCustomOptions($customField))
+            ->dynamic($this->getOptionParameter($customField, 'dynamic_prioritized'))
             ->mutateSelectUsing(
                 function (Select $select, $selectId) use ($validationMessages, $labels, $selectLabelTranslation) {
                     $label = $selectId + 1 . '. ' . $selectLabelTranslation;
@@ -73,16 +65,15 @@ class SelectTypeView implements FieldTypeView
             );
     }
 
-    public function getSingleSelect(CustomField $record): Select
+    public function getSingleSelect(EmbedCustomField $customField): Select
     {
-        /** @var Select $select */
-        $select = $this->makeComponent(Select::class, $record);
-        $select = $select->options($this->getAvailableCustomOptions($record));
-        $required = $this->getOptionParameter($record, 'required');
-        $minItems = $required ? $this->getOptionParameter($record, 'min_select') : 0;
+        $select = $this->makeComponent(Select::class, $customField, false);
+        $select = $select->options($this->getAvailableCustomOptions($customField));
+        $required = $this->getOptionParameter($customField, 'required');
+        $minItems = $required ? $this->getOptionParameter($customField, 'min_select') : 0;
 
-        if ($this->getOptionParameter($record, 'several')) {
-            $maxItems = $this->getOptionParameter($record, 'max_select');
+        if ($this->getOptionParameter($customField, 'several')) {
+            $maxItems = $this->getOptionParameter($customField, 'max_select');
             $select = $select
                 ->multiple()
                 ->minItems($minItems);
@@ -95,49 +86,24 @@ class SelectTypeView implements FieldTypeView
         return $select;
     }
 
-    public function getInfolistComponent(
-        CustomFieldType $type,
-        CustomFieldAnswer $record,
-        array $parameter = []
-    ): InfolistsComponent {
-        $several = $this->getOptionParameter($record, 'several');
-        $prioritized = $this->getOptionParameter($record, 'prioritized');
+    public function getEntryComponent(EmbedCustomFieldAnswer $customFieldAnswer, array $parameter = []): Component
+    {
+        $several = $this->getOptionParameter($customFieldAnswer, 'several');
+        $prioritized = $this->getOptionParameter($customFieldAnswer, 'prioritized');
 
         if (!($several && $prioritized)) {
-            return $this->getInfolistComponentNormalSelect($type, $record, $parameter);
+            return $this->getEntryComponentNormalSelect($customFieldAnswer, $parameter);
         }
 
-        /**@var TextEntry $textEntry */
-        $textEntry = $this->makeComponent(TextEntry::class, $record);
-        $answer = $this->getAnswer($record) ?? [];
+        $prioritizeEntry = $this->makeComponent(PrioritizeEntry::class, $customFieldAnswer, true);
+        $translatedSelect = $customFieldAnswer->getType()->displayname();
+        $answer = $this->getAnswer($customFieldAnswer) ?? [];
         $stateList = $this
-            ->getAllCustomOptions($record)
+            ->getAllCustomOptions($customFieldAnswer)
             ->filter(fn($value, $id) => in_array($id, $answer, false));
 
-        if (!is_array($answer)) {
-            $answer = [];
-        }
 
-        $cleanedAnswers = [];
-        foreach ($answer as $key => $value) {
-            if (is_null($value) || !str_contains($key, 'prioritized_')) {
-                continue;
-            }
-
-            $selectId = str_replace('prioritized_', '', $key);
-
-            $name = $stateList->toArray()[$value] ?? '';
-            $translatedSelect = $type->getTranslatedName();
-            $cleanedAnswers[$selectId] = $selectId + 1 . '. ' . $translatedSelect . ': ' . $name;
-        }
-
-        ksort($cleanedAnswers, SORT_NUMERIC);
-
-        return $textEntry
-            ->state($cleanedAnswers)
-            ->listWithLineBreaks()
-            ->columnSpanFull()
-            ->inlineLabel()
-            ->badge();
+        return $prioritizeEntry->formatPrioritizedState($answer, $stateList, $translatedSelect);
     }
+
 }

@@ -1,0 +1,60 @@
+publish:
+  image: node:latest
+  stage: publish
+  rules:
+    - if: '$CI_COMMIT_TAG =~ /^v/ && $CI_COMMIT_TAG !~ /dev/'
+  script:
+    - cp /etc/gitlab-runner/certs/ca.crt /usr/local/share/ca-certificates/
+    - update-ca-certificates
+    - 'curl --fail-with-body --header "Job-Token: $CI_JOB_TOKEN" --data tag=$CI_COMMIT_TAG "${CI_API_V4_URL}/projects/$CI_PROJECT_ID/packages/composer"'
+
+# Publishes a tag/branch to Composer Packages of the current project
+publish-dev:
+  image: node:latest
+  stage: publish
+  rules:
+    - if: '$CI_MERGE_REQUEST_ID' # Ensures the job does not run in MR pipelines
+      when: never
+    - if: '$CI_COMMIT_BRANCH =~ /^develop\/.*$/ && $CI_PIPELINE_SOURCE == "push"' # Runs only on push after MR merge
+  before_script:
+    - cp /etc/gitlab-runner/certs/ca.crt /usr/local/share/ca-certificates/
+    - update-ca-certificates
+    - apt-get update && apt-get install -y jq
+    - git config user.email "gitlab-ci@ffhs.ch"
+    - git config user.name "GitLab CI"
+  script:
+    - VERSION=$(jq -r '.version' composer.json)
+    - TAG_NAME=v${VERSION}-alpha.${CI_JOB_ID}
+    - 'echo "Tag to create: $TAG_NAME"'
+    - 'git tag $TAG_NAME  # Create the tag locally'
+    - 'git push https://oauth2:${CI_PUSH_TOKEN}@${CI_SERVER_HOST}/$CI_PROJECT_PATH.git $TAG_NAME'  # Use CI_JOB_TOKEN to authenticate
+    - 'curl --fail-with-body --header "Job-Token: $CI_JOB_TOKEN" --data tag=$TAG_NAME "${CI_API_V4_URL}/projects/$CI_PROJECT_ID/packages/composer"'
+
+set-minimum-stability:
+  image: node:latest
+  stage: build
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main" && $CI_COMMIT_MESSAGE =~ /^Merge branch/'
+      when: always
+  before_script:
+    - cp /etc/gitlab-runner/certs/ca.crt /usr/local/share/ca-certificates/
+    - update-ca-certificates
+    - apt-get update && apt-get install -y jq git
+    - git config user.email "gitlab-ci@ffhs.ch"
+    - git config user.name "GitLab CI"
+  script:
+    - 'jq ''."minimum-stability" = "stable"'' composer.json | jq ''."prefer-stable" = true'' > composer.tmp.json'
+    - mv composer.tmp.json composer.json
+    - |
+      if ! git diff --quiet -- composer.json; then
+      git add composer.json
+      git commit -m "ci: enforce stable Composer settings after merge"
+      git push --force "https://oauth2:${CI_PUSH_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git" HEAD:main
+      else
+      echo "No changes to composer.json detected, skipping commit"
+      fi
+    - VERSION=$(jq -r '.version' composer.json)
+    - TAG_NAME=v${VERSION}
+    - 'git tag $TAG_NAME  # Create the tag locally '
+    - 'git push https://oauth2:${CI_PUSH_TOKEN}@${CI_SERVER_HOST}/$CI_PROJECT_PATH.git $TAG_NAME'
+    - 'curl --fail-with-body --header "Job-Token: $CI_JOB_TOKEN" --data tag=$TAG_NAME "${CI_API_V4_URL}/projects/$CI_PROJECT_ID/packages/composer"'

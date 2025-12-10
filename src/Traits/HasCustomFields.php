@@ -13,6 +13,9 @@ use Illuminate\Support\Collection;
 
 trait HasCustomFields
 {
+    /**
+     * @return HasMany<CustomField, $this>
+     */
     public function ownedFields(): HasMany
     {
         return $this->hasMany(CustomField::class);
@@ -21,32 +24,28 @@ trait HasCustomFields
     public function customFields(): Collection
     {
         if ($this->relationLoaded('customFields')) {
-            return $this->getRelation('customFields');
+            return $this->getRelation('customFields') ?? collect();
         }
 
         $templateIdQueries = CustomField::query()
             ->select('template_id')
             ->where('custom_form_id', $this->id);
 
-        $customFieldQuery = CustomField::query()
-            ->where(function (Builder $query) use ($templateIdQueries) {
-                $query
-                    ->where('custom_form_id', $this->id)
-                    ->orWhereIn('custom_form_id', $templateIdQueries);
-            });
-
-        $templates = CustomForm::query()
-            ->whereIn('id', $templateIdQueries)
-            ->get()
-            ->keyBy('id');
-
-        $customFields = $customFieldQuery
+        $customFields = CustomField::query()
+            ->where('custom_form_id', $this->id)
+            ->orWhereIn('custom_form_id', $templateIdQueries)
             ->with([
                 'generalField',
                 'generalField.customOptions',
                 'customOptions'
             ])
             ->get();
+
+
+        $templates = CustomForm::query()
+            ->whereIn('id', $templateIdQueries)
+            ->get()
+            ->keyBy('id');
 
         $groupedCustomFields = $customFields->groupBy('custom_form_id');
         $this->setRelation('ownedFields', $groupedCustomFields->get($this->id));
@@ -92,7 +91,7 @@ trait HasCustomFields
     public function getOwnedFields(): Collection
     {
         if ($this->relationLoaded('ownedFields')) {
-            return parent::__get('ownedFields');
+            return parent::__get('ownedFields') ?? collect();
         }
 
         $customFields = $this->customFields();

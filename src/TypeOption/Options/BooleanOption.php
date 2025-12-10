@@ -2,19 +2,18 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options;
 
+use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasOptionNoComponentModification;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\TypeOption;
-use Filament\Forms\Components\Component as FormsComponent;
 use Filament\Forms\Components\Toggle;
-use Filament\Infolists\Components\Component as InfolistsComponent;
+use Filament\Support\Components\Component;
 
 class BooleanOption extends TypeOption
 {
-    public function getDefaultValue(): bool
-    {
-        return false;
-    }
+    use HasOptionNoComponentModification;
 
-    public function getComponent(string $name): FormsComponent
+    protected mixed $default = false;
+
+    public function getComponent(string $name): Component
     {
         return Toggle::make($name)
             ->label(TypeOption::__('boolean.label'))
@@ -22,17 +21,12 @@ class BooleanOption extends TypeOption
             ->live();
     }
 
-    public function modifyFormComponent(FormsComponent $component, mixed $value): FormsComponent
+    public function modifyFormComponent(Component $component, mixed $value): Component
     {
-        if ($value) {
+        if ($value && method_exists($component, 'boolean')) {
             $component = $component->boolean();
         }
 
-        return $component;
-    }
-
-    public function modifyInfolistComponent(InfolistsComponent $component, mixed $value): InfolistsComponent
-    {
         return $component;
     }
 }

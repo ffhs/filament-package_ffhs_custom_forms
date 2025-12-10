@@ -5,9 +5,11 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\Traits;
 use Exception;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\TemplatesType\TemplateFieldType;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormConfiguration\CustomFormConfiguration;
 use Ffhs\FilamentPackageFfhsCustomForms\Exceptions\FieldDataHasNoOrWrongCustomFieldTypeException;
 use Ffhs\FilamentPackageFfhsCustomForms\Exceptions\FieldHasNoOrWrongCustomFieldTypeException;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField;
 
 trait CanInteractionWithFieldTypes
 {
@@ -15,10 +17,16 @@ trait CanInteractionWithFieldTypes
      * @throws FieldHasNoOrWrongCustomFieldTypeException
      * @throws FieldDataHasNoOrWrongCustomFieldTypeException
      */
-    public function getFieldTypeFromRawDate(array &$data, CustomForm $customForm): CustomFieldType
-    {
+    public function getFieldTypeFromRawDate(
+        array &$data,
+        CustomForm|CustomFormConfiguration $configuration
+    ): CustomFieldType {
         if (empty($data)) {
             throw new FieldDataHasNoOrWrongCustomFieldTypeException($data);
+        }
+
+        if ($configuration instanceof CustomForm) {
+            $configuration = $configuration->getFormConfiguration();
         }
 
         if (!empty($data['cachedFieldType'])) {
@@ -34,11 +42,13 @@ trait CanInteractionWithFieldTypes
         }
 
         if (!empty($data['general_field_id'])) {
-            return $customForm
-                ->getFormConfiguration()
+            /**@var GeneralField $generalField */
+            $generalField = $configuration
                 ->getAvailableGeneralFields()
-                ->firstWhere('id', $data['general_field_id'])
-                ->getType();
+                ->firstWhere('id', $data['general_field_id']);
+
+            /**@phpstan-ignore-next-line */
+            return $generalField->getType();
         }
 
         if (empty($data['type'])) {

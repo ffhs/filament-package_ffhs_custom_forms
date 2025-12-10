@@ -2,10 +2,14 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Traits;
 
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomField;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormConfiguration\CustomFormConfiguration;
+use Ffhs\FilamentPackageFfhsCustomForms\Facades\CustomForms;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\FormEditor\StateCasts\CustomFieldStateCast;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\FormRule;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Get;
+use Filament\Schemas\Components\Utilities\Get;
+use Illuminate\Support\Collection;
 
 trait HasTriggerEventFormTargets
 {
@@ -13,14 +17,15 @@ trait HasTriggerEventFormTargets
     use HasFieldsMapToSelectOptions;
     use CanLoadFieldRelationFromForm;
 
-    protected array|null $cachedAllFieldsData = null;
+    /** @var Collection<string, EmbedCustomField>|null */
+    protected $cachedAllFieldsData = null;
 
     public function getTargetsSelect(): Select
     {
         return Select::make('targets')
-            ->multiple()
-            ->label('Target')
             ->options($this->getTargetOptions(...))
+            ->label('Target') //todo Translate
+            ->multiple()
             ->lazy()
             ->hidden(function ($set, $get) {
                 //Fields with an array doesn't generate properly
@@ -34,24 +39,31 @@ trait HasTriggerEventFormTargets
     public function getTargetSelect(): Select
     {
         return Select::make('target')
-            ->label('Target')
             ->options($this->getTargetOptions(...))
+            ->label(FormRule::type__('events.has_targets.target_field.label'))
             ->live();
     }
 
-    public function getTargetOptions(Get $get, ?CustomForm $record): array
+    /**
+     * @param Get $get
+     * @return array<string|int, string|array<string, string>>
+     */
+    public function getTargetOptions(Get $get): array
     {
-        $fields = collect($this->getAllFieldsData($get, $record))
-            ->map(function ($fieldData) use ($record) {
-                $customField = new CustomField($fieldData);
+        $formConfiguration = $this->getFormConfiguration($get);
+        $fields = collect($this->getAllFieldsData($get, $formConfiguration))
+            ->filter(fn(EmbedCustomField $field) => !$field->isTemplate());
 
-                return $this->loadFieldRelationsFromForm($customField, $record);
-            });
-
-        return $this->getSelectOptionsFromFields($fields);
+        /**@phpstan-ignore-next-line */
+        return $this->getSelectOptionsFromFields($fields, $formConfiguration);
     }
 
-    public function getAllFieldsData(Get $get, CustomForm $customForm): array
+    /**
+     * @param Get $get
+     * @param CustomFormConfiguration $formConfiguration
+     * @return Collection<string, EmbedCustomField>
+     */
+    public function getAllFieldsData(Get $get, CustomFormConfiguration $formConfiguration): Collection
     {
         if (!is_null($this->cachedAllFieldsData)) {
             return $this->cachedAllFieldsData;
@@ -59,10 +71,13 @@ trait HasTriggerEventFormTargets
 
         $fields = $get('../../../../../custom_fields') ?? [];
 
-        return $this->cachedAllFieldsData = $this->getFieldDataFromFormData($fields, $customForm);
+        $fields = new CustomFieldStateCast()->flattCustomFields($fields);
+
+
+        return $this->cachedAllFieldsData = $this->getFieldDataFromFormData($fields, $formConfiguration);
     }
 
-    public function getTargetFieldData(Get $get, $customForm): array|null
+    public function getTargetFieldData(Get $get): EmbedCustomField|null
     {
         $identifier = $get('target');
 
@@ -70,8 +85,13 @@ trait HasTriggerEventFormTargets
             return null;
         }
 
-        $fields = $this->getAllFieldsData($get, $customForm);
+        $fields = $this->getAllFieldsData($get, $this->getFormConfiguration($get));
 
         return $fields[$identifier] ?? null;
+    }
+
+    public function getFormConfiguration(Get $get): CustomFormConfiguration
+    {
+        return CustomForms::getFormConfiguration($get('../../../../../custom_form_identifier'));
     }
 }

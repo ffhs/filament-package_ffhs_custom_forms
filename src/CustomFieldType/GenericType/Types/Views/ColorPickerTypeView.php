@@ -2,37 +2,28 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\Types\Views;
 
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomField;
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\FieldTypeView;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldType;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasDefaultViewComponent;
 use Filament\Forms\Components\ColorPicker;
-use Filament\Forms\Components\Component as FormsComponent;
 use Filament\Infolists\Components\ColorEntry;
-use Filament\Infolists\Components\Component as InfolistsComponent;
+use Filament\Support\Components\Component;
+
 
 class ColorPickerTypeView implements FieldTypeView
 {
     use HasDefaultViewComponent;
 
-    public function getFormComponent(
-        CustomFieldType $type,
-        CustomField $record,
-        array $parameter = []
-    ): FormsComponent {
-        $picker = $this->makeComponent(ColorPicker::class, $record);
-        $colorType = $this->getOptionParameter($record, 'color_type');
-        $picker = $picker->$colorType();
-
-        return $picker;
+    public function getFormComponent(EmbedCustomField $customField, array $parameter = []): Component
+    {
+        $picker = $this->makeComponent(ColorPicker::class, $customField, false);
+        $colorType = $this->getOptionParameter($customField, 'color_type');
+        return $picker->$colorType();
     }
 
-    public function getInfolistComponent(
-        CustomFieldType $type,
-        CustomFieldAnswer $record,
-        array $parameter = []
-    ): InfolistsComponent {
-        return $this->makeComponent(ColorEntry::class, $record);
+    public function getEntryComponent(EmbedCustomFieldAnswer $customFieldAnswer, array $parameter = []): Component
+    {
+        return $this->makeComponent(ColorEntry::class, $customFieldAnswer, true);
     }
 }

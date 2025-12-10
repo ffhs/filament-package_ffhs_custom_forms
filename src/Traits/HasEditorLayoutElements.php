@@ -2,43 +2,45 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Traits;
 
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormEditor\TypeActions\Default\DefaultCustomActivationAction;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormEditor\TypeActions\Default\DefaultCustomFieldDeleteAction;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormEditor\TypeActions\Default\DefaultCustomFieldEditTypeOptionsAction;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormConfiguration\CustomFormConfiguration;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\FormEditor\TypeActions\DefaultCustomActivationAction;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\FormEditor\TypeActions\DefaultFieldDeleteAction;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\FormEditor\TypeActions\DefaultFieldEditOptionsAction;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Filament\Support\Colors\Color;
 
 trait HasEditorLayoutElements
 {
     abstract public function icon(): string;
 
-    public function getEditorFieldBadge(array $rawData): ?string
+    public function getEditorFieldBadge(array $fieldState, CustomFormConfiguration $configuration): ?string
     {
-        $text = $this->getEditorFieldBadgeText($rawData);
-        $color = $this->getEditorFieldBadgeColor($rawData);
+        $text = $this->getEditorFieldBadgeText($fieldState);
+        $color = $this->getEditorFieldBadgeColor($fieldState);
 
         if (is_null($color) || is_null($text)) {
             return null;
         }
 
-        return view('filament-package_ffhs_custom_forms::badge', ['text' => $text, 'color' => $color]);
+        /** @phpstan-ignore argument.type */
+        return view('filament-package_ffhs_custom_forms::filament.components.form-editor.badge',
+            ['text' => $text, 'color' => $color]);
     }
 
-    public function getEditorFieldTitle(array $rawData, CustomForm $form): string
+    public function getEditorFieldTitle(array $fieldState, CustomFormConfiguration $configuration): string
     {
-        $customField = $this->getEditorCustomFieldFromData($rawData, $form);
+        $customField = $this->getEditorCustomFieldFromData($fieldState, $configuration);
 
         if (!$customField->isGeneralField()) {
-            return $this->getTranslatedName();
+            return $this->displayname();
         }
 
-        return $customField->name;
+        return str($customField->getGeneralField()->name ?? '404');
     }
 
-    public function getEditorFieldIcon(array $rawData, CustomForm $form): string
+    public function getEditorFieldIcon(array $rawData, CustomFormConfiguration $configuration): string
     {
-        $customField = $this->getEditorCustomFieldFromData($rawData, $form);
+        $customField = $this->getEditorCustomFieldFromData($rawData, $configuration);
 
         if (!$customField->isGeneralField()) {
             return $this->icon();
@@ -47,17 +49,21 @@ trait HasEditorLayoutElements
         return $customField->generalField->icon;
     }
 
-    public function fieldEditorExtraComponent(array $rawData): ?string
+    public function getFieldDataExtraComponents(CustomFormConfiguration $configuration, array $state): array
     {
-        return null;
+        return [];
     }
 
-    public function getEditorActions(string $key, array $rawData): array
+    public function getEditorActions(CustomFormConfiguration $formConfiguration, array $state): array
     {
         return [
-            DefaultCustomFieldDeleteAction::make('delete-field-' . $key),
-            DefaultCustomFieldEditTypeOptionsAction::make('edit-field-' . $key),
-            DefaultCustomActivationAction::make('active-' . $key)->visible($this->canBeDeactivate()),
+            DefaultFieldDeleteAction::make('delete-field')
+                ->formConfiguration($formConfiguration),
+            DefaultFieldEditOptionsAction::make('edit-options')
+                ->formConfiguration($formConfiguration),
+            DefaultCustomActivationAction::make('toggle_active')
+                ->formConfiguration($formConfiguration)
+                ->visible($this->canBeDeactivate()),
         ];
     }
 
@@ -66,7 +72,7 @@ trait HasEditorLayoutElements
         return empty($fielData['general_field_id']);
     }
 
-    protected function getEditorCustomFieldFromData(array $rawData, CustomForm $form): CustomField
+    protected function getEditorCustomFieldFromData(array $rawData, CustomFormConfiguration $configuration): CustomField
     {
         $customField = app(CustomField::class)->fill($rawData);
 
@@ -74,8 +80,7 @@ trait HasEditorLayoutElements
             return $customField;
         }
 
-        $generalField = $form
-            ->getFormConfiguration()
+        $generalField = $configuration
             ->getAvailableGeneralFields()
             ->get($customField->general_field_id);
         $customField->setRelation('generalField', $generalField);
@@ -83,14 +88,14 @@ trait HasEditorLayoutElements
         return $customField;
     }
 
-    protected function getEditorFieldBadgeText(array $rawData): ?string
+    protected function getEditorFieldBadgeText(array $fielData): ?string
     {
-        $customField = app(CustomField::class)->fill($rawData);
+        $customField = app(CustomField::class)->fill($fielData);
 
         return $customField->isGeneralField() ? 'Gen' : null;
     }
 
-    protected function getEditorFieldBadgeColor(array $rawData): ?array
+    protected function getEditorFieldBadgeColor(array $fielData): ?array
     {
         return Color::rgb('rgb(43, 164, 204)');
     }

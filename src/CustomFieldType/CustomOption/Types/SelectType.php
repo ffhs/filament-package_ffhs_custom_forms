@@ -11,14 +11,14 @@ use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Groups\ValidationTypeOptionGr
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\FastTypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\MaxSelectOption;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\MinSelectOption;
+use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\SeveralOption;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\ValidationMessageOption;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\TypeOption;
-use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Field;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Get;
+use Filament\Schemas\Components\Utilities\Get;
 
 class SelectType extends CustomOptionType
 {
@@ -50,11 +50,11 @@ class SelectType extends CustomOptionType
                     'prioritized_labels',
                     FastTypeOption::makeFast(
                         [],
-                        Repeater::make('prioritized_labels')
+                        static fn($name) => Repeater::make($name)
                             ->label(TypeOption::__('prioritized_labels.label'))
                             ->schema([
                                 TextInput::make('label')
-                                    ->label(''),
+                                    ->hiddenLabel(),
                             ])
                             ->whenTruthy('prioritized')
                             ->addActionLabel('prioritized_labels.add_label')
@@ -65,17 +65,10 @@ class SelectType extends CustomOptionType
             ValidationTypeOptionGroup::make()
                 ->removeTypeOption('validation_messages')
                 ->mergeTypeOptions([
-                    'several' => FastTypeOption::makeFast(
-                        false,
-                        Toggle::make('several')
-                            ->label(TypeOption::__('several.label'))
-                            ->helperText(TypeOption::__('several.helper_text'))
-                            ->columnSpanFull()
-                            ->live()
-                    ),
+                    'several' => SeveralOption::make(),
                     'prioritized' => FastTypeOption::makeFast(
                         false,
-                        Toggle::make('prioritized')
+                        static fn($name) => Toggle::make($name)
                             ->whenTruthy('several')
                             ->label(TypeOption::__('prioritized.label'))
                             ->helperText(TypeOption::__('prioritized.helper_text'))
@@ -83,28 +76,29 @@ class SelectType extends CustomOptionType
                     ),
                     'dynamic_prioritized' => FastTypeOption::makeFast(
                         false,
-                        Toggle::make('dynamic_prioritized')
+                        static fn($name) => Toggle::make($name)
                             ->whenTruthy('prioritized')
                             ->label(TypeOption::__('dynamic_prioritized.label'))
                             ->helperText(TypeOption::__('dynamic_prioritized.helper_text'))
                     ),
                     'min_select' => MinSelectOption::make()
                         ->modifyOptionComponent(fn(Field $component) => $component
-                            ->required(fn($get) => $get('prioritized'))
+                            ->required(fn(Get $get) => $get('prioritized'))
                             ->whenTruthy('several')
                             ->columnStart(1)
                         ),
                     'max_select' => MaxSelectOption::make()
                         ->modifyOptionComponent(fn(Field $component) => $component
-                            ->required(fn($get) => $get('prioritized'))
+                            ->required(fn(Get $get) => $get('prioritized'))
                             ->whenTruthy('several')
                         ),
                     'validation_messages' => ValidationMessageOption::make()
                         ->modifyOptionComponent(
-                            fn(Component $component) => $component->hidden(fn(Get $get) => $get('prioritized'))
+                            fn(Field $component) => $component->hidden(fn(Get $get) => $get('prioritized'))
                         ),
                     'validation_messages_prioritized' => FastTypeOption::makeFast([],
-                        Repeater::make('validation_messages_prioritized')
+                        static fn($name) => Repeater::make($name)
+                            ->visible(fn(Get $get) => $get('prioritized'))
                             ->label(TypeOption::__('validation_messages_prioritized.label'))
                             ->helperText(TypeOption::__('validation_messages_prioritized.helper_text'))
                             ->schema([

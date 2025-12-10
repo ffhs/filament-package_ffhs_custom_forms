@@ -2,9 +2,14 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Contracts;
 
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
+
+use Ffhs\FilamentPackageFfhsCustomForms\Enums\FormRuleAction;
 
 interface FieldDisplayer
 {
-    public function __invoke(string $viewMode, CustomField $customField, array $parameter);
+    public function __invoke(string $viewMode, EmbedCustomField $customField, array $parameter);
+
+    public function getRuleActionBeforeRender(): FormRuleAction;
+
+    public function getRuleActionAfterRender(): FormRuleAction;
 }

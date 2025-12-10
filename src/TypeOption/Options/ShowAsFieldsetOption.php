@@ -2,35 +2,23 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options;
 
+use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasOptionNoComponentModification;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\TypeOption;
-use Filament\Forms\Components\Component as FormsComponent;
 use Filament\Forms\Components\Toggle;
-use Filament\Infolists\Components\Component as InfolistsComponent;
+use Filament\Support\Components\Component;
 
 class ShowAsFieldsetOption extends TypeOption
 {
+    use HasOptionNoComponentModification;
 
-    public function getDefaultValue(): bool
-    {
-        return false;
-    }
+    protected mixed $default = false;
 
-    public function getComponent(string $name): FormsComponent
+    public function getComponent(string $name): Component
     {
         return Toggle::make($name)
             ->columnSpanFull()
             ->label(TypeOption::__('show_as_fieldset.label'))
             ->helperText(TypeOption::__('show_as_fieldset.helper_text'))
             ->disabled(fn($get) => !$get('show_label'));
-    }
-
-    public function modifyFormComponent(FormsComponent $component, mixed $value): FormsComponent
-    {
-        return $component;
-    }
-
-    public function modifyInfolistComponent(InfolistsComponent $component, mixed $value): InfolistsComponent
-    {
-        return $component;
     }
 }

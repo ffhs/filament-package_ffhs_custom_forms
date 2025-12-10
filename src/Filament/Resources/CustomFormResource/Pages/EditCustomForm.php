@@ -2,25 +2,23 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormResource\Pages;
 
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormEditor\CustomFormEditor;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormHeaderActions\CustomFormSchemaExportAction;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormHeaderActions\CustomFormSchemaImportAction;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormResource;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormSchemaExportAction;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormSchemaImportAction;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormResource\CustomFormResource;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanLoadCustomFormEditorData;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanSaveCustomFormEditorData;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\LocaleSwitcher;
-use Filament\Forms\Form;
 use Filament\Resources\Pages\EditRecord;
-use Filament\Resources\Pages\EditRecord\Concerns\Translatable;
-use Filament\Support\Enums\MaxWidth;
 use Filament\Support\Facades\FilamentView;
 use Illuminate\Contracts\Support\Htmlable;
+use LaraZeus\SpatieTranslatable\Actions\LocaleSwitcher;
+use LaraZeus\SpatieTranslatable\Resources\Pages\EditRecord\Concerns\Translatable;
 use Throwable;
-
 use function Filament\Support\is_app_url;
 
+/**
+ * @method CustomForm getRecord()
+ */
 class EditCustomForm extends EditRecord
 {
     use Translatable;
@@ -44,26 +42,14 @@ class EditCustomForm extends EditRecord
         return trans(CustomForm::__('pages.edit.title'), $attributes);
     }
 
-    public function getMaxContentWidth(): MaxWidth|string|null
-    {
-        return MaxWidth::Full;
-    }
-
-    public function form(Form $form): Form
-    {
-        return $form->schema([
-            CustomFormEditor::make('custom_form')
-                ->label('')
-        ]);
-    }
-
     /**
      * @throws Throwable
      */
     public function save(bool $shouldRedirect = true, bool $shouldSendSavedNotification = true): void
     {
         $this->authorizeAccess();
-        $this->saveCustomFormEditorData($this->data['custom_form'], $this->getRecord());
+        $state = $this->form->getState();
+        $this->saveCustomFormEditorData($state['custom_form'], $this->getRecord());
         $this->rememberData();
 
         if ($shouldSendSavedNotification) {
@@ -79,15 +65,12 @@ class EditCustomForm extends EditRecord
 
     protected function fillForm(): void
     {
-        /**@var CustomForm $customForm */
         $customForm = $this->getRecord();
         $customForm->load('ownedRules', 'ownedRules.ruleTriggers', 'ownedRules.ruleEvents');
 
         $this
             ->form
-            ->fill([
-                'custom_form' => $this->loadCustomFormEditorData($customForm)
-            ]);
+            ->fill(['custom_form' => $this->loadCustomFormEditorData($customForm)]);
     }
 
     protected function getHeaderActions(): array
@@ -96,15 +79,16 @@ class EditCustomForm extends EditRecord
             CustomFormSchemaExportAction::make(),
             CustomFormSchemaImportAction::make()
                 ->existingForm(fn(CustomForm $record) => $record)
-                ->disabled(fn(CustomForm $record) => $record->ownedFields->count() > 0
-                    || $record->rules->count() > 0
-                )
+                ->disabled(function (CustomForm $record) {
+                    return $record->ownedFields->count() > 0
+                        || $record->rules->count() > 0;
+                })
                 ->action(function (CustomFormSchemaImportAction $action, $data) {
                     $action->callImportAction($data);
                     $action->redirect('edit');
                 }),
             LocaleSwitcher::make(),
-            DeleteAction::make(),
         ];
     }
+
 }

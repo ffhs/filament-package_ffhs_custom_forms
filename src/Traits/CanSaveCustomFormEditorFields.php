@@ -33,20 +33,19 @@ trait CanSaveCustomFormEditorFields
                 return [$fieldData['identifier'] => $fieldData];
             }
 
-            /**@var null|GeneralField $genField */
+            /**@phpstan-var null|GeneralField $genField */
             $genField = $generalFields->firstWhere('id', $fieldData['general_field_id']);
 
+            /** @phpstan-ignore-next-line */
             return [$genField?->identifier => $fieldData];
         });
 
         //Run after Save
         $savedFields
-            ->whereIn('id', $usedIds)
+            ->whereIn('id', collect($fieldsToSaveData)->pluck('id'))
             ->each(function (CustomField $field) use ($rawData): void {
                 $data = $rawData->get($field->identifier, []);
-                $field
-                    ->getType()
-                    ->doAfterSaveField($field, $data);
+                $field->getType()->doAfterSaveField($field, $data);
             });
 
         //Run after Create
@@ -101,7 +100,7 @@ trait CanSaveCustomFormEditorFields
                 $customField = app(CustomField::class);
             }
 
-            $type = CustomForms::getFieldTypeFromRawDate($field, $form);
+            $type = CustomForms::getFieldTypeFromRawDate($field, $form->getFormConfiguration());
             $mutatedFieldData = $type->getMutateCustomFieldDataOnSave($customField, $field);
 
             $customField->fill($mutatedFieldData);

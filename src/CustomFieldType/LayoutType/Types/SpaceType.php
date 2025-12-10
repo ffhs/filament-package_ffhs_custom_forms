@@ -6,10 +6,8 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldT
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\LayoutType\Types\Views\SpaceTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasCustomTypePackageTranslation;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Groups\LayoutOptionGroup;
-use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\FastTypeOption;
+use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\AmountOption;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\ShowInViewOption;
-use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\TypeOption;
-use Filament\Forms\Components\TextInput;
 
 class SpaceType extends CustomFieldType
 {
@@ -37,22 +35,18 @@ class SpaceType extends CustomFieldType
         return false;
     }
 
+    public function isFullSizeField(): bool
+    {
+        return true;
+    }
+
     public function extraTypeOptions(): array
     {
         return [
             LayoutOptionGroup::make()
                 ->removeTypeOption('new_line')
                 ->setTypeOptions([
-                    'amount' => FastTypeOption::makeFast(
-                        1,
-                        TextInput::make('amount')
-                            ->label(TypeOption::__('size.label'))
-                            ->helperText(TypeOption::__('size.helper_text'))
-                            ->columnStart(1)
-                            ->minValue(1)
-                            ->required()
-                            ->numeric()
-                    ),
+                    'amount' => AmountOption::make(),
                     'show_in_view' => ShowInViewOption::make(),
                 ]),
         ];

@@ -3,9 +3,9 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\Traits;
 
 use Closure;
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\LayoutType\CustomLayoutType;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
 
 trait HasLayoutSplit
 {
@@ -39,11 +39,12 @@ trait HasLayoutSplit
         return $this->evaluate($this->layoutTypeSplit);
     }
 
-    public function loadLayoutTypeSplitAnswerData(CustomFormAnswer $answer): array
+    public function loadLayoutTypeSplitAnswerData(EmbedCustomFormAnswer $answer): array
     {
+        //ToDo doesnt work when field is in Template
         $layoutField = $answer
-            ->customForm
-            ->customFields
+            ->getCustomForm()
+            ->getCustomFields()
             ->filter(fn(CustomField $field) => $field->type === $this->getLayoutTypeSplit()::identifier())
             ->first();
 

@@ -6,11 +6,8 @@ use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldT
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\LayoutType\Types\Views\TextLayoutTypeView;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasCustomTypePackageTranslation;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Groups\LayoutOptionGroup;
-use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\FastTypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\ShowInViewOption;
-use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\TypeOption;
-use Filament\Forms\Components\RichEditor;
-use Illuminate\Support\Facades\App;
+use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\TextOption;
 
 class TextLayoutType extends CustomFieldType
 {
@@ -35,32 +32,12 @@ class TextLayoutType extends CustomFieldType
 
     public function extraTypeOptions(): array
     {
-        $buttons = [
-            'bold',
-            'bulletList',
-            'italic',
-            'link',
-            'orderedList',
-            'underline',
-        ];
 
         return [
             LayoutOptionGroup::make()
                 ->addTypeOptions('show_in_view', ShowInViewOption::make())
                 ->removeTypeOption('helper_text')
-                ->addTypeOptions(
-                    'text',
-                    FastTypeOption::makeFast(
-                        '',
-                        RichEditor::make('text.' . App::getLocale())
-                            ->label(TypeOption::__('text.label'))
-                            ->helperText(TypeOption::__('text.helper_text'))
-                            ->columnSpanFull()
-                            ->toolbarButtons(
-                                $buttons
-                            ) //ToDo Add Location Selection, add to FieldMapper the language Getter
-                    )
-                ),
+                ->addTypeOptions('text', TextOption::make()),
         ];
     }
 }

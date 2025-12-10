@@ -3,13 +3,14 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\TemplatesType;
 
 use Closure;
+use Ffhs\FfhsUtils\Traits\HasStaticMake;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldType;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormEditor\TypeActions\Default\DefaultCustomActivationAction;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormEditor\TypeActions\Default\DefaultCustomFieldDeleteAction;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormEditor\TypeActions\Default\DefaultTemplateDissolveAction;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormConfiguration\CustomFormConfiguration;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\FormEditor\TypeActions\DefaultCustomActivationAction;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\FormEditor\TypeActions\DefaultFieldDeleteAction;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\FormEditor\TypeActions\DefaultTemplateDissolveAction;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasCustomTypePackageTranslation;
 use Filament\Support\Colors\Color;
@@ -18,6 +19,7 @@ use Illuminate\Support\Collection;
 final class TemplateFieldType extends CustomFieldType
 {
     use HasCustomTypePackageTranslation;
+    use HasStaticMake;
 
     public static function identifier(): string
     {
@@ -48,22 +50,26 @@ final class TemplateFieldType extends CustomFieldType
         return $data;
     }
 
-    public function getEditorActions(string $key, array $rawData): array
+    public function getEditorActions(CustomFormConfiguration $formConfiguration, array $state): array
     {
-        return [
-            DefaultCustomFieldDeleteAction::make('delete-field-' . $key),
-            DefaultTemplateDissolveAction::make('dissolve-template-' . $key),
-            DefaultCustomActivationAction::make('active-' . $key)->visible($this->canBeDeactivate()),
-        ];
+        return array(
+            DefaultFieldDeleteAction::make('delete-field')
+                ->formConfiguration($formConfiguration),
+            DefaultTemplateDissolveAction::make('dissolve-template')
+                ->formConfiguration($formConfiguration),
+
+            DefaultCustomActivationAction::make('toggle_active')
+                ->visible($this->canBeDeactivate())
+                ->formConfiguration($formConfiguration),
+        );
     }
 
-    public function getEditorFieldTitle(array $rawData, CustomForm $form): string
+    public function getEditorFieldTitle(array $fieldState, CustomFormConfiguration $configuration): string
     {
-        return $form
-            ->getFormConfiguration()
+        return $configuration
             ->getAvailableTemplates()
-            ->get($rawData['template_id'])
-            ->short_title;
+            ->get($fieldState['template_id'])
+            ->short_title ?? '404';
     }
 
     public function hasEditorNameElement(array $fielData): bool
@@ -96,27 +102,27 @@ final class TemplateFieldType extends CustomFieldType
         $templateFields = $field
             ->template
             ->customFields;
+
         $formFields = $field
             ->customForm
             ->customFields;
 
         $field
             ->customForm
-            ->customFormAnswers
-            ->each(function (CustomFormAnswer $formAnswer) use (
-                $formFields,
-                $field,
-                $templateFields
-            ) {
-                $templateIdentifiers = $templateFields->pluck('identifier');
-                $formFieldIds = $formFields
-                    ->whereIn('identifier', $templateIdentifiers)
-                    ->pluck('id');
-                $formAnswer
-                    ->customFieldAnswers
-                    ->whereIn('custom_field_id', $formFieldIds)
-                    ->each($this->getFieldTransferClosure($templateFields, $formFields));
+            ->customFormAnswers()
+            ->chunk(10, function ($formAnswers) use ($templateFields, $formFields) {
+                $formAnswers->each(function (CustomFormAnswer $formAnswer) use ($formFields, $templateFields) {
+                    $templateIdentifiers = $templateFields->pluck('identifier');
+                    $formFieldIds = $formFields
+                        ->whereIn('identifier', $templateIdentifiers)
+                        ->pluck('id');
+                    $formAnswer
+                        ->customFieldAnswers()
+                        ->whereIn('custom_field_id', $formFieldIds)
+                        ->each($this->getFieldTransferClosure($templateFields, $formFields));
+                });
             });
+
     }
 
     protected function getFieldTransferClosure(Collection $newFields, Collection $originalFields): Closure
@@ -143,12 +149,12 @@ final class TemplateFieldType extends CustomFieldType
         };
     }
 
-    protected function getEditorFieldBadgeColor(array $rawData): ?array
+    protected function getEditorFieldBadgeColor(array $rawData): array
     {
         return Color::rgb('rgb(34, 135, 0)');
     }
 
-    protected function getEditorFieldBadgeText(array $rawData): ?string
+    protected function getEditorFieldBadgeText(array $rawData): string
     {
         return 'Template';
     }

@@ -2,12 +2,16 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Traits;
 
-use Filament\Forms\Components\Component;
-use Filament\Forms\Components\Group;
 use Filament\Forms\Components\TagsInput;
+use Filament\Schemas\Components\Group;
 
 trait HasTextCheck
 {
+    /**
+     * @param mixed $targetValue
+     * @param array<string, array<string|int, string>> $data
+     * @return bool
+     */
     protected function checkText(mixed $targetValue, array $data): bool
     {
         if (!is_string($targetValue) || empty($data['values'])) {
@@ -23,13 +27,13 @@ trait HasTextCheck
         return false;
     }
 
-    protected function getTextTypeGroup(): Component
+    protected function getTextTypeGroup(): Group
     {
         return Group::make([
             TagsInput::make('values')
                 ->reorderable(false)
                 ->columnSpanFull()
-                ->label(''),
+                ->hiddenLabel(),
         ]);
     }
 }

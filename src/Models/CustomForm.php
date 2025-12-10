@@ -2,15 +2,19 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Models;
 
+use Ffhs\FfhsUtils\Models\Rule;
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormConfiguration\CustomFormConfiguration;
 use Ffhs\FilamentPackageFfhsCustomForms\Facades\CustomForms;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\Rule;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasCustomFields;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasFormIdentifier;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasFormRules;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Carbon;
 use Spatie\Translatable\HasTranslations;
 
 /**
@@ -21,43 +25,43 @@ use Spatie\Translatable\HasTranslations;
  * @property string $custom_form_identifier
  * @property string|null $short_title
  * @property string|null $template_identifier
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
  * @property string|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField> $customFields
+ * @property-read Collection<int, CustomField> $customFields
  * @property-read int|null $custom_fields_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer> $customFormAnswers
+ * @property-read Collection<int, CustomFormAnswer> $customFormAnswers
  * @property-read int|null $custom_form_answers_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Ffhs\FilamentPackageFfhsCustomForms\Models\FormRule> $formRules
+ * @property-read Collection<int, FormRule> $formRules
  * @property-read int|null $form_rules_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Ffhs\FilamentPackageFfhsCustomForms\Models\GeneralField> $generalFields
+ * @property-read Collection<int, GeneralField> $generalFields
  * @property-read int|null $general_fields_count
  * @property-read string $cache_key_for
  * @property-read int|null $owned_fields_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, Rule> $ownedRules
+ * @property-read Collection<int, Rule> $ownedRules
  * @property-read int|null $owned_rules_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, Rule> $rules
+ * @property-read Collection<int, Rule> $rules
  * @property-read int|null $rules_count
  * @property-read mixed $translations
- * @property bool|\Illuminate\Database\Eloquent\Collection|mixed $ownedGeneralFields
+ * @property bool|Collection|mixed $ownedGeneralFields
  * @property bool|\Illuminate\Support\Collection $ownedFields
- * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomForm newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomForm newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomForm query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomForm whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomForm whereCustomFormIdentifier($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomForm whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomForm whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomForm whereJsonContainsLocale(string $column, string $locale, ?mixed $value, string $operand = '=')
- * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomForm whereJsonContainsLocales(string $column, array $locales, ?mixed $value, string $operand = '=')
- * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomForm whereLocale(string $column, string $locale)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomForm whereLocales(string $column, array $locales)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomForm whereShortTitle($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomForm whereTemplateIdentifier($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomForm whereUpdatedAt($value)
+ * @method static Builder<static>|CustomForm newModelQuery()
+ * @method static Builder<static>|CustomForm newQuery()
+ * @method static Builder<static>|CustomForm query()
+ * @method static Builder<static>|CustomForm whereCreatedAt($value)
+ * @method static Builder<static>|CustomForm whereCustomFormIdentifier($value)
+ * @method static Builder<static>|CustomForm whereDeletedAt($value)
+ * @method static Builder<static>|CustomForm whereId($value)
+ * @method static Builder<static>|CustomForm whereJsonContainsLocale(string $column, string $locale, ?mixed $value, string $operand = '=')
+ * @method static Builder<static>|CustomForm whereJsonContainsLocales(string $column, array $locales, ?mixed $value, string $operand = '=')
+ * @method static Builder<static>|CustomForm whereLocale(string $column, string $locale)
+ * @method static Builder<static>|CustomForm whereLocales(string $column, array $locales)
+ * @method static Builder<static>|CustomForm whereShortTitle($value)
+ * @method static Builder<static>|CustomForm whereTemplateIdentifier($value)
+ * @method static Builder<static>|CustomForm whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-class CustomForm extends Model
+class CustomForm extends Model implements EmbedCustomForm
 {
     use HasTranslations;
     use HasFormIdentifier;
@@ -65,13 +69,15 @@ class CustomForm extends Model
     use HasFormRules;
     use HasCustomFields;
 
+    public $translatable = ['not_existing'];
+
     protected $fillable = [
         'custom_form_identifier',
         'template_identifier',
         'short_title',
     ];
 
-    public static function __(...$args): string
+    public static function __(...$args): mixed
     {
         return CustomForms::__('models.custom_form.' . implode('.', $args));
     }
@@ -93,6 +99,9 @@ class CustomForm extends Model
         return !is_null($this->template_identifier);
     }
 
+    /**
+     * @return HasMany<CustomFormAnswer, $this>
+     */
     public function customFormAnswers(): HasMany
     {
         return $this->hasMany(CustomFormAnswer::class);
@@ -101,5 +110,15 @@ class CustomForm extends Model
     public function getFormConfiguration(): CustomFormConfiguration
     {
         return CustomForms::getFormConfiguration($this->custom_form_identifier);
+    }
+
+    public function getRules(): \Illuminate\Support\Collection
+    {
+        return $this->rules;
+    }
+
+    public function getCustomFields(): \Illuminate\Support\Collection
+    {
+        return $this->customFields();
     }
 }

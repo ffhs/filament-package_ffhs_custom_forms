@@ -3,11 +3,8 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\TemplateResource\Pages;
 
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormResource\Pages\CreateCustomForm;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\TemplateResource;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\TemplateResource\TemplateResource;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Illuminate\Contracts\Support\Htmlable;
 
 class CreateTemplate extends CreateCustomForm
@@ -17,33 +14,5 @@ class CreateTemplate extends CreateCustomForm
     public function getTitle(): string|Htmlable
     {
         return CustomForm::__('pages.create_template.title');
-    }
-
-    public function form(Form $form): Form
-    {
-        return $form
-            ->schema([
-                TextInput::make('template_identifier')
-                    ->label('Template Id')
-                    ->required(), //ToDo Translate
-                TextInput::make('short_title')
-                    ->label('Namen')
-                    ->required(), //ToDo Translate
-                Select::make('custom_form_identifier')
-                    ->label('Formularart') //ToDo Translate
-                    ->required()
-                    ->options(function () {
-                        $keys = array_map(
-                            fn($config) => $config::identifier(),
-                            config('ffhs_custom_forms.forms')
-                        );
-                        $values = array_map(
-                            fn($config) => $config::displayName(),
-                            config('ffhs_custom_forms.forms')
-                        );
-
-                        return array_combine($keys, $values);
-                    }),
-            ]);
     }
 }

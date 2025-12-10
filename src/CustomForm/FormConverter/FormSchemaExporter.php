@@ -2,11 +2,11 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormConverter;
 
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
+use Ffhs\FfhsUtils\Traits\HasStaticMake;
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanExportFieldInformation;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanExportFormInformation;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanExportRuleInformation;
-use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasStaticMake;
 
 class FormSchemaExporter
 {
@@ -15,12 +15,13 @@ class FormSchemaExporter
     use CanExportRuleInformation;
     use HasStaticMake;
 
-    public function export(CustomForm $form): array
+    public function export(EmbedCustomForm $form): array
     {
         return [
+            /**@phpstan-ignore-next-line */
             'form' => $this->exportFormInformation($form),
-            'fields' => $this->exportFieldInformation($form->ownedFields),
-            'rules' => $this->exportRuleInformation($form->ownedRules),
+            'fields' => $this->exportFieldInformation($form->getOwnedFields()),
+            'rules' => $this->exportRuleInformation($form->getOwnedRules()),
         ];
     }
 }

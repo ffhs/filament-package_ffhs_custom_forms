@@ -2,58 +2,44 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\LayoutType\Types\Views;
 
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomField;
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\FieldTypeView;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\GenericType\CustomFieldType;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasDefaultViewComponent;
-use Filament\Forms\Components\Placeholder;
-use Filament\Infolists\Components\Component;
-use Filament\Infolists\Components\Group;
 use Filament\Infolists\Components\TextEntry;
+use Filament\Schemas\Components\Group;
+use Filament\Support\Components\Component;
 use Illuminate\Support\HtmlString;
 
 class TitleTypeView implements FieldTypeView
 {
     use HasDefaultViewComponent;
 
-    public function getFormComponent(
-        CustomFieldType $type,
-        CustomField $record,
-        array $parameter = []
-    ): Placeholder {
-        $title = $this->getTitle($record);
+    public function getFormComponent(EmbedCustomField $customField, array $parameter = []): Component
+    {
+        $title = $this->getTitle($customField);
 
-        /**@var $placeholder Placeholder */
-        $placeholder = $this->makeComponent(Placeholder::class, $record);
-
-        return $placeholder
-            ->content(new HtmlString($title))
-            ->label('');
+        return $this->makeComponent(TextEntry::class, $customField, false)
+            ->state(new HtmlString($title))
+            ->hiddenLabel();
     }
 
-    public function getInfolistComponent(
-        CustomFieldType $type,
-        CustomFieldAnswer $record,
-        array $parameter = []
-    ): Component {
-        if (!$this->getOptionParameter($record, 'show_in_view')) {
-            return Group::make()
-                ->hidden();
+    public function getEntryComponent(EmbedCustomFieldAnswer $customFieldAnswer, array $parameter = []): Component
+    {
+        if (!$this->getOptionParameter($customFieldAnswer, 'show_in_view')) {
+            return Group::make()->hidden();
         }
 
-        $title = $this->getTitle($record);
+        $title = $this->getTitle($customFieldAnswer);
 
-        /**@var $placeholder TextEntry */
-        $placeholder = $this->makeComponent(TextEntry::class, $record);
-
-        return $placeholder
+        return $this->makeComponent(TextEntry::class, $customFieldAnswer, true)
             ->state(new HtmlString($title))
             ->columnSpanFull()
+            ->hiddenLabel()
             ->inlineLabel();
     }
 
-    private function getTitle($record): string
+    private function getTitle($record): string //ToDo make with css
     {
         $titleSize = $this->getOptionParameter($record, 'title_size');
 

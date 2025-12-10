@@ -2,26 +2,29 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options;
 
-use Error;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
+use Exception;
+use Ffhs\FilamentPackageFfhsCustomForms\DataContainer\CustomFieldDataContainer;
+use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasOptionNoComponentModification;
+use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasTypeOptionFormEditorComponent;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\TypeOption;
-use Filament\Forms\ComponentContainer;
-use Filament\Forms\Components\Component as FormsComponent;
 use Filament\Forms\Components\Field;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Get;
-use Filament\Infolists\Components\Component as InfolistsComponent;
+use Filament\Pages\Page;
 use Filament\Resources\Pages\EditRecord;
+use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Schema;
+use Filament\Support\Components\Component;
 
 class ValidationMessageOption extends TypeOption
 {
-    public function getDefaultValue(): array
-    {
-        return [];
-    }
+    use HasOptionNoComponentModification;
+    use HasTypeOptionFormEditorComponent;
 
-    public function getComponent(string $name): FormsComponent
+    protected mixed $default = [];
+
+    public function getComponent(string $name): Component
     {
         return Repeater::make($name)
             ->label(TypeOption::__('validation_messages.label'))
@@ -30,14 +33,13 @@ class ValidationMessageOption extends TypeOption
                 TextInput::make('rule')
                     ->label(TypeOption::__('validation_messages.rule.label'))
                     ->helperText(TypeOption::__('validation_messages.rule.helper_text'))
-                    ->required()
-                    ->datalist($this->getValidationMessageParameters(...)),
+                    ->datalist($this->getValidationMessageParameters(...))
+                    ->required(),
                 TextInput::make('message')
                     ->label(TypeOption::__('validation_messages.message.label'))
                     ->helperText(TypeOption::__('validation_messages.message.helper_text'))
-                    ->nullable()
-                    ->datalist($this->getValidationMessageParameters(...))
-                    ->columnSpan(2),
+                    ->columnSpan(2)
+                    ->nullable(),
             ])
             ->addActionLabel(TypeOption::__('validation_messages.add_label'))
             ->collapsible(false)
@@ -45,40 +47,81 @@ class ValidationMessageOption extends TypeOption
             ->columnSpanFull();
     }
 
-    public function modifyFormComponent(FormsComponent|Field $component, mixed $value): FormsComponent
+    public function modifyFormComponent(Component|Field $component, mixed $value): Component
     {
+        if (!$component instanceof Field) {
+            return $component;
+        }
+
         if (!is_array($value)) {
             $value = [];
         }
 
-        $value = collect($value)->mapWithKeys(fn($information) => [$information['rule'] => $information['message']]);
+        $validationMessages = collect($value)
+            ->filter(fn($item) => is_array($item) && isset($item['rule'], $item['message']))
+            ->mapWithKeys(fn($item) => [$item['rule'] => $item['message']]);
 
-        return $component->validationMessages($value->toArray());
+        return $component->validationMessages($validationMessages->toArray());
     }
 
-    public function modifyInfolistComponent(InfolistsComponent $component, mixed $value): InfolistsComponent
-    {
-        return $component;
-    }
-
-    protected function getValidationMessageParameters(Get $get): array
+    /**
+     * @param Get $get
+     * @param RelationManager|Page $livewire
+     * @return array<string|int, string>
+     */
+    protected function getValidationMessageParameters(Get $get, RelationManager|Page $livewire): array
     {
         try {
-            $temporaryField = new CustomField();
-            $temporaryField->fill($get('../../../'));
-            $rules = $temporaryField
-                ->getType()
-                ->getFormComponent($temporaryField, $temporaryField->customForm, 'default', ['renderer' => fn() => []])
-                ->container(ComponentContainer::make(new EditRecord()))
-                ->getValidationRules();
+            $componentPath = $get('../../../../context.schemaComponent');
+            $customFormComponent = $this->getFormEditorComponent($componentPath, $livewire);
 
-            return collect($rules)
-                ->map(fn($rule) => is_string($rule) ? explode(':', $rule)[0] ?? null : null)
-                ->unique()
-                ->filter(fn($preparedValue) => !in_array($preparedValue, ['nullable', 'array', null,], false))
-                ->toArray();
-        } catch (Error $error) {
+            if (is_null($customFormComponent)) {
+                return [];
+            }
+
+            $formConfiguration = $customFormComponent->getFormConfiguration();
+            $temporaryField = CustomFieldDataContainer::make($get('../../../'), $formConfiguration);
+            $fieldType = $temporaryField->getType();
+
+            $schemaComponent = $fieldType?->getFormComponent(
+                $temporaryField,
+                $formConfiguration,
+                'default',
+                ['child_render' => fn() => []]
+            );
+
+            if (!$schemaComponent instanceof Field) {
+                return [];
+            }
+
+            $schema = Schema::make(new EditRecord());
+            $schemaComponent->container($schema);
+
+            return $this->extractValidationRules($schemaComponent);
+        } catch (Exception) {
             return [];
         }
+    }
+
+    /**
+     * @param Field $component
+     * @return array<string|int, string>
+     */
+    private function extractValidationRules(Field $component): array
+    {
+        $excludedRules = ['nullable', 'array'];
+
+        return collect($component->getValidationRules())
+            ->map(function ($rule) {
+                if (!is_string($rule)) {
+                    return null;
+                }
+
+                return explode(':', $rule)[0];
+            })
+            ->filter(fn($ruleName) => $ruleName !== null && !in_array($ruleName, $excludedRules, true))
+            ->unique()
+            ->values()
+            ->toArray();
     }
 }

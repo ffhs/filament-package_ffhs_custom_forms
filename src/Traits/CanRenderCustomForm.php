@@ -2,32 +2,34 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Traits;
 
+use Ffhs\FfhsUtils\Contracts\Rules\EmbedRule;
+use Ffhs\FfhsUtils\Models\Rule;
+use Ffhs\FfhsUtils\Models\RuleTrigger;
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomField;
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\FieldDisplayer;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Trigger\FormRuleTriggerType;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\EmbeddedCustomForm\Render\ChildFieldRender;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\EmbeddedCustomForm\Render\FormFieldDisplayer;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\EmbeddedCustomForm\Render\InfolistFieldDisplayer;
+use Ffhs\FilamentPackageFfhsCustomForms\Enums\FormRuleAction;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormAnswer\Render\ChildFieldRender;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormAnswer\Render\EntryFieldDisplayer;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormAnswer\Render\FormFieldDisplayer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\Rule;
-use Ffhs\FilamentPackageFfhsCustomForms\Models\Rules\RuleTrigger;
-use Filament\Forms\Components\Group as FormsGroup;
-use Filament\Infolists\Components\Group as InfolistsGroup;
+use Filament\Schemas\Components\Group;
 use Illuminate\Support\Collection;
 
 trait CanRenderCustomForm
 {
-    public function generateFormSchema(CustomForm $form, string $viewMode): array
+    public function generateFormSchema(EmbedCustomForm $form, string $viewMode): array
     {
+        $columns = $form->getFormConfiguration()->getColumns();
         $customFields = $form->getOwnedFields();
 
         $render = FormFieldDisplayer::make($form);
         $renderOutput = $this->renderCustomForm($viewMode, $render, $form, $customFields);
 
-        //ToDo Maby add default con to FormConfiguration
         return [
-            FormsGroup::make($renderOutput[0])->columns(config('ffhs_custom_forms.default_column_count')),
+            Group::make($renderOutput[0])->columns($columns),
         ];
     }
 
@@ -35,32 +37,32 @@ trait CanRenderCustomForm
     {
         $form = $formAnswer->customForm;
         $customFields = $form->getOwnedFields();
+        $columns = $form->getFormConfiguration()->getColumns();
 
-        $render = InfolistFieldDisplayer::make($formAnswer);
+        $render = EntryFieldDisplayer::make($formAnswer);
         $renderOutput = $this->renderCustomForm($viewMode, $render, $form, $customFields);
 
-        //ToDo Maby add default con to FormConfiguration
         return [
-            InfolistsGroup::make($renderOutput[0])
-                ->columns(config('ffhs_custom_forms.default_column_count')),
+            Group::make($renderOutput[0])
+                ->columns($columns),
         ];
     }
 
     public function renderCustomForm(
         string $viewMode,
         FieldDisplayer $displayer,
-        CustomForm $customForm,
+        EmbedCustomForm $customForm,
         Collection $customFields,
         int $positionOffset = 0,
     ): array {
-        $rules = $customForm->rules;
+        $rules = collect($customForm->getRules());
 
         if ($customFields->isEmpty()) {
             return [[], collect()];
         }
 
         //Rule before render
-        $this->runRulesBeforeRender($rules, $customFields);
+        $this->runRulesBeforeRender($rules, $customFields, $displayer->getRuleActionBeforeRender());
 
         //Rule Rendering
         /**@var Collection $allComponents */
@@ -72,8 +74,9 @@ trait CanRenderCustomForm
             $positionOffset
         );
 
-        //TriggerPreparation (maintain for live attribute)  ca 10ms
-        $this->runRulesAfterRender($rules, $allComponents, $customForm, $customFields);
+        //TriggerPreparation (maintain for live attribute)
+        $this->runRulesAfterRender($rules, $allComponents, $customForm, $customFields,
+            $displayer->getRuleActionAfterRender());
 
         return [$customFormSchema, $allComponents];
     }
@@ -81,17 +84,19 @@ trait CanRenderCustomForm
     public function renderCustomFormRaw(
         string $viewMode,
         FieldDisplayer $displayer,
-        CustomForm $customForm,
+        EmbedCustomForm $customForm,
         Collection $customFields,
         int $positionOffset
     ): array {
-        $customFields = $customFields->keyBy('form_position');
+        $customFields = $customFields
+            ->mapWithKeys(fn(EmbedCustomField $embedField) => [$embedField->getFormPosition() => $embedField]);
         $customFormSchema = [];
         $allComponents = [];
         //This Function allows to register the rendered components to $allComponents for the rules
         $registerRenderedComponents = static function (array $components) use (&$allComponents) {
             $allComponents += $components;
         };
+
         $defaultParameters = [
             'viewMode' => $viewMode,
             'registerComponents' => $registerRenderedComponents,
@@ -104,20 +109,22 @@ trait CanRenderCustomForm
             $formPosition <= $customFields->count() + $positionOffset;
             $formPosition++
         ) {
-            /** @var CustomField $customField */
+            /** @var ?EmbedCustomField $customField */
             $customField = $customFields->get($formPosition);
             $parameters = $defaultParameters;
 
             //When field isn't Active skip it or not exist
-            if (is_null($customField) || !$customField->is_active) {
+            if (is_null($customField) || !$customField->isActive()) {
                 continue;
             }
 
-            //if field is a layout field, add Render Components
-            if (!is_null($customField->layout_end_position)) {
+            //if a field is a layout field, add Render Components
+            if (!is_null($customField->getLayoutEndPosition())) {
                 $fieldRenderData = $customFields
-                    ->where('form_position', '>', $customField->form_position)
-                    ->where('form_position', '<=', $customField->layout_end_position);
+                    ->filter(function (EmbedCustomField $field) use ($customField) {
+                        return $field->getFormPosition() > $customField->getFormPosition() &&
+                            $field->getFormPosition() <= $customField->getLayoutEndPosition();
+                    });
 
                 $parameters['child_fields'] = $fieldRenderData;
                 $parameters['child_render'] = ChildFieldRender::make(
@@ -136,42 +143,43 @@ trait CanRenderCustomForm
             //render Field
             $renderedComponent = $displayer($viewMode, $customField, $parameters);
 
-            $allComponents[$customField->identifier] = $renderedComponent;
+            $allComponents[$customField->identifier()] = $renderedComponent;
             $customFormSchema[] = $renderedComponent;
         }
 
         return [$customFormSchema, $allComponents];
     }
 
-    protected function runRulesBeforeRender(Collection $rules, Collection &$customFields): void
+    protected function runRulesBeforeRender(Collection $rules, Collection &$customFields, FormRuleAction $action): void
     {
-        $rules->each(function (Rule $rule) use (&$customFields) {
-            $customFields = $rule->handle(['action' => 'before_render'], $customFields);
+        $rules->each(function (Rule $rule) use ($action, &$customFields) {
+            $customFields = $rule->handle($action, [], $customFields);
         });
     }
 
     protected function runRulesAfterRender(
         Collection $rules,
         array &$allComponents,
-        CustomForm $customForm,
+        EmbedCustomForm $customForm,
         Collection &$customFields,
+        FormRuleAction $action
     ): void {
         $rules
-            ->map(fn(Rule $rule) => $rule->ruleTriggers)
+            ->map(fn(EmbedRule $rule) => $rule->getTriggers())
             ->flatten(1)
-            ->filter(fn(RuleTrigger $ruleTrigger) => !is_null($ruleTrigger))
             ->filter(fn(RuleTrigger $ruleTrigger) => $ruleTrigger->getType() instanceof FormRuleTriggerType)
             ->each(function (RuleTrigger $trigger) use (&$allComponents) {
+                /** @phpstan-ignore-next-line */
                 $allComponents = $trigger->getType()->prepareComponents($allComponents, $trigger);
             });
 
         $customFields = $customForm
-            ->customFields
+            ->getCustomFields()
             ->mapWithKeys(fn(CustomField $field) => [$field->identifier => $field]);
 
-        $rules->each(function (Rule $rule) use ($customFields, &$allComponents) {
-            $data = ['action' => 'after_render', 'custom_fields' => $customFields];
-            $allComponents = $rule->handle($data, $allComponents);
+        $rules->each(function (Rule $rule) use ($action, $customFields, &$allComponents) {
+            $data = ['custom_fields' => $customFields];
+            $allComponents = $rule->handle($action, $data, $allComponents);
         });
     }
 }

@@ -3,8 +3,7 @@
 namespace Ffhs\FilamentPackageFfhsCustomForms\Traits;
 
 use Filament\Forms\Components\Checkbox;
-use Filament\Forms\Components\Component;
-use Filament\Forms\Components\Group;
+use Filament\Schemas\Components\Group;
 
 trait HasBoolCheck
 {
@@ -31,7 +30,7 @@ trait HasBoolCheck
         return $targetValue === $boolean;
     }
 
-    protected function getBooleanTypeGroup(): Component
+    protected function getBooleanTypeGroup(): Group
     {
         return Group::make([
             Checkbox::make('boolean')

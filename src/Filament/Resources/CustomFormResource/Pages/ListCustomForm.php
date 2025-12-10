@@ -2,14 +2,16 @@
 
 namespace Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormResource\Pages;
 
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormHeaderActions\CustomFormSchemaImportAction;
-use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormResource;
+use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormConfiguration\CustomFormConfiguration;
+use Ffhs\FilamentPackageFfhsCustomForms\Facades\CustomForms;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\CustomFormSchemaImportAction;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\CustomFormResource\CustomFormResource;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Resources\TemplateResource\Pages\ListTemplate;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Filament\Actions\CreateAction;
-use Filament\Resources\Components\Tab;
+use Filament\Actions\EditAction;
 use Filament\Resources\Pages\ListRecords;
-use Filament\Tables\Actions\EditAction;
+use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Contracts\Support\Htmlable;
@@ -32,11 +34,12 @@ class ListCustomForm extends ListRecords
                 ->badge($query->clone()->count()),
         ];
 
-        foreach (config('ffhs_custom_forms.forms') as $formClass) {
-            $tabs[$formClass::identifier()] =
-                Tab::make($formClass::displayName())
-                    ->badge($query->where('custom_form_identifier', $formClass::identifier())->count())
-                    ->modifyQueryUsing(fn($query) => $this->prepareTabQuery($formClass::identifier(), $query));
+        foreach (CustomForms::getFormConfigurations() as $identifier => $formConfiguration) {
+            /**@var CustomFormConfiguration $formConfiguration */
+            $tabs[$identifier] =
+                Tab::make($formConfiguration::displayname())
+                    ->badge($query->where('custom_form_identifier', $identifier)->count())
+                    ->modifyQueryUsing(fn($query) => $this->prepareTabQuery($identifier, $query));
         }
 
         return $tabs;
@@ -47,26 +50,26 @@ class ListCustomForm extends ListRecords
         return 'all';
     }
 
-    public function table(Table $table): Table
+    public function table(Table $table): Table //ToDo put in table class
     {
         return parent::table($table)
-            ->actions([
+            ->recordActions([
                 EditAction::make(),
             ])
             ->columns([
                 TextColumn::make('id'),
                 TextColumn::make('template_identifier')
                     ->visible($this instanceof ListTemplate)
-                    ->label(CustomForm::__('attributes.template_identifier'))
+                    ->label(CustomForm::__('attributes.template_identifier.label'))
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('short_title')
-                    ->label(CustomForm::__('attributes.short_title'))
+                    ->label(CustomForm::__('attributes.short_title.label'))
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('custom_form_identifier')
-                    ->label(CustomForm::__('attributes.custom_form_identifier'))
-                    ->state(fn(CustomForm $record) => ($record->dynamicFormConfiguration())::displayName())
+                    ->label(CustomForm::__('attributes.custom_form_identifier.label'))
+                    ->state(fn(CustomForm $record) => ($record->dynamicFormConfiguration())::displayname())
                     ->sortable(),
                 TextColumn::make('owned_fields_count')
                     ->label(CustomForm::__('attributes.owned_fields_amount'))
