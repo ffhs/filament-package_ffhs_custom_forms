@@ -17,7 +17,6 @@ class TextTypeView implements FieldTypeView
 
     public function getFormComponent(EmbedCustomField $customField, array $parameter = []): Component
     {
-        /** @var TextInput $input */
         $input = $this->makeComponent(TextInput::class, $customField, false);
         $suggestions = $this->getOptionParameter($customField, 'suggestions');
 
