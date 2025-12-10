@@ -16,8 +16,8 @@ class KeyValueType extends CustomOptionType
 {
     use HasCustomTypePackageTranslation;
 
-    protected static string $identifier = 'heroicon-o-key';
-    protected static string $icon = 'carbon-character-whole-number';
+    protected static string $identifier = 'key_value';
+    protected static string $icon = 'heroicon-o-key';
     protected static array $viewModes = [
         'default' => KeyValueTypeView::class,
     ];
