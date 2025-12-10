@@ -13,22 +13,11 @@ class SpaceType extends CustomFieldType
 {
     use HasCustomTypePackageTranslation;
 
-    public static function identifier(): string
-    {
-        return 'space';
-    }
-
-    public function viewModes(): array
-    {
-        return [
-            'default' => SpaceTypeView::class,
-        ];
-    }
-
-    public function icon(): string
-    {
-        return 'carbon-name-space';
-    }
+    protected static string $identifier = 'space';
+    protected static string $icon = 'carbon-name-space';
+    protected static array $viewModes = [
+        'default' => SpaceTypeView::class,
+    ];
 
     public function hasEditorNameElement(array $fielData): bool
     {

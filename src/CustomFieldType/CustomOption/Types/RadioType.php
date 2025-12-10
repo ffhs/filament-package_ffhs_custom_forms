@@ -13,17 +13,11 @@ class RadioType extends CustomOptionType
 {
     use HasCustomTypePackageTranslation;
 
-    public static function identifier(): string
-    {
-        return 'radio';
-    }
-
-    public function viewModes(): array
-    {
-        return [
-            'default' => RadioTypeView::class,
-        ];
-    }
+    protected static string $identifier = 'radio';
+    protected static string $icon = 'carbon-radio-button-checked';
+    protected static array $viewModes = [
+        'default' => RadioTypeView::class,
+    ];
 
     public function extraTypeOptions(): array
     {
@@ -34,8 +28,4 @@ class RadioType extends CustomOptionType
         ];
     }
 
-    public function icon(): string
-    {
-        return 'carbon-radio-button-checked';
-    }
 }

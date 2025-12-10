@@ -18,22 +18,11 @@ class RepeaterLayoutType extends CustomSplitType
 {
     use HasCustomTypePackageTranslation;
 
-    public static function identifier(): string
-    {
-        return 'repeater';
-    }
-
-    public function viewModes(): array
-    {
-        return [
-            'default' => RepeaterLayoutTypeView::class,
-        ];
-    }
-
-    public function icon(): string
-    {
-        return 'heroicon-m-wallet';
-    }
+    protected static string $identifier = 'repeater';
+    protected static string $icon = 'heroicon-m-wallet';
+    protected static array $viewModes = [
+        'default' => RepeaterLayoutTypeView::class,
+    ];
 
     public function extraTypeOptions(): array
     {

@@ -19,22 +19,11 @@ class DownloadType extends CustomFieldType
 {
     use HasCustomTypePackageTranslation;
 
-    public static function identifier(): string
-    {
-        return 'download_file';
-    }
-
-    public function viewModes(): array
-    {
-        return [
-            'default' => DownloadTypeView::class,
-        ];
-    }
-
-    public function icon(): string
-    {
-        return 'tabler-download';
-    }
+    protected static string $identifier = 'download_file';
+    protected static string $icon = 'tabler-download';
+    protected static array $viewModes = [
+        'default' => DownloadTypeView::class,
+    ];
 
     public function extraTypeOptions(): array
     {

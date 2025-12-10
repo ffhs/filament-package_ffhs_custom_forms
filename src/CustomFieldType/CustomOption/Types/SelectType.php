@@ -24,23 +24,11 @@ class SelectType extends CustomOptionType
 {
     use HasCustomTypePackageTranslation;
 
-    public static function identifier(): string
-    {
-        return 'select';
-    }
-
-    public function viewModes(): array
-    {
-        return [
-            'default' => SelectTypeView::class,
-        ];
-    }
-
-    public function icon(): string
-    {
-        return 'carbon-select-window';
-    }
-
+    protected static string $identifier = 'select';
+    protected static string $icon = 'carbon-select-window';
+    protected static array $viewModes = [
+        'default' => SelectTypeView::class,
+    ];
 
     public function extraTypeOptions(): array
     {

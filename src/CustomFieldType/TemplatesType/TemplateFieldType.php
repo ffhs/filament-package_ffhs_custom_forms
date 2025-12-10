@@ -21,22 +21,11 @@ final class TemplateFieldType extends CustomFieldType
     use HasCustomTypePackageTranslation;
     use HasStaticMake;
 
-    public static function identifier(): string
-    {
-        return 'template';
-    }
-
-    public function viewModes(): array
-    {
-        return [
-            'default' => TemplateTypeView::class,
-        ];
-    }
-
-    public function icon(): string
-    {
-        return 'carbon-copy-file';
-    }
+    protected static string $identifier = 'template';
+    protected static string $icon = 'carbon-copy-file';
+    protected static array $viewModes = [
+        'default' => TemplateTypeView::class,
+    ];
 
     public function isFullSizeField(): bool
     {

@@ -14,22 +14,11 @@ class NumberType extends CustomFieldType
 {
     use HasCustomTypePackageTranslation;
 
-    public static function identifier(): string
-    {
-        return 'number';
-    }
-
-    public function viewModes(): array
-    {
-        return [
-            'default' => NumberTypeView::class,
-        ];
-    }
-
-    public function icon(): string
-    {
-        return 'carbon-character-whole-number';
-    }
+    protected static string $identifier = 'number';
+    protected static string $icon = 'carbon-character-whole-number';
+    protected static array $viewModes = [
+        'default' => NumberTypeView::class,
+    ];
 
     public function extraTypeOptions(): array
     {
