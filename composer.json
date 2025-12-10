@@ -88,7 +88,7 @@
             "role": "Reviewer"
         }
     ],
-    "minimum-stability": "alpha",
+    "minimum-stability": "dev",
     "prefer-stable": true,
     "repositories": {
         "internal-git.alpen.ffhs.ch/36": {

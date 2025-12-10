@@ -43,16 +43,16 @@ set-minimum-stability:
     - git config user.email "gitlab-ci@ffhs.ch"
     - git config user.name "GitLab CI"
   script:
-    - 'jq ''."minimum-stability" = "stable"'' composer.json | jq ''."prefer-stable" = true'' > composer.tmp.json'
-    - mv composer.tmp.json composer.json
-    - |
-      if ! git diff --quiet -- composer.json; then
-      git add composer.json
-      git commit -m "ci: enforce stable Composer settings after merge"
-      git push --force "https://oauth2:${CI_PUSH_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git" HEAD:main
-      else
-      echo "No changes to composer.json detected, skipping commit"
-      fi
+    #    - 'jq ''."minimum-stability" = "stable"'' composer.json | jq ''."prefer-stable" = true'' > composer.tmp.json'
+    #    - mv composer.tmp.json composer.json
+    #    - |
+    #      if ! git diff --quiet -- composer.json; then
+    #      git add composer.json
+    #      git commit -m "ci: enforce stable Composer settings after merge"
+    #      git push --force "https://oauth2:${CI_PUSH_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git" HEAD:main
+    #      else
+    #      echo "No changes to composer.json detected, skipping commit"
+    #      fi
     - VERSION=$(jq -r '.version' composer.json)
     - TAG_NAME=v${VERSION}
     - 'git tag $TAG_NAME  # Create the tag locally '
