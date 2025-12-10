@@ -27,9 +27,7 @@ abstract class CustomFieldType implements Type
     use HasEditorLayoutElements;
     use HasAnswerCallbacks;
 
-    /**
-     * @var $viewModes array<string, class-string<FieldTypeView>>
-     */
+    /** @var array<string, class-string<FieldTypeView>> $viewModes */
     protected static array $viewModes;
     protected static string $identifier;
     protected static string $icon;
