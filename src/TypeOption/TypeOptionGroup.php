@@ -4,7 +4,6 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\TypeOption;
 
 
 use Filament\Schemas\Components\Section;
-use Filament\Support\Components\Component;
 
 
 class TypeOptionGroup
@@ -62,7 +61,6 @@ class TypeOptionGroup
     public function getModifyOptionComponent(): Section
     {
         return once(function (): Section {
-            /** @var Component[] $schema */
             $schema = [];
 
             foreach ($this->getTypeOptions() as $key => $extraTypeOption) {
@@ -72,6 +70,7 @@ class TypeOptionGroup
             return Section::make($this->getName())
                 ->icon($this->getIcon())
                 ->columnSpanFull()
+                /** @phpstan-ignore-next-line */
                 ->schema($schema)
                 ->collapsible()
                 ->collapsed()

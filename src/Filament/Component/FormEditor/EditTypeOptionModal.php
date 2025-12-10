@@ -57,6 +57,7 @@ class EditTypeOptionModal extends Component
             return [
                 Group::make([LocaleSwitcher::make()])
                     ->columns(),
+                /**@phpstan-ignore-next-line */
                 Group::make($components)
                     ->statePath('options')
                     ->columns()
