@@ -4,9 +4,11 @@ namespace Ffhs\FilamentPackageFfhsCustomForms\CustomForm\FormRule\Trigger;
 
 use Ffhs\FfhsUtils\Contracts\Rules\EmbedRuleTrigger;
 use Ffhs\FfhsUtils\Models\RuleTrigger;
+use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\CustomOption\CustomOptionType;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\TempCustomField;
-use Ffhs\FilamentPackageFfhsCustomForms\DataContainer\CustomFieldDataContainer;
+use Ffhs\FilamentPackageFfhsCustomForms\Facades\CustomForms;
+use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\FormEditor\StateCasts\CustomFieldStateCast;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasBoolCheck;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasNumberCheck;
@@ -14,6 +16,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasOptionCheck;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasRuleTriggerPluginTranslate;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasTextCheck;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasTriggerEventFormTargets;
+use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasTypeOptionFormEditorComponent;
 use Filament\Forms\Components\Field;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Schemas\Components\Component;
@@ -21,6 +24,7 @@ use Filament\Schemas\Components\Utilities\Get;
 
 class ValueEqualsRuleTrigger extends FormRuleTriggerType
 {
+    use HasTypeOptionFormEditorComponent;
     use HasRuleTriggerPluginTranslate;
     use HasTriggerEventFormTargets;
     use HasNumberCheck;
@@ -127,19 +131,19 @@ class ValueEqualsRuleTrigger extends FormRuleTriggerType
 
         $target = $get('target');
         $formState = $get('../../../../../custom_fields') ?? [];
+        $customFormIdentifier = $get('../../../../../custom_form_identifier') ?? [];
+        $formConfiguration = CustomForms::getFormConfiguration($customFormIdentifier);
 
-        foreach ($formState as $field) {
-            $identifier = $field['identifier'] ?? '';
+        $flattenFields = new CustomFieldStateCast()->flattCustomFields($formState);
+        $fields = $this->getFieldDataFromFormData($flattenFields, $formConfiguration)->toArray();
 
-            if (!empty($field['general_field_id'])) {
-                $customField = CustomFieldDataContainer::make($field, $record->getFormConfiguration());
-                $identifier = $customField->identifier();
-            }
+        foreach ($fields as $field) {
+            /**@var EmbedCustomField $field */
+
+            $identifier = $field->identifier();
 
             if ($identifier === $target) {
-                $customField = CustomFieldDataContainer::make($field, $record->getFormConfiguration());
-
-                return !($customField->getType() instanceof CustomOptionType);
+                return !($field->getType() instanceof CustomOptionType);
             }
         }
 
