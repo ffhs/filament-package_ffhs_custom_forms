@@ -34,7 +34,7 @@ class EditTypeOptionModal extends Component
             $field = new CustomField();
             $field->fill($state);
 
-            $disabledOption = $field->overwritten_options;
+            $disabledOption = $field->overwritten_options ?? [];
             $components = $field
                 ->getType()
                 ->getExtraTypeOptionComponents();
