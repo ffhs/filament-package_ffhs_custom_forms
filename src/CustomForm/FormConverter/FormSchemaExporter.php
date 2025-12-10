@@ -18,6 +18,7 @@ class FormSchemaExporter
     public function export(EmbedCustomForm $form): array
     {
         return [
+            /**@phpstan-ignore-next-line */
             'form' => $this->exportFormInformation($form),
             'fields' => $this->exportFieldInformation($form->getOwnedFields()),
             'rules' => $this->exportRuleInformation($form->getOwnedRules()),

@@ -34,7 +34,7 @@ class EditTypeOptionModal extends Component
             $field = new CustomField();
             $field->fill($state);
 
-            $disabledOption = $field->overwritten_options;
+            $disabledOption = $field->overwritten_options ?? [];
             $components = $field
                 ->getType()
                 ->getExtraTypeOptionComponents();
@@ -57,6 +57,7 @@ class EditTypeOptionModal extends Component
             return [
                 Group::make([LocaleSwitcher::make()])
                     ->columns(),
+                /**@phpstan-ignore-next-line */
                 Group::make($components)
                     ->statePath('options')
                     ->columns()

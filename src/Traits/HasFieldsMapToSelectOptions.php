@@ -20,7 +20,7 @@ trait HasFieldsMapToSelectOptions
     }
 
     /**
-     * @param Collection<int|string, EmbedCustomField> $customFields
+     * @param Collection<string, EmbedCustomField> $customFields
      * @param CustomFormConfiguration $formConfiguration
      * @return array<string|int, array<string, string>>
      */
