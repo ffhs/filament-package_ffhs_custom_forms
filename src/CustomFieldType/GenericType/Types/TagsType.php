@@ -12,22 +12,11 @@ class TagsType extends CustomOptionType
 {
     use HasCustomTypePackageTranslation;
 
-    public static function identifier(): string
-    {
-        return 'tags_input';
-    }
-
-    public function viewModes(): array
-    {
-        return [
-            'default' => TagsTypeView::class,
-        ];
-    }
-
-    public function icon(): string
-    {
-        return 'bi-tags';
-    }
+    protected static string $identifier = 'tags_input';
+    protected static string $icon = 'bi-tags';
+    protected static array $viewModes = [
+        'default' => TagsTypeView::class,
+    ];
 
     public function extraTypeOptions(): array
     {

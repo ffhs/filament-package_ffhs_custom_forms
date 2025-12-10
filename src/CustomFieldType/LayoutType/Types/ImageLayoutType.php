@@ -18,22 +18,11 @@ class ImageLayoutType extends CustomFieldType
 {
     use HasCustomTypePackageTranslation;
 
-    public static function identifier(): string
-    {
-        return 'image_layout';
-    }
-
-    public function viewModes(): array
-    {
-        return [
-            'default' => ImageTypeView::class,
-        ];
-    }
-
-    public function icon(): string
-    {
-        return 'bi-card-image';
-    }
+    protected static string $identifier = 'image_layout';
+    protected static string $icon = 'bi-card-image';
+    protected static array $viewModes = [
+        'default' => ImageTypeView::class,
+    ];
 
     public function extraTypeOptions(): array
     {

@@ -13,22 +13,11 @@ class DateType extends CustomFieldType
 {
     use HasCustomTypePackageTranslation;
 
-    public static function identifier(): string
-    {
-        return 'date';
-    }
-
-    public function viewModes(): array
-    {
-        return [
-            'default' => DateTypeView::class,
-        ];
-    }
-
-    public function icon(): string
-    {
-        return 'bi-calendar3';
-    }
+    protected static string $identifier = 'date';
+    protected static string $icon = 'bi-calendar3';
+    protected static array $viewModes = [
+        'default' => DateTypeView::class,
+    ];
 
     public function extraTypeOptions(): array
     {

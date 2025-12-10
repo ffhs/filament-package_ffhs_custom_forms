@@ -15,22 +15,11 @@ class DateTimeType extends CustomFieldType
 {
     use HasCustomTypePackageTranslation;
 
-    public static function identifier(): string
-    {
-        return 'date-time';
-    }
-
-    public function viewModes(): array
-    {
-        return [
-            'default' => DateTimeTypeView::class,
-        ];
-    }
-
-    public function icon(): string
-    {
-        return 'heroicon-s-clock';
-    }
+    protected static string $identifier = 'date-time';
+    protected static string $icon = 'heroicon-s-clock';
+    protected static array $viewModes = [
+        'default' => DateTimeTypeView::class,
+    ];
 
     public function extraTypeOptions(): array
     {

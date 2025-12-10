@@ -13,22 +13,11 @@ class TextLayoutType extends CustomFieldType
 {
     use HasCustomTypePackageTranslation;
 
-    public static function identifier(): string
-    {
-        return 'layout_text';
-    }
-
-    public function viewModes(): array
-    {
-        return [
-            'default' => TextLayoutTypeView::class,
-        ];
-    }
-
-    public function icon(): string
-    {
-        return 'heroicon-m-chat-bubble-bottom-center-text';
-    }
+    protected static string $identifier = 'layout_text';
+    protected static string $icon = 'heroicon-m-chat-bubble-bottom-center-text';
+    protected static array $viewModes = [
+        'default' => TextLayoutTypeView::class,
+    ];
 
     public function extraTypeOptions(): array
     {
