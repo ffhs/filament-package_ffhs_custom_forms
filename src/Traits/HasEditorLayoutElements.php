@@ -7,6 +7,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\FormEditor\TypeAction
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\FormEditor\TypeActions\DefaultFieldDeleteAction;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\FormEditor\TypeActions\DefaultFieldEditOptionsAction;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomField;
+use Filament\Actions\Action;
 use Filament\Support\Colors\Color;
 
 trait HasEditorLayoutElements
@@ -95,7 +96,7 @@ trait HasEditorLayoutElements
         return $customField->isGeneralField() ? 'Gen' : null;
     }
 
-    protected function getEditorFieldBadgeColor(array $fielData): ?array
+    protected function getEditorFieldBadgeColor(array $fieldData): ?array
     {
         return Color::rgb('rgb(43, 164, 204)');
     }
