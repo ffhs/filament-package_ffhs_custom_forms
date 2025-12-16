@@ -69,8 +69,9 @@ class ValueEqualsRuleTrigger extends FormRuleTriggerType
             $targetValue = $fieldAnswer?->customField->getType()->prepareLoadAnswerData($fieldAnswer,
                 $fieldAnswer->answer);
         } else {
-            $targetValue = $state[$targetFieldIdentifier] ?? null;
+            $targetValue = [];
         }
+
 
         $type = $trigger->data['type'];
 
@@ -146,7 +147,7 @@ class ValueEqualsRuleTrigger extends FormRuleTriggerType
         $formConfiguration = CustomForms::getFormConfiguration($customFormIdentifier);
 
         $flattenFields = new CustomFieldStateCast()->flattCustomFields($formState);
-        $fields = $this->getFieldDataFromFormData($flattenFields, $formConfiguration)->toArray();
+        $fields = $this->getFieldDataFromFormData($flattenFields, $formConfiguration);
 
         foreach ($fields as $field) {
             /**@var EmbedCustomField $field */

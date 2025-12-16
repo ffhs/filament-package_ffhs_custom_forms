@@ -66,7 +66,7 @@ abstract class  IsPropertyOverwriteEvent extends FormRuleEventType
                 return $component->evaluate($oldProperty);
             }
 
-            $triggered = $triggers(['state' => $component->makeGetUtility()('.')]); //todo fuck... what if with repeaters
+            $triggered = $triggers(); //todo fuck... what if with repeaters
 
             if ($triggered !== $this->dominatingSide()) {
                 $triggered = $component->evaluate($oldProperty);

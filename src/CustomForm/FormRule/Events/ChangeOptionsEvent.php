@@ -74,7 +74,7 @@ class ChangeOptionsEvent extends OptionsEvent
         mixed $identifier
     ): Closure {
         return static function ($get, $set) use ($arguments, $identifier, $optionsOld, $target, $rule) {
-            $triggered = $rule->getRule()->getTriggersCallback($target, $arguments)(['state' => $get('.')]);
+            $triggered = $rule->getRule()->getTriggersCallback($target, $arguments)();
             /**@var array|Collection $options */
             $options = $target->evaluate($optionsOld);
             $options = is_array($options) ? collect($options) : $options;
