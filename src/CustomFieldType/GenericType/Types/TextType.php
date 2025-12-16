@@ -19,22 +19,11 @@ class TextType extends CustomFieldType
 {
     use HasCustomTypePackageTranslation;
 
-    public static function identifier(): string
-    {
-        return 'text';
-    }
-
-    public function viewModes(): array
-    {
-        return [
-            'default' => TextTypeView::class,
-        ];
-    }
-
-    public function icon(): string
-    {
-        return 'bi-input-cursor-text';
-    }
+    protected static string $identifier = 'text';
+    protected static string $icon = 'bi-input-cursor-text';
+    protected static array $viewModes = [
+        'default' => TextTypeView::class,
+    ];
 
     public function extraTypeOptions(): array
     {

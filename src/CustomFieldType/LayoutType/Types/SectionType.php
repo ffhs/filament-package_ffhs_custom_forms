@@ -16,22 +16,11 @@ class SectionType extends CustomLayoutType
 {
     use HasCustomTypePackageTranslation;
 
-    public static function identifier(): string
-    {
-        return 'section';
-    }
-
-    public function viewModes(): array
-    {
-        return [
-            'default' => SectionTypeView::class,
-        ];
-    }
-
-    public function icon(): string
-    {
-        return 'tabler-section';
-    }
+    protected static string $identifier = 'section';
+    protected static string $icon = 'tabler-section';
+    protected static array $viewModes = [
+        'default' => SectionTypeView::class,
+    ];
 
     public function extraTypeOptions(): array
     {

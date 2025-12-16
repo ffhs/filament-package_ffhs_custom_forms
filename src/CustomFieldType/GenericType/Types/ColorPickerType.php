@@ -13,17 +13,11 @@ class ColorPickerType extends CustomOptionType
 {
     use HasCustomTypePackageTranslation;
 
-    public static function identifier(): string
-    {
-        return 'color_input';
-    }
-
-    public function viewModes(): array
-    {
-        return [
-            'default' => ColorPickerTypeView::class,
-        ];
-    }
+    protected static string $identifier = 'color_input';
+    protected static string $icon = 'carbon-color-palette';
+    protected static array $viewModes = [
+        'default' => ColorPickerTypeView::class,
+    ];
 
     public function extraTypeOptions(): array
     {
@@ -32,10 +26,5 @@ class ColorPickerType extends CustomOptionType
             ValidationTypeOptionGroup::make()
                 ->addTypeOptions('color_type', ColorTypeOption::make()),
         ];
-    }
-
-    public function icon(): string
-    {
-        return 'carbon-color-palette';
     }
 }

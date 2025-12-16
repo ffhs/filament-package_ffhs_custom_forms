@@ -20,17 +20,11 @@ class ToggleButtonsType extends CustomOptionType
 {
     use HasCustomTypePackageTranslation;
 
-    public static function identifier(): string
-    {
-        return 'toggle_buttons';
-    }
-
-    public function viewModes(): array
-    {
-        return [
-            'default' => ToggleButtonsView::class,
-        ];
-    }
+    protected static string $identifier = 'toggle_buttons';
+    protected static string $icon = 'bi-toggles';
+    protected static array $viewModes = [
+        'default' => ToggleButtonsView::class,
+    ];
 
     public function prepareToSaveAnswerData(EmbedCustomFieldAnswer $answer, mixed $data): ?array
     {
@@ -38,11 +32,6 @@ class ToggleButtonsType extends CustomOptionType
             $data = false;
         }
         return parent::prepareToSaveAnswerData($answer, $data);
-    }
-
-    public function icon(): string
-    {
-        return 'bi-toggles';
     }
 
     public function extraTypeOptions(): array

@@ -15,22 +15,11 @@ class CheckboxListType extends CustomOptionType
 {
     use HasCustomTypePackageTranslation;
 
-    public static function identifier(): string
-    {
-        return 'checkbox_list';
-    }
-
-    public function viewModes(): array
-    {
-        return [
-            'default' => CheckboxListTypeView::class,
-        ];
-    }
-
-    public function icon(): string
-    {
-        return 'bi-ui-checks-grid';
-    }
+    protected static string $identifier = 'checkbox_list';
+    protected static string $icon = 'bi-ui-checks-grid';
+    protected static array $viewModes = [
+        'default' => CheckboxListTypeView::class,
+    ];
 
     public function extraTypeOptions(): array
     {

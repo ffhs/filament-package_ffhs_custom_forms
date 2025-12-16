@@ -14,22 +14,11 @@ class EmailType extends CustomFieldType
 {
     use HasCustomTypePackageTranslation;
 
-    public static function identifier(): string
-    {
-        return 'email';
-    }
-
-    public function viewModes(): array
-    {
-        return [
-            'default' => EmailTypeView::class,
-        ];
-    }
-
-    public function icon(): string
-    {
-        return 'carbon-email';
-    }
+    protected static string $identifier = 'email';
+    protected static string $icon = 'carbon-email';
+    protected static array $viewModes = [
+        'default' => EmailTypeView::class,
+    ];
 
     public function extraTypeOptions(): array
     {
