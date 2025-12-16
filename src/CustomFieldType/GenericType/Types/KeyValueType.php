@@ -16,22 +16,11 @@ class KeyValueType extends CustomOptionType
 {
     use HasCustomTypePackageTranslation;
 
-    public static function identifier(): string
-    {
-        return 'key_value';
-    }
-
-    public function viewModes(): array
-    {
-        return [
-            'default' => KeyValueTypeView::class,
-        ];
-    }
-
-    public function icon(): string
-    {
-        return 'heroicon-o-key';
-    }
+    protected static string $identifier = 'key_value';
+    protected static string $icon = 'heroicon-o-key';
+    protected static array $viewModes = [
+        'default' => KeyValueTypeView::class,
+    ];
 
     public function extraTypeOptions(): array
     {

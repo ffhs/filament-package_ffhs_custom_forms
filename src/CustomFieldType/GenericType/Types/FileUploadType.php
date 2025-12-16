@@ -35,10 +35,11 @@ class FileUploadType extends CustomFieldType
     use HasCustomTypePackageTranslation;
     use CanMapFields;
 
-    public static function identifier(): string
-    {
-        return 'file_upload';
-    }
+    protected static string $identifier = 'file_upload';
+    protected static string $icon = 'carbon-copy-file';
+    protected static array $viewModes = [
+        'default' => FileUploadView::class,
+    ];
 
     public function extraTypeOptions(): array
     {
@@ -84,11 +85,6 @@ class FileUploadType extends CustomFieldType
                     'allowed_type' => AllowedFileTypeOption::make(),
                 ]),
         ];
-    }
-
-    public function icon(): string
-    {
-        return 'carbon-copy-file';
     }
 
     public function updateAnswerFormComponentOnSave(
@@ -142,13 +138,6 @@ class FileUploadType extends CustomFieldType
                 }
             }
         }
-    }
-
-    public function viewModes(): array
-    {
-        return [
-            'default' => FileUploadView::class,
-        ];
     }
 
     public function isEmptyAnswer(CustomFieldAnswer $customFieldAnswer, ?array $fieldAnswererData): bool

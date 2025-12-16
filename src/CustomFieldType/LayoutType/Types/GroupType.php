@@ -12,22 +12,11 @@ class GroupType extends CustomLayoutType
 {
     use HasCustomTypePackageTranslation;
 
-    public static function identifier(): string
-    {
-        return 'group';
-    }
-
-    public function viewModes(): array
-    {
-        return [
-            'default' => GroupTypeView::class,
-        ];
-    }
-
-    public function icon(): string
-    {
-        return 'carbon-cics-system-group';
-    }
+    protected static string $identifier = 'group';
+    protected static string $icon = 'carbon-cics-system-group';
+    protected static array $viewModes = [
+        'default' => GroupTypeView::class,
+    ];
 
     public function extraTypeOptions(): array
     {

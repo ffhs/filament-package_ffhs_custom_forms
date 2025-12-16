@@ -12,22 +12,11 @@ class IconSelectType extends CustomFieldType
 {
     use HasCustomTypePackageTranslation;
 
-    public static function identifier(): string
-    {
-        return 'icon-select';
-    }
-
-    public function viewModes(): array
-    {
-        return [
-            'default' => IconSelectView::class,
-        ];
-    }
-
-    public function icon(): string
-    {
-        return 'carbon-color-palette';
-    }
+    protected static string $identifier = 'icon-select';
+    protected static string $icon = 'carbon-color-palette';
+    protected static array $viewModes = [
+        'default' => IconSelectView::class,
+    ];
 
     public function extraTypeOptions(): array
     {

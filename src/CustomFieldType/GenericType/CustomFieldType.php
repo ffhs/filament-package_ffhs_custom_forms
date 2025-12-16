@@ -27,6 +27,16 @@ abstract class CustomFieldType implements Type
     use HasEditorLayoutElements;
     use HasAnswerCallbacks;
 
+    /** @var array<string, class-string<FieldTypeView>> $viewModes */
+    protected static array $viewModes;
+    protected static string $identifier;
+    protected static string $icon;
+
+    public static function identifier(): string
+    {
+        return static::$identifier;
+    }
+
     final public static function getTypeListConfig(): array
     {
         $formConfig = CustomForms::config('form_configurations', []);
@@ -64,10 +74,18 @@ abstract class CustomFieldType implements Type
         return __('custom_forms.types.' . static::identifier());
     }
 
+    public function icon(): string
+    {
+        return static::$icon;
+    }
+
     /**
      * @return array<string, class-string<FieldTypeView>>
      */
-    abstract public function viewModes(): array;
+    public function viewModes(): array
+    {
+        return static::$viewModes;
+    }
 
     public function canBeDeactivate(): bool
     {

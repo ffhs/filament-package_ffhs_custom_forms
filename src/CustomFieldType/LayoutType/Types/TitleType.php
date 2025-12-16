@@ -15,22 +15,11 @@ class TitleType extends CustomFieldType
 {
     use HasCustomTypePackageTranslation;
 
-    public static function identifier(): string
-    {
-        return 'title';
-    }
-
-    public function viewModes(): array
-    {
-        return [
-            'default' => TitleTypeView::class,
-        ];
-    }
-
-    public function icon(): string
-    {
-        return 'bi-card-heading';
-    }
+    protected static string $identifier = 'title';
+    protected static string $icon = 'bi-card-heading';
+    protected static array $viewModes = [
+        'default' => TitleTypeView::class,
+    ];
 
     public function extraTypeOptions(): array
     {
