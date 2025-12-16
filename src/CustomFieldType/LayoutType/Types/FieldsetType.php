@@ -13,22 +13,11 @@ class FieldsetType extends CustomLayoutType
 {
     use HasCustomTypePackageTranslation;
 
-    public static function identifier(): string
-    {
-        return 'fieldset';
-    }
-
-    public function viewModes(): array
-    {
-        return [
-            'default' => FieldsetTypeView::class,
-        ];
-    }
-
-    public function icon(): string
-    {
-        return 'bi-columns-gap';
-    }
+    protected static string $identifier = 'fieldset';
+    protected static string $icon = 'bi-columns-gap';
+    protected static array $viewModes = [
+        'default' => FieldsetTypeView::class,
+    ];
 
     public function extraTypeOptions(): array
     {

@@ -17,22 +17,11 @@ class TextAreaType extends CustomFieldType
 {
     use HasCustomTypePackageTranslation;
 
-    public static function identifier(): string
-    {
-        return 'textarea';
-    }
-
-    public function viewModes(): array
-    {
-        return [
-            'default' => TextAreaTypeView::class,
-        ];
-    }
-
-    public function icon(): string
-    {
-        return 'bi-textarea-t';
-    }
+    protected static string $identifier = 'textarea';
+    protected static string $icon = 'bi-textarea-t';
+    protected static array $viewModes = [
+        'default' => TextAreaTypeView::class,
+    ];
 
     public function extraTypeOptions(): array
     {

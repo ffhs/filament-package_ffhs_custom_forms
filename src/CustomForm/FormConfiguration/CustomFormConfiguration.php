@@ -28,11 +28,6 @@ abstract class CustomFormConfiguration
             CustomForms::config('default_form_configuration.' . $config, $default);
     }
 
-    public static function getEditorFieldAdder(): array
-    {
-        return static::config('field_adders');
-    }
-
     /**
      * @return array<class-string<CustomFieldType>, array<string, class-string<FieldTypeView>>>
      */
@@ -136,7 +131,6 @@ abstract class CustomFormConfiguration
     {
         return once(function () {
             $generalFieldFormQuery = GeneralFieldForm::query()
-//                ->with('customOptions')
                 ->select('general_field_id')
                 ->where('custom_form_identifier', $this::identifier());
 

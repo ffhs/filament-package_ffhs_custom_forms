@@ -12,22 +12,11 @@ class CheckboxType extends CustomFieldType
 {
     use HasCustomTypePackageTranslation;
 
-    public static function identifier(): string
-    {
-        return 'checkbox';
-    }
-
-    public function viewModes(): array
-    {
-        return [
-            'default' => CheckboxTypeView::class,
-        ];
-    }
-
-    public function icon(): string
-    {
-        return 'bi-check-square';
-    }
+    protected static string $identifier = 'checkbox';
+    protected static string $icon = 'bi-check-square';
+    protected static array $viewModes = [
+        'default' => CheckboxTypeView::class,
+    ];
 
     public function extraTypeOptions(): array
     {
