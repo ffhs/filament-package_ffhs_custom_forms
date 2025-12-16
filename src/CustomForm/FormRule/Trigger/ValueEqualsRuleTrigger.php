@@ -6,10 +6,11 @@ use Ffhs\FfhsUtils\Contracts\Rules\EmbedRuleTrigger;
 use Ffhs\FfhsUtils\Models\RuleTrigger;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\CustomFieldType\CustomOption\CustomOptionType;
-use Ffhs\FilamentPackageFfhsCustomForms\CustomForm\TempCustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Facades\CustomForms;
 use Ffhs\FilamentPackageFfhsCustomForms\Filament\Component\FormEditor\StateCasts\CustomFieldStateCast;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFieldAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomForm;
+use Ffhs\FilamentPackageFfhsCustomForms\Models\CustomFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasBoolCheck;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasNumberCheck;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasOptionCheck;
@@ -59,8 +60,18 @@ class ValueEqualsRuleTrigger extends FormRuleTriggerType
         }
 
         $targetFieldIdentifier = $trigger->data['target'];
+
         $state = $arguments['state'];
-        $targetValue = $state[$targetFieldIdentifier] ?? null;
+
+        if ($state instanceof CustomFormAnswer) {
+            $fieldAnswer = $state->customFieldAnswers->firstWhere('customField.identifier', $targetFieldIdentifier);
+            /**@var CustomFieldAnswer $fieldAnswer */
+            $targetValue = $fieldAnswer?->customField->getType()->prepareLoadAnswerData($fieldAnswer,
+                $fieldAnswer->answer);
+        } else {
+            $targetValue = $state[$targetFieldIdentifier] ?? null;
+        }
+
         $type = $trigger->data['type'];
 
         return match ($type) {
