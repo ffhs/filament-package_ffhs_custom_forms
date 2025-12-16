@@ -69,8 +69,9 @@ class ValueEqualsRuleTrigger extends FormRuleTriggerType
             $targetValue = $fieldAnswer?->customField->getType()->prepareLoadAnswerData($fieldAnswer,
                 $fieldAnswer->answer);
         } else {
-            $targetValue = $state[$targetFieldIdentifier] ?? null;
+            $targetValue = [];
         }
+
 
         $type = $trigger->data['type'];
 

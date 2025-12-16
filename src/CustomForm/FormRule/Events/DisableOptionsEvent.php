@@ -22,8 +22,8 @@ class DisableOptionsEvent extends OptionsEvent
 
         $trigger = $rule->getRule()->getTriggersCallback($target, $arguments);
 
-        return $target->disableOptionWhen(function ($get, $value) use ($trigger, $rule) {
-            $triggered = once(fn(): bool => $trigger(['state' => $get('.')]));
+        return $target->disableOptionWhen(function ($value) use ($trigger, $rule) {
+            $triggered = once(fn(): bool => $trigger());
 
             return $triggered && in_array($value, $rule->data['selected_options'] ?? [], true);
         });
