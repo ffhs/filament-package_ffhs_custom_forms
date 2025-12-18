@@ -14,6 +14,7 @@ trait HasOptionCheck
 
     protected function checkOption(mixed $targetValue, array $data): bool
     {
+
         if (empty($data)) {
             return false;
         }
