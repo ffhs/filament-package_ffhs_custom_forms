@@ -8,6 +8,7 @@ use Ffhs\FfhsUtils\Contracts\Rules\RuleTriggersCallback;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\CanLoadFormAnswer;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasRuleEventPluginTranslate;
 use Ffhs\FilamentPackageFfhsCustomForms\Traits\HasTriggerEventFormTargets;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Support\Components\Component;
 
 abstract class  IsPropertyOverwriteEvent extends FormRuleEventType
@@ -61,12 +62,12 @@ abstract class  IsPropertyOverwriteEvent extends FormRuleEventType
 
     protected function getPropertyFunction(mixed $oldProperty, RuleTriggersCallback $triggers): Closure
     {
-        return fn(Component $component) => once(function () use ($component, $oldProperty, $triggers) {
+        return fn(Get $get, Component $component) => once(function () use ($get, $component, $oldProperty, $triggers) {
             if (!$component instanceof \Filament\Schemas\Components\Component) {
                 return $component->evaluate($oldProperty);
             }
 
-            $triggered = $triggers(); //todo fuck... what if with repeaters
+            $triggered = $triggers(['state' => $get('.')]); //todo fuck... what if with repeaters
 
             if ($triggered !== $this->dominatingSide()) {
                 $triggered = $component->evaluate($oldProperty);
