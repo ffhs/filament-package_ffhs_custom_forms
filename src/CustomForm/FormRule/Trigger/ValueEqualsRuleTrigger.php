@@ -70,6 +70,8 @@ class ValueEqualsRuleTrigger extends FormRuleTriggerType
                 $fieldAnswer->answer);
         } elseif (is_array($state)) {
             $targetValue = $state[$targetFieldIdentifier] ?? null;
+        } else {
+            $targetValue = $state;
         }
 
 
