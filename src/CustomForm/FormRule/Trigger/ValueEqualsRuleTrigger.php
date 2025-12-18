@@ -61,15 +61,15 @@ class ValueEqualsRuleTrigger extends FormRuleTriggerType
 
         $targetFieldIdentifier = $trigger->data['target'];
 
-        $state = $arguments['state'];
+        $state = $arguments['state'] ?? null;
 
         if ($state instanceof CustomFormAnswer) {
             $fieldAnswer = $state->customFieldAnswers->firstWhere('customField.identifier', $targetFieldIdentifier);
             /**@var CustomFieldAnswer $fieldAnswer */
             $targetValue = $fieldAnswer?->customField->getType()->prepareLoadAnswerData($fieldAnswer,
                 $fieldAnswer->answer);
-        } else {
-            $targetValue = [];
+        } elseif (is_array($state)) {
+            $targetValue = $state[$targetFieldIdentifier] ?? null;
         }
 
 
