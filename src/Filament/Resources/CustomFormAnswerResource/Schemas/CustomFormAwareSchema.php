@@ -29,14 +29,14 @@ class CustomFormAwareSchema
                 )
                 ->required(),
 
-            Group::make(static fn($operation
+            Group::make(fn(string $operation
             ) => $operation === 'create' ? [] : [ //todo add fill_out on start without record.
                 CustomFormAnswerEditor::make('form_answer')
                     ->customFormRelation('customForm')
                     ->hiddenOn('create')
                     ->autoViewMode()
                     ->columnSpanFull()
-            ])
+            ])->columnSpanFull()
         ]);
     }
 }

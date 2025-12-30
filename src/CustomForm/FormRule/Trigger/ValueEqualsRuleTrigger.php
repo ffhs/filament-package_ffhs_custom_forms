@@ -67,6 +67,7 @@ class ValueEqualsRuleTrigger extends FormRuleTriggerType
         if ($state instanceof CustomFormAnswer) {
             $fieldAnswer = $state->customFieldAnswers
                 ->firstWhere(function (EmbedCustomFieldAnswer $answer) use ($targetFieldIdentifier) {
+                    /**@phpstan-ignore-next-line */
                     return $answer->customField->identifier() === $targetFieldIdentifier;
                 });
 

@@ -12,7 +12,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Groups\LayoutWithColumnsOptio
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Groups\ValidationTypeOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\BooleanOption;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\GroupedOption;
-use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\InlineOption;
+use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\InLineOption;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Component;
 
@@ -39,7 +39,7 @@ class ToggleButtonsType extends CustomOptionType
         return [
             LayoutWithColumnsOptionGroup::make()
                 ->mergeTypeOptions([
-                    'inline' => InlineOption::make()
+                    'inline' => InLineOption::make()
                         ->modifyOptionComponent(function (Toggle $component) {
                             return $component->hidden(fn($get) => $get('grouped'));
                         }),

@@ -7,7 +7,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\TypeOption;
 use Filament\Forms\Components\Toggle;
 use Filament\Support\Components\Component;
 
-class InlineOption extends TypeOption
+class InLineOption extends TypeOption
 {
     use HasOptionNoComponentModification;
 
