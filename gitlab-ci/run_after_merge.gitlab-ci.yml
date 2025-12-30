@@ -12,10 +12,8 @@ publish:
 publish-dev:
   image: node:latest
   stage: publish
-  rules:
-    - if: '$CI_MERGE_REQUEST_ID' # Ensures the job does not run in MR pipelines
-      when: never
-    - if: '$CI_COMMIT_BRANCH =~ /^develop\/.*$/ && $CI_PIPELINE_SOURCE == "push"' # Runs only on push after MR merge
+  only:
+    - main
   before_script:
     - cp /etc/gitlab-runner/certs/ca.crt /usr/local/share/ca-certificates/
     - update-ca-certificates
