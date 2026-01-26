@@ -15,16 +15,16 @@ class DefaultCustomActivationAction extends FieldTypeAction
         $this
             ->iconButton()
             ->icon(Heroicon::Sun)
-            ->color(fn(array $state) => ($state['is_active'] ?? false) ? 'success' : 'danger')
-            ->tooltip(function (array $state) {
-                if ($state['is_active'] ?? false) {
+            ->color(fn(array $schemaState) => ($schemaState['is_active'] ?? false) ? 'success' : 'danger')
+            ->tooltip(function (array $schemaState) {
+                if ($schemaState['is_active'] ?? false) {
                     return CustomField::__('attributes.is_active.active');
                 }
 
                 return CustomField::__('attributes.is_active.not_active');
             })
-            ->action(function (array $state, Set $set) {
-                $set('is_active', !($state['is_active'] ?? false));
+            ->action(function (array $schemaState, Set $set) {
+                $set('is_active', !($schemaState['is_active'] ?? false));
             });
     }
 }
