@@ -69,9 +69,12 @@ abstract class CustomFormConfiguration
         return static::config('selectable_field_types');
     }
 
+    /**
+     * @return array<string, CustomFieldType>
+     */
     public function getSelectableFieldTypes(): array
     {
-        return once(function () {
+        return once(function ():array {
             $classes = $this->getSelectableFieldTypeClasses();
             $types = [];
             foreach ($classes as $class) {
