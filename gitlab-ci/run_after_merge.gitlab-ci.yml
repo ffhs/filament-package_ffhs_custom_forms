@@ -27,6 +27,7 @@ publish-dev:
     - VERSION=$(jq -r '.version' composer.json)
     - TAG_NAME=v${VERSION}-alpha.${CI_JOB_ID}
     - 'echo "Tag to create: $TAG_NAME"'
+    -  git tag -d "$TAG_NAME" || true
     - 'git tag $TAG_NAME  # Create the tag locally'
     - 'git push https://oauth2:${GITHUB_TOKEN}@${CI_SERVER_HOST}/$CI_PROJECT_PATH.git $TAG_NAME'  # Use CI_JOB_TOKEN to authenticate
     - 'curl --fail-with-body --header "Job-Token: $CI_JOB_TOKEN" --data tag=$TAG_NAME "${CI_API_V4_URL}/projects/$CI_PROJECT_ID/packages/composer"'
@@ -39,6 +40,10 @@ publish-main:
   script:
     - VERSION=$(jq -r '.version' composer.json)
     - TAG_NAME=v${VERSION}
+    - 'if git rev-parse "$TAG_NAME" >/dev/null 2>&1; then
+         git tag -d "$TAG_NAME" || true
+         git push origin --delete "$TAG_NAME" || true
+       fi'
     - 'git tag $TAG_NAME  # Create the tag locally'
     - 'git push https://oauth2:${CI_PUSH_TOKEN}@${CI_SERVER_HOST}/$CI_PROJECT_PATH.git $TAG_NAME'
     - 'curl --fail-with-body --header "Job-Token: $CI_JOB_TOKEN" --data tag=$TAG_NAME "${CI_API_V4_URL}/projects/$CI_PROJECT_ID/packages/composer"'
