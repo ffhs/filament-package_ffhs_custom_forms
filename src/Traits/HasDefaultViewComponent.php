@@ -6,6 +6,9 @@ use Ffhs\FfhsUtils\Traits\HasStaticMake;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomField;
 use Ffhs\FilamentPackageFfhsCustomForms\Contracts\EmbedCustomFieldAnswer;
 use Filament\Infolists\Components\Entry;
+use Filament\Schemas\Components\Fieldset;
+use Filament\Schemas\Components\Group;
+use Filament\Schemas\Components\Section;
 use Filament\Support\Components\Component;
 
 trait HasDefaultViewComponent
@@ -60,8 +63,12 @@ trait HasDefaultViewComponent
 
         // Handle label
         if (method_exists($component, 'label') && method_exists($component, 'hiddenLabel')) {
-            $label = $this->getLabelName($field);
-            $component = empty($label) ? $component->hiddenLabel() : $component->label($label);
+
+            if (!$component instanceof Section && !$component instanceof Fieldset && !$component instanceof Group) {
+                $label = $this->getLabelName($field);
+                $component = empty($label) ? $component->hiddenLabel() : $component->label($label);
+            }
+            
         }
 
         // Early return for non-entry components

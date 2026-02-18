@@ -25,8 +25,7 @@ class DefaultFieldDeleteAction extends FieldTypeAction
 
                 return trans(CustomField::__('actions.delete.confirmation_message'), $parameters);
             })
-            ->action(function ($get, $set, $value) {
-                $state = $get('../');
+            ->action(function ($state, $get, $set, $value) {
                 unset($state[$value]);
                 $set('../', $state);
             });

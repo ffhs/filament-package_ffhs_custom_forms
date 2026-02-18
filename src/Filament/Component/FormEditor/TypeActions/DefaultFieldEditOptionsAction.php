@@ -20,23 +20,23 @@ class DefaultFieldEditOptionsAction extends FieldTypeAction
             ->action(function (Set $set, array $data) {
                 $set('options', $data['options']);
             })
-            ->fillForm(fn(array $state) => $state)
+            ->fillForm(fn(array $schemaState) => $schemaState)
             ->schema(fn() => once(fn() => [EditTypeOptionModal::make()]))
             ->icon('carbon-settings-edit')
             ->visible(fn(?CustomFieldType $type) => count($type?->extraTypeOptions() ?? []))
-            ->modalHeading(fn(array $state, CustomFormConfiguration $formConfiguration) => once(function () use (
-                $state,
+            ->modalHeading(fn(array $schemaState, CustomFormConfiguration $formConfiguration) => once(function () use (
+                $schemaState,
                 $formConfiguration
             ) {
 
                 $genFieldName = static fn() => $formConfiguration
                     ->getAvailableGeneralFields()
-                    ->find($state['general_field_id'])
+                    ->find($schemaState['general_field_id'])
                     ->name;
 
                 $modalHeading = CustomField::__('actions.edit_options.modal_heading');
-                $name = empty($state['general_field_id'])
-                    ? ($state['name'][app()->getLocale()] ?? '') //ToDo Translate $record->getLocale()
+                $name = empty($schemaState['general_field_id'])
+                    ? ($schemaState['name'][app()->getLocale()] ?? '') //ToDo Translate $record->getLocale()
                     : ('G. ' . $genFieldName());
 
                 return trans($modalHeading, ['name' => $name]);

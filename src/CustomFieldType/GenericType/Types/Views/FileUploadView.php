@@ -190,8 +190,11 @@ class FileUploadView implements FieldTypeView
 
     public function getTextEntryLabel(EmbedCustomFieldAnswer $record): TextEntry
     {
+        $label = $this->getLabelName($record);
+
         return TextEntry::make($this->getIdentifyKey($record) . '-title')
-            ->label($this->getLabelName($record))
+            ->hiddenLabel(empty($label))
+            ->label($label)
             ->inlineLabel();
     }
 

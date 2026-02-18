@@ -37,7 +37,7 @@ use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\HelperTextTypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\IconOption;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\ImaginaryTypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\InLineLabelOption;
-use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\InlineOption;
+use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\InLineOption;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\MaxAmountOption;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\MaxLengthOption;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\MaxSelectOption;
@@ -104,7 +104,7 @@ $allOptionTypes = [
     IconOption::class,
     ImaginaryTypeOption::class,
     InLineLabelOption::class,
-    InlineOption::class,
+    InLineOption::class,
     MaxAmountOption::class,
     MaxLengthOption::class,
     MaxSelectOption::class,

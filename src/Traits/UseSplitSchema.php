@@ -87,7 +87,7 @@ trait UseSplitSchema
         $renderOutput = $this->renderCustomForm($viewMode, $fieldDisplayer, $customForm, $customFields);
 
         return [
-            Group::make($renderOutput[0])->columns($columns),
+            Group::make($renderOutput[0])->columns(fn(string $operation) => $operation === 'view' ? 1 : $columns),
         ];
     }
 

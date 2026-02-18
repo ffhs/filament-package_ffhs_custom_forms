@@ -62,12 +62,22 @@ abstract class  IsPropertyOverwriteEvent extends FormRuleEventType
 
     protected function getPropertyFunction(mixed $oldProperty, RuleTriggersCallback $triggers): Closure
     {
-        return fn(Get $get, Component $component) => once(function () use ($get, $component, $oldProperty, $triggers) {
+        return fn(Get $get, Component $component, string $operation) => once(function () use (
+            $get,
+            $component,
+            $oldProperty,
+            $triggers,
+            $operation
+        ) {
             if (!$component instanceof \Filament\Schemas\Components\Component) {
                 return $component->evaluate($oldProperty);
             }
 
-            $triggered = $triggers(['state' => $get('.')]); //todo fuck... what if with repeaters
+            if ($operation === 'view') {
+                $triggered = $triggers(['state' => $component->getRecord()]);
+            } else {
+                $triggered = $triggers(['state' => $get('.')]); //todo fuck... what if with repeaters
+            }
 
             if ($triggered !== $this->dominatingSide()) {
                 $triggered = $component->evaluate($oldProperty);
