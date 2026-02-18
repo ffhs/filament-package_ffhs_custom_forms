@@ -32,8 +32,8 @@ publish-dev:
     - 'curl --fail-with-body --header "Job-Token: $CI_JOB_TOKEN" --data tag=$TAG_NAME "${CI_API_V4_URL}/projects/$CI_PROJECT_ID/packages/composer"'
 
 publish-main:
-  image: node:latest
-  stage: build
+  extends: .base_adter_merge_job
+  stage: publish
   only:
     - main
   script:
