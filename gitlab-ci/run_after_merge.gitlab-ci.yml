@@ -55,7 +55,25 @@ update-on-github:
   only:
     - main
   before_script:
+    # Install ssh client if not present (for minimal images)
+    - 'which ssh-agent || (apt-get update -y && apt-get install -y openssh-client)'
+
+    # Start ssh agent
+    - eval "$(ssh-agent -s)"
+
+    # Add private key (stored in GitLab CI variable SSH_PRIVATE_KEY)
+    - echo "$GITHUB_SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+
+    # Create SSH directory
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+
+    # Add GitHub to known_hosts
+    - ssh-keyscan github.com >> ~/.ssh/known_hosts
+    - chmod 644 ~/.ssh/known_hosts
+
+    # Configure remote
     - git remote remove github 2>/dev/null || true
-    - git remote add github "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPO}.git"
+    - git remote add github "git@github.com:${GITHUB_REPO}.git"
   script:
     - git push github HEAD:refs/heads/main --force
