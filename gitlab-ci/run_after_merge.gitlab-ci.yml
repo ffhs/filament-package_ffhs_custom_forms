@@ -56,6 +56,6 @@ update-on-github:
     - main
   before_script:
     - git remote remove github 2>/dev/null || true
-    - git remote add github https://${GITHUB_TOKEN}@github.com/${GITHUB_REPO}.git
+    - git remote add github "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPO}.git"
   script:
     - git push github HEAD:refs/heads/main --force
