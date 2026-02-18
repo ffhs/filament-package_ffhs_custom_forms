@@ -7,6 +7,7 @@ stages:
   - test
   - stan
   - publish
+  - publication
 
 include:
   - local: gitlab-ci/run_before_merge.gitlab-ci.yml
