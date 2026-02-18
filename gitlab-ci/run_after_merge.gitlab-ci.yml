@@ -1,4 +1,4 @@
-.base_adter_merge_job:
+.base_after_merge_job:
   image: node:latest
   before_script:
     - cp /etc/gitlab-runner/certs/ca.crt /usr/local/share/ca-certificates/
@@ -9,7 +9,7 @@
 
 publish:
   stage: publish
-  extends: .base_adter_merge_job
+  extends: .base_after_merge_job
   rules:
     - if: '$CI_COMMIT_TAG =~ /^v/ && $CI_COMMIT_TAG !~ /dev/'
   script:
@@ -18,7 +18,7 @@ publish:
 # Publishes a tag/branch to Composer Packages of the current project
 publish-dev:
   stage: publish
-  extends: .base_adter_merge_job
+  extends: .base_after_merge_job
   rules:
     - if: '$CI_MERGE_REQUEST_ID' # Ensures the job does not run in MR pipelines
       when: never
@@ -33,23 +33,24 @@ publish-dev:
     - 'curl --fail-with-body --header "Job-Token: $CI_JOB_TOKEN" --data tag=$TAG_NAME "${CI_API_V4_URL}/projects/$CI_PROJECT_ID/packages/composer"'
 
 publish-main:
-  extends: .base_adter_merge_job
+  extends: .base_after_merge_job
   stage: publish
   only:
     - main
   script:
     - VERSION=$(jq -r '.version' composer.json)
     - TAG_NAME=v${VERSION}
-    - 'if git rev-parse "$TAG_NAME" >/dev/null 2>&1; then
+    - |
+       if git rev-parse "$TAG_NAME" >/dev/null 2>&1; then
          git tag -d "$TAG_NAME" || true
          git push origin --delete "$TAG_NAME" || true
-       fi'
+       fi
     - 'git tag $TAG_NAME  # Create the tag locally'
     - 'git push https://oauth2:${CI_PUSH_TOKEN}@${CI_SERVER_HOST}/$CI_PROJECT_PATH.git $TAG_NAME'
     - 'curl --fail-with-body --header "Job-Token: $CI_JOB_TOKEN" --data tag=$TAG_NAME "${CI_API_V4_URL}/projects/$CI_PROJECT_ID/packages/composer"'
 
 update-on-github:
-  extends: .base_adter_merge_job
+  extends: .base_after_merge_job
   stage: publication
   only:
     - main
