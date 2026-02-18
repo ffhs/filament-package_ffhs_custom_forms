@@ -63,6 +63,8 @@ update-on-github:
     - |
       cat > ~/.ssh/config <<'EOF'
       Host github.com
+        Hostname ssh.github.com
+        Port 443
         User git
         StrictHostKeyChecking accept-new
         IdentityAgent SSH_AUTH_SOCK
