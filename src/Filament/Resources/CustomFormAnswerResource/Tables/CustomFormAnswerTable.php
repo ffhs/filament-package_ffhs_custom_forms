@@ -16,7 +16,7 @@ use Filament\Tables\Table;
 
 class CustomFormAnswerTable
 {
-    public static function configure(Table $table): table
+    public static function configure(Table $table): Table
     {
         return $table
             ->recordUrl(fn($record) => CustomFormAnswerResource::getUrl('edit', [$record]))
