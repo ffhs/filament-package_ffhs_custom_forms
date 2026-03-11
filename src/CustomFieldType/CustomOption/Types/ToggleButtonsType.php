@@ -28,9 +28,7 @@ class ToggleButtonsType extends CustomOptionType
 
     public function prepareToSaveAnswerData(EmbedCustomFieldAnswer $answer, mixed $data): ?array
     {
-        if ($data === '0') {
-            $data = false;
-        }
+        $data = is_null($data) ? $data : (bool)$data;
         return parent::prepareToSaveAnswerData($answer, $data);
     }
 

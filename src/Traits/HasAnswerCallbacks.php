@@ -44,9 +44,35 @@ trait HasAnswerCallbacks
 
     public function isEmptyAnswer(CustomFieldAnswer $customFieldAnswer, ?array $fieldAnswererData): bool
     {
-        return empty($fieldAnswererData)
-            || (empty($fieldAnswererData['saved'] ?? [])
-                && count($fieldAnswererData) === 1
-                && !is_bool($fieldAnswererData['saved']));
+        if (is_null($fieldAnswererData)) {
+            return true;
+        }
+
+        if (count($fieldAnswererData) === 0) {
+            return true;
+        }
+
+        if (count($fieldAnswererData) === 1 && array_key_exists('saved', $fieldAnswererData)) {
+            return $this->isRawAnswerEmpty($fieldAnswererData['saved']);
+        }
+
+        return false;
+    }
+
+    private function isRawAnswerEmpty(mixed $answerData): bool
+    {
+        if (is_null($answerData)) {
+            return true;
+        }
+
+        if (is_string($answerData) && empty($answerData)) {
+            return true;
+        }
+
+        if (is_array($answerData) && empty($answerData)) {
+            return true;
+        }
+
+        return false;
     }
 }

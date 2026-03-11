@@ -14,7 +14,7 @@ use Filament\Tables\Table;
 
 class GeneralFieldTable
 {
-    public static function configure(Table $table): table
+    public static function configure(Table $table): Table
     {
         return $table
             ->columns([
