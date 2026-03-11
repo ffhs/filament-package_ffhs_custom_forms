@@ -46,7 +46,7 @@ class FormRule extends Model
         return $this->belongsTo(Rule::class);
     }
 
-    public function customForm(): belongsTo
+    public function customForm(): BelongsTo
     {
         return $this->belongsTo(CustomForm::class);
     }
