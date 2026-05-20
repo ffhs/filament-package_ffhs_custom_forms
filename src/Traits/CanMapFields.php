@@ -171,6 +171,7 @@ trait CanMapFields
             $record = $record->getCustomField();
         } else {
             /**@var CustomField $record */
+            /**@phpstan-ignore-next-line */
             $customForm = $record->customForm;
         }
 
@@ -194,11 +195,13 @@ trait CanMapFields
                 return false;
             }
 
+            /**@phpstan-ignore-next-line */
             if ($child->custom_form_id !== $parent->custom_form_id) {
                 if (!is_null($parent->custom_form_id)) {
                     return false;
                 }
 
+                /**@phpstan-ignore-next-line */
                 $child = $fields->firstWhere('template_id', $child->custom_form_id) ?? $child;
             }
 
@@ -244,6 +247,7 @@ trait CanMapFields
             $record = $record->getCustomField();
         } else {
             /**@var CustomField $record */
+            /**@phpstan-ignore-next-line */
             $customForm = $record->customForm;
         }
 
