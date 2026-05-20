@@ -69,7 +69,6 @@ trait CanMapFields
         array $generalDefaultValues,
         array $options
     ): mixed {
-
         // Check record-specific options first
         if (array_key_exists($option, $options) && (!is_null($options[$option]) || $canBeNull)) {
             return $options[$option];
@@ -89,7 +88,7 @@ trait CanMapFields
     public function hasOptionParameter(EmbedCustomField|CustomFieldAnswer $record, string $option): bool
     {
         if ($record instanceof CustomFieldAnswer) {
-            $record = $record->getCustomField();;
+            $record = $record->getCustomField();
         }
 
         return !is_null($record->getType()->getFlattenExtraTypeOptions()[$option] ?? null)
@@ -112,7 +111,6 @@ trait CanMapFields
 
     public function getAvailableCustomOptions(EmbedCustomField $record): Collection
     {
-
         if ($record->isGeneralField()) {
             $options = $record->getGeneralField()->customOptions;
         } else {
@@ -124,10 +122,13 @@ trait CanMapFields
                 if (!is_array($option)) {
                     return [$option->identifier => $option->name];
                 }
+
                 $name = $option['name'];
+
                 if (is_array($name)) {
                     $name = $name[app()->getLocale()] ?? $name[app()->getFallbackLocale()] ?? '';
                 }
+
                 return [$option['identifier'] => $name];
             });
     }
@@ -160,56 +161,50 @@ trait CanMapFields
     }
 
     /**
-     * Like an Repeater
+     * Like a Repeater
      */
     public function isFieldInSplitGroup(EmbedCustomField|EmbedCustomFieldAnswer $record): bool
-    {//ToDo Slow
+    {
+        //ToDo make for non CustomForm
         if ($record instanceof EmbedCustomFieldAnswer) {
+            $customForm = $record->getCustomForm();
             $record = $record->getCustomField();
+        } else {
+            /**@var CustomField $record */
+            $customForm = $record->customForm;
         }
 
-        /**@phpstan-ignore-next-line */ //ToDo make for non CustomForm
-        $fields = $record->customForm->getCustomFields();
-        $parentSplitField = $fields
-            ->firstWhere(function (CustomField $field) use ($record) {
-                if ($field->getFormPosition() >= $record->getFormPosition()
-                    || $field->getLayoutEndPosition() < $record->getFormPosition()) {
-                    return false;
-                }
+        /**@var CustomField $record */
+        /**@phpstan-ignore-next-line */
+        $fields = $customForm->getCustomFields();
 
-                return $field->getType() instanceof CustomSplitType;
-            });
+        $parentSplitField = $fields
+            ->firstWhere($this->splitGroupFieldFilter($fields, $record));
 
         return !is_null($parentSplitField);
     }
 
-    public function getParentSplitGroups(EmbedCustomField|CustomFieldAnswer $record): Collection
-    {//ToDo Slow
-        if ($record instanceof CustomFieldAnswer) {
-            $record = $record->customField;
-        }
-
-        /**@phpstan-ignore-next-line */ //ToDo make for non CustomForm
-        $fields = $record->customForm->customFields;
-
-        return $fields
-            ->where('form_position', '<', $record->getFormPosition())
-            ->where('layout_end_position', '>=', $record->getFormPosition())
-            ->filter(fn(CustomField $field) => $field->getType() instanceof CustomSplitType);
-    }
-
-    public function getFieldsInLayout(EmbedCustomField|CustomFieldAnswer $record): Collection
+    protected function splitGroupFieldFilter(Collection $fields, CustomField $record): \Closure
     {
-        if ($record instanceof CustomFieldAnswer) {
-            $record = $record->getCustomField();;
-        }
+        return static function (CustomField $field) use ($fields, $record) {
+            $child = $record;
+            $parent = $field;
 
-        /**@phpstan-ignore-next-line */ //ToDo make for non CustomForm
-        return $record->customForm->getCustomFields()
-            ->filter(function (CustomField $field) use ($record) {
-                return !($field->getFormPosition() > $record->getLayoutEndPosition()
-                    || $field->getFormPosition() <= $record->getFormPosition());
-            });
+            if (!$parent->getType() instanceof CustomSplitType) {
+                return false;
+            }
+
+            if ($child->custom_form_id !== $parent->custom_form_id) {
+                if (!is_null($parent->custom_form_id)) {
+                    return false;
+                }
+
+                $child = $fields->firstWhere('template_id', $child->custom_form_id) ?? $child;
+            }
+
+            return $parent->getFormPosition() < $child->getFormPosition()
+                || $parent->getLayoutEndPosition() > $child->getFormPosition();
+        };
     }
 
     public function getExistingPaths(
@@ -226,6 +221,10 @@ trait CanMapFields
             ->sortByDesc('form_position')
             ->first();
 
+        if (is_null($splitGroup)) {
+            return collect();
+        }
+
         $fieldsInGroup = $this->getFieldsInLayout($splitGroup);
 
         $answersWithPath = $customFormAnswer
@@ -236,6 +235,37 @@ trait CanMapFields
         return $answersWithPath
             ->keyBy('path')
             ->keys();
+    }
+
+    public function getParentSplitGroups(EmbedCustomField|CustomFieldAnswer $record): Collection
+    {
+        if ($record instanceof EmbedCustomFieldAnswer) {
+            $customForm = $record->getCustomForm();
+            $record = $record->getCustomField();
+        } else {
+            /**@var CustomField $record */
+            $customForm = $record->customForm;
+        }
+
+        /**@var CustomField $record */
+        /**@phpstan-ignore-next-line */
+        $fields = $customForm->getCustomFields();
+
+        return $fields->where($this->splitGroupFieldFilter($fields, $record));
+    }
+
+    public function getFieldsInLayout(EmbedCustomField|CustomFieldAnswer $record): Collection
+    {
+        if ($record instanceof CustomFieldAnswer) {
+            $record = $record->getCustomField();
+        }
+
+        /**@phpstan-ignore-next-line */ //ToDo make for non CustomForm
+        return $record->customForm->getCustomFields()
+            ->filter(function (CustomField $field) use ($record) {
+                return !($field->getFormPosition() > $record->getLayoutEndPosition()
+                    || $field->getFormPosition() <= $record->getFormPosition());
+            });
     }
 
 }
