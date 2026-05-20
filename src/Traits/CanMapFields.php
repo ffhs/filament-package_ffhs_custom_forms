@@ -184,7 +184,7 @@ trait CanMapFields
         return !is_null($parentSplitField);
     }
 
-    protected function splitGroupFieldFilter(Collection $fields, CustomField $record): \Closure
+    protected function splitGroupFieldFilter(Collection $fields, EmbedCustomField $record): \Closure
     {
         return static function (CustomField $field) use ($fields, $record) {
             $child = $record;
