@@ -9,7 +9,6 @@ use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Groups\LayoutOptionGroup;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\ColumnSpanOption;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\FastTypeOption;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\ShowInViewOption;
-use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\Options\ShowLabelOption;
 use Ffhs\FilamentPackageFfhsCustomForms\TypeOption\TypeOptionGroup;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\TextInput;
@@ -33,28 +32,47 @@ class ImageLayoutType extends CustomFieldType
                     fn($name) => FileUpload::make($name)
                         ->directory($this->getConfigAttribute('save_path'))
                         ->disk($this->getConfigAttribute('disk'))
-                        ->label('Bild') //ToDo Translate
-                        ->visibility('private')
+                        ->afterStateUpdated(function (FileUpload $component) {
+                            if ($component->isSaved()) {
+                                $component->saveUploadedFiles();
+                            }
+                        })
+                        ->label(static::__('image'))
+                        ->visibility($this->getConfigAttribute('visibility'))
                         ->columnSpanFull()
                         ->downloadable()
+                        ->hiddenLabel()
                         ->previewable()
+                        ->required()
                         ->image()
-                        ->live()
+                        ->live(),
                 ),
             ], 'carbon-data-1'),
             LayoutOptionGroup::make()
                 ->removeTypeOption('inline_label')
+                ->removeTypeOption('column_span')
                 ->mergeTypeOptions([
+                    'show_in_view' => (ShowInViewOption::make())->modifyDefault(fn($default) => false),
                     'column_span' => new ColumnSpanOption(),
                     'width' => FastTypeOption::makeFast(
                         null,
                         static fn($name) => TextInput::make($name)
-                            ->label('Breite') //ToDo Translate
+                            ->label(static::__('width'))
+                            ->helperText(static::__('width_helper'))
+                            ->columnStart(1)
                             ->minValue(1)
+                            ->nullable()
                             ->numeric()
                     ),
-                    'show_label' => (ShowLabelOption::make())->modifyDefault(fn($default) => false),
-                    'show_in_view' => (ShowInViewOption::make())->modifyDefault(fn($default) => false),
+                    'height' => FastTypeOption::makeFast(
+                        null,
+                        static fn($name) => TextInput::make($name)
+                            ->label(static::__('height'))
+                            ->helperText(static::__('height_helper'))
+                            ->minValue(1)
+                            ->nullable()
+                            ->numeric()
+                    ),
                 ]),
 
         ];
