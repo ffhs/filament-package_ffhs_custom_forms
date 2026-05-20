@@ -32,11 +32,12 @@ class ImageLayoutType extends CustomFieldType
                     fn($name) => FileUpload::make($name)
                         ->directory($this->getConfigAttribute('save_path'))
                         ->disk($this->getConfigAttribute('disk'))
-                        ->afterStateUpdated(
-                            fn(FileUpload $fileUpload) => $fileUpload->isSaved(
-                            ) ? null : $fileUpload->saveUploadedFiles()
-                        )
-                        ->label('Bild') //ToDo Translate
+                        ->afterStateUpdated(function (FileUpload $component) {
+                            if ($component->isSaved()) {
+                                $component->saveUploadedFiles();
+                            }
+                        })
+                        ->label(static::__('image'))
                         ->visibility($this->getConfigAttribute('visibility'))
                         ->columnSpanFull()
                         ->downloadable()
@@ -56,8 +57,8 @@ class ImageLayoutType extends CustomFieldType
                     'width' => FastTypeOption::makeFast(
                         null,
                         static fn($name) => TextInput::make($name)
-                            ->label('Breite') //ToDo Translate
-                            ->helperText('Nichts entspricht keine festsetzung')
+                            ->label(static::__('width'))
+                            ->helperText(static::__('width_helper'))
                             ->columnStart(1)
                             ->minValue(1)
                             ->nullable()
@@ -66,8 +67,8 @@ class ImageLayoutType extends CustomFieldType
                     'height' => FastTypeOption::makeFast(
                         null,
                         static fn($name) => TextInput::make($name)
-                            ->label('Höhe') //ToDo Translate
-                            ->helperText('Nichts entspricht keine festsetzung')
+                            ->label(static::__('height'))
+                            ->helperText(static::__('height_helper'))
                             ->minValue(1)
                             ->nullable()
                             ->numeric()
