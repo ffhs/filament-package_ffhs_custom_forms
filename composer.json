@@ -1,5 +1,5 @@
 {
-    "version": "2.0.12",
+    "version": "2.1.0",
     "name": "ffhs/filament-package_ffhs_custom_forms",
     "description": "Custom forms for Fernfachhochschule Schweiz (FFHS)",
     "keywords": [
@@ -17,7 +17,7 @@
     "require": {
         "php": "^8.2",
         "filament/filament": "^4.0",
-        "ffhs/filament-package_ffhs_utils": "~0.1.0",
+        "ffhs/filament-package_ffhs_utils": "^0.1 || ^0.2",
         "filament/notifications": "^4.0",
         "laravel/framework": "^11|^12.0",
         "laravel/prompts": "^0.3",
