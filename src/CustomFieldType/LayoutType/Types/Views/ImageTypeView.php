@@ -20,8 +20,8 @@ class ImageTypeView implements FieldTypeView
 
     protected function getImageEntry(EmbedCustomField $customField, $entry): ImageEntry
     {
-        return $this->makeComponent(ImageEntry::class, $customField, $entry) //toDo fix
-        ->label($this->getLabelName($customField))
+        return $this->makeComponent(ImageEntry::class, $customField, $entry)
+            ->label($this->getLabelName($customField))
             ->defaultImageUrl($this->getTypeConfigAttribute($customField, 'url_prefix'))
             ->state($this->getOptionParameter($customField, 'image'))
             ->disk($this->getTypeConfigAttribute($customField, 'disk'))

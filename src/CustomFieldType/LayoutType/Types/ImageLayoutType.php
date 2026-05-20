@@ -31,14 +31,9 @@ class ImageLayoutType extends CustomFieldType
                     [],
                     fn($name) => FileUpload::make($name)
                         ->directory($this->getConfigAttribute('save_path'))
-                        ->disk($this->getConfigAttribute('disk'))
-                        ->afterStateUpdated(function (FileUpload $component) {
-                            if ($component->isSaved()) {
-                                $component->saveUploadedFiles();
-                            }
-                        })
-                        ->label(static::__('image'))
                         ->visibility($this->getConfigAttribute('visibility'))
+                        ->disk($this->getConfigAttribute('disk'))
+                        ->label(static::__('image'))
                         ->columnSpanFull()
                         ->downloadable()
                         ->hiddenLabel()
@@ -48,6 +43,7 @@ class ImageLayoutType extends CustomFieldType
                         ->live(),
                 ),
             ], 'carbon-data-1'),
+
             LayoutOptionGroup::make()
                 ->removeTypeOption('inline_label')
                 ->removeTypeOption('column_span')
