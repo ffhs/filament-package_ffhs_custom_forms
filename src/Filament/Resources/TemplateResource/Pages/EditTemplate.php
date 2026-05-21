@@ -39,12 +39,51 @@ class EditTemplate extends EditCustomForm
         return trans(CustomForm::__('pages.edit_template.title'), $attributes);
     }
 
+    protected function getSaveFormAction(): Action
+    {
+        return parent::getSaveFormAction()
+            ->action(fn() => $this->save())
+            ->submit(null)
+            ->requiresConfirmation(fn() => $this->showSaveConfirmation() || $this->showCollideMessage())
+            ->modalWidth(Width::ExtraLarge)
+            ->modalSubmitAction(function (Action $action) {
+                if ($this->showCollideMessage()) {
+                    $action->hidden();
+                }
+
+                return $action;
+            })
+            ->modalSubmitActionLabel(function () {
+                return $this->showSaveConfirmation() ?
+                    __('filament-panels::resources/pages/edit-record.form.actions.save.label') :
+                    null;
+            })
+            ->modalDescription(function () {
+                if ($this->showCollideMessage()) {
+                    return $this->collideMessageDescription();
+                }
+
+                if ($this->showSaveConfirmation()) {
+                    return $this->saveConfirmationDescription();
+                }
+
+                return null;
+            })
+            ->modalHeading(function () {
+                if ($this->showCollideMessage()) {
+                    return $this->collideMessageHeading();
+                }
+
+                if ($this->showSaveConfirmation()) {
+                    return $this->saveConfirmationHeading();
+                }
+
+                return null;
+            });
+    }
+
     public function save(bool $shouldRedirect = true, bool $shouldSendSavedNotification = true): void //ToDo improve
     {
-        if (!$this->showSaveConfirmation()) {
-            parent::save($shouldRedirect, $shouldSendSavedNotification);
-        }
-
         DB::transaction(function () use ($shouldSendSavedNotification, $shouldRedirect) {
             parent::save($shouldRedirect, $shouldSendSavedNotification);
 
@@ -58,8 +97,10 @@ class EditTemplate extends EditCustomForm
                 ->clone()
                 ->select('general_field_id');
 
-            $customFormsWitchUseTemplate = CustomField::query()->where('template_id',
-                $template->id)->select('custom_form_id');
+            $customFormsWitchUseTemplate = CustomField::query()->where(
+                'template_id',
+                $template->id
+            )->select('custom_form_id');
 
             $toDeleteGenFieldQuery = CustomField::query()
                 ->whereIn('general_field_id', $templateGeneralFieldQueryId)
@@ -109,62 +150,9 @@ class EditTemplate extends EditCustomForm
         });
     }
 
-    public function getFormConfiguration(): CustomFormConfiguration
-    {
-        return $this->getRecord()->getFormConfiguration();
-    }
-
-    protected function getSaveFormAction(): Action
-    {
-        return parent::getSaveFormAction()
-            ->action(fn() => $this->save())
-            ->submit(null)
-            ->requiresConfirmation(fn() => $this->showSaveConfirmation() || $this->showCollideMessage())
-            ->modalWidth(Width::ExtraLarge)
-            ->modalSubmitAction(function (Action $action) {
-                if ($this->showCollideMessage()) {
-                    $action->hidden();
-                }
-
-                return $action;
-            })
-            ->modalSubmitActionLabel(function () {
-                return $this->showSaveConfirmation() ?
-                    __('filament-panels::resources/pages/edit-record.form.actions.save.label') :
-                    null;
-            })
-            ->modalDescription(function () {
-                if ($this->showCollideMessage()) {
-                    return $this->collideMessageDescription();
-                }
-
-                if ($this->showSaveConfirmation()) {
-                    return $this->saveConfirmationDescription();
-                }
-
-                return null;
-            })
-            ->modalHeading(function () {
-                if ($this->showCollideMessage()) {
-                    return $this->collideMessageHeading();
-                }
-
-                if ($this->showSaveConfirmation()) {
-                    return $this->saveConfirmationHeading();
-                }
-
-                return null;
-            });
-    }
-
     protected function showSaveConfirmation(): bool
     {
         return $this->cachedGeneralFieldsOverwritten()->count() > 0;
-    }
-
-    protected function showCollideMessage(): bool
-    {
-        return $this->getTemplateGeneralFieldCollision()->count() > 0;
     }
 
     protected function cachedGeneralFieldsOverwritten(): Collection
@@ -184,6 +172,16 @@ class EditTemplate extends EditCustomForm
         return CustomField::query()
             ->whereIn('custom_form_id', $templateFieldsQuery->select('custom_form_id'))
             ->whereIn('general_field_id', $usedGeneralIds);
+    }
+
+    public function getFormConfiguration(): CustomFormConfiguration
+    {
+        return $this->getRecord()->getFormConfiguration();
+    }
+
+    protected function showCollideMessage(): bool
+    {
+        return $this->getTemplateGeneralFieldCollision()->count() > 0;
     }
 
     protected function getTemplateGeneralFieldCollision(): Collection
